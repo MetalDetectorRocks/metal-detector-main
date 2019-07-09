@@ -26,7 +26,15 @@ public class ArtistRestClient extends AbstractDiscogsRestClient {
     log.info("Status code value: " + responseEntity.getStatusCodeValue());
     log.info("HTTP Header 'ContentType': " + responseEntity.getHeaders().getContentType());
 
-    System.out.println(responseEntity.getBody());
+    Artist artist = responseEntity.getBody();
+    assert artist != null;
+    log.info("ID: {}", artist.getId());
+    log.info("Profile: {}", artist.getProfile());
+    log.info("Release URL: {}", artist.getReleasesUrl());
+    log.info("Resource URL: {}", artist.getResourceUrl());
+    log.info("URI: {}", artist.getUri());
+    log.info("URLs: {}", artist.getUrls());
+    log.info("Members: {}", artist.getMembers());
   }
 
 }
