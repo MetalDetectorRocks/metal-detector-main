@@ -11,9 +11,7 @@ import java.util.Date;
 
 public class JwtsUtils {
 
-  public  static final String TOKEN_PREFIX  = "Bearer ";
-  public  static final String HEADER_STRING = "Authorization";
-  private static       String TOKEN_SECRET;
+  private static String TOKEN_SECRET;
 
   private JwtsUtils() {
     throw new UnsupportedOperationException("util class - no instance needed!");
@@ -34,7 +32,7 @@ public class JwtsUtils {
                .getBody();
   }
 
-  public static String getTokenSecret() {
+  private static String getTokenSecret() {
     if (TOKEN_SECRET == null) {
       AppProperties appProperties = (AppProperties) SpringApplicationContext.getBean("appProperties");
       TOKEN_SECRET = appProperties.getTokenSecret();

@@ -7,8 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppProperties {
 
-  @Autowired
   private Environment env;
+
+  @Autowired
+  public AppProperties(Environment env) {
+    this.env = env;
+  }
 
   public String getTokenSecret() {
     return env.getProperty("token-secret");
