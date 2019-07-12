@@ -61,3 +61,11 @@ via your IDE
 - Execute main class `com.metalr2.MetalReleaseRadarApplication`
 
 Go to your web browser and visit `http://localhost:8090`.
+You can log in via the URL `http://localhost:8090/login`. 
+
+There are two example users with the following credentials:
+
+| Email                        | Password       |
+| ---------------------------- | -------------- |
+| john.doe@example.com         | john.doe       |
+| maria.thompson@example.com   | maria.thompson |
