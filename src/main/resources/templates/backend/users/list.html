@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html data-th-replace="~{backend/fragments/layout :: layout (~{::body})}" lang="en">
+    <body>
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Users</h1>
+        </div>
+        <!--<a href="users/create" class="btn btn-primary">Create user</a>-->
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-th-each="user : ${users}">
+                    <td data-th-text="${user.name}"></td>
+                    <td data-th-text="${user.email}"></td>
+                    <td>
+                        <span data-th-if="${user.enabled}" class="badge badge-success">Enabled</span>
+                        <span data-th-unless="${user.enabled}" class="badge badge-secondary">Disabled</span>
+                    </td>
+                    <td>
+                        <a href="#"><i class="material-icons table-action-icon">edit</i></a>
+                        <a href="#"><i class="material-icons table-action-icon">delete</i></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

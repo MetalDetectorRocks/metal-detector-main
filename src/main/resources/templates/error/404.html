@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html data-th-replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en">
+    <body>
+        <div class="container">
+            <h1>Sorry, we couldn't find the page you were looking for (<span data-th-text="${requestedURI}">requested uri</span>)</h1>
+            <a href="#" data-th-href="@{/index}">Home</a>
+        </div>
+    </body>
+</html>

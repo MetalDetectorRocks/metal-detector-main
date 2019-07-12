@@ -1,4 +1,4 @@
-package com.metalr2.config;
+package com.metalr2.config.resttemplate;
 
 import com.metalr2.discogs.config.DiscogsConfig;
 import lombok.extern.slf4j.Slf4j;

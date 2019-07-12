@@ -1,4 +1,4 @@
-package com.metalr2.config;
+package com.metalr2.config.resttemplate;
 
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
@@ -23,7 +23,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.metalr2.config.HttpClientConfigConstants.*;
+import static com.metalr2.config.resttemplate.HttpClientConfigConstants.*;
 
 @Configuration
 @EnableScheduling

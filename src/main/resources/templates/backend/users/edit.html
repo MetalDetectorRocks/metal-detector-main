@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html data-th-replace="~{backend/fragments/layout :: layout (~{::body})}" lang="en">
+    <body>
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Users</h1>
+        </div>
+        <a href="users/create" class="btn btn-primary">Create new user</a>
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">First name</th>
+                    <th scope="col">Last name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Daniel</td>
+                    <td>Wagner</td>
+                    <td>wagner.daniel87@gmail.com</td>
+                    <td><span class="badge badge-success">Enabled</span></td>
+                    <td>
+                        <a href="#" data-th-href="@{users/edit/1}"><i class="material-icons table-action-icon">edit</i></a>
+                        <a href="#"><i class="material-icons table-action-icon">delete</i></a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Nils</td>
+                    <td>Dammenhayn</td>
+                    <td>nils.dam@aol.com</td>
+                    <td><span class="badge badge-secondary">Disabled</span></td>
+                    <td>
+                        <a href="#" data-th-href="@{users/edit/2}"><i class="material-icons table-action-icon">edit</i></a>
+                        <a href="#"><i class="material-icons table-action-icon">delete</i></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html data-th-replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en">
+    <body>
+        <div class="auth-container">
+            <h3 class="mb-4">Login</h3>
+
+            <!-- Login Messages -->
+            <div data-th-if="${param.badCredentials}" class="alert alert-danger" role="alert"><span>Wrong email and/or password!</span></div>
+            <div data-th-if="${param.disabled}" class="alert alert-danger" role="alert"><span>Your account is disabled. Maybe your email address is not verified. Please check your email inbox.</span></div>
+            <div data-th-if="${param.error}" class="alert alert-danger" role="alert"><span>Unknown error!</span></div>
+            <div data-th-if="${param.logout}" class="alert alert-success" role="alert"><span>You have been successfully logged out.</span></div>
+
+            <!-- Registration Messages -->
+            <div data-th-if="${param.verificationSuccess}" class="alert alert-success" role="alert">
+                <span data-th-text="#{registration.verification-success}">Registration confirmation successful!</span>
+            </div>
+            <div data-th-if="${param.resendVerificationTokenSuccess}" class="alert alert-success" role="alert">
+                <span data-th-text="#{registration.resend-verification-token-success}">E-mail with verification link sent again</span>
+            </div>
+            <div data-th-if="${param.tokenNotFound}" class="alert alert-danger" role="alert">
+                <span data-th-text="#{registration.token-not-found}">Verification token not found.</span>
+            </div>
+            <div data-th-if="${param.tokenExpired}" class="alert alert-danger" role="alert">
+                <span data-th-text="#{registration.token-expired}">Verification token expired.</span>
+                <a href="#" data-th-href="@{/resend-verification-token?(token=${param.token})}" data-th-text="#{registration.resend-verification-email}">Resend verification e-mail</a>
+            </div>
+
+            <!-- Reset password messages-->
+            <div data-th-if="${param.resetSuccess}" class="alert alert-success" role="alert">
+                <span data-th-text="#{forgot-password.reset-successful}">You can now log in with your new password.</span>
+            </div>
+
+            <!-- Login form -->
+            <form id="loginForm" name="loginForm" action="#" data-th-action="@{/login}" method="POST">
+                <!-- Username -->
+                <div class="form-label-group">
+                    <input type="email" id="username" class="form-control" name="username" placeholder="Email address" required autofocus>
+                    <label for="username">Email address</label>
+                </div>
+
+                <!-- Password -->
+                <div class="form-label-group">
+                    <input type="password" id="password" class="form-control" name="password" placeholder="Password" required>
+                    <label for="password">Password</label>
+                </div>
+
+                <div class="form-label-group">
+                    <div class="row">
+                        <div class="col">
+                            <!-- Remember me -->
+                            <div class="checkbox mb-3">
+                                <label>
+                                    <input type="checkbox" value="remember-me"> Remember me
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col text-right">
+                            <!-- Forgot password -->
+                            <div class="form-label-group">
+                                <a href="#" data-th-href="@{forgot-password}">Forgot password?</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login -->
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+            </form>
+
+            <div class="row">
+                <div class="col-md-12">
+                    New user? <a href="#" data-th-href="@{/register}" data-th-text="#{index.register}">Register</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html data-th-replace="~{backend/fragments/layout :: layout (~{::body})}" lang="en">
+    <body>
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Create user</h1>
+        </div>
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+            <form id="registrationForm" name="registrationForm" action="#" data-th-action="@{/register}" data-th-object="${registerUserRequest}" method="POST">
+                <div data-th-if="${#fields.hasGlobalErrors()}" class="alert alert-danger" role="alert">
+                    <span data-th-each="err : ${#fields.globalErrors()}" data-th-text="${err}">global error</span>
+                </div>
+                <div data-th-if="${emailError}" class="alert alert-danger" role="alert">
+                    <span data-th-text="${emailError}">Email configuration error</span>
+                </div>
+                <div data-th-if="${successMessage}" class="alert alert-success" role="alert">
+                    <span data-th-text="${successMessage}">Registration successful</span>
+                </div>
+
+                <!-- First name -->
+                <div class="form-label-group">
+                    <input type="text" id="firstName" class="form-control" name="firstName"
+                           data-th-class="${#fields.hasErrors('firstName')}? 'form-control is-invalid' : 'form-control'"
+                           data-th-field="*{firstName}"
+                           placeholder="First name" required autofocus>
+                    <div class="invalid-feedback" data-th-errors="*{firstName}">First name error</div>
+                    <label for="firstName">First name</label>
+                </div>
+
+                <!-- Last name-->
+                <div class="form-label-group">
+                    <input type="text" id="lastName" class="form-control" name="lastName"
+                           data-th-class="${#fields.hasErrors('lastName')}? 'form-control is-invalid' : 'form-control'"
+                           data-th-field="*{lastName}"
+                           placeholder="Last name" required>
+                    <div class="invalid-feedback" data-th-errors="*{lastName}">Last name error</div>
+                    <label for="lastName">Last name</label>
+                </div>
+
+                <!-- EMail-->
+                <div class="form-label-group">
+                    <input type="email" id="email" class="form-control" name="email"
+                           data-th-class="${#fields.hasErrors('email')}? 'form-control is-invalid' : 'form-control'"
+                           data-th-field="*{email}"
+                           placeholder="Email" required>
+                    <div class="invalid-feedback" data-th-errors="*{email}">Email error</div>
+                    <label for="email">Email</label>
+                </div>
+
+                <!-- Password -->
+                <div class="form-label-group">
+                    <input type="password" id="password" class="form-control" name="password"
+                           data-th-class="${#fields.hasErrors('password')}? 'form-control is-invalid' : 'form-control'"
+                           data-th-field="*{password}"
+                           placeholder="Password" required>
+                    <div class="invalid-feedback" data-th-errors="*{password}">Password error</div>
+                    <label for="password">Password</label>
+                </div>
+
+                <!-- Verify Password -->
+                <div class="form-label-group">
+                    <input type="password" id="verify-password" class="form-control" name="verify-password"
+                           data-th-class="${#fields.hasErrors('verifyPassword')}? 'form-control is-invalid' : 'form-control'"
+                           data-th-field="*{verifyPassword}"
+                           placeholder="Password" required>
+                    <div class="invalid-feedback" data-th-errors="*{verifyPassword}">Verify password error</div>
+                    <label for="verify-password">Verify Password</label>
+                </div>
+
+                <!-- Buttons -->
+                <button class="btn btn-primary" type="submit">Create</button>
+                <button class="btn btn-primary" type="reset">Clear</button>
+                <a href="#" data-th-href="@{/admin/users}" class="btn btn-primary">Cancel</a>
+            </form>
+        </div>
+    </body>
+</html>

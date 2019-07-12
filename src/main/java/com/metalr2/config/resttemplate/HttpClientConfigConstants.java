@@ -1,4 +1,4 @@
-package com.metalr2.config;
+package com.metalr2.config.resttemplate;
 
 public interface HttpClientConfigConstants {
 

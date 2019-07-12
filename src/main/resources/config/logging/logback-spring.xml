@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="15 seconds">
+    <!-- scan="true": reloads the config file while application is running if there is any change -->
+    <!-- scanPeriod="15 seconds": We can specify values in milliseconds, seconds, minutes, or hours for scan -->
+    <!-- debug="true": prints debug messages regarding this configuration file -->
+    <property name="LOGS" value="./logs" />
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%white(%d{ISO8601}) [%blue(%thread)] %highlight(%-5level) %logger{40} - %msg %n%throwable</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/application.log</file>
+        <encoder>
+            <Pattern>%d{ISO8601} [%thread] %-5level %logger{40} - %msg %n%throwable{full}</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOGS}/archived/application-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- each file should be at most 10MB, keep 30 days worth of history, but at most 5GB -->
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- LOG everything at INFO level -->
+    <root level="info">
+        <appender-ref ref="RollingFile" />
+        <appender-ref ref="Console" />
+    </root>
+
+    <!-- LOG "com.metalr2.*" at TRACE level -->
+    <logger name="com.metalr2" level="trace" additivity="false">
+        <appender-ref ref="RollingFile" />
+        <appender-ref ref="Console" />
+    </logger>
+
+    <!-- LOG "org.springframework.web.*" at ERROR level -->
+    <logger name="logging.level.org.springframework.web" level="error" additivity="false">
+        <appender-ref ref="RollingFile" />
+        <appender-ref ref="Console" />
+    </logger>
+
+    <!-- LOG "logging.level.org.hibernate.*" at ERROR level -->
+    <logger name="logging.level.org.hibernate" level="error" additivity="false">
+        <appender-ref ref="RollingFile" />
+        <appender-ref ref="Console" />
+    </logger>
+</configuration>

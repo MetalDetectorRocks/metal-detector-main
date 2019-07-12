@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html data-th-replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en">
+    <body>
+    <h3 data-th-text="#{index.welcome(${applicationName})}">Welcome to our App!</h3>
+        <div class="row">
+            <div class="col-md-12">
+                New user? <a href="#" data-th-href="@{/register}" data-th-text="#{index.register}">Register</a>
+            </div>
+            <div class="col-md-12">
+                Already registered? <a href="#" data-th-href="@{/login}" data-th-text="#{index.login}">Login</a>
+            </div>
+        </div>
+    </body>
+</html>
