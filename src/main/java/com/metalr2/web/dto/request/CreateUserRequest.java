@@ -7,7 +7,6 @@ import lombok.Setter;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -27,7 +26,5 @@ public class CreateUserRequest {
   @NotBlank
   @Size(min=8, message="Password length must be at least 8 characters")
   private String password;
-
-  private List<CreateAddressRequest> addresses;
 	
 }
