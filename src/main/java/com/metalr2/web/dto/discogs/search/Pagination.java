@@ -1,4 +1,4 @@
-package com.metalr2.discogs.model.search;
+package com.metalr2.web.dto.discogs.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

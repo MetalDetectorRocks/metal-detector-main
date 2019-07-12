@@ -1,6 +1,6 @@
 package com.metalr2.config.misc;
 
-import com.metalr2.model.entities.UserEntity;
+import com.metalr2.model.user.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

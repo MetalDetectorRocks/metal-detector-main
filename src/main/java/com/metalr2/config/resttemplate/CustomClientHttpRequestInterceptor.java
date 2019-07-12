@@ -1,6 +1,6 @@
 package com.metalr2.config.resttemplate;
 
-import com.metalr2.discogs.config.DiscogsConfig;
+import com.metalr2.config.misc.DiscogsConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;

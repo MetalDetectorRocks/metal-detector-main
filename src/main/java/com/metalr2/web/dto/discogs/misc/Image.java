@@ -1,4 +1,4 @@
-package com.metalr2.discogs.model.misc;
+package com.metalr2.web.dto.discogs.misc;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

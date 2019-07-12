@@ -3,7 +3,7 @@ package com.metalr2.web.controller.authentication;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
-import com.metalr2.security.password.OnResetPasswordRequestCompleteEvent;
+import com.metalr2.model.user.events.OnResetPasswordRequestCompleteEvent;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.request.ForgotPasswordRequest;
@@ -57,7 +57,7 @@ public class ForgotPasswordController {
   public ModelAndView requestPasswordReset(@Valid @ModelAttribute ForgotPasswordRequest forgotPasswordRequest, BindingResult bindingResult, WebRequest request) {
     Optional<UserDto> userDto = userService.getUserByEmail(forgotPasswordRequest.getEmail());
 
-    if (! userDto.isPresent()) {
+    if (userDto.isEmpty()) {
       bindingResult.rejectValue("email", "userDoesNotExist", messages.getMessage(MessageKeys.ForgotPassword.USER_DOES_NOT_EXIST, null, request.getLocale()));
       return new ModelAndView(ViewNames.FORGOT_PASSWORD);
     }

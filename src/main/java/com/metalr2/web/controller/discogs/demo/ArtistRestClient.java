@@ -1,7 +1,7 @@
-package com.metalr2.discogs.restclient;
+package com.metalr2.web.controller.discogs.demo;
 
-import com.metalr2.discogs.config.DiscogsConfig;
-import com.metalr2.discogs.model.artist.Artist;
+import com.metalr2.config.misc.DiscogsConfig;
+import com.metalr2.web.dto.discogs.artist.Artist;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

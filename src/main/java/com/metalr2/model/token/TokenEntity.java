@@ -1,5 +1,6 @@
-package com.metalr2.model.entities;
+package com.metalr2.model.token;
 
+import com.metalr2.model.user.UserEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

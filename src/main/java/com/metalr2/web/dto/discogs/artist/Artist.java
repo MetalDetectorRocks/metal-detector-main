@@ -1,9 +1,10 @@
-package com.metalr2.discogs.model.artist;
+package com.metalr2.web.dto.discogs.artist;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.metalr2.discogs.model.misc.Image;
+import com.metalr2.web.dto.discogs.misc.Image;
 import lombok.Data;
+
 import java.util.List;
 
 @Data

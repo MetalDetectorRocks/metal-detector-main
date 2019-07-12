@@ -6,7 +6,7 @@ import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.exceptions.EmailVerificationTokenExpiredException;
 import com.metalr2.model.exceptions.ResourceNotFoundException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
-import com.metalr2.security.registration.OnRegistrationCompleteEvent;
+import com.metalr2.model.user.events.OnRegistrationCompleteEvent;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.UserDto;

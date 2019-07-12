@@ -1,8 +1,8 @@
-package com.metalr2.discogs.restclient;
+package com.metalr2.web.controller.discogs.demo;
 
-import com.metalr2.discogs.config.DiscogsConfig;
-import com.metalr2.discogs.model.search.ArtistSearchResult;
-import com.metalr2.discogs.model.search.ArtistSearchResults;
+import com.metalr2.config.misc.DiscogsConfig;
+import com.metalr2.web.dto.discogs.search.ArtistSearchResult;
+import com.metalr2.web.dto.discogs.search.ArtistSearchResults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

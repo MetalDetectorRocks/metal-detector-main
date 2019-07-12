@@ -1,4 +1,4 @@
-package com.metalr2.discogs.config;
+package com.metalr2.config.misc;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

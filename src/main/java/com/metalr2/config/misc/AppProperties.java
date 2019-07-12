@@ -14,10 +14,6 @@ public class AppProperties {
     this.env = env;
   }
 
-  public String getTokenSecret() {
-    return env.getProperty("token-secret");
-  }
-
   public String getDefaultMailFrom() {
     return env.getProperty("mail.from.email");
   }

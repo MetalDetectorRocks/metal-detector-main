@@ -1,13 +1,13 @@
 package com.metalr2.service.user;
 
-import com.metalr2.model.entities.TokenEntity;
-import com.metalr2.model.entities.UserEntity;
 import com.metalr2.model.exceptions.EmailVerificationTokenExpiredException;
 import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ResourceNotFoundException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
-import com.metalr2.model.repositories.TokenRepository;
-import com.metalr2.model.repositories.UserRepository;
+import com.metalr2.model.token.TokenEntity;
+import com.metalr2.model.token.TokenRepository;
+import com.metalr2.model.user.UserEntity;
+import com.metalr2.model.user.UserRepository;
 import com.metalr2.utils.Utils;
 import com.metalr2.web.dto.UserDto;
 import org.modelmapper.ModelMapper;
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
   public Optional<UserDto> getUserByEmail(String email) {
     Optional<UserEntity> userEntity = userRepository.findByEmail(email);
 
-    if (! userEntity.isPresent()) {
+    if (userEntity.isEmpty()) {
       return Optional.empty();
     }
 

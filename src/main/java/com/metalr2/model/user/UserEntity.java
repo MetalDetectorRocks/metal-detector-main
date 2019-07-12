@@ -1,4 +1,4 @@
-package com.metalr2.model.entities;
+package com.metalr2.model.user;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -7,11 +7,13 @@ import java.util.Map;
 
 public abstract class AbstractEmail {
 
-  static final String  HOST = ((AppProperties) SpringApplicationContext.getBean("appProperties")).getHost();
-  static final Integer PORT = ((AppProperties) SpringApplicationContext.getBean("appProperties")).getHttpPort();
+  private static final AppProperties appProperties = SpringApplicationContext.getBean("appProperties", AppProperties.class);
+
+  static final String  HOST = appProperties.getHost();
+  static final Integer PORT = appProperties.getHttpPort();
 
   public String getFrom() {
-    return ((AppProperties) SpringApplicationContext.getBean("appProperties")).getDefaultMailFrom();
+    return appProperties.getDefaultMailFrom();
   }
 
   public abstract String getRecipient();

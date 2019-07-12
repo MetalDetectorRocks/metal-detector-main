@@ -1,6 +1,7 @@
-package com.metalr2.security.registration;
+package com.metalr2.model.user.listener;
 
 import com.metalr2.model.email.RegistrationVerificationEmail;
+import com.metalr2.model.user.events.OnRegistrationCompleteEvent;
 import com.metalr2.service.email.EmailService;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.web.dto.UserDto;

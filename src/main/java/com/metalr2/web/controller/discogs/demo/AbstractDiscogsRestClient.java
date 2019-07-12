@@ -1,6 +1,6 @@
-package com.metalr2.discogs.restclient;
+package com.metalr2.web.controller.discogs.demo;
 
-import com.metalr2.discogs.config.DiscogsConfig;
+import com.metalr2.config.misc.DiscogsConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,8 +10,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public abstract class AbstractDiscogsRestClient {
 
-  protected final RestTemplate restTemplate;
-  protected final DiscogsConfig discogsConfig;
+  final RestTemplate restTemplate;
+  final DiscogsConfig discogsConfig;
 
   @Autowired
   public AbstractDiscogsRestClient(RestTemplate restTemplate, DiscogsConfig discogsConfig) {

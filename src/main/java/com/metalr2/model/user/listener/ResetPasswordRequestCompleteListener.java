@@ -1,6 +1,7 @@
-package com.metalr2.security.password;
+package com.metalr2.model.user.listener;
 
 import com.metalr2.model.email.ForgotPasswordEmail;
+import com.metalr2.model.user.events.OnResetPasswordRequestCompleteEvent;
 import com.metalr2.service.email.EmailService;
 import com.metalr2.service.token.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;

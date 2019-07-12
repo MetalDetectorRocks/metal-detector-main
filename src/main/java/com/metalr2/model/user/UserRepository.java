@@ -1,6 +1,5 @@
-package com.metalr2.model.repositories;
+package com.metalr2.model.user;
 
-import com.metalr2.model.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.metalr2.service.token;
 
-import com.metalr2.model.entities.TokenEntity;
+import com.metalr2.model.token.TokenEntity;
 
 import java.util.Optional;
 

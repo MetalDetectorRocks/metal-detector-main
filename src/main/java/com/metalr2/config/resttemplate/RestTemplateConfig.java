@@ -1,6 +1,6 @@
 package com.metalr2.config.resttemplate;
 
-import com.metalr2.discogs.config.DiscogsConfig;
+import com.metalr2.config.misc.DiscogsConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;

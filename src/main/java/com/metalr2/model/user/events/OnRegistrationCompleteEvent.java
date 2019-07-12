@@ -1,4 +1,4 @@
-package com.metalr2.security.password;
+package com.metalr2.model.user.events;
 
 import com.metalr2.web.dto.UserDto;
 import lombok.Getter;
@@ -7,11 +7,11 @@ import org.springframework.context.ApplicationEvent;
 
 @Getter
 @Setter
-public class OnResetPasswordRequestCompleteEvent extends ApplicationEvent {
+public class OnRegistrationCompleteEvent extends ApplicationEvent {
 
   private final UserDto userDto;
 
-  public OnResetPasswordRequestCompleteEvent(Object source, UserDto userDto) {
+  public OnRegistrationCompleteEvent(Object source, UserDto userDto) {
     super(source);
     this.userDto = userDto;
   }

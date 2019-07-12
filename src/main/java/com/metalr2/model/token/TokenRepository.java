@@ -1,6 +1,5 @@
-package com.metalr2.model.repositories;
+package com.metalr2.model.token;
 
-import com.metalr2.model.entities.TokenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

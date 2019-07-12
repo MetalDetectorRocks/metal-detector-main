@@ -1,4 +1,4 @@
-package com.metalr2.discogs.model.artist;
+package com.metalr2.web.dto.discogs.artist;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
