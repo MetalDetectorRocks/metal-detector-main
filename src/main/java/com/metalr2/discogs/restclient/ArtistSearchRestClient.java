@@ -1,7 +1,8 @@
 package com.metalr2.discogs.restclient;
 
 import com.metalr2.discogs.config.DiscogsConfig;
-import com.metalr2.discogs.model.search.*;
+import com.metalr2.discogs.model.search.ArtistSearchResult;
+import com.metalr2.discogs.model.search.ArtistSearchResults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
   @Autowired
   public ArtistSearchRestClient(RestTemplate restTemplate, DiscogsConfig discogsConfig) {
     super(restTemplate, discogsConfig);
-    searchForArtist("Nirvana");
+    // searchForArtist("Nirvana");
   }
 
   public void searchForArtist(String artistQueryString) {

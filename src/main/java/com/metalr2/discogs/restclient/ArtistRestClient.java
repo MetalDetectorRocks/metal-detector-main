@@ -15,7 +15,7 @@ public class ArtistRestClient extends AbstractDiscogsRestClient {
 
   public ArtistRestClient(RestTemplate restTemplate, DiscogsConfig discogsConfig) {
     super(restTemplate, discogsConfig);
-    getArtist(125246);
+    // getArtist(125246);
   }
 
   public void getArtist(long artistId) {
