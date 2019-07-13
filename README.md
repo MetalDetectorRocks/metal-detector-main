@@ -40,12 +40,8 @@ To setup the project please apply the following steps:
     - `spring.mail.username`
     - `spring.mail.password`
     - `mail.from.email`
-- Define the token secret property `token-secret` also in file `application.properties`.
-- In the resources folder, create the file `discogs.properties` with values for the following properties:
-    - `discogs.user-agent`
-    - `discogs.access-token`
-    - `discogs.rest-base-url`
-- Take into account the information available at [Discogs API Documentation](https://www.discogs.com/developers/).
+- Deposit your Discogs Access Token for the property `discogs.access-token` in file `discogs.properties` (see [Discogs API Documentation](https://www.discogs.com/developers/) for further information).
+- Define the token secret property for JWTS in file `security.properties`.
 
 <a name="run-application"></a>
 ## 4 Run the application

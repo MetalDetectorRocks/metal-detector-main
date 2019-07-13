@@ -5,14 +5,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
+@PropertySource(value = "classpath:security.properties")
 public class JwtsSupport {
 
-  @Value("${token-secret}")
+  @Value("${security.token-secret}")
   private String TOKEN_SECRET;
 
   public String generateToken(String subject, ExpirationTime expirationTime) {
