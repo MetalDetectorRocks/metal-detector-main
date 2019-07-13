@@ -15,11 +15,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.Locale;
 import java.util.Optional;
 
 @Controller
@@ -45,15 +45,15 @@ public class ResetPasswordController {
   }
 
   @GetMapping
-  public ModelAndView showResetPasswordForm(@RequestParam(value="token") String tokenString, WebRequest request, Model model, RedirectAttributes redirectAttributes) {
+  public ModelAndView showResetPasswordForm(@RequestParam(value="token") String tokenString, Model model, RedirectAttributes redirectAttributes) {
     Optional<TokenEntity> tokenEntity = tokenService.getResetPasswordTokenByTokenString(tokenString);
 
-    if (! tokenEntity.isPresent()) {
-      redirectAttributes.addFlashAttribute("resetPasswordError", messages.getMessage(MessageKeys.ForgotPassword.TOKEN_DOES_NOT_EXIST, null, request.getLocale()));
+    if (tokenEntity.isEmpty()) {
+      redirectAttributes.addFlashAttribute("resetPasswordError", messages.getMessage(MessageKeys.ForgotPassword.TOKEN_DOES_NOT_EXIST, null, Locale.US));
       return new ModelAndView("redirect:" + Endpoints.FORGOT_PASSWORD);
     }
     else if (tokenEntity.get().isExpired()) {
-      redirectAttributes.addFlashAttribute("resetPasswordError", messages.getMessage(MessageKeys.ForgotPassword.TOKEN_IS_EXPIRED, null, request.getLocale()));
+      redirectAttributes.addFlashAttribute("resetPasswordError", messages.getMessage(MessageKeys.ForgotPassword.TOKEN_IS_EXPIRED, null, Locale.US));
       return new ModelAndView("redirect:" + Endpoints.FORGOT_PASSWORD);
     }
     else {

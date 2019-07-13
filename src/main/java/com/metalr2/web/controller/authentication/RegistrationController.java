@@ -22,11 +22,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @Controller
@@ -61,7 +61,7 @@ public class RegistrationController {
   }
 
   @PostMapping(Endpoints.REGISTER)
-  public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult, WebRequest request) {
+  public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult) {
     // show registration form if there are validation errors
     if (bindingResult.hasErrors()) {
       return new ModelAndView(ViewNames.REGISTER);
@@ -82,7 +82,7 @@ public class RegistrationController {
     eventPublisher.publishEvent(new OnRegistrationCompleteEvent(this, createdUserDto));
 
     Map<String, Object> viewModel = new HashMap<>();
-    viewModel.put("successMessage", messages.getMessage(MessageKeys.Registration.SUCCESS, null, request.getLocale()));
+    viewModel.put("successMessage", messages.getMessage(MessageKeys.Registration.SUCCESS, null, Locale.US));
     viewModel.put("registerUserRequest", new RegisterUserRequest()); // to clear the register form
 
     return new ModelAndView(ViewNames.REGISTER, viewModel);
