@@ -5,8 +5,8 @@ import com.metalr2.config.constants.ViewNames;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.UserDto;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class RegisterNewUserAccountIntegrationTest {
+class RegisterNewUserAccountIntegrationTest {
 
   private static final String RESPONSE_ATTRIBUTE_NAME = "registerUserRequest";
   private static final String PARAM_FIRST_NAME        = "firstName";
@@ -41,8 +41,8 @@ public class RegisterNewUserAccountIntegrationTest {
   @Mock private ApplicationEventPublisher eventPublisher;
   @Mock private MessageSource messages;
 
-  @Before
-  public void setup(){
+  @BeforeEach
+  void setup(){
     userService = mock(UserService.class);
     when(userService.createUser(new UserDto())).thenReturn(new UserDto());
 
@@ -65,7 +65,7 @@ public class RegisterNewUserAccountIntegrationTest {
   }
 
   @Test
-  public void register_new_user_account_should_be_ok() throws Exception {
+  void register_new_user_account_should_be_ok() throws Exception {
     mockMvc.perform(createRequestBuilder())
            .andExpect(model().errorCount(0))
            .andExpect(status().isOk())
@@ -73,7 +73,7 @@ public class RegisterNewUserAccountIntegrationTest {
   }
 
   @Test
-  public void register_new_user_account_should_fail_due_to_empty_names() throws Exception {
+  void register_new_user_account_should_fail_due_to_empty_names() throws Exception {
     paramValues.put(PARAM_FIRST_NAME, "");
     paramValues.put(PARAM_LAST_NAME, null);
 
@@ -85,7 +85,7 @@ public class RegisterNewUserAccountIntegrationTest {
   }
 
   @Test
-  public void register_new_user_account_should_fail_due_to_invalid_email() throws Exception {
+  void register_new_user_account_should_fail_due_to_invalid_email() throws Exception {
     paramValues.put(PARAM_EMAIL, "john.doe.example.de");
     mockMvc.perform(createRequestBuilder())
             .andExpect(model().errorCount(1))
@@ -95,7 +95,7 @@ public class RegisterNewUserAccountIntegrationTest {
   }
 
   @Test
-  public void register_new_user_account_should_fail_due_to_empty_email() throws Exception {
+  void register_new_user_account_should_fail_due_to_empty_email() throws Exception {
     paramValues.put(PARAM_EMAIL, "");
     mockMvc.perform(createRequestBuilder())
             .andExpect(model().errorCount(1))
@@ -105,7 +105,7 @@ public class RegisterNewUserAccountIntegrationTest {
   }
 
   @Test
-  public void register_new_user_account_should_fail_due_to_not_matching_passwords() throws Exception {
+  void register_new_user_account_should_fail_due_to_not_matching_passwords() throws Exception {
     paramValues.put(PARAM_PASSWORD, "secret-password");
     paramValues.put(PARAM_VERIFY_PASSWORD, "other-secret-password");
     mockMvc.perform(createRequestBuilder())
@@ -115,7 +115,7 @@ public class RegisterNewUserAccountIntegrationTest {
   }
 
   @Test
-  public void register_new_user_account_should_fail_due_to_too_short_passwords() throws Exception {
+  void register_new_user_account_should_fail_due_to_too_short_passwords() throws Exception {
     paramValues.put(PARAM_PASSWORD, "secret");
     paramValues.put(PARAM_VERIFY_PASSWORD, "secret");
     mockMvc.perform(createRequestBuilder())
@@ -126,7 +126,7 @@ public class RegisterNewUserAccountIntegrationTest {
   }
 
   @Test
-  public void register_new_user_account_should_fail_due_to_empty_and_not_matching_passwords() throws Exception {
+  void register_new_user_account_should_fail_due_to_empty_and_not_matching_passwords() throws Exception {
     paramValues.put(PARAM_PASSWORD, "");
     paramValues.put(PARAM_VERIFY_PASSWORD, "");
     mockMvc.perform(createRequestBuilder())

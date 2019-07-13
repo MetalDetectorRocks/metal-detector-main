@@ -19,7 +19,7 @@ public class AppProperties {
   }
 
   public int getHttpPort() {
-    return Integer.parseInt(env.getProperty("server.port", "80"));
+    return env.getProperty("server.port", Integer.class, 80);
   }
 
   public String getHost() {
