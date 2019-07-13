@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(RegistrationController.class)
 @Import(WebSecurity.class)
-public class RegistrationControllerTest {
+class RegistrationControllerTest {
 
   private static final String NOT_EXISTING_TOKEN = "not_existing_token";
   private static final String EXPIRED_TOKEN      = "expired_token";

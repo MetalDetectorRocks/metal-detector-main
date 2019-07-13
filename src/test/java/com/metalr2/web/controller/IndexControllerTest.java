@@ -23,32 +23,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(IndexController.class)
 @Import(WebSecurity.class)
-public class IndexControllerTest {
+class IndexControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-    @MockBean
-    private UserService userService;
+  @MockBean
+  private UserService userService;
 
-    @MockBean
-    private BCryptPasswordEncoder passwordEncoder;
+  @MockBean
+  private BCryptPasswordEncoder passwordEncoder;
 
-    @BeforeEach
-    void setUp() {
-        // do nothing
-    }
+  @BeforeEach
+  void setUp() {
+    // do nothing
+  }
 
-    @AfterEach
-    void tearDown() {
-        // do nothing
-    }
+  @AfterEach
+  void tearDown() {
+    // do nothing
+  }
 
-    @Test
-    void given_index_uri_then_return_index_view() throws Exception {
-        mockMvc.perform(get(Endpoints.SLASH_INDEX))
-               .andExpect(status().isOk())
-               .andExpect(view().name(ViewNames.INDEX))
-               .andExpect(content().string(containsString("Welcome")));
-    }
+  @Test
+  void given_index_uri_then_return_index_view() throws Exception {
+    mockMvc.perform(get(Endpoints.SLASH_INDEX))
+            .andExpect(status().isOk())
+            .andExpect(view().name(ViewNames.INDEX))
+            .andExpect(content().string(containsString("Welcome")));
+  }
 }

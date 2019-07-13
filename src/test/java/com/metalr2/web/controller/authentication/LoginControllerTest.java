@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(LoginController.class)
 @Import(WebSecurity.class)
-public class LoginControllerTest {
+class LoginControllerTest {
 
   @Autowired
   private MockMvc mockMvc;

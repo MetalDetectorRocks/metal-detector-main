@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ForgotPasswordController.class)
 @Import(WebSecurity.class)
-public class ForgotPasswordControllerTest {
+class ForgotPasswordControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
