@@ -8,7 +8,6 @@ import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.token.TokenRepository;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserRepository;
-import com.metalr2.utils.Utils;
 import com.metalr2.web.dto.UserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-  private final UserRepository userRepository;
+  private final UserRepository  userRepository;
   private final PasswordEncoder passwordEncoder;
   private final TokenRepository tokenRepository;
   private final ModelMapper     mapper;
@@ -50,7 +49,6 @@ public class UserServiceImpl implements UserService {
     // enhance UserEntity
     UserEntity userEntity = mapper.map(userDto, UserEntity.class);
     userEntity.setEncryptedPassword(passwordEncoder.encode(userDto.getPassword()));
-    userEntity.setUserId(Utils.generatePublicId(30));
 
     // create user
     UserEntity savedUserEntity = userRepository.save(userEntity);

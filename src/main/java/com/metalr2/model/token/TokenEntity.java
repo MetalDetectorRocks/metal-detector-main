@@ -1,17 +1,13 @@
 package com.metalr2.model.token;
 
 import com.metalr2.model.user.UserEntity;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity(name="tokens")
 public class TokenEntity implements Serializable {
 

@@ -27,7 +27,6 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
   @Transactional
   public void run(ApplicationArguments args) {
     UserEntity johnDoe = new UserEntity();
-    johnDoe.setUserId("GRuCAUq0d5ypIE1cHngQ1e2S46iTC7");
     johnDoe.setFirstName("John");
     johnDoe.setLastName("Doe");
     johnDoe.setEmail("john.doe@example.com");
@@ -35,7 +34,6 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
     johnDoe.setEnabled(true);
 
     UserEntity mariaThompson = new UserEntity();
-    mariaThompson.setUserId("zqjrp55YmBMjXTHfRKF88bIWGHzgcr");
     mariaThompson.setFirstName("Maria");
     mariaThompson.setLastName("Thompson");
     mariaThompson.setEmail("maria.thompson@example.com");
@@ -43,7 +41,6 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
     mariaThompson.setEnabled(true);
 
     UserEntity mikeMiller = new UserEntity();
-    mikeMiller.setUserId("AQXn6c8ToGy9pzXpbm16tfcLoNhllZ");
     mikeMiller.setFirstName("Mike");
     mikeMiller.setLastName("Miller");
     mikeMiller.setEmail("mike.miller@example.com");

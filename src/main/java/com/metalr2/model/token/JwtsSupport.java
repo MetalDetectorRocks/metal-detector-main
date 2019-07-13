@@ -1,4 +1,4 @@
-package com.metalr2.utils;
+package com.metalr2.model.token;
 
 import com.metalr2.security.ExpirationTime;
 import io.jsonwebtoken.Claims;
