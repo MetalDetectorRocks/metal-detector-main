@@ -65,3 +65,4 @@ There are two example users with the following credentials:
 | ---------------------------- | -------------- |
 | john.doe@example.com         | john.doe       |
 | maria.thompson@example.com   | maria.thompson |
+
