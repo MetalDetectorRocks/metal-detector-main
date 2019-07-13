@@ -1,4 +1,4 @@
-# Metal Release Radar
+# Metal Release Radar [![CircleCI](https://circleci.com/gh/Waginator/metal-release-radar/tree/master.svg?style=svg)](https://circleci.com/gh/Waginator/metal-release-radar/tree/master)
 
 ## Table of contents
 1. [ Introduction ](#introduction)
