@@ -1,4 +1,5 @@
 ![Logo](https://github.com/Waginator/metal-release-radar/blob/master/misc/logo.png) 
+
 [![CircleCI](https://circleci.com/gh/Waginator/metal-release-radar/tree/master.svg?style=svg)](https://circleci.com/gh/Waginator/metal-release-radar/tree/master)
 
 ## Table of contents
