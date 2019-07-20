@@ -6,6 +6,7 @@ public class Endpoints {
   public static final String INDEX       = "/index";
   public static final String EMPTY_INDEX = "";
   public static final String SLASH_INDEX = "/";
+  public static final String SEARCH      ="/search";
 
   // Users
   public static final String USERS_LIST   = "/admin/users";
@@ -34,6 +35,7 @@ public class Endpoints {
     public static final String[] FORGOT_PASSWORD           = {"/forgot-password", "/forgot-password/"};
     public static final String[] RESET_PASSWORD            = {"/reset-password", "/reset-password/"};
     public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**"};
+    public static final String[] SEARCH                    = {"/search", "/search/"};
   }
 
 }
