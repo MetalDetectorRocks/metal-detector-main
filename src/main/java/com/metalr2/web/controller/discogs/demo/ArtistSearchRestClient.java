@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
+import java.util.List;
+
 @Slf4j
 @Service
 public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
@@ -21,17 +24,18 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
     // searchForArtist("Nirvana");
   }
 
-  public void searchForArtist(String artistQueryString) {
+  public List<ArtistSearchResult> searchForArtist(String artistQueryString) {
     ResponseEntity<ArtistSearchResults> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_SEARCH_URL_FRAGMENT,
                                                                                   ArtistSearchResults.class,
                                                                                   artistQueryString);
 
     log.info("Status code value: " + responseEntity.getStatusCodeValue());
-    log.info("HTTP Header 'ContentType': " + responseEntity.getHeaders().getContentType());
+//    log.info("HTTP Header 'ContentType': " + responseEntity.getHeaders().getContentType());
 
-    for (ArtistSearchResult result : responseEntity.getBody().getResults()) {
-      log.info(result.toString());
-    }
+//    for (ArtistSearchResult result : responseEntity.getBody().getResults()) {
+//      log.info(result.toString());
+//    }
+    return responseEntity.getBody() != null ? responseEntity.getBody().getResults() : Collections.emptyList();
   }
 
 }

@@ -18,5 +18,10 @@
 <div class="row">
     <p data-th-text="${artistName}">Artist name</p>
 </div>
+<div class="row">
+    <ul>
+        <li data-th-each="result : ${searchResults}" data-th-text="${result.artistName}">entry</li>
+    </ul>
+</div>
 </body>
 </html>
