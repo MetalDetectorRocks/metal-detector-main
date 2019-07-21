@@ -2,10 +2,12 @@
 <html lang="en">
 <body>
 <h3>Search</h3>
-<div class="row">
-      <form id="searchForm" action="#" data-th-action="@{/search}" data-th-object="${searchRequest}" method="POST">
 
-          <!-- band name -->
+<!-- Search Form -->
+<div class="row">
+    <form id="searchForm" action="#" data-th-action="@{/search}" data-th-object="${searchRequest}" method="POST">
+
+        <!-- band name -->
         <div class="form-label-group">
             <input type="text" id="artistName" class="form-control" data-th-field="*{artistName}">
             <label for="artistName">Artist name</label>
@@ -14,14 +16,6 @@
         <!-- Submit -->
         <button class="btn btn-primary" type="submit">Search</button>
     </form>
-</div>
-<div class="row">
-    <p data-th-text="${artistName}">Artist name</p>
-</div>
-<div class="row">
-    <ul>
-        <li data-th-each="result : ${searchResults}" data-th-text="${result.artistName}">entry</li>
-    </ul>
 </div>
 </body>
 </html>

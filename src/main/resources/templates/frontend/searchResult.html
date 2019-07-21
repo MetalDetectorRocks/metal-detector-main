@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<h3>Search Result</h3>
+
+<!-- Searched term -->
+<div class="row">
+    <p data-th-text="${artistName}">Artist name</p>
+</div>
+
+<!-- Results table -->
+<table border="1">
+    <thead>
+    <tr>
+        <th data-th-text="#{ID}">ID Column</th>
+        <th data-th-text="#{Artist Name}">Artist Name Column</th>
+        <th data-th-text="#{URL}">URL Column</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr data-th-each="result : ${searchResultsPage}">
+        <td data-th-text="${result.id}">ID</td>
+        <td data-th-text="${result.artistName}">Artist Name</td>
+        <td data-th-text="${result.url}">URL</td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Pagination -->
+<div data-th-if="${searchResultsPage.totalPages > 0}" class="pagination"
+     data-th-each="pageNumber : ${pageNumbers}">
+    <a data-th-href="@{/searchResult(size=${searchResultsPage.size}, page=${pageNumber})}"
+       data-th-text=${pageNumber}
+       data-th-class="${pageNumber==searchResultsPage.number + 1} ? active"></a>
+</div>
+
+<!-- Results as simple list -->
+<!--<div class="row">-->
+<!--<ul>-->
+<!--<li data-th-each="result : ${searchResults}" data-th-text="${result.artistName}">entry</li>-->
+<!--</ul>-->
+<!--</div>-->
+</body>
+</html>

@@ -12,7 +12,6 @@ public class AppProperties {
   @Autowired
   public AppProperties(Environment env) {
     this.env = env;
-    System.out.println("TEST");
   }
 
   public String getDefaultMailFrom() {

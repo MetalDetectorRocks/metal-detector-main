@@ -10,7 +10,9 @@ public class ViewNames {
   public static final String RESET_PASSWORD            = "frontend/registration/reset-password";
 
   // Search area
-  public static final String SEARCH                     = "frontend/search";
+  public static final String SEARCH                    = "frontend/search";
+  public static final String SEARCH_RESULT             = "frontend/searchResult";
+
 
   // Admin area
   public static final String USERS_LIST                = "backend/users/list";

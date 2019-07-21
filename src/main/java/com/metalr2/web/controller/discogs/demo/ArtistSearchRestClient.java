@@ -21,21 +21,18 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
   @Autowired
   public ArtistSearchRestClient(RestTemplate restTemplate, DiscogsConfig discogsConfig) {
     super(restTemplate, discogsConfig);
-    // searchForArtist("Nirvana");
   }
 
   public List<ArtistSearchResult> searchForArtist(String artistQueryString) {
+
     ResponseEntity<ArtistSearchResults> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_SEARCH_URL_FRAGMENT,
                                                                                   ArtistSearchResults.class,
                                                                                   artistQueryString);
 
     log.info("Status code value: " + responseEntity.getStatusCodeValue());
-//    log.info("HTTP Header 'ContentType': " + responseEntity.getHeaders().getContentType());
 
-//    for (ArtistSearchResult result : responseEntity.getBody().getResults()) {
-//      log.info(result.toString());
-//    }
     return responseEntity.getBody() != null ? responseEntity.getBody().getResults() : Collections.emptyList();
   }
+
 
 }
