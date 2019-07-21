@@ -6,13 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class handles all Exception that can occur while using the REST API of this application.
@@ -51,13 +50,9 @@ public class AppExceptionsHandler {
   }
 
   private ErrorResponse createErrorResponse(ValidationException exception) {
-    List<String> messages = new ArrayList<>();
-    messages.add(exception.getMessage());
-
-    for (FieldError error : exception.getFieldErrors()) {
-      messages.add(error.getField() + ": " + error.getDefaultMessage());
-    }
-
+    List<String> messages = exception.getFieldErrors().stream()
+                                                      .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                                                      .collect(Collectors.toList());
     return new ErrorResponse(messages);
   }
 	
