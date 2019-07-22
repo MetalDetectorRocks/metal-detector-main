@@ -12,26 +12,19 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
 @Slf4j
+@SessionAttributes("searchResults")
 public class SearchController {
 
   private final ArtistSearchRestClient artistSearchRestClient;
-  private List<SearchResponse> searchResults = Collections.emptyList();
-  private String searchedArtist = "";
 
   @Autowired
   public SearchController(ArtistSearchRestClient artistSearchRestClient) {
@@ -43,35 +36,28 @@ public class SearchController {
     return new SearchRequest();
   }
 
-  @GetMapping({Endpoints.SEARCH})
-  public ModelAndView showSearchForm() {
-    return new ModelAndView(ViewNames.SEARCH);
+  @ModelAttribute
+  private List<SearchResponse> searchResults(){
+    return new ArrayList<>();
   }
 
   @PostMapping({Endpoints.SEARCH})
-  public ModelAndView handleSearchRequest(@ModelAttribute SearchRequest searchRequest) {
-
+  public ModelAndView handleSearchRequest(@ModelAttribute SearchRequest searchRequest, @ModelAttribute List<SearchResponse> searchResults) {
     log.info(searchRequest.getArtistName());
 
-    searchedArtist = searchRequest.getArtistName();
-    searchResults = artistSearchRestClient.searchForArtist(searchRequest.getArtistName())
+    searchResults.addAll( artistSearchRestClient.searchForArtist(searchRequest.getArtistName())
             .stream().map(result -> new SearchResponse(result.getId(), result.getTitle(), "https://discogs.com" + result.getUri()))
-            .collect(Collectors.toList());
+            .collect(Collectors.toList())); // TODO nils: 22.07.19 namen verbessern: searchedArtist, searchResults; auch andere methoden checken
 
-    return showSearchResult(0, 0);
+    Page<SearchResponse> paginationPage = findPaginated(PageRequest.of(0, 10), searchResults);
+    Map<String,Object> viewModel = buildResultMap(paginationPage, searchResults);
+    viewModel.put("artistName", searchRequest.getArtistName());
 
+    return new ModelAndView(ViewNames.SEARCH, viewModel);
   }
 
-  @GetMapping({Endpoints.SEARCH_RESULT})
-  public ModelAndView showSearchResult(@RequestParam("page") int page, @RequestParam("size") int size) {
-
-    int currentPage = page == 0 ? 1 : page;
-    int pageSize = size == 0 ? 10 : size;
-
-    Page<SearchResponse> searchResultsPage = findPaginated(PageRequest.of(currentPage - 1, pageSize), searchResults);
-
+  private Map<String,Object> buildResultMap(Page<SearchResponse> searchResultsPage, List<SearchResponse> searchResults) {
     Map<String, Object> map = new HashMap<>();
-    map.put("artistName", searchedArtist);
     map.put("searchResults", searchResults);
     map.put("searchResultsPage", searchResultsPage);
 
@@ -80,9 +66,20 @@ public class SearchController {
       List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
       map.put("pageNumbers", pageNumbers);
     }
+    return map;
+  }
 
-    return new ModelAndView(ViewNames.SEARCH_RESULT, map);
+  @GetMapping({Endpoints.SEARCH})
+  public ModelAndView showSearch(@RequestParam(name = "page", defaultValue = "1") int page,
+                                 @RequestParam(name = "size", defaultValue = "10") int size,
+                                 @ModelAttribute List<SearchResponse> searchResults) {
+    if (searchResults.isEmpty()){
+      return new ModelAndView(ViewNames.SEARCH);
+    }
+    Page<SearchResponse> paginationPage = findPaginated(PageRequest.of(0, 10), searchResults);
+    Map<String,Object> viewModel = buildResultMap(paginationPage, searchResults);
 
+    return new ModelAndView(ViewNames.SEARCH, viewModel);
   }
 
   private Page<SearchResponse> findPaginated(Pageable pageable, List<SearchResponse> searchResults) {

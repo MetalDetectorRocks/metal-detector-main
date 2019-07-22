@@ -24,7 +24,6 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
   }
 
   public List<ArtistSearchResult> searchForArtist(String artistQueryString) {
-
     ResponseEntity<ArtistSearchResults> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_SEARCH_URL_FRAGMENT,
                                                                                   ArtistSearchResults.class,
                                                                                   artistQueryString);
@@ -33,6 +32,5 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
 
     return responseEntity.getBody() != null ? responseEntity.getBody().getResults() : Collections.emptyList();
   }
-
 
 }

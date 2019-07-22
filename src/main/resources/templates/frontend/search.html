@@ -17,5 +17,36 @@
         <button class="btn btn-primary" type="submit">Search</button>
     </form>
 </div>
+
+<!-- Searched term -->
+<div class="row">
+    <p data-th-text="${artistName}">Artist name</p>
+</div>
+
+<!-- Results table -->
+<table border="1">
+    <thead>
+    <tr>
+        <th data-th-text="#{ID}">ID Column</th>
+        <th data-th-text="#{Artist Name}">Artist Name Column</th>
+        <th data-th-text="#{URL}">URL Column</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr data-th-each="result : ${searchResultsPage}">
+        <td data-th-text="${result.id}">ID</td>
+        <td data-th-text="${result.artistName}">Artist Name</td>
+        <td data-th-text="${result.url}">URL</td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Pagination -->
+<div data-th-if="${searchResultsPage.totalPages > 0}" class="pagination"
+     data-th-each="pageNumber : ${pageNumbers}">
+    <a data-th-href="@{/search(size=${searchResultsPage.size}, page=${pageNumber})}"
+       data-th-text=${pageNumber}
+       data-th-class="${pageNumber==searchResultsPage.number + 1} ? active"></a>
+</div>
 </body>
 </html>
