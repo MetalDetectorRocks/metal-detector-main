@@ -33,20 +33,20 @@
     </tr>
     </thead>
     <tbody>
-    <tr data-th-each="result : ${searchResultsPage}">
-        <td data-th-text="${result.id}">ID</td>
-        <td data-th-text="${result.artistName}">Artist Name</td>
-        <td data-th-text="${result.url}">URL</td>
+    <tr data-th-each="result : ${artistSearchResultsPage}">
+        <td data-th-text="${result.id}">id</td>
+        <td data-th-text="${result.title}">artistName</td>
+        <td data-th-text="${result.uri}">uri</td>
     </tr>
     </tbody>
 </table>
 
 <!-- Pagination -->
-<div data-th-if="${searchResultsPage.totalPages > 0}" class="pagination"
+<div data-th-if="${artistSearchResultsPage.totalPages > 0}" class="pagination"
      data-th-each="pageNumber : ${pageNumbers}">
-    <a data-th-href="@{/search(size=${searchResultsPage.size}, page=${pageNumber})}"
+    <a data-th-href="@{/search(size=${artistSearchResultsPage.size}, page=${pageNumber})}"
        data-th-text=${pageNumber}
-       data-th-class="${pageNumber==searchResultsPage.number + 1} ? active"></a>
+       data-th-class="${pageNumber==artistSearchResultsPage.number + 1} ? active"></a>
 </div>
 </body>
 </html>

@@ -8,9 +8,7 @@ public class Endpoints {
   public static final String SLASH_INDEX    = "/";
 
   // Search
-  public static final String SEARCH         ="/search";
-  public static final String SEARCH_RESULT  ="/searchResult";
-
+  public static final String SEARCH         = "/search";
 
   // Users
   public static final String USERS_LIST     = "/admin/users";
