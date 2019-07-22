@@ -10,7 +10,7 @@ body {
   display: flex;
   flex-direction: column;
 
-  /* Other */
+  /* other */
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -46,4 +46,10 @@ footer{
 .footer-link:hover {
   color: #cccccc !important;
   text-decoration: none;
+}
+
+.auth-button {
+  border-color: grey;
+  width: 7rem;
+  height: 3rem;
 }
