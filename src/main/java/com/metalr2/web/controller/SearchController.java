@@ -79,7 +79,7 @@ public class SearchController {
 
   @GetMapping({Endpoints.SEARCH})
   public ModelAndView showSearch(@RequestParam(name = "page", defaultValue = "1") int page,
-                                 @RequestParam(name = "size", defaultValue = "10") int size,
+                                 @RequestParam(name = "size", defaultValue = "25") int size,
                                  @ModelAttribute List<ArtistSearchResult> searchResults) {
     if (searchResults.isEmpty()){
       return new ModelAndView(ViewNames.SEARCH);

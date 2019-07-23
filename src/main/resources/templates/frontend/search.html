@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-th-replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en">
 <body>
 <h3>Search</h3>
 
@@ -18,35 +18,31 @@
     </form>
 </div>
 
-<!-- Searched term -->
+<!-- Pagination -->
+<!--<div data-th-if="${artistSearchResultsPage.totalPages > 0}" class="pagination"-->
+<!--     data-th-each="pageNumber : ${pageNumbers}">-->
+<!--    <a data-th-href="@{/search(size=${artistSearchResultsPage.size}, page=${pageNumber})}"-->
+<!--       data-th-text=${pageNumber}-->
+<!--       data-th-class="${pageNumber==artistSearchResultsPage.number + 1} ? active"></a>-->
+<!--</div>-->
+
+<!-- Result cards -->
 <div class="row">
-    <p data-th-text="${artistName}">Artist name</p>
+    <div data-th-if="${artistSearchResultsPage.totalPages > 0}"
+         data-th-each="result : ${artistSearchResultsPage}">
+        <div data-th-class="card">
+            <div data-th-class="card-body">
+                <p data-th-text="${result.id}">id</p>
+                <p data-th-text="${result.title}">title</p>
+                <p data-th-text="${result.uri}">uri</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Results table -->
-<table border="1">
-    <thead>
-    <tr>
-        <th data-th-text="#{ID}">ID Column</th>
-        <th data-th-text="#{Artist Name}">Artist Name Column</th>
-        <th data-th-text="#{URL}">URL Column</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr data-th-each="result : ${artistSearchResultsPage}">
-        <td data-th-text="${result.id}">id</td>
-        <td data-th-text="${result.title}">artistName</td>
-        <td data-th-text="${result.uri}">uri</td>
-    </tr>
-    </tbody>
-</table>
+<!-- Pagination in geil -->
+<div class="row">
 
-<!-- Pagination -->
-<div data-th-if="${artistSearchResultsPage.totalPages > 0}" class="pagination"
-     data-th-each="pageNumber : ${pageNumbers}">
-    <a data-th-href="@{/search(size=${artistSearchResultsPage.size}, page=${pageNumber})}"
-       data-th-text=${pageNumber}
-       data-th-class="${pageNumber==artistSearchResultsPage.number + 1} ? active"></a>
 </div>
 </body>
 </html>
