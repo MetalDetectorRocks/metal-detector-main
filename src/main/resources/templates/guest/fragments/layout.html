@@ -1,31 +1,28 @@
-<!DOCTYPE>
-<html lang="en">
+<!DOCTYPE html>
+<html data-th-fragment="layout (template)" lang="en">
   <head>
     <title>Metal Release Radar</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-    <!-- Custom Stylesheet -->
-    <link data-th-href="@{/style.css}" href="style.css" rel="stylesheet" />
+    <!-- Custom -->
+    <link data-th-href="@{/css/guest.css}" href="#" rel="stylesheet" />
+    <link data-th-href="@{/css/auth.css}" href="#" rel="stylesheet" />
 
     <!-- Material icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link data-th-href="@{https://fonts.googleapis.com/icon?family=Material+Icons}" href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
   <body class="bg-dark">
 
     <main role="main">
-      <div class="container" id="content-wrapper">
+      <div class="container">
         <div class="container text-center mt-5">
-          <img alt="Logo" src="logo.png" class="img-fluid" />
+          <a href="#" data-th-href="@{/}"><img alt="Logo" data-th-src="@{/images/logo.png}" src="#" class="img-fluid mb-5" /></a>
         </div>
-        <div class="container text-center mt-5">
-          <button type="button" class="btn btn-dark auth-button font-weight-bold">Sign Up</button>
-          <span style="color: white; font-weight: bold" class="mx-3">Or</span>
-          <button type="button" class="btn btn-dark auth-button font-weight-bold">Sign In</button>
-        </div>
+        <data-th-block data-th-include="${template}"></data-th-block>
       </div>
     </main>
 

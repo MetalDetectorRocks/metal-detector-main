@@ -3,11 +3,11 @@ package com.metalr2.config.constants;
 public class ViewNames {
 
   // Authentication
-  public static final String INDEX                     = "frontend/index";
-  public static final String LOGIN                     = "frontend/registration/login";
-  public static final String REGISTER                  = "frontend/registration/register";
-  public static final String FORGOT_PASSWORD           = "frontend/registration/forgot-password";
-  public static final String RESET_PASSWORD            = "frontend/registration/reset-password";
+  public static final String INDEX                     = "guest/index";
+  public static final String LOGIN                     = "guest/auth/login";
+  public static final String REGISTER                  = "guest/auth/register";
+  public static final String FORGOT_PASSWORD           = "guest/auth/forgot-password";
+  public static final String RESET_PASSWORD            = "guest/auth/reset-password";
 
   // Admin area
   public static final String USERS_LIST                = "backend/users/list";
