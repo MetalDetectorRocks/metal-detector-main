@@ -28,7 +28,7 @@ import java.util.stream.IntStream;
 public class SearchController {
 
   private final ArtistSearchRestClient artistSearchRestClient;
-  private static final String PAGE_SIZE = "25";
+  private static final String DEFAULT_PAGE_SIZE = "25";
   private static final String DEFAULT_PAGE = "1";
 
   @Autowired
@@ -41,11 +41,15 @@ public class SearchController {
     return new SearchRequest();
   }
 
+  @ModelAttribute List<ArtistSearchResult> searchResults(){
+    return new ArrayList<>();
+  }
+
   @PostMapping({Endpoints.SEARCH})
   public ModelAndView handleSearchRequest(@ModelAttribute SearchRequest searchRequest) {
     log.info(searchRequest.getArtistName());
 
-    Optional<ArtistSearchResults> artistSearchResultsOptional = artistSearchRestClient.searchForArtist(searchRequest.getArtistName(), DEFAULT_PAGE, PAGE_SIZE);
+    Optional<ArtistSearchResults> artistSearchResultsOptional = artistSearchRestClient.searchForArtist(searchRequest.getArtistName(), DEFAULT_PAGE, DEFAULT_PAGE_SIZE);
 
     if (artistSearchResultsOptional.isEmpty()){
       return new ModelAndView(ViewNames.SEARCH);
