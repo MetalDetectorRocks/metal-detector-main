@@ -1,0 +1,49 @@
+html{
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    /* push footer to the bottom */
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    /* other */
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: left;
+}
+
+.navbar-custom {
+    min-height: 4rem;
+    box-shadow: 0 1rem 1rem rgba(0,0,0,.05), inset 0 -1px 0 rgba(0,0,0,.1);
+}
+
+.nav-link {
+    position: relative;
+    display: block;
+    margin-right: 1.5rem;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+#content-wrapper {
+    padding: 5rem 1rem 1rem 1rem;
+}
+
+footer{
+    margin-top: auto;
+}
+
+.footer-link:hover {
+    color: #cccccc !important;
+    text-decoration: none;
+}

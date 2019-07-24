@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html data-th-fragment="layout (template)" lang="en">
     <head>
-        <title>Spring Boot User Registration Blueprint</title>
+        <title>Admin Area | Metal Release Radar</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
-        <!-- bootstrap -->
+        <!-- Bootstrap -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-        <link data-th-href="@{/css/style.css}" href="#" rel="stylesheet" />
+
+        <!-- Custom-->
+        <link data-th-href="@{/css/admin.css}" href="#" rel="stylesheet" />
 
         <!-- material icons -->
         <link data-th-href="@{https://fonts.googleapis.com/icon?family=Material+Icons}" href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -16,7 +18,7 @@
 
         <!-- top bar -->
         <nav data-th-fragment="copy" class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/admin">Admin Area</a>
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Admin Area</a>
             <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
@@ -53,7 +55,7 @@
                 </nav>
 
                 <!-- main content -->
-                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 mt-5">
                     <data-th-block data-th-include="${template}"></data-th-block>
                 </main>
 

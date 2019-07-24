@@ -11,7 +11,7 @@ public final class RegistrationVerificationEmail extends AbstractEmail {
   private final String        recipient;
   private final String        emailVerificationToken;
 
-  private static final String  VERIFICATION_URL = Endpoints.REGISTRATION_VERIFICATION + "?token=%s";
+  private static final String  VERIFICATION_URL = Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=%s";
   private static final String  SUBJECT          = "One last step to complete your registration!";
 
   public RegistrationVerificationEmail(String recipient, String emailVerificationToken) {

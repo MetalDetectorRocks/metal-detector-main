@@ -69,7 +69,7 @@ class RegisterNewUserAccountIntegrationTest {
     mockMvc.perform(createRequestBuilder())
            .andExpect(model().errorCount(0))
            .andExpect(status().isOk())
-           .andExpect(view().name(ViewNames.REGISTER));
+           .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
 
   @Test
@@ -81,7 +81,7 @@ class RegisterNewUserAccountIntegrationTest {
             .andExpect(model().errorCount(2))
             .andExpect(model().attributeHasFieldErrors(RESPONSE_ATTRIBUTE_NAME, PARAM_FIRST_NAME, PARAM_LAST_NAME))
             .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.REGISTER));
+            .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
 
   @Test
@@ -91,7 +91,7 @@ class RegisterNewUserAccountIntegrationTest {
             .andExpect(model().errorCount(1))
             .andExpect(model().attributeHasFieldErrors(RESPONSE_ATTRIBUTE_NAME, PARAM_EMAIL))
             .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.REGISTER));
+            .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
 
   @Test
@@ -101,7 +101,7 @@ class RegisterNewUserAccountIntegrationTest {
             .andExpect(model().errorCount(1))
             .andExpect(model().attributeHasFieldErrors(RESPONSE_ATTRIBUTE_NAME, PARAM_EMAIL))
             .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.REGISTER));
+            .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
 
   @Test
@@ -111,7 +111,7 @@ class RegisterNewUserAccountIntegrationTest {
     mockMvc.perform(createRequestBuilder())
             .andExpect(model().errorCount(1))
             .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.REGISTER));
+            .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
 
   @Test
@@ -122,7 +122,7 @@ class RegisterNewUserAccountIntegrationTest {
             .andExpect(model().errorCount(2))
             .andExpect(model().attributeHasFieldErrors(RESPONSE_ATTRIBUTE_NAME, PARAM_PASSWORD, PARAM_PASSWORD))
             .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.REGISTER));
+            .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
 
   @Test
@@ -133,12 +133,12 @@ class RegisterNewUserAccountIntegrationTest {
             .andExpect(model().errorCount(4))
             .andExpect(model().attributeHasFieldErrors(RESPONSE_ATTRIBUTE_NAME, PARAM_PASSWORD, PARAM_PASSWORD))
             .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.REGISTER));
+            .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
 
   private MockHttpServletRequestBuilder createRequestBuilder() {
     return MockMvcRequestBuilders
-            .post(Endpoints.REGISTER)
+            .post(Endpoints.Guest.REGISTER)
             .accept(MediaType.TEXT_HTML)
             .param(PARAM_FIRST_NAME, paramValues.get(PARAM_FIRST_NAME))
             .param(PARAM_LAST_NAME, paramValues.get(PARAM_LAST_NAME))

@@ -1,0 +1,5 @@
+# ignore all stuff in private folder
+.private/
+
+# ignore IntelliJ Config
+.idea/

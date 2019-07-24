@@ -55,16 +55,16 @@ public class RegistrationController {
     return new RegisterUserRequest();
   }
 
-  @GetMapping(Endpoints.REGISTER)
+  @GetMapping(Endpoints.Guest.REGISTER)
   public ModelAndView showRegistrationForm() {
-    return new ModelAndView(ViewNames.REGISTER);
+    return new ModelAndView(ViewNames.Guest.REGISTER);
   }
 
-  @PostMapping(Endpoints.REGISTER)
+  @PostMapping(Endpoints.Guest.REGISTER)
   public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult) {
     // show registration form if there are validation errors
     if (bindingResult.hasErrors()) {
-      return new ModelAndView(ViewNames.REGISTER);
+      return new ModelAndView(ViewNames.Guest.REGISTER);
     }
 
     // create user
@@ -76,7 +76,7 @@ public class RegistrationController {
     }
     catch (UserAlreadyExistsException e) {
       bindingResult.rejectValue("email", "userAlreadyExists", e.getMessage());
-      return new ModelAndView(ViewNames.REGISTER); // show registration form with validation errors
+      return new ModelAndView(ViewNames.Guest.REGISTER); // show registration form with validation errors
     }
 
     eventPublisher.publishEvent(new OnRegistrationCompleteEvent(this, createdUserDto));
@@ -85,10 +85,10 @@ public class RegistrationController {
     viewModel.put("successMessage", messages.getMessage(MessageKeys.Registration.SUCCESS, null, Locale.US));
     viewModel.put("registerUserRequest", new RegisterUserRequest()); // to clear the register form
 
-    return new ModelAndView(ViewNames.REGISTER, viewModel);
+    return new ModelAndView(ViewNames.Guest.REGISTER, viewModel);
   }
 
-  @GetMapping(Endpoints.REGISTRATION_VERIFICATION)
+  @GetMapping(Endpoints.Guest.REGISTRATION_VERIFICATION)
   public ModelAndView verifyRegistration(@RequestParam(value="token") String tokenString) {
     String param = "verificationSuccess";
 
@@ -102,10 +102,10 @@ public class RegistrationController {
       param = "tokenNotFound";
     }
 
-    return new ModelAndView("redirect:" + Endpoints.LOGIN + "?" + param);
+    return new ModelAndView("redirect:" + Endpoints.Guest.LOGIN + "?" + param);
   }
 
-  @GetMapping(Endpoints.RESEND_VERIFICATION_TOKEN)
+  @GetMapping(Endpoints.Guest.RESEND_VERIFICATION_TOKEN)
   public ModelAndView resendEmailVerificationToken(@RequestParam(value="token") String tokenString) {
     String param = "resendVerificationTokenSuccess";
 
@@ -116,7 +116,7 @@ public class RegistrationController {
       param = "tokenNotFound";
     }
 
-    return new ModelAndView("redirect:" + Endpoints.LOGIN + "?" + param);
+    return new ModelAndView("redirect:" + Endpoints.Guest.LOGIN + "?" + param);
   }
 
 }
