@@ -18,18 +18,9 @@
     </form>
 </div>
 
-<!-- Pagination -->
-<!--<div data-th-if="${artistSearchResultsPage.totalPages > 0}" class="pagination"-->
-<!--     data-th-each="pageNumber : ${pageNumbers}">-->
-<!--    <a data-th-href="@{/search(size=${artistSearchResultsPage.size}, page=${pageNumber})}"-->
-<!--       data-th-text=${pageNumber}-->
-<!--       data-th-class="${pageNumber==artistSearchResultsPage.number + 1} ? active"></a>-->
-<!--</div>-->
-
 <!-- Result cards -->
 <div class="row">
-    <div data-th-if="${artistSearchResultsPage.totalPages > 0}"
-         data-th-each="result : ${artistSearchResultsPage}">
+    <div data-th-each="result : ${artistSearchResultList}">
         <div data-th-class="card">
             <div data-th-class="card-body">
                 <p data-th-text="${result.id}">id</p>
@@ -40,9 +31,10 @@
     </div>
 </div>
 
-<!-- Pagination in geil -->
+<!-- Pagination links -->
 <div class="row">
-
+    <a href="#" data-th-href="@{/search(size=${size}, page=${page-1}, artistName=${artistName})}" data-th-text="#{Previous}">Previous</a>
+    <a href="#" data-th-href="@{/search(size=${size}, page=${page}, artistName=${artistName})}" data-th-text="#{Next}">Next</a>
 </div>
 </body>
 </html>

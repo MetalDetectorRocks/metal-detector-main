@@ -3,15 +3,11 @@ package com.metalr2.web.controller;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.web.controller.discogs.demo.ArtistSearchRestClient;
-import com.metalr2.web.dto.discogs.search.ArtistSearchResult;
 import com.metalr2.web.dto.discogs.search.ArtistSearchResults;
+import com.metalr2.web.dto.discogs.search.PaginationUrls;
 import com.metalr2.web.dto.request.SearchRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,9 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -30,6 +26,7 @@ public class SearchController {
   private final ArtistSearchRestClient artistSearchRestClient;
   private static final String DEFAULT_PAGE_SIZE = "25";
   private static final String DEFAULT_PAGE = "1";
+  private static final String DEFAULT_ARTIST_NAME = "";
 
   @Autowired
   public SearchController(ArtistSearchRestClient artistSearchRestClient) {
@@ -41,69 +38,65 @@ public class SearchController {
     return new SearchRequest();
   }
 
-  @ModelAttribute List<ArtistSearchResult> searchResults(){
-    return new ArrayList<>();
-  }
-
   @PostMapping({Endpoints.SEARCH})
   public ModelAndView handleSearchRequest(@ModelAttribute SearchRequest searchRequest) {
     log.info(searchRequest.getArtistName());
 
     Optional<ArtistSearchResults> artistSearchResultsOptional = artistSearchRestClient.searchForArtist(searchRequest.getArtistName(), DEFAULT_PAGE, DEFAULT_PAGE_SIZE);
 
-    if (artistSearchResultsOptional.isEmpty()){
+    if (artistSearchResultsOptional.isEmpty()) {
       return new ModelAndView(ViewNames.SEARCH);
     }
 
     ArtistSearchResults artistSearchResults = artistSearchResultsOptional.get();
 
-    Page<ArtistSearchResult> paginationPage = findPaginated(PageRequest.of(0, 10), artistSearchResults.getResults());
-    Map<String,Object> viewModel = buildResultMap(paginationPage, artistSearchResults.getResults());
+    Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", searchRequest.getArtistName());
+    viewModel.put("artistSearchResultList", artistSearchResults.getResults());
+
+    PaginationUrls paginationUrls = artistSearchResults.getPagination().getUrls();
+
+    if (paginationUrls.getNext() != null){
+      String size = this.getSizeFromNext(paginationUrls.getNext());
+      String page = this.getPageFromNext(paginationUrls.getNext());
+      viewModel.put("size", size);
+      viewModel.put("page", page);
+    }
 
     return new ModelAndView(ViewNames.SEARCH, viewModel);
-  }
-
-  private Map<String,Object> buildResultMap(Page<ArtistSearchResult> artistSearchResultsPage, List<ArtistSearchResult> artistSearchResults) {
-    Map<String, Object> map = new HashMap<>();
-    map.put("artistSearchResults", artistSearchResults);
-    map.put("artistSearchResultsPage", artistSearchResultsPage);
-
-    int totalPages = artistSearchResultsPage.getTotalPages();
-    if (totalPages > 0) {
-      List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
-      map.put("pageNumbers", pageNumbers);
-    }
-    return map;
   }
 
   @GetMapping({Endpoints.SEARCH})
-  public ModelAndView showSearch(@RequestParam(name = "page", defaultValue = "1") int page,
-                                 @RequestParam(name = "size", defaultValue = "25") int size,
-                                 @ModelAttribute List<ArtistSearchResult> searchResults) {
-    if (searchResults.isEmpty()){
+  public ModelAndView showSearch(@RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
+                                 @RequestParam(name = "page", defaultValue = DEFAULT_PAGE) int page,
+                                 @RequestParam(name = "artistName", defaultValue = DEFAULT_ARTIST_NAME) String artistName) {
+    if (artistName.isEmpty()) {
       return new ModelAndView(ViewNames.SEARCH);
     }
-    Page<ArtistSearchResult> paginationPage = findPaginated(PageRequest.of(0, 10), searchResults);
-    Map<String,Object> viewModel = buildResultMap(paginationPage, searchResults);
+
+    Optional<ArtistSearchResults> artistSearchResultsOptional = artistSearchRestClient.searchForArtist(artistName, String.valueOf(page), String.valueOf(size));
+
+    if (artistSearchResultsOptional.isEmpty()) {
+      return new ModelAndView(ViewNames.SEARCH);
+    }
+
+    ArtistSearchResults artistSearchResults = artistSearchResultsOptional.get();
+
+    Map<String, Object> viewModel = new HashMap<>();
+    viewModel.put("artistName", artistName);
+    viewModel.put("artistSearchResultList", artistSearchResults.getResults());
+    viewModel.put("size", size);
+    viewModel.put("page", page);
 
     return new ModelAndView(ViewNames.SEARCH, viewModel);
   }
 
-  private Page<ArtistSearchResult> findPaginated(Pageable pageable, List<ArtistSearchResult> searchResults) {
-    int pageSize = pageable.getPageSize();
-    int currentPage = pageable.getPageNumber();
-    int startItem = currentPage * pageSize;
-    List<ArtistSearchResult> list;
+  private String getSizeFromNext(String nextUrl){
+    return nextUrl.substring(nextUrl.indexOf("&per_page=")+10, nextUrl.indexOf("&type=artist&page="));
+  }
 
-    if (searchResults.size() < startItem) {
-      list = Collections.emptyList();
-    } else {
-      int toIndex = Math.min(startItem + pageSize, searchResults.size());
-      list = searchResults.subList(startItem, toIndex);
-    }
-
-    return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), searchResults.size());
+  private String getPageFromNext(String nextUrl){
+    return nextUrl.substring(nextUrl.indexOf("&type=artist&page=")+18);
   }
 
 }
