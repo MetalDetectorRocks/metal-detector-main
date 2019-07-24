@@ -20,7 +20,7 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
      * String refererUrl = request.getHeader("Referer");
      */
     response.setStatus(HttpStatus.OK.value());
-    response.sendRedirect(Endpoints.LOGIN + "?logout");
+    response.sendRedirect(Endpoints.Guest.LOGIN + "?logout");
     super.onLogoutSuccess(request, response, authentication);
   }
 }

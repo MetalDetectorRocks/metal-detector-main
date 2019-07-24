@@ -29,7 +29,7 @@ public class UserController {
     this.mapper = new ModelMapper();
   }
 
-  @GetMapping({Endpoints.USERS_LIST})
+  @GetMapping({Endpoints.AdminArea.USERS_LIST})
   public ModelAndView showUsersList() {
     List<UserResponse> users = userService.getAllUsers()
             .stream()
@@ -39,17 +39,17 @@ public class UserController {
     Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("users", users);
 
-    return new ModelAndView(ViewNames.USERS_LIST, viewModel);
+    return new ModelAndView(ViewNames.AdminArea.USERS_LIST, viewModel);
   }
 
-  @GetMapping({Endpoints.USERS_CREATE})
+  @GetMapping({Endpoints.AdminArea.USERS_CREATE})
   public ModelAndView showCreateUserForm(Model model) {
-    return new ModelAndView(ViewNames.USERS_CREATE);
+    return new ModelAndView(ViewNames.AdminArea.USERS_CREATE);
   }
 
-  @GetMapping({Endpoints.USERS_EDIT})
+  @GetMapping({Endpoints.AdminArea.USERS_EDIT})
   public ModelAndView showEditUserForm(@PathVariable(name="id") long id, Model model) {
-    return new ModelAndView(ViewNames.USERS_EDIT);
+    return new ModelAndView(ViewNames.AdminArea.USERS_EDIT);
   }
 
 }

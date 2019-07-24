@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 @Controller
-@RequestMapping(Endpoints.RESET_PASSWORD)
+@RequestMapping(Endpoints.Guest.RESET_PASSWORD)
 public class ResetPasswordController {
 
   private static final String FORM_DTO = "changePasswordRequest";
@@ -50,11 +50,11 @@ public class ResetPasswordController {
 
     if (tokenEntity.isEmpty()) {
       redirectAttributes.addFlashAttribute("resetPasswordError", messages.getMessage(MessageKeys.ForgotPassword.TOKEN_DOES_NOT_EXIST, null, Locale.US));
-      return new ModelAndView("redirect:" + Endpoints.FORGOT_PASSWORD);
+      return new ModelAndView("redirect:" + Endpoints.Guest.FORGOT_PASSWORD);
     }
     else if (tokenEntity.get().isExpired()) {
       redirectAttributes.addFlashAttribute("resetPasswordError", messages.getMessage(MessageKeys.ForgotPassword.TOKEN_IS_EXPIRED, null, Locale.US));
-      return new ModelAndView("redirect:" + Endpoints.FORGOT_PASSWORD);
+      return new ModelAndView("redirect:" + Endpoints.Guest.FORGOT_PASSWORD);
     }
     else {
       // everything is OK, set token as hidden input field
@@ -68,7 +68,7 @@ public class ResetPasswordController {
       }
     }
 
-    return new ModelAndView(ViewNames.RESET_PASSWORD);
+    return new ModelAndView(ViewNames.Guest.RESET_PASSWORD);
   }
 
   @PostMapping
@@ -77,12 +77,12 @@ public class ResetPasswordController {
     if (bindingResult.hasErrors()) {
       redirectAttributes.addFlashAttribute(BindingResult.class.getName() + "." + FORM_DTO, bindingResult);
       redirectAttributes.addFlashAttribute(FORM_DTO, changePasswordRequest);
-      return new ModelAndView("redirect:" + Endpoints.RESET_PASSWORD + "?token=" + changePasswordRequest.getTokenString());
+      return new ModelAndView("redirect:" + Endpoints.Guest.RESET_PASSWORD + "?token=" + changePasswordRequest.getTokenString());
     }
 
     changePassword(changePasswordRequest);
 
-    return new ModelAndView("redirect:" + Endpoints.LOGIN + "?resetSuccess");
+    return new ModelAndView("redirect:" + Endpoints.Guest.LOGIN + "?resetSuccess");
   }
 
   private void changePassword(ChangePasswordRequest changePasswordRequest) {

@@ -12,7 +12,7 @@ public final class ForgotPasswordEmail extends AbstractEmail {
   private final String firstName;
   private final String resetPasswordToken;
 
-  private static final String  RESET_PASSWORD_URL = Endpoints.RESET_PASSWORD + "?token=%s";
+  private static final String  RESET_PASSWORD_URL = Endpoints.Guest.RESET_PASSWORD + "?token=%s";
   private static final String  SUBJECT            = "Your password reset request";
 
   public ForgotPasswordEmail(String receiver, String firstName, String resetPasswordToken) {

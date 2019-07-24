@@ -9,9 +9,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class IndexController {
 
-  @GetMapping({Endpoints.INDEX, Endpoints.EMPTY_INDEX, Endpoints.SLASH_INDEX})
+  @GetMapping({Endpoints.Guest.INDEX, Endpoints.Guest.EMPTY_INDEX, Endpoints.Guest.SLASH_INDEX})
   public ModelAndView showIndex() {
-    return new ModelAndView(ViewNames.INDEX);
+    return new ModelAndView(ViewNames.Guest.INDEX);
   }
 
 }

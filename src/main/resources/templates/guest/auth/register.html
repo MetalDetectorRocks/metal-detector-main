@@ -48,6 +48,7 @@
         </div>
 
         <!-- Password -->
+        <div class="small ml-1">Make sure your password has at least 8 characters.</div>
         <div class="form-label-group">
           <input type="password" id="password" class="form-control" name="password"
                  data-th-class="${#fields.hasErrors('password')}? 'form-control is-invalid' : 'form-control'"
@@ -70,7 +71,7 @@
         </div>
 
         <!-- Register -->
-        <button class="btn btn-lg btn-dark btn-block" type="submit">Join Metal Release Radar</button>
+        <button class="btn btn-lg btn-dark btn-block mt-4" type="submit">Join Metal Release Radar</button>
       </form>
       <p class="my-2">
         Already registered? <a href="#" data-th-href="@{/login}" data-th-text="#{index.login}">Login</a>

@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(Endpoints.LOGIN)
+@RequestMapping(Endpoints.Guest.LOGIN)
 public class LoginController {
 
   @GetMapping
   public String showLoginForm() {
-    return ViewNames.LOGIN;
+    return ViewNames.Guest.LOGIN;
   }
 
 }

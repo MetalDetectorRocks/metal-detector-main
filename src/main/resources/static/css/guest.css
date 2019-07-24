@@ -8,5 +8,10 @@ body {
 .auth-button {
   border-color: grey;
   width: 7rem;
-  height: 3rem;
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+}
+
+.auth-button:hover {
+  border-color: grey;
 }

@@ -1,9 +1,0 @@
-Review des letzten Commits
-Startseite: Hovering der Buttons, Buttons müssen zum Ziel springen
-individuelle Seitentitel für alle Seiten
-überall px durch rem tauschen
-password-hint for register (8 characters)
-Daten für Registrierung: Username, Email, Password
-Layout reset-password prüfen
-Abstände über den Auth-Buttons vereinheitlichen
-Nach Login ins Frontend statt Backend

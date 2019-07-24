@@ -46,9 +46,9 @@ class IndexControllerTest {
 
   @Test
   void given_index_uri_then_return_index_view() throws Exception {
-    mockMvc.perform(get(Endpoints.SLASH_INDEX))
+    mockMvc.perform(get(Endpoints.Guest.SLASH_INDEX))
             .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.INDEX))
+            .andExpect(view().name(ViewNames.Guest.INDEX))
             .andExpect(content().string(containsString("Welcome")));
   }
 }
