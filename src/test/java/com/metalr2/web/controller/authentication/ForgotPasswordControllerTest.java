@@ -46,9 +46,9 @@ class ForgotPasswordControllerTest {
 
   @Test
   void given_forgot_password_uri_should_return_forgot_password_view() throws Exception {
-    mockMvc.perform(get(Endpoints.FORGOT_PASSWORD))
+    mockMvc.perform(get(Endpoints.Guest.FORGOT_PASSWORD))
             .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.FORGOT_PASSWORD))
+            .andExpect(view().name(ViewNames.Guest.FORGOT_PASSWORD))
             .andExpect(content().string(containsString("Forgot Password")));
   }
 }

@@ -1,0 +1,17 @@
+body {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.auth-button {
+  border-color: grey;
+  width: 7rem;
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+}
+
+.auth-button:hover {
+  border-color: grey;
+}

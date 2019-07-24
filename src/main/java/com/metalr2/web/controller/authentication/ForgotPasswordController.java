@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Controller
-@RequestMapping(Endpoints.FORGOT_PASSWORD)
+@RequestMapping(Endpoints.Guest.FORGOT_PASSWORD)
 public class ForgotPasswordController {
 
   private static final String FORM_DTO = "forgotPasswordRequest";
@@ -50,7 +50,7 @@ public class ForgotPasswordController {
 
   @GetMapping
   public ModelAndView showForgotPasswordForm() {
-    return new ModelAndView(ViewNames.FORGOT_PASSWORD);
+    return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD);
   }
 
   @PostMapping
@@ -59,7 +59,7 @@ public class ForgotPasswordController {
 
     if (userDto.isEmpty()) {
       bindingResult.rejectValue("email", "userDoesNotExist", messages.getMessage(MessageKeys.ForgotPassword.USER_DOES_NOT_EXIST, null, Locale.US));
-      return new ModelAndView(ViewNames.FORGOT_PASSWORD);
+      return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD);
     }
 
     eventPublisher.publishEvent(new OnResetPasswordRequestCompleteEvent(this, userDto.get()));
@@ -68,7 +68,7 @@ public class ForgotPasswordController {
     viewModel.put("successMessage", messages.getMessage(MessageKeys.ForgotPassword.SUCCESS, null, Locale.US));
     viewModel.put("forgotPasswordRequest", new ForgotPasswordRequest()); // to clear the form
 
-    return new ModelAndView(ViewNames.FORGOT_PASSWORD, viewModel);
+    return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, viewModel);
   }
 
 }

@@ -77,44 +77,44 @@ class RegistrationControllerTest {
 
   @Test
   void given_register_uri_should_return_register_view() throws Exception {
-    mockMvc.perform(get(Endpoints.REGISTER))
+    mockMvc.perform(get(Endpoints.Guest.REGISTER))
             .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.REGISTER));
+            .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
 
   @Test
   void given_valid_token_on_registration_verification_uri_should_redirect_to_login_view() throws Exception {
-    mockMvc.perform(get(Endpoints.REGISTRATION_VERIFICATION + "?token=valid_token"))
+    mockMvc.perform(get(Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=valid_token"))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:" + Endpoints.LOGIN + "?verificationSuccess"));
+            .andExpect(view().name("redirect:" + Endpoints.Guest.LOGIN + "?verificationSuccess"));
   }
 
   @Test
   void given_not_existing_token_on_registration_verification_uri_should_redirect_to_login_view() throws Exception {
-    mockMvc.perform(get(Endpoints.REGISTRATION_VERIFICATION + "?token=" + NOT_EXISTING_TOKEN))
+    mockMvc.perform(get(Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + NOT_EXISTING_TOKEN))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:" + Endpoints.LOGIN + "?tokenNotFound"));
+            .andExpect(view().name("redirect:" + Endpoints.Guest.LOGIN + "?tokenNotFound"));
   }
 
   @Test
   void given_expired_token_on_registration_verification_uri_should_redirect_to_login_view() throws Exception {
-    mockMvc.perform(get(Endpoints.REGISTRATION_VERIFICATION + "?token=" + EXPIRED_TOKEN))
+    mockMvc.perform(get(Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + EXPIRED_TOKEN))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:" + Endpoints.LOGIN + "?tokenExpired&token=" + EXPIRED_TOKEN));
+            .andExpect(view().name("redirect:" + Endpoints.Guest.LOGIN + "?tokenExpired&token=" + EXPIRED_TOKEN));
   }
 
   @Test
   void given_valid_token_on_resend_verification_token_uri_should_redirect_to_login_view() throws Exception {
-    mockMvc.perform(get(Endpoints.RESEND_VERIFICATION_TOKEN + "?token=valid-token"))
+    mockMvc.perform(get(Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "?token=valid-token"))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:" + Endpoints.LOGIN + "?resendVerificationTokenSuccess"));
+            .andExpect(view().name("redirect:" + Endpoints.Guest.LOGIN + "?resendVerificationTokenSuccess"));
   }
 
   @Test
   void given__not_existing_token_on_resend_verification_token_uri_should_redirect_to_login_view() throws Exception {
-    mockMvc.perform(get(Endpoints.RESEND_VERIFICATION_TOKEN + "?token=" + NOT_EXISTING_TOKEN))
+    mockMvc.perform(get(Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "?token=" + NOT_EXISTING_TOKEN))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:" + Endpoints.LOGIN + "?tokenNotFound"));
+            .andExpect(view().name("redirect:" + Endpoints.Guest.LOGIN + "?tokenNotFound"));
   }
 
 }

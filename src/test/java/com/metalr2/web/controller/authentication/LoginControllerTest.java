@@ -46,9 +46,9 @@ class LoginControllerTest {
 
   @Test
   void given_login_uri_should_return_login_view() throws Exception {
-    mockMvc.perform(get(Endpoints.LOGIN))
+    mockMvc.perform(get(Endpoints.Guest.LOGIN))
             .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.LOGIN))
+            .andExpect(view().name(ViewNames.Guest.LOGIN))
             .andExpect(content().string(containsString("Login")));
   }
 }

@@ -44,14 +44,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .anyRequest().authenticated()
       .and()
       .formLogin()
-        .loginPage(Endpoints.LOGIN)
-        .loginProcessingUrl(Endpoints.LOGIN)
-        .defaultSuccessUrl(Endpoints.USERS_LIST, false) // if this is true, user see always this site after login
+        .loginPage(Endpoints.Guest.LOGIN)
+        .loginProcessingUrl(Endpoints.Guest.LOGIN)
+        .defaultSuccessUrl(Endpoints.Frontend.FOLLOW_ARTISTS, false) // if this is true, user see always this site after login
         .failureHandler(authenticationFailureHandler())
       //.failureUrl(Endpoints.LOGIN + "?error=true")
       .and()
       .logout()
-        .logoutUrl(Endpoints.LOGOUT).permitAll()
+        .logoutUrl(Endpoints.Guest.LOGOUT).permitAll()
         .invalidateHttpSession(true)
         .clearAuthentication(true)
         .deleteCookies("JSESSIONID")

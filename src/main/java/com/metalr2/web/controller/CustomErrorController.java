@@ -19,10 +19,10 @@ public class CustomErrorController implements org.springframework.boot.web.servl
 
   @Override
   public String getErrorPath() {
-    return Endpoints.ERROR;
+    return Endpoints.Guest.ERROR;
   }
 
-  @RequestMapping(Endpoints.ERROR)
+  @RequestMapping(Endpoints.Guest.ERROR)
   public ModelAndView handleError(HttpServletRequest request) {
     Object statusCodeObj = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
     Object requestURIObj = request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
@@ -36,9 +36,9 @@ public class CustomErrorController implements org.springframework.boot.web.servl
     }
     else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
       LOG.error("Internal server error while requesting '" + requestURI + "'.");
-      return new ModelAndView(ViewNames.ERROR_500, "requestedURI", requestURI);
+      return new ModelAndView(ViewNames.Guest.ERROR_500, "requestedURI", requestURI);
     }
 
-    return new ModelAndView(ViewNames.ERROR, "requestedURI", requestURI);
+    return new ModelAndView(ViewNames.Guest.ERROR, "requestedURI", requestURI);
   }
 }

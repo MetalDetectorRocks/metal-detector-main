@@ -16,9 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(IndexController.class)
@@ -46,9 +46,8 @@ class IndexControllerTest {
 
   @Test
   void given_index_uri_then_return_index_view() throws Exception {
-    mockMvc.perform(get(Endpoints.SLASH_INDEX))
+    mockMvc.perform(get(Endpoints.Guest.SLASH_INDEX))
             .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.INDEX))
-            .andExpect(content().string(containsString("Welcome")));
+            .andExpect(view().name(ViewNames.Guest.INDEX));
   }
 }

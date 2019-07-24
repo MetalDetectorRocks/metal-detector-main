@@ -14,7 +14,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 
   @Override
   public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-    String redirectURL = exception instanceof DisabledException ? Endpoints.LOGIN + "?disabled" : Endpoints.LOGIN + "?badCredentials";
+    String redirectURL = exception instanceof DisabledException ? Endpoints.Guest.LOGIN + "?disabled" : Endpoints.Guest.LOGIN + "?badCredentials";
 
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
     response.sendRedirect(redirectURL);
