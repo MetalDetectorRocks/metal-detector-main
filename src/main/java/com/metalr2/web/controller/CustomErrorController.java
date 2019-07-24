@@ -32,7 +32,7 @@ public class CustomErrorController implements org.springframework.boot.web.servl
 
     if(statusCode == HttpStatus.NOT_FOUND.value()) {
       LOG.warn("Could not find any content for '" + requestURI + "'.");
-      return new ModelAndView(ViewNames.ERROR_404, "requestedURI", requestURI);
+      return new ModelAndView(ViewNames.Guest.ERROR_404, "requestedURI", requestURI);
     }
     else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
       LOG.error("Internal server error while requesting '" + requestURI + "'.");

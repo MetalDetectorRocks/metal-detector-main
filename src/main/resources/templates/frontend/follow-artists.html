@@ -1,6 +1,44 @@
 <!DOCTYPE html>
 <html data-th-replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en">
-  <body>
-    <h1>Follow Artists</h1>
-  </body>
+<body>
+<h1>Follow Artists</h1>
+<!-- Search Form -->
+<div class="row">
+    <form id="searchForm" action="#" data-th-action="@{/follow-artists}" data-th-object="${searchRequest}"
+          method="POST">
+        <!-- Artist name -->
+        <div class="form-label-group">
+            <label for="artistName"></label><input type="text" id="artistName" class="form-control" data-th-field="*{artistName}">
+        </div>
+        <!-- Submit -->
+        <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+</div>
+<!-- Artist name -->
+<div data-th-if="${totalPages} > 0" data-th-text="${artistName}">Artist Name</div>
+<!-- Result cards -->
+<div class="row">
+    <div data-th-each="result : ${artistSearchResultList}"
+         data-th-class="card">
+        <div data-th-class="card-body">
+            <p data-th-text="${result.id}">id</p>
+            <p data-th-text="${result.title}">title</p>
+            <p data-th-text="${result.uri}">uri</p>
+        </div>
+    </div>
+</div>
+<!-- Pagination links -->
+<div class="row" data-th-if="${totalPages} > 0">
+    <a data-th-if="${currentPage} > 1" href="#"
+       data-th-href="@{/follow-artists(size=${nextSize}, page=${nextPage}, artistName=${artistName})}"
+       data-th-text="#{Previous}">Previous</a>
+    <a data-th-if="${totalPages > 1}"
+       data-th-each="pageNumber : ${pageNumbers}"
+       href="#" data-th-href="@{/follow-artists(size=${nextSize}, page=${pageNumber}, artistName=${artistName})}"
+       data-th-text="#{${pageNumber}}">Page number</a>
+    <a data-th-if="${currentPage} < ${totalPages}" href="#"
+       data-th-href="@{/follow-artists(size=${nextSize}, page=${nextPage}, artistName=${artistName})}"
+       data-th-text="#{Next}">Next</a>
+</div>
+</body>
 </html>
