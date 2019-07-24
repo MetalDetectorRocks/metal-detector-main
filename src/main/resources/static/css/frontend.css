@@ -15,6 +15,11 @@ body {
     font-weight: 400;
     line-height: 1.5;
     text-align: left;
+    background-color: #343a40;
+}
+
+.h1, h1 {
+    color: white;
 }
 
 .navbar-custom {
@@ -46,4 +51,19 @@ footer{
 .footer-link:hover {
     color: #cccccc !important;
     text-decoration: none;
+}
+
+.auth-button {
+    border-color: white;
+    width: 6rem;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+}
+
+.auth-button:hover {
+    border-color: grey;
+}
+
+.form-control {
+    margin-bottom: 1rem;
 }
