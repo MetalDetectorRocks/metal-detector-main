@@ -49,6 +49,7 @@ public class SearchController {
     Optional<ArtistSearchResults> artistSearchResultsOptional = artistSearchRestClient.searchForArtist(searchRequest.getArtistName(), DEFAULT_PAGE, DEFAULT_PAGE_SIZE);
 
     if (artistSearchResultsOptional.isEmpty()) {
+      // TODO NilsD: 24.07.19 return "artist not found" instead
       return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS);
     }
 
