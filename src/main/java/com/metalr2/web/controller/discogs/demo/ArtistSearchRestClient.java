@@ -21,16 +21,16 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
     super(restTemplate, discogsConfig);
   }
 
-  public Optional<ArtistSearchResults> searchForArtist(String artistQueryString, int page, int size) {
+  public ResponseEntity<ArtistSearchResults> searchForArtist(String artistQueryString, int page, int size) {
     ResponseEntity<ArtistSearchResults> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_SEARCH_URL_FRAGMENT,
                                                                                         ArtistSearchResults.class,
                                                                                         artistQueryString,
                                                                                         page,
                                                                                         size);
 
-    log.info("Status code value: " + responseEntity.getStatusCodeValue());
+    log.debug("Status code value: " + responseEntity.getStatusCodeValue());
 
-    return Optional.ofNullable(responseEntity.getBody());
+    return responseEntity;
   }
 
 }

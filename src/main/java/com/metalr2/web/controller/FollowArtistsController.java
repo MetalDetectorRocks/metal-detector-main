@@ -9,6 +9,8 @@ import com.metalr2.web.dto.discogs.search.PaginationUrls;
 import com.metalr2.web.dto.request.ArtistSearchRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -44,8 +46,6 @@ public class FollowArtistsController {
 
   @PostMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
   public ModelAndView handleSearchRequest(@ModelAttribute ArtistSearchRequest artistSearchRequest) {
-    log.debug("Searched artist: {}", artistSearchRequest.getArtistName());
-
     return getFollowArtistsModelAndView(artistSearchRequest.getArtistName(),Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
   }
 
@@ -94,16 +94,21 @@ public class FollowArtistsController {
   }
 
   private ModelAndView getFollowArtistsModelAndView(String artistName, int page, int size){
-    Optional<ArtistSearchResults> artistSearchResultsOptional = artistSearchRestClient.searchForArtist(artistName, page, size);
+    log.debug("Searched artist: {}", artistName);
 
-    if (artistSearchResultsOptional.isEmpty()) {
-      // TODO NilsD: 24.07.19 return "artist not found" instead, see issue #22
+    ResponseEntity<ArtistSearchResults> responseEntity = artistSearchRestClient.searchForArtist(artistName, page, size);
+
+    if (responseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND)){
+      return new ModelAndView(ViewNames.Guest.ERROR_404, "requestedURI", "follow-artists?size=" + size + "&page=" + page + "&artistName=" + artistName);
+    }
+
+    ArtistSearchResults artistSearchResults = responseEntity.getBody();
+
+    if (artistSearchResults == null || artistSearchResults.getResults().isEmpty()) {
       return getDefaultModelAndView();
     }
 
-    ArtistSearchResults artistSearchResults = artistSearchResultsOptional.get();
     Map<String, Object> viewModel = buildViewModel(artistSearchResults, artistName);
-
     return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
   }
 }
