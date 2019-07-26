@@ -11,7 +11,6 @@ public class WebConfig implements WebMvcConfigurer {
 
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
-//    registry.addViewController(Endpoints.Frontend.FOLLOW_ARTISTS).setViewName(ViewNames.Frontend.FOLLOW_ARTISTS);
     registry.addViewController(Endpoints.Frontend.SETTINGS).setViewName(ViewNames.Frontend.SETTINGS);
     registry.addViewController(Endpoints.Frontend.PROFILE).setViewName(ViewNames.Frontend.PROFILE);
     registry.addViewController(Endpoints.Frontend.ARTISTS_RELEASES).setViewName(ViewNames.Frontend.ARTISTS_RELEASES);

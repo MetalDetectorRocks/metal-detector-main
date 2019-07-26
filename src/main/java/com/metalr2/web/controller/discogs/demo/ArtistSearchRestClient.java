@@ -21,7 +21,7 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
     super(restTemplate, discogsConfig);
   }
 
-  public Optional<ArtistSearchResults> searchForArtist(String artistQueryString, String page, String size) {
+  public Optional<ArtistSearchResults> searchForArtist(String artistQueryString, int page, int size) {
     ResponseEntity<ArtistSearchResults> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_SEARCH_URL_FRAGMENT,
                                                                                         ArtistSearchResults.class,
                                                                                         artistQueryString,
