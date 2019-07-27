@@ -13,9 +13,5 @@ public class UserResponse {
   private String userName;
   private String email;
   private boolean enabled;
-
-  public String getName() {
-    return userName;
-  }
 	
 }
