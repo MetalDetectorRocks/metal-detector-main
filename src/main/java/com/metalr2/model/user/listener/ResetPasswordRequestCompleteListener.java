@@ -27,6 +27,6 @@ public class ResetPasswordRequestCompleteListener implements ApplicationListener
 
   private void sendResetPasswordEmail(OnResetPasswordRequestCompleteEvent event) {
     String token = tokenService.createResetPasswordToken(event.getUserDto().getUserId());
-    emailService.sendEmail(new ForgotPasswordEmail(event.getUserDto().getEmail(), event.getUserDto().getFirstName(), token));
+    emailService.sendEmail(new ForgotPasswordEmail(event.getUserDto().getEmail(), event.getUserDto().getUserName(), token));
   }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-th-replace="~{backend/fragments/layout :: layout (~{::body})}" lang="en">
+<html data-th-replace="~{admin/fragments/layout :: layout (~{::body})}" lang="en">
     <body>
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2">Create user</h1>
@@ -16,24 +16,14 @@
                     <span data-th-text="${successMessage}">Registration successful</span>
                 </div>
 
-                <!-- First name -->
+                <!-- User name-->
                 <div class="form-label-group">
-                    <input type="text" id="firstName" class="form-control" name="firstName"
-                           data-th-class="${#fields.hasErrors('firstName')}? 'form-control is-invalid' : 'form-control'"
-                           data-th-field="*{firstName}"
-                           placeholder="First name" required autofocus>
-                    <div class="invalid-feedback" data-th-errors="*{firstName}">First name error</div>
-                    <label for="firstName">First name</label>
-                </div>
-
-                <!-- Last name-->
-                <div class="form-label-group">
-                    <input type="text" id="lastName" class="form-control" name="lastName"
-                           data-th-class="${#fields.hasErrors('lastName')}? 'form-control is-invalid' : 'form-control'"
-                           data-th-field="*{lastName}"
-                           placeholder="Last name" required>
-                    <div class="invalid-feedback" data-th-errors="*{lastName}">Last name error</div>
-                    <label for="lastName">Last name</label>
+                    <input type="text" id="userName" class="form-control" name="userName"
+                           data-th-class="${#fields.hasErrors('userName')}? 'form-control is-invalid' : 'form-control'"
+                           data-th-field="*{userName}"
+                           placeholder="User name" required>
+                    <div class="invalid-feedback" data-th-errors="*{userName}">User name error</div>
+                    <label for="userName">User name</label>
                 </div>
 
                 <!-- EMail-->
