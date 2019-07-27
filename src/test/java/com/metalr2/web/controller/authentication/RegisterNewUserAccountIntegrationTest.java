@@ -27,8 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RegisterNewUserAccountIntegrationTest {
 
   private static final String RESPONSE_ATTRIBUTE_NAME = "registerUserRequest";
-  private static final String PARAM_FIRST_NAME        = "firstName";
-  private static final String PARAM_LAST_NAME         = "lastName";
+  private static final String PARAM_USER_NAME         = "userName";
   private static final String PARAM_EMAIL             = "email";
   private static final String PARAM_PASSWORD          = "password";
   private static final String PARAM_VERIFY_PASSWORD   = "verifyPassword";
@@ -57,8 +56,7 @@ class RegisterNewUserAccountIntegrationTest {
                              .setViewResolvers(viewResolver)
                              .build();
 
-    paramValues.put(PARAM_FIRST_NAME, "John");
-    paramValues.put(PARAM_LAST_NAME, "Doe");
+    paramValues.put(PARAM_USER_NAME, "JohnD");
     paramValues.put(PARAM_EMAIL, "john.doe@example.com");
     paramValues.put(PARAM_PASSWORD, "secret-password");
     paramValues.put(PARAM_VERIFY_PASSWORD, "secret-password");
@@ -73,13 +71,23 @@ class RegisterNewUserAccountIntegrationTest {
   }
 
   @Test
-  void register_new_user_account_should_fail_due_to_empty_names() throws Exception {
-    paramValues.put(PARAM_FIRST_NAME, "");
-    paramValues.put(PARAM_LAST_NAME, null);
+  void register_new_user_account_should_fail_due_to_empty_name() throws Exception {
+    paramValues.put(PARAM_USER_NAME, "");
 
     mockMvc.perform(createRequestBuilder())
-            .andExpect(model().errorCount(2))
-            .andExpect(model().attributeHasFieldErrors(RESPONSE_ATTRIBUTE_NAME, PARAM_FIRST_NAME, PARAM_LAST_NAME))
+            .andExpect(model().errorCount(1))
+            .andExpect(model().attributeHasFieldErrors(RESPONSE_ATTRIBUTE_NAME, PARAM_USER_NAME))
+            .andExpect(status().isOk())
+            .andExpect(view().name(ViewNames.Guest.REGISTER));
+  }
+
+  @Test
+  void register_new_user_account_should_fail_due_to_null_name() throws Exception {
+    paramValues.put(PARAM_USER_NAME, null);
+
+    mockMvc.perform(createRequestBuilder())
+            .andExpect(model().errorCount(1))
+            .andExpect(model().attributeHasFieldErrors(RESPONSE_ATTRIBUTE_NAME, PARAM_USER_NAME))
             .andExpect(status().isOk())
             .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
@@ -140,8 +148,7 @@ class RegisterNewUserAccountIntegrationTest {
     return MockMvcRequestBuilders
             .post(Endpoints.Guest.REGISTER)
             .accept(MediaType.TEXT_HTML)
-            .param(PARAM_FIRST_NAME, paramValues.get(PARAM_FIRST_NAME))
-            .param(PARAM_LAST_NAME, paramValues.get(PARAM_LAST_NAME))
+            .param(PARAM_USER_NAME, paramValues.get(PARAM_USER_NAME))
             .param(PARAM_EMAIL, paramValues.get(PARAM_EMAIL))
             .param(PARAM_PASSWORD, paramValues.get(PARAM_PASSWORD))
             .param(PARAM_VERIFY_PASSWORD, paramValues.get(PARAM_VERIFY_PASSWORD));
