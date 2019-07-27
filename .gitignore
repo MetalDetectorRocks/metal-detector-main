@@ -1,5 +1,14 @@
+!**/src/main/**
+!**/src/test/**
+
 # ignore all stuff in private folder
 .private/
 
-# ignore IntelliJ Config
+# ignore IntelliJ IDEA files
 .idea/
+*.iws
+*.iml
+*.ipr
+
+# ignore all logs
+*.log
