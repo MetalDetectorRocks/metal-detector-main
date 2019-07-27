@@ -72,3 +72,7 @@ footer{
 .btn-pagination:hover {
     background-color: #777777;
 }
+
+.container {
+    margin-bottom: 1rem;
+}
