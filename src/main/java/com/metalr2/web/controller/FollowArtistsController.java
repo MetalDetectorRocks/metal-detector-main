@@ -21,7 +21,6 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -46,7 +45,7 @@ public class FollowArtistsController {
 
   @PostMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
   public ModelAndView handleSearchRequest(@ModelAttribute ArtistSearchRequest artistSearchRequest) {
-    return getFollowArtistsModelAndView(artistSearchRequest.getArtistName(),Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
+    return createArtistSearchResultModelAndView(artistSearchRequest.getArtistName(),Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
   }
 
   @GetMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
@@ -54,10 +53,10 @@ public class FollowArtistsController {
                                         @RequestParam(name = "page", defaultValue = DEFAULT_PAGE) int page,
                                         @RequestParam(name = "artistName", defaultValue = DEFAULT_ARTIST_NAME) String artistName) {
     if (artistName.isEmpty()) {
-      return getDefaultModelAndView();
+      return createDefaultModelAndView();
     }
 
-    return getFollowArtistsModelAndView(artistName,page,size);
+    return createArtistSearchResultModelAndView(artistName,page,size);
   }
 
   private Map<String,Object> buildViewModel(ArtistSearchResults artistSearchResults, String artistName) {
@@ -73,13 +72,8 @@ public class FollowArtistsController {
     viewModel.put("pageNumbers", pageNumbers);
 
     PaginationUrls paginationUrls = pagination.getUrls();
-    int nextSize = Integer.parseInt(DEFAULT_PAGE_SIZE);
-    int nextPage = Integer.parseInt(DEFAULT_PAGE);
-
-    if (paginationUrls.getNext() != null){
-      nextSize = pagination.getItemsPerPage();
-      nextPage = pagination.getCurrentPage()+1;
-    }
+    var nextSize = paginationUrls.getNext() != null ? pagination.getItemsPerPage() : DEFAULT_PAGE_SIZE;
+    var nextPage = paginationUrls.getNext() != null ? pagination.getCurrentPage() + 1 : DEFAULT_PAGE;
 
     viewModel.put("nextSize", nextSize);
     viewModel.put("nextPage", nextPage);
@@ -87,13 +81,13 @@ public class FollowArtistsController {
     return viewModel;
   }
 
-  private ModelAndView getDefaultModelAndView() {
+  private ModelAndView createDefaultModelAndView() {
     Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("totalPages", "0");
     return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
   }
 
-  private ModelAndView getFollowArtistsModelAndView(String artistName, int page, int size){
+  private ModelAndView createArtistSearchResultModelAndView(String artistName, int page, int size){
     log.debug("Searched artist: {}", artistName);
 
     ResponseEntity<ArtistSearchResults> responseEntity = artistSearchRestClient.searchForArtist(artistName, page, size);
@@ -105,7 +99,7 @@ public class FollowArtistsController {
     ArtistSearchResults artistSearchResults = responseEntity.getBody();
 
     if (artistSearchResults == null || artistSearchResults.getResults().isEmpty()) {
-      return getDefaultModelAndView();
+      return createDefaultModelAndView();
     }
 
     Map<String, Object> viewModel = buildViewModel(artistSearchResults, artistName);
