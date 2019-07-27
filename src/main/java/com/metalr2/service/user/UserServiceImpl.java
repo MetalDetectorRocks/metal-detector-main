@@ -84,8 +84,8 @@ public class UserServiceImpl implements UserService {
     UserEntity userEntity = userRepository.findByUserId(userId)
                                           .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
-    userEntity.setFirstName(userDto.getFirstName());
-    userEntity.setLastName(userDto.getLastName());
+    userEntity.setUserName(userDto.getUserName());
+
     UserEntity updatedUserEntity = userRepository.save(userEntity);
 
     return mapper.map(updatedUserEntity, UserDto.class);
