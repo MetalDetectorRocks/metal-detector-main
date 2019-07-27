@@ -23,10 +23,7 @@ public class UserEntity implements Serializable {
   private final String userId;
 
   @Column(nullable=false, length=50)
-  private String firstName;
-
-  @Column(nullable=false, length=50)
-  private String lastName;
+  private String userName;
 
   @Column(nullable=false, length=120)
   private String email;
