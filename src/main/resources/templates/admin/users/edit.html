@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-th-replace="~{admin/fragments/layout :: layout (~{::body})}" lang="en">
+<html th:replace="~{admin/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
     <body>
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2">Users</h1>
@@ -23,7 +23,7 @@
                     <td>john.doe@example.com</td>
                     <td><span class="badge badge-success">Enabled</span></td>
                     <td>
-                        <a href="#" data-th-href="@{users/edit/1}"><i class="material-icons table-action-icon">edit</i></a>
+                        <a href="#" th:href="@{users/edit/1}"><i class="material-icons table-action-icon">edit</i></a>
                         <a href="#"><i class="material-icons table-action-icon">delete</i></a>
                     </td>
                 </tr>
@@ -33,7 +33,7 @@
                     <td>maria.thompson@example.com</td>
                     <td><span class="badge badge-secondary">Disabled</span></td>
                     <td>
-                        <a href="#" data-th-href="@{users/edit/2}"><i class="material-icons table-action-icon">edit</i></a>
+                        <a href="#" th:href="@{users/edit/2}"><i class="material-icons table-action-icon">edit</i></a>
                         <a href="#"><i class="material-icons table-action-icon">delete</i></a>
                     </td>
                 </tr>

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html data-th-replace="~{guest/fragments/layout :: layout (~{::body})}" lang="en">
+<html th:replace="~{guest/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
     <body>
         <div class="container">
             <h1 class="display-4 text-white">Sorry</h1>
-            <h2 class="text-white">We couldn't find the page you were looking for (<span data-th-text="${requestedURI}">requested uri</span>)</h2>
-            <a href="#" data-th-href="@{/index}">Home</a>
+            <h2 class="text-white">We couldn't find the page you were looking for (<span th:text="${requestedURI}">requested uri</span>)</h2>
+            <a href="#" th:href="@{/index}">Home</a>
         </div>
     </body>
 </html>

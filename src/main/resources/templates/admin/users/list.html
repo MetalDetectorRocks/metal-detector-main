@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-th-replace="~{admin/fragments/layout :: layout (~{::body})}" lang="en">
+<html th:replace="~{admin/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
     <body>
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2">Users</h1>
@@ -16,12 +16,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr data-th-each="user : ${users}">
-                    <td data-th-text="${user.userName}"></td>
-                    <td data-th-text="${user.email}"></td>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.userName}"></td>
+                    <td th:text="${user.email}"></td>
                     <td>
-                        <span data-th-if="${user.enabled}" class="badge badge-success">Enabled</span>
-                        <span data-th-unless="${user.enabled}" class="badge badge-secondary">Disabled</span>
+                        <span th:if="${user.enabled}" class="badge badge-success">Enabled</span>
+                        <span th:unless="${user.enabled}" class="badge badge-secondary">Disabled</span>
                     </td>
                     <td>
                         <a href="#"><i class="material-icons table-action-icon">edit</i></a>
