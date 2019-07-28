@@ -111,7 +111,7 @@ class RegistrationControllerTest {
   }
 
   @Test
-  void given__not_existing_token_on_resend_verification_token_uri_should_redirect_to_login_view() throws Exception {
+  void given_not_existing_token_on_resend_verification_token_uri_should_redirect_to_login_view() throws Exception {
     mockMvc.perform(get(Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "?token=" + NOT_EXISTING_TOKEN))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:" + Endpoints.Guest.LOGIN + "?tokenNotFound"));

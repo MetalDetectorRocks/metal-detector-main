@@ -20,7 +20,7 @@ public class ValidationException extends RuntimeException {
     this.fieldErrors = fieldErrors;
   }
 
-  public List<FieldError> getFieldErrors() {
+  List<FieldError> getFieldErrors() {
     return fieldErrors;
   }
 }
