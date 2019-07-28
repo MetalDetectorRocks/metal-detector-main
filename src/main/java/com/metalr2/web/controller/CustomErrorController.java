@@ -2,8 +2,7 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,9 +12,8 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
+@Slf4j
 public class CustomErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
-
-  private static final Logger LOG = LoggerFactory.getLogger(CustomErrorController.class);
 
   @Override
   public String getErrorPath() {
@@ -28,17 +26,18 @@ public class CustomErrorController implements org.springframework.boot.web.servl
     Object requestURIObj = request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
 
     int statusCode    = (statusCodeObj != null)? Integer.parseInt(statusCodeObj.toString()) : -1;
-    String requestURI = (requestURIObj != null)? (String) requestURIObj : "";
+    String requestedURI = (requestURIObj != null)? (String) requestURIObj : "";
 
     if(statusCode == HttpStatus.NOT_FOUND.value()) {
-      LOG.warn("Could not find any content for '" + requestURI + "'.");
-      return new ModelAndView(ViewNames.Guest.ERROR_404, "requestedURI", requestURI);
+      log.warn("Could not find any content for '{}'", requestedURI);
+      return new ModelAndView(ViewNames.Guest.ERROR_404, "requestedURI", requestedURI);
     }
     else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-      LOG.error("Internal server error while requesting '" + requestURI + "'.");
-      return new ModelAndView(ViewNames.Guest.ERROR_500, "requestedURI", requestURI);
+      log.error("Internal server error while requesting '{}''", requestedURI);
+      return new ModelAndView(ViewNames.Guest.ERROR_500, "requestedURI", requestedURI);
     }
 
-    return new ModelAndView(ViewNames.Guest.ERROR, "requestedURI", requestURI);
+    log.error("Unhandled exception occurred. Status code is {}. Requested URI was {}", statusCode, request);
+    return new ModelAndView(ViewNames.Guest.ERROR, "requestedURI", requestedURI);
   }
 }
