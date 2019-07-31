@@ -31,7 +31,6 @@ public class FollowArtistsController {
   private static final String DEFAULT_PAGE_SIZE = "25";
   private static final String DEFAULT_PAGE = "1";
   private static final String DEFAULT_ARTIST_NAME = "";
-  private static final String DISCOGS_URI = "http://discogs.com";
 
   @Autowired
   public FollowArtistsController(ArtistSearchRestClient artistSearchRestClient) {
@@ -61,8 +60,6 @@ public class FollowArtistsController {
   }
 
   private Map<String, Object> buildViewModel(ArtistSearchResults artistSearchResults, String artistName) {
-    artistSearchResults.getResults().forEach(result -> result.setUri(DISCOGS_URI + result.getUri()));
-
     Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
     viewModel.put("artistSearchResultList", artistSearchResults.getResults());
@@ -93,27 +90,26 @@ public class FollowArtistsController {
   private ModelAndView createArtistSearchResultModelAndView(String artistName, int page, int size) {
     log.debug("Searched artist: {}; page: {}; size: {}", artistName, page, size);
 
-    Optional<ResponseEntity<ArtistSearchResults>> responseEntityOptional = artistSearchRestClient.searchForArtist(artistName, page, size);
+    Optional<ArtistSearchResults> artistSearchResultsOptional = artistSearchRestClient.searchForArtist(artistName, page, size);
 
-    if (responseEntityOptional.isEmpty()) {
+    if (artistSearchResultsOptional.isEmpty()) {
       return createBadArtistSearchRequestModelAndView(artistName, page, size);
     }
 
-    ArtistSearchResults artistSearchResults = responseEntityOptional.get().getBody();
+    ArtistSearchResults artistSearchResults = artistSearchResultsOptional.get();
 
-    assert artistSearchResults != null;
     Map<String, Object> viewModel = buildViewModel(artistSearchResults, artistName);
     return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
   }
 
   private ModelAndView createBadArtistSearchRequestModelAndView(String artistName, int page, int size) {
-    ModelAndView defaultModelAndView = createDefaultModelAndView();
-    Map<String, Object> modelView = defaultModelAndView.getModel();
-    modelView.put("badArtistSearchRequestMessage", "No data could be found for the given parameters:");
-    modelView.put("badArtistSearchRequestArtistName", artistName);
-    modelView.put("badArtistSearchRequestPage", page);
-    modelView.put("badArtistSearchRequestSize", size);
-    return defaultModelAndView;
+    Map<String, Object> viewModel = new HashMap<>();
+    viewModel.put("totalPages", "0");
+    viewModel.put("badArtistSearchRequestMessage", "No data could be found for the given parameters:");
+    viewModel.put("badArtistSearchRequestArtistName", artistName);
+    viewModel.put("badArtistSearchRequestPage", page);
+    viewModel.put("badArtistSearchRequestSize", size);
+    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
   }
 
 }

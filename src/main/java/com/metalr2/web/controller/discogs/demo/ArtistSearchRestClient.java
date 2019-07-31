@@ -22,22 +22,22 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
     super(restTemplate, discogsConfig);
   }
 
-  public Optional<ResponseEntity<ArtistSearchResults>> searchForArtist(String artistQueryString, int page, int size) {
+  public Optional<ArtistSearchResults> searchForArtist(String artistQueryString, int page, int size) {
 
-    if (artistQueryString.isEmpty() || size == 0){
+    if (artistQueryString.isEmpty() || size == 0) {
       return Optional.empty();
     }
 
     ResponseEntity<ArtistSearchResults> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_SEARCH_URL_FRAGMENT,
-                                                                                        ArtistSearchResults.class,
-                                                                                        artistQueryString,
-                                                                                        page,
-                                                                                        size);
+            ArtistSearchResults.class,
+            artistQueryString,
+            page,
+            size);
 
-    return responseEntity.getBody() == null || !responseEntity.getStatusCode().equals(HttpStatus.OK)
-                                            ||  responseEntity.getBody().getResults().isEmpty()
-                                                                                        ? Optional.empty()
-                                                                                        : Optional.of(responseEntity);
+    if (responseEntity.getBody() == null || !responseEntity.getStatusCode().equals(HttpStatus.OK)
+            || responseEntity.getBody().getResults().isEmpty()) {
+      return Optional.empty();
+    }
+    return Optional.of(responseEntity.getBody());
   }
-
 }
