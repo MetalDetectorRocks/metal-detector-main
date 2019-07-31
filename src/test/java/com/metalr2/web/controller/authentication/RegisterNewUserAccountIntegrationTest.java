@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RegisterNewUserAccountIntegrationTest {
 
   private static final String RESPONSE_ATTRIBUTE_NAME = "registerUserRequest";
-  private static final String PARAM_USER_NAME         = "userName";
+  private static final String PARAM_USER_NAME         = "username";
   private static final String PARAM_EMAIL             = "email";
   private static final String PARAM_PASSWORD          = "password";
   private static final String PARAM_VERIFY_PASSWORD   = "verifyPassword";
@@ -71,7 +71,7 @@ class RegisterNewUserAccountIntegrationTest {
   }
 
   @Test
-  void register_new_user_account_should_fail_due_to_empty_name() throws Exception {
+  void register_new_user_account_should_fail_due_to_empty_username() throws Exception {
     paramValues.put(PARAM_USER_NAME, "");
 
     mockMvc.perform(createRequestBuilder())

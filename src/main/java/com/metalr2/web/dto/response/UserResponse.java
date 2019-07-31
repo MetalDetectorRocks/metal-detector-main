@@ -10,7 +10,7 @@ import lombok.Setter;
 public class UserResponse {
 	
   private String userId;
-  private String userName;
+  private String username;
   private String email;
   private boolean enabled;
 	
