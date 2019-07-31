@@ -4,7 +4,8 @@ public enum ExpirationTime {
 
   ONE_SECOND(1000),
   ONE_HOUR(1000 * 60 * 60),
-  TEN_DAYS(1000 * 60 * 60 * 24 * 10);
+  TEN_DAYS(1000 * 60 * 60 * 24 * 10),
+  TWO_WEEKS(1000 * 60 * 60 * 24 * 14);
 
   private final long expirationTimeInMs;
 
@@ -14,6 +15,10 @@ public enum ExpirationTime {
 
   public long toMillis() {
     return expirationTimeInMs;
+  }
+
+  public long toSeconds() {
+    return expirationTimeInMs / 1000;
   }
 
 }

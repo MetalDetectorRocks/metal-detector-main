@@ -1,4 +1,4 @@
-package com.metalr2.config.misc;
+package com.metalr2.config.bootstrap;
 
 import com.metalr2.model.user.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
