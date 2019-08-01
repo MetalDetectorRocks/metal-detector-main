@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html data-th-replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en">
-  <head data-th-include="admin/fragments/layout :: headerFragment">
+<html th:replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+  <head th:include="admin/fragments/layout :: headerFragment">
     <title id="pageTitle">Artist releases | Metal Release Radar</title>
   </head>
   <body>
