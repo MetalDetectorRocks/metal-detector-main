@@ -1,63 +1,63 @@
 <!DOCTYPE html>
-<html data-th-replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en">
+<html th:replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <body>
     <div class="mb-3 mt-5">
         <h1>Follow Artists</h1>
         <!-- Search Form -->
         <div class="mb-3">
-            <form id="searchForm" action="#" data-th-action="@{/follow-artists}" data-th-object="${artistSearchRequest}"
+            <form id="searchForm" action="#" th:action="@{/follow-artists}" th:object="${artistSearchRequest}"
                   method="POST">
                 <!-- Artist name -->
                 <label for="artistName"></label><input type="text" id="artistName" class="form-control"
-                                                       data-th-field="*{artistName}">
+                                                       th:field="*{artistName}">
                 <!-- Submit -->
                 <button class="btn btn-primary btn-dark font-weight-bold" type="submit">Search</button>
             </form>
         </div>
         <!-- Artist name -->
         <div class="mb-3">
-            <div data-th-if="${totalPages} > 0" data-th-text="${'You searched for: ' + artistName}">Artist Name</div>
+            <div th:if="${totalPages} > 0" th:text="${'You searched for: ' + artistName}">Artist Name</div>
         </div>
         <!-- Bad request message -->
         <div class="mb-3">
-            <div data-th-if="${badArtistSearchRequestMessage} != null" class="alert alert-danger" role="alert">
-                <p data-th-text="${badArtistSearchRequestMessage}">Bad search request message</p>
+            <div th:if="${badArtistSearchRequestMessage} != null" class="alert alert-danger" role="alert">
+                <p th:text="${badArtistSearchRequestMessage}">Bad search request message</p>
                 <ul>
-                    <li data-th-text="${'Artist name: ' + badArtistSearchRequestArtistName}">Bad search request artist name</li>
-                    <li data-th-text="${'Page: ' + badArtistSearchRequestPage}">Bad search request page</li>
-                    <li data-th-text="${'Size: ' + badArtistSearchRequestSize}">Bad search request</li>
+                    <li th:text="${'Artist name: ' + badArtistSearchRequestArtistName}">Bad search request artist name</li>
+                    <li th:text="${'Page: ' + badArtistSearchRequestPage}">Bad search request page</li>
+                    <li th:text="${'Size: ' + badArtistSearchRequestSize}">Bad search request</li>
                 </ul>
             </div>
         </div>
     </div>
     <!-- Result cards -->
     <div class="mb-3">
-        <div data-th-each="result : ${artistSearchResultList}"
-             data-th-class="card">
-            <div data-th-class="card-body">
-                <p data-th-text="${result.id}">id</p>
-                <p data-th-text="${result.title}">title</p>
+        <div th:each="result : ${artistSearchResultList}"
+             th:class="card">
+            <div th:class="card-body">
+                <p th:text="${result.id}">id</p>
+                <p th:text="${result.title}">title</p>
                 <a target="_blank" rel="noopener noreferrer"
-                   data-th-href="@{${result.uri}}"
-                   data-th-text="${result.title + ' on discogs'}">uri</a>
+                   th:href="@{${result.uri}}"
+                   th:text="${result.title + ' on discogs'}">uri</a>
             </div>
         </div>
     </div>
     <!-- Pagination links -->
     <div class="mb-3">
-        <div class="row" data-th-if="${totalPages} > 0">
-            <a data-th-if="${currentPage} > 1" href="#"
-               data-th-href="@{/follow-artists(size=${nextSize}, page=${nextPage}, artistName=${artistName})}"
-               data-th-text="#{Previous}"
+        <div class="row" th:if="${totalPages} > 0">
+            <a th:if="${currentPage} > 1" href="#"
+               th:href="@{/follow-artists(size=${nextSize}, page=${nextPage}, artistName=${artistName})}"
+               th:text="#{Previous}"
                class="btn btn-dark btn-pagination">Previous</a>
-            <a data-th-if="${totalPages > 1}"
-               data-th-each="pageNumber : ${pageNumbers}" href="#"
-               data-th-href="@{/follow-artists(size=${nextSize}, page=${pageNumber}, artistName=${artistName})}"
-               data-th-text="#{${pageNumber}}"
+            <a th:if="${totalPages > 1}"
+               th:each="pageNumber : ${pageNumbers}" href="#"
+               th:href="@{/follow-artists(size=${nextSize}, page=${pageNumber}, artistName=${artistName})}"
+               th:text="#{${pageNumber}}"
                class="btn btn-dark btn-pagination">Page number</a>
-            <a data-th-if="${currentPage} < ${totalPages}" href="#"
-               data-th-href="@{/follow-artists(size=${nextSize}, page=${nextPage}, artistName=${artistName})}"
-               data-th-text="#{Next}"
+            <a th:if="${currentPage} < ${totalPages}" href="#"
+               th:href="@{/follow-artists(size=${nextSize}, page=${nextPage}, artistName=${artistName})}"
+               th:text="#{Next}"
                class="btn btn-dark btn-pagination">Next</a>
         </div>
     </div>
