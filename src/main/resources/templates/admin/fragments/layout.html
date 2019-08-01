@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html th:fragment="layout (template)" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>Admin Area | Metal Release Radar</title>
+    <head th:fragment="headerFragment">
+        <title th:include=":: #pageTitle">Dynamic page title</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
 

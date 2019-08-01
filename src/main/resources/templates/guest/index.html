@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html th:replace="~{guest/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+  <head th:include="admin/fragments/layout :: headerFragment">
+      <title id="pageTitle">Metal Release Radar</title>
+  </head>
   <body>
     <div class="container text-center mt-5">
       <a href="#" th:href="@{/register}" class="btn btn-dark auth-button font-weight-bold">Join now</a>
