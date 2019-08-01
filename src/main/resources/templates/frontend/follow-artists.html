@@ -20,12 +20,12 @@
         </div>
         <!-- Bad request message -->
         <div class="mb-3">
-            <div data-th-if="${badArtistSearchRequestMessage} != null" class="alert alert-danger" role="alert">
-                <p data-th-text="${badArtistSearchRequestMessage}">Bad search request message</p>
+            <div th:if="${badArtistSearchRequestMessage} != null" class="alert alert-danger" role="alert">
+                <p th:text="${badArtistSearchRequestMessage}">Bad search request message</p>
                 <ul>
-                    <li data-th-text="${'Artist name: ' + badArtistSearchRequestArtistName}">Bad search request artist name</li>
-                    <li data-th-text="${'Page: ' + badArtistSearchRequestPage}">Bad search request page</li>
-                    <li data-th-text="${'Size: ' + badArtistSearchRequestSize}">Bad search request</li>
+                    <li th:text="${'Artist name: ' + badArtistSearchRequestArtistName}">Bad search request artist name</li>
+                    <li th:text="${'Page: ' + badArtistSearchRequestPage}">Bad search request page</li>
+                    <li th:text="${'Size: ' + badArtistSearchRequestSize}">Bad search request</li>
                 </ul>
             </div>
         </div>
