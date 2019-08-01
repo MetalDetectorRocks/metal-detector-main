@@ -5,7 +5,7 @@
       <h3 class="mb-3">Login</h3>
 
       <!-- Login Messages -->
-      <div th:if="${param.badCredentials}" class="alert alert-danger" role="alert"><span>Wrong email and/or password!</span></div>
+      <div th:if="${param.badCredentials}" class="alert alert-danger" role="alert"><span>Invalid username, email or password!</span></div>
       <div th:if="${param.disabled}" class="alert alert-danger" role="alert"><span>Your account is disabled. Maybe your email address is not verified. Please check your email inbox.</span></div>
       <div th:if="${param.error}" class="alert alert-danger" role="alert"><span>Unknown error!</span></div>
       <div th:if="${param.logout}" class="alert alert-success" role="alert"><span>You have been successfully logged out.</span></div>
@@ -34,7 +34,7 @@
       <form id="loginForm" name="loginForm" action="#" th:action="@{/login}" method="POST">
         <!-- Username -->
         <div class="form-label-group">
-          <input type="email" id="username" class="form-control" name="username" placeholder="#" required autofocus>
+          <input type="text" id="username" class="form-control" name="username" placeholder="#" required autofocus>
           <label for="username">Email address or username</label>
         </div>
 
@@ -50,7 +50,7 @@
               <!-- Remember me -->
               <div class="checkbox">
                 <label>
-                  <input type="checkbox" value="remember-me"> Remember me
+                  <input type="checkbox" id="remember-me" name="remember-me"> Remember me
                 </label>
               </div>
             </div>

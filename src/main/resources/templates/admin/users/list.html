@@ -17,7 +17,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="user : ${users}">
-                    <td th:text="${user.userName}"></td>
+                    <td th:text="${user.username}"></td>
                     <td th:text="${user.email}"></td>
                     <td>
                         <span th:if="${user.enabled}" class="badge badge-success">Enabled</span>

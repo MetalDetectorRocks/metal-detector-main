@@ -14,18 +14,18 @@
           <span th:text="${successMessage}">Registration successful</span>
         </div>
 
-        <!-- User name-->
+        <!-- Username-->
         <div class="form-label-group">
-          <input type="text" id="userName" class="form-control" name="userName"
-                 th:class="${#fields.hasErrors('userName')}? 'form-control is-invalid' : 'form-control'"
-                 th:field="*{userName}"
+          <input type="text" id="username" class="form-control" name="username"
+                 th:class="${#fields.hasErrors('username')}? 'form-control is-invalid' : 'form-control'"
+                 th:field="*{username}"
                  placeholder="#"
                  required autofocus>
-          <div class="invalid-feedback" th:errors="*{userName}">User name error</div>
-          <label for="userName">User name</label>
+          <div class="invalid-feedback" th:errors="*{username}">Username error</div>
+          <label for="username">Username</label>
         </div>
 
-        <!-- EMail-->
+        <!-- Email-->
         <div class="form-label-group">
           <input type="email" id="email" class="form-control" name="email"
                  th:class="${#fields.hasErrors('email')}? 'form-control is-invalid' : 'form-control'"
