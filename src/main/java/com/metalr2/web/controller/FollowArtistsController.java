@@ -2,16 +2,13 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
-import com.metalr2.web.controller.discogs.demo.ArtistSearchRestClient;
-import com.metalr2.web.dto.discogs.search.ArtistSearchResult;
+import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
 import com.metalr2.web.dto.discogs.search.ArtistSearchResults;
 import com.metalr2.web.dto.discogs.search.Pagination;
 import com.metalr2.web.dto.discogs.search.PaginationUrls;
-import com.metalr2.web.dto.request.ArtistSearchRequest;
+import com.metalr2.web.dto.request.ArtistSearchByNameRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -38,13 +35,13 @@ public class FollowArtistsController {
   }
 
   @ModelAttribute
-  private ArtistSearchRequest searchRequest() {
-    return new ArtistSearchRequest();
+  private ArtistSearchByNameRequest searchRequest() {
+    return new ArtistSearchByNameRequest();
   }
 
   @PostMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
-  public ModelAndView handleSearchRequest(@ModelAttribute ArtistSearchRequest artistSearchRequest) {
-    return createArtistSearchResultModelAndView(artistSearchRequest.getArtistName(), Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
+  public ModelAndView handleSearchRequest(@ModelAttribute ArtistSearchByNameRequest artistSearchByNameRequest) {
+    return createArtistSearchResultModelAndView(artistSearchByNameRequest.getArtistName(), Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
   }
 
   @GetMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
@@ -88,9 +85,7 @@ public class FollowArtistsController {
   }
 
   private ModelAndView createArtistSearchResultModelAndView(String artistName, int page, int size) {
-    log.debug("Searched artist: {}; page: {}; size: {}", artistName, page, size);
-
-    Optional<ArtistSearchResults> artistSearchResultsOptional = artistSearchRestClient.searchForArtist(artistName, page, size);
+    Optional<ArtistSearchResults> artistSearchResultsOptional = artistSearchRestClient.searchForArtistByName(artistName, page, size);
 
     if (artistSearchResultsOptional.isEmpty()) {
       return createBadArtistSearchRequestModelAndView(artistName, page, size);
