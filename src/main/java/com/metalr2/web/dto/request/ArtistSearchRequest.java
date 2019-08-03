@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArtistSearchByIdRequest {
+public class ArtistSearchRequest {
 
-  private long artistId;
+  private String artistName;
 
 }

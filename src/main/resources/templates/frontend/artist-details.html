@@ -4,20 +4,32 @@
         <title id="pageTitle">Artist details | Metal Release Radar</title>
     </head>
     <body>
-    <div class="mb-3 mt-5">
-        <h1>Artist Details</h1>
-        <div th:class="card">
-            <div th:class="card-body">
-                <p th:text="${artistId}">Artist id</p>
-                <p th:text="${artistProfile}">Artist profile</p>
-            </div>
-            <div th:each="image : ${artistImages}"
-                 th:class="card">
-                <div th:class="card-body">
-                    <img alt="${artistId}" th:src="${image.resourceUrl}">
+        <div class="mb-3 mt-5">
+            <h1 th:text="${artistName}">Artist name</h1>
+            <ul class="nav nav-tabs">
+                <li class="nav-item"><a class="nav-link nav-link-artist nav-link-artist-active" href="#" th:href="@{#profile}">Profile</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-artist" href="#" th:href="@{#releases}">Releases</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-artist" href="#" th:href="@{#member}">Member</a></li>
+                <li class="nav-item"><a class="nav-link nav-link-artist" href="#" th:href="@{#images}">Images</a></li>
+            </ul>
+            <div th:class="card">
+                <div id="profile" th:class="card-body">
+                    <p th:text="${artistProfile}">Artist profile</p>
+                </div>
+                <div id="releases" th:class="card-body">
+                    <div th:each="image : ${artistImages}">
+                        <img alt="${artistId}" th:src="${image.resourceUrl}">
+                    </div>
+                </div>
+                <div id="member" th:class="card-body">
+                    <p th:text="${artistProfile}">Artist profile</p>
+                </div>
+                <div id="images" th:class="card-body">
+                    <div th:each="image : ${artistImages}">
+                        <img alt="${artistId}" th:src="${image.resourceUrl}">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </body>
 </html>

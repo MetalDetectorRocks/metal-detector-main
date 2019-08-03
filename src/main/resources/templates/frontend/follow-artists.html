@@ -8,7 +8,7 @@
             <h1>Follow Artists</h1>
             <!-- Search Form -->
             <div class="mb-3">
-                <form id="searchForm" action="#" th:action="@{/follow-artists}" th:object="${artistSearchByNameRequest}"
+                <form id="searchForm" action="#" th:action="@{/follow-artists}" th:object="${artistSearchRequest}"
                       method="POST">
                     <!-- Artist name -->
                     <label for="artistName"></label><input type="text" id="artistName" class="form-control"
@@ -40,7 +40,7 @@
                 <div th:class="card-body">
                     <p th:text="${result.id}">Id</p>
                     <p th:text="${result.title}">Title</p>
-                    <a th:href="@{/artist-details(id=${result.id})}"
+                    <a th:href="@{/artist-details(artistName=${result.title}, id=${result.id})}"
                        th:text="${'Details for ' + result.title}">Artist details</a>
                 </div>
             </div>

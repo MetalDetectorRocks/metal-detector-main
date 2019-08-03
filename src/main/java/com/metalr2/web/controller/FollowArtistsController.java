@@ -6,7 +6,7 @@ import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
 import com.metalr2.web.dto.discogs.search.ArtistSearchResults;
 import com.metalr2.web.dto.discogs.search.Pagination;
 import com.metalr2.web.dto.discogs.search.PaginationUrls;
-import com.metalr2.web.dto.request.ArtistSearchByNameRequest;
+import com.metalr2.web.dto.request.ArtistSearchRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,13 +35,13 @@ public class FollowArtistsController {
   }
 
   @ModelAttribute
-  private ArtistSearchByNameRequest searchRequest() {
-    return new ArtistSearchByNameRequest();
+  private ArtistSearchRequest searchRequest() {
+    return new ArtistSearchRequest();
   }
 
   @PostMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
-  public ModelAndView handleSearchRequest(@ModelAttribute ArtistSearchByNameRequest artistSearchByNameRequest) {
-    return createArtistSearchResultModelAndView(artistSearchByNameRequest.getArtistName(), Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
+  public ModelAndView handleSearchRequest(@ModelAttribute ArtistSearchRequest artistSearchRequest) {
+    return createArtistSearchResultModelAndView(artistSearchRequest.getArtistName(), Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
   }
 
   @GetMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
