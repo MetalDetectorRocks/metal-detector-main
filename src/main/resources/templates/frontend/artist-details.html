@@ -6,28 +6,43 @@
     <body>
         <div class="mb-3 mt-5">
             <h1 th:text="${artistName}">Artist name</h1>
-            <ul class="nav nav-tabs">
-                <li class="nav-item"><a class="nav-link nav-link-artist nav-link-artist-active" href="#" th:href="@{#profile}">Profile</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-artist" href="#" th:href="@{#releases}">Releases</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-artist" href="#" th:href="@{#member}">Member</a></li>
-                <li class="nav-item"><a class="nav-link nav-link-artist" href="#" th:href="@{#images}">Images</a></li>
-            </ul>
+            <!-- Result card -->
             <div th:class="card">
-                <div id="profile" th:class="card-body">
+                <div th:if="${artistProfile != null}" th:class="card-body">
+                    <h3>Profile</h3>
                     <p th:text="${artistProfile}">Artist profile</p>
                 </div>
-                <div id="releases" th:class="card-body">
-                    <div th:each="image : ${artistImages}">
-                        <img alt="${artistId}" th:src="${image.resourceUrl}">
+                <div th:if="${artistMemberActive != null}" th:class="card-body">
+                    <h3>Active Member</h3>
+                    <div th:each="member : ${artistMemberActive}">
+                        <ul>
+                            <li th:text="${member.name}">Member name</li>
+                        </ul>
                     </div>
                 </div>
-                <div id="member" th:class="card-body">
-                    <p th:text="${artistProfile}">Artist profile</p>
-                </div>
-                <div id="images" th:class="card-body">
-                    <div th:each="image : ${artistImages}">
-                        <img alt="${artistId}" th:src="${image.resourceUrl}">
+                <div th:if="${artistMemberInactive != null}" th:class="card-body">
+                    <h3>Past Member</h3>
+                    <div th:each="member : ${artistMemberInactive}">
+                        <ul>
+                            <li th:text="${member.name}">Member name</li>
+                        </ul>
                     </div>
+                </div>
+                <div th:if="${artistImages != null}" th:class="card-body">
+                    <h3>Images</h3>
+                    <div th:each="image : ${artistImages}">
+                        <img alt="${'Image of ' + artistName}" th:src="${image.resourceUrl}" src="">
+                    </div>
+                </div>
+            </div>
+            <!-- Bad request message -->
+            <div class="mb-3">
+                <div th:if="${badArtistSearchRequestMessage} != null" class="alert alert-danger" role="alert">
+                    <p th:text="${badArtistSearchRequestMessage}">Bad search request message</p>
+                    <ul>
+                        <li th:text="${'Artist name: ' + badArtistName}">Bad search request artist name</li>
+                        <li th:text="${'Artist id: ' + badArtistId}">Bad search request page</li>
+                    </ul>
                 </div>
             </div>
         </div>

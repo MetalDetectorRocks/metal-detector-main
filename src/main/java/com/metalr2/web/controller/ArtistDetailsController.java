@@ -4,6 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
 import com.metalr2.web.dto.discogs.artist.Artist;
+import com.metalr2.web.dto.discogs.artist.Member;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -38,7 +40,7 @@ public class ArtistDetailsController {
     Optional<Artist> artistOptional = artistSearchRestClient.searchForArtistById(artistId);
 
     if (artistOptional.isEmpty()) {
-      return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, "totalPages", "0");
+      return createBadArtistSearchRequestModelAndView(artistName, artistId);
     }
 
     Artist artist = artistOptional.get();
@@ -46,10 +48,28 @@ public class ArtistDetailsController {
     Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
     viewModel.put("artistId", artist.getId());
-    viewModel.put("artistImages", artist.getImages());
-    viewModel.put("artistProfile", artist.getProfile());
-//    viewModel.put("artistMembers", artist.getMembers());
 
+    if (!artist.getProfile().isEmpty()){
+      viewModel.put("artistProfile", artist.getProfile());
+    }
+
+    if (artist.getImages() != null){
+      viewModel.put("artistImages", artist.getImages());
+    }
+
+    if (artist.getMembers() != null) {
+      viewModel.put("artistMemberActive", artist.getMembers().stream().filter(Member::isActive).collect(Collectors.toList()));
+      viewModel.put("artistMemberInactive", artist.getMembers().stream().filter(member -> !member.isActive()).collect(Collectors.toList()));
+    }
+
+    return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS, viewModel);
+  }
+
+  private ModelAndView createBadArtistSearchRequestModelAndView(String artistName, long artistId) {
+    Map<String, Object> viewModel = new HashMap<>();
+    viewModel.put("badArtistSearchRequestMessage", "No data could be found for the given parameters:");
+    viewModel.put("badArtistName", artistName);
+    viewModel.put("badArtistId", artistId);
     return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS, viewModel);
   }
 }

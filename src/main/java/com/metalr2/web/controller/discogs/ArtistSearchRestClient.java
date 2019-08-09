@@ -47,6 +47,10 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
   public Optional<Artist> searchForArtistById(long artistId) {
     log.debug("Searched artist id: {}", artistId);
 
+    if (artistId == 0) {
+      return Optional.empty();
+    }
+
     ResponseEntity<Artist> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_ID_URL_FRAGMENT,
             Artist.class,
             artistId);
