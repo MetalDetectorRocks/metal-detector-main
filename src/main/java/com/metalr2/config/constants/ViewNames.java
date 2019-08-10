@@ -28,6 +28,7 @@ public class ViewNames {
     public static final String TEAM                      = "frontend/team";
     public static final String CONTACT                   = "frontend/contact";
     public static final String IMPRINT                   = "frontend/imprint";
+    public static final String STATUS                    = "frontend/status";
   }
 
   public static class AdminArea {

@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
@@ -63,7 +64,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .invalidateHttpSession(true)
         .clearAuthentication(true)
         .deleteCookies("JSESSIONID", "remember-me")
-        .logoutSuccessHandler(logoutSuccessHandler());
+        .logoutSuccessHandler(logoutSuccessHandler())
+      .and()
+      .exceptionHandling()
+        .accessDeniedHandler(accessDeniedHandler());
   }
 
   @Override
@@ -77,6 +81,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
   private LogoutSuccessHandler logoutSuccessHandler() {
     return new CustomLogoutSuccessHandler();
+  }
+
+  private AccessDeniedHandler accessDeniedHandler(){
+    return new CustomAccessDeniedHandler();
   }
 
 }

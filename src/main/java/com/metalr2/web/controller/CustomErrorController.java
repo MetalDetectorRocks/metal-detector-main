@@ -25,8 +25,8 @@ public class CustomErrorController implements org.springframework.boot.web.servl
     Object statusCodeObj = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
     Object requestURIObj = request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
 
-    int statusCode    = (statusCodeObj != null)? Integer.parseInt(statusCodeObj.toString()) : -1;
-    String requestedURI = (requestURIObj != null)? (String) requestURIObj : "";
+    int statusCode      = statusCodeObj != null ? Integer.parseInt(statusCodeObj.toString()) : -1;
+    String requestedURI = requestURIObj != null ? (String) requestURIObj : "";
 
     if(statusCode == HttpStatus.NOT_FOUND.value()) {
       log.warn("Could not find any content for '{}'", requestedURI);
