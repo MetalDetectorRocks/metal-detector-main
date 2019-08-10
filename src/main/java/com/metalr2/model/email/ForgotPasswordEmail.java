@@ -9,15 +9,15 @@ import java.util.Map;
 public final class ForgotPasswordEmail extends AbstractEmail {
 
   private final String recipient;
-  private final String userName;
+  private final String username;
   private final String resetPasswordToken;
 
   private static final String  RESET_PASSWORD_URL = Endpoints.Guest.RESET_PASSWORD + "?token=%s";
   private static final String  SUBJECT            = "Your password reset request";
 
-  public ForgotPasswordEmail(String recipient, String userName, String resetPasswordToken) {
+  public ForgotPasswordEmail(String recipient, String username, String resetPasswordToken) {
     this.recipient          = recipient;
-    this.userName           = userName;
+    this.username           = username;
     this.resetPasswordToken = resetPasswordToken;
   }
 
@@ -34,7 +34,7 @@ public final class ForgotPasswordEmail extends AbstractEmail {
   @Override
   public Map<String, Object> getViewModel() {
     Map<String, Object> viewModel = new HashMap<>();
-    viewModel.put("userName", userName);
+    viewModel.put("username", username);
     viewModel.put("resetPasswordURL", createResetPasswordURL());
 
     return viewModel;

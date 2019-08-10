@@ -18,7 +18,7 @@ import javax.validation.constraints.Size;
 public class RegisterUserRequest {
 
   @NotBlank
-  private String userName;
+  private String username;
 
   @NotBlank
   @Email

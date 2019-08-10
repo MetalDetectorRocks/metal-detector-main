@@ -14,6 +14,8 @@ import lombok.Data;
 })
 public class ArtistSearchResult {
 
+  private static final String DISCOGS_URI = "http://discogs.com";
+
   @JsonProperty("id")
   private long id;
 
@@ -29,4 +31,7 @@ public class ArtistSearchResult {
   @JsonProperty("resource_url")
   private String resourceUrl; // todo danielw: should be of type URL or something equal
 
+  public String getUri() {
+    return DISCOGS_URI + uri;
+  }
 }

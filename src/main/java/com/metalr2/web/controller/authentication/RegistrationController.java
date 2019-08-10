@@ -75,7 +75,13 @@ public class RegistrationController {
       createdUserDto = userService.createUser(userDto);
     }
     catch (UserAlreadyExistsException e) {
-      bindingResult.rejectValue("email", "userAlreadyExists", e.getMessage());
+      if (e.getReason() == UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS) {
+        bindingResult.rejectValue("username", "userAlreadyExists", e.getMessage());
+      }
+      else if (e.getReason() == UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS) {
+        bindingResult.rejectValue("email", "userAlreadyExists", e.getMessage());
+      }
+
       return new ModelAndView(ViewNames.Guest.REGISTER); // show registration form with validation errors
     }
 

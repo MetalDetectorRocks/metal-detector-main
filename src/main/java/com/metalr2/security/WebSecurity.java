@@ -5,6 +5,7 @@ import com.metalr2.security.handler.CustomAuthenticationFailureHandler;
 import com.metalr2.security.handler.CustomLogoutSuccessHandler;
 import com.metalr2.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,6 +18,9 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 @EnableWebSecurity
 @Configuration
 public class WebSecurity extends WebSecurityConfigurerAdapter {
+
+  @Value("${security.remember-me-secret}")
+  private String REMEMBER_ME_SECRET;
 
   private final UserService userService;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -36,28 +40,30 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             // todo danielw: build one big AntPattern for guest area
         .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
         .antMatchers(Endpoints.AntPattern.INDEX).anonymous()
-        .antMatchers(Endpoints.AntPattern.LOGIN).anonymous()
-        .antMatchers(Endpoints.AntPattern.REGISTER).anonymous()
-        .antMatchers(Endpoints.AntPattern.REGISTRATION_VERIFICATION).anonymous()
-        .antMatchers(Endpoints.AntPattern.RESEND_VERIFICATION_TOKEN).anonymous()
-        .antMatchers(Endpoints.AntPattern.FORGOT_PASSWORD).anonymous()
-        .antMatchers(Endpoints.AntPattern.RESET_PASSWORD).anonymous()
-        .anyRequest().authenticated()
+            .antMatchers(Endpoints.AntPattern.LOGIN).anonymous()
+            .antMatchers(Endpoints.AntPattern.REGISTER).anonymous()
+            .antMatchers(Endpoints.AntPattern.REGISTRATION_VERIFICATION).anonymous()
+            .antMatchers(Endpoints.AntPattern.RESEND_VERIFICATION_TOKEN).anonymous()
+            .antMatchers(Endpoints.AntPattern.FORGOT_PASSWORD).anonymous()
+            .antMatchers(Endpoints.AntPattern.RESET_PASSWORD).anonymous()
+            .anyRequest().authenticated()
       .and()
       .formLogin()
-        .loginPage(Endpoints.Guest.LOGIN)
-        .loginProcessingUrl(Endpoints.Guest.LOGIN)
-        .defaultSuccessUrl(Endpoints.Frontend.FOLLOW_ARTISTS, false) // if this is true, user see always this site after login
-        .failureHandler(authenticationFailureHandler())
-      //.failureUrl(Endpoints.LOGIN + "?error=true")
+            .loginPage(Endpoints.Guest.LOGIN)
+            .loginProcessingUrl(Endpoints.Guest.LOGIN)
+            .defaultSuccessUrl(Endpoints.Frontend.FOLLOW_ARTISTS, false) // if this is true, user see always this site after login
+            .failureHandler(authenticationFailureHandler())
+      .and()
+      .rememberMe()
+            .key(REMEMBER_ME_SECRET)
+            .tokenValiditySeconds((int) ExpirationTime.TWO_WEEKS.toSeconds())
       .and()
       .logout()
-        .logoutUrl(Endpoints.Guest.LOGOUT).permitAll()
-        .invalidateHttpSession(true)
-        .clearAuthentication(true)
-        .deleteCookies("JSESSIONID")
-        .logoutSuccessHandler(logoutSuccessHandler());
-        //.logoutSuccessUrl(Endpoints.LOGIN);
+            .logoutUrl(Endpoints.Guest.LOGOUT).permitAll()
+            .invalidateHttpSession(true)
+            .clearAuthentication(true)
+            .deleteCookies("JSESSIONID", "remember-me")
+            .logoutSuccessHandler(logoutSuccessHandler());
   }
 
   @Override

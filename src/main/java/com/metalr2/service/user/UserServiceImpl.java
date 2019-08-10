@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public UserDto createUser(UserDto userDto) {
-    checkIfUserAlreadyExists(userDto.getEmail());
+    checkIfUserAlreadyExists(userDto.getUsername(), userDto.getEmail());
 
     // enhance UserEntity
     UserEntity userEntity = mapper.map(userDto, UserEntity.class);
@@ -67,8 +67,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(readOnly = true)
-  public Optional<UserDto> getUserByEmail(String email) {
-    Optional<UserEntity> userEntity = userRepository.findByEmail(email);
+  public Optional<UserDto> getUserByEmailOrUsername(String emailOrUsername) {
+    Optional<UserEntity> userEntity = findByEmailOrUsername(emailOrUsername);
 
     if (userEntity.isEmpty()) {
       return Optional.empty();
@@ -84,8 +84,7 @@ public class UserServiceImpl implements UserService {
     UserEntity userEntity = userRepository.findByUserId(userId)
                                           .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
-    userEntity.setUserName(userDto.getUserName());
-
+    userEntity.setUsername(userDto.getUsername());
     UserEntity updatedUserEntity = userRepository.save(userEntity);
 
     return mapper.map(updatedUserEntity, UserDto.class);
@@ -121,11 +120,11 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(readOnly = true)
-  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    UserEntity userEntity = userRepository.findByEmail(email)
-                                          .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_WITH_EMAIL_NOT_FOUND.toDisplayString()));
+  public UserDetails loadUserByUsername(String emailOrUsername) throws UsernameNotFoundException {
+    UserEntity userEntity = findByEmailOrUsername(emailOrUsername)
+                            .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND.toDisplayString()));
 
-    return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), userEntity.isEnabled(), true, true, true, Collections.emptyList());
+    return new User(userEntity.getUsername(), userEntity.getEncryptedPassword(), userEntity.isEnabled(), true, true, true, Collections.emptyList());
   }
 
   @Override
@@ -155,9 +154,28 @@ public class UserServiceImpl implements UserService {
     userRepository.save(userEntity);
   }
 
-  private void checkIfUserAlreadyExists(String email) {
-    if (userRepository.existsByEmail(email)) {
-      throw new UserAlreadyExistsException();
+  private Optional<UserEntity> findByEmailOrUsername(String emailOrUsername) {
+    // try to find user by email
+    Optional<UserEntity> userEntity = userRepository.findByEmail(emailOrUsername);
+
+    // If no user was found by email, a user will be searched by username
+    if (userEntity.isEmpty()) {
+      userEntity = userRepository.findByUsername(emailOrUsername);
+    }
+
+    return userEntity;
+  }
+
+  /*
+   * It's not allowed to use someones username or email.
+   * It's also not allowed to use someones email as username and vice versa.
+   */
+  private void checkIfUserAlreadyExists(String username, String email) {
+    if (userRepository.existsByUsername(username) || userRepository.existsByEmail(username)) {
+      throw UserAlreadyExistsException.createUserWithUsernameAlreadyExistsException();
+    }
+    else if (userRepository.existsByEmail(email) || userRepository.existsByUsername(email)) {
+      throw UserAlreadyExistsException.createUserWithEmailAlreadyExistsException();
     }
   }
 

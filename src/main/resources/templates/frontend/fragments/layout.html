@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html data-th-fragment="layout (template)" lang="en">
-  <head>
-    <title>Metal Release Radar</title>
+<html th:fragment="layout (template)" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:fragment="headerFragment">
+    <title th:include=":: #pageTitle">Dynamic page title</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
@@ -9,31 +9,31 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
     <!-- Custom -->
-    <link data-th-href="@{/css/frontend.css}" href="#" rel="stylesheet" />
+    <link th:href="@{/css/frontend.css}" href="#" rel="stylesheet" />
   </head>
   <body >
     <header>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-custom">
         <div class="container">
-          <a href="#" data-th-href="@{/follow-artists}"><img class="navbar-brand mb-0 h1" data-th-src="@{/images/logo.png}" alt="Logo" src="#" width="300" /></a>
+          <a href="#" th:href="@{/follow-artists}"><img class="navbar-brand mb-0 h1" th:src="@{/images/logo.png}" alt="Logo" src="#" width="300" /></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item active">
-                <a class="nav-link" href="#" data-th-href="@{/follow-artists}" >Follow Artists</a>
+                <a class="nav-link" href="#" th:href="@{/follow-artists}" >Follow Artists</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#" data-th-href="@{/my-artists}" >My Artists</a>
+                <a class="nav-link" href="#" th:href="@{/my-artists}" >My Artists</a>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarUpcomingReleasesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Upcoming Releases
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarUpcomingReleasesDropdown">
-                  <a class="dropdown-item" href="#" data-th-href="@{/all-releases}">All Releases</a>
-                  <a class="dropdown-item" href="#" data-th-href="@{/artists-releases}">From your Artists</a>
+                  <a class="dropdown-item" href="#" th:href="@{/all-releases}">All Releases</a>
+                  <a class="dropdown-item" href="#" th:href="@{/artists-releases}">From your Artists</a>
                 </div>
               </li>
             </ul>
@@ -43,10 +43,10 @@
                   John Doe
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarUserDropdown">
-                  <a class="dropdown-item" href="#" data-th-href="@{/profile}">Profile</a>
-                  <a class="dropdown-item" href="#" data-th-href="@{/settings}">Settings</a>
+                  <a class="dropdown-item" href="#" th:href="@{/profile}">Profile</a>
+                  <a class="dropdown-item" href="#" th:href="@{/settings}">Settings</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#" data-th-href="@{/logout}">Logout</a>
+                  <a class="dropdown-item" href="#" th:href="@{/logout}">Logout</a>
                 </div>
               </li>
             </ul>
@@ -58,7 +58,7 @@
     <main role="main">
       <div class="container bg-white" id="content-wrapper">
         <div class="content">
-          <data-th-block data-th-include="${template}"></data-th-block>
+          <th:block th:include="${template}" />
         </div>
       </div>
     </main>
@@ -72,7 +72,7 @@
               <li><a class="text-muted footer-link" href="https://github.com/Waginator/metal-release-radar" target="_blank">Find us on GitHub</a></li>
               <li><a class="text-muted footer-link" href="https://github.com/Waginator/metal-release-radar/issues/new/choose" target="_blank">Request a feature</a></li>
               <li><a class="text-muted footer-link" href="https://github.com/Waginator/metal-release-radar/issues/new/choose" target="_blank">Report an issue</a></li>
-              <li><a class="text-muted footer-link" href="#" data-th-href="@{/report-artist-release}">Report an artist release</a></li>
+              <li><a class="text-muted footer-link" href="#" th:href="@{/report-artist-release}">Report an artist release</a></li>
               <li><a class="text-muted footer-link" href="#" target="_blank">Spend a beer</a></li>
             </ul>
           </div>
@@ -88,10 +88,10 @@
           <div class="col-6 col-md">
             <h5 class="text-white">About</h5>
             <ul class="list-unstyled text-small">
-              <li><a class="text-muted footer-link" href="#" data-th-href="@{/about}">About Metal Release Radar</a></li>
-              <li><a class="text-muted footer-link" href="#" data-th-href="@{/team}">Our Team</a></li>
-              <li><a class="text-muted footer-link" href="#" data-th-href="@{/contact}">Contact us</a></li>
-              <li><a class="text-muted footer-link" href="#" data-th-href="@{/imprint}">Imprint</a></li>
+              <li><a class="text-muted footer-link" href="#" th:href="@{/about}">About Metal Release Radar</a></li>
+              <li><a class="text-muted footer-link" href="#" th:href="@{/team}">Our Team</a></li>
+              <li><a class="text-muted footer-link" href="#" th:href="@{/contact}">Contact us</a></li>
+              <li><a class="text-muted footer-link" href="#" th:href="@{/imprint}">Imprint</a></li>
             </ul>
           </div>
         </div>
