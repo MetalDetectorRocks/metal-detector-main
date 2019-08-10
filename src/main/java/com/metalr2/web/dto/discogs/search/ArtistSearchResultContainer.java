@@ -11,7 +11,7 @@ import java.util.List;
         "pagination",
         "results"
 })
-public class ArtistSearchResults {
+public class ArtistSearchResultContainer {
 
   @JsonProperty("pagination")
   private Pagination pagination;

@@ -3,15 +3,12 @@ package com.metalr2.web.controller;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.web.controller.discogs.demo.ArtistSearchRestClient;
-import com.metalr2.web.dto.discogs.search.ArtistSearchResult;
-import com.metalr2.web.dto.discogs.search.ArtistSearchResults;
+import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.Pagination;
 import com.metalr2.web.dto.discogs.search.PaginationUrls;
 import com.metalr2.web.dto.request.ArtistSearchRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,7 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -59,7 +59,7 @@ public class FollowArtistsController {
     return createArtistSearchResultModelAndView(artistName, page, size);
   }
 
-  private Map<String, Object> buildViewModel(ArtistSearchResults artistSearchResults, String artistName) {
+  private Map<String, Object> buildViewModel(ArtistSearchResultContainer artistSearchResults, String artistName) {
     Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
     viewModel.put("artistSearchResultList", artistSearchResults.getResults());
@@ -90,13 +90,13 @@ public class FollowArtistsController {
   private ModelAndView createArtistSearchResultModelAndView(String artistName, int page, int size) {
     log.debug("Searched artist: {}; page: {}; size: {}", artistName, page, size);
 
-    Optional<ArtistSearchResults> artistSearchResultsOptional = artistSearchRestClient.searchForArtist(artistName, page, size);
+    Optional<ArtistSearchResultContainer> artistSearchResultsOptional = artistSearchRestClient.searchForArtist(artistName, page, size);
 
     if (artistSearchResultsOptional.isEmpty()) {
       return createBadArtistSearchRequestModelAndView(artistName, page, size);
     }
 
-    ArtistSearchResults artistSearchResults = artistSearchResultsOptional.get();
+    ArtistSearchResultContainer artistSearchResults = artistSearchResultsOptional.get();
 
     Map<String, Object> viewModel = buildViewModel(artistSearchResults, artistName);
     return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);

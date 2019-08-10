@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
@@ -25,7 +26,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final UserService userService;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
   @Autowired
   public WebSecurity(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
     this.userService = userService;
@@ -37,33 +37,30 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     http
       .csrf().disable() // // todo danielw: enable later, do logout within a POST
       .authorizeRequests()
-            // .antMatchers(Endpoints.AntPattern.ADMIN).hasRole("ROLE_ADMIN")
-            .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
-            .antMatchers(Endpoints.AntPattern.INDEX).permitAll()
-            .antMatchers(Endpoints.AntPattern.LOGIN).permitAll()
-            .antMatchers(Endpoints.AntPattern.REGISTER).permitAll()
-            .antMatchers(Endpoints.AntPattern.REGISTRATION_VERIFICATION).permitAll()
-            .antMatchers(Endpoints.AntPattern.RESEND_VERIFICATION_TOKEN).permitAll()
-            .antMatchers(Endpoints.AntPattern.FORGOT_PASSWORD).permitAll()
-            .antMatchers(Endpoints.AntPattern.RESET_PASSWORD).permitAll()
-            .anyRequest().authenticated()
+        // .antMatchers(Endpoints.AntPattern.ADMIN).hasRole("ROLE_ADMIN")
+        .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
+        .antMatchers(Endpoints.AntPattern.AUTH_PAGES).anonymous()
+        .anyRequest().authenticated()
       .and()
       .formLogin()
-            .loginPage(Endpoints.Guest.LOGIN)
-            .loginProcessingUrl(Endpoints.Guest.LOGIN)
-            .defaultSuccessUrl(Endpoints.Frontend.FOLLOW_ARTISTS, false) // if this is true, user see always this site after login
-            .failureHandler(authenticationFailureHandler())
+        .loginPage(Endpoints.Guest.LOGIN)
+        .loginProcessingUrl(Endpoints.Guest.LOGIN)
+        .defaultSuccessUrl(Endpoints.Frontend.FOLLOW_ARTISTS, false) // if this is true, user see always this site after login
+        .failureHandler(authenticationFailureHandler())
       .and()
       .rememberMe()
-            .key(REMEMBER_ME_SECRET)
-            .tokenValiditySeconds((int) ExpirationTime.TWO_WEEKS.toSeconds())
+        .key(REMEMBER_ME_SECRET)
+        .tokenValiditySeconds((int) ExpirationTime.TWO_WEEKS.toSeconds())
       .and()
       .logout()
-            .logoutUrl(Endpoints.Guest.LOGOUT).permitAll()
-            .invalidateHttpSession(true)
-            .clearAuthentication(true)
-            .deleteCookies("JSESSIONID", "remember-me")
-            .logoutSuccessHandler(logoutSuccessHandler());
+        .logoutUrl(Endpoints.Guest.LOGOUT).permitAll()
+        .invalidateHttpSession(true)
+        .clearAuthentication(true)
+        .deleteCookies("JSESSIONID", "remember-me")
+        .logoutSuccessHandler(logoutSuccessHandler())
+      .and()
+      .exceptionHandling()
+        .accessDeniedHandler(accessDeniedHandler());
   }
 
   @Override
@@ -77,6 +74,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
   private LogoutSuccessHandler logoutSuccessHandler() {
     return new CustomLogoutSuccessHandler();
+  }
+
+  private AccessDeniedHandler accessDeniedHandler(){
+    return new CustomAccessDeniedHandler();
   }
 
 }

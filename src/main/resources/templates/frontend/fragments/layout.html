@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html th:fragment="layout (template)" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html th:fragment="layout (template)" lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 <head th:fragment="headerFragment">
     <title th:include=":: #pageTitle">Dynamic page title</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -40,7 +42,7 @@
             <ul class="navbar-nav">
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  John Doe
+                  <span sec:authentication="name">Username</span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarUserDropdown">
                   <a class="dropdown-item" href="#" th:href="@{/profile}">Profile</a>
