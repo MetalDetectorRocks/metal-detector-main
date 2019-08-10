@@ -40,30 +40,30 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             // todo danielw: build one big AntPattern for guest area
         .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
         .antMatchers(Endpoints.AntPattern.INDEX).anonymous()
-            .antMatchers(Endpoints.AntPattern.LOGIN).anonymous()
-            .antMatchers(Endpoints.AntPattern.REGISTER).anonymous()
-            .antMatchers(Endpoints.AntPattern.REGISTRATION_VERIFICATION).anonymous()
-            .antMatchers(Endpoints.AntPattern.RESEND_VERIFICATION_TOKEN).anonymous()
-            .antMatchers(Endpoints.AntPattern.FORGOT_PASSWORD).anonymous()
-            .antMatchers(Endpoints.AntPattern.RESET_PASSWORD).anonymous()
-            .anyRequest().authenticated()
+        .antMatchers(Endpoints.AntPattern.LOGIN).anonymous()
+        .antMatchers(Endpoints.AntPattern.REGISTER).anonymous()
+        .antMatchers(Endpoints.AntPattern.REGISTRATION_VERIFICATION).anonymous()
+        .antMatchers(Endpoints.AntPattern.RESEND_VERIFICATION_TOKEN).anonymous()
+        .antMatchers(Endpoints.AntPattern.FORGOT_PASSWORD).anonymous()
+        .antMatchers(Endpoints.AntPattern.RESET_PASSWORD).anonymous()
+        .anyRequest().authenticated()
       .and()
       .formLogin()
-            .loginPage(Endpoints.Guest.LOGIN)
-            .loginProcessingUrl(Endpoints.Guest.LOGIN)
-            .defaultSuccessUrl(Endpoints.Frontend.FOLLOW_ARTISTS, false) // if this is true, user see always this site after login
-            .failureHandler(authenticationFailureHandler())
+        .loginPage(Endpoints.Guest.LOGIN)
+        .loginProcessingUrl(Endpoints.Guest.LOGIN)
+        .defaultSuccessUrl(Endpoints.Frontend.FOLLOW_ARTISTS, false) // if this is true, user see always this site after login
+        .failureHandler(authenticationFailureHandler())
       .and()
       .rememberMe()
-            .key(REMEMBER_ME_SECRET)
-            .tokenValiditySeconds((int) ExpirationTime.TWO_WEEKS.toSeconds())
+        .key(REMEMBER_ME_SECRET)
+        .tokenValiditySeconds((int) ExpirationTime.TWO_WEEKS.toSeconds())
       .and()
       .logout()
-            .logoutUrl(Endpoints.Guest.LOGOUT).permitAll()
-            .invalidateHttpSession(true)
-            .clearAuthentication(true)
-            .deleteCookies("JSESSIONID", "remember-me")
-            .logoutSuccessHandler(logoutSuccessHandler());
+        .logoutUrl(Endpoints.Guest.LOGOUT).permitAll()
+        .invalidateHttpSession(true)
+        .clearAuthentication(true)
+        .deleteCookies("JSESSIONID", "remember-me")
+        .logoutSuccessHandler(logoutSuccessHandler());
   }
 
   @Override
