@@ -38,15 +38,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
       .csrf().disable() // // todo danielw: enable later, do logout within a POST
       .authorizeRequests()
         // .antMatchers(Endpoints.AntPattern.ADMIN).hasRole("ROLE_ADMIN")
-            // todo danielw: build one big AntPattern for guest area
         .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
-        .antMatchers(Endpoints.AntPattern.INDEX).anonymous()
-        .antMatchers(Endpoints.AntPattern.LOGIN).anonymous()
-        .antMatchers(Endpoints.AntPattern.REGISTER).anonymous()
-        .antMatchers(Endpoints.AntPattern.REGISTRATION_VERIFICATION).anonymous()
-        .antMatchers(Endpoints.AntPattern.RESEND_VERIFICATION_TOKEN).anonymous()
-        .antMatchers(Endpoints.AntPattern.FORGOT_PASSWORD).anonymous()
-        .antMatchers(Endpoints.AntPattern.RESET_PASSWORD).anonymous()
+        .antMatchers(Endpoints.AntPattern.AUTH_PAGES).anonymous()
         .anyRequest().authenticated()
       .and()
       .formLogin()

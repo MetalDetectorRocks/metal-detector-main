@@ -1,6 +1,7 @@
 package com.metalr2.config.constants;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Endpoints {
 
@@ -47,16 +48,20 @@ public class Endpoints {
     public static final String USERS_EDIT   = "/admin/users/edit/{id}";
   }
 
+
   public static class AntPattern {
     public static final String   ADMIN                     = "/admin/**";
-    public static final String[] INDEX                     = {"/", "/index", "/index/"};
+           static final String[] INDEX                     = {"/", "/index", "/index/"};
     public static final String[] LOGIN                     = {"/login", "/login/"};
-    public static final String[] REGISTER                  = {"/register", "/register/"};
-    public static final String[] REGISTRATION_VERIFICATION = {"/registration-verification", "/registration-verification/"};
-    public static final String[] RESEND_VERIFICATION_TOKEN = {"/resend-verification-token", "/resend-verification-token/"};
-    public static final String[] FORGOT_PASSWORD           = {"/forgot-password", "/forgot-password/"};
-    public static final String[] RESET_PASSWORD            = {"/reset-password", "/reset-password/"};
+           static final String[] REGISTER                  = {"/register", "/register/"};
+           static final String[] REGISTRATION_VERIFICATION = {"/registration-verification", "/registration-verification/"};
+           static final String[] RESEND_VERIFICATION_TOKEN = {"/resend-verification-token", "/resend-verification-token/"};
+           static final String[] FORGOT_PASSWORD           = {"/forgot-password", "/forgot-password/"};
+           static final String[] RESET_PASSWORD            = {"/reset-password", "/reset-password/"};
     public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**"};
+
+    public static final String[] AUTH_PAGES = Stream.of(INDEX, LOGIN, REGISTER, REGISTRATION_VERIFICATION,
+            RESEND_VERIFICATION_TOKEN, FORGOT_PASSWORD, RESET_PASSWORD).flatMap(Stream::of).toArray(String[]::new);
   }
 
 }
