@@ -38,6 +38,7 @@
             <div th:each="result : ${artistSearchResultList}"
                  th:class="card">
                 <div th:class="card-body">
+                    <img th:if="${result.thumb} != ''" src="" th:src="${result.thumb}" th:alt="${'Thumb for ' + artistName}" alt="">
                     <p th:text="${result.id}">Id</p>
                     <p th:text="${result.title}">Title</p>
                     <a th:href="@{/artist-details(artistName=${result.title}, id=${result.id})}"
