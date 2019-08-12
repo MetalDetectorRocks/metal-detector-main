@@ -15,6 +15,13 @@ public enum UserRole {
     return userRoleSet;
   }
 
+  public static Set<UserRole> createAdministratorRole() {
+    Set<UserRole> userRoleSet = new HashSet<>();
+    userRoleSet.add(ADMINISTRATOR);
+
+    return userRoleSet;
+  }
+
   public static Set<UserRole> createSuperUserRole() {
     Set<UserRole> superUserRoleSet = createUserRole();
     superUserRoleSet.add(ADMINISTRATOR);

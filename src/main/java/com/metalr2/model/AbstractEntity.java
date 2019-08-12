@@ -9,7 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -27,7 +27,7 @@ public class AbstractEntity {
   @Temporal(TemporalType.TIMESTAMP)
   @Column(name = "created_date", updatable = false)
   @ArtifactForFramework
-  private Date createdDate;
+  private Date createdDateTime;
 
   @CreatedBy
   @Column(name = "created_by", updatable = false)
@@ -38,7 +38,7 @@ public class AbstractEntity {
   @Temporal(TemporalType.TIMESTAMP)
   @Column(name = "last_modified_date")
   @ArtifactForFramework
-  private Date lastModifiedDate;
+  private Date lastModifiedDateTime;
 
   @LastModifiedBy
   @Column(name = "last_modified_by")
@@ -49,12 +49,12 @@ public class AbstractEntity {
     return id == null;
   }
 
-  public LocalDate getCreatedDate() {
-    return createdDate != null ? createdDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
+  public LocalDateTime getCreatedDateTime() {
+    return createdDateTime != null ? createdDateTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime() : null;
   }
 
-  public LocalDate getLastModifiedDate() {
-    return lastModifiedDate != null ? lastModifiedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
+  public LocalDateTime getLastModifiedDateTime() {
+    return lastModifiedDateTime != null ? lastModifiedDateTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime() : null;
   }
 
 }

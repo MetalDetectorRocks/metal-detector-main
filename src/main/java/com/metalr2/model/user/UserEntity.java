@@ -13,6 +13,8 @@ import java.util.UUID;
 @Entity(name="users")
 public class UserEntity extends AbstractEntity {
 
+  private static final int ENCRYPTED_PASSWORD_LENGTH = 60;
+
   @Column(name = "public_id", nullable = false, unique = true, updatable = false)
   private String publicId; // ToDo DanielW: test UUID later
 
@@ -22,7 +24,7 @@ public class UserEntity extends AbstractEntity {
   @Column(name = "email", nullable = false, length=120, unique = true)
   private String email;
 
-  @Column(name = "encrypted_password", nullable = false, length = 60)
+  @Column(name = "encrypted_password", nullable = false, length = ENCRYPTED_PASSWORD_LENGTH)
   private String encryptedPassword;
 
   @Column(name = "user_roles", nullable = false)
@@ -56,8 +58,13 @@ public class UserEntity extends AbstractEntity {
     email = newEmail == null ? "" : newEmail;
   }
 
+  // ToDo DanielW: use special data type for encrypted password?
   public void setEncryptedPassword(String newEncryptedPassword) {
-    encryptedPassword = newEncryptedPassword == null ? "" : newEncryptedPassword;
+    if (newEncryptedPassword == null || newEncryptedPassword.length() != ENCRYPTED_PASSWORD_LENGTH) {
+      throw new IllegalArgumentException("It seems that the new password has not been correctly encrypted.");
+    }
+
+    encryptedPassword = newEncryptedPassword;
   }
 
   public void setUserRoles(Set<UserRole> newUserRoles) {
