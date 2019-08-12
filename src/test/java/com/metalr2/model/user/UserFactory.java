@@ -6,7 +6,7 @@ class UserFactory {
     return UserEntity.builder()
             .username(username)
             .email(email)
-            .encryptedPassword("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
+            .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
             .userRoles(UserRole.createUserRole())
             .enabled(true)
             .build();
@@ -16,7 +16,7 @@ class UserFactory {
     return UserEntity.builder()
             .username(username)
             .email(email)
-            .encryptedPassword("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
+            .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
             .userRoles(UserRole.createAdministratorRole())
             .enabled(true)
             .build();
@@ -26,7 +26,7 @@ class UserFactory {
     return UserEntity.builder()
             .username(username)
             .email(email)
-            .encryptedPassword("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
+            .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
             .userRoles(UserRole.createSuperUserRole())
             .enabled(true)
             .build();

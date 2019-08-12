@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @FieldsValueMatch.List({
-  @FieldsValueMatch(field = "password", fieldMatch = "verifyPassword", message = "The Passwords must match")
+  @FieldsValueMatch(field = "newPlainPassword", fieldMatch = "verifyNewPlainPassword", message = "The Passwords must match")
 })
 @Getter
 @Setter
@@ -20,10 +20,10 @@ public class ChangePasswordRequest {
 
   @NotBlank
   @Size(min=8, message="Password length must be at least 8 characters")
-  private String password;
+  private String newPlainPassword;
 
   @NotBlank
   @Size(min=8, message="Password length must be at least 8 characters")
-  private String verifyPassword;
+  private String verifyNewPlainPassword;
 
 }

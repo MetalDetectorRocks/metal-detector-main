@@ -45,12 +45,15 @@ public class UserServiceImpl implements UserService {
   public UserDto createUser(UserDto userDto) {
     checkIfUserAlreadyExists(userDto.getUsername(), userDto.getEmail());
 
-    // enhance UserEntity
-    UserEntity userEntity = mapper.map(userDto, UserEntity.class);
-    userEntity.setPassword(passwordEncoder.encode(userDto.getPassword()));
-    userEntity.setUserRoles(UserRole.createUserRole());
-
     // create user
+    UserEntity userEntity = UserEntity.builder()
+            .username(userDto.getUsername())
+            .email(userDto.getEmail())
+            .password(passwordEncoder.encode(userDto.getPlainPassword()))
+            .userRoles(UserRole.createUserRole())
+            .build();
+
+    // persist user
     UserEntity savedUserEntity = userRepository.save(userEntity);
 
     return mapper.map(savedUserEntity, UserDto.class);

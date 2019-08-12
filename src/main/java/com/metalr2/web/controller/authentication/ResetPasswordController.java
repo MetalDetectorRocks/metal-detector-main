@@ -92,7 +92,7 @@ public class ResetPasswordController {
         UserEntity userEntity = tokenEntity.get().getUser();
 
     // 2. set new password
-    userService.changePassword(userEntity, changePasswordRequest.getPassword());
+    userService.changePassword(userEntity, changePasswordRequest.getNewPlainPassword());
 
     // 3. remove token from database
     tokenService.deleteToken(tokenEntity.get());

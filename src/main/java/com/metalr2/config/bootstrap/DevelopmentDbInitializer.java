@@ -30,7 +30,7 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
     UserEntity johnDoe = UserEntity.builder()
                                    .username("JohnD")
                                    .email("john.doe@example.com")
-                                   .encryptedPassword("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
+                                   .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
                                    .enabled(true)
                                    .userRoles(UserRole.createUserRole())
                                    .build();
@@ -38,7 +38,7 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
     UserEntity mariaThompson = UserEntity.builder()
                                          .username("MariaT")
                                          .email("maria.thompson@example.com")
-                                         .encryptedPassword("$2a$10$fiWhbakTv3lFCiz6weDJXO/qZuzUL.uLJFOkQuquOnRGIJaoJGKpS")
+                                         .password("$2a$10$fiWhbakTv3lFCiz6weDJXO/qZuzUL.uLJFOkQuquOnRGIJaoJGKpS")
                                          .enabled(true)
                                          .userRoles(UserRole.createUserRole())
                                          .build();
@@ -46,7 +46,7 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
     UserEntity mikeMiller = UserEntity.builder()
                                       .username("MikeM")
                                       .email("mike.miller@example.com")
-                                      .encryptedPassword("$2a$10$ymg5PpCHQ.bp7RTynUzxzeLGfHN2.0K6y0q7NLlZ/d01zkhN1cb8W")
+                                      .password("$2a$10$ymg5PpCHQ.bp7RTynUzxzeLGfHN2.0K6y0q7NLlZ/d01zkhN1cb8W")
                                       .enabled(false)
                                       .userRoles(UserRole.createUserRole())
                                       .build();
@@ -54,7 +54,7 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
     UserEntity administrator = UserEntity.builder()
                                          .username("Administrator")
                                          .email("administrator@example.com")
-                                         .encryptedPassword("$2a$10$ymg5PpCHQ.bp7RTynUzxzeLGfHN2.0K6y0q7NLlZ/d01zkhN1cb8W") // todo danielw: change password hash
+                                         .password("$2a$10$SHReFWSMijakmT6GTC/EN.kLY4RYvqfcLsjDibRMEMeYCqPPbcNE6")
                                          .enabled(true)
                                          .userRoles(UserRole.createSuperUserRole())
                                          .build();
