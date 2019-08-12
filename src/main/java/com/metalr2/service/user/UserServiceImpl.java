@@ -14,14 +14,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
     // enhance UserEntity
     UserEntity userEntity = mapper.map(userDto, UserEntity.class);
-    userEntity.setEncryptedPassword(passwordEncoder.encode(userDto.getPassword()));
+    userEntity.setPassword(passwordEncoder.encode(userDto.getPassword()));
     userEntity.setUserRoles(UserRole.createUserRole());
 
     // create user
@@ -123,10 +121,8 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(readOnly = true)
   public UserDetails loadUserByUsername(String emailOrUsername) throws UsernameNotFoundException {
-    UserEntity userEntity = findByEmailOrUsername(emailOrUsername)
-                            .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND.toDisplayString()));
-
-    return new User(userEntity.getUsername(), userEntity.getEncryptedPassword(), userEntity.isEnabled(), true, true, true, Collections.emptyList());
+    return findByEmailOrUsername(emailOrUsername)
+           .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND.toDisplayString()));
   }
 
   @Override
@@ -152,7 +148,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void changePassword(UserEntity userEntity, String newPassword) {
-    userEntity.setEncryptedPassword(passwordEncoder.encode(newPassword));
+    userEntity.setPassword(passwordEncoder.encode(newPassword));
     userRepository.save(userEntity);
   }
 

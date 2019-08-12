@@ -143,12 +143,12 @@ class UserEntityTest {
     String newEncryptedPassword = passwordEncoder.encode("test1234");
     UserEntity user = UserFactory.createSuperUser("Test", "test@test.com");
 
-    assertNotNull(user.getEncryptedPassword());
-    user.setEncryptedPassword(newEncryptedPassword);
-    assertEquals(newEncryptedPassword, user.getEncryptedPassword());
+    assertNotNull(user.getPassword());
+    user.setPassword(newEncryptedPassword);
+    assertEquals(newEncryptedPassword, user.getPassword());
 
-    assertThrows(IllegalArgumentException.class, () -> user.setEncryptedPassword(null));
-    assertThrows(IllegalArgumentException.class, () -> user.setEncryptedPassword(""));
+    assertThrows(IllegalArgumentException.class, () -> user.setPassword(null));
+    assertThrows(IllegalArgumentException.class, () -> user.setPassword(""));
   }
 
   @Test
@@ -161,8 +161,9 @@ class UserEntityTest {
     user.setUserRoles(UserRole.createSuperUserRole());
     assertTrue(user.isSuperUser());
 
-    user.removeUserRole(UserRole.ADMINISTRATOR);
+    boolean removeResult = user.removeUserRole(UserRole.ADMINISTRATOR);
     assertTrue(user.isUser());
+    assertTrue(removeResult);
 
     assertThrows(IllegalArgumentException.class, () -> user.setUserRoles(Collections.emptySet()));
     assertThrows(IllegalArgumentException.class, () -> user.setUserRoles(null));
