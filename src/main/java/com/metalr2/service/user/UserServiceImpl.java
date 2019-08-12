@@ -8,6 +8,7 @@ import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.token.TokenRepository;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserRepository;
+import com.metalr2.model.user.UserRole;
 import com.metalr2.web.dto.UserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ public class UserServiceImpl implements UserService {
     // enhance UserEntity
     UserEntity userEntity = mapper.map(userDto, UserEntity.class);
     userEntity.setEncryptedPassword(passwordEncoder.encode(userDto.getPassword()));
+    userEntity.setUserRoles(UserRole.createUserRole());
 
     // create user
     UserEntity savedUserEntity = userRepository.save(userEntity);
@@ -58,8 +60,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(readOnly = true)
-  public UserDto getUserByUserId(String userId) {
-    UserEntity userEntity = userRepository.findByUserId(userId)
+  public UserDto getUserByPublicId(String publicId) {
+    UserEntity userEntity = userRepository.findByPublicId(publicId)
                                           .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
     return mapper.map(userEntity, UserDto.class);
@@ -80,11 +82,11 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public UserDto updateUser(String userId, UserDto userDto) {
-    UserEntity userEntity = userRepository.findByUserId(userId)
+  public UserDto updateUser(String publicId, UserDto userDto) {
+    UserEntity userEntity = userRepository.findByPublicId(publicId)
                                           .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
-    userEntity.setUsername(userDto.getUsername());
+    userEntity.setEmail(userDto.getEmail());
     UserEntity updatedUserEntity = userRepository.save(userEntity);
 
     return mapper.map(updatedUserEntity, UserDto.class);
@@ -92,8 +94,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void deleteUser(String userId) {
-    UserEntity userEntity = userRepository.findByUserId(userId)
+  public void deleteUser(String publicId) {
+    UserEntity userEntity = userRepository.findByPublicId(publicId)
                                           .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
     userRepository.delete(userEntity);
   }
