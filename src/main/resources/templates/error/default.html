@@ -13,22 +13,22 @@
     </head>
     <body>
         <div class="container">
-            <h1 class="display-4 text-white">>Default Error Page</h1>
+            <h1 class="display-4 text-white">Default Error Page</h1>
 
-            <p th:if="${timestamp}" id='created'>
+            <p th:if="${timestamp}" id="created" class="text-white">
                 <b>Occurred:</b> <span th:text="${timestamp}">Timestamp</span>
             </p>
 
-            <p th:if="${status}">
+            <p th:if="${status}" class="text-white">
                 <b>Response Status:</b> <span th:text="${status}">status-code</span>
                 <span th:if="${error}" th:text="'('+${error}+')'">error</span>
             </p>
 
-            <p th:if="${requestedURI}">
+            <p th:if="${requestedURI}" class="text-white">
                 <b>Request URI:</b> <span th:text="${requestedURI}">/request/uri</span>
             </p>
 
-            <div th:if="${exception} or (${message} and ${message.length() != 0})">
+            <div th:if="${exception} or (${message} and ${message.length() != 0})" class="text-white">
                 <b>Cause:</b> <span th:if="${exception}" th:text="${exception}">exception</span>
                 <span th:if="${exception}" th:text="${exception}">exception</span>
                 <span th:if="${message} and ${message.length() != 0}"
@@ -39,11 +39,11 @@
                 </blockquote>
             </div>
 
-            <p th:unless="${exception} or (${message} and ${message.length() != 0})">
+            <p class="text-white" th:unless="${exception} or (${message} and ${message.length() != 0})">
                 Cause unknown (no exception details available)
             </p>
 
-            <p>
+            <p class="text-white">
                 You are seeing this error page due to Spring Boot (which returns a
                 view called "error" in response to uncaught exceptions. Since we are
                 using Thymeleaf this corresponds to the template <code>error.html</code>)

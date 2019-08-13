@@ -2,6 +2,8 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
+import com.metalr2.web.controller.discogs.demo.ArtistSearchRestClient;
+import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
 import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
 import com.metalr2.web.dto.discogs.search.ArtistSearchResults;
 import com.metalr2.web.dto.discogs.search.Pagination;
@@ -56,7 +58,7 @@ public class FollowArtistsController {
     return createArtistSearchResultModelAndView(artistName, page, size);
   }
 
-  private Map<String, Object> buildViewModel(ArtistSearchResults artistSearchResults, String artistName) {
+  private Map<String, Object> buildViewModel(ArtistSearchResultContainer artistSearchResults, String artistName) {
     Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
     viewModel.put("artistSearchResultList", artistSearchResults.getResults());
@@ -85,13 +87,13 @@ public class FollowArtistsController {
   }
 
   private ModelAndView createArtistSearchResultModelAndView(String artistName, int page, int size) {
-    Optional<ArtistSearchResults> artistSearchResultsOptional = artistSearchRestClient.searchForArtistByName(artistName, page, size);
+    Optional<ArtistSearchResultContainer> artistSearchResultsOptional = artistSearchRestClient.searchForArtistByName(artistName, page, size);
 
     if (artistSearchResultsOptional.isEmpty()) {
       return createBadArtistSearchRequestModelAndView(artistName, page, size);
     }
 
-    ArtistSearchResults artistSearchResults = artistSearchResultsOptional.get();
+    ArtistSearchResultContainer artistSearchResults = artistSearchResultsOptional.get();
 
     Map<String, Object> viewModel = buildViewModel(artistSearchResults, artistName);
     return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);

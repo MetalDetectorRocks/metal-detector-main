@@ -4,35 +4,34 @@
         <title id="pageTitle">Follow Artists | Metal Release Radar</title>
     </head>
     <body>
-        <div class="mb-3 mt-5">
-            <h1>Follow Artists</h1>
-            <!-- Search Form -->
-            <div class="mb-3">
-                <form id="searchForm" action="#" th:action="@{/follow-artists}" th:object="${artistSearchRequest}"
-                      method="POST">
-                    <!-- Artist name -->
-                    <label for="artistName"></label><input type="text" id="artistName" class="form-control"
-                                                           th:field="*{artistName}">
-                    <!-- Submit -->
-                    <button class="btn btn-primary btn-dark font-weight-bold" type="submit">Search</button>
-                </form>
-            </div>
-            <!-- Artist name -->
-            <div class="mb-3">
-                <div th:if="${totalPages} > 0" th:text="${'You searched for: ' + artistName}">Artist Name</div>
-            </div>
-            <!-- Bad request message -->
-            <div class="mb-3">
-                <div th:if="${badArtistSearchRequestMessage} != null" class="alert alert-danger" role="alert">
-                    <p th:text="${badArtistSearchRequestMessage}">Bad search request message</p>
-                    <ul>
-                        <li th:text="${'Artist name: ' + badArtistSearchRequestArtistName}">Bad search request artist name</li>
-                        <li th:text="${'Page: ' + badArtistSearchRequestPage}">Bad search request page</li>
-                        <li th:text="${'Size: ' + badArtistSearchRequestSize}">Bad search request</li>
-                    </ul>
-                </div>
+        <h1>Follow Artists</h1>
+        <!-- Search Form -->
+        <div class="mb-3">
+            <form id="searchForm" action="#" th:action="@{/follow-artists}" th:object="${artistSearchRequest}"
+                  method="POST">
+                <!-- Artist name -->
+                <label for="artistName"></label><input type="text" id="artistName" class="form-control"
+                                                       th:field="*{artistName}">
+                <!-- Submit -->
+                <button class="btn btn-primary btn-dark font-weight-bold" type="submit">Search</button>
+            </form>
+        </div>
+        <!-- Artist name -->
+        <div class="mb-3">
+            <div th:if="${totalPages} > 0" th:text="${'You searched for: ' + artistName}">Artist Name</div>
+        </div>
+        <!-- Bad request message -->
+        <div class="mb-3">
+            <div th:if="${badArtistSearchRequestMessage} != null" class="alert alert-danger" role="alert">
+                <p th:text="${badArtistSearchRequestMessage}">Bad search request message</p>
+                <ul>
+                    <li th:text="${'Artist name: ' + badArtistSearchRequestArtistName}">Bad search request artist name</li>
+                    <li th:text="${'Page: ' + badArtistSearchRequestPage}">Bad search request page</li>
+                    <li th:text="${'Size: ' + badArtistSearchRequestSize}">Bad search request</li>
+                </ul>
             </div>
         </div>
+
         <!-- Result cards -->
         <div class="mb-3">
             <div th:each="result : ${artistSearchResultList}"

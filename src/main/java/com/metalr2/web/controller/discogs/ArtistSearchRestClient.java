@@ -1,6 +1,7 @@
 package com.metalr2.web.controller.discogs;
 
 import com.metalr2.config.misc.DiscogsConfig;
+import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.artist.Artist;
 import com.metalr2.web.dto.discogs.search.ArtistSearchResults;
 import lombok.extern.slf4j.Slf4j;
@@ -24,23 +25,24 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
     super(restTemplate, discogsConfig);
   }
 
-  public Optional<ArtistSearchResults> searchForArtistByName(String artistQueryString, int page, int size) {
+  public Optional<ArtistSearchResultContainer> searchForArtistByName(String artistQueryString, int page, int size) {
     log.debug("Searched artist: {}; page: {}; size: {}", artistQueryString, page, size);
 
     if (artistQueryString.isEmpty() || size == 0) {
       return Optional.empty();
     }
 
-    ResponseEntity<ArtistSearchResults> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_NAME_SEARCH_URL_FRAGMENT,
-            ArtistSearchResults.class,
+    ResponseEntity<ArtistSearchResultContainer> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_SEARCH_URL_FRAGMENT,
+            ArtistSearchResultContainer.class,
             artistQueryString,
             page,
             size);
 
-    if (responseEntity.getBody() == null || !responseEntity.getStatusCode().equals(HttpStatus.OK)
-            || responseEntity.getBody().getResults().isEmpty()) {
+    ArtistSearchResultContainer resultContainer = responseEntity.getBody();
+    if (resultContainer == null || responseEntity.getStatusCode() != HttpStatus.OK || resultContainer.getResults().isEmpty()) {
       return Optional.empty();
     }
+
     return Optional.of(responseEntity.getBody());
   }
 
