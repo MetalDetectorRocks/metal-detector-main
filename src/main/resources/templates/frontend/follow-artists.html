@@ -31,7 +31,6 @@
                 </ul>
             </div>
         </div>
-
         <!-- Result cards -->
         <div class="mb-3">
             <div th:each="result : ${artistSearchResultList}"
@@ -42,6 +41,9 @@
                     <a target="_blank" rel="noopener noreferrer"
                        th:href="@{${result.uri}}"
                        th:text="${result.title + ' on discogs'}">uri</a>
+<!--                    <a href="#" th:object="${followArtistRequest}" th:href="@{/follow-artists(followArtistRequest={&quot;artistDiscogsId&quot;:&quot;${result.id}&quot;,&quot;emailOrUserName&quot;:&quot;JohnD&quot;} ,size=${nextSize}, page=${nextPage}, artistName=${artistName})}"-->
+<!--                       th:text="#{Follow}"-->
+<!--                       class="btn btn-dark btn-pagination">Follow</a>-->
                 </div>
             </div>
         </div>
