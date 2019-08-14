@@ -1,6 +1,8 @@
 package com.metalr2.security;
 
 import com.metalr2.config.constants.Endpoints;
+import com.metalr2.model.user.UserRole;
+import com.metalr2.security.handler.CustomAccessDeniedHandler;
 import com.metalr2.security.handler.CustomAuthenticationFailureHandler;
 import com.metalr2.security.handler.CustomAuthenticationSuccessHandler;
 import com.metalr2.security.handler.CustomLogoutSuccessHandler;
@@ -35,7 +37,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     http
       .csrf().disable() // // todo danielw: enable later, do logout within a POST
       .authorizeRequests()
-        // .antMatchers(Endpoints.AntPattern.ADMIN).hasRole("ROLE_ADMIN")
+        .antMatchers(Endpoints.AntPattern.ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
         .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
         .antMatchers(Endpoints.AntPattern.AUTH_PAGES).anonymous()
         .anyRequest().authenticated()

@@ -3,12 +3,14 @@ package com.metalr2.model.user;
 import com.metalr2.model.AbstractEntity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
@@ -98,11 +100,11 @@ public class UserEntity extends AbstractEntity implements UserDetails {
   }
 
   public boolean isUser() {
-    return userRoles.contains(UserRole.USER);
+    return userRoles.contains(UserRole.ROLE_USER);
   }
 
   public boolean isAdministrator() {
-    return userRoles.contains(UserRole.ADMINISTRATOR);
+    return userRoles.contains(UserRole.ROLE_ADMINISTRATOR);
   }
 
   public boolean isSuperUser() {
@@ -111,7 +113,7 @@ public class UserEntity extends AbstractEntity implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return null;
+    return userRoles.stream().map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
   }
 
   public void setEnabled(boolean enabled) {

@@ -3,6 +3,7 @@ package com.metalr2.web.controller;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,14 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @Slf4j
-public class CustomErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
+public class CustomErrorController implements ErrorController {
 
   @Override
   public String getErrorPath() {
-    return Endpoints.Guest.ERROR;
+    return Endpoints.ERROR;
   }
 
-  @RequestMapping(Endpoints.Guest.ERROR)
+  @RequestMapping(Endpoints.ERROR)
   public ModelAndView handleError(HttpServletRequest request) {
     Object statusCodeObj = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
     Object requestURIObj = request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
@@ -28,13 +29,17 @@ public class CustomErrorController implements org.springframework.boot.web.servl
     int statusCode      = statusCodeObj != null ? Integer.parseInt(statusCodeObj.toString()) : -1;
     String requestedURI = requestURIObj != null ? (String) requestURIObj : "";
 
-    if(statusCode == HttpStatus.NOT_FOUND.value()) {
+    if (statusCode == HttpStatus.NOT_FOUND.value()) {
       log.warn("Could not find any content for '{}'", requestedURI);
       return new ModelAndView(ViewNames.Guest.ERROR_404, "requestedURI", requestedURI);
     }
-    else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+    else if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
       log.error("Internal server error while requesting '{}''", requestedURI);
       return new ModelAndView(ViewNames.Guest.ERROR_500, "requestedURI", requestedURI);
+    }
+    else if (statusCode == HttpStatus.FORBIDDEN.value()) {
+      log.warn("Access denied while requesting '{}' for user {}'", requestedURI, request.getUserPrincipal().getName());
+      return new ModelAndView(ViewNames.Guest.ERROR_403, "requestedURI", requestedURI);
     }
 
     log.error("Unhandled exception occurred. Status code is {}. Requested URI was {}", statusCode, request);

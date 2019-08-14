@@ -12,6 +12,7 @@ public class ViewNames {
 
     // Error pages
     public static final String ERROR                     = "error/default";
+    public static final String ERROR_403                 = "error/403";
     public static final String ERROR_404                 = "error/404";
     public static final String ERROR_500                 = "error/500";
   }

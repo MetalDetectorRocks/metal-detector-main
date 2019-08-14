@@ -161,7 +161,7 @@ class UserEntityTest {
     user.setUserRoles(UserRole.createSuperUserRole());
     assertTrue(user.isSuperUser());
 
-    boolean removeResult = user.removeUserRole(UserRole.ADMINISTRATOR);
+    boolean removeResult = user.removeUserRole(UserRole.ROLE_ADMINISTRATOR);
     assertTrue(user.isUser());
     assertTrue(removeResult);
 
