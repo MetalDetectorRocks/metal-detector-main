@@ -42,24 +42,24 @@
         <!-- Password -->
         <div class="small ml-1">Make sure your password has at least 8 characters.</div>
         <div class="form-label-group">
-          <input type="password" id="password" class="form-control" name="password"
-                 th:class="${#fields.hasErrors('password')}? 'form-control is-invalid' : 'form-control'"
-                 th:field="*{password}"
+          <input type="password" id="plainPassword" class="form-control" name="plainPassword"
+                 th:class="${#fields.hasErrors('plainPassword')}? 'form-control is-invalid' : 'form-control'"
+                 th:field="*{plainPassword}"
                  placeholder="#"
                  required>
-          <div class="invalid-feedback" th:errors="*{password}">Password error</div>
-          <label for="password">Password</label>
+          <div class="invalid-feedback" th:errors="*{plainPassword}">Password error</div>
+          <label for="plainPassword">Password</label>
         </div>
 
         <!-- Verify Password -->
         <div class="form-label-group">
-          <input type="password" id="verify-password" class="form-control" name="verify-password"
-                 th:class="${#fields.hasErrors('verifyPassword')}? 'form-control is-invalid' : 'form-control'"
-                 th:field="*{verifyPassword}"
+          <input type="password" id="verifyPlainPassword" class="form-control" name="verifyPlainPassword"
+                 th:class="${#fields.hasErrors('verifyPlainPassword')}? 'form-control is-invalid' : 'form-control'"
+                 th:field="*{verifyPlainPassword}"
                  placeholder="#"
                  required>
-          <div class="invalid-feedback" th:errors="*{verifyPassword}">Verify password error</div>
-          <label for="verify-password">Verify Password</label>
+          <div class="invalid-feedback" th:errors="*{verifyPlainPassword}">Verify password error</div>
+          <label for="verifyPlainPassword">Verify Password</label>
         </div>
 
         <!-- Register -->

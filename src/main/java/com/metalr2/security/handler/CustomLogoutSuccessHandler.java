@@ -21,6 +21,5 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
      */
     response.setStatus(HttpStatus.OK.value());
     response.sendRedirect(Endpoints.Guest.LOGIN + "?logout");
-    super.onLogoutSuccess(request, response, authentication);
   }
 }

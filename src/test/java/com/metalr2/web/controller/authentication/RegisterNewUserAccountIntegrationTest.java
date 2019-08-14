@@ -29,8 +29,8 @@ class RegisterNewUserAccountIntegrationTest {
   private static final String RESPONSE_ATTRIBUTE_NAME = "registerUserRequest";
   private static final String PARAM_USER_NAME         = "username";
   private static final String PARAM_EMAIL             = "email";
-  private static final String PARAM_PASSWORD          = "password";
-  private static final String PARAM_VERIFY_PASSWORD   = "verifyPassword";
+  private static final String PARAM_PASSWORD          = "plainPassword";
+  private static final String PARAM_VERIFY_PASSWORD   = "verifyPlainPassword";
 
   private Map<String, String> paramValues = new HashMap<>();
   private MockMvc mockMvc;

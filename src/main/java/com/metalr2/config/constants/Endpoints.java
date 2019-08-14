@@ -5,6 +5,8 @@ import java.util.stream.Stream;
 
 public class Endpoints {
 
+  public static final String ERROR = "/error";
+
   public static class Guest {
     // General
     public static final String INDEX       = "/index";
@@ -21,8 +23,6 @@ public class Endpoints {
     public static final String       RESET_PASSWORD            = "/reset-password";
     public static final List<String> ALL_AUTH_PAGES            = List.of(LOGIN, REGISTER, REGISTRATION_VERIFICATION,
                                                                          RESEND_VERIFICATION_TOKEN, FORGOT_PASSWORD, RESET_PASSWORD);
-    // Errors
-    public static final String ERROR = "/error";
   }
 
   public static class Frontend {

@@ -1,7 +1,10 @@
 package com.metalr2.security;
 
 import com.metalr2.config.constants.Endpoints;
+import com.metalr2.model.user.UserRole;
+import com.metalr2.security.handler.CustomAccessDeniedHandler;
 import com.metalr2.security.handler.CustomAuthenticationFailureHandler;
+import com.metalr2.security.handler.CustomAuthenticationSuccessHandler;
 import com.metalr2.security.handler.CustomLogoutSuccessHandler;
 import com.metalr2.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +15,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 @EnableWebSecurity
 @Configuration
@@ -35,9 +35,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
-      .csrf().disable() // // todo danielw: enable later, do logout within a POST
+      .csrf().disable()
       .authorizeRequests()
-        // .antMatchers(Endpoints.AntPattern.ADMIN).hasRole("ROLE_ADMIN")
+        .antMatchers(Endpoints.AntPattern.ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
         .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
         .antMatchers(Endpoints.AntPattern.AUTH_PAGES).anonymous()
         .anyRequest().authenticated()
@@ -45,8 +45,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
       .formLogin()
         .loginPage(Endpoints.Guest.LOGIN)
         .loginProcessingUrl(Endpoints.Guest.LOGIN)
-        .defaultSuccessUrl(Endpoints.Frontend.FOLLOW_ARTISTS, false) // if this is true, user see always this site after login
-        .failureHandler(authenticationFailureHandler())
+        .successHandler(new CustomAuthenticationSuccessHandler())
+        .failureHandler(new CustomAuthenticationFailureHandler())
       .and()
       .rememberMe()
         .key(REMEMBER_ME_SECRET)
@@ -57,27 +57,15 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .invalidateHttpSession(true)
         .clearAuthentication(true)
         .deleteCookies("JSESSIONID", "remember-me")
-        .logoutSuccessHandler(logoutSuccessHandler())
+        .logoutSuccessHandler(new CustomLogoutSuccessHandler())
       .and()
       .exceptionHandling()
-        .accessDeniedHandler(accessDeniedHandler());
+        .accessDeniedHandler(new CustomAccessDeniedHandler());
   }
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
-  }
-
-  private AuthenticationFailureHandler authenticationFailureHandler() {
-    return new CustomAuthenticationFailureHandler();
-  }
-
-  private LogoutSuccessHandler logoutSuccessHandler() {
-    return new CustomLogoutSuccessHandler();
-  }
-
-  private AccessDeniedHandler accessDeniedHandler(){
-    return new CustomAccessDeniedHandler();
   }
 
 }

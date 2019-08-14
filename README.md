@@ -65,8 +65,9 @@ You can log in via the URL `http://localhost:8090/login`.
 
 There are two example users with the following credentials:
 
-| Email                        | Password       |
-| ---------------------------- | -------------- |
-| john.doe@example.com         | john.doe       |
-| maria.thompson@example.com   | maria.thompson |
+| Username       | Password       | Role           |
+| -------------- | -------------- | -------------- |
+| JohnD          | john.doe       | USER           |
+| MariaT         | maria.thompson | USER           |
+| Administrator  | simsalabim     | ADMINISTRATOR  |
 
