@@ -13,8 +13,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
-    // ToDo DanielW: update dateTime for last login
-    // ToDo DanielW: redirect to last visit page?
     httpServletResponse.sendRedirect(Endpoints.Frontend.HOME);
   }
 }

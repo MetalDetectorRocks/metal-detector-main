@@ -10,7 +10,4 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @WebMvcTest(ResetPasswordController.class)
 @Import(WebSecurity.class)
 class ResetPasswordControllerTest {
-
-  // ToDo DanielW: Implement this
-
 }

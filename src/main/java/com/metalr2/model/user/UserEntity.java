@@ -21,7 +21,7 @@ public class UserEntity extends AbstractEntity implements UserDetails {
   private static final int ENCRYPTED_PASSWORD_LENGTH = 60;
 
   @Column(name = "public_id", nullable = false, unique = true, updatable = false)
-  private String publicId; // ToDo DanielW: test UUID later
+  private String publicId;
 
   @Column(name = "username", nullable = false, length=50, unique = true, updatable = false)
   private String username;
@@ -68,7 +68,6 @@ public class UserEntity extends AbstractEntity implements UserDetails {
     this.username = username;
   }
 
-  // ToDo DanielW: use special data type for email address
   public void setEmail(String newEmail) {
     email = newEmail == null ? "" : newEmail;
   }
@@ -78,7 +77,6 @@ public class UserEntity extends AbstractEntity implements UserDetails {
     return password;
   }
 
-  // ToDo DanielW: use special data type for encrypted password?
   public void setPassword(String newPassword) {
     if (newPassword == null || newPassword.length() != ENCRYPTED_PASSWORD_LENGTH) {
       throw new IllegalArgumentException("It seems that the new password has not been correctly encrypted.");

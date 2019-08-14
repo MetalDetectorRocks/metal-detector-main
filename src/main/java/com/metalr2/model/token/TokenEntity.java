@@ -8,7 +8,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-// ToDo DanielW: rework with @Builder
 @Getter
 @Setter
 @Entity(name="tokens")
