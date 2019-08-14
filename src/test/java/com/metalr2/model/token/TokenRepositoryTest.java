@@ -18,8 +18,8 @@ class TokenRepositoryTest {
   @Autowired
   private TokenRepository tokenRepository;
 
-  @Autowired
-  private JwtsSupport jwtsSupport;
+  // @Autowired
+  // private JwtsSupport jwtsSupport;
 
   private TokenEntity emailVerificationToken;
   private TokenEntity resetPasswordToken;
