@@ -2,14 +2,14 @@ package com.metalr2.model.token;
 
 import com.metalr2.model.AbstractEntity;
 import com.metalr2.model.user.UserEntity;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
 @Entity(name="tokens")
 public class TokenEntity extends AbstractEntity {
 
@@ -26,6 +26,14 @@ public class TokenEntity extends AbstractEntity {
 
   @Column(name = "expiration_date_time", nullable = false)
   private LocalDateTime expirationDateTime;
+
+  @Builder
+  public TokenEntity(@NonNull String tokenString, @NonNull TokenType tokenType, @NonNull UserEntity user, @NonNull LocalDateTime expirationDateTime) {
+    this.tokenString        = tokenString;
+    this.tokenType          = tokenType;
+    this.user               = user;
+    this.expirationDateTime = expirationDateTime;
+  }
 
   public boolean isExpired() {
     return LocalDateTime.now().isAfter(expirationDateTime);
