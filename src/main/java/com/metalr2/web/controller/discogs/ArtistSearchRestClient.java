@@ -1,9 +1,8 @@
 package com.metalr2.web.controller.discogs;
 
 import com.metalr2.config.misc.DiscogsConfig;
-import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.artist.Artist;
-import com.metalr2.web.dto.discogs.search.ArtistSearchResults;
+import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,7 @@ import java.util.Optional;
 public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
 
   private static final String ARTIST_NAME_SEARCH_URL_FRAGMENT = "/database/search?type=artist&q={artistQueryString}&page={page}&per_page={size}";
-  private static final String ARTIST_ID_URL_FRAGMENT = "/artists/{artistId}";
+  private static final String ARTIST_ID_SEARCH_URL_FRAGMENT = "/artists/{artistId}";
 
   @Autowired
   public ArtistSearchRestClient(RestTemplate restTemplate, DiscogsConfig discogsConfig) {
@@ -32,7 +31,7 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
       return Optional.empty();
     }
 
-    ResponseEntity<ArtistSearchResultContainer> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_SEARCH_URL_FRAGMENT,
+    ResponseEntity<ArtistSearchResultContainer> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_NAME_SEARCH_URL_FRAGMENT,
             ArtistSearchResultContainer.class,
             artistQueryString,
             page,
@@ -49,15 +48,15 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
   public Optional<Artist> searchForArtistById(long artistId) {
     log.debug("Searched artist id: {}", artistId);
 
-    if (artistId == 0) {
+    if (artistId <= 0) {
       return Optional.empty();
     }
 
-    ResponseEntity<Artist> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_ID_URL_FRAGMENT,
+    ResponseEntity<Artist> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_ID_SEARCH_URL_FRAGMENT,
             Artist.class,
             artistId);
 
-    if (responseEntity.getBody() == null || !responseEntity.getStatusCode().equals(HttpStatus.OK)) {
+    if (responseEntity.getBody() == null || responseEntity.getStatusCode() != HttpStatus.OK) {
       return Optional.empty();
     }
     return Optional.of(responseEntity.getBody());
