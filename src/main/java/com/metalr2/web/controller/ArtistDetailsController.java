@@ -28,7 +28,6 @@ public class ArtistDetailsController {
   private final ArtistSearchRestClient artistSearchRestClient;
   private static final String DEFAULT_ARTIST_ID = "0";
   private static final String DEFAULT_ARTIST_NAME = "";
-  private static final String BAD_ARTIST_ID_MESSAGE = "No data could be found for the given parameters:";
 
   @Autowired
   public ArtistDetailsController(ArtistSearchRestClient artistSearchRestClient) {
@@ -51,12 +50,19 @@ public class ArtistDetailsController {
     Artist artist                               = artistOptional.get();
     ArtistDetailsResponse artistDetailsResponse = createArtistDetailsResponse(artistName,artist);
 
-    return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS, "artistDetailsResponse", artistDetailsResponse);
+    HashMap<String, Object> viewModel = new HashMap<>();
+    viewModel.put("artistName", artistName);
+    viewModel.put("artistDetailsResponse", artistDetailsResponse);
+
+    return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS, viewModel);
   }
 
   private ModelAndView createBadArtistIdSearchRequestModelAndView(String artistName, long artistId) {
-    BadArtistIdSearchResponse badArtistIdSearchResponse = new BadArtistIdSearchResponse(BAD_ARTIST_ID_MESSAGE, artistName, artistId);
-    return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS, "badArtistIdSearchResponse", badArtistIdSearchResponse);
+    BadArtistIdSearchResponse badArtistIdSearchResponse = new BadArtistIdSearchResponse(artistId);
+    Map<String, Object> viewModel = new HashMap<>();
+    viewModel.put("artistName", artistName);
+    viewModel.put("badArtistIdSearchResponse", badArtistIdSearchResponse);
+    return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS, viewModel);
   }
 
   private ArtistDetailsResponse createArtistDetailsResponse(String artistName, Artist artist) {
@@ -65,6 +71,6 @@ public class ArtistDetailsController {
     List<String> formerMember = artist.getMembers() == null   ? null : artist.getMembers().stream().filter(member -> !member.isActive()).map(Member::getName).collect(Collectors.toList());
     List<String> images       = artist.getImages()  == null   ? null : artist.getImages().stream().map(Image::getResourceUrl).collect(Collectors.toList());
 
-    return new ArtistDetailsResponse(artistName, artistProfile, activeMember, formerMember, images);
+    return new ArtistDetailsResponse(artistProfile, activeMember, formerMember, images);
   }
 }

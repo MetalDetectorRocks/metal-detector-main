@@ -27,7 +27,7 @@ import java.util.stream.IntStream;
 
 @Controller
 @Slf4j
-public class FollowArtistsController {
+public class ArtistSearchController {
 
   private final ArtistSearchRestClient artistSearchRestClient;
   private static final String DEFAULT_PAGE_SIZE = "25";
@@ -35,7 +35,7 @@ public class FollowArtistsController {
   private static final String DEFAULT_ARTIST_NAME = "";
 
   @Autowired
-  public FollowArtistsController(ArtistSearchRestClient artistSearchRestClient) {
+  public ArtistSearchController(ArtistSearchRestClient artistSearchRestClient) {
     this.artistSearchRestClient = artistSearchRestClient;
   }
 
@@ -54,14 +54,14 @@ public class FollowArtistsController {
                                         @RequestParam(name = "page", defaultValue = DEFAULT_PAGE) int page,
                                         @RequestParam(name = "artistName", defaultValue = DEFAULT_ARTIST_NAME) String artistName) {
     if (artistName.equals(DEFAULT_ARTIST_NAME) && size == Integer.parseInt(DEFAULT_PAGE_SIZE)
-                                               && page == Integer.parseInt(DEFAULT_PAGE)){
+            && page == Integer.parseInt(DEFAULT_PAGE)) {
       return createDefaultModelAndView();
     }
 
     return createArtistSearchResultModelAndView(artistName, page, size);
   }
 
-  private ArtistNameSearchResponse createArtistNameSearchResponse(ArtistSearchResultContainer artistSearchResults, String artistName) {
+  private ArtistNameSearchResponse createArtistNameSearchResponse(ArtistSearchResultContainer artistSearchResults) {
     Pagination pagination = artistSearchResults.getPagination();
     List<Integer> pageNumbers = IntStream.rangeClosed(1, pagination.getPagesTotal()).boxed().collect(Collectors.toList());
 
@@ -69,9 +69,11 @@ public class FollowArtistsController {
     int nextSize = paginationUrls.getNext() != null ? pagination.getItemsPerPage() : Integer.parseInt(DEFAULT_PAGE_SIZE);
     int nextPage = paginationUrls.getNext() != null ? pagination.getCurrentPage() + 1 : Integer.parseInt(DEFAULT_PAGE);
 
-    List<ArtistNameSearchResponse.ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream().map(artistSearchResult ->
-            new ArtistNameSearchResponse.ArtistSearchResult(artistSearchResult.getThumb(), artistSearchResult.getId(), artistSearchResult.getTitle())).collect(Collectors.toList());
-    ArtistNameSearchResponse.Pagination dtoPagination = new ArtistNameSearchResponse.Pagination(pagination.getPagesTotal(), pagination.getCurrentPage(), nextSize, nextPage, pageNumbers);
+    List<ArtistNameSearchResponse.ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
+            .map(artistSearchResult -> new ArtistNameSearchResponse.ArtistSearchResult(artistSearchResult.getThumb(),
+                    artistSearchResult.getId(), artistSearchResult.getTitle())).collect(Collectors.toList());
+    ArtistNameSearchResponse.Pagination dtoPagination = new ArtistNameSearchResponse.Pagination(pagination.getPagesTotal(),
+            pagination.getCurrentPage(), nextSize, nextPage, pageNumbers);
 
     return new ArtistNameSearchResponse(dtoArtistSearchResults, dtoPagination);
   }
@@ -87,8 +89,8 @@ public class FollowArtistsController {
       return createBadArtistSearchRequestModelAndView(artistName, page, size);
     }
 
-    ArtistSearchResultContainer artistSearchResults   = artistSearchResultsOptional.get();
-    ArtistNameSearchResponse artistNameSearchResponse = createArtistNameSearchResponse(artistSearchResults, artistName);
+    ArtistSearchResultContainer artistSearchResults = artistSearchResultsOptional.get();
+    ArtistNameSearchResponse artistNameSearchResponse = createArtistNameSearchResponse(artistSearchResults);
 
     Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);

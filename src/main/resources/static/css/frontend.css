@@ -63,6 +63,10 @@ footer{
     padding: 1rem;
 }
 
+.card-title {
+    margin: 0.75rem;
+}
+
 .btn-pagination {
     margin-right: 0.5rem;
     background-color: #ececec;

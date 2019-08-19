@@ -9,7 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ArtistDetailsResponse {
 
-  private String artistName;
   private String profile;
   private List<String> activeMember;
   private List<String> formerMember;

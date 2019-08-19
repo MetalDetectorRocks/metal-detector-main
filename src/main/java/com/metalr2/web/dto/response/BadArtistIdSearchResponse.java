@@ -7,7 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class BadArtistIdSearchResponse {
 
-  private String message;
-  private String artistName;
   private long artistId;
 }

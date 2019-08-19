@@ -17,8 +17,7 @@
             </form>
         </div>
         <!-- Artist name -->
-        <div th:if="${artistName}"
-             class="mb-3">
+        <div th:if="${artistName}" class="mb-3">
             <p th:text="${'You searched for: ' + artistName}">Artist Name</p>
         </div>
         <!-- Bad request message -->
@@ -31,10 +30,8 @@
             </ul>
         </div>
         <!-- Result cards -->
-        <div th:if="${artistNameSearchResponse}"
-             class="mb-3">
-            <div th:each="result : ${artistNameSearchResponse.artistSearchResults}"
-                 class="card">
+        <div th:if="${artistNameSearchResponse}" class="mb-3">
+            <div th:each="result : ${artistNameSearchResponse.artistSearchResults}" class="card">
                 <div class="card-body">
                     <img th:if="${result.thumb} != ''" src="" th:src="${result.thumb}" th:alt="${'Thumb for ' + result.artistName}" alt="">
                     <p th:text="${result.id}">Id</p>
@@ -45,8 +42,7 @@
             </div>
         </div>
         <!-- Pagination links -->
-        <div th:if="${artistNameSearchResponse}"
-             class="mb-3 row">
+        <div th:if="${artistNameSearchResponse}" class="mb-3 row">
             <a th:if="${artistNameSearchResponse.pagination.currentPage} > 1" href="#"
                th:href="@{/follow-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${artistNameSearchResponse.pagination.nextPage}, artistName=${artistName})}"
                th:text="#{Previous}"

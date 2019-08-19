@@ -4,47 +4,44 @@
         <title id="pageTitle">Artist details | Metal Release Radar</title>
     </head>
     <body>
-    <h1 th:text="${artistDetailsResponse.artistName}">Artist name</h1>
-        <div class="mb-3 mt-5">
+    <h1>Artist Details</h1>
+        <div th:if="${artistDetailsResponse}" class="mb-3 mt-5 card">
             <!-- Result card -->
-            <div th:class="card" th:if="${artistDetailsResponse}">
-                <div th:if="${artistDetailsResponse.profile}" th:class="card-body">
-                    <h3>Profile</h3>
-                    <p th:text="${artistDetailsResponse.profile}">Artist profile</p>
-                </div>
-                <div th:if="${artistDetailsResponse.activeMember}" th:class="card-body">
-                    <h3>Active Member</h3>
-                    <div th:each="member : ${artistDetailsResponse.activeMember}">
-                        <ul>
-                            <li th:text="${member}">Member name</li>
-                        </ul>
-                    </div>
-                </div>
-                <div th:if="${artistDetailsResponse.formerMember}" th:class="card-body">
-                    <h3>Past Member</h3>
-                    <div th:each="member : ${artistDetailsResponse.formerMember}">
-                        <ul>
-                            <li th:text="${member}">Member name</li>
-                        </ul>
-                    </div>
-                </div>
-                <div th:if="${artistDetailsResponse.images}" th:class="card-body">
-                    <h3>Images</h3>
-                    <div th:each="image : ${artistDetailsResponse.images}">
-                        <img alt="${'Image of ' + artistName}" th:src="${image}" src="">
-                    </div>
-                </div>
+            <h2 th:text="${artistName}" class="card-title">Artist name</h2>
+            <div th:if="${artistDetailsResponse.profile}" class="card-body">
+                <h3>Profile</h3>
+                <p th:text="${artistDetailsResponse.profile}">Artist profile</p>
             </div>
-            <!-- Bad request message -->
-            <div class="mb-3">
-                <div th:if="${badArtistIdSearchResponse}" class="alert alert-danger" role="alert">
-                    <p th:text="${badArtistIdSearchResponse.message}">Bad search request message</p>
+            <div th:if="${artistDetailsResponse.activeMember}" class="card-body">
+                <h3>Active Member</h3>
+                <div th:each="member : ${artistDetailsResponse.activeMember}">
                     <ul>
-                        <li th:text="${'Artist name: ' + badArtistIdSearchResponse.artistName}">Bad artist id search request name</li>
-                        <li th:text="${'Artist id: ' + badArtistIdSearchResponse.artistId}">Bad artist id search request id</li>
+                        <li th:text="${member}">Member name</li>
                     </ul>
                 </div>
             </div>
+            <div th:if="${artistDetailsResponse.formerMember}" class="card-body">
+                <h3>Past Member</h3>
+                <div th:each="member : ${artistDetailsResponse.formerMember}">
+                    <ul>
+                        <li th:text="${member}">Member name</li>
+                    </ul>
+                </div>
+            </div>
+            <div th:if="${artistDetailsResponse.images}" class="card-body">
+                <h3>Images</h3>
+                <div th:each="image : ${artistDetailsResponse.images}">
+                    <img alt="${'Image of ' + artistName}" th:src="${image}" src="">
+                </div>
+            </div>
+        </div>
+        <!-- Bad request message -->
+        <div th:if="${badArtistIdSearchResponse}" class="mb-3 alert alert-danger" role="alert">
+            <p>No data could be found for the given parameters:</p>
+            <ul>
+                <li th:text="${'Artist name: ' + artistName}">Bad artist id search request name</li>
+                <li th:text="${'Artist id: ' + badArtistIdSearchResponse.artistId}">Bad artist id search request id</li>
+            </ul>
         </div>
     </body>
 </html>
