@@ -17,27 +17,26 @@
             </form>
         </div>
         <!-- Artist name -->
-        <div class="mb-3">
-            <div th:if="${artistNameSearchResponse.artistName != ''}" th:text="${'You searched for: ' + artistNameSearchResponse.artistName}">Artist Name</div>
+        <div th:if="${artistName}"
+             class="mb-3">
+            <p th:text="${'You searched for: ' + artistName}">Artist Name</p>
         </div>
         <!-- Bad request message -->
-        <div class="mb-3">
-            <div th:if="${badArtistSearchRequestMessage}" class="alert alert-danger" role="alert">
-                <p th:text="${badArtistSearchRequestMessage}">Bad search request message</p>
-                <ul>
-                    <li th:text="${'Artist name: ' + badArtistSearchRequestArtistName}">Bad search request artist name</li>
-                    <li th:text="${'Page: ' + badArtistSearchRequestPage}">Bad search request page</li>
-                    <li th:text="${'Size: ' + badArtistSearchRequestSize}">Bad search request</li>
-                </ul>
-            </div>
+        <div th:if="${badArtistNameSearchResponse}" class="mb-3 alert alert-danger" role="alert">
+            <p>No data could be found for the given parameters:</p>
+            <ul>
+                <li th:text="${'Artist name: ' + artistName}">Bad search request artist name</li>
+                <li th:text="${'Page: ' + badArtistNameSearchResponse.page}">Bad search request page</li>
+                <li th:text="${'Size: ' + badArtistNameSearchResponse.size}">Bad search request</li>
+            </ul>
         </div>
         <!-- Result cards -->
-        <div class="mb-3">
-            <div th:if="${artistNameSearchResponse}"
-                 th:each="result : ${artistNameSearchResponse.artistSearchResults}"
-                 th:class="card">
-                <div th:class="card-body">
-                    <img th:if="${result.thumb} != ''" src="" th:src="${result.thumb}" th:alt="${'Thumb for ' + artistNameSearchResponse.artistName}" alt="">
+        <div th:if="${artistNameSearchResponse}"
+             class="mb-3">
+            <div th:each="result : ${artistNameSearchResponse.artistSearchResults}"
+                 class="card">
+                <div class="card-body">
+                    <img th:if="${result.thumb} != ''" src="" th:src="${result.thumb}" th:alt="${'Thumb for ' + result.artistName}" alt="">
                     <p th:text="${result.id}">Id</p>
                     <p th:text="${result.artistName}">Artist name</p>
                     <a th:href="@{/artist-details(artistName=${result.artistName}, id=${result.id})}"
@@ -46,22 +45,21 @@
             </div>
         </div>
         <!-- Pagination links -->
-        <div class="mb-3">
-            <div class="row" th:if="${artistNameSearchResponse}">
-                <a th:if="${artistNameSearchResponse.pagination.currentPage} > 1" href="#"
-                   th:href="@{/follow-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${artistNameSearchResponse.pagination.nextPage}, artistName=${artistNameSearchResponse.artistName})}"
-                   th:text="#{Previous}"
-                   class="btn btn-dark btn-pagination">Previous</a>
-                <a th:if="${artistNameSearchResponse.pagination.totalPages > 1}"
-                   th:each="pageNumber : ${artistNameSearchResponse.pagination.pageNumbers}" href="#"
-                   th:href="@{/follow-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${pageNumber}, artistName=${artistNameSearchResponse.artistName})}"
-                   th:text="#{${pageNumber}}"
-                   class="btn btn-dark btn-pagination">Page number</a>
-                <a th:if="${artistNameSearchResponse.pagination.currentPage} < ${artistNameSearchResponse.pagination.totalPages}" href="#"
-                   th:href="@{/follow-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${artistNameSearchResponse.pagination.nextPage}, artistName=${artistNameSearchResponse.artistName})}"
-                   th:text="#{Next}"
-                   class="btn btn-dark btn-pagination">Next</a>
-            </div>
+        <div th:if="${artistNameSearchResponse}"
+             class="mb-3 row">
+            <a th:if="${artistNameSearchResponse.pagination.currentPage} > 1" href="#"
+               th:href="@{/follow-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${artistNameSearchResponse.pagination.nextPage}, artistName=${artistName})}"
+               th:text="#{Previous}"
+               class="btn btn-dark btn-pagination">Previous</a>
+            <a th:if="${artistNameSearchResponse.pagination.totalPages > 1}"
+               th:each="pageNumber : ${artistNameSearchResponse.pagination.pageNumbers}" href="#"
+               th:href="@{/follow-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${pageNumber}, artistName=${artistName})}"
+               th:text="#{${pageNumber}}"
+               class="btn btn-dark btn-pagination">Page number</a>
+            <a th:if="${artistNameSearchResponse.pagination.currentPage} < ${artistNameSearchResponse.pagination.totalPages}" href="#"
+               th:href="@{/follow-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${artistNameSearchResponse.pagination.nextPage}, artistName=${artistName})}"
+               th:text="#{Next}"
+               class="btn btn-dark btn-pagination">Next</a>
         </div>
     </body>
 </html>

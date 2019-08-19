@@ -11,12 +11,11 @@ import java.util.List;
 @AllArgsConstructor
 public class ArtistNameSearchResponse {
 
-  private String artistName;
   private List<ArtistSearchResult> artistSearchResults;
   private Pagination pagination;
 
   public ArtistNameSearchResponse() {
-    artistName = "";
+    artistSearchResults = new ArrayList<>();
     pagination = new Pagination();
   }
 
