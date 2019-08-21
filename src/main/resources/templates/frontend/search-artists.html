@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html th:replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
     <head th:include="admin/fragments/layout :: headerFragment">
-        <title id="pageTitle">Follow Artists | Metal Release Radar</title>
+        <title id="pageTitle">Search Artists | Metal Release Radar</title>
     </head>
     <body>
-        <h1>Follow Artists</h1>
+        <h1>Search Artists</h1>
         <!-- Search Form -->
         <div class="mb-3">
-            <form id="searchForm" action="#" th:action="@{/follow-artists}" th:object="${artistSearchRequest}"
+            <form id="searchForm" action="#" th:action="@{/search-artists}" th:object="${artistSearchRequest}"
                   method="POST">
                 <!-- Artist name -->
                 <label for="artistName"></label><input type="text" id="artistName" class="form-control"

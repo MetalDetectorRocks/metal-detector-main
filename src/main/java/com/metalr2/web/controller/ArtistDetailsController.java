@@ -7,7 +7,6 @@ import com.metalr2.web.dto.discogs.artist.Artist;
 import com.metalr2.web.dto.discogs.artist.Member;
 import com.metalr2.web.dto.discogs.misc.Image;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.BadArtistIdSearchResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -58,10 +57,9 @@ public class ArtistDetailsController {
   }
 
   private ModelAndView createBadArtistIdSearchRequestModelAndView(String artistName, long artistId) {
-    BadArtistIdSearchResponse badArtistIdSearchResponse = new BadArtistIdSearchResponse(artistId);
     Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
-    viewModel.put("badArtistIdSearchResponse", badArtistIdSearchResponse);
+    viewModel.put("badArtistIdSearchResponseId", artistId);
     return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS, viewModel);
   }
 

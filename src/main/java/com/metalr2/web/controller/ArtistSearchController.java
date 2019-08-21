@@ -44,12 +44,12 @@ public class ArtistSearchController {
     return new ArtistSearchRequest();
   }
 
-  @PostMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
+  @PostMapping({Endpoints.Frontend.SEARCH_ARTISTS})
   public ModelAndView handleSearchRequest(@ModelAttribute ArtistSearchRequest artistSearchRequest) {
     return createArtistSearchResultModelAndView(artistSearchRequest.getArtistName(), Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
   }
 
-  @GetMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
+  @GetMapping({Endpoints.Frontend.SEARCH_ARTISTS})
   public ModelAndView showFollowArtists(@RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
                                         @RequestParam(name = "page", defaultValue = DEFAULT_PAGE) int page,
                                         @RequestParam(name = "artistName", defaultValue = DEFAULT_ARTIST_NAME) String artistName) {
@@ -79,7 +79,7 @@ public class ArtistSearchController {
   }
 
   private ModelAndView createDefaultModelAndView() {
-    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, "artistNameSearchResponse", new ArtistNameSearchResponse());
+    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, "artistNameSearchResponse", new ArtistNameSearchResponse());
   }
 
   private ModelAndView createArtistSearchResultModelAndView(String artistName, int page, int size) {
@@ -96,7 +96,7 @@ public class ArtistSearchController {
     viewModel.put("artistName", artistName);
     viewModel.put("artistNameSearchResponse", artistNameSearchResponse);
 
-    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
+    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, viewModel);
   }
 
   private ModelAndView createBadArtistSearchRequestModelAndView(String artistName, int page, int size) {
@@ -104,6 +104,6 @@ public class ArtistSearchController {
     Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
     viewModel.put("badArtistNameSearchResponse", badArtistNameSearchResponse);
-    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
+    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, viewModel);
   }
 }
