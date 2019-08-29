@@ -1,21 +1,17 @@
 package com.metalr2.model.user;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,40 +30,15 @@ class UserEntityTest {
   static class MyTestConfiguration {
 
     @Bean
-    public AuditorAware<String> auditorAware() {
-      return () -> Optional.of("ANONYMOUS");
-    }
-
-    @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
       return new BCryptPasswordEncoder();
     }
 
   }
 
-  @BeforeEach
-  void setUp() {
-  }
-
   @AfterEach
   void tearDown() {
-  }
-
-  @Test
-  void jpaAuditingFieldsShouldBeNotNull() {
-    UserEntity user = UserFactory.createUser("Test", "test@test.com");
-
-    assertNull(user.getCreatedBy());
-    assertNull(user.getCreatedDateTime());
-    assertNull(user.getLastModifiedBy());
-    assertNull(user.getLastModifiedDateTime());
-
-    userRepository.save(user);
-
-    assertEquals("ANONYMOUS", user.getCreatedBy());
-    assertTrue(LocalDateTime.now().isAfter(user.getCreatedDateTime()));
-    assertEquals("ANONYMOUS", user.getLastModifiedBy());
-    assertTrue(LocalDateTime.now().isAfter(user.getLastModifiedDateTime()));
+    userRepository.deleteAll();
   }
 
   @Test
@@ -107,7 +78,7 @@ class UserEntityTest {
 
   @Test
   void isAdministratorShouldReturnTrueForUserOfRoleAdministrator() {
-    UserEntity user = UserFactory.createAdministrator("Administrator", "administrator@test.com");
+    UserEntity user = UserFactory.createAdministrator();
 
     assertFalse(user.isUser());
     assertTrue(user.isAdministrator());
@@ -116,7 +87,7 @@ class UserEntityTest {
 
   @Test
   void isSuperUserShouldReturnTrueForUserOfRoleSuperUser() {
-    UserEntity user = UserFactory.createSuperUser("SuperUser", "super-user@test.com");
+    UserEntity user = UserFactory.createSuperUser();
 
     assertTrue(user.isUser());
     assertTrue(user.isAdministrator());
@@ -128,7 +99,7 @@ class UserEntityTest {
     String initialEmail = "test@test.com";
     String newEmail     = "test-update@test.com";
 
-    UserEntity user = UserFactory.createSuperUser("Test", initialEmail);
+    UserEntity user = UserFactory.createUser("user", initialEmail);
     assertEquals(initialEmail, user.getEmail());
 
     user.setEmail(newEmail);
@@ -141,7 +112,7 @@ class UserEntityTest {
   @Test
   void updateOfPasswordShouldBePossible() {
     String newEncryptedPassword = passwordEncoder.encode("test1234");
-    UserEntity user = UserFactory.createSuperUser("Test", "test@test.com");
+    UserEntity user = UserFactory.createSuperUser();
 
     assertNotNull(user.getPassword());
     user.setPassword(newEncryptedPassword);
@@ -153,7 +124,7 @@ class UserEntityTest {
 
   @Test
   void updateOfUserRolesShouldBePossible() {
-    UserEntity user = UserFactory.createSuperUser("Test", "test@test.com");
+    UserEntity user = UserFactory.createSuperUser();
 
     user.setUserRoles(UserRole.createAdministratorRole());
     assertTrue(user.isAdministrator());

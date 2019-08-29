@@ -57,12 +57,12 @@ public class TokenServiceImpl implements TokenService {
   private String createToken(String publicUserId, TokenType tokenType, ExpirationTime expirationTime) {
     String      tokenString = jwtsSupport.generateToken(publicUserId, expirationTime);
     UserEntity  userEntity  = userRepository.findByPublicId(publicUserId).orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
-    TokenEntity tokenEntity = new TokenEntity();
-
-    tokenEntity.setUser(userEntity);
-    tokenEntity.setTokenString(tokenString);
-    tokenEntity.setExpirationDateTime(LocalDateTime.now().plus(expirationTime.toMillis(), ChronoUnit.MILLIS));
-    tokenEntity.setTokenType(tokenType);
+    TokenEntity tokenEntity = TokenEntity.builder()
+                                         .user(userEntity)
+                                         .tokenString(tokenString)
+                                         .expirationDateTime(LocalDateTime.now().plus(expirationTime.toMillis(), ChronoUnit.MILLIS))
+                                         .tokenType(tokenType)
+                                         .build();
 
     tokenRepository.save(tokenEntity);
 
