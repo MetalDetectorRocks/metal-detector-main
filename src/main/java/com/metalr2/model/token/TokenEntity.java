@@ -1,35 +1,39 @@
 package com.metalr2.model.token;
 
+import com.metalr2.model.AbstractEntity;
 import com.metalr2.model.user.UserEntity;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
 @Entity(name="tokens")
-public class TokenEntity implements Serializable {
+public class TokenEntity extends AbstractEntity {
 
-  public static final long serialVersionUID = 1L;
-
-  @Id
-  @GeneratedValue
-  private long id;
-
-  @Column(nullable = false)
+  @Column(name = "token_string", nullable = false)
   private String tokenString;
 
-  @Column(nullable = false)
+  @Column(name = "token_type", nullable = false)
   @Enumerated(value = EnumType.STRING)
   private TokenType tokenType;
 
-  @OneToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
+  @OneToOne(targetEntity = UserEntity.class)
   @JoinColumn(nullable = false, name = "users_id")
   private UserEntity user;
 
-  @Column(nullable = false)
+  @Column(name = "expiration_date_time", nullable = false)
   private LocalDateTime expirationDateTime;
+
+  @Builder
+  public TokenEntity(@NonNull String tokenString, @NonNull TokenType tokenType, @NonNull UserEntity user, @NonNull LocalDateTime expirationDateTime) {
+    this.tokenString        = tokenString;
+    this.tokenType          = tokenType;
+    this.user               = user;
+    this.expirationDateTime = expirationDateTime;
+  }
 
   public boolean isExpired() {
     return LocalDateTime.now().isAfter(expirationDateTime);

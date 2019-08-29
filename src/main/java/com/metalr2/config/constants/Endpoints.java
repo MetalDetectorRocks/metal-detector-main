@@ -5,12 +5,15 @@ import java.util.stream.Stream;
 
 public class Endpoints {
 
+  public static final String ERROR = "/error";
+
   public static class Guest {
     // General
-    public static final String INDEX       = "/index";
-    public static final String EMPTY_INDEX = "";
-    public static final String SLASH_INDEX = "/";
-    public static final String LOGOUT      = "/logout";
+    public static final String        INDEX                  = "/index";
+    public static final String        EMPTY_INDEX            = "";
+    public static final String        SLASH_INDEX            = "/";
+    public static final String        LOGOUT                 = "/logout";
+    public static final List<String>  ALL_GUEST_INDEX_PAGES  = List.of(INDEX, EMPTY_INDEX, SLASH_INDEX);
 
     // Authentication
     public static final String       LOGIN                     = "/login";
@@ -21,8 +24,6 @@ public class Endpoints {
     public static final String       RESET_PASSWORD            = "/reset-password";
     public static final List<String> ALL_AUTH_PAGES            = List.of(LOGIN, REGISTER, REGISTRATION_VERIFICATION,
                                                                          RESEND_VERIFICATION_TOKEN, FORGOT_PASSWORD, RESET_PASSWORD);
-    // Errors
-    public static final String ERROR = "/error";
   }
 
   public static class Frontend {
@@ -47,7 +48,6 @@ public class Endpoints {
     public static final String USERS_CREATE = "/admin/users/create";
     public static final String USERS_EDIT   = "/admin/users/edit/{id}";
   }
-
 
   public static class AntPattern {
     public static final String   ADMIN                     = "/admin/**";

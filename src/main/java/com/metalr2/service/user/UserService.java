@@ -11,13 +11,13 @@ public interface UserService extends UserDetailsService {
 
   UserDto createUser(UserDto userDto);
 
-  UserDto getUserByUserId(String userId);
+  UserDto getUserByPublicId(String publicId);
 
   Optional<UserDto> getUserByEmailOrUsername(String emailOrUsername);
 
-  UserDto updateUser(String userId, UserDto userDto);
+  UserDto updateUser(String publicId, UserDto userDto);
 
-  void deleteUser(String userId);
+  void deleteUser(String publicId);
 
   List<UserDto> getAllUsers();
 

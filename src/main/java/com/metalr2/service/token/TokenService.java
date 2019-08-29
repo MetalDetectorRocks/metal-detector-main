@@ -8,9 +8,9 @@ public interface TokenService {
 
   Optional<TokenEntity> getResetPasswordTokenByTokenString(String tokenString);
 
-  String createEmailVerificationToken(String userId);
+  String createEmailVerificationToken(String publicUserId);
 
-  String createResetPasswordToken(String userId);
+  String createResetPasswordToken(String publicUserId);
 
   void resendExpiredEmailVerificationToken(String tokenString);
 

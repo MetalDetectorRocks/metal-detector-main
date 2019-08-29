@@ -32,7 +32,7 @@ public class ForgotPasswordController {
   private static final String FORM_DTO = "forgotPasswordRequest";
 
   private final ApplicationEventPublisher eventPublisher;
-  private final UserService userService;
+  private final UserService               userService;
   private final MessageSource             messages;
 
   @Autowired
