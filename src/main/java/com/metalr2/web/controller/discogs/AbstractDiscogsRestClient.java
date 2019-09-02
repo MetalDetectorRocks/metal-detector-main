@@ -1,4 +1,4 @@
-package com.metalr2.web.controller.discogs.demo;
+package com.metalr2.web.controller.discogs;
 
 import com.metalr2.config.misc.DiscogsConfig;
 import org.springframework.beans.factory.annotation.Autowired;

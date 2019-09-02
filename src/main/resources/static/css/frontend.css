@@ -63,6 +63,10 @@ footer{
     padding: 1rem;
 }
 
+.card-title {
+    margin: 0.75rem;
+}
+
 .btn-pagination {
     margin-right: 0.5rem;
     background-color: #ececec;
@@ -72,4 +76,15 @@ footer{
 
 .btn-pagination:hover {
     background-color: #777777;
+}
+
+.nav-link-artist {
+    margin-right: 0;
+    color: #212529;
+    background-color: #b1b0ad;
+    border: 1px solid grey;
+}
+
+.nav-link-artist-active {
+    background-color: #ececec;
 }

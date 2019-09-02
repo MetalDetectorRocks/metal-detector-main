@@ -2,11 +2,13 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
-import com.metalr2.web.controller.discogs.demo.ArtistSearchRestClient;
+import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
 import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.Pagination;
 import com.metalr2.web.dto.discogs.search.PaginationUrls;
 import com.metalr2.web.dto.request.ArtistSearchRequest;
+import com.metalr2.web.dto.response.ArtistNameSearchResponse;
+import com.metalr2.web.dto.response.BadArtistNameSearchResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,7 +27,7 @@ import java.util.stream.IntStream;
 
 @Controller
 @Slf4j
-public class FollowArtistsController {
+public class ArtistSearchController {
 
   private final ArtistSearchRestClient artistSearchRestClient;
   private static final String DEFAULT_PAGE_SIZE = "25";
@@ -33,7 +35,7 @@ public class FollowArtistsController {
   private static final String DEFAULT_ARTIST_NAME = "";
 
   @Autowired
-  public FollowArtistsController(ArtistSearchRestClient artistSearchRestClient) {
+  public ArtistSearchController(ArtistSearchRestClient artistSearchRestClient) {
     this.artistSearchRestClient = artistSearchRestClient;
   }
 
@@ -42,74 +44,66 @@ public class FollowArtistsController {
     return new ArtistSearchRequest();
   }
 
-  @PostMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
+  @PostMapping({Endpoints.Frontend.SEARCH_ARTISTS})
   public ModelAndView handleSearchRequest(@ModelAttribute ArtistSearchRequest artistSearchRequest) {
     return createArtistSearchResultModelAndView(artistSearchRequest.getArtistName(), Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
   }
 
-  @GetMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
+  @GetMapping({Endpoints.Frontend.SEARCH_ARTISTS})
   public ModelAndView showFollowArtists(@RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
                                         @RequestParam(name = "page", defaultValue = DEFAULT_PAGE) int page,
                                         @RequestParam(name = "artistName", defaultValue = DEFAULT_ARTIST_NAME) String artistName) {
     if (artistName.equals(DEFAULT_ARTIST_NAME) && size == Integer.parseInt(DEFAULT_PAGE_SIZE)
-                                               && page == Integer.parseInt(DEFAULT_PAGE)){
+            && page == Integer.parseInt(DEFAULT_PAGE)) {
       return createDefaultModelAndView();
     }
 
     return createArtistSearchResultModelAndView(artistName, page, size);
   }
 
-  private Map<String, Object> buildViewModel(ArtistSearchResultContainer artistSearchResults, String artistName) {
-    Map<String, Object> viewModel = new HashMap<>();
-    viewModel.put("artistName", artistName);
-    viewModel.put("artistSearchResultList", artistSearchResults.getResults());
-
+  private ArtistNameSearchResponse createArtistNameSearchResponse(ArtistSearchResultContainer artistSearchResults) {
     Pagination pagination = artistSearchResults.getPagination();
     List<Integer> pageNumbers = IntStream.rangeClosed(1, pagination.getPagesTotal()).boxed().collect(Collectors.toList());
 
-    viewModel.put("totalPages", pagination.getPagesTotal());
-    viewModel.put("currentPage", pagination.getCurrentPage());
-    viewModel.put("pageNumbers", pageNumbers);
-
     PaginationUrls paginationUrls = pagination.getUrls();
-    var nextSize = paginationUrls.getNext() != null ? pagination.getItemsPerPage() : DEFAULT_PAGE_SIZE;
-    var nextPage = paginationUrls.getNext() != null ? pagination.getCurrentPage() + 1 : DEFAULT_PAGE;
+    int nextSize = paginationUrls.getNext() != null ? pagination.getItemsPerPage() : Integer.parseInt(DEFAULT_PAGE_SIZE);
+    int nextPage = paginationUrls.getNext() != null ? pagination.getCurrentPage() + 1 : Integer.parseInt(DEFAULT_PAGE);
 
-    viewModel.put("nextSize", nextSize);
-    viewModel.put("nextPage", nextPage);
+    List<ArtistNameSearchResponse.ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
+            .map(artistSearchResult -> new ArtistNameSearchResponse.ArtistSearchResult(artistSearchResult.getThumb(),
+                    artistSearchResult.getId(), artistSearchResult.getTitle())).collect(Collectors.toList());
+    ArtistNameSearchResponse.Pagination dtoPagination = new ArtistNameSearchResponse.Pagination(pagination.getPagesTotal(),
+            pagination.getCurrentPage(), nextSize, nextPage, pageNumbers);
 
-    return viewModel;
+    return new ArtistNameSearchResponse(dtoArtistSearchResults, dtoPagination);
   }
 
   private ModelAndView createDefaultModelAndView() {
-    Map<String, Object> viewModel = new HashMap<>();
-    viewModel.put("totalPages", "0");
-    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
+    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, "artistNameSearchResponse", new ArtistNameSearchResponse());
   }
 
   private ModelAndView createArtistSearchResultModelAndView(String artistName, int page, int size) {
-    log.debug("Searched artist: {}; page: {}; size: {}", artistName, page, size);
-
-    Optional<ArtistSearchResultContainer> artistSearchResultsOptional = artistSearchRestClient.searchForArtist(artistName, page, size);
+    Optional<ArtistSearchResultContainer> artistSearchResultsOptional = artistSearchRestClient.searchForArtistByName(artistName, page, size);
 
     if (artistSearchResultsOptional.isEmpty()) {
       return createBadArtistSearchRequestModelAndView(artistName, page, size);
     }
 
     ArtistSearchResultContainer artistSearchResults = artistSearchResultsOptional.get();
+    ArtistNameSearchResponse artistNameSearchResponse = createArtistNameSearchResponse(artistSearchResults);
 
-    Map<String, Object> viewModel = buildViewModel(artistSearchResults, artistName);
-    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
+    Map<String, Object> viewModel = new HashMap<>();
+    viewModel.put("artistName", artistName);
+    viewModel.put("artistNameSearchResponse", artistNameSearchResponse);
+
+    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, viewModel);
   }
 
   private ModelAndView createBadArtistSearchRequestModelAndView(String artistName, int page, int size) {
+    BadArtistNameSearchResponse badArtistNameSearchResponse = new BadArtistNameSearchResponse(page, size);
     Map<String, Object> viewModel = new HashMap<>();
-    viewModel.put("totalPages", "0");
-    viewModel.put("badArtistSearchRequestMessage", "No data could be found for the given parameters:");
-    viewModel.put("badArtistSearchRequestArtistName", artistName);
-    viewModel.put("badArtistSearchRequestPage", page);
-    viewModel.put("badArtistSearchRequestSize", size);
-    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
+    viewModel.put("artistName", artistName);
+    viewModel.put("badArtistNameSearchResponse", badArtistNameSearchResponse);
+    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, viewModel);
   }
-
 }
