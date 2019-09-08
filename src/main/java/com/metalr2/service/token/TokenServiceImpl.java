@@ -12,14 +12,14 @@ import com.metalr2.model.user.UserRepository;
 import com.metalr2.security.ExpirationTime;
 import com.metalr2.service.email.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-@Component
+@Service
 public class TokenServiceImpl implements TokenService {
 
   private final TokenRepository tokenRepository;
