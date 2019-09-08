@@ -10,7 +10,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 
 @Service
 @Slf4j
-@Profile("dev")
+@Profile({"dev", "default"})
 public class ConsoleEmailService implements EmailService {
 
   private final SpringTemplateEngine templateEngine;
