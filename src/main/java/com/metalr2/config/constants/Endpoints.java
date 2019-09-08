@@ -59,7 +59,7 @@ public class Endpoints {
            static final String[] RESEND_VERIFICATION_TOKEN = {"/resend-verification-token", "/resend-verification-token/"};
            static final String[] FORGOT_PASSWORD           = {"/forgot-password", "/forgot-password/"};
            static final String[] RESET_PASSWORD            = {"/reset-password", "/reset-password/"};
-    public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**"};
+    public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**", "/webjars/**"};
 
     public static final String[] AUTH_PAGES = Stream.of(INDEX, LOGIN, REGISTER, REGISTRATION_VERIFICATION,
             RESEND_VERIFICATION_TOKEN, FORGOT_PASSWORD, RESET_PASSWORD).flatMap(Stream::of).toArray(String[]::new);
