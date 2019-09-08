@@ -54,7 +54,7 @@ You need Java 11 to run the application.
 via Maven
 - Clone the repository
 - Execute command `mvn install` in root directory
-- Execute .jar file from directory `target` via `java -jar metal-release-radar-0.0.1.jar`
+- Execute command `mvn springboot:run` in root directory
 
 via your IDE
 - Clone the repository
@@ -63,7 +63,7 @@ via your IDE
 Go to your web browser and visit `http://localhost:8090`.
 You can log in via the URL `http://localhost:8090/login`. 
 
-There are two example users with the following credentials:
+There are three example users with the following credentials:
 
 | Username       | Password       | Role           |
 | -------------- | -------------- | -------------- |
