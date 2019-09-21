@@ -3,25 +3,24 @@ package com.metalr2.model.token;
 import com.metalr2.security.ExpirationTime;
 import io.jsonwebtoken.Claims;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.Date;
 import java.util.UUID;
 
+@TestPropertySource("classpath:test.properties")
+@SpringJUnitConfig
 class JwtsSupportTest implements WithAssertions {
 
-  private static final String TOKEN_SECRET = "dummy-token-secret";
-  private static final String TOKEN_ISSUER = "dummy issuer";
+  private static final String TOKEN_ISSUER = "dummy-token-issuer";
 
+  @Autowired
   private JwtsSupport jwtsSupport;
-
-  @BeforeEach
-  void setUp() {
-    jwtsSupport = new JwtsSupport();
-    jwtsSupport.setTokenSecret(TOKEN_SECRET);
-    jwtsSupport.setTokenIssuer(TOKEN_ISSUER);
-  }
 
   @Test
   void generateTokenShouldGenerateANewToken() {
@@ -48,20 +47,10 @@ class JwtsSupportTest implements WithAssertions {
     assertThat(claims.getIssuer()).isEqualTo(TOKEN_ISSUER);
   }
 
-  @Test
-  void setTokenSecretTwiceShouldThrowException() {
-    Throwable setTokenSecret = catchThrowable(() -> jwtsSupport.setTokenSecret("secret"));
-
-    assertThat(setTokenSecret).isInstanceOf(UnsupportedOperationException.class);
-    assertThat(setTokenSecret).hasMessage("The value may only be set once.");
-  }
-
-  @Test
-  void setTokenIssuerTwiceShouldThrowException() {
-    Throwable setTokenIssuer = catchThrowable(() -> jwtsSupport.setTokenIssuer("issuer"));
-
-    assertThat(setTokenIssuer).isInstanceOf(UnsupportedOperationException.class);
-    assertThat(setTokenIssuer).hasMessage("The value may only be set once.");
+  @TestConfiguration
+  @ComponentScan("com.metalr2.model.token")
+  static class TestConfig {
+    // needed for autowiring JwtsSupport
   }
 
 }

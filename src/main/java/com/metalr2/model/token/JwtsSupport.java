@@ -15,7 +15,10 @@ import java.util.UUID;
 @PropertySource(value = "classpath:security.properties")
 public class JwtsSupport {
 
+  @Value("${security.token-secret}")
   private String TOKEN_SECRET;
+
+  @Value("${security.token-issuer}")
   private String TOKEN_ISSUER;
 
   public String generateToken(String subject, ExpirationTime expirationTime) {
@@ -35,24 +38,6 @@ public class JwtsSupport {
                .setSigningKey(TOKEN_SECRET)
                .parseClaimsJws(token)
                .getBody();
-  }
-
-  @Value("${security.token-secret}")
-  void setTokenSecret(String tokenSecret) {
-    if (TOKEN_SECRET != null) {
-      throw new UnsupportedOperationException("The value may only be set once.");
-    }
-
-    TOKEN_SECRET = tokenSecret;
-  }
-
-  @Value("${security.token-issuer}")
-  void setTokenIssuer(String tokenIssuer) {
-    if (TOKEN_ISSUER != null) {
-      throw new UnsupportedOperationException("The value may only be set once.");
-    }
-
-    TOKEN_ISSUER = tokenIssuer;
   }
 
 }
