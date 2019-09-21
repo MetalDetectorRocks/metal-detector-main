@@ -9,18 +9,23 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 @PropertySource(value = "classpath:security.properties")
 public class JwtsSupport {
 
-  @Value("${security.token-secret}")
   private String TOKEN_SECRET;
+  private String TOKEN_ISSUER;
 
   public String generateToken(String subject, ExpirationTime expirationTime) {
+    long currentTimeMillis = System.currentTimeMillis();
     return Jwts.builder()
                .setSubject(subject)
-               .setExpiration(new Date(System.currentTimeMillis() + expirationTime.toMillis()))
+               .setId(UUID.randomUUID().toString())
+               .setIssuedAt(new Date(currentTimeMillis))
+               .setIssuer(TOKEN_ISSUER)
+               .setExpiration(new Date(currentTimeMillis + expirationTime.toMillis()))
                .signWith(SignatureAlgorithm.HS512, TOKEN_SECRET)
                .compact();
   }
@@ -30,6 +35,24 @@ public class JwtsSupport {
                .setSigningKey(TOKEN_SECRET)
                .parseClaimsJws(token)
                .getBody();
+  }
+
+  @Value("${security.token-secret}")
+  void setTokenSecret(String tokenSecret) {
+    if (TOKEN_SECRET != null) {
+      throw new UnsupportedOperationException("The value may only be set once.");
+    }
+
+    TOKEN_SECRET = tokenSecret;
+  }
+
+  @Value("${security.token-issuer}")
+  void setTokenIssuer(String tokenIssuer) {
+    if (TOKEN_ISSUER != null) {
+      throw new UnsupportedOperationException("The value may only be set once.");
+    }
+
+    TOKEN_ISSUER = tokenIssuer;
   }
 
 }
