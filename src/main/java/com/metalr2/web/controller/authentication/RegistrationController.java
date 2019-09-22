@@ -3,6 +3,7 @@ package com.metalr2.web.controller.authentication;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
+import com.metalr2.model.ArtifactForFramework;
 import com.metalr2.model.exceptions.EmailVerificationTokenExpiredException;
 import com.metalr2.model.exceptions.ResourceNotFoundException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
@@ -51,6 +52,7 @@ public class RegistrationController {
   }
 
   @ModelAttribute(FORM_DTO)
+  @ArtifactForFramework
   private RegisterUserRequest registerUserRequest() {
     return new RegisterUserRequest();
   }
