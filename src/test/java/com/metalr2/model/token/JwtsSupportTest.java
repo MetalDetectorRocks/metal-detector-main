@@ -3,24 +3,22 @@ package com.metalr2.model.token;
 import com.metalr2.security.ExpirationTime;
 import io.jsonwebtoken.Claims;
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.Date;
 import java.util.UUID;
 
-@TestPropertySource("classpath:test.properties")
-@SpringJUnitConfig
 class JwtsSupportTest implements WithAssertions {
 
+  private static final String TOKEN_SECRET = "dummy-token-secret";
   private static final String TOKEN_ISSUER = "dummy-token-issuer";
-
-  @Autowired
   private JwtsSupport jwtsSupport;
+
+  @BeforeEach
+  void setup() {
+    jwtsSupport = new JwtsSupport(TOKEN_SECRET, TOKEN_ISSUER);
+  }
 
   @Test
   void generateTokenShouldGenerateANewToken() {
@@ -45,12 +43,6 @@ class JwtsSupportTest implements WithAssertions {
     assertThat(claims.getExpiration()).isCloseTo(new Date(currentMillis + ExpirationTime.ONE_HOUR.toMillis()), 1_000L);
     assertThat(claims.getIssuedAt()).isCloseTo(new Date(currentMillis), 1_000L);
     assertThat(claims.getIssuer()).isEqualTo(TOKEN_ISSUER);
-  }
-
-  @TestConfiguration
-  @ComponentScan("com.metalr2.model.token")
-  static class TestConfig {
-    // needed for autowiring JwtsSupport
   }
 
 }
