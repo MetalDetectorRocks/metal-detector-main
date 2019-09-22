@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class TokenEntity extends AbstractEntity {
 
   @Column(name = "token_string", nullable = false)
+  @Lob
   @NonNull
   private String tokenString;
 

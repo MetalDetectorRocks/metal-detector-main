@@ -12,8 +12,8 @@ class TokenFactory {
           static final String DUMMY_TOKEN_STRING = "dummy-token-string";
   private static final UserEntity userEntity     = UserFactory.createUser("JohnD", "john.d@example.com");
 
-  static TokenEntity createToken(TokenType tokenType) {
-    return createToken(tokenType, userEntity);
+  static TokenEntity createToken(TokenType tokenType, long expireInMillis) {
+    return createToken(tokenType, userEntity, expireInMillis);
   }
 
   static TokenEntity createToken(long expireInMillis) {

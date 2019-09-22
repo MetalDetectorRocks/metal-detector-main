@@ -21,7 +21,7 @@ class JwtsSupportTest implements WithAssertions {
   }
 
   @Test
-  void generateTokenShouldGenerateANewToken() {
+  void generate_token_should_generate_a_new_and_unique_token() {
     String token1 = jwtsSupport.generateToken("Dummy Subject", ExpirationTime.ONE_HOUR);
     String token2 = jwtsSupport.generateToken("Dummy Subject", ExpirationTime.ONE_HOUR);
 
@@ -30,7 +30,7 @@ class JwtsSupportTest implements WithAssertions {
   }
 
   @Test
-  void getClaimsShouldReturnCorrectValues() {
+  void get_claims_should_return_correct_values_from_token() {
     final String SUBJECT = "Dummy Subject";
     long currentMillis = System.currentTimeMillis();
     String token = jwtsSupport.generateToken(SUBJECT, ExpirationTime.ONE_HOUR);

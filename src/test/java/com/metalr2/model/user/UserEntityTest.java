@@ -1,55 +1,23 @@
 package com.metalr2.model.user;
 
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.Collections;
 
-@ExtendWith(SpringExtension.class)
-@DataJpaTest
+@SpringJUnitConfig
 class UserEntityTest implements WithAssertions {
-
-  @Autowired
-  private UserRepository userRepository;
 
   @Autowired
   private BCryptPasswordEncoder passwordEncoder;
 
-  @AfterEach
-  void tearDown() {
-    userRepository.deleteAll();
-  }
-
   @Test
-  void getPublicIdShouldReturnIdAfterPersisting() {
-    UserEntity user = UserFactory.createUser("Test", "test@test.com");
-
-    assertThat(user.getPublicId()).isNull();
-    userRepository.save(user);
-    assertThat(user.getPublicId()).isNotNull();
-  }
-
-  @Test
-  void getIdShouldReturnIdAfterPersisting() {
-    UserEntity user = UserFactory.createUser("Test", "test@test.com");
-
-    assertThat(user.getId()).isNull();
-    assertThat(user.isNew()).isTrue();
-    userRepository.save(user);
-    assertThat(user.getId()).isNotNull();
-    assertThat(user.isNew()).isFalse();
-  }
-
-  @Test
-  void setUsernameShouldThrowException() {
+  void set_username_should_throw_exception() {
     UserEntity user = UserFactory.createUser("Test", "test@test.com");
 
     Throwable throwable = catchThrowable(() -> user.setUsername("new username"));
@@ -59,7 +27,7 @@ class UserEntityTest implements WithAssertions {
   }
 
   @Test
-  void isUserShouldReturnTrueForUserOfRoleUser() {
+  void is_user_should_return_true_for_user_of_role_user() {
     UserEntity user = UserFactory.createUser("User", "user@test.com");
 
     assertThat(user.isUser()).isTrue();
@@ -68,7 +36,7 @@ class UserEntityTest implements WithAssertions {
   }
 
   @Test
-  void isAdministratorShouldReturnTrueForUserOfRoleAdministrator() {
+  void is_administrator_should_return_true_for_user_of_role_administrator() {
     UserEntity user = UserFactory.createAdministrator();
 
     assertThat(user.isUser()).isFalse();
@@ -77,7 +45,7 @@ class UserEntityTest implements WithAssertions {
   }
 
   @Test
-  void isSuperUserShouldReturnTrueForUserOfRoleSuperUser() {
+  void is_super_user_should_return_true_for_user_of_role_super_user() {
     UserEntity user = UserFactory.createSuperUser();
 
     assertThat(user.isUser()).isTrue();
@@ -86,7 +54,7 @@ class UserEntityTest implements WithAssertions {
   }
 
   @Test
-  void updateOfEmailShouldBePossible() {
+  void update_of_email_should_be_possible() {
     String initialEmail = "test@test.com";
     String newEmail     = "test-update@test.com";
 
@@ -101,7 +69,7 @@ class UserEntityTest implements WithAssertions {
   }
 
   @Test
-  void updateOfPasswordWithValidValueShouldBePossible() {
+  void update_of_password_with_valid_value_should_be_possible() {
     String newEncryptedPassword = passwordEncoder.encode("test1234");
     UserEntity user = UserFactory.createSuperUser();
 
@@ -111,7 +79,7 @@ class UserEntityTest implements WithAssertions {
   }
 
   @Test
-  void updatePasswordWithNullValueShouldThrowException() {
+  void update_password_with_null_value_should_throw_exception() {
     UserEntity user = UserFactory.createSuperUser();
 
     Throwable setNullPassword = catchThrowable(() -> user.setPassword(null));
@@ -121,7 +89,7 @@ class UserEntityTest implements WithAssertions {
   }
 
   @Test
-  void updatePasswordWithEmptyValueShouldThrowException() {
+  void update_password_with_empty_value_should_throw_exception() {
     UserEntity user = UserFactory.createSuperUser();
 
     Throwable setEmptyPassword = catchThrowable(() -> user.setPassword(""));
@@ -131,7 +99,7 @@ class UserEntityTest implements WithAssertions {
   }
 
   @Test
-  void updateOfUserRolesShouldBePossible() {
+  void update_of_user_roles_should_be_possible() {
     UserEntity user = UserFactory.createSuperUser();
 
     user.setUserRoles(UserRole.createAdministratorRole());
@@ -146,7 +114,7 @@ class UserEntityTest implements WithAssertions {
   }
 
   @Test
-  void updateOfUserRolesWithEmptySetShouldThrowException() {
+  void update_of_user_roles_with_empty_set_should_throw_exception() {
     UserEntity user = UserFactory.createSuperUser();
 
     Throwable setEmptyCollection = catchThrowable(() -> user.setUserRoles(Collections.emptySet()));
@@ -156,7 +124,7 @@ class UserEntityTest implements WithAssertions {
   }
 
   @Test
-  void updateOfUserRolesWithNullValueShouldThrowException() {
+  void update_of_user_roles_with_null_value_should_throw_exception() {
     UserEntity user = UserFactory.createSuperUser();
 
     Throwable setNullValue = catchThrowable(() -> user.setUserRoles(Collections.emptySet()));
@@ -176,4 +144,3 @@ class UserEntityTest implements WithAssertions {
   }
 
 }
-

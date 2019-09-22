@@ -25,7 +25,7 @@ class CustomAccessDeniedHandlerTest implements WithAssertions {
 
   @ParameterizedTest
   @MethodSource("createRequestUris")
-  void handleAccessDeniedForAuthenticatedUser(List<String> requestUris, HttpStatus httpStatus, String location, String errorMessage) throws Exception {
+  void handle_access_denied_for_authenticated_user(List<String> requestUris, HttpStatus httpStatus, String location, String errorMessage) throws Exception {
     Authentication authenticationMock = Mockito.mock(UsernamePasswordAuthenticationToken.class);
     AccessDeniedHandler accessDeniedHandler = new CustomAccessDeniedHandler(() -> authenticationMock);
 

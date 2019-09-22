@@ -3,8 +3,6 @@ package com.metalr2.web.controller.authentication;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.service.user.UserService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,32 +21,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(LoginController.class)
 @Import(WebSecurity.class)
-class LoginControllerTest {
+class LoginControllerMvcTest {
 
   @Autowired
   private MockMvc mockMvc;
 
-  @MockBean
-  private UserService userService;
-
-  @MockBean
-  private BCryptPasswordEncoder passwordEncoder;
-
-  @BeforeEach
-  void setUp() {
-    // do nothing
-  }
-
-  @AfterEach
-  void tearDown() {
-    // do nothing
-  }
+  // for WebSecurity
+  @MockBean private UserService userService;
+  @MockBean private BCryptPasswordEncoder passwordEncoder;
 
   @Test
   void given_login_uri_should_return_login_view() throws Exception {
     mockMvc.perform(get(Endpoints.Guest.LOGIN))
             .andExpect(status().isOk())
             .andExpect(view().name(ViewNames.Guest.LOGIN))
+            .andExpect(model().size(0))
             .andExpect(content().string(containsString("Login")));
   }
 }

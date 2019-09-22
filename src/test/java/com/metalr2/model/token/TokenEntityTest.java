@@ -1,17 +1,24 @@
 package com.metalr2.model.token;
 
+import com.metalr2.security.ExpirationTime;
 import org.assertj.core.api.WithAssertions;
+import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static com.metalr2.model.token.TokenFactory.DUMMY_TOKEN_STRING;
 
 class TokenEntityTest implements WithAssertions {
 
   @Test
-  void allTokenFieldsHaveValidValues() {
-    TokenEntity token = TokenFactory.createToken(TokenType.EMAIL_VERIFICATION);
+  void all_token_fields_should_have_valid_values() {
+    TokenEntity token = TokenFactory.createToken(TokenType.EMAIL_VERIFICATION, ExpirationTime.ONE_HOUR.toMillis());
 
-    assertThat(token.getExpirationDateTime());
+    LocalDateTime expectedExpirationDateTime = LocalDateTime.now().plus(1, ChronoUnit.HOURS);
+    TemporalUnitLessThanOffset offset = new TemporalUnitLessThanOffset(1, ChronoUnit.SECONDS);
+    assertThat(token.getExpirationDateTime()).isCloseTo(expectedExpirationDateTime, offset);
     assertThat(token.isExpired()).isFalse();
     assertThat(token.getUser()).isNotNull();
     assertThat(token.getTokenString()).hasSize(DUMMY_TOKEN_STRING.length());
@@ -19,7 +26,7 @@ class TokenEntityTest implements WithAssertions {
   }
 
   @Test
-  void isExpired() throws Exception {
+  void token_should_expire_after_expiration_time() throws Exception {
     long expirationTimeInMillis = 50;
     TokenEntity token = TokenFactory.createToken(expirationTimeInMillis);
 

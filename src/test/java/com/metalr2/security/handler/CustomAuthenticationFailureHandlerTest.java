@@ -26,7 +26,7 @@ class CustomAuthenticationFailureHandlerTest implements WithAssertions {
   }
 
   @Test
-  void locateToLoginPageIfUserIsDisabled() throws Exception {
+  void locate_to_login_page_if_user_is_disabled() throws Exception {
     authenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, new DisabledException("dummy"));
 
     assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.MOVED_TEMPORARILY.value());
@@ -34,7 +34,7 @@ class CustomAuthenticationFailureHandlerTest implements WithAssertions {
   }
 
   @Test
-  void locateToLoginPageIfUserHasBadCredentials() throws Exception {
+  void locate_to_login_page_if_user_has_bad_credentials() throws Exception {
     authenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, new BadCredentialsException("dummy"));
 
     assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.MOVED_TEMPORARILY.value());

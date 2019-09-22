@@ -25,7 +25,7 @@ class CustomAuthenticationSuccessHandlerTest implements WithAssertions {
   }
 
   @Test
-  void locateAuthenticatedUserToFrontendHomepage() throws Exception {
+  void locate_user_to_frontend_homepage_on_authentication_success() throws Exception {
     Authentication authentication = new TestingAuthenticationToken("principal", "credentials");
     authenticationSuccessHandler.onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
 

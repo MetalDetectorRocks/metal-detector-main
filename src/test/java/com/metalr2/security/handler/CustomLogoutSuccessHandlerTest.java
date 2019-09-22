@@ -25,7 +25,7 @@ class CustomLogoutSuccessHandlerTest implements WithAssertions {
   }
 
   @Test
-  void locateAuthenticatedUserToFrontendHomepage() throws Exception {
+  void locate_user_to_login_page_on_logout() throws Exception {
     Authentication authentication = new TestingAuthenticationToken("principal", "credentials");
     logoutSuccessHandler.onLogoutSuccess(httpServletRequest, httpServletResponse, authentication);
 

@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-class AbstractEntityTest implements WithAssertions {
+class AbstractEntityIT implements WithAssertions {
 
   private static final String AUDITOR_USER = "ANONYMOUS";
 
@@ -26,7 +26,7 @@ class AbstractEntityTest implements WithAssertions {
   private SimpleTestRepository testRepository;
 
   @Test
-  void jpaAuditingFieldsShouldBeNotNull() {
+  void jpa_auditing_fields_should_be_not_null() {
     TemporalUnitLessThanOffset offset = new TemporalUnitLessThanOffset(500, ChronoUnit.MILLIS);
     SimpleTestEntity testEntity = new SimpleTestEntity();
 
