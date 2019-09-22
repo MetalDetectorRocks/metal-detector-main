@@ -1,5 +1,6 @@
 package com.metalr2.service.email;
 
+import com.metalr2.config.misc.MailConfig;
 import com.metalr2.model.email.AbstractEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +27,14 @@ public class EmailService {
   private final JavaMailSender       emailSender;
   private final SpringTemplateEngine templateEngine;
   private final Executor             executor;
+  private final MailConfig           mailConfig;
 
   @Autowired
-  public EmailService(JavaMailSender emailSender, SpringTemplateEngine templateEngine) {
+  public EmailService(JavaMailSender emailSender, SpringTemplateEngine templateEngine, MailConfig mailConfig) {
     this.emailSender    = emailSender;
     this.templateEngine = templateEngine;
     this.executor       = Executors.newSingleThreadExecutor();
+    this.mailConfig     = mailConfig;
   }
 
   @Async
@@ -56,13 +59,13 @@ public class EmailService {
     try {
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
       Context context = new Context();
-      context.setVariables(email.getViewModel());
+      context.setVariables(email.getEnhancedViewModel(mailConfig.getHost()));
       String html = templateEngine.process(email.getTemplateName(), context);
 
       helper.setTo(email.getRecipient());
       helper.setText(html, true);
       helper.setSubject(email.getSubject());
-      helper.setFrom(email.getFrom());
+      helper.setFrom(mailConfig.getFromEmail());
     }
     catch (MessagingException me) {
       LOG.error("unable to create email", me);
