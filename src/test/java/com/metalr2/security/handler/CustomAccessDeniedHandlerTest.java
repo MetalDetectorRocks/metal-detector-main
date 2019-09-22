@@ -1,6 +1,7 @@
 package com.metalr2.security.handler;
 
 import com.metalr2.config.constants.Endpoints;
+import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,10 +20,8 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @ExtendWith(MockitoExtension.class)
-class CustomAccessDeniedHandlerTest {
+class CustomAccessDeniedHandlerTest implements WithAssertions {
 
   @ParameterizedTest
   @MethodSource("createRequestUris")
@@ -37,9 +36,9 @@ class CustomAccessDeniedHandlerTest {
 
       accessDeniedHandler.handle(request, response, new AccessDeniedException("Access denied!"));
 
-      assertEquals(httpStatus.value(), response.getStatus());
-      assertEquals(location, response.getHeader(HttpHeaders.LOCATION));
-      assertEquals(errorMessage, response.getErrorMessage());
+      assertThat(response.getStatus()).isEqualTo(httpStatus.value());
+      assertThat(response.getHeader(HttpHeaders.LOCATION)).isEqualTo(location);
+      assertThat(response.getErrorMessage()).isEqualTo(errorMessage);
     }
   }
 

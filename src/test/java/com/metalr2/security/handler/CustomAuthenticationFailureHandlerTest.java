@@ -1,6 +1,7 @@
 package com.metalr2.security.handler;
 
 import com.metalr2.config.constants.Endpoints;
+import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -11,9 +12,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-class CustomAuthenticationFailureHandlerTest {
+class CustomAuthenticationFailureHandlerTest implements WithAssertions {
 
   private AuthenticationFailureHandler authenticationFailureHandler;
   private MockHttpServletRequest       httpServletRequest;
@@ -30,16 +29,16 @@ class CustomAuthenticationFailureHandlerTest {
   void locateToLoginPageIfUserIsDisabled() throws Exception {
     authenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, new DisabledException("dummy"));
 
-    assertEquals(HttpStatus.MOVED_TEMPORARILY.value(), httpServletResponse.getStatus());
-    assertEquals(Endpoints.Guest.LOGIN + "?disabled", httpServletResponse.getHeader(HttpHeaders.LOCATION));
+    assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.MOVED_TEMPORARILY.value());
+    assertThat(httpServletResponse.getHeader(HttpHeaders.LOCATION)).isEqualTo(Endpoints.Guest.LOGIN + "?disabled");
   }
 
   @Test
   void locateToLoginPageIfUserHasBadCredentials() throws Exception {
     authenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, new BadCredentialsException("dummy"));
 
-    assertEquals(HttpStatus.MOVED_TEMPORARILY.value(), httpServletResponse.getStatus());
-    assertEquals(Endpoints.Guest.LOGIN + "?badCredentials", httpServletResponse.getRedirectedUrl());
+    assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.MOVED_TEMPORARILY.value());
+    assertThat(httpServletResponse.getRedirectedUrl()).isEqualTo(Endpoints.Guest.LOGIN + "?badCredentials");
   }
 
 }

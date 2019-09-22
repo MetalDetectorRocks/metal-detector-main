@@ -1,5 +1,6 @@
 package com.metalr2.model.user;
 
+import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,11 +11,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-class UserRepositoryTest {
+class UserRepositoryTest implements WithAssertions {
 
   @Autowired
   private UserRepository userRepository;
@@ -39,57 +38,57 @@ class UserRepositoryTest {
   void findByEmailShouldReturnUserEntity() {
     Optional<UserEntity> user = userRepository.findByEmail(EMAIL);
 
-    assertTrue(user.isPresent());
-    assertEquals(JOHN_DOE, user.get());
+    assertThat(user).isPresent();
+    assertThat(user.get()).isEqualTo(JOHN_DOE);
   }
 
   @Test
   void findByEmailShouldReturnEmptyOptional() {
     Optional<UserEntity> user = userRepository.findByEmail(UNKNOWN_EMAIL);
 
-    assertTrue(user.isEmpty());
+    assertThat(user).isEmpty();
   }
 
   @Test
   void findByUsernameShouldReturnUserEntity() {
     Optional<UserEntity> user = userRepository.findByUsername(USERNAME);
 
-    assertTrue(user.isPresent());
-    assertEquals(JOHN_DOE, user.get());
+    assertThat(user).isPresent();
+    assertThat(user.get()).isEqualTo(JOHN_DOE);
   }
 
   @Test
   void findByUsernameShouldReturnEmptyOptional() {
     Optional<UserEntity> user = userRepository.findByUsername(UNKNOWN_USERNAME);
 
-    assertTrue(user.isEmpty());
+    assertThat(user).isEmpty();
   }
 
   @Test
   void findByPublicIdShouldReturnUserEntity() {
     Optional<UserEntity> user = userRepository.findByPublicId(JOHN_DOE.getPublicId());
 
-    assertTrue(user.isPresent());
-    assertEquals(JOHN_DOE, user.get());
+    assertThat(user).isPresent();
+    assertThat(user.get()).isEqualTo(JOHN_DOE);
   }
 
   @Test
   void findByPublicIdShouldReturnEmptyOptional() {
     Optional<UserEntity> user = userRepository.findByPublicId(UNKNOWN_USERNAME);
 
-    assertTrue(user.isEmpty());
+    assertThat(user).isEmpty();
   }
 
   @Test
   void existsByEmailShouldReturnTrueOrFalse() {
-    assertTrue(userRepository.existsByEmail(EMAIL));
-    assertFalse(userRepository.existsByEmail(UNKNOWN_EMAIL));
+    assertThat(userRepository.existsByEmail(EMAIL)).isTrue();
+    assertThat(userRepository.existsByEmail(UNKNOWN_EMAIL)).isFalse();
   }
 
   @Test
   void existsByUsernameShouldReturnTrueOrFalse() {
-    assertTrue(userRepository.existsByUsername(USERNAME));
-    assertFalse(userRepository.existsByUsername(UNKNOWN_USERNAME));
+    assertThat(userRepository.existsByUsername(USERNAME)).isTrue();
+    assertThat(userRepository.existsByUsername(UNKNOWN_USERNAME)).isFalse();
   }
 
 }

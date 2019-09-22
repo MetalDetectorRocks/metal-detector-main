@@ -1,5 +1,6 @@
 package com.metalr2.model.user;
 
+import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,34 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-class UserEntityTest {
+class UserEntityTest implements WithAssertions {
 
   @Autowired
   private UserRepository userRepository;
 
   @Autowired
   private BCryptPasswordEncoder passwordEncoder;
-
-  @EnableJpaAuditing
-  @TestConfiguration
-  static class MyTestConfiguration {
-
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-      return new BCryptPasswordEncoder();
-    }
-
-  }
 
   @AfterEach
   void tearDown() {
@@ -45,53 +32,57 @@ class UserEntityTest {
   void getPublicIdShouldReturnIdAfterPersisting() {
     UserEntity user = UserFactory.createUser("Test", "test@test.com");
 
-    assertNull(user.getPublicId());
+    assertThat(user.getPublicId()).isNull();
     userRepository.save(user);
-    assertNotNull(user.getPublicId());
+    assertThat(user.getPublicId()).isNotNull();
   }
 
   @Test
   void getIdShouldReturnIdAfterPersisting() {
     UserEntity user = UserFactory.createUser("Test", "test@test.com");
 
-    assertNull(user.getId());
-    assertTrue(user.isNew());
+    assertThat(user.getId()).isNull();
+    assertThat(user.isNew()).isTrue();
     userRepository.save(user);
-    assertNotNull(user.getId());
+    assertThat(user.getId()).isNotNull();
+    assertThat(user.isNew()).isFalse();
   }
 
   @Test
   void setUsernameShouldThrowException() {
     UserEntity user = UserFactory.createUser("Test", "test@test.com");
 
-    assertThrows(UnsupportedOperationException.class, () -> user.setUsername("new username"));
+    Throwable throwable = catchThrowable(() -> user.setUsername("new username"));
+
+    assertThat(throwable).isInstanceOf(UnsupportedOperationException.class);
+    assertThat(throwable).hasMessage("The username must not be changed.");
   }
 
   @Test
   void isUserShouldReturnTrueForUserOfRoleUser() {
     UserEntity user = UserFactory.createUser("User", "user@test.com");
 
-    assertTrue(user.isUser());
-    assertFalse(user.isAdministrator());
-    assertFalse(user.isSuperUser());
+    assertThat(user.isUser()).isTrue();
+    assertThat(user.isAdministrator()).isFalse();
+    assertThat(user.isSuperUser()).isFalse();
   }
 
   @Test
   void isAdministratorShouldReturnTrueForUserOfRoleAdministrator() {
     UserEntity user = UserFactory.createAdministrator();
 
-    assertFalse(user.isUser());
-    assertTrue(user.isAdministrator());
-    assertFalse(user.isSuperUser());
+    assertThat(user.isUser()).isFalse();
+    assertThat(user.isAdministrator()).isTrue();
+    assertThat(user.isSuperUser()).isFalse();
   }
 
   @Test
   void isSuperUserShouldReturnTrueForUserOfRoleSuperUser() {
     UserEntity user = UserFactory.createSuperUser();
 
-    assertTrue(user.isUser());
-    assertTrue(user.isAdministrator());
-    assertTrue(user.isSuperUser());
+    assertThat(user.isUser()).isTrue();
+    assertThat(user.isAdministrator()).isTrue();
+    assertThat(user.isSuperUser()).isTrue();
   }
 
   @Test
@@ -100,26 +91,43 @@ class UserEntityTest {
     String newEmail     = "test-update@test.com";
 
     UserEntity user = UserFactory.createUser("user", initialEmail);
-    assertEquals(initialEmail, user.getEmail());
+    assertThat(user.getEmail()).isEqualTo(initialEmail);
 
     user.setEmail(newEmail);
-    assertEquals(newEmail, user.getEmail());
+    assertThat(user.getEmail()).isEqualTo(newEmail);
 
     user.setEmail(null);
-    assertEquals("", user.getEmail());
+    assertThat(user.getEmail()).isEmpty();
   }
 
   @Test
-  void updateOfPasswordShouldBePossible() {
+  void updateOfPasswordWithValidValueShouldBePossible() {
     String newEncryptedPassword = passwordEncoder.encode("test1234");
     UserEntity user = UserFactory.createSuperUser();
 
-    assertNotNull(user.getPassword());
+    assertThat(user.getPassword()).isNotEqualTo(newEncryptedPassword);
     user.setPassword(newEncryptedPassword);
-    assertEquals(newEncryptedPassword, user.getPassword());
+    assertThat(user.getPassword()).isEqualTo(newEncryptedPassword);
+  }
 
-    assertThrows(IllegalArgumentException.class, () -> user.setPassword(null));
-    assertThrows(IllegalArgumentException.class, () -> user.setPassword(""));
+  @Test
+  void updatePasswordWithNullValueShouldThrowException() {
+    UserEntity user = UserFactory.createSuperUser();
+
+    Throwable setNullPassword = catchThrowable(() -> user.setPassword(null));
+
+    assertThat(setNullPassword).isInstanceOf(IllegalArgumentException.class);
+    assertThat(setNullPassword).hasMessage("It seems that the new password has not been correctly encrypted.");
+  }
+
+  @Test
+  void updatePasswordWithEmptyValueShouldThrowException() {
+    UserEntity user = UserFactory.createSuperUser();
+
+    Throwable setEmptyPassword = catchThrowable(() -> user.setPassword(""));
+
+    assertThat(setEmptyPassword).isInstanceOf(IllegalArgumentException.class);
+    assertThat(setEmptyPassword).hasMessage("It seems that the new password has not been correctly encrypted.");
   }
 
   @Test
@@ -127,17 +135,45 @@ class UserEntityTest {
     UserEntity user = UserFactory.createSuperUser();
 
     user.setUserRoles(UserRole.createAdministratorRole());
-    assertTrue(user.isAdministrator());
+    assertThat(user.isAdministrator()).isTrue();
 
     user.setUserRoles(UserRole.createSuperUserRole());
-    assertTrue(user.isSuperUser());
+    assertThat(user.isSuperUser()).isTrue();
 
     boolean removeResult = user.removeUserRole(UserRole.ROLE_ADMINISTRATOR);
-    assertTrue(user.isUser());
-    assertTrue(removeResult);
+    assertThat(user.isUser()).isTrue();
+    assertThat(removeResult).isTrue();
+  }
 
-    assertThrows(IllegalArgumentException.class, () -> user.setUserRoles(Collections.emptySet()));
-    assertThrows(IllegalArgumentException.class, () -> user.setUserRoles(null));
+  @Test
+  void updateOfUserRolesWithEmptySetShouldThrowException() {
+    UserEntity user = UserFactory.createSuperUser();
+
+    Throwable setEmptyCollection = catchThrowable(() -> user.setUserRoles(Collections.emptySet()));
+
+    assertThat(setEmptyCollection).isInstanceOf(IllegalArgumentException.class);
+    assertThat(setEmptyCollection).hasMessage("At least one user role must be set!");
+  }
+
+  @Test
+  void updateOfUserRolesWithNullValueShouldThrowException() {
+    UserEntity user = UserFactory.createSuperUser();
+
+    Throwable setNullValue = catchThrowable(() -> user.setUserRoles(Collections.emptySet()));
+
+    assertThat(setNullValue).isInstanceOf(IllegalArgumentException.class);
+    assertThat(setNullValue).hasMessage("At least one user role must be set!");
+  }
+
+  @TestConfiguration
+  static class UserEntityTestConfiguration {
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+      return new BCryptPasswordEncoder();
+    }
+
   }
 
 }
+

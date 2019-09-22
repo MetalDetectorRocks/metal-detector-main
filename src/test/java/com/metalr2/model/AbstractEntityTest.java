@@ -1,5 +1,7 @@
 package com.metalr2.model;
 
+import org.assertj.core.api.WithAssertions;
+import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,16 +13,35 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-class AbstractEntityTest {
+class AbstractEntityTest implements WithAssertions {
+
+  private static final String AUDITOR_USER = "ANONYMOUS";
 
   @Autowired
   private SimpleTestRepository testRepository;
+
+  @Test
+  void jpaAuditingFieldsShouldBeNotNull() {
+    TemporalUnitLessThanOffset offset = new TemporalUnitLessThanOffset(500, ChronoUnit.MILLIS);
+    SimpleTestEntity testEntity = new SimpleTestEntity();
+
+    assertThat(testEntity.getCreatedBy()).isNull();
+    assertThat(testEntity.getCreatedDateTime()).isNull();
+    assertThat(testEntity.getLastModifiedBy()).isNull();
+    assertThat(testEntity.getLastModifiedDateTime()).isNull();
+
+    testRepository.save(testEntity);
+
+    assertThat(testEntity.getCreatedBy()).isEqualTo(AUDITOR_USER);
+    assertThat(testEntity.getCreatedDateTime()).isCloseTo(LocalDateTime.now(), offset);
+    assertThat(testEntity.getLastModifiedBy()).isEqualTo(AUDITOR_USER);
+    assertThat(testEntity.getLastModifiedDateTime()).isCloseTo(LocalDateTime.now(), offset);
+  }
 
   @EnableJpaAuditing
   @TestConfiguration
@@ -28,26 +49,9 @@ class AbstractEntityTest {
 
     @Bean
     public AuditorAware<String> auditorAware() {
-      return () -> Optional.of("ANONYMOUS");
+      return () -> Optional.of(AUDITOR_USER);
     }
 
-  }
-
-  @Test
-  void jpaAuditingFieldsShouldBeNotNull() {
-    SimpleTestEntity testEntity = new SimpleTestEntity();
-
-    assertNull(testEntity.getCreatedBy());
-    assertNull(testEntity.getCreatedDateTime());
-    assertNull(testEntity.getLastModifiedBy());
-    assertNull(testEntity.getLastModifiedDateTime());
-
-    testRepository.save(testEntity);
-
-    assertEquals("ANONYMOUS", testEntity.getCreatedBy());
-    assertTrue(LocalDateTime.now().isAfter(testEntity.getCreatedDateTime()));
-    assertEquals("ANONYMOUS", testEntity.getLastModifiedBy());
-    assertTrue(LocalDateTime.now().isAfter(testEntity.getLastModifiedDateTime()));
   }
 
 }
