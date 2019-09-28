@@ -2,6 +2,7 @@ package com.metalr2.security.handler;
 
 import com.metalr2.config.constants.Endpoints;
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -25,6 +26,7 @@ class CustomAccessDeniedHandlerTest implements WithAssertions {
 
   @ParameterizedTest
   @MethodSource("createRequestUris")
+  @DisplayName("Test several access denied scenarios")
   void handle_access_denied_for_authenticated_user(List<String> requestUris, HttpStatus httpStatus, String location, String errorMessage) throws Exception {
     Authentication authenticationMock = Mockito.mock(UsernamePasswordAuthenticationToken.class);
     AccessDeniedHandler accessDeniedHandler = new CustomAccessDeniedHandler(() -> authenticationMock);

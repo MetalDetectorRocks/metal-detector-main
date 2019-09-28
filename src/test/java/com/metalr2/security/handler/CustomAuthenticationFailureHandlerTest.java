@@ -3,6 +3,7 @@ package com.metalr2.security.handler;
 import com.metalr2.config.constants.Endpoints;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,8 @@ class CustomAuthenticationFailureHandlerTest implements WithAssertions {
   }
 
   @Test
-  void locate_to_login_page_if_user_is_disabled() throws Exception {
+  @DisplayName("Forward user to login page again if the user is disabled")
+  void forward_to_login_page_if_user_is_disabled() throws Exception {
     authenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, new DisabledException("dummy"));
 
     assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.MOVED_TEMPORARILY.value());
@@ -34,7 +36,8 @@ class CustomAuthenticationFailureHandlerTest implements WithAssertions {
   }
 
   @Test
-  void locate_to_login_page_if_user_has_bad_credentials() throws Exception {
+  @DisplayName("Forward user to login page again if the user has bad credentials")
+  void forward_to_login_page_if_user_has_bad_credentials() throws Exception {
     authenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, new BadCredentialsException("dummy"));
 
     assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.MOVED_TEMPORARILY.value());

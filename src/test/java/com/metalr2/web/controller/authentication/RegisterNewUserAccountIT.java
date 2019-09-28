@@ -6,6 +6,7 @@ import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.UserDto;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.context.ApplicationEventPublisher;
@@ -24,7 +25,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class RegisterNewUserAccountIntegrationTest {
+@Tag("integration-test")
+class RegisterNewUserAccountIT {
 
   private static final String RESPONSE_ATTRIBUTE_NAME = "registerUserRequest";
   private static final String PARAM_USER_NAME         = "username";

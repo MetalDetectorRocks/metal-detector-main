@@ -7,6 +7,7 @@ import com.metalr2.service.email.EmailService;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.web.dto.UserDto;
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -33,6 +34,7 @@ class ResetPasswordRequestCompleteListenerTest implements WithAssertions {
   private ResetPasswordRequestCompleteListener listener;
 
   @Test
+  @DisplayName("ResetPasswordRequestCompleteListener should create token and send an email after password reset request")
   void create_token_and_send_email_on_password_reset() {
     // given
     final String EMAIL = "john.doe@example.com";

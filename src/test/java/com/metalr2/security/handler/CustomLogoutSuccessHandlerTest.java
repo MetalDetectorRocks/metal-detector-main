@@ -3,6 +3,7 @@ package com.metalr2.security.handler;
 import com.metalr2.config.constants.Endpoints;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -25,7 +26,8 @@ class CustomLogoutSuccessHandlerTest implements WithAssertions {
   }
 
   @Test
-  void locate_user_to_login_page_on_logout() throws Exception {
+  @DisplayName("Forward user to login page on logout")
+  void forward_user_to_login_page_on_logout() throws Exception {
     Authentication authentication = new TestingAuthenticationToken("principal", "credentials");
     logoutSuccessHandler.onLogoutSuccess(httpServletRequest, httpServletResponse, authentication);
 

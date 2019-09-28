@@ -1,18 +1,12 @@
 package com.metalr2.model.user;
 
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-@ExtendWith(SpringExtension.class)
 @DataJpaTest
 @Tag("integration-test")
 class UserRepositoryIT implements WithAssertions {
@@ -37,6 +31,7 @@ class UserRepositoryIT implements WithAssertions {
   }
 
   @Test
+  @DisplayName("getPublicId() should return a valid id after persisting the user")
   void get_public_id_should_return_id_after_persisting() {
     UserEntity user = UserFactory.createUser("Test", "test@test.com");
 
@@ -46,6 +41,7 @@ class UserRepositoryIT implements WithAssertions {
   }
 
   @Test
+  @DisplayName("getId() should return a valid id after persisting the user")
   void get_id_should_return_id_after_persisting() {
     UserEntity user = UserFactory.createUser("Test", "test@test.com");
 
@@ -57,6 +53,7 @@ class UserRepositoryIT implements WithAssertions {
   }
 
   @Test
+  @DisplayName("findByEmail() should return the correct user entity")
   void find_by_email_should_return_user_entity() {
     Optional<UserEntity> user = userRepository.findByEmail(EMAIL);
 
@@ -65,6 +62,7 @@ class UserRepositoryIT implements WithAssertions {
   }
 
   @Test
+  @DisplayName("findByEmail() should return an empty optional if no user was found")
   void find_by_email_should_return_empty_optional() {
     Optional<UserEntity> user = userRepository.findByEmail(UNKNOWN_EMAIL);
 
@@ -72,6 +70,7 @@ class UserRepositoryIT implements WithAssertions {
   }
 
   @Test
+  @DisplayName("findByUsername() should return the correct user entity")
   void find_by_username_should_return_user_entity() {
     Optional<UserEntity> user = userRepository.findByUsername(USERNAME);
 
@@ -80,6 +79,7 @@ class UserRepositoryIT implements WithAssertions {
   }
 
   @Test
+  @DisplayName("findByUsername() should return an empty optional if no user was found")
   void find_by_username_should_return_empty_optional() {
     Optional<UserEntity> user = userRepository.findByUsername(UNKNOWN_USERNAME);
 
@@ -87,6 +87,7 @@ class UserRepositoryIT implements WithAssertions {
   }
 
   @Test
+  @DisplayName("findByPublicId() should return the correct user entity")
   void find_by_public_id_should_return_user_entity() {
     Optional<UserEntity> user = userRepository.findByPublicId(JOHN_DOE.getPublicId());
 
@@ -95,6 +96,7 @@ class UserRepositoryIT implements WithAssertions {
   }
 
   @Test
+  @DisplayName("findByPublicId() should return an empty optional if no user was found")
   void find_by_public_id_should_return_empty_optional() {
     Optional<UserEntity> user = userRepository.findByPublicId(UNKNOWN_USERNAME);
 
@@ -102,12 +104,14 @@ class UserRepositoryIT implements WithAssertions {
   }
 
   @Test
+  @DisplayName("existsByEmail() should return true for existing users and false for not existing users")
   void exists_by_email_should_return_true_or_false() {
     assertThat(userRepository.existsByEmail(EMAIL)).isTrue();
     assertThat(userRepository.existsByEmail(UNKNOWN_EMAIL)).isFalse();
   }
 
   @Test
+  @DisplayName("existsByUsername() should return true for existing users and false for not existing users")
   void exists_by_username_should_return_true_or_false() {
     assertThat(userRepository.existsByUsername(USERNAME)).isTrue();
     assertThat(userRepository.existsByUsername(UNKNOWN_USERNAME)).isFalse();

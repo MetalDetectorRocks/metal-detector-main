@@ -4,18 +4,12 @@ import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserFactory;
 import com.metalr2.model.user.UserRepository;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-@ExtendWith(SpringExtension.class)
 @DataJpaTest
 @Tag("integration-test")
 class TokenRepositoryIT implements WithAssertions {
@@ -41,6 +35,7 @@ class TokenRepositoryIT implements WithAssertions {
   }
 
   @Test
+  @DisplayName("findEmailVerificationToken() should return correct token entity")
   void find_email_verification_token_should_return_correct_token_entity() {
     TokenEntity emailVerificationToken = createToken(TokenType.EMAIL_VERIFICATION);
 
@@ -51,6 +46,7 @@ class TokenRepositoryIT implements WithAssertions {
   }
 
   @Test
+  @DisplayName("findResetPasswordToken() should return correct token entity")
   void find_reset_password_token_should_return_correct_token_entity() {
     TokenEntity resetPasswordToken = createToken(TokenType.PASSWORD_RESET);
 

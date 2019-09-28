@@ -8,6 +8,8 @@ import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.request.ForgotPasswordRequest;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +28,8 @@ import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ForgotPasswordControllerTest implements WithAssertions {
+@Tag("integration-test")
+class ForgotPasswordControllerIT implements WithAssertions {
 
   private static final String EXISTING_EMAIL = "john.doe@example.com";
   private static final String NOT_EXISTING_EMAIL = "not.existing@example.com";
@@ -66,6 +69,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("Request a password reset for an existing user")
   void request_password_reset_for_existing_user() {
     // given
     ForgotPasswordRequest request = ForgotPasswordRequest.builder().emailOrUsername(EXISTING_EMAIL).build();
@@ -84,6 +88,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("Request a password reset for a not existing user")
   void request_password_reset_for_not_existing_user() {
     // given
     ForgotPasswordRequest request = ForgotPasswordRequest.builder().emailOrUsername(NOT_EXISTING_EMAIL).build();

@@ -4,6 +4,7 @@ import com.metalr2.security.ExpirationTime;
 import io.jsonwebtoken.Claims;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -21,6 +22,7 @@ class JwtsSupportTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("generateToken() should generate a new and unique token")
   void generate_token_should_generate_a_new_and_unique_token() {
     String token1 = jwtsSupport.generateToken("Dummy Subject", ExpirationTime.ONE_HOUR);
     String token2 = jwtsSupport.generateToken("Dummy Subject", ExpirationTime.ONE_HOUR);
@@ -30,6 +32,7 @@ class JwtsSupportTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("getClaims() should return correct values from token")
   void get_claims_should_return_correct_values_from_token() {
     final String SUBJECT = "Dummy Subject";
     long currentMillis = System.currentTimeMillis();

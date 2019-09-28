@@ -7,6 +7,7 @@ import com.metalr2.service.email.EmailService;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.web.dto.UserDto;
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -33,6 +34,7 @@ class RegistrationCompleteListenerTest implements WithAssertions {
   private RegistrationCompleteListener listener;
 
   @Test
+  @DisplayName("RegistrationCompleteListener should create a new token and send an email after registration")
   void create_token_and_send_email_on_registration() {
     // given
     final String EMAIL = "john.doe@example.com";

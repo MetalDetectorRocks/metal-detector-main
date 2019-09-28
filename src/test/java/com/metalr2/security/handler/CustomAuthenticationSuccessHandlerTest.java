@@ -3,6 +3,7 @@ package com.metalr2.security.handler;
 import com.metalr2.config.constants.Endpoints;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -25,7 +26,8 @@ class CustomAuthenticationSuccessHandlerTest implements WithAssertions {
   }
 
   @Test
-  void locate_user_to_frontend_homepage_on_authentication_success() throws Exception {
+  @DisplayName("Forward user to frontend home on successful authentication")
+  void forward_user_to_frontend_homepage_on_authentication_success() throws Exception {
     Authentication authentication = new TestingAuthenticationToken("principal", "credentials");
     authenticationSuccessHandler.onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
 

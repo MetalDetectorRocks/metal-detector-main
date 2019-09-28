@@ -3,6 +3,7 @@ package com.metalr2.model.token;
 import com.metalr2.security.ExpirationTime;
 import org.assertj.core.api.WithAssertions;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import static com.metalr2.model.token.TokenFactory.DUMMY_TOKEN_STRING;
 class TokenEntityTest implements WithAssertions {
 
   @Test
+  @DisplayName("All fields of a TokenEntity should have valid values after creation")
   void all_token_fields_should_have_valid_values() {
     TokenEntity token = TokenFactory.createToken(TokenType.EMAIL_VERIFICATION, ExpirationTime.ONE_HOUR.toMillis());
 
@@ -26,6 +28,7 @@ class TokenEntityTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("The token should be expired after the set expiration time has passed")
   void token_should_expire_after_expiration_time() throws Exception {
     long expirationTimeInMillis = 50;
     TokenEntity token = TokenFactory.createToken(expirationTimeInMillis);
