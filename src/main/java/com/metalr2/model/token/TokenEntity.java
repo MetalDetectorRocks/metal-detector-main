@@ -1,6 +1,6 @@
 package com.metalr2.model.token;
 
-import com.metalr2.model.AbstractEntity;
+import com.metalr2.model.BaseEntity;
 import com.metalr2.model.user.UserEntity;
 import lombok.*;
 
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
 @AllArgsConstructor(access = AccessLevel.PRIVATE) // for lombok builder
 @Entity(name="tokens")
-public class TokenEntity extends AbstractEntity {
+public class TokenEntity extends BaseEntity {
 
   @Column(name = "token_string", nullable = false)
   @Lob

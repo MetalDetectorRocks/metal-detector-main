@@ -1,6 +1,6 @@
 package com.metalr2.model.user;
 
-import com.metalr2.model.AbstractEntity;
+import com.metalr2.model.BaseEntity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
 @EqualsAndHashCode(callSuper = true)
 @Entity(name="users")
-public class UserEntity extends AbstractEntity implements UserDetails {
+public class UserEntity extends BaseEntity implements UserDetails {
 
   private static final int ENCRYPTED_PASSWORD_LENGTH = 60;
 
