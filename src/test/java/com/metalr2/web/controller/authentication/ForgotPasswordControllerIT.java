@@ -5,13 +5,10 @@ import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.user.events.OnResetPasswordRequestCompleteEvent;
 import com.metalr2.service.user.UserService;
-import com.metalr2.web.DtoFactory;
+import com.metalr2.web.DtoFactory.UserDtoFactory;
 import com.metalr2.web.dto.UserDto;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -29,7 +26,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @ExtendWith(MockitoExtension.class)
 @Tag("integration-test")
@@ -54,7 +50,14 @@ class ForgotPasswordControllerIT implements WithAssertions {
 
   @BeforeEach
   void setup() {
+    // Since ApplicationEventPublisher is not a bean, we cannot work with @WebMvcTest at this point and have to mock the controller
+    // we want to test ourselves and initialize the MockMvc itself.
     mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+  }
+
+  @AfterEach
+  void tearDown() {
+    reset(userService, messages);
   }
 
   @Test
@@ -71,7 +74,7 @@ class ForgotPasswordControllerIT implements WithAssertions {
   void request_password_reset_for_existing_user_should_be_ok() throws Exception {
     // given
     ArgumentCaptor<OnResetPasswordRequestCompleteEvent> eventCaptor = ArgumentCaptor.forClass(OnResetPasswordRequestCompleteEvent.class);
-    UserDto userDto = DtoFactory.createUser("JohnD", EXISTING_EMAIL);
+    UserDto userDto = UserDtoFactory.withUsernameAndEmail("JohnD", EXISTING_EMAIL);
     when(userService.getUserByEmailOrUsername(EXISTING_EMAIL)).thenReturn(Optional.of(userDto));
     when(messages.getMessage(MessageKeys.ForgotPassword.SUCCESS, null, Locale.US)).thenReturn("success message");
 
@@ -90,6 +93,22 @@ class ForgotPasswordControllerIT implements WithAssertions {
   }
 
   @Test
+  @DisplayName("Request a password reset with an invalid username should be a bad request")
+  void request_password_reset_for_invalid_username_should_be_bad_request() throws Exception {
+    // when
+    mockMvc.perform(post(Endpoints.Guest.FORGOT_PASSWORD).param("emailOrUsername", (String) null))
+            .andExpect(status().isBadRequest())
+            .andExpect(view().name(ViewNames.Guest.FORGOT_PASSWORD))
+            .andExpect(model().errorCount(1))
+            .andExpect(model().attributeHasFieldErrorCode(ForgotPasswordController.FORM_DTO, "emailOrUsername", "NotBlank"));
+
+    // then
+    verifyZeroInteractions(userService);
+    verifyZeroInteractions(messages);
+    verifyZeroInteractions(eventPublisher);
+  }
+
+  @Test
   @DisplayName("Request a password reset for a not existing user should be a bad request")
   void request_password_reset_for_not_existing_user_should_be_bad_request() throws Exception {
     // given
@@ -101,7 +120,7 @@ class ForgotPasswordControllerIT implements WithAssertions {
             .andExpect(status().isBadRequest())
             .andExpect(view().name(ViewNames.Guest.FORGOT_PASSWORD))
             .andExpect(model().errorCount(1))
-            .andExpect(model().attributeHasFieldErrorCode(ForgotPasswordController.FORM_DTO, "emailOrUsername", "userDoesNotExist"));
+            .andExpect(model().attributeHasFieldErrorCode(ForgotPasswordController.FORM_DTO, "emailOrUsername", "UserDoesNotExist"));
 
     // then
     verify(userService, times(1)).getUserByEmailOrUsername(NOT_EXISTING_EMAIL);

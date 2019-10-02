@@ -58,10 +58,15 @@ public class ForgotPasswordController {
 
   @PostMapping
   public ModelAndView requestPasswordReset(@Valid @ModelAttribute ForgotPasswordRequest forgotPasswordRequest, BindingResult bindingResult) {
+    // show forgot password form if there are validation errors
+    if (bindingResult.hasErrors()) {
+      return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
+    }
+
     Optional<UserDto> userDto = userService.getUserByEmailOrUsername(forgotPasswordRequest.getEmailOrUsername());
 
     if (userDto.isEmpty()) {
-      bindingResult.rejectValue("emailOrUsername", "userDoesNotExist", messages.getMessage(MessageKeys.ForgotPassword.USER_DOES_NOT_EXIST, null, Locale.US));
+      bindingResult.rejectValue("emailOrUsername", "UserDoesNotExist", messages.getMessage(MessageKeys.ForgotPassword.USER_DOES_NOT_EXIST, null, Locale.US));
       return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
     }
 
