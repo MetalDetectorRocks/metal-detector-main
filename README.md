@@ -37,15 +37,18 @@ To setup the project please apply the following steps:
     - `spring.datasource.username`
     - `spring.datasource.password`
     - `spring.datasource.url`
-- Define the email server connection details in file `application.properties`. Define at least the following properties for the connection:
-    - `spring.mail.host`
-    - `spring.mail.username`
-    - `spring.mail.password`
-    - `mail.from.email`
 - Deposit your Discogs Access Token for the property `discogs.access-token` in file `discogs.properties` (see [Discogs API Documentation](https://www.discogs.com/developers/) for further information).
 - Define the following secrets in file `security.properties`:
     - `security.token-secret` for JWTS
     - `security.remember-me-secret` for remember me functionality
+
+If you start the application with the default Spring profile or with the profile 'dev', all emails sent by the application will be displayed on the console. 
+No emails are sent via an SMTP server. If you want the application to send emails via an SMTP server, you must start the application with the Spring profile 
+'prod'. Before this you have to define the email server connection details in file `application.properties`. Define at least the following properties for the connection:
+    - `spring.mail.host`
+    - `spring.mail.username`
+    - `spring.mail.password`
+    - `mail.from.email`
 
 <a name="run-application"></a>
 ## 4 Run the application
@@ -54,7 +57,7 @@ You need Java 11 to run the application.
 via Maven
 - Clone the repository
 - Execute command `mvn install` in root directory
-- Execute .jar file from directory `target` via `java -jar metal-release-radar-0.0.1.jar`
+- Execute command `mvn springboot:run` in root directory
 
 via your IDE
 - Clone the repository
@@ -63,7 +66,7 @@ via your IDE
 Go to your web browser and visit `http://localhost:8090`.
 You can log in via the URL `http://localhost:8090/login`. 
 
-There are two example users with the following credentials:
+There are three example users with the following credentials:
 
 | Username       | Password       | Role           |
 | -------------- | -------------- | -------------- |

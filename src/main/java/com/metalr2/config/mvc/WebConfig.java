@@ -3,6 +3,7 @@ package com.metalr2.config.mvc;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -22,6 +23,13 @@ public class WebConfig implements WebMvcConfigurer {
     registry.addViewController(Endpoints.Frontend.CONTACT).setViewName(ViewNames.Frontend.CONTACT);
     registry.addViewController(Endpoints.Frontend.IMPRINT).setViewName(ViewNames.Frontend.IMPRINT);
     registry.addViewController(Endpoints.Frontend.STATUS).setViewName(ViewNames.Frontend.STATUS);
+  }
+
+  @Override
+  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    registry.addResourceHandler("/webjars/**")
+            .addResourceLocations("/webjars/")
+            .resourceChain(false);
   }
 
 }

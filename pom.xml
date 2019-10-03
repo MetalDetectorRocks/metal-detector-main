@@ -50,6 +50,10 @@
         <hibernate-validator.version>6.1.0.Alpha2</hibernate-validator.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <modelmapper.version>2.3.0</modelmapper.version>
+        <bootstrao.version>4.3.1</bootstrao.version>
+        <jquery.version>3.4.1</jquery.version>
+        <popperJS.version>1.15.0</popperJS.version>
+        <material-icons.version>0.3.1</material-icons.version>
     </properties>
 
     <parent>
@@ -158,6 +162,33 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>${validation-api.version}</version>
+        </dependency>
+
+        <!-- Web JARs-->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator</artifactId>
+            <version>${webjars-locator-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>${bootstrao.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>popper.js</artifactId>
+            <version>${popperJS.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>${jquery.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>material-icons</artifactId>
+            <version>${material-icons.version}</version>
         </dependency>
 
         <!-- Util -->

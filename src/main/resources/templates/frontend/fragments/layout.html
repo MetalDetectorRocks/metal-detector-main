@@ -3,16 +3,20 @@
       xmlns:th="http://www.w3.org/1999/xhtml"
       xmlns:sec="http://www.w3.org/1999/xhtml">
 <head th:fragment="headerFragment">
-    <title th:include=":: #pageTitle">Dynamic page title</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
+  <title th:include=":: #pageTitle">Dynamic page title</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <!-- CSS -->
+  <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" href="#" rel="stylesheet" type="text/css" />
+  <link th:href="@{/css/frontend.css}" href="#" rel="stylesheet" />
 
-    <!-- Custom -->
-    <link th:href="@{/css/frontend.css}" href="#" rel="stylesheet" />
-  </head>
+  <!-- JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script th:src="@{/webjars/jquery/jquery.min.js}" src="#"></script>
+  <script th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
+  <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
+</head>
   <body >
     <header>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-custom">
@@ -100,13 +104,5 @@
         </div>
       </div>
     </footer>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script crossorigin="anonymous"
-            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script crossorigin="anonymous"
-            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   </body>
 </html>
