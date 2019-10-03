@@ -1,6 +1,7 @@
 package com.metalr2.web;
 
 import com.metalr2.web.dto.UserDto;
+import com.metalr2.web.dto.request.ChangePasswordRequest;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 
 import java.util.UUID;
@@ -42,6 +43,26 @@ public class DtoFactory {
               .email(email)
               .plainPassword(plainPassword)
               .verifyPlainPassword(verifyPlainPassword)
+              .build();
+    }
+
+  }
+
+  public static class ChangePasswordRequestFactory {
+
+    public static ChangePasswordRequest withTokenString(String tokenString) {
+      return create(tokenString, "valid-password", "valid-password");
+    }
+
+    public static ChangePasswordRequest withPassword(String plainPassword, String verifyPlainPassword) {
+      return create("valid-token", plainPassword, verifyPlainPassword);
+    }
+
+    private static ChangePasswordRequest create(String tokenString, String plainPassword, String verifyPlainPassword) {
+      return ChangePasswordRequest.builder()
+              .tokenString(tokenString)
+              .newPlainPassword(plainPassword)
+              .verifyNewPlainPassword(verifyPlainPassword)
               .build();
     }
 

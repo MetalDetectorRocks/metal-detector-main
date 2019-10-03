@@ -45,7 +45,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("integration-test")
 class RegistrationControllerIT implements WithAssertions {
 
-  private static final String RESPONSE_ATTRIBUTE_NAME = "registerUserRequest";
   private static final String PARAM_USERNAME          = "username";
   private static final String PARAM_EMAIL             = "email";
   private static final String PARAM_PASSWORD          = "plainPassword";
@@ -142,7 +141,7 @@ class RegistrationControllerIT implements WithAssertions {
 
     mockMvc.perform(createRequest())
             .andExpect(model().errorCount(expectedErrorCount))
-            .andExpect(model().attributeHasFieldErrors(RESPONSE_ATTRIBUTE_NAME, incorrectFieldNames))
+            .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, incorrectFieldNames))
             .andExpect(status().isBadRequest())
             .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
@@ -176,7 +175,7 @@ class RegistrationControllerIT implements WithAssertions {
 
     mockMvc.perform(createRequest())
            .andExpect(model().errorCount(1))
-           .andExpect(model().attributeHasFieldErrors(RESPONSE_ATTRIBUTE_NAME, PARAM_USERNAME))
+           .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, PARAM_USERNAME))
            .andExpect(status().isBadRequest())
            .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
@@ -188,7 +187,7 @@ class RegistrationControllerIT implements WithAssertions {
 
     mockMvc.perform(createRequest())
            .andExpect(model().errorCount(1))
-           .andExpect(model().attributeHasFieldErrors(RESPONSE_ATTRIBUTE_NAME, PARAM_EMAIL))
+           .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, PARAM_EMAIL))
            .andExpect(status().isBadRequest())
            .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
@@ -209,38 +208,38 @@ class RegistrationControllerIT implements WithAssertions {
   class VerifyRegistrationTest {
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with valid token should return the view to login with success message")
+    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with valid token should return the login view with success message")
     void given_valid_token_on_registration_verification_uri_should_redirect_to_login_view() throws Exception {
       String token = "valid_token";
 
       mockMvc.perform(get(Endpoints.Guest.REGISTRATION_VERIFICATION + "?token={token}", token))
               .andExpect(model().hasNoErrors())
               .andExpect(status().is3xxRedirection())
-              .andExpect(view().name("redirect:" + Endpoints.Guest.LOGIN + "?verificationSuccess"));
+              .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?verificationSuccess"));
 
       verify(userService, times(1)).verifyEmailToken(token);
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with not existing token should return the view to login with error message")
+    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with not existing token should return the login view login with error message")
     void given_not_existing_token_on_registration_verification_uri_should_redirect_to_login_view() throws Exception {
       doThrow(ResourceNotFoundException.class).when(userService).verifyEmailToken(NOT_EXISTING_TOKEN);
 
       mockMvc.perform(get(Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + NOT_EXISTING_TOKEN))
               .andExpect(status().is3xxRedirection())
-              .andExpect(view().name("redirect:" + Endpoints.Guest.LOGIN + "?tokenNotFound"));
+              .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenNotFound"));
 
       verify(userService, times(1)).verifyEmailToken(NOT_EXISTING_TOKEN);
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with expired token should return the view to login with error message")
+    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with expired token should return the login view with error message")
     void given_expired_token_on_registration_verification_uri_should_redirect_to_login_view() throws Exception {
       doThrow(EmailVerificationTokenExpiredException.class).when(userService).verifyEmailToken(EXPIRED_TOKEN);
 
       mockMvc.perform(get(Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + EXPIRED_TOKEN))
               .andExpect(status().is3xxRedirection())
-              .andExpect(view().name("redirect:" + Endpoints.Guest.LOGIN + "?tokenExpired&token=" + EXPIRED_TOKEN));
+              .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenExpired&token=" + EXPIRED_TOKEN));
 
       verify(userService, times(1)).verifyEmailToken(EXPIRED_TOKEN);
     }
@@ -252,25 +251,25 @@ class RegistrationControllerIT implements WithAssertions {
   class ResendEmailVerificationTokenTest {
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "' with valid token should return the view to login with success message")
+    @DisplayName("Requesting '" + Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "' with valid token should return the login view with success message")
     void given_valid_token_on_resend_verification_token_uri_should_redirect_to_login_view() throws Exception {
       final String VALID_TOKEN = "valid-token";
 
       mockMvc.perform(get(Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "?token=" + VALID_TOKEN))
               .andExpect(status().is3xxRedirection())
-              .andExpect(view().name("redirect:" + Endpoints.Guest.LOGIN + "?resendVerificationTokenSuccess"));
+              .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?resendVerificationTokenSuccess"));
 
       verify(tokenService, times(1)).resendExpiredEmailVerificationToken(VALID_TOKEN);
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "' with valid expired should return the view to login with token not found message")
+    @DisplayName("Requesting '" + Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "' with valid expired should return the login view with token not found message")
     void given_not_existing_token_on_resend_verification_token_uri_should_redirect_to_login_view() throws Exception {
       doThrow(ResourceNotFoundException.class).when(tokenService).resendExpiredEmailVerificationToken(NOT_EXISTING_TOKEN);
 
       mockMvc.perform(get(Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "?token=" + NOT_EXISTING_TOKEN))
               .andExpect(status().is3xxRedirection())
-              .andExpect(view().name("redirect:" + Endpoints.Guest.LOGIN + "?tokenNotFound"));
+              .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenNotFound"));
 
       verify(tokenService, times(1)).resendExpiredEmailVerificationToken(NOT_EXISTING_TOKEN);
     }

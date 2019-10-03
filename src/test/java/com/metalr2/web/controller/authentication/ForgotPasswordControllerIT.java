@@ -97,10 +97,10 @@ class ForgotPasswordControllerIT implements WithAssertions {
   void request_password_reset_for_invalid_username_should_be_bad_request() throws Exception {
     // when
     mockMvc.perform(post(Endpoints.Guest.FORGOT_PASSWORD).param("emailOrUsername", (String) null))
-            .andExpect(status().isBadRequest())
-            .andExpect(view().name(ViewNames.Guest.FORGOT_PASSWORD))
             .andExpect(model().errorCount(1))
-            .andExpect(model().attributeHasFieldErrorCode(ForgotPasswordController.FORM_DTO, "emailOrUsername", "NotBlank"));
+            .andExpect(model().attributeHasFieldErrorCode(ForgotPasswordController.FORM_DTO, "emailOrUsername", "NotBlank"))
+            .andExpect(status().isBadRequest())
+            .andExpect(view().name(ViewNames.Guest.FORGOT_PASSWORD));
 
     // then
     verifyZeroInteractions(userService);
@@ -117,10 +117,10 @@ class ForgotPasswordControllerIT implements WithAssertions {
 
     // when
     mockMvc.perform(post(Endpoints.Guest.FORGOT_PASSWORD).param("emailOrUsername", NOT_EXISTING_EMAIL))
-            .andExpect(status().isBadRequest())
-            .andExpect(view().name(ViewNames.Guest.FORGOT_PASSWORD))
             .andExpect(model().errorCount(1))
-            .andExpect(model().attributeHasFieldErrorCode(ForgotPasswordController.FORM_DTO, "emailOrUsername", "UserDoesNotExist"));
+            .andExpect(model().attributeHasFieldErrorCode(ForgotPasswordController.FORM_DTO, "emailOrUsername", "UserDoesNotExist"))
+            .andExpect(status().isBadRequest())
+            .andExpect(view().name(ViewNames.Guest.FORGOT_PASSWORD));
 
     // then
     verify(userService, times(1)).getUserByEmailOrUsername(NOT_EXISTING_EMAIL);

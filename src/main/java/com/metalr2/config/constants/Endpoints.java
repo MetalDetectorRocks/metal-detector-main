@@ -27,7 +27,7 @@ public class Endpoints {
   }
 
   public static class Frontend {
-    public static final String HOME                  = "/search-artists"; // ToDo DanielW: Maybe later we have a better home page
+    public static final String HOME                  = "/search-artists";
     public static final String SEARCH_ARTISTS        = "/search-artists";
     public static final String ARTIST_DETAILS        = "/artist-details";
     public static final String SETTINGS              = "/settings";

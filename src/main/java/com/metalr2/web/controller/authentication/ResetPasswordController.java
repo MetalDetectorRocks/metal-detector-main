@@ -11,6 +11,7 @@ import com.metalr2.web.dto.request.ChangePasswordRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,7 +27,7 @@ import java.util.Optional;
 @RequestMapping(Endpoints.Guest.RESET_PASSWORD)
 public class ResetPasswordController {
 
-  private static final String FORM_DTO = "changePasswordRequest";
+  static final String FORM_DTO = "changePasswordRequest";
 
   private final UserService userService;
   private final TokenService tokenService;
@@ -39,36 +40,31 @@ public class ResetPasswordController {
     this.messages     = messages;
   }
 
-  @ModelAttribute(FORM_DTO)
-  private ChangePasswordRequest changePasswordRequest() {
-    return new ChangePasswordRequest();
-  }
-
   @GetMapping
   public ModelAndView showResetPasswordForm(@RequestParam(value="token") String tokenString, Model model, RedirectAttributes redirectAttributes) {
     Optional<TokenEntity> tokenEntity = tokenService.getResetPasswordTokenByTokenString(tokenString);
 
+    // check whether token exists
     if (tokenEntity.isEmpty()) {
       redirectAttributes.addFlashAttribute("resetPasswordError", messages.getMessage(MessageKeys.ForgotPassword.TOKEN_DOES_NOT_EXIST, null, Locale.US));
       return new ModelAndView("redirect:" + Endpoints.Guest.FORGOT_PASSWORD);
     }
+    // check whether token is expired
     else if (tokenEntity.get().isExpired()) {
       redirectAttributes.addFlashAttribute("resetPasswordError", messages.getMessage(MessageKeys.ForgotPassword.TOKEN_IS_EXPIRED, null, Locale.US));
       return new ModelAndView("redirect:" + Endpoints.Guest.FORGOT_PASSWORD);
     }
+    // everything is OK here, set token as hidden input field
     else {
-      // everything is OK, set token as hidden input field
-      if (model.asMap().containsKey(FORM_DTO)) {
-        ((ChangePasswordRequest) model.asMap().get(FORM_DTO)).setTokenString(tokenString);
+      // The model may contain a form request dto with validation messages from previous request (see resetPassword() method).
+      // To display the errors correctly in the HTML file, this attribute must continue to be used and must not be overwritten by a new attribute.
+      if (! model.asMap().containsKey(FORM_DTO)) {
+        // create new ChangePasswordRequest if model has no attribute
+        model.addAttribute(ChangePasswordRequest.builder().tokenString(tokenString).build());
       }
-      else {
-        ChangePasswordRequest changePasswordRequest = changePasswordRequest();
-        changePasswordRequest.setTokenString(tokenString);
-        model.addAttribute(changePasswordRequest);
-      }
-    }
 
-    return new ModelAndView(ViewNames.Guest.RESET_PASSWORD);
+      return new ModelAndView(ViewNames.Guest.RESET_PASSWORD, HttpStatus.OK);
+    }
   }
 
   @PostMapping
@@ -89,7 +85,7 @@ public class ResetPasswordController {
     // 1. get user from token
     Optional<TokenEntity> tokenEntity = tokenService.getResetPasswordTokenByTokenString(changePasswordRequest.getTokenString());
     @SuppressWarnings("OptionalGetWithoutIsPresent") // safe here, because we have validation in method showResetPasswordForm()
-        UserEntity userEntity = tokenEntity.get().getUser();
+    UserEntity userEntity = tokenEntity.get().getUser();
 
     // 2. set new password
     userService.changePassword(userEntity, changePasswordRequest.getNewPlainPassword());

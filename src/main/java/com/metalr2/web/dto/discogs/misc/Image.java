@@ -25,12 +25,12 @@ public class Image {
   private String type; // todo danielw: use enum
 
   @JsonProperty("resource_url")
-  private String resourceUrl; // todo danielw: use url data type
+  private String resourceUrl;
 
   @JsonProperty("uri")
-  private String uri; // todo danielw: use url data type
+  private String uri;
 
   @JsonProperty("uri150")
-  private String uri150; // todo danielw: use url data type
+  private String uri150;
 
 }

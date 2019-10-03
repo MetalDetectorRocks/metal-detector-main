@@ -23,24 +23,20 @@ public class Artist {
   @JsonProperty("id")
   private long id;
 
-  // todo danielw: name?
-//  @JsonProperty("")
-//  private String name;
-
   @JsonProperty("profile")
   private String profile;
 
   @JsonProperty("releases_url")
-  private String releasesUrl; // todo danielw: use url data type
+  private String releasesUrl;
 
   @JsonProperty("resource_url")
-  private String resourceUrl; // todo danielw: use url data type
+  private String resourceUrl;
 
   @JsonProperty("uri")
-  private String uri; // todo danielw: use url data type
+  private String uri;
 
   @JsonProperty("urls")
-  private List<String> urls; // todo danielw: use url data type
+  private List<String> urls;
 
   @JsonProperty("images")
   private List<Image> images;

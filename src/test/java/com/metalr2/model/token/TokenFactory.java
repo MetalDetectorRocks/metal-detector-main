@@ -7,12 +7,12 @@ import com.metalr2.security.ExpirationTime;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-class TokenFactory {
+public class TokenFactory {
 
           static final String DUMMY_TOKEN_STRING = "dummy-token-string";
   private static final UserEntity userEntity     = UserFactory.createUser("JohnD", "john.d@example.com");
 
-  static TokenEntity createToken(TokenType tokenType, long expireInMillis) {
+  public static TokenEntity createToken(TokenType tokenType, long expireInMillis) {
     return createToken(tokenType, userEntity, expireInMillis);
   }
 

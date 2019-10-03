@@ -45,4 +45,7 @@ class LoginControllerIT {
             .andExpect(content().contentType("text/html;charset=UTF-8"))
             .andExpect(content().string(containsString("Login")));
   }
+
+  // ToDo 02.10.19 daniel: test login process / test remember-me separately
+
 }

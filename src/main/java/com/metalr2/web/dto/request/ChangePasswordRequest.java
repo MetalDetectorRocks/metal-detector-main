@@ -1,9 +1,10 @@
 package com.metalr2.web.dto.request;
 
 import com.metalr2.web.validation.FieldsValueMatch;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -11,11 +12,13 @@ import javax.validation.constraints.Size;
 @FieldsValueMatch.List({
   @FieldsValueMatch(field = "newPlainPassword", fieldMatch = "verifyNewPlainPassword", message = "The Passwords must match")
 })
-@Getter
-@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Data
 public class ChangePasswordRequest {
 
+  @NotBlank
   private String tokenString;
 
   @NotBlank
