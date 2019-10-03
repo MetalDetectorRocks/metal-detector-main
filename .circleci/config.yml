@@ -38,3 +38,6 @@ jobs:
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
       - run: mvn verify
+
+      - store_test_results:
+          path: test-results
