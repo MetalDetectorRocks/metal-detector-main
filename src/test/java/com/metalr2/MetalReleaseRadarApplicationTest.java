@@ -8,6 +8,7 @@ class MetalReleaseRadarApplicationTest {
 
   @Test
   void contextLoads() {
+    // Simple test to check if the Spring Application context can be loaded successfully
   }
 
 }

@@ -12,6 +12,10 @@ public class TokenFactory {
           static final String DUMMY_TOKEN_STRING = "dummy-token-string";
   private static final UserEntity userEntity     = UserFactory.createUser("JohnD", "john.d@example.com");
 
+  public static TokenEntity createToken() {
+    return createToken(ExpirationTime.ONE_HOUR.toMillis());
+  }
+
   public static TokenEntity createToken(TokenType tokenType, long expireInMillis) {
     return createToken(tokenType, userEntity, expireInMillis);
   }
@@ -20,7 +24,7 @@ public class TokenFactory {
     return createToken(TokenType.EMAIL_VERIFICATION, userEntity, expireInMillis);
   }
 
-  static TokenEntity createToken(TokenType tokenType, UserEntity user) {
+  public static TokenEntity createToken(TokenType tokenType, UserEntity user) {
     return createToken(tokenType, user, ExpirationTime.ONE_HOUR.toMillis());
   }
 
