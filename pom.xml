@@ -226,12 +226,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- plugin that runs all unit test via maven phase test and skips all test classes that end with 'IT'-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
             <!-- Maven surefire plugin comes in by default. The Plugin runs all unit tests via maven phase 'test' and skips -->
             <!-- all test classes that end with 'IT' (Integration Tests). To execute heavyweight integration tests after -->
             <!-- unit tests you need maven failsafe plugin. -->
@@ -250,6 +244,11 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.22.2</version>
             </plugin>
         </plugins>
     </build>
