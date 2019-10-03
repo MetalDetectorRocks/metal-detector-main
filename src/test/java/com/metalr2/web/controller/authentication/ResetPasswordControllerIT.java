@@ -37,7 +37,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ResetPasswordController.class)
@@ -158,8 +157,7 @@ class ResetPasswordControllerIT {
             .andExpect(flash().attribute(ResetPasswordController.FORM_DTO, instanceOf(ChangePasswordRequest.class)))
             .andExpect(flash().attribute(BindingResult.class.getName() + "." + ResetPasswordController.FORM_DTO, instanceOf(BindingResult.class)))
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl(Endpoints.Guest.RESET_PASSWORD + "?token=" + request.getTokenString()))
-    .andDo(print());
+            .andExpect(redirectedUrl(Endpoints.Guest.RESET_PASSWORD + "?token=" + request.getTokenString()));
 
     verifyZeroInteractions(tokenService, userService);
   }
