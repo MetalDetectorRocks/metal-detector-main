@@ -7,11 +7,13 @@ import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 
 @DataJpaTest
 @Tag("integration-test")
+@TestPropertySource(locations = "classpath:application-integrationtest.properties")
 class TokenRepositoryIT implements WithAssertions {
 
   @Autowired
