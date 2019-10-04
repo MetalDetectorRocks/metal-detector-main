@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -31,18 +32,20 @@ public class CustomErrorController implements ErrorController {
 
     if (statusCode == HttpStatus.NOT_FOUND.value()) {
       log.warn("Could not find any content for '{}'", requestedURI);
-      return new ModelAndView(ViewNames.Guest.ERROR_404, "requestedURI", requestedURI);
+      return new ModelAndView(ViewNames.Guest.ERROR_404, Map.of("requestedURI", requestedURI), HttpStatus.NOT_FOUND);
     }
     else if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
       log.error("Internal server error while requesting '{}''", requestedURI);
-      return new ModelAndView(ViewNames.Guest.ERROR_500, "requestedURI", requestedURI);
+      return new ModelAndView(ViewNames.Guest.ERROR_500, Map.of("requestedURI", requestedURI), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     else if (statusCode == HttpStatus.FORBIDDEN.value()) {
       log.warn("Access denied while requesting '{}' for user {}'", requestedURI, request.getUserPrincipal().getName());
-      return new ModelAndView(ViewNames.Guest.ERROR_403, "requestedURI", requestedURI);
+      return new ModelAndView(ViewNames.Guest.ERROR_403, Map.of("requestedURI", requestedURI), HttpStatus.FORBIDDEN);
     }
 
     log.error("Unhandled exception occurred. Status code is {}. Requested URI was {}", statusCode, request);
-    return new ModelAndView(ViewNames.Guest.ERROR, "requestedURI", requestedURI);
+
+    HttpStatus responseStatus = statusCode != -1 ? HttpStatus.valueOf(statusCode) : HttpStatus.I_AM_A_TEAPOT;
+    return new ModelAndView(ViewNames.Guest.ERROR, Map.of("requestedURI", requestedURI), responseStatus);
   }
 }
