@@ -19,4 +19,8 @@ public class ArtistSearchResultContainer {
   @JsonProperty("results")
   private List<ArtistSearchResult> results;
 
+  @Override
+  public String toString() {
+    return String.format("%s search result(s)", results.size());
+  }
 }

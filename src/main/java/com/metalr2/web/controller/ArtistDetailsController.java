@@ -40,7 +40,7 @@ public class ArtistDetailsController {
   }
 
   private ModelAndView createArtistDetailsModelAndView(String artistName, long artistId) {
-    Optional<Artist> artistOptional = artistSearchRestClient.searchForArtistById(artistId);
+    Optional<Artist> artistOptional = artistSearchRestClient.searchById(artistId);
 
     if (artistOptional.isEmpty()) {
       return createBadArtistIdSearchRequestModelAndView(artistName, artistId);

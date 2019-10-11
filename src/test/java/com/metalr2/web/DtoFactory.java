@@ -1,9 +1,15 @@
 package com.metalr2.web;
 
 import com.metalr2.web.dto.UserDto;
+import com.metalr2.web.dto.discogs.artist.Artist;
+import com.metalr2.web.dto.discogs.search.ArtistSearchResult;
+import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
+import com.metalr2.web.dto.discogs.search.Pagination;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class DtoFactory {
@@ -64,6 +70,43 @@ public class DtoFactory {
               .newPlainPassword(plainPassword)
               .verifyNewPlainPassword(verifyPlainPassword)
               .build();
+    }
+
+  }
+
+  public static class ArtistSearchResultContainerFactory {
+
+    public static ArtistSearchResultContainer withOneResult() {
+      return createDefaultResultContainer();
+    }
+
+    public static ArtistSearchResultContainer withEmptyResult() {
+      ArtistSearchResultContainer resultContainer = createDefaultResultContainer();
+      resultContainer.setResults(Collections.emptyList());
+
+      return resultContainer;
+    }
+
+    private static ArtistSearchResultContainer createDefaultResultContainer() {
+      Pagination         pagination         = new Pagination();
+      ArtistSearchResult artistSearchResult = new ArtistSearchResult();
+
+      ArtistSearchResultContainer resultContainer = new ArtistSearchResultContainer();
+      resultContainer.setPagination(pagination);
+      resultContainer.setResults(List.of(artistSearchResult));
+
+      return resultContainer;
+    }
+
+  }
+
+  public static class ArtistFactory {
+
+    public static Artist createTestArtist() {
+      Artist artist = new Artist();
+      artist.setId(1L);
+      artist.setProfile("profile");
+      return artist;
     }
 
   }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.metalr2.web.dto.discogs.misc.Image;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import java.util.List;
         "images",
         "members"
 })
+@ToString(of = {"id"})
 public class Artist {
 
   @JsonProperty("id")
