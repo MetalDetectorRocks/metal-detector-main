@@ -15,6 +15,7 @@ import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -100,107 +101,113 @@ class RegistrationControllerIT implements WithAssertions {
             .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
 
-  @Test
-  @DisplayName("Register a new user account with a valid request should be ok")
-  void register_new_user_account_should_be_ok() throws Exception {
-    UserDto userDto = UserDtoFactory.withUsernameAndEmail("JohnD", "john.d@example.com");
-    when(userService.createUser(any(UserDto.class))).thenReturn(userDto);
-    when(messages.getMessage(MessageKeys.Registration.SUCCESS, null, Locale.US)).thenReturn("success message");
+  @Nested
+  @TestInstance(Lifecycle.PER_CLASS)
+  @DisplayName("Testing registration of a new user account")
+  class RegisterNewUserAccountTest {
 
-    ArgumentCaptor<UserDto> userDtoCaptor = ArgumentCaptor.forClass(UserDto.class);
-    ArgumentCaptor<OnRegistrationCompleteEvent> eventCaptor = ArgumentCaptor.forClass(OnRegistrationCompleteEvent.class);
+    @Test
+    @DisplayName("Register a new user account with a valid request should be ok")
+    void register_new_user_account_should_be_ok() throws Exception {
+      UserDto userDto = UserDtoFactory.withUsernameAndEmail("JohnD", "john.d@example.com");
+      when(userService.createUser(any(UserDto.class))).thenReturn(userDto);
+      when(messages.getMessage(MessageKeys.Registration.SUCCESS, null, Locale.US)).thenReturn("success message");
 
-    mockMvc.perform(createRequest())
-            .andExpect(model().hasNoErrors())
-            .andExpect(model().attributeExists(RegistrationController.FORM_DTO, "successMessage"))
-            .andExpect(model().attributeExists(RegistrationController.FORM_DTO, "registerUserRequest"))
-            .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.Guest.REGISTER));
+      ArgumentCaptor<UserDto> userDtoCaptor = ArgumentCaptor.forClass(UserDto.class);
+      ArgumentCaptor<OnRegistrationCompleteEvent> eventCaptor = ArgumentCaptor.forClass(OnRegistrationCompleteEvent.class);
 
-    verify(userService, times(1)).createUser(userDtoCaptor.capture());
-    assertThat(userDtoCaptor.getValue().getId()).isEqualTo(0);
-    assertThat(userDtoCaptor.getValue().getPublicId()).isNullOrEmpty();
-    assertThat(userDtoCaptor.getValue().getUsername()).isEqualTo(paramValues.get(PARAM_USERNAME));
-    assertThat(userDtoCaptor.getValue().getEmail()).isEqualTo(paramValues.get(PARAM_EMAIL));
-    assertThat(userDtoCaptor.getValue().getPlainPassword()).isEqualTo(paramValues.get(PARAM_PASSWORD));
+      mockMvc.perform(createRequest())
+              .andExpect(model().hasNoErrors())
+              .andExpect(model().attributeExists(RegistrationController.FORM_DTO, "successMessage"))
+              .andExpect(model().attributeExists(RegistrationController.FORM_DTO, "registerUserRequest"))
+              .andExpect(status().isOk())
+              .andExpect(view().name(ViewNames.Guest.REGISTER));
 
-    verify(eventPublisher, times(1)).publishEvent(eventCaptor.capture());
-    assertThat(eventCaptor.getValue().getUserDto()).isEqualTo(userDto);
+      verify(userService, times(1)).createUser(userDtoCaptor.capture());
+      assertThat(userDtoCaptor.getValue().getId()).isEqualTo(0);
+      assertThat(userDtoCaptor.getValue().getPublicId()).isNullOrEmpty();
+      assertThat(userDtoCaptor.getValue().getUsername()).isEqualTo(paramValues.get(PARAM_USERNAME));
+      assertThat(userDtoCaptor.getValue().getEmail()).isEqualTo(paramValues.get(PARAM_EMAIL));
+      assertThat(userDtoCaptor.getValue().getPlainPassword()).isEqualTo(paramValues.get(PARAM_PASSWORD));
 
-    verify(messages, times(1)).getMessage(MessageKeys.Registration.SUCCESS, null, Locale.US);
-  }
+      verify(eventPublisher, times(1)).publishEvent(eventCaptor.capture());
+      assertThat(eventCaptor.getValue().getUserDto()).isEqualTo(userDto);
 
-  @ParameterizedTest(name = "[{index}]: {0}")
-  @MethodSource("registerUserRequestProvider")
-  @DisplayName("Register a new user account with an invalid request dto should fail")
-  void register_new_user_account_with_invalid_request_dto_should_fail(RegisterUserRequest request, int expectedErrorCount, String[] incorrectFieldNames) throws Exception {
-    paramValues.put(PARAM_USERNAME, request.getUsername());
-    paramValues.put(PARAM_EMAIL, request.getEmail());
-    paramValues.put(PARAM_PASSWORD, request.getPlainPassword());
-    paramValues.put(PARAM_VERIFY_PASSWORD, request.getVerifyPlainPassword());
+      verify(messages, times(1)).getMessage(MessageKeys.Registration.SUCCESS, null, Locale.US);
+    }
 
-    mockMvc.perform(createRequest())
-            .andExpect(model().errorCount(expectedErrorCount))
-            .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, incorrectFieldNames))
-            .andExpect(status().isBadRequest())
-            .andExpect(view().name(ViewNames.Guest.REGISTER));
-  }
+    @ParameterizedTest(name = "[{index}]: {0}")
+    @MethodSource("registerUserRequestProvider")
+    @DisplayName("Register a new user account with an invalid request dto should fail")
+    void register_new_user_account_with_invalid_request_dto_should_fail(RegisterUserRequest request, int expectedErrorCount, String[] incorrectFieldNames) throws Exception {
+      paramValues.put(PARAM_USERNAME, request.getUsername());
+      paramValues.put(PARAM_EMAIL, request.getEmail());
+      paramValues.put(PARAM_PASSWORD, request.getPlainPassword());
+      paramValues.put(PARAM_VERIFY_PASSWORD, request.getVerifyPlainPassword());
 
-  private static Stream<Arguments> registerUserRequestProvider() {
-    return Stream.of(
-            // invalid username
-            Arguments.of(RegisterUserRequestFactory.withUsername(""), 1, new String[] {PARAM_USERNAME}),
-            Arguments.of(RegisterUserRequestFactory.withUsername("    "), 1, new String[] {PARAM_USERNAME}),
-            Arguments.of(RegisterUserRequestFactory.withUsername(null), 1, new String[] {PARAM_USERNAME}),
+      mockMvc.perform(createRequest())
+              .andExpect(model().errorCount(expectedErrorCount))
+              .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, incorrectFieldNames))
+              .andExpect(status().isBadRequest())
+              .andExpect(view().name(ViewNames.Guest.REGISTER));
+    }
 
-            // invalid email
-            Arguments.of(RegisterUserRequestFactory.withEmail("john.doe.example.de"), 1, new String[] {PARAM_EMAIL}),
-            Arguments.of(RegisterUserRequestFactory.withEmail(""), 1, new String[] {PARAM_EMAIL}),
-            Arguments.of(RegisterUserRequestFactory.withEmail("    "), 2, new String[] {PARAM_EMAIL}),
-            Arguments.of(RegisterUserRequestFactory.withEmail("@com"), 1, new String[] {PARAM_EMAIL}),
-            Arguments.of(RegisterUserRequestFactory.withEmail(null), 1, new String[] {PARAM_EMAIL}),
+    private Stream<Arguments> registerUserRequestProvider() {
+      return Stream.of(
+              // invalid username
+              Arguments.of(RegisterUserRequestFactory.withUsername(""), 1, new String[] {PARAM_USERNAME}),
+              Arguments.of(RegisterUserRequestFactory.withUsername("    "), 1, new String[] {PARAM_USERNAME}),
+              Arguments.of(RegisterUserRequestFactory.withUsername(null), 1, new String[] {PARAM_USERNAME}),
 
-            // invalid passwords
-            Arguments.of(RegisterUserRequestFactory.withPassword("secret-password", "other-secret-password"), 1, new String[] {}),
-            Arguments.of(RegisterUserRequestFactory.withPassword("secret", "secret"), 2, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD}),
-            Arguments.of(RegisterUserRequestFactory.withPassword("", ""), 4, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD}),
-            Arguments.of(RegisterUserRequestFactory.withPassword(null, null), 2, new String[] {PARAM_VERIFY_PASSWORD})
-    );
-  }
+              // invalid email
+              Arguments.of(RegisterUserRequestFactory.withEmail("john.doe.example.de"), 1, new String[] {PARAM_EMAIL}),
+              Arguments.of(RegisterUserRequestFactory.withEmail(""), 1, new String[] {PARAM_EMAIL}),
+              Arguments.of(RegisterUserRequestFactory.withEmail("    "), 2, new String[] {PARAM_EMAIL}),
+              Arguments.of(RegisterUserRequestFactory.withEmail("@com"), 1, new String[] {PARAM_EMAIL}),
+              Arguments.of(RegisterUserRequestFactory.withEmail(null), 1, new String[] {PARAM_EMAIL}),
 
-  @Test
-  @DisplayName("Register a new user account with an username that already exists should fail")
-  void register_user_account_with_username_that_already_exists_should_fail() throws Exception {
-    when(userService.createUser(any(UserDto.class))).thenThrow(UserAlreadyExistsException.createUserWithUsernameAlreadyExistsException());
+              // invalid passwords
+              Arguments.of(RegisterUserRequestFactory.withPassword("secret-password", "other-secret-password"), 1, new String[] {}),
+              Arguments.of(RegisterUserRequestFactory.withPassword("secret", "secret"), 2, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD}),
+              Arguments.of(RegisterUserRequestFactory.withPassword("", ""), 4, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD}),
+              Arguments.of(RegisterUserRequestFactory.withPassword(null, null), 2, new String[] {PARAM_VERIFY_PASSWORD})
+      );
+    }
 
-    mockMvc.perform(createRequest())
-           .andExpect(model().errorCount(1))
-           .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, PARAM_USERNAME))
-           .andExpect(status().isBadRequest())
-           .andExpect(view().name(ViewNames.Guest.REGISTER));
-  }
+    @Test
+    @DisplayName("Register a new user account with an username that already exists should fail")
+    void register_user_account_with_username_that_already_exists_should_fail() throws Exception {
+      when(userService.createUser(any(UserDto.class))).thenThrow(UserAlreadyExistsException.createUserWithUsernameAlreadyExistsException());
 
-  @Test
-  @DisplayName("Register a new user account with an email that already exists should fail")
-  void register_user_account_with_email_that_already_exists_should_fail() throws Exception {
-    when(userService.createUser(any(UserDto.class))).thenThrow(UserAlreadyExistsException.createUserWithEmailAlreadyExistsException());
+      mockMvc.perform(createRequest())
+              .andExpect(model().errorCount(1))
+              .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, PARAM_USERNAME))
+              .andExpect(status().isBadRequest())
+              .andExpect(view().name(ViewNames.Guest.REGISTER));
+    }
 
-    mockMvc.perform(createRequest())
-           .andExpect(model().errorCount(1))
-           .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, PARAM_EMAIL))
-           .andExpect(status().isBadRequest())
-           .andExpect(view().name(ViewNames.Guest.REGISTER));
-  }
+    @Test
+    @DisplayName("Register a new user account with an email that already exists should fail")
+    void register_user_account_with_email_that_already_exists_should_fail() throws Exception {
+      when(userService.createUser(any(UserDto.class))).thenThrow(UserAlreadyExistsException.createUserWithEmailAlreadyExistsException());
 
+      mockMvc.perform(createRequest())
+              .andExpect(model().errorCount(1))
+              .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, PARAM_EMAIL))
+              .andExpect(status().isBadRequest())
+              .andExpect(view().name(ViewNames.Guest.REGISTER));
+    }
 
-  private MockHttpServletRequestBuilder createRequest() {
-    return MockMvcRequestBuilders
-            .post(Endpoints.Guest.REGISTER)
-            .accept(MediaType.TEXT_HTML)
-            .param(PARAM_USERNAME, paramValues.get(PARAM_USERNAME))
-            .param(PARAM_EMAIL, paramValues.get(PARAM_EMAIL))
-            .param(PARAM_PASSWORD, paramValues.get(PARAM_PASSWORD))
-            .param(PARAM_VERIFY_PASSWORD, paramValues.get(PARAM_VERIFY_PASSWORD));
+    private MockHttpServletRequestBuilder createRequest() {
+      return MockMvcRequestBuilders
+              .post(Endpoints.Guest.REGISTER)
+              .accept(MediaType.TEXT_HTML)
+              .param(PARAM_USERNAME, paramValues.get(PARAM_USERNAME))
+              .param(PARAM_EMAIL, paramValues.get(PARAM_EMAIL))
+              .param(PARAM_PASSWORD, paramValues.get(PARAM_PASSWORD))
+              .param(PARAM_VERIFY_PASSWORD, paramValues.get(PARAM_VERIFY_PASSWORD));
+    }
+
   }
 
   @Nested
