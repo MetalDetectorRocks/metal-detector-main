@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html th:replace="~{guest/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-  <head th:include="admin/fragments/layout :: headerFragment">
+  <head th:include="guest/fragments/layout :: headerFragment">
       <title id="pageTitle">Register | Metal Release Radar</title>
   </head>
   <body>
@@ -23,6 +23,7 @@
                  th:class="${#fields.hasErrors('username')}? 'form-control is-invalid' : 'form-control'"
                  th:field="*{username}"
                  placeholder="#"
+                 autocomplete="username"
                  required autofocus>
           <div class="invalid-feedback" th:errors="*{username}">Username error</div>
           <label for="username">Username</label>
@@ -46,6 +47,7 @@
                  th:class="${#fields.hasErrors('plainPassword')}? 'form-control is-invalid' : 'form-control'"
                  th:field="*{plainPassword}"
                  placeholder="#"
+                 autocomplete="new-password"
                  required>
           <div class="invalid-feedback" th:errors="*{plainPassword}">Password error</div>
           <label for="plainPassword">Password</label>
@@ -57,6 +59,7 @@
                  th:class="${#fields.hasErrors('verifyPlainPassword')}? 'form-control is-invalid' : 'form-control'"
                  th:field="*{verifyPlainPassword}"
                  placeholder="#"
+                 autocomplete="new-password"
                  required>
           <div class="invalid-feedback" th:errors="*{verifyPlainPassword}">Verify password error</div>
           <label for="verifyPlainPassword">Verify Password</label>
