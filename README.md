@@ -38,18 +38,18 @@ To setup the project please apply the following steps:
     - `spring.datasource.username`
     - `spring.datasource.password`
     - `spring.datasource.url`
-- Deposit your Discogs Access Token for the property `discogs.access-token` in file `discogs.properties` (see [Discogs API Documentation](https://www.discogs.com/developers/) for further information).
-- Define the following secrets in file `security.properties`:
+- Deposit your Discogs Access Token for the property `discogs.access-token` in file `application.properties` (see [Discogs API Documentation](https://www.discogs.com/developers/) for further information).
+- Define the following secrets in file `application.properties`:
     - `security.token-issuer` for JWT
     - `security.token-secret` for JWT
     - `security.remember-me-secret` for remember me functionality
 - If you start the application with the default Spring profile or with the profile 'dev', all emails sent by the application will be displayed on the console. 
 No emails are sent via an SMTP server. If you want the application to send emails via an SMTP server, you must start the application with the Spring profile 
-'prod'. Before this you have to define the email server connection details in file `application.properties`. Define at least the following properties for the connection:
+'prod'. Before this you have to define the email server connection details in file `application-prod.properties`. Define at least the following properties for the connection:
     - `spring.mail.host`
     - `spring.mail.username`
     - `spring.mail.password`
-    - `mail.from.email`
+    - `spring.mail.properties.from`
 - It is also possible to define all mentioned connection details and secrets as environment variables. In this case no .properties variables need to be changed. 
 The names of the environment variables are already in the .properties files.
 
@@ -76,4 +76,3 @@ There are three example users with the following credentials:
 | JohnD          | john.doe       | USER           |
 | MariaT         | maria.thompson | USER           |
 | Administrator  | simsalabim     | ADMINISTRATOR  |
-
