@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(LoginController.class)
 @Import(WebSecurity.class)
-@Tag("integration-test")
+@Tag("test")
 class LoginControllerIT {
 
   private static final String PARAM_USERNAME = "username";

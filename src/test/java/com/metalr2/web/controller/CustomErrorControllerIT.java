@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(CustomErrorController.class)
 @Import(WebSecurity.class)
-@Tag("integration-test")
+@Tag("test")
 class CustomErrorControllerIT implements WithAssertions {
 
   @Autowired

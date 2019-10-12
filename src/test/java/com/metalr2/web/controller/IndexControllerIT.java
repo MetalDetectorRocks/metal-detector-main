@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(IndexController.class)
 @Import(WebSecurity.class)
-@Tag("integration-test")
+@Tag("test")
 class IndexControllerIT {
 
   @Autowired

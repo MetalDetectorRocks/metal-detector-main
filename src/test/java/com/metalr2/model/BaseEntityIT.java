@@ -17,7 +17,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @DataJpaTest
-@Tag("integration-test")
+@Tag("test")
 class BaseEntityIT implements WithAssertions {
 
   private static final String AUDITOR_USER = "ANONYMOUS";

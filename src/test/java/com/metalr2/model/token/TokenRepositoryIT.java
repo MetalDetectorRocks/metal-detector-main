@@ -12,8 +12,8 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.Optional;
 
 @DataJpaTest
-@Tag("integration-test")
-@TestPropertySource(locations = "classpath:application-integrationtest.properties")
+@Tag("test")
+@TestPropertySource(locations = "classpath:application-test.properties")
 class TokenRepositoryIT implements WithAssertions {
 
   @Autowired
