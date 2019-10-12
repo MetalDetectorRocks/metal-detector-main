@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.stream.Stream;
@@ -78,7 +79,10 @@ class LoginControllerIT {
   @Test
   @DisplayName("Login with valid credentials should be ok")
   void login_with_valid_credentials_should_be_ok() throws Exception {
-    mockMvc.perform(post(Endpoints.Guest.LOGIN).param(PARAM_USERNAME, USERNAME).param(PARAM_PASSWORD, PASSWORD))
+    mockMvc.perform(post(Endpoints.Guest.LOGIN)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .param(PARAM_USERNAME, USERNAME)
+                .param(PARAM_PASSWORD, PASSWORD))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl(Endpoints.Frontend.HOME));
 
@@ -89,7 +93,10 @@ class LoginControllerIT {
   @MethodSource("credentialProvider")
   @DisplayName("Login with bad credentials should fail")
   void login_with_bad_credentials_should_fail(String username, String plainPassword) throws Exception {
-    mockMvc.perform(post(Endpoints.Guest.LOGIN).param(PARAM_USERNAME, username).param(PARAM_PASSWORD, plainPassword))
+    mockMvc.perform(post(Endpoints.Guest.LOGIN)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .param(PARAM_USERNAME, username)
+                .param(PARAM_PASSWORD, plainPassword))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?badCredentials"));
 

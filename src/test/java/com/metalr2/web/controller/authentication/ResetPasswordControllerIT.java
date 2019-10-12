@@ -26,6 +26,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 
@@ -134,6 +135,7 @@ class ResetPasswordControllerIT {
     when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
 
     mockMvc.perform(post(Endpoints.Guest.RESET_PASSWORD)
+              .with(SecurityMockMvcRequestPostProcessors.csrf())
               .param(PARAM_TOKEN_STRING, TOKEN)
               .param(PARAM_PASSWORD, PASSWORD)
               .param(PARAM_VERIFY_PASSWORD, PASSWORD))
@@ -151,9 +153,10 @@ class ResetPasswordControllerIT {
   @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with invalid change password request should be fail")
   void test_reset_password_with_invalid_request(ChangePasswordRequest request) throws Exception {
     mockMvc.perform(post(Endpoints.Guest.RESET_PASSWORD)
-            .param(PARAM_TOKEN_STRING, request.getTokenString())
-            .param(PARAM_PASSWORD, request.getNewPlainPassword())
-            .param(PARAM_VERIFY_PASSWORD, request.getVerifyNewPlainPassword()))
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .param(PARAM_TOKEN_STRING, request.getTokenString())
+                .param(PARAM_PASSWORD, request.getNewPlainPassword())
+                .param(PARAM_VERIFY_PASSWORD, request.getVerifyNewPlainPassword()))
             .andExpect(flash().attribute(ResetPasswordController.FORM_DTO, instanceOf(ChangePasswordRequest.class)))
             .andExpect(flash().attribute(BindingResult.class.getName() + "." + ResetPasswordController.FORM_DTO, instanceOf(BindingResult.class)))
             .andExpect(status().is3xxRedirection())
