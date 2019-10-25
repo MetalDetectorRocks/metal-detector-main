@@ -53,32 +53,32 @@ public class FollowArtistsController {
     return createArtistSearchResultModelAndView(artistSearchRequest.getArtistName(), Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
   }
 
-//  @GetMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
-//  public ModelAndView showFollowArtists(@RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
-//                                        @RequestParam(name = "page", defaultValue = DEFAULT_PAGE) int page,
-//                                        @RequestParam(name = "artistName", defaultValue = DEFAULT_ARTIST_NAME) String artistName) {
-//    if (artistName.equals(DEFAULT_ARTIST_NAME) && size == Integer.parseInt(DEFAULT_PAGE_SIZE)
-//                                               && page == Integer.parseInt(DEFAULT_PAGE)){
-//      return createDefaultModelAndView();
-//    }
-//
-//    return createArtistSearchResultModelAndView(artistName, page, size);
-//  }
-
   @GetMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
-  public ModelAndView followArtist(FollowArtistRequest followArtistRequest,
-                                   @RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
-                                   @RequestParam(name = "page", defaultValue = DEFAULT_PAGE) int page,
-                                   @RequestParam(name = "artistName", defaultValue = DEFAULT_ARTIST_NAME) String artistName) {
-    if (followArtistRequest == null || (artistName.equals(DEFAULT_ARTIST_NAME) && size == Integer.parseInt(DEFAULT_PAGE_SIZE)
-            && page == Integer.parseInt(DEFAULT_PAGE))){
+  public ModelAndView showFollowArtists(@RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
+                                        @RequestParam(name = "page", defaultValue = DEFAULT_PAGE) int page,
+                                        @RequestParam(name = "artistName", defaultValue = DEFAULT_ARTIST_NAME) String artistName) {
+    if (artistName.equals(DEFAULT_ARTIST_NAME) && size == Integer.parseInt(DEFAULT_PAGE_SIZE)
+                                               && page == Integer.parseInt(DEFAULT_PAGE)){
       return createDefaultModelAndView();
     }
 
-    followArtistService.followArtist(followArtistRequest);
-
     return createArtistSearchResultModelAndView(artistName, page, size);
   }
+
+//  @GetMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
+//  public ModelAndView followArtist(FollowArtistRequest followArtistRequest,
+//                                   @RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
+//                                   @RequestParam(name = "page", defaultValue = DEFAULT_PAGE) int page,
+//                                   @RequestParam(name = "artistName", defaultValue = DEFAULT_ARTIST_NAME) String artistName) {
+//    if (followArtistRequest == null || (artistName.equals(DEFAULT_ARTIST_NAME) && size == Integer.parseInt(DEFAULT_PAGE_SIZE)
+//            && page == Integer.parseInt(DEFAULT_PAGE))){
+//      return createDefaultModelAndView();
+//    }
+//
+//    followArtistService.followArtist(followArtistRequest);
+//
+//    return createArtistSearchResultModelAndView(artistName, page, size);
+//  }
 
   private ArtistNameSearchResponse createArtistNameSearchResponse(ArtistSearchResultContainer artistSearchResults) {
     Pagination pagination = artistSearchResults.getPagination();
