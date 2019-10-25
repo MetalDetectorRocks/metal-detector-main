@@ -33,7 +33,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     }
 
     UserDto userEntity = userEntityOptional.get();
-    FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(Long.parseLong(userEntity.getUserId()),followArtistRequest.getArtistDiscogsId());
+    FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(userEntity.getId(),followArtistRequest.getArtistDiscogsId());
 
     followedArtistRepository.save(followedArtistEntity);
 

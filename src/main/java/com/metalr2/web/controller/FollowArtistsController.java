@@ -3,7 +3,6 @@ package com.metalr2.web.controller;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.service.followArtist.FollowArtistService;
-import com.metalr2.web.controller.discogs.demo.ArtistSearchRestClient;
 import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
 import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.Pagination;
@@ -99,7 +98,7 @@ public class FollowArtistsController {
   }
 
   private ModelAndView createDefaultModelAndView() {
-    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, "artistNameSearchResponse", new ArtistNameSearchResponse());
+    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, "artistNameSearchResponse", new ArtistNameSearchResponse());
   }
 
   private ModelAndView createArtistSearchResultModelAndView(String artistName, int page, int size) {
@@ -116,7 +115,7 @@ public class FollowArtistsController {
     viewModel.put("artistName", artistName);
     viewModel.put("artistNameSearchResponse", artistNameSearchResponse);
 
-    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, viewModel);
+    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
   }
 
   private ModelAndView createBadArtistSearchRequestModelAndView(String artistName, int page, int size) {
@@ -124,6 +123,6 @@ public class FollowArtistsController {
     Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
     viewModel.put("badArtistNameSearchResponse", badArtistNameSearchResponse);
-    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, viewModel);
+    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
   }
 }
