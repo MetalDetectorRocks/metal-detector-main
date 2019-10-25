@@ -8,9 +8,9 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:application.properties")
 public class MailConfig {
 
-  private String fromEmail;
-  private String host;
-  private String port;
+  private final String fromEmail;
+  private final String host;
+  private final String port;
 
   public MailConfig(@Value("${spring.mail.properties.from}") String fromEmail,
                     @Value("${application.host}") String host,
