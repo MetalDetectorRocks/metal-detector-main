@@ -9,18 +9,29 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 @PropertySource(value = "classpath:security.properties")
 public class JwtsSupport {
 
-  @Value("${security.token-secret}")
-  private String TOKEN_SECRET;
+  private final String TOKEN_SECRET;
+  private final String TOKEN_ISSUER;
+
+  public JwtsSupport(@Value("${security.token-secret}") String tokenSecret,
+                     @Value("${security.token-issuer}") String tokenIssuer) {
+    TOKEN_SECRET = tokenSecret;
+    TOKEN_ISSUER = tokenIssuer;
+  }
 
   public String generateToken(String subject, ExpirationTime expirationTime) {
+    long currentTimeMillis = System.currentTimeMillis();
     return Jwts.builder()
                .setSubject(subject)
-               .setExpiration(new Date(System.currentTimeMillis() + expirationTime.toMillis()))
+               .setId(UUID.randomUUID().toString())
+               .setIssuedAt(new Date(currentTimeMillis))
+               .setIssuer(TOKEN_ISSUER)
+               .setExpiration(new Date(currentTimeMillis + expirationTime.toMillis()))
                .signWith(SignatureAlgorithm.HS512, TOKEN_SECRET)
                .compact();
   }

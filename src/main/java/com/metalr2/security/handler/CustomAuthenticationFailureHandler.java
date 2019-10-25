@@ -1,7 +1,6 @@
 package com.metalr2.security.handler;
 
 import com.metalr2.config.constants.Endpoints;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -15,8 +14,6 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
   @Override
   public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
     String redirectURL = exception instanceof DisabledException ? Endpoints.Guest.LOGIN + "?disabled" : Endpoints.Guest.LOGIN + "?badCredentials";
-
-    response.setStatus(HttpStatus.UNAUTHORIZED.value());
     response.sendRedirect(redirectURL);
   }
 }

@@ -8,19 +8,18 @@ import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.token.TokenRepository;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserRepository;
+import com.metalr2.model.user.UserRole;
 import com.metalr2.web.dto.UserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,11 +45,15 @@ public class UserServiceImpl implements UserService {
   public UserDto createUser(UserDto userDto) {
     checkIfUserAlreadyExists(userDto.getUsername(), userDto.getEmail());
 
-    // enhance UserEntity
-    UserEntity userEntity = mapper.map(userDto, UserEntity.class);
-    userEntity.setEncryptedPassword(passwordEncoder.encode(userDto.getPassword()));
-
     // create user
+    UserEntity userEntity = UserEntity.builder()
+            .username(userDto.getUsername())
+            .email(userDto.getEmail())
+            .password(passwordEncoder.encode(userDto.getPlainPassword()))
+            .userRoles(UserRole.createUserRole())
+            .build();
+
+    // persist user
     UserEntity savedUserEntity = userRepository.save(userEntity);
 
     return mapper.map(savedUserEntity, UserDto.class);
@@ -58,8 +61,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(readOnly = true)
-  public UserDto getUserByUserId(String userId) {
-    UserEntity userEntity = userRepository.findByUserId(userId)
+  public UserDto getUserByPublicId(String publicId) {
+    UserEntity userEntity = userRepository.findByPublicId(publicId)
                                           .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
     return mapper.map(userEntity, UserDto.class);
@@ -80,11 +83,11 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public UserDto updateUser(String userId, UserDto userDto) {
-    UserEntity userEntity = userRepository.findByUserId(userId)
+  public UserDto updateUser(String publicId, UserDto userDto) {
+    UserEntity userEntity = userRepository.findByPublicId(publicId)
                                           .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
-    userEntity.setUsername(userDto.getUsername());
+    userEntity.setEmail(userDto.getEmail());
     UserEntity updatedUserEntity = userRepository.save(userEntity);
 
     return mapper.map(updatedUserEntity, UserDto.class);
@@ -92,8 +95,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void deleteUser(String userId) {
-    UserEntity userEntity = userRepository.findByUserId(userId)
+  public void deleteUser(String publicId) {
+    UserEntity userEntity = userRepository.findByPublicId(publicId)
                                           .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
     userRepository.delete(userEntity);
   }
@@ -121,10 +124,8 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(readOnly = true)
   public UserDetails loadUserByUsername(String emailOrUsername) throws UsernameNotFoundException {
-    UserEntity userEntity = findByEmailOrUsername(emailOrUsername)
-                            .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND.toDisplayString()));
-
-    return new User(userEntity.getUsername(), userEntity.getEncryptedPassword(), userEntity.isEnabled(), true, true, true, Collections.emptyList());
+    return findByEmailOrUsername(emailOrUsername)
+           .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND.toDisplayString()));
   }
 
   @Override
@@ -150,7 +151,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void changePassword(UserEntity userEntity, String newPassword) {
-    userEntity.setEncryptedPassword(passwordEncoder.encode(newPassword));
+    userEntity.setPassword(passwordEncoder.encode(newPassword));
     userRepository.save(userEntity);
   }
 

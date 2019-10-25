@@ -12,12 +12,14 @@ public class ViewNames {
 
     // Error pages
     public static final String ERROR                     = "error/default";
+    public static final String ERROR_403                 = "error/403";
     public static final String ERROR_404                 = "error/404";
     public static final String ERROR_500                 = "error/500";
   }
 
   public static class Frontend {
-    public static final String FOLLOW_ARTISTS            = "frontend/follow-artists";
+    public static final String SEARCH_ARTISTS            = "frontend/search-artists";
+    public static final String ARTIST_DETAILS            = "frontend/artist-details";
     public static final String SETTINGS                  = "frontend/settings";
     public static final String PROFILE                   = "frontend/profile";
     public static final String ARTISTS_RELEASES          = "frontend/artists-releases";

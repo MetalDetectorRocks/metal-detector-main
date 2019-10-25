@@ -23,13 +23,13 @@ public class ArtistSearchResult {
   private String title;
 
   @JsonProperty("thumb")
-  private String thumb;       // todo danielw: should be of type URL or something equal
+  private String thumb;
 
   @JsonProperty("uri")
-  private String uri;         // todo danielw: should be of type URI or something equal
+  private String uri;
 
   @JsonProperty("resource_url")
-  private String resourceUrl; // todo danielw: should be of type URL or something equal
+  private String resourceUrl;
 
   public String getUri() {
     return DISCOGS_URI + uri;

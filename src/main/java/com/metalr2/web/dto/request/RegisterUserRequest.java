@@ -1,20 +1,22 @@
 package com.metalr2.web.dto.request;
 
 import com.metalr2.web.validation.FieldsValueMatch;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @FieldsValueMatch.List({
-  @FieldsValueMatch(field = "password", fieldMatch = "verifyPassword", message = "The Passwords must match")
+  @FieldsValueMatch(field = "plainPassword", fieldMatch = "verifyPlainPassword", message = "The Passwords must match")
 })
 @NoArgsConstructor
-@Getter
-@Setter
+@AllArgsConstructor
+@Builder
+@Data
 public class RegisterUserRequest {
 
   @NotBlank
@@ -26,10 +28,10 @@ public class RegisterUserRequest {
 
   @NotBlank
   @Size(min=8, message="Password length must be at least 8 characters")
-  private String password;
+  private String plainPassword;
 
   @NotBlank
   @Size(min=8, message="Password length must be at least 8 characters")
-  private String verifyPassword;
+  private String verifyPlainPassword;
 
 }

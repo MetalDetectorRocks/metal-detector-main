@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.metalr2.web.dto.discogs.misc.Image;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -18,29 +19,26 @@ import java.util.List;
         "images",
         "members"
 })
+@ToString(of = {"id"})
 public class Artist {
 
   @JsonProperty("id")
   private long id;
 
-  // todo danielw: name?
-//  @JsonProperty("")
-//  private String name;
-
   @JsonProperty("profile")
   private String profile;
 
   @JsonProperty("releases_url")
-  private String releasesUrl; // todo danielw: use url data type
+  private String releasesUrl;
 
   @JsonProperty("resource_url")
-  private String resourceUrl; // todo danielw: use url data type
+  private String resourceUrl;
 
   @JsonProperty("uri")
-  private String uri; // todo danielw: use url data type
+  private String uri;
 
   @JsonProperty("urls")
-  private List<String> urls; // todo danielw: use url data type
+  private List<String> urls;
 
   @JsonProperty("images")
   private List<Image> images;

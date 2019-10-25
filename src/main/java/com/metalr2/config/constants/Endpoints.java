@@ -5,12 +5,15 @@ import java.util.stream.Stream;
 
 public class Endpoints {
 
+  public static final String ERROR = "/error";
+
   public static class Guest {
     // General
-    public static final String INDEX       = "/index";
-    public static final String EMPTY_INDEX = "";
-    public static final String SLASH_INDEX = "/";
-    public static final String LOGOUT      = "/logout";
+    public static final String        INDEX                  = "/index";
+    public static final String        EMPTY_INDEX            = "";
+    public static final String        SLASH_INDEX            = "/";
+    public static final String        LOGOUT                 = "/logout";
+    public static final List<String>  ALL_GUEST_INDEX_PAGES  = List.of(INDEX, EMPTY_INDEX, SLASH_INDEX);
 
     // Authentication
     public static final String       LOGIN                     = "/login";
@@ -21,13 +24,12 @@ public class Endpoints {
     public static final String       RESET_PASSWORD            = "/reset-password";
     public static final List<String> ALL_AUTH_PAGES            = List.of(LOGIN, REGISTER, REGISTRATION_VERIFICATION,
                                                                          RESEND_VERIFICATION_TOKEN, FORGOT_PASSWORD, RESET_PASSWORD);
-    // Errors
-    public static final String ERROR = "/error";
   }
 
   public static class Frontend {
-    public static final String HOME                  = "/follow-artists"; // ToDo DanielW: Maybe later we have a better home page
-    public static final String FOLLOW_ARTISTS        = "/follow-artists";
+    public static final String HOME                  = "/search-artists";
+    public static final String SEARCH_ARTISTS        = "/search-artists";
+    public static final String ARTIST_DETAILS        = "/artist-details";
     public static final String SETTINGS              = "/settings";
     public static final String PROFILE               = "/profile";
     public static final String ARTISTS_RELEASES      = "/artists-releases";
@@ -48,7 +50,6 @@ public class Endpoints {
     public static final String USERS_EDIT   = "/admin/users/edit/{id}";
   }
 
-
   public static class AntPattern {
     public static final String   ADMIN                     = "/admin/**";
            static final String[] INDEX                     = {"/", "/index", "/index/"};
@@ -58,7 +59,7 @@ public class Endpoints {
            static final String[] RESEND_VERIFICATION_TOKEN = {"/resend-verification-token", "/resend-verification-token/"};
            static final String[] FORGOT_PASSWORD           = {"/forgot-password", "/forgot-password/"};
            static final String[] RESET_PASSWORD            = {"/reset-password", "/reset-password/"};
-    public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**"};
+    public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**", "/webjars/**"};
 
     public static final String[] AUTH_PAGES = Stream.of(INDEX, LOGIN, REGISTER, REGISTRATION_VERIFICATION,
             RESEND_VERIFICATION_TOKEN, FORGOT_PASSWORD, RESET_PASSWORD).flatMap(Stream::of).toArray(String[]::new);

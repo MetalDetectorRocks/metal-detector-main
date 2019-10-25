@@ -1,27 +1,58 @@
 package com.metalr2.model.email;
 
-import com.metalr2.config.misc.AppProperties;
-import com.metalr2.config.misc.SpringApplicationContext;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractEmail {
 
-  private static final AppProperties appProperties = SpringApplicationContext.getBean("appProperties", AppProperties.class);
+  private final List<ViewModelEntry> viewModelEntries;
 
-  static final String  HOST = appProperties.getHost();
-  static final Integer PORT = appProperties.getHttpPort();
-
-  public String getFrom() {
-    return appProperties.getDefaultMailFrom();
+  AbstractEmail() {
+    viewModelEntries = new ArrayList<>();
   }
 
   public abstract String getRecipient();
 
   public abstract String getSubject();
 
-  public abstract Map<String, Object> getViewModel();
-
   public abstract String getTemplateName();
+
+  abstract void buildViewModel();
+
+  public Map<String, Object> getEnhancedViewModel(String baseUrl) {
+    buildViewModel();
+    Map<String, Object> viewModel = new HashMap<>();
+    for (ViewModelEntry entry : viewModelEntries) {
+      if (entry.isRelativeUrl()) {
+        viewModel.put(entry.getName(), baseUrl + entry.getValue());
+      }
+      else {
+        viewModel.put(entry.getName(), entry.getValue());
+      }
+    }
+
+    return viewModel;
+  }
+
+  void addViewModelEntry(ViewModelEntry entry) {
+    viewModelEntries.add(entry);
+  }
+
+}
+
+@Getter
+@Builder
+@AllArgsConstructor
+class ViewModelEntry {
+
+  private final String name;
+  private final String value;
+  private final boolean relativeUrl;
 
 }

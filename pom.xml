@@ -46,9 +46,14 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
         <junit-jupiter.version>5.5.0-M1</junit-jupiter.version>
+        <mockito.version>2.23.0</mockito.version>
         <hibernate-validator.version>6.1.0.Alpha2</hibernate-validator.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <modelmapper.version>2.3.0</modelmapper.version>
+        <bootstrap.version>4.3.1</bootstrap.version>
+        <jquery.version>3.4.1</jquery.version>
+        <popperJS.version>1.15.0</popperJS.version>
+        <material-icons.version>0.3.1</material-icons.version>
     </properties>
 
     <parent>
@@ -131,6 +136,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
@@ -151,6 +162,33 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>${validation-api.version}</version>
+        </dependency>
+
+        <!-- Web JARs-->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator</artifactId>
+            <version>${webjars-locator-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>${bootstrap.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>popper.js</artifactId>
+            <version>${popperJS.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>${jquery.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>material-icons</artifactId>
+            <version>${material-icons.version}</version>
         </dependency>
 
         <!-- Util -->
@@ -187,6 +225,30 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!-- Maven surefire plugin comes in by default. The Plugin runs all unit tests via maven phase 'test' and skips -->
+            <!-- all test classes that end with 'IT' (Integration Tests). To execute heavyweight integration tests after -->
+            <!-- unit tests you need maven failsafe plugin. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!-- execute integration tests in phase integration-test (in terminal 'mvn integration-test') -->
+                            <goal>integration-test</goal>
+
+                            <!-- execute integration tests also in phase verify (default behaviour)-->
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.22.2</version>
             </plugin>
         </plugins>
     </build>

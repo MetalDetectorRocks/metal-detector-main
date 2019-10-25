@@ -4,8 +4,13 @@
 # ignore all stuff in private folder
 .private/
 
+# ignore all stuff in target folder
+target/
+
 # ignore IntelliJ IDEA files
 .idea/
+.idea/compiler.xml
+.idea/misc.xml
 *.iws
 *.iml
 *.ipr

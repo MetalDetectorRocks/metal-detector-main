@@ -12,14 +12,14 @@ import com.metalr2.model.user.UserRepository;
 import com.metalr2.security.ExpirationTime;
 import com.metalr2.service.email.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-@Component
+@Service
 public class TokenServiceImpl implements TokenService {
 
   private final TokenRepository tokenRepository;
@@ -44,25 +44,25 @@ public class TokenServiceImpl implements TokenService {
 
   @Override
   @Transactional
-  public String createEmailVerificationToken(String userId) {
-    return createToken(userId, TokenType.EMAIL_VERIFICATION, ExpirationTime.TEN_DAYS);
+  public String createEmailVerificationToken(String publicUserId) {
+    return createToken(publicUserId, TokenType.EMAIL_VERIFICATION, ExpirationTime.TEN_DAYS);
   }
 
   @Override
   @Transactional
-  public String createResetPasswordToken(String userId) {
-    return createToken(userId, TokenType.PASSWORD_RESET, ExpirationTime.ONE_HOUR);
+  public String createResetPasswordToken(String publicUserId) {
+    return createToken(publicUserId, TokenType.PASSWORD_RESET, ExpirationTime.ONE_HOUR);
   }
 
-  private String createToken(String userId, TokenType tokenType, ExpirationTime expirationTime) {
-    String      tokenString = jwtsSupport.generateToken(userId, expirationTime);
-    UserEntity  userEntity  = userRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
-    TokenEntity tokenEntity = new TokenEntity();
-
-    tokenEntity.setUser(userEntity);
-    tokenEntity.setTokenString(tokenString);
-    tokenEntity.setExpirationDateTime(LocalDateTime.now().plus(expirationTime.toMillis(), ChronoUnit.MILLIS));
-    tokenEntity.setTokenType(tokenType);
+  private String createToken(String publicUserId, TokenType tokenType, ExpirationTime expirationTime) {
+    String      tokenString = jwtsSupport.generateToken(publicUserId, expirationTime);
+    UserEntity  userEntity  = userRepository.findByPublicId(publicUserId).orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+    TokenEntity tokenEntity = TokenEntity.builder()
+                                         .user(userEntity)
+                                         .tokenString(tokenString)
+                                         .expirationDateTime(LocalDateTime.now().plus(expirationTime.toMillis(), ChronoUnit.MILLIS))
+                                         .tokenType(tokenType)
+                                         .build();
 
     tokenRepository.save(tokenEntity);
 
@@ -77,7 +77,7 @@ public class TokenServiceImpl implements TokenService {
     UserEntity userEntity = tokenEntity.getUser();
 
     tokenRepository.delete(tokenEntity);
-    String newTokenString = createEmailVerificationToken(userEntity.getUserId());
+    String newTokenString = createEmailVerificationToken(userEntity.getPublicId());
     emailService.sendEmail(new RegistrationVerificationEmail(userEntity.getEmail(), newTokenString));
   }
 

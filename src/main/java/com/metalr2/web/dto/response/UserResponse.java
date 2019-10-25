@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class UserResponse {
 	
-  private String userId;
+  private String publicId;
   private String username;
   private String email;
   private boolean enabled;

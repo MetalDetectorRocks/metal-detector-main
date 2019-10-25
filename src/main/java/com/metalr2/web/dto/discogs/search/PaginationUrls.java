@@ -12,9 +12,9 @@ import lombok.Data;
 public class PaginationUrls {
 
   @JsonProperty("last")
-  private String last; // todo danielw: data type should be URL or something equal
+  private String last;
 
   @JsonProperty("next")
-  private String next; // todo danielw: data type should be URL or something equal
+  private String next;
 
 }
