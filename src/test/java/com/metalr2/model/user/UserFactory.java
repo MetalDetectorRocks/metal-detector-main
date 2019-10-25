@@ -12,6 +12,16 @@ public class UserFactory {
             .build();
   }
 
+  public static UserEntity createUser(String username, String email, String encryptedPassword) {
+    return UserEntity.builder()
+            .username(username)
+            .email(email)
+            .password(encryptedPassword)
+            .userRoles(UserRole.createUserRole())
+            .enabled(true)
+            .build();
+  }
+
   static UserEntity createAdministrator() {
     return UserEntity.builder()
             .username("super-user")

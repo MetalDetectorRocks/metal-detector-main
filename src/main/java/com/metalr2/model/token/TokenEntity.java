@@ -1,6 +1,6 @@
 package com.metalr2.model.token;
 
-import com.metalr2.model.AbstractEntity;
+import com.metalr2.model.BaseEntity;
 import com.metalr2.model.user.UserEntity;
 import lombok.*;
 
@@ -10,30 +10,28 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
+@AllArgsConstructor(access = AccessLevel.PRIVATE) // for lombok builder
 @Entity(name="tokens")
-public class TokenEntity extends AbstractEntity {
+public class TokenEntity extends BaseEntity {
 
   @Column(name = "token_string", nullable = false)
+  @Lob
+  @NonNull
   private String tokenString;
 
   @Column(name = "token_type", nullable = false)
+  @NonNull
   @Enumerated(value = EnumType.STRING)
   private TokenType tokenType;
 
   @OneToOne(targetEntity = UserEntity.class)
   @JoinColumn(nullable = false, name = "users_id")
+  @NonNull
   private UserEntity user;
 
   @Column(name = "expiration_date_time", nullable = false)
+  @NonNull
   private LocalDateTime expirationDateTime;
-
-  @Builder
-  public TokenEntity(@NonNull String tokenString, @NonNull TokenType tokenType, @NonNull UserEntity user, @NonNull LocalDateTime expirationDateTime) {
-    this.tokenString        = tokenString;
-    this.tokenType          = tokenType;
-    this.user               = user;
-    this.expirationDateTime = expirationDateTime;
-  }
 
   public boolean isExpired() {
     return LocalDateTime.now().isAfter(expirationDateTime);

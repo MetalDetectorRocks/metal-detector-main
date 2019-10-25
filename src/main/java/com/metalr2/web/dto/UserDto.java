@@ -1,14 +1,16 @@
 package com.metalr2.web.dto;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.io.Serializable;
 
+@Data
 @NoArgsConstructor
-@Getter
-@Setter
+@AllArgsConstructor
+@Builder
 public class UserDto implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -19,5 +21,5 @@ public class UserDto implements Serializable {
   private String email;
   private String plainPassword;
   private boolean enabled;
-	
+
 }

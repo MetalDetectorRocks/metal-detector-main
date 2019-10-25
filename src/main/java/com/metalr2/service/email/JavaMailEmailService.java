@@ -1,5 +1,6 @@
 package com.metalr2.service.email;
 
+import com.metalr2.config.misc.MailConfig;
 import com.metalr2.model.email.AbstractEmail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.ISpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -23,15 +24,17 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class JavaMailEmailService implements EmailService {
 
-  private final JavaMailSender       emailSender;
-  private final SpringTemplateEngine templateEngine;
-  private final Executor             executor;
+  private final JavaMailSender        emailSender;
+  private final ISpringTemplateEngine templateEngine;
+  private final MailConfig            mailConfig;
+  private       Executor              executor;
 
   @Autowired
-  public JavaMailEmailService(JavaMailSender emailSender, SpringTemplateEngine templateEngine) {
+  public JavaMailEmailService(JavaMailSender emailSender, ISpringTemplateEngine templateEngine, MailConfig mailConfig) {
     this.emailSender    = emailSender;
     this.templateEngine = templateEngine;
     this.executor       = Executors.newSingleThreadExecutor();
+    this.mailConfig     = mailConfig;
   }
 
   @Async
@@ -55,21 +58,25 @@ public class JavaMailEmailService implements EmailService {
   private MimeMessage createMimeMessage(AbstractEmail email) {
     MimeMessage mimeMessage = emailSender.createMimeMessage();
     try {
-      MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
       Context context = new Context();
-      context.setVariables(email.getViewModel());
+      context.setVariables(email.getEnhancedViewModel(mailConfig.getHost()));
       String html = templateEngine.process(email.getTemplateName(), context);
 
+      MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
       helper.setTo(email.getRecipient());
       helper.setText(html, true);
       helper.setSubject(email.getSubject());
-      helper.setFrom(email.getFrom());
+      helper.setFrom(mailConfig.getFromEmail());
     }
     catch (MessagingException me) {
       log.error("unable to create email", me);
     }
 
     return mimeMessage;
+  }
+
+  void setExecutor(Executor executor) {
+    this.executor = executor;
   }
 
 }

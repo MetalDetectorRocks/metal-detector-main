@@ -23,6 +23,6 @@ public class Member {
   private boolean active;
 
   @JsonProperty("resource_url")
-  private String resourceUrl; // todo danielw: should be of type URL or something equal
+  private String resourceUrl;
 
 }

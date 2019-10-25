@@ -1,6 +1,7 @@
 ![Logo](https://github.com/Waginator/metal-release-radar/blob/master/misc/logo.png) 
 
 [![CircleCI](https://circleci.com/gh/Waginator/metal-release-radar/tree/master.svg?style=svg)](https://circleci.com/gh/Waginator/metal-release-radar/tree/master)
+[![Coverage Status](https://coveralls.io/repos/github/Waginator/metal-release-radar/badge.svg?branch=master)](https://coveralls.io/github/Waginator/metal-release-radar?branch=master)
 
 ## Table of contents
 1. [ Introduction ](#introduction)
@@ -39,7 +40,8 @@ To setup the project please apply the following steps:
     - `spring.datasource.url`
 - Deposit your Discogs Access Token for the property `discogs.access-token` in file `discogs.properties` (see [Discogs API Documentation](https://www.discogs.com/developers/) for further information).
 - Define the following secrets in file `security.properties`:
-    - `security.token-secret` for JWTS
+    - `security.token-issuer` for JWT
+    - `security.token-secret` for JWT
     - `security.remember-me-secret` for remember me functionality
 
 If you start the application with the default Spring profile or with the profile 'dev', all emails sent by the application will be displayed on the console. 

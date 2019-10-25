@@ -3,6 +3,7 @@ package com.metalr2.web.controller.authentication;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
+import com.metalr2.model.ArtifactForFramework;
 import com.metalr2.model.user.events.OnResetPasswordRequestCompleteEvent;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.UserDto;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +31,7 @@ import java.util.Optional;
 @RequestMapping(Endpoints.Guest.FORGOT_PASSWORD)
 public class ForgotPasswordController {
 
-  private static final String FORM_DTO = "forgotPasswordRequest";
+  static final String FORM_DTO = "forgotPasswordRequest";
 
   private final ApplicationEventPublisher eventPublisher;
   private final UserService               userService;
@@ -44,6 +46,7 @@ public class ForgotPasswordController {
   }
 
   @ModelAttribute(FORM_DTO)
+  @ArtifactForFramework
   private ForgotPasswordRequest forgotPasswordRequest() {
     return new ForgotPasswordRequest();
   }
@@ -55,11 +58,16 @@ public class ForgotPasswordController {
 
   @PostMapping
   public ModelAndView requestPasswordReset(@Valid @ModelAttribute ForgotPasswordRequest forgotPasswordRequest, BindingResult bindingResult) {
+    // show forgot password form if there are validation errors
+    if (bindingResult.hasErrors()) {
+      return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
+    }
+
     Optional<UserDto> userDto = userService.getUserByEmailOrUsername(forgotPasswordRequest.getEmailOrUsername());
 
     if (userDto.isEmpty()) {
-      bindingResult.rejectValue("emailOrUsername", "userDoesNotExist", messages.getMessage(MessageKeys.ForgotPassword.USER_DOES_NOT_EXIST, null, Locale.US));
-      return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD);
+      bindingResult.rejectValue("emailOrUsername", "UserDoesNotExist", messages.getMessage(MessageKeys.ForgotPassword.USER_DOES_NOT_EXIST, null, Locale.US));
+      return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
     }
 
     eventPublisher.publishEvent(new OnResetPasswordRequestCompleteEvent(this, userDto.get()));
@@ -68,7 +76,7 @@ public class ForgotPasswordController {
     viewModel.put("successMessage", messages.getMessage(MessageKeys.ForgotPassword.SUCCESS, null, Locale.US));
     viewModel.put("forgotPasswordRequest", new ForgotPasswordRequest()); // to clear the form
 
-    return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, viewModel);
+    return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, viewModel, HttpStatus.OK);
   }
 
 }

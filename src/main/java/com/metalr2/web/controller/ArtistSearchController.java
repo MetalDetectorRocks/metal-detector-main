@@ -83,7 +83,7 @@ public class ArtistSearchController {
   }
 
   private ModelAndView createArtistSearchResultModelAndView(String artistName, int page, int size) {
-    Optional<ArtistSearchResultContainer> artistSearchResultsOptional = artistSearchRestClient.searchForArtistByName(artistName, page, size);
+    Optional<ArtistSearchResultContainer> artistSearchResultsOptional = artistSearchRestClient.searchByName(artistName, page, size);
 
     if (artistSearchResultsOptional.isEmpty()) {
       return createBadArtistSearchRequestModelAndView(artistName, page, size);

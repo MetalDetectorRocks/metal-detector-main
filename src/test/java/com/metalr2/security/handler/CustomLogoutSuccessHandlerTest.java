@@ -1,7 +1,9 @@
 package com.metalr2.security.handler;
 
 import com.metalr2.config.constants.Endpoints;
+import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -10,9 +12,7 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-class CustomLogoutSuccessHandlerTest {
+class CustomLogoutSuccessHandlerTest implements WithAssertions {
 
   private LogoutSuccessHandler    logoutSuccessHandler;
   private MockHttpServletRequest  httpServletRequest;
@@ -26,12 +26,13 @@ class CustomLogoutSuccessHandlerTest {
   }
 
   @Test
-  void locateAuthenticatedUserToFrontendHomepage() throws Exception {
+  @DisplayName("Forward user to login page on logout")
+  void forward_user_to_login_page_on_logout() throws Exception {
     Authentication authentication = new TestingAuthenticationToken("principal", "credentials");
     logoutSuccessHandler.onLogoutSuccess(httpServletRequest, httpServletResponse, authentication);
 
-    assertEquals(HttpStatus.MOVED_TEMPORARILY.value(), httpServletResponse.getStatus());
-    assertEquals(Endpoints.Guest.LOGIN + "?logout", httpServletResponse.getRedirectedUrl());
+    assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.MOVED_TEMPORARILY.value());
+    assertThat(httpServletResponse.getRedirectedUrl()).isEqualTo(Endpoints.Guest.LOGIN + "?logout");
   }
 
 }

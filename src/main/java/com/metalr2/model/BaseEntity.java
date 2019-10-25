@@ -17,7 +17,7 @@ import java.util.Date;
 @EqualsAndHashCode(of = "id")
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class AbstractEntity {
+public abstract class BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
