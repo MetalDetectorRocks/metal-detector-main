@@ -101,7 +101,7 @@ class UserEntityTest implements WithAssertions {
     void update_of_user_roles_with_null_value_should_throw_exception() {
       UserEntity user = UserFactory.createSuperUser();
 
-      Throwable setNullValue = catchThrowable(() -> user.setUserRoles(Collections.emptySet()));
+      Throwable setNullValue = catchThrowable(() -> user.setUserRoles(null));
 
       assertThat(setNullValue).isInstanceOf(IllegalArgumentException.class);
       assertThat(setNullValue).hasMessage("At least one user role must be set!");
