@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-@Tag("test")
+@Tag("integration-test")
 class RegistrationControllerIT implements WithAssertions {
 
   private static final String PARAM_USERNAME          = "username";

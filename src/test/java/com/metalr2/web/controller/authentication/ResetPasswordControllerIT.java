@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ResetPasswordController.class)
 @Import(WebSecurity.class)
-@Tag("test")
+@Tag("integration-test")
 class ResetPasswordControllerIT {
 
   private static final String PARAM_TOKEN_STRING      = "tokenString";

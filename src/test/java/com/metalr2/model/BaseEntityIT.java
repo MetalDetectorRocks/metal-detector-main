@@ -17,7 +17,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @DataJpaTest
-@Tag("test")
+@Tag("integration-test")
 class BaseEntityIT implements WithAssertions {
 
   private static final String AUDITOR_USER = "ANONYMOUS";
@@ -29,6 +29,7 @@ class BaseEntityIT implements WithAssertions {
   @DisplayName("All JPA auditing fields should have a valid value after persisting")
   void jpa_auditing_fields_should_be_not_null() {
     TemporalUnitLessThanOffset offset = new TemporalUnitLessThanOffset(500, ChronoUnit.MILLIS);
+    LocalDateTime now = LocalDateTime.now();
     SimpleTestEntity testEntity = new SimpleTestEntity();
 
     assertThat(testEntity.getCreatedBy()).isNull();
@@ -39,9 +40,9 @@ class BaseEntityIT implements WithAssertions {
     testRepository.save(testEntity);
 
     assertThat(testEntity.getCreatedBy()).isEqualTo(AUDITOR_USER);
-    assertThat(testEntity.getCreatedDateTime()).isCloseTo(LocalDateTime.now(), offset);
+    assertThat(testEntity.getCreatedDateTime()).isCloseTo(now, offset);
     assertThat(testEntity.getLastModifiedBy()).isEqualTo(AUDITOR_USER);
-    assertThat(testEntity.getLastModifiedDateTime()).isCloseTo(LocalDateTime.now(), offset);
+    assertThat(testEntity.getLastModifiedDateTime()).isCloseTo(now, offset);
   }
 
   @EnableJpaAuditing
