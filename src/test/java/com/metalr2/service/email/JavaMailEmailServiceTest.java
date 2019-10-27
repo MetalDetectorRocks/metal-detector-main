@@ -61,12 +61,11 @@ class JavaMailEmailServiceTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("")
+  @DisplayName("Sending an email with JavaMail should interact with EmailSender and TemplateEngine as expected")
   void send_email() {
     // given
     final String TOKEN = "token";
     final String EXPECTED_VERIFICATION_URL = mailConfig.getHost() + Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + TOKEN;
-    ArgumentCaptor<MimeMessage> mimeMessageCaptor = ArgumentCaptor.forClass(MimeMessage.class);
     ArgumentCaptor<Context> contextCaptor = ArgumentCaptor.forClass(Context.class);
     ArgumentCaptor<String> templateNameCaptor = ArgumentCaptor.forClass(String.class);
     AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", TOKEN);
@@ -77,7 +76,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
     // then
     verify(emailSender, times(1)).createMimeMessage();
     verify(templateEngine, times(1)).process(templateNameCaptor.capture(), contextCaptor.capture());
-    verify(emailSender, times(1)).send(mimeMessageCaptor.capture());
+    verify(emailSender, times(1)).send(any(MimeMessage.class));
 
     assertThat(templateNameCaptor.getValue()).isEqualTo(email.getTemplateName());
     assertThat(contextCaptor.getValue().getVariable("verificationUrl")).isEqualTo(EXPECTED_VERIFICATION_URL);

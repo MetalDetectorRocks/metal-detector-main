@@ -8,6 +8,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Profile("test")
+@Tag("integration-test")
 class MetalReleaseRadarApplicationIT {
 
   @Test

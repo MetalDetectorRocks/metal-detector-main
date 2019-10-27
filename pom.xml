@@ -50,7 +50,7 @@
         <hibernate-validator.version>6.1.0.Alpha2</hibernate-validator.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <modelmapper.version>2.3.0</modelmapper.version>
-        <bootstrao.version>4.3.1</bootstrao.version>
+        <bootstrap.version>4.3.1</bootstrap.version>
         <jquery.version>3.4.1</jquery.version>
         <popperJS.version>1.15.0</popperJS.version>
         <material-icons.version>0.3.1</material-icons.version>
@@ -173,7 +173,7 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
-            <version>${bootstrao.version}</version>
+            <version>${bootstrap.version}</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>

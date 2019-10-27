@@ -64,7 +64,7 @@ class ArtistSearchRestClientTest implements WithAssertions {
     @DisplayName("Searching by name should return a valid result")
     void search_by_name() {
       // given
-      final String ARTIST_NAME_QUERY = "Nirvana";
+      final String ARTIST_NAME_QUERY = "Darkthrone";
       ArtistSearchResultContainer resultContainer = ArtistSearchResultContainerFactory.withOneResult();
       when(discogsConfig.getRestBaseUrl()).thenReturn(BASE_URL);
       when(restTemplate.getForEntity(SEARCH_BY_NAME_URL, ArtistSearchResultContainer.class, ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE))
@@ -84,7 +84,7 @@ class ArtistSearchRestClientTest implements WithAssertions {
     @DisplayName("Searching by name should return an empty optional when Discogs returns no usable response")
     void search_by_name_with_no_usable_response_from_discogs(ArtistSearchResultContainer resultContainer, HttpStatus httpStatus) {
       // given
-      final String ARTIST_NAME_QUERY = "Nirvana";
+      final String ARTIST_NAME_QUERY = "Darkthrone";
       when(discogsConfig.getRestBaseUrl()).thenReturn(BASE_URL);
       when(restTemplate.getForEntity(SEARCH_BY_NAME_URL, ArtistSearchResultContainer.class, ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE))
               .thenReturn(ResponseEntity.status(httpStatus).body(resultContainer));
