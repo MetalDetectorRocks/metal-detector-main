@@ -9,7 +9,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.Optional;
 
 @DataJpaTest
-@Tag("test")
+@Tag("integration-test")
 @TestPropertySource(locations = "classpath:application-test.properties")
 class UserRepositoryIT implements WithAssertions {
 
