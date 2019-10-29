@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @DataJpaTest
 @Tag("integration-test")
-@TestPropertySource(locations = "classpath:application-integrationtest.properties")
+@TestPropertySource(locations = "classpath:application-test.properties")
 class UserRepositoryIT implements WithAssertions {
 
   @Autowired
