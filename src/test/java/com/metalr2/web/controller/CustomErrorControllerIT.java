@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.RequestDispatcher;
@@ -55,6 +56,7 @@ class CustomErrorControllerIT implements WithAssertions {
       when(userService.loadUserByUsername(USERNAME)).thenReturn(userEntity);
 
       HttpSession session = mockMvc.perform(post(Endpoints.Guest.LOGIN)
+              .with(SecurityMockMvcRequestPostProcessors.csrf())
               .param("username", USERNAME)
               .param("password", PASSWORD))
               .andReturn()

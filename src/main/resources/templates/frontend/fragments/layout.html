@@ -16,6 +16,7 @@
   <script th:src="@{/webjars/jquery/jquery.min.js}" src="#"></script>
   <script th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
   <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
+  <script th:src="@{/js/common.js}" src="#"></script>
 </head>
   <body >
     <header>
@@ -53,13 +54,15 @@
                   <a class="dropdown-item" href="#" th:href="@{/settings}">Settings</a>
                   <a class="dropdown-item" href="#" target="_blank" th:href="@{/admin/users}" sec:authorize="hasRole('ROLE_ADMINISTRATOR')">Admin area</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#" th:href="@{/logout}">Logout</a>
+                  <a id="logout-link" class="dropdown-item" href="#" th:href="@{/logout}">Logout</a>
                 </div>
               </li>
             </ul>
           </div>
         </div>
       </nav>
+      <form id="logout-form" method="POST" action="#" th:action="@{/logout}">
+      </form>
     </header>
 
     <main role="main">
@@ -104,5 +107,10 @@
         </div>
       </div>
     </footer>
+    <script>
+        $(document).ready( function() {
+            registerLogoutListener();
+        });
+    </script>
   </body>
 </html>
