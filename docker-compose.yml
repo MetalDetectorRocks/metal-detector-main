@@ -1,0 +1,104 @@
+version: '3.7'
+
+services: 
+  mrr-mysql: 
+    image: mysql:5
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mrr_mysql_root_password
+      MYSQL_DATABASE: metal-release-radar
+      MYSQL_USER: db_metal_release_radar
+      MYSQL_PASSWORD_FILE: /run/secrets/mrr_mysql_password
+    secrets:
+      - mrr_mysql_root_password
+      - mrr_mysql_password
+    networks:
+      - mrr-network
+    volumes:
+      - type: volume
+        source: mrr-mysql-volume
+        target: /var/lib/mysql
+    ports:
+      - 3306:3306
+    restart: always
+     
+  mrr-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+     PMA_ARBITRARY: 1
+     PMA_HOST: mrr-mysql
+    networks:
+      - mrr-network
+    volumes:
+      - type: volume
+        source: mrr-phpmyadmin-volume
+        target: /sessions
+    ports:
+     - 9000:80
+    restart: always
+
+  mrr-butler-mysql:
+    image: mysql:5
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mrr_butler_mysql_root_password
+      MYSQL_DATABASE: metal-release-butler
+      MYSQL_USER: db_metal_release_butler
+      MYSQL_PASSWORD_FILE: /run/secrets/mrr_butler_mysql_password
+    secrets:
+      - mrr_butler_mysql_root_password
+      - mrr_butler_mysql_password
+    networks:
+      - mrr-butler-network
+    volumes:
+      - type: volume
+        source: mrr-butler-mysql-volume
+        target: /var/lib/mysql  
+    ports:
+      - 3307:3306
+    restart: always
+
+  mrr-butler-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+     PMA_ARBITRARY: 1
+     PMA_HOST: mrr-butler-mysql
+    networks:
+      - mrr-butler-network
+    volumes:
+      - type: volume
+        source: mrr-butler-phpmyadmin-volume
+        target: /sessions
+    ports:
+     - 9001:80
+    restart: always
+
+  mrr-butler:
+    image: metalreleaseradar/metal-release-butler
+    environment:
+      DATASOURCE_URL: jdbc:mysql://mrr-butler-mysql:3306/metal-release-butler?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&useSSL=false
+      DATASOURCE_USERNAME: root
+      DATASOURCE_PASSWORD: ${BUTLER_MYSQL_PASSWORD}
+    networks:
+      - mrr-butler-network
+    ports:
+      - 8095:8095
+    restart: always
+
+volumes:
+  mrr-mysql-volume:
+  mrr-phpmyadmin-volume:
+  mrr-butler-mysql-volume:
+  mrr-butler-phpmyadmin-volume:
+
+secrets:
+  mrr_mysql_root_password:
+    file: .secrets/mrr_mysql_root_password.txt
+  mrr_mysql_password:
+    file: .secrets/mrr_mysql_password.txt
+  mrr_butler_mysql_root_password:
+    file: .secrets/mrr_butler_mysql_root_password.txt
+  mrr_butler_mysql_password:
+    file: .secrets/mrr_butler_mysql_password.txt
+
+networks:
+  mrr-network:
+  mrr-butler-network:

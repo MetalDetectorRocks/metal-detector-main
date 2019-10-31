@@ -267,6 +267,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Maven plugin for submitting Java code coverage reports to Coveralls web service. -->
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
@@ -279,6 +280,9 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <!-- JaCoCo is a free code coverage library for Java. It records which parts of your Java code are executed during a        -->
+            <!-- particular program launch. This technique is called code coverage analysis and typically used with automated           -->
+            <!-- testing like JUnit unit tests. It helps to identify untested parts of a code base and improve the corresponding tests. -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
