@@ -1,8 +1,11 @@
 !**/src/main/**
 !**/src/test/**
 
-# ignore all stuff in private folder
+# ignore all stuff in .private folder
 .private/
+
+# ignore docker .secrets folder
+.secrets/
 
 # ignore all stuff in target folder
 target/
@@ -17,3 +20,6 @@ target/
 
 # ignore all logs
 *.log
+
+# docker env file
+src/main/docker/env.txt
