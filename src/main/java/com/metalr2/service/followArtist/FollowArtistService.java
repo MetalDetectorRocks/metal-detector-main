@@ -1,11 +1,11 @@
 package com.metalr2.service.followArtist;
 
-import com.metalr2.web.dto.request.FollowArtistRequest;
+import com.metalr2.web.dto.FollowArtistsDto;
 
 public interface FollowArtistService {
 
-  boolean followArtist(FollowArtistRequest followArtistRequest);
+  boolean followArtist(FollowArtistsDto followArtistsDto);
 
-  boolean unfollowArtist(FollowArtistRequest unfollowArtistRequest);
+  void unfollowArtist(FollowArtistsDto followArtistsDto);
 
 }

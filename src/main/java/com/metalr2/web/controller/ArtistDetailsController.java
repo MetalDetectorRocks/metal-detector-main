@@ -51,6 +51,7 @@ public class ArtistDetailsController {
 
     HashMap<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
+    viewModel.put("artistId", artistId);
     viewModel.put("artistDetailsResponse", artistDetailsResponse);
 
     return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS, viewModel);
@@ -59,7 +60,7 @@ public class ArtistDetailsController {
   private ModelAndView createBadArtistIdSearchRequestModelAndView(String artistName, long artistId) {
     Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
-    viewModel.put("badArtistIdSearchResponseId", artistId);
+    viewModel.put("artistId", artistId);
     return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS, viewModel);
   }
 

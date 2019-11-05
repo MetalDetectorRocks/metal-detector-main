@@ -1,6 +1,8 @@
 package com.metalr2.model.followArtist;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,16 +13,16 @@ import java.io.Serializable;
 @Data
 @IdClass(FollowedArtistEntity.class)
 @Entity(name = "followed_artists")
+@NoArgsConstructor
+@AllArgsConstructor
 public class FollowedArtistEntity implements Serializable {
 
-  public static final long serialVersionUID = 1L;
+  @Id
+  @Column
+  private long userId;
 
   @Id
   @Column
-  private final long userId;
-
-  @Id
-  @Column
-  private final long artistDiscogsId;
+  private long artistDiscogsId;
 
 }

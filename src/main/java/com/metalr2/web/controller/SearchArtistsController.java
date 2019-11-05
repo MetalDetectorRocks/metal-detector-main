@@ -29,18 +29,16 @@ import java.util.stream.IntStream;
 
 @Controller
 @Slf4j
-public class FollowArtistsController {
+public class SearchArtistsController {
 
   private final ArtistSearchRestClient artistSearchRestClient;
-  private final FollowArtistService followArtistService;
   private static final String DEFAULT_PAGE_SIZE = "25";
   private static final String DEFAULT_PAGE = "1";
   private static final String DEFAULT_ARTIST_NAME = "";
 
   @Autowired
-  public FollowArtistsController(ArtistSearchRestClient artistSearchRestClient, FollowArtistService followArtistService) {
+  public SearchArtistsController(ArtistSearchRestClient artistSearchRestClient) {
     this.artistSearchRestClient = artistSearchRestClient;
-    this.followArtistService = followArtistService;
   }
 
   @ModelAttribute
@@ -48,13 +46,13 @@ public class FollowArtistsController {
     return new ArtistSearchRequest();
   }
 
-  @PostMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
+  @PostMapping({Endpoints.Frontend.SEARCH_ARTISTS})
   public ModelAndView handleSearchRequest(@ModelAttribute ArtistSearchRequest artistSearchRequest) {
     return createArtistSearchResultModelAndView(artistSearchRequest.getArtistName(), Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
   }
 
-  @GetMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
-  public ModelAndView showFollowArtists(@RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
+  @GetMapping({Endpoints.Frontend.SEARCH_ARTISTS})
+  public ModelAndView showSearchArtists(@RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
                                         @RequestParam(name = "page", defaultValue = DEFAULT_PAGE) int page,
                                         @RequestParam(name = "artistName", defaultValue = DEFAULT_ARTIST_NAME) String artistName) {
     if (artistName.equals(DEFAULT_ARTIST_NAME) && size == Integer.parseInt(DEFAULT_PAGE_SIZE)
@@ -64,21 +62,6 @@ public class FollowArtistsController {
 
     return createArtistSearchResultModelAndView(artistName, page, size);
   }
-
-//  @GetMapping({Endpoints.Frontend.FOLLOW_ARTISTS})
-//  public ModelAndView followArtist(FollowArtistRequest followArtistRequest,
-//                                   @RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
-//                                   @RequestParam(name = "page", defaultValue = DEFAULT_PAGE) int page,
-//                                   @RequestParam(name = "artistName", defaultValue = DEFAULT_ARTIST_NAME) String artistName) {
-//    if (followArtistRequest == null || (artistName.equals(DEFAULT_ARTIST_NAME) && size == Integer.parseInt(DEFAULT_PAGE_SIZE)
-//            && page == Integer.parseInt(DEFAULT_PAGE))){
-//      return createDefaultModelAndView();
-//    }
-//
-//    followArtistService.followArtist(followArtistRequest);
-//
-//    return createArtistSearchResultModelAndView(artistName, page, size);
-//  }
 
   private ArtistNameSearchResponse createArtistNameSearchResponse(ArtistSearchResultContainer artistSearchResults) {
     Pagination pagination = artistSearchResults.getPagination();
@@ -98,7 +81,7 @@ public class FollowArtistsController {
   }
 
   private ModelAndView createDefaultModelAndView() {
-    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, "artistNameSearchResponse", new ArtistNameSearchResponse());
+    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, "artistNameSearchResponse", new ArtistNameSearchResponse());
   }
 
   private ModelAndView createArtistSearchResultModelAndView(String artistName, int page, int size) {
@@ -115,7 +98,7 @@ public class FollowArtistsController {
     viewModel.put("artistName", artistName);
     viewModel.put("artistNameSearchResponse", artistNameSearchResponse);
 
-    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
+    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, viewModel);
   }
 
   private ModelAndView createBadArtistSearchRequestModelAndView(String artistName, int page, int size) {
@@ -123,6 +106,6 @@ public class FollowArtistsController {
     Map<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
     viewModel.put("badArtistNameSearchResponse", badArtistNameSearchResponse);
-    return new ModelAndView(ViewNames.Frontend.FOLLOW_ARTISTS, viewModel);
+    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, viewModel);
   }
 }

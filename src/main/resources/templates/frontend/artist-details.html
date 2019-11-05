@@ -36,11 +36,11 @@
             </div>
         </div>
         <!-- Bad request message -->
-        <div th:if="${badArtistIdSearchResponseId <= 0}" class="mb-3 alert alert-danger" role="alert">
+        <div th:if="${artistId <= 0}" class="mb-3 alert alert-danger" role="alert">
             <p>No data could be found for the given parameters:</p>
             <ul>
                 <li th:text="${'Artist name: ' + artistName}">Bad artist id search request name</li>
-                <li th:text="${'Artist id: ' + badArtistIdSearchResponseId}">Bad artist id search request id</li>
+                <li th:text="${'Artist id: ' + artistId}">Bad artist id search request id</li>
             </ul>
         </div>
     </body>

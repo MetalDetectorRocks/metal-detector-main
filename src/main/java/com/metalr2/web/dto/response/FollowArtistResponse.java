@@ -1,4 +1,4 @@
-package com.metalr2.web.dto.request;
+package com.metalr2.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FollowArtistRequest {
+public class FollowArtistResponse {
 
-  private long artistDiscogsId;
+  private boolean nowFollowed;
 
 }
