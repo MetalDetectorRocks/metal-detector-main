@@ -4,8 +4,12 @@ import com.metalr2.web.dto.FollowArtistsDto;
 
 public interface FollowArtistService {
 
-  boolean followArtist(FollowArtistsDto followArtistsDto);
+  FollowArtistsDto followArtist(FollowArtistsDto followArtistsDto);
 
   void unfollowArtist(FollowArtistsDto followArtistsDto);
+
+  boolean userFollowsArtist(FollowArtistsDto followArtistsDto);
+
+  boolean artistFollowedByUser(FollowArtistsDto followArtistsDto);
 
 }

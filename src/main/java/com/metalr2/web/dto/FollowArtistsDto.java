@@ -1,17 +1,17 @@
 package com.metalr2.web.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-
 @Data
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class FollowArtistsDto {
 
+  private long userId;
   private long artistDiscogsId;
 
 }

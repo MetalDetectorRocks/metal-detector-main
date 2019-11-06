@@ -31,17 +31,17 @@
     </div>
     <!-- Result cards -->
     <div th:if="${artistNameSearchResponse}" class="mb-3">
-        <div th:each="result : ${artistNameSearchResponse.artistSearchResults}" class="card">
+        <div th:each="result, iterStat : ${artistNameSearchResponse.artistSearchResults}" class="card">
             <div class="card-body">
                 <img th:if="${result.thumb} != ''" src="" th:src="${result.thumb}" th:alt="${'Thumb for ' + result.artistName}" alt="">
-                <p id="discogsArtistId" th:text="${result.id}">Id</p>
+                <p th:text="${result.id}">Id</p>
                 <p th:text="${result.artistName}">Artist name</p>
                 <a th:href="@{/artist-details(artistName=${result.artistName}, id=${result.id})}"
                    th:text="${'Details for ' + result.artistName}">Artist details</a><br>
-                <a id="followArtistLink" href="#" onclick="followArtist()"
+                <a href="#" th:attr="onclick=|followArtist('${result.id}')|"
                    th:text="${'Follow ' + result.artistName}">Follow artist</a><br>
-                <a id="unfollowArtistLink" href="#" onclick="unfollowArtist()"
-                   th:text="${'Unfollow ' + result.artistName}">Follow artist</a>
+                <a href="#" th:attr="onclick=|unfollowArtist('${result.id}')|"
+                   th:text="${'Unfollow ' + result.artistName}">Unfollow artist</a>
             </div>
         </div>
     </div>

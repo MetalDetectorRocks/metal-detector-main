@@ -10,9 +10,7 @@ public interface FollowedArtistRepository extends JpaRepository<FollowedArtistEn
 
   List<FollowedArtistEntity> findFollowedArtistEntitiesByUserId(long userId);
 
-  boolean existsFollowedArtistEntityByUserId(long userId);
-
-  boolean existsFollowedArtistEntityByArtistDiscogsId(long artistDiscogsId);
+  List<FollowedArtistEntity> findFollowedArtistEntitiesByArtistDiscogsId(long artistDiscogsId);
 
   boolean existsFollowedArtistEntityByUserIdAndArtistDiscogsId(long userId, long artistDiscogsId);
 

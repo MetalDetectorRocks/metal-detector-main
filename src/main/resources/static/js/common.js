@@ -5,10 +5,10 @@ function registerLogoutListener() {
     });
 }
 
-function followArtist(){
+function followArtist(artistId){
     const followArtistRequest =
         {
-            "artistDiscogsId" : document.getElementById('discogsArtistId').innerText
+            "artistDiscogsId" : artistId
         };
     const followArtistRequestJson = JSON.stringify(followArtistRequest);
     $.ajax({
@@ -24,10 +24,10 @@ function followArtist(){
     return false;
 }
 
-function unfollowArtist(){
+function unfollowArtist(artistId){
     const unfollowArtistRequest =
         {
-            "artistDiscogsId" : document.getElementById('discogsArtistId').innerText
+            "artistDiscogsId" : artistId
         };
     const unfollowArtistRequestJson = JSON.stringify(unfollowArtistRequest);
     $.ajax({
