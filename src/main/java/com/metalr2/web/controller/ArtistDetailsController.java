@@ -2,13 +2,20 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
+import com.metalr2.model.user.UserEntity;
+import com.metalr2.service.followArtist.FollowArtistService;
+import com.metalr2.service.user.UserService;
 import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
+import com.metalr2.web.dto.FollowArtistDto;
+import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.discogs.artist.Artist;
 import com.metalr2.web.dto.discogs.artist.Member;
 import com.metalr2.web.dto.discogs.misc.Image;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,12 +32,18 @@ import java.util.stream.Collectors;
 public class ArtistDetailsController {
 
   private final ArtistSearchRestClient artistSearchRestClient;
+  private final FollowArtistService followArtistService;
+  private final UserService userService;
+
   private static final String DEFAULT_ARTIST_ID = "0";
   private static final String DEFAULT_ARTIST_NAME = "";
 
   @Autowired
-  public ArtistDetailsController(ArtistSearchRestClient artistSearchRestClient) {
+  public ArtistDetailsController(ArtistSearchRestClient artistSearchRestClient, FollowArtistService followArtistService,
+                                 UserService userService) {
     this.artistSearchRestClient = artistSearchRestClient;
+    this.followArtistService    = followArtistService;
+    this.userService            = userService;
   }
 
   @GetMapping({Endpoints.Frontend.ARTIST_DETAILS})
@@ -47,7 +60,7 @@ public class ArtistDetailsController {
     }
 
     Artist artist                               = artistOptional.get();
-    ArtistDetailsResponse artistDetailsResponse = createArtistDetailsResponse(artistName,artist);
+    ArtistDetailsResponse artistDetailsResponse = createArtistDetailsResponse(artist);
 
     HashMap<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
@@ -64,12 +77,24 @@ public class ArtistDetailsController {
     return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS, viewModel);
   }
 
-  private ArtistDetailsResponse createArtistDetailsResponse(String artistName, Artist artist) {
+  private ArtistDetailsResponse createArtistDetailsResponse(Artist artist) {
     String artistProfile      = artist.getProfile().isEmpty() ? null : artist.getProfile();
     List<String> activeMember = artist.getMembers() == null   ? null : artist.getMembers().stream().filter(Member::isActive).map(Member::getName).collect(Collectors.toList());
     List<String> formerMember = artist.getMembers() == null   ? null : artist.getMembers().stream().filter(member -> !member.isActive()).map(Member::getName).collect(Collectors.toList());
     List<String> images       = artist.getImages()  == null   ? null : artist.getImages().stream().map(Image::getResourceUrl).collect(Collectors.toList());
+    boolean isFollowed        = followArtistService.followArtistEntityExists(new FollowArtistDto(getUserId(), artist.getId()));
+    return new ArtistDetailsResponse(artistProfile, activeMember, formerMember, images, isFollowed);
+  }
 
-    return new ArtistDetailsResponse(artistProfile, activeMember, formerMember, images);
+  private long getUserId(){
+    Authentication auth                  = SecurityContextHolder.getContext().getAuthentication();
+    Optional<UserDto> userEntityOptional = userService.getUserByEmailOrUsername(((UserEntity)auth.getPrincipal()).getEmail());
+
+    if (userEntityOptional.isEmpty()) {
+      throw new IllegalStateException("User not found"); // TODO: 06.11.19 better ways than exception?
+    }
+
+    UserDto userEntity = userEntityOptional.get();
+    return userEntity.getId();
   }
 }

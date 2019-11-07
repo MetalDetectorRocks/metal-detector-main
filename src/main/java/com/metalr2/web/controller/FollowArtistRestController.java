@@ -12,7 +12,7 @@ import javax.validation.Valid;
  * @param <T> DTO for request
  * @param <U> DTO for response
  */
-public interface FollowArtistsRestController<T, U> {
+public interface FollowArtistRestController<T, U> {
 
   ResponseEntity<U> followArtist(@Valid T request, BindingResult bindingResult);
 

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface FollowedArtistRepository extends JpaRepository<FollowedArtistEntity, Long> {
+public interface FollowedArtistsRepository extends JpaRepository<FollowedArtistEntity, Long> {
 
   List<FollowedArtistEntity> findFollowedArtistEntitiesByUserId(long userId);
 

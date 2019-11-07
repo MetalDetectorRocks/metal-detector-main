@@ -1,15 +1,13 @@
 package com.metalr2.service.followArtist;
 
-import com.metalr2.web.dto.FollowArtistsDto;
+import com.metalr2.web.dto.FollowArtistDto;
 
 public interface FollowArtistService {
 
-  FollowArtistsDto followArtist(FollowArtistsDto followArtistsDto);
+  FollowArtistDto followArtist(FollowArtistDto followArtistDto);
 
-  void unfollowArtist(FollowArtistsDto followArtistsDto);
+  void unfollowArtist(FollowArtistDto followArtistDto);
 
-  boolean userFollowsArtist(FollowArtistsDto followArtistsDto);
-
-  boolean artistFollowedByUser(FollowArtistsDto followArtistsDto);
+  boolean followArtistEntityExists(FollowArtistDto followArtistDto);
 
 }

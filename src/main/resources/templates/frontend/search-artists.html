@@ -38,10 +38,11 @@
                 <p th:text="${result.artistName}">Artist name</p>
                 <a th:href="@{/artist-details(artistName=${result.artistName}, id=${result.id})}"
                    th:text="${'Details for ' + result.artistName}">Artist details</a><br>
-                <a href="#" th:attr="onclick=|followArtist('${result.id}')|"
-                   th:text="${'Follow ' + result.artistName}">Follow artist</a><br>
-                <a href="#" th:attr="onclick=|unfollowArtist('${result.id}')|"
-                   th:text="${'Unfollow ' + result.artistName}">Unfollow artist</a>
+                <form id="followArtistForm">
+                    <button th:id="${'followArtistButton' + iterStat.index}" class="btn btn-primary btn-dark font-weight-bold" type="button"
+                            th:attr="onclick=|followArtist('${result.id}','${iterStat.index}')|"
+                            th:text="${result.isFollowed}? Unfollow : Follow">Follow</button>
+                </form>
             </div>
         </div>
     </div>

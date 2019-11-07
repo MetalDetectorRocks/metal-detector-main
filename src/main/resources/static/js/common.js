@@ -5,40 +5,44 @@ function registerLogoutListener() {
     });
 }
 
-function followArtist(artistId){
+function followArtist(artistId,index){
     const followArtistRequest =
         {
             "artistDiscogsId" : artistId
         };
     const followArtistRequestJson = JSON.stringify(followArtistRequest);
-    $.ajax({
-        method: "POST",
-        dataType: "json",
-        url: "/rest/v1/follow-artists",
-        contentType: 'application/json',
-        data: followArtistRequestJson,
-        error: function(e){
-            console.log(e.message);
-        }
-    });
-    return false;
-}
+    const button = document.getElementById('followArtistButton' + index);
 
-function unfollowArtist(artistId){
-    const unfollowArtistRequest =
-        {
-            "artistDiscogsId" : artistId
-        };
-    const unfollowArtistRequestJson = JSON.stringify(unfollowArtistRequest);
-    $.ajax({
-        method: "DELETE",
-        dataType: "json",
-        url: "/rest/v1/follow-artists",
-        contentType: 'application/json',
-        data: unfollowArtistRequestJson,
-        error: function(e){
-            console.log(e.message);
-        }
-    });
+    const buttonText = button.innerText;
+    if (buttonText==="Follow") {
+        $.ajax({
+            method: "POST",
+            dataType: "json",
+            url: "/rest/v1/follow-artist",
+            contentType: 'application/json',
+            data: followArtistRequestJson,
+            success: function(){
+                button.childNodes[0].nodeValue = 'Unfollow';
+            },
+            error: function(e){
+                console.log(e.message);
+            }
+        });
+    }
+    else {
+        $.ajax({
+            method: "DELETE",
+            url: "/rest/v1/follow-artist",
+            contentType: 'application/json',
+            data: followArtistRequestJson,
+            success: function(){
+                button.childNodes[0].nodeValue = 'Follow';
+            },
+            error: function(e){
+                console.log(e.message);
+            }
+        });
+    }
+
     return false;
 }

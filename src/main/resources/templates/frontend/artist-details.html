@@ -8,6 +8,11 @@
         <div th:if="${artistDetailsResponse}" class="mb-3 mt-5 card">
             <!-- Result card -->
             <h2 th:text="${artistName}" class="card-title">Artist name</h2>
+            <form name="followArtistButton" class="card-body">
+                <button id="followArtistButton0" class="btn btn-primary btn-dark font-weight-bold"
+                        type="button" th:attr="onclick=|followArtist('${artistId}',0)|"
+                        th:text="${artistDetailsResponse.isFollowed}? Unfollow : Follow">Follow button</button>
+            </form>
             <div th:if="${artistDetailsResponse.profile}" class="card-body">
                 <h3>Profile</h3>
                 <p th:text="${artistDetailsResponse.profile}">Artist profile</p>

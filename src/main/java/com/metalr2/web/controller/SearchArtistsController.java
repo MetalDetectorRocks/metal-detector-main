@@ -2,17 +2,21 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
+import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.followArtist.FollowArtistService;
+import com.metalr2.service.user.UserService;
 import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
+import com.metalr2.web.dto.FollowArtistDto;
+import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.Pagination;
 import com.metalr2.web.dto.discogs.search.PaginationUrls;
 import com.metalr2.web.dto.request.ArtistSearchRequest;
-import com.metalr2.web.dto.request.FollowArtistRequest;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.BadArtistNameSearchResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,17 +32,22 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-@Slf4j
 public class SearchArtistsController {
 
   private final ArtistSearchRestClient artistSearchRestClient;
+  private final FollowArtistService followArtistService;
+  private final UserService userService;
+
   private static final String DEFAULT_PAGE_SIZE = "25";
   private static final String DEFAULT_PAGE = "1";
   private static final String DEFAULT_ARTIST_NAME = "";
 
   @Autowired
-  public SearchArtistsController(ArtistSearchRestClient artistSearchRestClient) {
+  public SearchArtistsController(ArtistSearchRestClient artistSearchRestClient, FollowArtistService followArtistService,
+                                 UserService userService) {
     this.artistSearchRestClient = artistSearchRestClient;
+    this.followArtistService    = followArtistService;
+    this.userService            = userService;
   }
 
   @ModelAttribute
@@ -73,7 +82,9 @@ public class SearchArtistsController {
 
     List<ArtistNameSearchResponse.ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
             .map(artistSearchResult -> new ArtistNameSearchResponse.ArtistSearchResult(artistSearchResult.getThumb(),
-                    artistSearchResult.getId(), artistSearchResult.getTitle())).collect(Collectors.toList());
+                    artistSearchResult.getId(), artistSearchResult.getTitle(),
+                    followArtistService.followArtistEntityExists(new FollowArtistDto(getUserId(), artistSearchResult.getId()))))
+            .collect(Collectors.toList());
     ArtistNameSearchResponse.Pagination dtoPagination = new ArtistNameSearchResponse.Pagination(pagination.getPagesTotal(),
             pagination.getCurrentPage(), nextSize, nextPage, pageNumbers);
 
@@ -107,5 +118,17 @@ public class SearchArtistsController {
     viewModel.put("artistName", artistName);
     viewModel.put("badArtistNameSearchResponse", badArtistNameSearchResponse);
     return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, viewModel);
+  }
+
+  private long getUserId(){
+    Authentication auth                  = SecurityContextHolder.getContext().getAuthentication();
+    Optional<UserDto> userEntityOptional = userService.getUserByEmailOrUsername(((UserEntity)auth.getPrincipal()).getEmail());
+
+    if (userEntityOptional.isEmpty()) {
+      throw new IllegalStateException("User not found"); // TODO: 06.11.19 better ways than exception?
+    }
+
+    UserDto userEntity = userEntityOptional.get();
+    return userEntity.getId();
   }
 }

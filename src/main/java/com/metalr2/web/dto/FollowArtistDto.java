@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class FollowArtistsDto {
+public class FollowArtistDto {
 
   private long userId;
   private long artistDiscogsId;

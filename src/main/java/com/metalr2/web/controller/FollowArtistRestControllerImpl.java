@@ -4,7 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.service.user.UserService;
-import com.metalr2.web.dto.FollowArtistsDto;
+import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.request.FollowArtistRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -23,25 +23,25 @@ import java.util.Optional;
 @RestController
 @RequestMapping(Endpoints.Rest.FOLLOW_ARTISTS_V1)
 @Slf4j
-public class FollowArtistsRestControllerImpl implements FollowArtistsRestController<FollowArtistRequest, FollowArtistsDto> {
+public class FollowArtistRestControllerImpl implements FollowArtistRestController<FollowArtistRequest, FollowArtistDto> {
 
   private final UserService userService;
   private final FollowArtistService followArtistService;
 
   @Autowired
-  public FollowArtistsRestControllerImpl(UserService userService, FollowArtistService followArtistService){
+  public FollowArtistRestControllerImpl(UserService userService, FollowArtistService followArtistService){
     this.userService         = userService;
     this.followArtistService = followArtistService;
   }
 
   @Override
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<FollowArtistsDto> followArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult) {
+  public ResponseEntity<FollowArtistDto> followArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult) {
     validateRequest(bindingResult);
 
-    FollowArtistsDto followArtistsDto      = new FollowArtistsDto(getUserId(), followArtistRequest.getArtistDiscogsId());
-    FollowArtistsDto savedFollowArtistsDto = followArtistService.followArtist(followArtistsDto);
-    return ResponseEntity.status(HttpStatus.CREATED).body(savedFollowArtistsDto);
+    FollowArtistDto followArtistDto = new FollowArtistDto(getUserId(), followArtistRequest.getArtistDiscogsId());
+    FollowArtistDto savedFollowArtistDto = followArtistService.followArtist(followArtistDto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(savedFollowArtistDto);
   }
 
   @Override
@@ -49,8 +49,8 @@ public class FollowArtistsRestControllerImpl implements FollowArtistsRestControl
   public void unfollowArtist(@RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult) {
     validateRequest(bindingResult);
 
-    FollowArtistsDto followArtistsDto = new FollowArtistsDto(getUserId(), followArtistRequest.getArtistDiscogsId());
-    followArtistService.unfollowArtist(followArtistsDto);
+    FollowArtistDto followArtistDto = new FollowArtistDto(getUserId(), followArtistRequest.getArtistDiscogsId());
+    followArtistService.unfollowArtist(followArtistDto);
   }
 
   private long getUserId(){
