@@ -11,15 +11,17 @@ function followArtist(artistId,index){
             "artistDiscogsId" : artistId
         };
     const followArtistRequestJson = JSON.stringify(followArtistRequest);
-    const button = document.getElementById('followArtistButton' + index);
-
+    const button     = document.getElementById('followArtistButton' + index);
     const buttonText = button.innerText;
+    const csrfToken  = $("input[name='_csrf']").val();
+
     if (buttonText==="Follow") {
         $.ajax({
             method: "POST",
             dataType: "json",
             url: "/rest/v1/follow-artist",
             contentType: 'application/json',
+            headers: {"X-CSRF-TOKEN": csrfToken},
             data: followArtistRequestJson,
             success: function(){
                 button.childNodes[0].nodeValue = 'Unfollow';
@@ -35,6 +37,7 @@ function followArtist(artistId,index){
             url: "/rest/v1/follow-artist",
             contentType: 'application/json',
             data: followArtistRequestJson,
+            headers: {"X-CSRF-TOKEN": csrfToken},
             success: function(){
                 button.childNodes[0].nodeValue = 'Follow';
             },
