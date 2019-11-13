@@ -8,10 +8,10 @@ import java.util.List;
 @Repository
 public interface FollowedArtistsRepository extends JpaRepository<FollowedArtistEntity, Long> {
 
-  List<FollowedArtistEntity> findFollowedArtistEntitiesByUserId(long userId);
+  List<FollowedArtistEntity> findFollowedArtistEntitiesByPublicUserId(String publicUserId);
 
   List<FollowedArtistEntity> findFollowedArtistEntitiesByArtistDiscogsId(long artistDiscogsId);
 
-  boolean existsFollowedArtistEntityByUserIdAndArtistDiscogsId(long userId, long artistDiscogsId);
+  boolean existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(String publicUserId, long artistDiscogsId);
 
 }

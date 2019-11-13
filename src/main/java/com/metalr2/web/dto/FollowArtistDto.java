@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FollowArtistDto {
 
-  private long userId;
+  private String publicUserId;
   private long artistDiscogsId;
 
 }

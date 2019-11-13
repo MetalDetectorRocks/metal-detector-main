@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class FollowArtistServiceTest implements WithAssertions {
 
-  private static final long userId           = 1L;
+  private static final String userId        = "1";
   private static final long artistDiscogsId = 252211L;
 
   @Mock
@@ -53,24 +53,47 @@ class FollowArtistServiceTest implements WithAssertions {
 
     // then
     assertThat(savedFollowArtistDto).isNotNull();
-    assertThat(savedFollowArtistDto.getUserId()).isEqualTo(userId);
+    assertThat(savedFollowArtistDto.getPublicUserId()).isEqualTo(userId);
     assertThat(savedFollowArtistDto.getArtistDiscogsId()).isEqualTo(artistDiscogsId);
 
-    assertThat(followArtistEntityCaptor.getValue().getUserId()).isEqualTo(userId);
+    assertThat(followArtistEntityCaptor.getValue().getPublicUserId()).isEqualTo(userId);
     assertThat(followArtistEntityCaptor.getValue().getArtistDiscogsId()).isEqualTo(artistDiscogsId);
   }
 
   @Test
-  @DisplayName("Unfollowing an artist for a given user id should work")
-  void unfollow_artist(){
+  @DisplayName("Unfollowing a combination of artist and user which exist should return true")
+  void unfollow_existing_artist_should_return_true(){
     // given
     FollowArtistDto followArtistDto = new FollowArtistDto(userId, artistDiscogsId);
 
+    when(followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(true);
+
     // when
-    followArtistService.unfollowArtist(followArtistDto);
+    boolean result = followArtistService.unfollowArtist(followArtistDto);
 
     // then
+    assertThat(result).isTrue();
+
+    verify(followedArtistsRepository, times(1)).existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
     verify(followedArtistsRepository, times(1)).delete(new FollowedArtistEntity(userId, artistDiscogsId));
+  }
+
+  @Test
+  @DisplayName("Unfollowing a combination of artist and user which do not exist should return false")
+  void unfollow_not_existing_artist_should_return_false(){
+    // given
+    FollowArtistDto followArtistDto = new FollowArtistDto(userId, artistDiscogsId);
+
+    when(followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(false);
+
+    // when
+    boolean result = followArtistService.unfollowArtist(followArtistDto);
+
+    // then
+    assertThat(result).isFalse();
+
+    verify(followedArtistsRepository, times(1)).existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
+    verify(followedArtistsRepository, times(0)).delete(new FollowedArtistEntity(userId, artistDiscogsId));
   }
 
   @Test
@@ -79,7 +102,7 @@ class FollowArtistServiceTest implements WithAssertions {
     // given
     FollowArtistDto followArtistDto = new FollowArtistDto(userId, artistDiscogsId);
 
-    when(followedArtistsRepository.existsFollowedArtistEntityByUserIdAndArtistDiscogsId(anyLong(), anyLong())).thenReturn(true);
+    when(followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(true);
 
     // when
     boolean result = followArtistService.followArtistEntityExists(followArtistDto);
@@ -87,7 +110,7 @@ class FollowArtistServiceTest implements WithAssertions {
     // then
     assertThat(result).isTrue();
 
-    verify(followedArtistsRepository, times(1)).existsFollowedArtistEntityByUserIdAndArtistDiscogsId(userId, artistDiscogsId);
+    verify(followedArtistsRepository, times(1)).existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
   }
 
   @Test
@@ -96,7 +119,7 @@ class FollowArtistServiceTest implements WithAssertions {
     // given
     FollowArtistDto followArtistDto = new FollowArtistDto(userId, artistDiscogsId);
 
-    when(followedArtistsRepository.existsFollowedArtistEntityByUserIdAndArtistDiscogsId(anyLong(), anyLong())).thenReturn(false);
+    when(followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(false);
 
     // when
     boolean result = followArtistService.followArtistEntityExists(followArtistDto);
@@ -104,6 +127,6 @@ class FollowArtistServiceTest implements WithAssertions {
     // then
     assertThat(result).isFalse();
 
-    verify(followedArtistsRepository, times(1)).existsFollowedArtistEntityByUserIdAndArtistDiscogsId(userId, artistDiscogsId);
+    verify(followedArtistsRepository, times(1)).existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
   }
 }

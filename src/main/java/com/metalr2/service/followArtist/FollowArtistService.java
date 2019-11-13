@@ -6,7 +6,7 @@ public interface FollowArtistService {
 
   FollowArtistDto followArtist(FollowArtistDto followArtistDto);
 
-  void unfollowArtist(FollowArtistDto followArtistDto);
+  boolean unfollowArtist(FollowArtistDto followArtistDto);
 
   boolean followArtistEntityExists(FollowArtistDto followArtistDto);
 

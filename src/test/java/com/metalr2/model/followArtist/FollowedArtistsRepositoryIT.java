@@ -13,9 +13,9 @@ import java.util.List;
 @TestPropertySource(locations = "classpath:application-test.properties")
 class FollowedArtistsRepositoryIT implements WithAssertions {
 
-  private static final long userId                 = 1L;
+  private static final String userId               = "1";
+  private static final String unknownUserId        = "0";
   private static final long artistDiscogsId        = 252211L;
-  private static final long unknownUserId          = 0L;
   private static final long unknownArtistDiscogsId = 0L;
   private static final FollowedArtistEntity FOLLOW_ARTIST_ENTITY = new FollowedArtistEntity(userId, artistDiscogsId);
 
@@ -35,7 +35,7 @@ class FollowedArtistsRepositoryIT implements WithAssertions {
   @Test
   @DisplayName("findFollowedArtistEntitiesByUserId() finds the correct entities for a given user id if it exists")
   void find_followed_artist_entities_by_user_id_should_return_user_entities() {
-    List<FollowedArtistEntity> followedArtistEntitiesPerUser = followedArtistsRepository.findFollowedArtistEntitiesByUserId(userId);
+    List<FollowedArtistEntity> followedArtistEntitiesPerUser = followedArtistsRepository.findFollowedArtistEntitiesByPublicUserId(userId);
 
     assertThat(followedArtistEntitiesPerUser.size()).isEqualTo(1);
     assertThat(followedArtistEntitiesPerUser.get(0)).isEqualTo(FOLLOW_ARTIST_ENTITY);
@@ -44,7 +44,7 @@ class FollowedArtistsRepositoryIT implements WithAssertions {
   @Test
   @DisplayName("findFollowedArtistEntitiesByUserId() returns empty list for a given user id if it does not exist")
   void find_followed_artist_entities_by_user_id_should_return_empty_list() {
-    List<FollowedArtistEntity> notFollowedArtistEntitiesPerUser = followedArtistsRepository.findFollowedArtistEntitiesByUserId(unknownUserId);
+    List<FollowedArtistEntity> notFollowedArtistEntitiesPerUser = followedArtistsRepository.findFollowedArtistEntitiesByPublicUserId(unknownUserId);
 
     assertThat(notFollowedArtistEntitiesPerUser.size()).isEqualTo(0);
   }
@@ -69,9 +69,9 @@ class FollowedArtistsRepositoryIT implements WithAssertions {
   @Test
   @DisplayName("Should return true for existing and false for not existing combinations of user id and artist discogs id")
   void exists_followed_artist_entity_by_user_id_and_artist_discogs_id() {
-    boolean existingUserAndArtistDiscogsId     = followedArtistsRepository.existsFollowedArtistEntityByUserIdAndArtistDiscogsId(userId, artistDiscogsId);
-    boolean notExistingUserAndArtistDiscogsId1 = followedArtistsRepository.existsFollowedArtistEntityByUserIdAndArtistDiscogsId(unknownUserId, artistDiscogsId);
-    boolean notExistingUserAndArtistDiscogsId2 = followedArtistsRepository.existsFollowedArtistEntityByUserIdAndArtistDiscogsId(userId, unknownArtistDiscogsId);
+    boolean existingUserAndArtistDiscogsId     = followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
+    boolean notExistingUserAndArtistDiscogsId1 = followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(unknownUserId, artistDiscogsId);
+    boolean notExistingUserAndArtistDiscogsId2 = followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(userId, unknownArtistDiscogsId);
 
     assertThat(existingUserAndArtistDiscogsId).isTrue();
     assertThat(notExistingUserAndArtistDiscogsId1).isFalse();

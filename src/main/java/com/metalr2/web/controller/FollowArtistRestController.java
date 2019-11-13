@@ -16,7 +16,7 @@ public interface FollowArtistRestController<T, U> {
 
   ResponseEntity<U> followArtist(@Valid T request, BindingResult bindingResult);
 
-  void unfollowArtist(@Valid T request, BindingResult bindingResult);
+  ResponseEntity<Void> unfollowArtist(@Valid T request, BindingResult bindingResult);
 
   default void validateRequest(BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {

@@ -23,20 +23,28 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   @Override
   @Transactional
   public FollowArtistDto followArtist(FollowArtistDto followArtistDto) {
-    FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(followArtistDto.getUserId(), followArtistDto.getArtistDiscogsId());
+    FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(followArtistDto.getPublicUserId(), followArtistDto.getArtistDiscogsId());
     FollowedArtistEntity savedFollowedArtistEntity = followedArtistsRepository.save(followedArtistEntity);
     return mapper.map(savedFollowedArtistEntity, FollowArtistDto.class);
   }
 
   @Override
   @Transactional
-  public void unfollowArtist(FollowArtistDto followArtistDto) {
-    FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(followArtistDto.getUserId(), followArtistDto.getArtistDiscogsId());
+  public boolean unfollowArtist(FollowArtistDto followArtistDto) {
+    boolean entityExists = followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(followArtistDto.getPublicUserId(), followArtistDto.getArtistDiscogsId());
+
+    if (!entityExists){
+      return false;
+    }
+
+    FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(followArtistDto.getPublicUserId(), followArtistDto.getArtistDiscogsId());
     followedArtistsRepository.delete(followedArtistEntity);
+
+    return true;
   }
 
   @Override
   public boolean followArtistEntityExists(FollowArtistDto followArtistDto) {
-    return followedArtistsRepository.existsFollowedArtistEntityByUserIdAndArtistDiscogsId(followArtistDto.getUserId(), followArtistDto.getArtistDiscogsId());
+    return followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(followArtistDto.getPublicUserId(), followArtistDto.getArtistDiscogsId());
   }
 }

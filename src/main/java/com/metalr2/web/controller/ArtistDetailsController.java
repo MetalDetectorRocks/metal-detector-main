@@ -82,19 +82,12 @@ public class ArtistDetailsController {
     List<String> activeMember = artist.getMembers() == null   ? null : artist.getMembers().stream().filter(Member::isActive).map(Member::getName).collect(Collectors.toList());
     List<String> formerMember = artist.getMembers() == null   ? null : artist.getMembers().stream().filter(member -> !member.isActive()).map(Member::getName).collect(Collectors.toList());
     List<String> images       = artist.getImages()  == null   ? null : artist.getImages().stream().map(Image::getResourceUrl).collect(Collectors.toList());
-    boolean isFollowed        = followArtistService.followArtistEntityExists(new FollowArtistDto(getUserId(), artist.getId()));
+    boolean isFollowed        = followArtistService.followArtistEntityExists(new FollowArtistDto(getPublicUserId(), artist.getId()));
     return new ArtistDetailsResponse(artistProfile, activeMember, formerMember, images, isFollowed);
   }
 
-  private long getUserId(){
-    Authentication auth                  = SecurityContextHolder.getContext().getAuthentication();
-    Optional<UserDto> userEntityOptional = userService.getUserByEmailOrUsername(((UserEntity)auth.getPrincipal()).getEmail());
-
-    if (userEntityOptional.isEmpty()) {
-      throw new IllegalStateException("User not found"); // TODO: 06.11.19 better ways than exception?
-    }
-
-    UserDto userEntity = userEntityOptional.get();
-    return userEntity.getId();
+  private String getPublicUserId(){
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    return ((UserEntity)auth.getPrincipal()).getPublicId();
   }
 }

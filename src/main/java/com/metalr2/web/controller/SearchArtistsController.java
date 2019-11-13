@@ -83,7 +83,7 @@ public class SearchArtistsController {
     List<ArtistNameSearchResponse.ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
             .map(artistSearchResult -> new ArtistNameSearchResponse.ArtistSearchResult(artistSearchResult.getThumb(),
                     artistSearchResult.getId(), artistSearchResult.getTitle(),
-                    followArtistService.followArtistEntityExists(new FollowArtistDto(getUserId(), artistSearchResult.getId()))))
+                    followArtistService.followArtistEntityExists(new FollowArtistDto(getPublicUserId(), artistSearchResult.getId()))))
             .collect(Collectors.toList());
     ArtistNameSearchResponse.Pagination dtoPagination = new ArtistNameSearchResponse.Pagination(pagination.getPagesTotal(),
             pagination.getCurrentPage(), nextSize, nextPage, pageNumbers);
@@ -120,15 +120,8 @@ public class SearchArtistsController {
     return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, viewModel);
   }
 
-  private long getUserId(){
-    Authentication auth                  = SecurityContextHolder.getContext().getAuthentication();
-    Optional<UserDto> userEntityOptional = userService.getUserByEmailOrUsername(((UserEntity)auth.getPrincipal()).getEmail());
-
-    if (userEntityOptional.isEmpty()) {
-      throw new IllegalStateException("User not found"); // TODO: 06.11.19 better ways than exception?
-    }
-
-    UserDto userEntity = userEntityOptional.get();
-    return userEntity.getId();
+  private String getPublicUserId(){
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    return ((UserEntity)auth.getPrincipal()).getPublicId();
   }
 }
