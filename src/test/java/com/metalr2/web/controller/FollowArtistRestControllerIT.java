@@ -50,7 +50,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
   void tearDown() {
   }
 
-  @Test
+//  @Test
   @DisplayName("CREATE should create an entity and return the correct dto")
   void create_with_valid_request_should_return_201() {
     FollowArtistRequest request = new FollowArtistRequest(artistDiscogsId);
@@ -72,7 +72,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
     followArtistService.unfollowArtist(createdFollowArtistDto);
   }
 
-  @Test
+//  @Test
   @DisplayName("DELETE should should delete the entity if it exists")
   void delete_an_existing_resource_should_return_200() {
     followArtistService.followArtist(followArtistDto);
@@ -87,7 +87,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
     assertThat(followArtistService.followArtistEntityExists(followArtistDto)).isFalse();
   }
 
-  @Test
+//  @Test
   @DisplayName("DELETE should should return 404 if the entity does not exist")
   void delete_an_not_existing_resource_should_return_404() {
     String requestUri = "http://" + serverAddress + ":" + port + Endpoints.Rest.FOLLOW_ARTISTS_V1;
