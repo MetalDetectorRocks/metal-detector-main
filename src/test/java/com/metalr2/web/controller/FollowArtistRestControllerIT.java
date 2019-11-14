@@ -6,7 +6,9 @@ import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.request.FollowArtistRequest;
 import com.metalr2.web.dto.response.ErrorResponse;
+import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,6 +92,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @DisplayName("DELETE should should delete the entity if it exists")
   void delete_an_existing_resource_should_return_200() {
     followArtistService.followArtist(followArtistDto);
+    RestAssured.defaultParser = Parser.JSON;
 
     assertThat(followArtistService.followArtistEntityExists(followArtistDto)).isTrue();
 

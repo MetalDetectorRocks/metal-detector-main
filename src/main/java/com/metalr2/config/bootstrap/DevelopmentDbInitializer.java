@@ -13,7 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Component
-@Profile({"dev"})
+@Profile({"dev","test"})
 public class DevelopmentDbInitializer implements ApplicationRunner {
 
   @PersistenceContext
