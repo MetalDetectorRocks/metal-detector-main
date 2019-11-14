@@ -1,7 +1,7 @@
 package com.metalr2.web.controller;
 
 import com.metalr2.model.exceptions.ErrorMessages;
-import com.metalr2.model.exceptions.RestRequestValidationException;
+import com.metalr2.model.exceptions.ValidationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
@@ -20,7 +20,7 @@ public interface FollowArtistRestController<T, U> {
 
   default void validateRequest(BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
-      throw new RestRequestValidationException(ErrorMessages.VALIDATION_ERROR.toDisplayString(), bindingResult.getFieldErrors());
+      throw new ValidationException(ErrorMessages.VALIDATION_ERROR.toDisplayString(), bindingResult.getFieldErrors());
     }
   }
 }

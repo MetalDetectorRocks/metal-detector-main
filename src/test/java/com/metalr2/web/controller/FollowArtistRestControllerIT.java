@@ -5,6 +5,7 @@ import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.request.FollowArtistRequest;
+import com.metalr2.web.dto.response.ErrorResponse;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
@@ -18,6 +19,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -47,12 +51,11 @@ class FollowArtistRestControllerIT implements WithAssertions {
   }
 
   @Test
-  @DisplayName("CREATE should create an entity and return the correct dto")
+  @DisplayName("CREATE with valid request should create an entity and return the correct dto")
   void create_with_valid_request_should_return_201() {
     FollowArtistRequest request = new FollowArtistRequest(userId,artistDiscogsId);
 
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, request);
-
     FollowArtistDto createdFollowArtistDto = validatableResponse.extract().as(FollowArtistDto.class);
 
     // assert
@@ -65,6 +68,22 @@ class FollowArtistRestControllerIT implements WithAssertions {
 
     // remove created employee
     followArtistService.unfollowArtist(createdFollowArtistDto);
+  }
+
+  @Test
+  @DisplayName("CREATE with invalid request should return 400")
+  void create_with_invalid_request_should_return_400() {
+    FollowArtistRequest invalidRequest = new FollowArtistRequest(null,artistDiscogsId);
+
+    ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, invalidRequest);
+    ErrorResponse errorResponse = validatableResponse.extract().as(ErrorResponse.class);
+
+    // assert
+    validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value())
+            .contentType(ContentType.JSON);
+
+    assertNotNull(errorResponse);
+    assertEquals(1, errorResponse.getMessages().size());
   }
 
   @Test
