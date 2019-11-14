@@ -5,18 +5,18 @@ import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.request.FollowArtistRequest;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.parsing.Parser;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -46,15 +46,10 @@ class FollowArtistRestControllerIT implements WithAssertions {
     followArtistDto = new FollowArtistDto(userId, artistDiscogsId);
   }
 
-  @AfterEach
-  void tearDown() {
-  }
-
-//  @Test
+  @Test
   @DisplayName("CREATE should create an entity and return the correct dto")
   void create_with_valid_request_should_return_201() {
-    FollowArtistRequest request = new FollowArtistRequest(artistDiscogsId);
-    RestAssured.defaultParser = Parser.JSON; // TODO: 12.11.19 should not be necessary
+    FollowArtistRequest request = new FollowArtistRequest(userId,artistDiscogsId);
 
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, request);
 
@@ -62,7 +57,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
 
     // assert
     validatableResponse.statusCode(HttpStatus.CREATED.value())
-            .contentType(ContentType.JSON);
+                       .contentType(ContentType.JSON);
 
     assertThat(createdFollowArtistDto).isNotNull();
     assertThat(followArtistDto.getPublicUserId()).isEqualTo(createdFollowArtistDto.getPublicUserId());
@@ -72,14 +67,14 @@ class FollowArtistRestControllerIT implements WithAssertions {
     followArtistService.unfollowArtist(createdFollowArtistDto);
   }
 
-//  @Test
+  @Test
   @DisplayName("DELETE should should delete the entity if it exists")
   void delete_an_existing_resource_should_return_200() {
     followArtistService.followArtist(followArtistDto);
 
     assertThat(followArtistService.followArtistEntityExists(followArtistDto)).isTrue();
 
-    FollowArtistRequest request = new FollowArtistRequest(artistDiscogsId);
+    FollowArtistRequest request = new FollowArtistRequest(userId, artistDiscogsId);
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert
@@ -87,14 +82,12 @@ class FollowArtistRestControllerIT implements WithAssertions {
     assertThat(followArtistService.followArtistEntityExists(followArtistDto)).isFalse();
   }
 
-//  @Test
+  @Test
   @DisplayName("DELETE should should return 404 if the entity does not exist")
   void delete_an_not_existing_resource_should_return_404() {
-    String requestUri = "http://" + serverAddress + ":" + port + Endpoints.Rest.FOLLOW_ARTISTS_V1;
-
     assertThat(followArtistService.followArtistEntityExists(followArtistDto)).isFalse();
 
-    FollowArtistRequest request = new FollowArtistRequest(artistDiscogsId);
+    FollowArtistRequest request = new FollowArtistRequest(userId, artistDiscogsId);
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert

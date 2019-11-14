@@ -4,8 +4,6 @@ import com.metalr2.web.dto.request.FollowArtistRequest;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 
-import java.util.Map;
-
 import static io.restassured.RestAssured.given;
 
 public class RestAssuredRequestHandler {
@@ -23,7 +21,6 @@ public class RestAssuredRequestHandler {
               .body(request)
             .when()
               .post(requestUri)
-//              .peek()
             .then();
   }
 
@@ -34,7 +31,6 @@ public class RestAssuredRequestHandler {
               .body(request)
             .when()
               .delete(requestUri)
-//              .peek()
             .then();
   }
 }

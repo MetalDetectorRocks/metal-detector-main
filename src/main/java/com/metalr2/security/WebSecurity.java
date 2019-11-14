@@ -36,10 +36,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
+      .csrf().disable()// TODO: 13.11.19 activate again
       .authorizeRequests()
         .antMatchers(Endpoints.AntPattern.ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
         .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
         .antMatchers(Endpoints.AntPattern.AUTH_PAGES).anonymous()
+        .antMatchers(Endpoints.Rest.FOLLOW_ARTISTS_V1).permitAll() // TODO: 14.11.19 deactivate again
         .anyRequest().authenticated()
       .and()
       .formLogin()

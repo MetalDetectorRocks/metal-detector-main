@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FollowArtistRequest {
 
+  private String publicUserId;
   private long artistDiscogsId;
 
 }

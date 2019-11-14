@@ -5,9 +5,10 @@ function registerLogoutListener() {
     });
 }
 
-function followArtist(artistId,index){
+function followArtist(publicUserId,artistId,index){
     const followArtistRequest =
         {
+            "publicUserId" : publicUserId,
             "artistDiscogsId" : artistId
         };
     const followArtistRequestJson = JSON.stringify(followArtistRequest);
