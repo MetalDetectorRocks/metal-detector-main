@@ -7,7 +7,6 @@ import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
 import com.metalr2.web.dto.FollowArtistDto;
-import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.Pagination;
 import com.metalr2.web.dto.discogs.search.PaginationUrls;
@@ -80,10 +79,12 @@ public class SearchArtistsController {
     int nextSize = paginationUrls.getNext() != null ? pagination.getItemsPerPage() : Integer.parseInt(DEFAULT_PAGE_SIZE);
     int nextPage = paginationUrls.getNext() != null ? pagination.getCurrentPage() + 1 : Integer.parseInt(DEFAULT_PAGE);
 
+    List<FollowArtistDto> alreadyFollowedArtists = followArtistService.findFollowedArtistsPerUser(getPublicUserId());
+
     List<ArtistNameSearchResponse.ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
             .map(artistSearchResult -> new ArtistNameSearchResponse.ArtistSearchResult(artistSearchResult.getThumb(),
                     artistSearchResult.getId(), artistSearchResult.getTitle(),
-                    followArtistService.followArtistEntityExists(new FollowArtistDto(getPublicUserId(), artistSearchResult.getId()))))
+                    alreadyFollowedArtists.contains(new FollowArtistDto(getPublicUserId(), artistSearchResult.getId()))))
             .collect(Collectors.toList());
     ArtistNameSearchResponse.Pagination dtoPagination = new ArtistNameSearchResponse.Pagination(pagination.getPagesTotal(),
             pagination.getCurrentPage(), nextSize, nextPage, pageNumbers);

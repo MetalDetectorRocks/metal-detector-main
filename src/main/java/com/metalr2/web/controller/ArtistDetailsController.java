@@ -7,7 +7,6 @@ import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
 import com.metalr2.web.dto.FollowArtistDto;
-import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.discogs.artist.Artist;
 import com.metalr2.web.dto.discogs.artist.Member;
 import com.metalr2.web.dto.discogs.misc.Image;
@@ -82,7 +81,7 @@ public class ArtistDetailsController {
     List<String> activeMember = artist.getMembers() == null   ? null : artist.getMembers().stream().filter(Member::isActive).map(Member::getName).collect(Collectors.toList());
     List<String> formerMember = artist.getMembers() == null   ? null : artist.getMembers().stream().filter(member -> !member.isActive()).map(Member::getName).collect(Collectors.toList());
     List<String> images       = artist.getImages()  == null   ? null : artist.getImages().stream().map(Image::getResourceUrl).collect(Collectors.toList());
-    boolean isFollowed        = followArtistService.followArtistEntityExists(new FollowArtistDto(getPublicUserId(), artist.getId()));
+    boolean isFollowed        = followArtistService.exists(new FollowArtistDto(getPublicUserId(), artist.getId()));
     return new ArtistDetailsResponse(artistProfile, activeMember, formerMember, images, isFollowed);
   }
 

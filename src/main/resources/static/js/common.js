@@ -19,7 +19,6 @@ function followArtist(publicUserId,artistId,index){
     if (buttonText==="Follow") {
         $.ajax({
             method: "POST",
-            dataType: "json",
             url: "/rest/v1/follow-artist",
             contentType: 'application/json',
             headers: {"X-CSRF-TOKEN": csrfToken},

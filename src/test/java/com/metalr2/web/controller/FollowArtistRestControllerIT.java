@@ -6,9 +6,7 @@ import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.request.FollowArtistRequest;
 import com.metalr2.web.dto.response.ErrorResponse;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.parsing.Parser;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,20 +54,19 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @DisplayName("CREATE with valid request should create an entity and return the correct dto")
   void create_with_valid_request_should_return_201() {
     FollowArtistRequest request = new FollowArtistRequest(userId,artistDiscogsId);
+    FollowArtistDto dto         = new FollowArtistDto(request.getPublicUserId(),request.getArtistDiscogsId());
+
+    assertThat(followArtistService.exists(dto)).isFalse();
 
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, request);
-    FollowArtistDto createdFollowArtistDto = validatableResponse.extract().as(FollowArtistDto.class);
 
     // assert
-    validatableResponse.statusCode(HttpStatus.CREATED.value())
-                       .contentType(ContentType.JSON);
+    validatableResponse.statusCode(HttpStatus.CREATED.value());
 
-    assertThat(createdFollowArtistDto).isNotNull();
-    assertThat(followArtistDto.getPublicUserId()).isEqualTo(createdFollowArtistDto.getPublicUserId());
-    assertThat(followArtistDto.getArtistDiscogsId()).isEqualTo(createdFollowArtistDto.getArtistDiscogsId());
+    assertThat(followArtistService.exists(dto)).isTrue();
 
     // remove created employee
-    followArtistService.unfollowArtist(createdFollowArtistDto);
+    followArtistService.unfollowArtist(dto);
   }
 
   @Test
@@ -92,28 +89,27 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @DisplayName("DELETE should should delete the entity if it exists")
   void delete_an_existing_resource_should_return_200() {
     followArtistService.followArtist(followArtistDto);
-    RestAssured.defaultParser = Parser.JSON;
 
-    assertThat(followArtistService.followArtistEntityExists(followArtistDto)).isTrue();
+    assertThat(followArtistService.exists(followArtistDto)).isTrue();
 
     FollowArtistRequest request = new FollowArtistRequest(userId, artistDiscogsId);
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert
     validatableResponse.statusCode(HttpStatus.OK.value());
-    assertThat(followArtistService.followArtistEntityExists(followArtistDto)).isFalse();
+    assertThat(followArtistService.exists(followArtistDto)).isFalse();
   }
 
   @Test
   @DisplayName("DELETE should should return 404 if the entity does not exist")
   void delete_an_not_existing_resource_should_return_404() {
-    assertThat(followArtistService.followArtistEntityExists(followArtistDto)).isFalse();
+    assertThat(followArtistService.exists(followArtistDto)).isFalse();
 
     FollowArtistRequest request = new FollowArtistRequest(userId, artistDiscogsId);
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert
     validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-    assertThat(followArtistService.followArtistEntityExists(followArtistDto)).isFalse();
+    assertThat(followArtistService.exists(followArtistDto)).isFalse();
   }
 }

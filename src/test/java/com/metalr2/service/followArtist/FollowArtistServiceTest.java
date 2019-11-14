@@ -14,12 +14,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class FollowArtistServiceTest implements WithAssertions {
 
   private static final String userId        = "1";
+  private static final String unknownUserId = "";
   private static final long artistDiscogsId = 252211L;
 
   @Mock
@@ -47,15 +52,11 @@ class FollowArtistServiceTest implements WithAssertions {
     when(followedArtistsRepository.save(any(FollowedArtistEntity.class))).thenReturn(new FollowedArtistEntity(userId, artistDiscogsId));
 
     // when
-    FollowArtistDto savedFollowArtistDto = followArtistService.followArtist(followArtistDto);
+    followArtistService.followArtist(followArtistDto);
 
     verify(followedArtistsRepository, times(1)).save(followArtistEntityCaptor.capture());
 
     // then
-    assertThat(savedFollowArtistDto).isNotNull();
-    assertThat(savedFollowArtistDto.getPublicUserId()).isEqualTo(userId);
-    assertThat(savedFollowArtistDto.getArtistDiscogsId()).isEqualTo(artistDiscogsId);
-
     assertThat(followArtistEntityCaptor.getValue().getPublicUserId()).isEqualTo(userId);
     assertThat(followArtistEntityCaptor.getValue().getArtistDiscogsId()).isEqualTo(artistDiscogsId);
   }
@@ -66,7 +67,7 @@ class FollowArtistServiceTest implements WithAssertions {
     // given
     FollowArtistDto followArtistDto = new FollowArtistDto(userId, artistDiscogsId);
 
-    when(followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(true);
+    when(followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(Optional.of(new FollowedArtistEntity(userId,artistDiscogsId)));
 
     // when
     boolean result = followArtistService.unfollowArtist(followArtistDto);
@@ -74,7 +75,7 @@ class FollowArtistServiceTest implements WithAssertions {
     // then
     assertThat(result).isTrue();
 
-    verify(followedArtistsRepository, times(1)).existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
+    verify(followedArtistsRepository, times(1)).findByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
     verify(followedArtistsRepository, times(1)).delete(new FollowedArtistEntity(userId, artistDiscogsId));
   }
 
@@ -82,9 +83,9 @@ class FollowArtistServiceTest implements WithAssertions {
   @DisplayName("Unfollowing a combination of artist and user which do not exist should return false")
   void unfollow_not_existing_artist_should_return_false(){
     // given
-    FollowArtistDto followArtistDto = new FollowArtistDto(userId, artistDiscogsId);
+    FollowArtistDto followArtistDto = new FollowArtistDto(unknownUserId, artistDiscogsId);
 
-    when(followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(false);
+    when(followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(Optional.empty());
 
     // when
     boolean result = followArtistService.unfollowArtist(followArtistDto);
@@ -92,25 +93,25 @@ class FollowArtistServiceTest implements WithAssertions {
     // then
     assertThat(result).isFalse();
 
-    verify(followedArtistsRepository, times(1)).existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
-    verify(followedArtistsRepository, times(0)).delete(new FollowedArtistEntity(userId, artistDiscogsId));
+    verify(followedArtistsRepository, times(1)).findByPublicUserIdAndArtistDiscogsId(unknownUserId, artistDiscogsId);
+    verify(followedArtistsRepository, times(0)).delete(new FollowedArtistEntity(unknownUserId, artistDiscogsId));
   }
 
   @Test
-  @DisplayName("followArtistEntityExists() should return true if the given combination from user id and artist discogs id exists")
-  void follow_artist_entity_exists_should_return_true_for_existing_entity(){
+  @DisplayName("exists() should return true if the given combination from user id and artist discogs id exists")
+  void exists_should_return_true_for_existing_entity(){
     // given
     FollowArtistDto followArtistDto = new FollowArtistDto(userId, artistDiscogsId);
 
-    when(followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(true);
+    when(followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(true);
 
     // when
-    boolean result = followArtistService.followArtistEntityExists(followArtistDto);
+    boolean result = followArtistService.exists(followArtistDto);
 
     // then
     assertThat(result).isTrue();
 
-    verify(followedArtistsRepository, times(1)).existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
+    verify(followedArtistsRepository, times(1)).existsByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
   }
 
   @Test
@@ -119,14 +120,31 @@ class FollowArtistServiceTest implements WithAssertions {
     // given
     FollowArtistDto followArtistDto = new FollowArtistDto(userId, artistDiscogsId);
 
-    when(followedArtistsRepository.existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(false);
+    when(followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(false);
 
     // when
-    boolean result = followArtistService.followArtistEntityExists(followArtistDto);
+    boolean result = followArtistService.exists(followArtistDto);
 
     // then
     assertThat(result).isFalse();
 
-    verify(followedArtistsRepository, times(1)).existsFollowedArtistEntityByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
+    verify(followedArtistsRepository, times(1)).existsByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
+  }
+
+  @Test
+  @DisplayName("findFollowedArtistsPerUser() finds the correct entities for a given user id if it exists")
+  void find_followed_artists_per_user_finds_correct_entities(){
+    // given
+    when(followedArtistsRepository.findAllByPublicUserId(anyString())).thenReturn(Collections.singletonList(new FollowedArtistEntity(userId, artistDiscogsId)));
+
+    // when
+    List<FollowArtistDto> followArtistDtos = followArtistService.findFollowedArtistsPerUser(userId);
+
+    // then
+    assertThat(followArtistDtos.isEmpty()).isFalse();
+    assertThat(followArtistDtos.get(0).getArtistDiscogsId()).isEqualTo(artistDiscogsId);
+    assertThat(followArtistDtos.get(0).getPublicUserId()).isEqualTo(userId);
+
+    verify(followedArtistsRepository, times(1)).findAllByPublicUserId(userId);
   }
 }

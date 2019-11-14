@@ -2,12 +2,16 @@ package com.metalr2.service.followArtist;
 
 import com.metalr2.web.dto.FollowArtistDto;
 
+import java.util.List;
+
 public interface FollowArtistService {
 
-  FollowArtistDto followArtist(FollowArtistDto followArtistDto);
+  void followArtist(FollowArtistDto followArtistDto);
 
   boolean unfollowArtist(FollowArtistDto followArtistDto);
 
-  boolean followArtistEntityExists(FollowArtistDto followArtistDto);
+  boolean exists(FollowArtistDto followArtistDto);
+
+  List<FollowArtistDto> findFollowedArtistsPerUser(String publicUserId);
 
 }
