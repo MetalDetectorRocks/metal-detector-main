@@ -43,6 +43,10 @@ public class Endpoints {
     public static final String STATUS                = "/status";
   }
 
+  public static class Rest {
+    public static final String FOLLOW_ARTISTS_V1     = "/rest/v1/follow-artist";
+  }
+
   public static class AdminArea {
     // Users
     public static final String USERS_LIST   = "/admin/users";

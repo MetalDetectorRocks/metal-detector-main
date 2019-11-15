@@ -2,15 +2,20 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
+import com.metalr2.model.user.UserEntity;
+import com.metalr2.service.followArtist.FollowArtistService;
+import com.metalr2.service.user.UserService;
 import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
+import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.Pagination;
 import com.metalr2.web.dto.discogs.search.PaginationUrls;
 import com.metalr2.web.dto.request.ArtistSearchRequest;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.BadArtistNameSearchResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,17 +31,19 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-@Slf4j
-public class ArtistSearchController {
+public class SearchArtistsController {
 
   private final ArtistSearchRestClient artistSearchRestClient;
+  private final FollowArtistService followArtistService;
+
   private static final String DEFAULT_PAGE_SIZE = "25";
   private static final String DEFAULT_PAGE = "1";
   private static final String DEFAULT_ARTIST_NAME = "";
 
   @Autowired
-  public ArtistSearchController(ArtistSearchRestClient artistSearchRestClient) {
+  public SearchArtistsController(ArtistSearchRestClient artistSearchRestClient, FollowArtistService followArtistService) {
     this.artistSearchRestClient = artistSearchRestClient;
+    this.followArtistService    = followArtistService;
   }
 
   @ModelAttribute
@@ -50,11 +57,11 @@ public class ArtistSearchController {
   }
 
   @GetMapping({Endpoints.Frontend.SEARCH_ARTISTS})
-  public ModelAndView showFollowArtists(@RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
+  public ModelAndView showSearchArtists(@RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
                                         @RequestParam(name = "page", defaultValue = DEFAULT_PAGE) int page,
                                         @RequestParam(name = "artistName", defaultValue = DEFAULT_ARTIST_NAME) String artistName) {
     if (artistName.equals(DEFAULT_ARTIST_NAME) && size == Integer.parseInt(DEFAULT_PAGE_SIZE)
-            && page == Integer.parseInt(DEFAULT_PAGE)) {
+                                               && page == Integer.parseInt(DEFAULT_PAGE)){
       return createDefaultModelAndView();
     }
 
@@ -69,9 +76,13 @@ public class ArtistSearchController {
     int nextSize = paginationUrls.getNext() != null ? pagination.getItemsPerPage() : Integer.parseInt(DEFAULT_PAGE_SIZE);
     int nextPage = paginationUrls.getNext() != null ? pagination.getCurrentPage() + 1 : Integer.parseInt(DEFAULT_PAGE);
 
+    List<FollowArtistDto> alreadyFollowedArtists = followArtistService.findPerUser(getPublicUserId());
+
     List<ArtistNameSearchResponse.ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
             .map(artistSearchResult -> new ArtistNameSearchResponse.ArtistSearchResult(artistSearchResult.getThumb(),
-                    artistSearchResult.getId(), artistSearchResult.getTitle())).collect(Collectors.toList());
+                    artistSearchResult.getId(), artistSearchResult.getTitle(),
+                    alreadyFollowedArtists.contains(new FollowArtistDto(getPublicUserId(), artistSearchResult.getTitle(), artistSearchResult.getId()))))
+            .collect(Collectors.toList());
     ArtistNameSearchResponse.Pagination dtoPagination = new ArtistNameSearchResponse.Pagination(pagination.getPagesTotal(),
             pagination.getCurrentPage(), nextSize, nextPage, pageNumbers);
 
@@ -105,5 +116,10 @@ public class ArtistSearchController {
     viewModel.put("artistName", artistName);
     viewModel.put("badArtistNameSearchResponse", badArtistNameSearchResponse);
     return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS, viewModel);
+  }
+
+  private String getPublicUserId(){
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    return ((UserEntity)auth.getPrincipal()).getPublicId();
   }
 }

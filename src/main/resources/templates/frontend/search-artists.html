@@ -4,58 +4,63 @@
         <title id="pageTitle">Search Artists | Metal Release Radar</title>
     </head>
     <body>
-        <h1>Search Artists</h1>
-        <!-- Search Form -->
-        <div class="mb-3">
-            <form id="searchForm" action="#" th:action="@{/search-artists}" th:object="${artistSearchRequest}"
-                  method="POST">
-                <!-- Artist name -->
-                <label for="artistName"></label><input type="text" id="artistName" class="form-control"
-                                                       th:field="*{artistName}">
-                <!-- Submit -->
-                <button class="btn btn-primary btn-dark font-weight-bold" type="submit">Search</button>
-            </form>
-        </div>
-        <!-- Artist name -->
-        <div th:if="${artistName}" class="mb-3">
-            <p th:text="${'You searched for: ' + artistName}">Artist Name</p>
-        </div>
-        <!-- Bad request message -->
-        <div th:if="${badArtistNameSearchResponse}" class="mb-3 alert alert-danger" role="alert">
-            <p>No data could be found for the given parameters:</p>
-            <ul>
-                <li th:text="${'Artist name: ' + artistName}">Bad search request artist name</li>
-                <li th:text="${'Page: ' + badArtistNameSearchResponse.page}">Bad search request page</li>
-                <li th:text="${'Size: ' + badArtistNameSearchResponse.size}">Bad search request</li>
-            </ul>
-        </div>
-        <!-- Result cards -->
-        <div th:if="${artistNameSearchResponse}" class="mb-3">
-            <div th:each="result : ${artistNameSearchResponse.artistSearchResults}" class="card">
-                <div class="card-body">
-                    <img th:if="${result.thumb} != ''" src="" th:src="${result.thumb}" th:alt="${'Thumb for ' + result.artistName}" alt="">
-                    <p th:text="${result.id}">Id</p>
-                    <p th:text="${result.artistName}">Artist name</p>
-                    <a th:href="@{/artist-details(artistName=${result.artistName}, id=${result.id})}"
-                       th:text="${'Details for ' + result.artistName}">Artist details</a>
-                </div>
+    <h1>Search Artists</h1>
+    <!-- Search Form -->
+    <div class="mb-3">
+        <form id="searchForm" action="#" th:action="@{/search-artists}" th:object="${artistSearchRequest}"
+              method="POST">
+            <!-- Artist name -->
+            <label for="artistName"></label><input type="text" id="artistName" class="form-control"
+                                                   th:field="*{artistName}">
+            <!-- Submit -->
+            <button class="btn btn-primary btn-dark font-weight-bold" type="submit">Search</button>
+        </form>
+    </div>
+    <!-- Artist name -->
+    <div th:if="${artistName}" class="mb-3">
+        <p th:text="${'You searched for: ' + artistName}">Artist Name</p>
+    </div>
+    <!-- Bad request message -->
+    <div th:if="${badArtistNameSearchResponse}" class="mb-3 alert alert-danger" role="alert">
+        <p>No data could be found for the given parameters:</p>
+        <ul>
+            <li th:text="${'Artist name: ' + artistName}">Bad search request artist name</li>
+            <li th:text="${'Page: ' + badArtistNameSearchResponse.page}">Bad search request page</li>
+            <li th:text="${'Size: ' + badArtistNameSearchResponse.size}">Bad search request</li>
+        </ul>
+    </div>
+    <!-- Result cards -->
+    <div th:if="${artistNameSearchResponse}" class="mb-3">
+        <div th:each="result, iterStat : ${artistNameSearchResponse.artistSearchResults}" class="card">
+            <div class="card-body">
+                <img th:if="${result.thumb} != ''" src="" th:src="${result.thumb}" th:alt="${'Thumb for ' + result.artistName}" alt="">
+                <p th:text="${result.id}">Id</p>
+                <p th:text="${result.artistName}">Artist name</p>
+                <a th:href="@{/artist-details(artistName=${result.artistName}, id=${result.id})}"
+                   th:text="${'Details for ' + result.artistName}">Artist details</a><br>
+                <form id="followArtistForm">
+                    <button th:id="${'followArtistButton' + iterStat.index}" class="btn btn-primary btn-dark font-weight-bold" type="button"
+                            th:attr="onclick=|followingAction('${#authentication.principal.publicId}','${result.artistName}','${result.id}',this)|"
+                            th:text="${result.isFollowed}? Unfollow : Follow">Follow</button>
+                </form>
             </div>
         </div>
-        <!-- Pagination links -->
-        <div th:if="${artistNameSearchResponse}" class="mb-3 row">
-            <a th:if="${artistNameSearchResponse.pagination.currentPage} > 1" href="#"
-               th:href="@{/follow-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${artistNameSearchResponse.pagination.nextPage}, artistName=${artistName})}"
-               th:text="#{Previous}"
-               class="btn btn-dark btn-pagination">Previous</a>
-            <a th:if="${artistNameSearchResponse.pagination.totalPages > 1}"
-               th:each="pageNumber : ${artistNameSearchResponse.pagination.pageNumbers}" href="#"
-               th:href="@{/follow-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${pageNumber}, artistName=${artistName})}"
-               th:text="#{${pageNumber}}"
-               class="btn btn-dark btn-pagination">Page number</a>
-            <a th:if="${artistNameSearchResponse.pagination.currentPage} < ${artistNameSearchResponse.pagination.totalPages}" href="#"
-               th:href="@{/follow-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${artistNameSearchResponse.pagination.nextPage}, artistName=${artistName})}"
-               th:text="#{Next}"
-               class="btn btn-dark btn-pagination">Next</a>
-        </div>
+    </div>
+    <!-- Pagination links -->
+    <div th:if="${artistNameSearchResponse}" class="mb-3 row">
+        <a th:if="${artistNameSearchResponse.pagination.currentPage} > 1" href="#"
+           th:href="@{/search-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${artistNameSearchResponse.pagination.nextPage}, artistName=${artistName})}"
+           th:text="#{Previous}"
+           class="btn btn-dark btn-pagination">Previous</a>
+        <a th:if="${artistNameSearchResponse.pagination.totalPages > 1}"
+           th:each="pageNumber : ${artistNameSearchResponse.pagination.pageNumbers}" href="#"
+           th:href="@{/search-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${pageNumber}, artistName=${artistName})}"
+           th:text="#{${pageNumber}}"
+           class="btn btn-dark btn-pagination">Page number</a>
+        <a th:if="${artistNameSearchResponse.pagination.currentPage} < ${artistNameSearchResponse.pagination.totalPages}" href="#"
+           th:href="@{/search-artists(size=${artistNameSearchResponse.pagination.nextSize}, page=${artistNameSearchResponse.pagination.nextPage}, artistName=${artistName})}"
+           th:text="#{Next}"
+           class="btn btn-dark btn-pagination">Next</a>
+    </div>
     </body>
 </html>

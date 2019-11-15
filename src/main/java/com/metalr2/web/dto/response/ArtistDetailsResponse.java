@@ -13,5 +13,6 @@ public class ArtistDetailsResponse {
   private List<String> activeMember;
   private List<String> formerMember;
   private List<String> images;
+  private Boolean isFollowed;
 
 }

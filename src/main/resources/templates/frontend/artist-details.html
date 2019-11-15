@@ -8,6 +8,11 @@
         <div th:if="${artistDetailsResponse}" class="mb-3 mt-5 card">
             <!-- Result card -->
             <h2 th:text="${artistName}" class="card-title">Artist name</h2>
+            <form name="followArtistButton" class="card-body">
+                <button id="followArtistButton0" class="btn btn-primary btn-dark font-weight-bold"
+                        type="button" th:attr="onclick=|followingAction('${#authentication.principal.publicId}','${artistName}','${artistId}',this)|"
+                        th:text="${artistDetailsResponse.isFollowed}? Unfollow : Follow">Follow button</button>
+            </form>
             <div th:if="${artistDetailsResponse.profile}" class="card-body">
                 <h3>Profile</h3>
                 <p th:text="${artistDetailsResponse.profile}">Artist profile</p>
@@ -36,11 +41,11 @@
             </div>
         </div>
         <!-- Bad request message -->
-        <div th:if="${badArtistIdSearchResponseId <= 0}" class="mb-3 alert alert-danger" role="alert">
+        <div th:if="${artistId <= 0}" class="mb-3 alert alert-danger" role="alert">
             <p>No data could be found for the given parameters:</p>
             <ul>
                 <li th:text="${'Artist name: ' + artistName}">Bad artist id search request name</li>
-                <li th:text="${'Artist id: ' + badArtistIdSearchResponseId}">Bad artist id search request id</li>
+                <li th:text="${'Artist id: ' + artistId}">Bad artist id search request id</li>
             </ul>
         </div>
     </body>
