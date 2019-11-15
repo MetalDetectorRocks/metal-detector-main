@@ -32,17 +32,14 @@ public class ArtistDetailsController {
 
   private final ArtistSearchRestClient artistSearchRestClient;
   private final FollowArtistService followArtistService;
-  private final UserService userService;
 
   private static final String DEFAULT_ARTIST_ID = "0";
   private static final String DEFAULT_ARTIST_NAME = "";
 
   @Autowired
-  public ArtistDetailsController(ArtistSearchRestClient artistSearchRestClient, FollowArtistService followArtistService,
-                                 UserService userService) {
+  public ArtistDetailsController(ArtistSearchRestClient artistSearchRestClient, FollowArtistService followArtistService) {
     this.artistSearchRestClient = artistSearchRestClient;
     this.followArtistService    = followArtistService;
-    this.userService            = userService;
   }
 
   @GetMapping({Endpoints.Frontend.ARTIST_DETAILS})
@@ -59,7 +56,7 @@ public class ArtistDetailsController {
     }
 
     Artist artist                               = artistOptional.get();
-    ArtistDetailsResponse artistDetailsResponse = createArtistDetailsResponse(artist);
+    ArtistDetailsResponse artistDetailsResponse = createArtistDetailsResponse(artist, artistName);
 
     HashMap<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
@@ -76,12 +73,12 @@ public class ArtistDetailsController {
     return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS, viewModel);
   }
 
-  private ArtistDetailsResponse createArtistDetailsResponse(Artist artist) {
+  private ArtistDetailsResponse createArtistDetailsResponse(Artist artist, String artistName) {
     String artistProfile      = artist.getProfile().isEmpty() ? null : artist.getProfile();
     List<String> activeMember = artist.getMembers() == null   ? null : artist.getMembers().stream().filter(Member::isActive).map(Member::getName).collect(Collectors.toList());
     List<String> formerMember = artist.getMembers() == null   ? null : artist.getMembers().stream().filter(member -> !member.isActive()).map(Member::getName).collect(Collectors.toList());
     List<String> images       = artist.getImages()  == null   ? null : artist.getImages().stream().map(Image::getResourceUrl).collect(Collectors.toList());
-    boolean isFollowed        = followArtistService.exists(new FollowArtistDto(getPublicUserId(), artist.getId()));
+    boolean isFollowed        = followArtistService.exists(new FollowArtistDto(getPublicUserId(), artistName, artist.getId()));
     return new ArtistDetailsResponse(artistProfile, activeMember, formerMember, images, isFollowed);
   }
 

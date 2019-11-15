@@ -41,7 +41,7 @@
                    th:text="${'Details for ' + result.artistName}">Artist details</a><br>
                 <form id="followArtistForm">
                     <button th:id="${'followArtistButton' + iterStat.index}" class="btn btn-primary btn-dark font-weight-bold" type="button"
-                            th:attr="onclick=|followArtist('${#authentication.principal.publicId}','${result.id}','${iterStat.index}')|"
+                            th:attr="onclick=|followingAction('${#authentication.principal.publicId}','${result.artistName}','${result.id}',this)|"
                             th:text="${result.isFollowed}? Unfollow : Follow">Follow</button>
                 </form>
             </div>

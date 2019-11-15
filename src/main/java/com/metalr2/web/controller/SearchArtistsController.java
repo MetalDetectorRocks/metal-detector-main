@@ -35,18 +35,15 @@ public class SearchArtistsController {
 
   private final ArtistSearchRestClient artistSearchRestClient;
   private final FollowArtistService followArtistService;
-  private final UserService userService;
 
   private static final String DEFAULT_PAGE_SIZE = "25";
   private static final String DEFAULT_PAGE = "1";
   private static final String DEFAULT_ARTIST_NAME = "";
 
   @Autowired
-  public SearchArtistsController(ArtistSearchRestClient artistSearchRestClient, FollowArtistService followArtistService,
-                                 UserService userService) {
+  public SearchArtistsController(ArtistSearchRestClient artistSearchRestClient, FollowArtistService followArtistService) {
     this.artistSearchRestClient = artistSearchRestClient;
     this.followArtistService    = followArtistService;
-    this.userService            = userService;
   }
 
   @ModelAttribute
@@ -79,12 +76,12 @@ public class SearchArtistsController {
     int nextSize = paginationUrls.getNext() != null ? pagination.getItemsPerPage() : Integer.parseInt(DEFAULT_PAGE_SIZE);
     int nextPage = paginationUrls.getNext() != null ? pagination.getCurrentPage() + 1 : Integer.parseInt(DEFAULT_PAGE);
 
-    List<FollowArtistDto> alreadyFollowedArtists = followArtistService.findFollowedArtistsPerUser(getPublicUserId());
+    List<FollowArtistDto> alreadyFollowedArtists = followArtistService.findPerUser(getPublicUserId());
 
     List<ArtistNameSearchResponse.ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
             .map(artistSearchResult -> new ArtistNameSearchResponse.ArtistSearchResult(artistSearchResult.getThumb(),
                     artistSearchResult.getId(), artistSearchResult.getTitle(),
-                    alreadyFollowedArtists.contains(new FollowArtistDto(getPublicUserId(), artistSearchResult.getId()))))
+                    alreadyFollowedArtists.contains(new FollowArtistDto(getPublicUserId(), artistSearchResult.getTitle(), artistSearchResult.getId()))))
             .collect(Collectors.toList());
     ArtistNameSearchResponse.Pagination dtoPagination = new ArtistNameSearchResponse.Pagination(pagination.getPagesTotal(),
             pagination.getCurrentPage(), nextSize, nextPage, pageNumbers);

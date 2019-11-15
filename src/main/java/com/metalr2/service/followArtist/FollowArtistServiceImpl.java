@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
- @Service
+@Service
 @Slf4j
 public class FollowArtistServiceImpl implements FollowArtistService {
 
@@ -29,24 +29,29 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   @Override
   @Transactional
   public void followArtist(FollowArtistDto followArtistDto) {
-    FollowedArtistEntity followedArtistEntity      = new FollowedArtistEntity(followArtistDto.getPublicUserId(),followArtistDto.getArtistDiscogsId());
+    FollowedArtistEntity followedArtistEntity      = new FollowedArtistEntity(followArtistDto.getPublicUserId(),
+            followArtistDto.getArtistName(),followArtistDto.getArtistDiscogsId());
     FollowedArtistEntity savedFollowedArtistEntity = followedArtistsRepository.save(followedArtistEntity);
 
-    log.debug("User with public id " + savedFollowedArtistEntity.getPublicUserId() + " is now following artist with discogs id " + savedFollowedArtistEntity.getArtistDiscogsId() + ".");
+    log.debug("User with public id " + savedFollowedArtistEntity.getPublicUserId() + " is now following artist "
+            + savedFollowedArtistEntity.getArtistName() + " with discogs id " + savedFollowedArtistEntity.getArtistDiscogsId() + ".");
   }
 
   @Override
   @Transactional
   public boolean unfollowArtist(FollowArtistDto followArtistDto) {
-    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(followArtistDto.getPublicUserId(),followArtistDto.getArtistDiscogsId());
+    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(
+            followArtistDto.getPublicUserId(),followArtistDto.getArtistDiscogsId());
 
     if (optionalFollowedArtistEntity.isEmpty()){
       return false;
     }
 
-    followedArtistsRepository.delete(optionalFollowedArtistEntity.get());
+    FollowedArtistEntity followedArtistEntity = optionalFollowedArtistEntity.get();
+    followedArtistsRepository.delete(followedArtistEntity);
 
-    log.debug("User with public id " + followArtistDto.getPublicUserId() + " is not following artist with discogs id " + followArtistDto.getArtistDiscogsId() + " anymore.");
+    log.debug("User with public id " + followedArtistEntity.getPublicUserId() + " is not following artist "
+            + followedArtistEntity.getArtistName() + " with discogs id " + followedArtistEntity.getArtistDiscogsId() + " anymore.");
     return true;
   }
 
@@ -56,7 +61,8 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   }
 
   @Override
-  public List<FollowArtistDto> findFollowedArtistsPerUser(String publicUserId) {
-    return followedArtistsRepository.findAllByPublicUserId(publicUserId).stream().map(entity -> mapper.map(entity,FollowArtistDto.class)).collect(Collectors.toList());
+  public List<FollowArtistDto> findPerUser(String publicUserId) {
+    return followedArtistsRepository.findAllByPublicUserId(publicUserId).stream()
+            .map(entity -> mapper.map(entity,FollowArtistDto.class)).collect(Collectors.toList());
   }
 }

@@ -10,7 +10,7 @@
             <h2 th:text="${artistName}" class="card-title">Artist name</h2>
             <form name="followArtistButton" class="card-body">
                 <button id="followArtistButton0" class="btn btn-primary btn-dark font-weight-bold"
-                        type="button" th:attr="onclick=|followArtist('${#authentication.principal.publicId}','${artistId}',0)|"
+                        type="button" th:attr="onclick=|followingAction('${#authentication.principal.publicId}','${artistName}','${artistId}',this)|"
                         th:text="${artistDetailsResponse.isFollowed}? Unfollow : Follow">Follow button</button>
             </form>
             <div th:if="${artistDetailsResponse.profile}" class="card-body">

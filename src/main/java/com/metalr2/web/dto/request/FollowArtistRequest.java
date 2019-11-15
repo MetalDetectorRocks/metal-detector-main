@@ -13,6 +13,8 @@ public class FollowArtistRequest {
 
   @NotBlank
   private String publicUserId;
+  @NotBlank
+  private String artistName;
   private long artistDiscogsId;
 
 }

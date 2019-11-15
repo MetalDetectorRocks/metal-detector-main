@@ -12,6 +12,6 @@ public interface FollowArtistService {
 
   boolean exists(FollowArtistDto followArtistDto);
 
-  List<FollowArtistDto> findFollowedArtistsPerUser(String publicUserId);
+  List<FollowArtistDto> findPerUser(String publicUserId);
 
 }

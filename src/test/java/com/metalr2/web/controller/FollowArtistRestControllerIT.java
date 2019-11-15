@@ -29,11 +29,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class FollowArtistRestControllerIT implements WithAssertions {
 
   private static final String userId        = "1";
+  private static final String artistName    = "Darkthrone";
   private static final long artistDiscogsId = 252211L;
 
   @Autowired
   private FollowArtistService followArtistService;
   private FollowArtistDto followArtistDto;
+  private FollowArtistRequest followArtistRequest;
 
   @Value("${server.address}")
   private String serverAddress;
@@ -45,34 +47,31 @@ class FollowArtistRestControllerIT implements WithAssertions {
 
   @BeforeEach
   void setUp() {
-    String requestUri = "http://" + serverAddress + ":" + port + Endpoints.Rest.FOLLOW_ARTISTS_V1;
-    requestHandler = new RestAssuredRequestHandler(requestUri);
-    followArtistDto = new FollowArtistDto(userId, artistDiscogsId);
+    String requestUri   = "http://" + serverAddress + ":" + port + Endpoints.Rest.FOLLOW_ARTISTS_V1;
+    requestHandler      = new RestAssuredRequestHandler(requestUri);
+    followArtistDto     = new FollowArtistDto(userId, artistName, artistDiscogsId);
+    followArtistRequest = new FollowArtistRequest(userId, artistName, artistDiscogsId);
   }
 
   @Test
   @DisplayName("CREATE with valid request should create an entity and return the correct dto")
   void create_with_valid_request_should_return_201() {
-    FollowArtistRequest request = new FollowArtistRequest(userId,artistDiscogsId);
-    FollowArtistDto dto         = new FollowArtistDto(request.getPublicUserId(),request.getArtistDiscogsId());
+    assertThat(followArtistService.exists(followArtistDto)).isFalse();
 
-    assertThat(followArtistService.exists(dto)).isFalse();
-
-    ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, request);
+    ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, followArtistRequest);
 
     // assert
     validatableResponse.statusCode(HttpStatus.CREATED.value());
 
-    assertThat(followArtistService.exists(dto)).isTrue();
+    assertThat(followArtistService.exists(followArtistDto)).isTrue();
 
-    // remove created employee
-    followArtistService.unfollowArtist(dto);
+    followArtistService.unfollowArtist(followArtistDto);
   }
 
   @Test
   @DisplayName("CREATE with invalid request should return 400")
   void create_with_invalid_request_should_return_400() {
-    FollowArtistRequest invalidRequest = new FollowArtistRequest(null,artistDiscogsId);
+    FollowArtistRequest invalidRequest = new FollowArtistRequest(null, null, artistDiscogsId);
 
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, invalidRequest);
     ErrorResponse errorResponse = validatableResponse.extract().as(ErrorResponse.class);
@@ -82,7 +81,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
             .contentType(ContentType.JSON);
 
     assertNotNull(errorResponse);
-    assertEquals(1, errorResponse.getMessages().size());
+    assertEquals(2, errorResponse.getMessages().size());
   }
 
   @Test
@@ -92,7 +91,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
 
     assertThat(followArtistService.exists(followArtistDto)).isTrue();
 
-    FollowArtistRequest request = new FollowArtistRequest(userId, artistDiscogsId);
+    FollowArtistRequest request = new FollowArtistRequest(userId, artistName, artistDiscogsId);
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert
@@ -105,7 +104,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
   void delete_an_not_existing_resource_should_return_404() {
     assertThat(followArtistService.exists(followArtistDto)).isFalse();
 
-    FollowArtistRequest request = new FollowArtistRequest(userId, artistDiscogsId);
+    FollowArtistRequest request = new FollowArtistRequest(userId, artistName, artistDiscogsId);
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert
