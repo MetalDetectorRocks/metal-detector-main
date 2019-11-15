@@ -140,7 +140,7 @@ class FollowArtistServiceTest implements WithAssertions {
     List<FollowArtistDto> followArtistDtos = followArtistService.findPerUser(userId);
 
     // then
-    assertThat(followArtistDtos.isEmpty()).isFalse();
+    assertThat(followArtistDtos).isNotEmpty();
     assertThat(followArtistDtos.get(0).getArtistDiscogsId()).isEqualTo(artistDiscogsId);
     assertThat(followArtistDtos.get(0).getPublicUserId()).isEqualTo(userId);
 
@@ -157,7 +157,7 @@ class FollowArtistServiceTest implements WithAssertions {
     List<FollowArtistDto> followArtistDtos = followArtistService.findPerUser(unknownUserId);
 
     // then
-    assertThat(followArtistDtos.isEmpty()).isTrue();
+    assertThat(followArtistDtos).isEmpty();
 
     verify(followedArtistsRepository, times(1)).findAllByPublicUserId(unknownUserId);
   }

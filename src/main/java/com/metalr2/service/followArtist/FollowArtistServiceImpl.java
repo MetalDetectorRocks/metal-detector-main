@@ -32,9 +32,6 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     FollowedArtistEntity followedArtistEntity      = new FollowedArtistEntity(followArtistDto.getPublicUserId(),
             followArtistDto.getArtistName(),followArtistDto.getArtistDiscogsId());
     FollowedArtistEntity savedFollowedArtistEntity = followedArtistsRepository.save(followedArtistEntity);
-
-    log.debug("User with public id " + savedFollowedArtistEntity.getPublicUserId() + " is now following artist "
-            + savedFollowedArtistEntity.getArtistName() + " with discogs id " + savedFollowedArtistEntity.getArtistDiscogsId() + ".");
   }
 
   @Override
@@ -49,9 +46,6 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
     FollowedArtistEntity followedArtistEntity = optionalFollowedArtistEntity.get();
     followedArtistsRepository.delete(followedArtistEntity);
-
-    log.debug("User with public id " + followedArtistEntity.getPublicUserId() + " is not following artist "
-            + followedArtistEntity.getArtistName() + " with discogs id " + followedArtistEntity.getArtistDiscogsId() + " anymore.");
     return true;
   }
 

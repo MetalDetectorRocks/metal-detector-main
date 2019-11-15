@@ -1,6 +1,6 @@
 package com.metalr2.web;
 
-import com.metalr2.web.dto.request.FollowArtistRequest;
+import com.metalr2.config.constants.Endpoints;
 import io.restassured.RestAssured;
 import io.restassured.authentication.FormAuthConfig;
 import io.restassured.http.ContentType;
@@ -9,38 +9,42 @@ import io.restassured.response.ValidatableResponse;
 
 import static io.restassured.RestAssured.given;
 
-public class RestAssuredRequestHandler {
+public class RestAssuredRequestHandler<T> {
 
   private final String requestUri;
+  private final String username;
+  private final String password;
 
-  public RestAssuredRequestHandler(String requestUri) {
+  public RestAssuredRequestHandler(String requestUri, String username, String password) {
     this.requestUri = requestUri;
+    this.username   = username;
+    this.password   = password;
     RestAssured.defaultParser = Parser.JSON;
   }
 
-  public ValidatableResponse doPost(ContentType accept, FollowArtistRequest request) {
+  public ValidatableResponse doPost(ContentType accept, T request) {
     return given()
               .contentType(accept)
               .accept(accept)
               .body(request)
               .auth()
-                .form("john.doe@example.com",
-                      "john.doe",
-                        new FormAuthConfig("/login", "username", "password"))
+                .form(username,
+                      password,
+                      new FormAuthConfig(Endpoints.Guest.LOGIN,"username","password"))
             .when()
               .post(requestUri)
             .then();
   }
 
-  public ValidatableResponse doDelete(ContentType accept, FollowArtistRequest request) {
+  public ValidatableResponse doDelete(ContentType accept, T request) {
     return given()
               .contentType(accept)
               .accept(accept)
               .body(request)
               .auth()
-                .form("john.doe@example.com",
-                      "john.doe",
-                        new FormAuthConfig("/login", "username", "password"))
+                .form(username,
+                      password,
+                      new FormAuthConfig(Endpoints.Guest.LOGIN,"username","password"))
             .when()
               .delete(requestUri)
             .then();

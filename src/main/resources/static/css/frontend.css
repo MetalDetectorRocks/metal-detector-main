@@ -4,6 +4,11 @@ html{
 }
 
 body {
+    /* push footer to the bottom */
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 
     /* other */
     font-size: 1rem;
@@ -12,11 +17,6 @@ body {
     text-align: left;
 }
 
-#footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-}
 
 .navbar {
     padding: 0;
