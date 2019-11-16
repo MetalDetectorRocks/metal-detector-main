@@ -67,3 +67,32 @@ function unfollowArtist(publicUserId,artistName,artistId,el){
 
     return false;
 }
+
+function searchArtist(publicUserId,page,size){
+    const artistName = document.getElementById('artistName').value;
+    const searchArtistRequest =
+        {
+            "publicUserId" : publicUserId,
+            "artistName" : artistName,
+            "page" : page,
+            "size" : size
+        };
+    const searchArtistRequestJson = JSON.stringify(searchArtistRequest);
+    const csrfToken  = $("input[name='_csrf']").val();
+
+    $.ajax({
+        method: "POST",
+        url: "/rest/v1/artist",
+        contentType: 'application/json',
+        headers: {"X-CSRF-TOKEN": csrfToken},
+        data: searchArtistRequestJson,
+        success: function(result){
+            $('.body').html(result);
+        },
+        error: function(e){
+            console.log(e.message);
+        }
+    });
+
+    return false;
+}
