@@ -26,8 +26,6 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
   }
 
   public Optional<ArtistSearchResultContainer> searchByName(String artistQueryString, int page, int size) {
-    log.debug("Searched artist: {}; page: {}; size: {}", artistQueryString, page, size);
-
     if (StringUtils.isEmpty(artistQueryString) || size == 0) {
       return Optional.empty();
     }
@@ -47,8 +45,6 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
   }
 
   public Optional<Artist> searchById(long artistId) {
-    log.debug("Searched artist id: {}", artistId);
-
     if (artistId <= 0) {
       return Optional.empty();
     }

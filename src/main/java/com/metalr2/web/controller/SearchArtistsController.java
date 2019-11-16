@@ -2,6 +2,8 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
+import com.metalr2.model.exceptions.ErrorMessages;
+import com.metalr2.model.exceptions.ValidationException;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.service.user.UserService;
@@ -14,15 +16,15 @@ import com.metalr2.web.dto.request.ArtistSearchRequest;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.BadArtistNameSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,10 +53,10 @@ public class SearchArtistsController {
     return new ArtistSearchRequest();
   }
 
-  @PostMapping({Endpoints.Frontend.SEARCH_ARTISTS})
-  public ModelAndView handleSearchRequest(@ModelAttribute ArtistSearchRequest artistSearchRequest) {
-    return createArtistSearchResultModelAndView(artistSearchRequest.getArtistName(), Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
-  }
+//  @PostMapping({Endpoints.Frontend.SEARCH_ARTISTS})
+//  public ModelAndView handleSearchRequest(@ModelAttribute ArtistSearchRequest artistSearchRequest) {
+//    return createArtistSearchResultModelAndView(artistSearchRequest.getArtistName(), Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
+//  }
 
   @GetMapping({Endpoints.Frontend.SEARCH_ARTISTS})
   public ModelAndView showSearchArtists(@RequestParam(name = "size", defaultValue = DEFAULT_PAGE_SIZE) int size,
@@ -66,6 +68,21 @@ public class SearchArtistsController {
     }
 
     return createArtistSearchResultModelAndView(artistName, page, size);
+  }
+
+  @PostMapping(value    = Endpoints.Rest.ARTISTS,
+               consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+               produces = MediaType.TEXT_HTML_VALUE)
+  public ModelAndView handleSearchRequest(@Valid @RequestBody ArtistSearchRequest artistSearchRequest, BindingResult bindingResult) {
+    validateRequest(bindingResult);
+
+    return createArtistSearchResultModelAndView(artistSearchRequest.getArtistName(), Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_PAGE_SIZE));
+  }
+
+  private void validateRequest(BindingResult bindingResult) {
+    if (bindingResult.hasErrors()) {
+      throw new ValidationException(ErrorMessages.VALIDATION_ERROR.toDisplayString(), bindingResult.getFieldErrors());
+    }
   }
 
   private ArtistNameSearchResponse createArtistNameSearchResponse(ArtistSearchResultContainer artistSearchResults) {
