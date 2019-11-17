@@ -87,7 +87,7 @@ function searchArtist(publicUserId,page,size){
         headers: {"X-CSRF-TOKEN": csrfToken},
         data: searchArtistRequestJson,
         success: function(result){
-            $('.body').html(result);
+            $('.searchResultsContainer').html(result);
         },
         error: function(e){
             console.log(e.message);
