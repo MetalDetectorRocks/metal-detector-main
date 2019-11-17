@@ -26,7 +26,7 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
   }
 
   public Optional<ArtistSearchResultContainer> searchByName(String artistQueryString, int page, int size) {
-    if (StringUtils.isEmpty(artistQueryString) || size == 0) {
+    if (StringUtils.isEmpty(artistQueryString)) {
       return Optional.empty();
     }
 

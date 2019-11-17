@@ -13,7 +13,6 @@ public class ArtistSearchRequest {
 
   @NotBlank
   private String publicUserId;
-  @NotBlank
   private String artistName;
   private int page;
   private int size;

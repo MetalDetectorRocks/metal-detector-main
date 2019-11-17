@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<body>
+    <!-- Artist name -->
+    <div th:if="${artistName!=null and !artistName.empty}" class="mb-3">
+        <p th:text="${'You searched for: ' + artistName}">Artist Name</p>
+    </div>
+    <!-- No results message -->
+    <div th:if="${artistNameSearchResponse==null}" class="mb-3 alert alert-danger" role="alert">
+        <p>No artists could be found for the given name:</p>
+        <ul>
+            <li th:text="${'Artist name: ' + artistName}">Bad search request artist name</li>
+        </ul>
+    </div>
+    <!-- Result cards -->
+    <div th:if="${artistNameSearchResponse}" class="mb-3">
+        <div th:each="result, iterStat : ${artistNameSearchResponse.artistSearchResults}" class="card">
+            <div class="card-body">
+                <img th:if="${result.thumb} != ''" src="" th:src="${result.thumb}" th:alt="${'Thumb for ' + result.artistName}" alt="">
+                <p th:text="${result.id}">Id</p>
+                <p th:text="${result.artistName}">Artist name</p>
+                <a th:href="@{/artist-details(artistName=${result.artistName}, id=${result.id})}"
+                   th:text="${'Details for ' + result.artistName}">Artist details</a><br>
+                <form id="followArtistForm">
+                    <button th:id="${'followArtistButton' + iterStat.index}" class="btn btn-primary btn-dark font-weight-bold" type="button"
+                            th:attr="onclick=|followingAction('${#authentication.principal.publicId}','${result.artistName}','${result.id}',this)|"
+                            th:text="${result.isFollowed}? Unfollow : Follow">Follow</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Pagination links -->
+    <div th:if="${artistNameSearchResponse}" class="mb-3 row">
+        <a th:if="${artistNameSearchResponse.pagination.currentPage} > 1" href="#"
+           th:text="#{Previous}" th:attr="onclick=|searchArtist('${#authentication.principal.publicId}',
+           '${artistNameSearchResponse.pagination.nextPage}','${artistNameSearchResponse.pagination.nextSize}')|"
+           class="btn btn-dark btn-pagination">Previous</a>
+        <a th:if="${artistNameSearchResponse.pagination.totalPages > 1}" href="#"
+           th:each="pageNumber : ${artistNameSearchResponse.pagination.pageNumbers}"
+           th:text="#{${pageNumber}}" th:attr="onclick=|searchArtist('${#authentication.principal.publicId}',
+           '${pageNumber}','${artistNameSearchResponse.pagination.nextSize}')|"
+           class="btn btn-dark btn-pagination">Page number</a>
+        <a th:if="${artistNameSearchResponse.pagination.currentPage} < ${artistNameSearchResponse.pagination.totalPages}" href="#"
+           th:text="#{Next}" th:attr="onclick=|searchArtist('${#authentication.principal.publicId}',
+           '${artistNameSearchResponse.pagination.nextPage}','${artistNameSearchResponse.pagination.nextSize}')|"
+           class="btn btn-dark btn-pagination">Next</a>
+    </div>
+</body>
+</html>
