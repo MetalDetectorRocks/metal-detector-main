@@ -12,7 +12,7 @@ import lombok.Data;
         "resource_url",
         "id"
 })
-public class ArtistSearchResult {
+public class DiscogsArtistSearchResult {
 
   private static final String DISCOGS_URI = "http://discogs.com";
 

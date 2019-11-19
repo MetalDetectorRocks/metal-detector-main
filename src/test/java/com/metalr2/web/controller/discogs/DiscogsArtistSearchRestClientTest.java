@@ -3,8 +3,8 @@ package com.metalr2.web.controller.discogs;
 import com.metalr2.config.misc.DiscogsConfig;
 import com.metalr2.web.DtoFactory.ArtistFactory;
 import com.metalr2.web.DtoFactory.ArtistSearchResultContainerFactory;
-import com.metalr2.web.dto.discogs.artist.Artist;
-import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
+import com.metalr2.web.dto.discogs.artist.DiscogsArtist;
+import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -27,7 +27,7 @@ import static com.metalr2.web.controller.discogs.ArtistSearchRestClient.ARTIST_N
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ArtistSearchRestClientTest implements WithAssertions {
+class DiscogsArtistSearchRestClientTest implements WithAssertions {
 
   private static final int DEFAULT_PAGE = 1;
   private static final int DEFAULT_SIZE = 10;
@@ -65,41 +65,41 @@ class ArtistSearchRestClientTest implements WithAssertions {
     void search_by_name() {
       // given
       final String ARTIST_NAME_QUERY = "Darkthrone";
-      ArtistSearchResultContainer resultContainer = ArtistSearchResultContainerFactory.withOneResult();
+      DiscogsArtistSearchResultContainer resultContainer = ArtistSearchResultContainerFactory.withOneResult();
       when(discogsConfig.getRestBaseUrl()).thenReturn(BASE_URL);
-      when(restTemplate.getForEntity(SEARCH_BY_NAME_URL, ArtistSearchResultContainer.class, ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE))
+      when(restTemplate.getForEntity(SEARCH_BY_NAME_URL, DiscogsArtistSearchResultContainer.class, ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE))
               .thenReturn(ResponseEntity.ok(resultContainer));
 
       // when
-      Optional<ArtistSearchResultContainer> result = artistSearchClient.searchByName(ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE);
+      Optional<DiscogsArtistSearchResultContainer> result = artistSearchClient.searchByName(ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE);
 
       // then
       assertThat(result).isPresent();
       assertThat(result.get()).isEqualTo(resultContainer);
-      verify(restTemplate, times(1)).getForEntity(SEARCH_BY_NAME_URL, ArtistSearchResultContainer.class, ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE);
+      verify(restTemplate, times(1)).getForEntity(SEARCH_BY_NAME_URL, DiscogsArtistSearchResultContainer.class, ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE);
     }
 
     @ParameterizedTest(name = "[{index}] => Result container <{0}> | HttpStatus <{1}>")
     @MethodSource("responseProvider")
     @DisplayName("Searching by name should return an empty optional when Discogs returns no usable response")
-    void search_by_name_with_no_usable_response_from_discogs(ArtistSearchResultContainer resultContainer, HttpStatus httpStatus) {
+    void search_by_name_with_no_usable_response_from_discogs(DiscogsArtistSearchResultContainer resultContainer, HttpStatus httpStatus) {
       // given
       final String ARTIST_NAME_QUERY = "Darkthrone";
       when(discogsConfig.getRestBaseUrl()).thenReturn(BASE_URL);
-      when(restTemplate.getForEntity(SEARCH_BY_NAME_URL, ArtistSearchResultContainer.class, ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE))
+      when(restTemplate.getForEntity(SEARCH_BY_NAME_URL, DiscogsArtistSearchResultContainer.class, ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE))
               .thenReturn(ResponseEntity.status(httpStatus).body(resultContainer));
 
       // when
-      Optional<ArtistSearchResultContainer> result = artistSearchClient.searchByName(ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE);
+      Optional<DiscogsArtistSearchResultContainer> result = artistSearchClient.searchByName(ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE);
 
       // then
       assertThat(result).isEmpty();
-      verify(restTemplate, times(1)).getForEntity(SEARCH_BY_NAME_URL, ArtistSearchResultContainer.class, ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE);
+      verify(restTemplate, times(1)).getForEntity(SEARCH_BY_NAME_URL, DiscogsArtistSearchResultContainer.class, ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE);
     }
 
     private Stream<Arguments> responseProvider() {
-      ArtistSearchResultContainer resultContainer = ArtistSearchResultContainerFactory.withOneResult();
-      ArtistSearchResultContainer emptyResultContainer = ArtistSearchResultContainerFactory.withEmptyResult();
+      DiscogsArtistSearchResultContainer resultContainer = ArtistSearchResultContainerFactory.withOneResult();
+      DiscogsArtistSearchResultContainer emptyResultContainer = ArtistSearchResultContainerFactory.withEmptyResult();
       return Stream.of(
               Arguments.of(null, HttpStatus.OK),
               Arguments.of(resultContainer, HttpStatus.BAD_REQUEST),
@@ -112,7 +112,7 @@ class ArtistSearchRestClientTest implements WithAssertions {
     @DisplayName("Searching by name with null or empty artist name should return an empty optional")
     void search_by_name_with_invalid_artist_name(String artistName) {
       // when
-      Optional<ArtistSearchResultContainer> result = artistSearchClient.searchByName(artistName, DEFAULT_PAGE, DEFAULT_SIZE);
+      Optional<DiscogsArtistSearchResultContainer> result = artistSearchClient.searchByName(artistName, DEFAULT_PAGE, DEFAULT_SIZE);
 
       // then
       assertThat(result).isEmpty();
@@ -137,43 +137,43 @@ class ArtistSearchRestClientTest implements WithAssertions {
     void search_by_id() {
       // given
       final long ARTIST_ID = 1L;
-      Artist artist = ArtistFactory.createTestArtist();
+      DiscogsArtist discogsArtist = ArtistFactory.createTestArtist();
       when(discogsConfig.getRestBaseUrl()).thenReturn(BASE_URL);
-      when(restTemplate.getForEntity(SEARCH_BY_ID_URL, Artist.class, ARTIST_ID))
-              .thenReturn(ResponseEntity.ok(artist));
+      when(restTemplate.getForEntity(SEARCH_BY_ID_URL, DiscogsArtist.class, ARTIST_ID))
+              .thenReturn(ResponseEntity.ok(discogsArtist));
 
       // when
-      Optional<Artist> result = artistSearchClient.searchById(ARTIST_ID);
+      Optional<DiscogsArtist> result = artistSearchClient.searchById(ARTIST_ID);
 
       // then
       assertThat(result).isPresent();
-      assertThat(result.get()).isEqualTo(artist);
-      verify(restTemplate, times(1)).getForEntity(SEARCH_BY_ID_URL, Artist.class, ARTIST_ID);
+      assertThat(result.get()).isEqualTo(discogsArtist);
+      verify(restTemplate, times(1)).getForEntity(SEARCH_BY_ID_URL, DiscogsArtist.class, ARTIST_ID);
     }
 
     @ParameterizedTest(name = "[{index}] => Artist <{0}> | HttpStatus <{1}>")
     @MethodSource("responseProvider")
     @DisplayName("Searching by id should return an empty optional when Discogs returns no usable response")
-    void search_by_name_with_no_usable_response_from_discogs(Artist artist, HttpStatus httpStatus) {
+    void search_by_name_with_no_usable_response_from_discogs(DiscogsArtist discogsArtist, HttpStatus httpStatus) {
       // given
       final long ARTIST_ID_QUERY = 1L;
       when(discogsConfig.getRestBaseUrl()).thenReturn(BASE_URL);
-      when(restTemplate.getForEntity(SEARCH_BY_ID_URL, Artist.class, ARTIST_ID_QUERY))
-              .thenReturn(ResponseEntity.status(httpStatus).body(artist));
+      when(restTemplate.getForEntity(SEARCH_BY_ID_URL, DiscogsArtist.class, ARTIST_ID_QUERY))
+              .thenReturn(ResponseEntity.status(httpStatus).body(discogsArtist));
 
       // when
-      Optional<Artist> result = artistSearchClient.searchById(ARTIST_ID_QUERY);
+      Optional<DiscogsArtist> result = artistSearchClient.searchById(ARTIST_ID_QUERY);
 
       // then
       assertThat(result).isEmpty();
-      verify(restTemplate, times(1)).getForEntity(SEARCH_BY_ID_URL, Artist.class, ARTIST_ID_QUERY);
+      verify(restTemplate, times(1)).getForEntity(SEARCH_BY_ID_URL, DiscogsArtist.class, ARTIST_ID_QUERY);
     }
 
     private Stream<Arguments> responseProvider() {
-      Artist artist = ArtistFactory.createTestArtist();
+      DiscogsArtist discogsArtist = ArtistFactory.createTestArtist();
       return Stream.of(
               Arguments.of(null, HttpStatus.OK),
-              Arguments.of(artist, HttpStatus.BAD_REQUEST)
+              Arguments.of(discogsArtist, HttpStatus.BAD_REQUEST)
       );
     }
 
@@ -182,7 +182,7 @@ class ArtistSearchRestClientTest implements WithAssertions {
     @DisplayName("Searching by id with id less than or equal to 0 should return an empty optional")
     void search_by_name_with_invalid_artist_id(long artistId) {
       // when
-      Optional<Artist> result = artistSearchClient.searchById(artistId);
+      Optional<DiscogsArtist> result = artistSearchClient.searchById(artistId);
 
       // then
       assertThat(result).isEmpty();

@@ -11,7 +11,7 @@ import lombok.Data;
         "name",
         "resource_url"
 })
-public class Member {
+public class DiscogsMember {
 
   @JsonProperty("id")
   private long id;

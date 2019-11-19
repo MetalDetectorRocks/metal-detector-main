@@ -14,6 +14,45 @@
                     th:text="Search">Search</button>
         </form>
     </div>
-    <div class="searchResultsContainer"></div>
+    <div id="searchResultsContainer" class="mb-3"></div>
+    <script>
+        const buildResults = function(artistNameSearchResponse){
+            jQuery.each(artistNameSearchResponse.artistSearchResults, function (i, artistSearchResult) {
+                createResultCard(artistSearchResult);
+            })
+
+        };
+
+        const createResultCard = function(artistSearchResult){
+            const card = document.createElement('div');
+            card.className = "card";
+
+            const cardBody = document.createElement('div');
+            cardBody.className = "card-body";
+            card.append(cardBody);
+
+            if (artistSearchResult.thumb !== ""){
+                const thumbElement = document.createElement('img');
+                thumbElement.alt = 'Thumb for ' + artistSearchResult.artistName;
+                thumbElement.src = artistSearchResult.thumb;
+                cardBody.append(thumbElement);
+            }
+
+            const artistIdElement = document.createElement('p');
+            artistIdElement.innerText = artistSearchResult.id;
+            cardBody.append(artistIdElement);
+
+            const artistNameElement = document.createElement('p');
+            artistNameElement.innerText = artistSearchResult.artistName;
+            cardBody.append(artistNameElement);
+
+            const artistDetailsElement = document.createElement('a');
+            artistDetailsElement.href = "/artist-details?artistName=" + artistSearchResult.artistName + ", id=" + artistSearchResult.id;
+            artistDetailsElement.text = "Details for " + artistSearchResult.artistName;
+            cardBody.append(artistDetailsElement);
+
+            document.getElementById('searchResultsContainer').appendChild(card);
+        }
+    </script>
     </body>
 </html>

@@ -24,14 +24,14 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Tag("integration-test")
-class FollowArtistRestControllerIT implements WithAssertions {
+class FollowDiscogsArtistRestControllerIT implements WithAssertions {
 
-  private static final String userId        = "1";
-  private static final String artistName    = "Darkthrone";
-  private static final long artistDiscogsId = 252211L;
-  private static final String username      = "JohnD";
-  private static final String password      = "john.doe";
-  private static final String email         = "john.doe@example.com";
+  private static final String USER_ID         = "1";
+  private static final String ARTIST_NAME     = "Darkthrone";
+  private static final long ARTIST_DISCOGS_ID = 252211L;
+  private static final String USERNAME        = "JohnD";
+  private static final String PASSWORD        = "john.doe";
+  private static final String EMAIL           = "john.doe@example.com";
 
   @Autowired
   private UserRepository userRepository;
@@ -52,12 +52,12 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @BeforeEach
   void setUp() {
     String requestUri   = "http://" + serverAddress + ":" + port + Endpoints.Rest.FOLLOW_ARTISTS_V1;
-    requestHandler      = new RestAssuredRequestHandler<>(requestUri, username, password);
-    followArtistDto     = new FollowArtistDto(userId, artistName, artistDiscogsId);
-    followArtistRequest = new FollowArtistRequest(userId, artistName, artistDiscogsId);
+    requestHandler      = new RestAssuredRequestHandler<>(requestUri, USERNAME, PASSWORD);
+    followArtistDto     = new FollowArtistDto(USER_ID, ARTIST_NAME, ARTIST_DISCOGS_ID);
+    followArtistRequest = new FollowArtistRequest(USER_ID, ARTIST_NAME, ARTIST_DISCOGS_ID);
     userRepository.save(UserEntity.builder()
-                  .username(username)
-                  .email(email)
+                  .username(USERNAME)
+                  .email(EMAIL)
                   .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
                   .enabled(true)
                   .userRoles(UserRole.createUserRole())
@@ -87,7 +87,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("CREATE with invalid request should return 400")
   void create_with_invalid_request_should_return_400() {
-    FollowArtistRequest invalidRequest = new FollowArtistRequest(null, null, artistDiscogsId);
+    FollowArtistRequest invalidRequest = new FollowArtistRequest(null, null, ARTIST_DISCOGS_ID);
 
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, invalidRequest);
     ErrorResponse errorResponse = validatableResponse.extract().as(ErrorResponse.class);
@@ -107,7 +107,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
 
     assertThat(followArtistService.exists(followArtistDto)).isTrue();
 
-    FollowArtistRequest request = new FollowArtistRequest(userId, artistName, artistDiscogsId);
+    FollowArtistRequest request = new FollowArtistRequest(USER_ID, ARTIST_NAME, ARTIST_DISCOGS_ID);
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert
@@ -120,7 +120,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
   void delete_an_not_existing_resource_should_return_404() {
     assertThat(followArtistService.exists(followArtistDto)).isFalse();
 
-    FollowArtistRequest request = new FollowArtistRequest(userId, artistName, artistDiscogsId);
+    FollowArtistRequest request = new FollowArtistRequest(USER_ID, ARTIST_NAME, ARTIST_DISCOGS_ID);
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert

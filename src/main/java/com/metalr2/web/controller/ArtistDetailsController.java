@@ -4,12 +4,11 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.followArtist.FollowArtistService;
-import com.metalr2.service.user.UserService;
 import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
 import com.metalr2.web.dto.FollowArtistDto;
-import com.metalr2.web.dto.discogs.artist.Artist;
-import com.metalr2.web.dto.discogs.artist.Member;
-import com.metalr2.web.dto.discogs.misc.Image;
+import com.metalr2.web.dto.discogs.artist.DiscogsArtist;
+import com.metalr2.web.dto.discogs.artist.DiscogsMember;
+import com.metalr2.web.dto.discogs.misc.DiscogsImage;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,14 +48,14 @@ public class ArtistDetailsController {
   }
 
   private ModelAndView createArtistDetailsModelAndView(String artistName, long artistId) {
-    Optional<Artist> artistOptional = artistSearchRestClient.searchById(artistId);
+    Optional<DiscogsArtist> artistOptional = artistSearchRestClient.searchById(artistId);
 
     if (artistOptional.isEmpty()) {
       return createBadArtistIdSearchRequestModelAndView(artistName, artistId);
     }
 
-    Artist artist                               = artistOptional.get();
-    ArtistDetailsResponse artistDetailsResponse = createArtistDetailsResponse(artist, artistName);
+    DiscogsArtist discogsArtist = artistOptional.get();
+    ArtistDetailsResponse artistDetailsResponse = createArtistDetailsResponse(discogsArtist, artistName);
 
     HashMap<String, Object> viewModel = new HashMap<>();
     viewModel.put("artistName", artistName);
@@ -73,12 +72,12 @@ public class ArtistDetailsController {
     return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS, viewModel);
   }
 
-  private ArtistDetailsResponse createArtistDetailsResponse(Artist artist, String artistName) {
-    String artistProfile      = artist.getProfile().isEmpty() ? null : artist.getProfile();
-    List<String> activeMember = artist.getMembers() == null   ? null : artist.getMembers().stream().filter(Member::isActive).map(Member::getName).collect(Collectors.toList());
-    List<String> formerMember = artist.getMembers() == null   ? null : artist.getMembers().stream().filter(member -> !member.isActive()).map(Member::getName).collect(Collectors.toList());
-    List<String> images       = artist.getImages()  == null   ? null : artist.getImages().stream().map(Image::getResourceUrl).collect(Collectors.toList());
-    boolean isFollowed        = followArtistService.exists(new FollowArtistDto(getPublicUserId(), artistName, artist.getId()));
+  private ArtistDetailsResponse createArtistDetailsResponse(DiscogsArtist discogsArtist, String artistName) {
+    String artistProfile      = discogsArtist.getProfile().isEmpty() ? null : discogsArtist.getProfile();
+    List<String> activeMember = discogsArtist.getDiscogsMembers() == null   ? null : discogsArtist.getDiscogsMembers().stream().filter(DiscogsMember::isActive).map(DiscogsMember::getName).collect(Collectors.toList());
+    List<String> formerMember = discogsArtist.getDiscogsMembers() == null   ? null : discogsArtist.getDiscogsMembers().stream().filter(discogsMember -> !discogsMember.isActive()).map(DiscogsMember::getName).collect(Collectors.toList());
+    List<String> images       = discogsArtist.getDiscogsImages()  == null   ? null : discogsArtist.getDiscogsImages().stream().map(DiscogsImage::getResourceUrl).collect(Collectors.toList());
+    boolean isFollowed        = followArtistService.exists(new FollowArtistDto(getPublicUserId(), artistName, discogsArtist.getId()));
     return new ArtistDetailsResponse(artistProfile, activeMember, formerMember, images, isFollowed);
   }
 

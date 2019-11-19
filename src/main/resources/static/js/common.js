@@ -86,8 +86,9 @@ function searchArtist(publicUserId,page,size){
         contentType: 'application/json',
         headers: {"X-CSRF-TOKEN": csrfToken},
         data: searchArtistRequestJson,
-        success: function(result){
-            $('.searchResultsContainer').html(result);
+        dataType: "json",
+        success: function(artistNameSearchResponse){
+            buildResults(artistNameSearchResponse);
         },
         error: function(e){
             console.log(e.message);
