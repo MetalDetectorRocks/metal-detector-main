@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @TestPropertySource(locations = "classpath:application-test.properties")
-class FollowArtistServiceTest implements WithAssertions {
+class FollowDiscogsArtistServiceTest implements WithAssertions {
 
   private static final String userId        = "1";
   private static final String unknownUserId = "";

@@ -12,7 +12,7 @@ import lombok.Data;
         "urls",
         "pages"
 })
-public class Pagination {
+public class DiscogsPagination {
 
   @JsonProperty("per_page")
   private int itemsPerPage;
@@ -27,6 +27,6 @@ public class Pagination {
   private int pagesTotal;
 
   @JsonProperty("urls")
-  private PaginationUrls urls;
+  private DiscogsPaginationUrls urls;
 
 }

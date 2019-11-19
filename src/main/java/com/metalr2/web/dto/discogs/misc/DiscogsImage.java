@@ -13,7 +13,7 @@ import lombok.Data;
         "uri150",
         "width"
 })
-public class Image {
+public class DiscogsImage {
 
   @JsonProperty("height")
   private int height;

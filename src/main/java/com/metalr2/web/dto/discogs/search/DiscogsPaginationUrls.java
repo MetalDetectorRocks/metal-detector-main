@@ -9,7 +9,7 @@ import lombok.Data;
         "last",
         "next"
 })
-public class PaginationUrls {
+public class DiscogsPaginationUrls {
 
   @JsonProperty("last")
   private String last;

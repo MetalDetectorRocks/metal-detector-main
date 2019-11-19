@@ -11,13 +11,13 @@ import java.util.List;
         "pagination",
         "results"
 })
-public class ArtistSearchResultContainer {
+public class DiscogsArtistSearchResultContainer {
 
   @JsonProperty("pagination")
-  private Pagination pagination;
+  private DiscogsPagination discogsPagination;
 
   @JsonProperty("results")
-  private List<ArtistSearchResult> results;
+  private List<DiscogsArtistSearchResult> results;
 
   @Override
   public String toString() {

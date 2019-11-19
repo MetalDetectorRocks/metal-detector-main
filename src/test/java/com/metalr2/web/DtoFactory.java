@@ -1,10 +1,10 @@
 package com.metalr2.web;
 
 import com.metalr2.web.dto.UserDto;
-import com.metalr2.web.dto.discogs.artist.Artist;
-import com.metalr2.web.dto.discogs.search.ArtistSearchResult;
-import com.metalr2.web.dto.discogs.search.ArtistSearchResultContainer;
-import com.metalr2.web.dto.discogs.search.Pagination;
+import com.metalr2.web.dto.discogs.artist.DiscogsArtist;
+import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResult;
+import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
+import com.metalr2.web.dto.discogs.search.DiscogsPagination;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 
@@ -76,24 +76,24 @@ public class DtoFactory {
 
   public static class ArtistSearchResultContainerFactory {
 
-    public static ArtistSearchResultContainer withOneResult() {
+    public static DiscogsArtistSearchResultContainer withOneResult() {
       return createDefaultResultContainer();
     }
 
-    public static ArtistSearchResultContainer withEmptyResult() {
-      ArtistSearchResultContainer resultContainer = createDefaultResultContainer();
+    public static DiscogsArtistSearchResultContainer withEmptyResult() {
+      DiscogsArtistSearchResultContainer resultContainer = createDefaultResultContainer();
       resultContainer.setResults(Collections.emptyList());
 
       return resultContainer;
     }
 
-    private static ArtistSearchResultContainer createDefaultResultContainer() {
-      Pagination         pagination         = new Pagination();
-      ArtistSearchResult artistSearchResult = new ArtistSearchResult();
+    private static DiscogsArtistSearchResultContainer createDefaultResultContainer() {
+      DiscogsPagination discogsPagination = new DiscogsPagination();
+      DiscogsArtistSearchResult discogsArtistSearchResult = new DiscogsArtistSearchResult();
 
-      ArtistSearchResultContainer resultContainer = new ArtistSearchResultContainer();
-      resultContainer.setPagination(pagination);
-      resultContainer.setResults(List.of(artistSearchResult));
+      DiscogsArtistSearchResultContainer resultContainer = new DiscogsArtistSearchResultContainer();
+      resultContainer.setDiscogsPagination(discogsPagination);
+      resultContainer.setResults(List.of(discogsArtistSearchResult));
 
       return resultContainer;
     }
@@ -102,11 +102,11 @@ public class DtoFactory {
 
   public static class ArtistFactory {
 
-    public static Artist createTestArtist() {
-      Artist artist = new Artist();
-      artist.setId(1L);
-      artist.setProfile("profile");
-      return artist;
+    public static DiscogsArtist createTestArtist() {
+      DiscogsArtist discogsArtist = new DiscogsArtist();
+      discogsArtist.setId(1L);
+      discogsArtist.setProfile("profile");
+      return discogsArtist;
     }
 
   }

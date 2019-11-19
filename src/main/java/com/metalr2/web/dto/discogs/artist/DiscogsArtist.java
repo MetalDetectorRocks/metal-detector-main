@@ -2,7 +2,7 @@ package com.metalr2.web.dto.discogs.artist;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.metalr2.web.dto.discogs.misc.Image;
+import com.metalr2.web.dto.discogs.misc.DiscogsImage;
 import lombok.Data;
 import lombok.ToString;
 
@@ -20,7 +20,7 @@ import java.util.List;
         "members"
 })
 @ToString(of = {"id"})
-public class Artist {
+public class DiscogsArtist {
 
   @JsonProperty("id")
   private long id;
@@ -41,9 +41,9 @@ public class Artist {
   private List<String> urls;
 
   @JsonProperty("images")
-  private List<Image> images;
+  private List<DiscogsImage> discogsImages;
 
   @JsonProperty("members")
-  private List<Member> members;
+  private List<DiscogsMember> discogsMembers;
 
 }
