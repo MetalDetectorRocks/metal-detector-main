@@ -11,8 +11,6 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class ArtistSearchRequest {
 
-  @NotBlank
-  private String publicUserId;
   private String artistName;
   private int page;
   private int size;
