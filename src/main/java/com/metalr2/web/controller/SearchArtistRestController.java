@@ -1,9 +1,9 @@
 package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
-import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ValidationException;
+import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
 import com.metalr2.web.dto.FollowArtistDto;
@@ -12,21 +12,22 @@ import com.metalr2.web.dto.discogs.search.DiscogsPagination;
 import com.metalr2.web.dto.discogs.search.DiscogsPaginationUrls;
 import com.metalr2.web.dto.request.ArtistSearchRequest;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
+import com.metalr2.web.dto.response.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping({Endpoints.Rest.ARTISTS})
@@ -46,10 +47,10 @@ public class SearchArtistRestController {
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<ArtistNameSearchResponse> handleSearchRequest(@Valid @RequestBody ArtistSearchRequest artistSearchRequest, BindingResult bindingResult) {
+  public ResponseEntity<ArtistNameSearchResponse> handleSearchRequest(@Valid @RequestBody ArtistSearchRequest artistSearchRequest, BindingResult bindingResult, UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) {
     validateRequest(bindingResult);
 
-    ArtistNameSearchResponse artistNameSearchResponse = searchArtist(artistSearchRequest,bindingResult);
+    ArtistNameSearchResponse artistNameSearchResponse = searchArtist(artistSearchRequest, ((UserEntity)usernamePasswordAuthenticationToken.getPrincipal()).getPublicId());
     return ResponseEntity.ok(artistNameSearchResponse);
   }
 
@@ -59,41 +60,37 @@ public class SearchArtistRestController {
     }
   }
 
-  private ArtistNameSearchResponse searchArtist(ArtistSearchRequest artistSearchRequest, BindingResult bindingResult) {
+  private ArtistNameSearchResponse searchArtist(ArtistSearchRequest artistSearchRequest, String publicUserId) {
     Optional<DiscogsArtistSearchResultContainer> artistSearchResultsOptional = artistSearchRestClient.searchByName(artistSearchRequest.getArtistName(),
             artistSearchRequest.getPage(), artistSearchRequest.getSize());
 
     if (artistSearchResultsOptional.isEmpty()) {
-//      return createNoResultsModelAndView(artistSearchRequest.getArtistName());
+      return new ArtistNameSearchResponse(Collections.EMPTY_LIST,new Pagination(),artistSearchRequest.getArtistName());
     }
 
     DiscogsArtistSearchResultContainer discogsArtistSearchResults = artistSearchResultsOptional.get();
 
-    return createArtistNameSearchResponse(artistSearchRequest,discogsArtistSearchResults);
+    return createArtistNameSearchResponse(artistSearchRequest,discogsArtistSearchResults, publicUserId);
   }
 
-  private ArtistNameSearchResponse createArtistNameSearchResponse(ArtistSearchRequest artistSearchRequest, DiscogsArtistSearchResultContainer artistSearchResults) {
-    DiscogsPagination discogsPagination = artistSearchResults.getDiscogsPagination();
-    List<Integer> pageNumbers = IntStream.rangeClosed(1, discogsPagination.getPagesTotal()).boxed().collect(Collectors.toList());
-
+  private ArtistNameSearchResponse createArtistNameSearchResponse(ArtistSearchRequest artistSearchRequest, DiscogsArtistSearchResultContainer artistSearchResults, String publicUserId) {
+    DiscogsPagination discogsPagination         = artistSearchResults.getDiscogsPagination();
     DiscogsPaginationUrls discogsPaginationUrls = discogsPagination.getUrls();
-    int nextSize = discogsPaginationUrls.getNext() != null ? discogsPagination.getItemsPerPage() : DEFAULT_PAGE_SIZE;
-    int nextPage = discogsPaginationUrls.getNext() != null ? discogsPagination.getCurrentPage() + 1 : DEFAULT_PAGE;
 
-    List<FollowArtistDto> alreadyFollowedArtists = followArtistService.findPerUser(artistSearchRequest.getPublicUserId());
+    int size      = discogsPaginationUrls.getNext() != null ? discogsPagination.getItemsPerPage() : DEFAULT_PAGE_SIZE;
+    int nextPage  = discogsPaginationUrls.getNext() != null ? discogsPagination.getCurrentPage() + 1 : DEFAULT_PAGE;
+
+    List<FollowArtistDto> alreadyFollowedArtists = followArtistService.findPerUser(publicUserId);
 
     List<ArtistNameSearchResponse.ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
             .map(artistSearchResult -> new ArtistNameSearchResponse.ArtistSearchResult(artistSearchResult.getThumb(),
                     artistSearchResult.getId(), artistSearchResult.getTitle(),
-                    alreadyFollowedArtists.contains(new FollowArtistDto(artistSearchRequest.getPublicUserId(), artistSearchResult.getTitle(), artistSearchResult.getId()))))
+                    alreadyFollowedArtists.contains(new FollowArtistDto(publicUserId, artistSearchResult.getTitle(), artistSearchResult.getId()))))
             .collect(Collectors.toList());
-    ArtistNameSearchResponse.Pagination dtoPagination = new ArtistNameSearchResponse.Pagination(discogsPagination.getPagesTotal(),
-            discogsPagination.getCurrentPage(), nextSize, nextPage, pageNumbers);
 
-    return new ArtistNameSearchResponse(dtoArtistSearchResults, dtoPagination);
-  }
+    Pagination pagination = new Pagination(discogsPagination.getPagesTotal(), discogsPagination.getCurrentPage(),
+            size, nextPage);
 
-  private ModelAndView createNoResultsModelAndView(String artistName) {
-    return new ModelAndView(ViewNames.Frontend.ARTIST_SEARCH_RESULTS, "artistName", artistName);
+    return new ArtistNameSearchResponse(dtoArtistSearchResults, pagination, artistSearchRequest.getArtistName());
   }
 }

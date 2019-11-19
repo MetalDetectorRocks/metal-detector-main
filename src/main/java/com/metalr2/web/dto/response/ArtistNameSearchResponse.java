@@ -13,6 +13,7 @@ public class ArtistNameSearchResponse {
 
   private List<ArtistSearchResult> artistSearchResults;
   private Pagination pagination;
+  private String requestedArtistName;
 
   public ArtistNameSearchResponse() {
     artistSearchResults = new ArrayList<>();
@@ -28,17 +29,5 @@ public class ArtistNameSearchResponse {
     private String artistName;
     private Boolean isFollowed;
 
-  }
-
-  @Data
-  @AllArgsConstructor
-  @NoArgsConstructor
-  public static class Pagination {
-
-    private int totalPages;
-    private int currentPage;
-    private int nextSize;
-    private int nextPage;
-    private List<Integer> pageNumbers;
   }
 }

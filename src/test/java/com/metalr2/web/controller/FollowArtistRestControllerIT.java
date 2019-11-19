@@ -24,7 +24,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Tag("integration-test")
-class FollowDiscogsArtistRestControllerIT implements WithAssertions {
+class FollowArtistRestControllerIT implements WithAssertions {
 
   private static final String USER_ID         = "1";
   private static final String ARTIST_NAME     = "Darkthrone";
@@ -54,7 +54,7 @@ class FollowDiscogsArtistRestControllerIT implements WithAssertions {
     String requestUri   = "http://" + serverAddress + ":" + port + Endpoints.Rest.FOLLOW_ARTISTS_V1;
     requestHandler      = new RestAssuredRequestHandler<>(requestUri, USERNAME, PASSWORD);
     followArtistDto     = new FollowArtistDto(USER_ID, ARTIST_NAME, ARTIST_DISCOGS_ID);
-    followArtistRequest = new FollowArtistRequest(USER_ID, ARTIST_NAME, ARTIST_DISCOGS_ID);
+    followArtistRequest = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
     userRepository.save(UserEntity.builder()
                   .username(USERNAME)
                   .email(EMAIL)
@@ -87,7 +87,7 @@ class FollowDiscogsArtistRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("CREATE with invalid request should return 400")
   void create_with_invalid_request_should_return_400() {
-    FollowArtistRequest invalidRequest = new FollowArtistRequest(null, null, ARTIST_DISCOGS_ID);
+    FollowArtistRequest invalidRequest = new FollowArtistRequest(null, ARTIST_DISCOGS_ID);
 
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, invalidRequest);
     ErrorResponse errorResponse = validatableResponse.extract().as(ErrorResponse.class);
@@ -107,7 +107,7 @@ class FollowDiscogsArtistRestControllerIT implements WithAssertions {
 
     assertThat(followArtistService.exists(followArtistDto)).isTrue();
 
-    FollowArtistRequest request = new FollowArtistRequest(USER_ID, ARTIST_NAME, ARTIST_DISCOGS_ID);
+    FollowArtistRequest request = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert
@@ -120,7 +120,7 @@ class FollowDiscogsArtistRestControllerIT implements WithAssertions {
   void delete_an_not_existing_resource_should_return_404() {
     assertThat(followArtistService.exists(followArtistDto)).isFalse();
 
-    FollowArtistRequest request = new FollowArtistRequest(USER_ID, ARTIST_NAME, ARTIST_DISCOGS_ID);
+    FollowArtistRequest request = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert
