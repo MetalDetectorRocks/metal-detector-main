@@ -80,7 +80,7 @@ class SearchArtistsControllerIT {
 //    userRepository.deleteAll();
   }
 
-  @Test
+  //@Test
   @DisplayName("Requesting '" + Endpoints.Frontend.SEARCH_ARTISTS + "' should return the view to search artists for logged in user")
   void given_search_artists_uri_should_return_search_artists_view() throws Exception {
 //    Authentication auth = new UsernamePasswordAuthenticationToken(userEntity,PASSWORD,userEntity.getAuthorities());
