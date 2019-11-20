@@ -8,6 +8,7 @@ import com.metalr2.web.dto.discogs.search.DiscogsPagination;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -78,6 +79,24 @@ public class DtoFactory {
 
     public static DiscogsArtistSearchResultContainer withOneResult() {
       return createDefaultResultContainer();
+    }
+
+    public static DiscogsArtistSearchResultContainer withOneCertainResult() {
+      DiscogsArtistSearchResultContainer container  = createDefaultResultContainer();
+      DiscogsArtistSearchResult searchResult        = new DiscogsArtistSearchResult();
+      DiscogsPagination pagination                  = new DiscogsPagination();
+
+      searchResult.setId(252211);
+      searchResult.setTitle("Darkthrone");
+
+      pagination.setCurrentPage(1);
+      pagination.setItemsPerPage(10);
+      pagination.setItemsTotal(10);
+      pagination.setPagesTotal(2);
+
+      container.setResults(Collections.singletonList(searchResult));
+      container.setDiscogsPagination(pagination);
+      return container;
     }
 
     public static DiscogsArtistSearchResultContainer withEmptyResult() {

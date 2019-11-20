@@ -17,4 +17,9 @@ public class DiscogsPaginationUrls {
   @JsonProperty("next")
   private String next;
 
+  DiscogsPaginationUrls() {
+    this.last = "";
+    this.next = "";
+  }
+
 }

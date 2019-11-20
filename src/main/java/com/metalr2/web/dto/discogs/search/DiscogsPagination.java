@@ -29,4 +29,8 @@ public class DiscogsPagination {
   @JsonProperty("urls")
   private DiscogsPaginationUrls urls;
 
+  public DiscogsPagination(){
+    this.urls = new DiscogsPaginationUrls();
+  }
+
 }

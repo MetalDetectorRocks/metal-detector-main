@@ -98,10 +98,12 @@ function searchArtist(page,size){
         data: searchArtistRequestJson,
         dataType: "json",
         success: function(artistNameSearchResponse){
+            clear();
             buildResults(artistNameSearchResponse);
         },
-        error: function(e){
-            console.log(e.message);
+        error: function(){
+            clear();
+            createNoResultsMessage();
         }
     });
 
@@ -113,14 +115,8 @@ function searchArtist(page,size){
  * @param artistNameSearchResponse  JSON response
  */
 const buildResults = function(artistNameSearchResponse) {
-    clear();
-
-    if (artistNameSearchResponse.artistSearchResults.length > 0) {
-        createResultCards(artistNameSearchResponse);
-        createPagination(artistNameSearchResponse);
-    } else {
-        createNoResultsMessage(artistNameSearchResponse);
-    }
+    createResultCards(artistNameSearchResponse);
+    createPagination(artistNameSearchResponse);
 };
 
 /**
@@ -255,14 +251,14 @@ const createPagination = function (artistNameSearchResponse) {
 
 /**
  * Builds HTML for the message for an empty result
- * @param artistNameSearchResponse  JSON response
  */
-const createNoResultsMessage = function (artistNameSearchResponse) {
+const createNoResultsMessage = function () {
     const noResultsMessageElement = document.createElement('div');
+    const artistName = document.getElementById('artistName').value;
     noResultsMessageElement.className = "mb-3 alert alert-danger";
     noResultsMessageElement.role = "alter";
     noResultsMessageElement.id = "noResultsMessageElement";
-    noResultsMessageElement.innerText =  "No artists could be found for the given name: " + artistNameSearchResponse.requestedArtistName;
+    noResultsMessageElement.innerText =  "No artists could be found for the given name: " + artistName;
 
     document.getElementById('noResultsMessageContainer').appendChild(noResultsMessageElement);
 };
