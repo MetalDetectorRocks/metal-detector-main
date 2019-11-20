@@ -26,7 +26,6 @@ import org.springframework.test.context.TestPropertySource;
 @Tag("integration-test")
 class FollowArtistRestControllerIT implements WithAssertions {
 
-  private static final String USER_ID         = "1";
   private static final String ARTIST_NAME     = "Darkthrone";
   private static final long ARTIST_DISCOGS_ID = 252211L;
   private static final String USERNAME        = "JohnD";
@@ -41,6 +40,8 @@ class FollowArtistRestControllerIT implements WithAssertions {
   private FollowArtistDto followArtistDto;
   private FollowArtistRequest followArtistRequest;
 
+  private UserEntity userEntity;
+
   @Value("${server.address}")
   private String serverAddress;
 
@@ -53,15 +54,16 @@ class FollowArtistRestControllerIT implements WithAssertions {
   void setUp() {
     String requestUri   = "http://" + serverAddress + ":" + port + Endpoints.Rest.FOLLOW_ARTISTS_V1;
     requestHandler      = new RestAssuredRequestHandler<>(requestUri, USERNAME, PASSWORD);
-    followArtistDto     = new FollowArtistDto(USER_ID, ARTIST_NAME, ARTIST_DISCOGS_ID);
     followArtistRequest = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
-    userRepository.save(UserEntity.builder()
-                  .username(USERNAME)
-                  .email(EMAIL)
-                  .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
-                  .enabled(true)
-                  .userRoles(UserRole.createUserRole())
-                  .build());
+    userEntity          = UserEntity.builder()
+            .username(USERNAME)
+            .email(EMAIL)
+            .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
+            .enabled(true)
+            .userRoles(UserRole.createUserRole())
+            .build();
+    userRepository.save(userEntity);
+    followArtistDto     = new FollowArtistDto(userEntity.getPublicId(), ARTIST_NAME, ARTIST_DISCOGS_ID);
   }
 
   @AfterEach
@@ -97,7 +99,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
             .contentType(ContentType.JSON);
 
     assertThat(errorResponse).isNotNull();
-    assertThat(errorResponse.getMessages()).hasSize(2);
+    assertThat(errorResponse.getMessages()).hasSize(1);
   }
 
   @Test

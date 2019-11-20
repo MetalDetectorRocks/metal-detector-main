@@ -15,16 +15,21 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
+public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRestClient {
 
-  static final String ARTIST_NAME_SEARCH_URL_FRAGMENT = "/database/search?type=artist&q={artistQueryString}&page={page}&per_page={size}";
+  public static final String ARTIST_NAME_SEARCH_URL_FRAGMENT = "/database/search?type=artist&q={artistQueryString}&page={page}&per_page={size}";
   static final String ARTIST_ID_SEARCH_URL_FRAGMENT = "/artists/{artistId}";
 
+  private final RestTemplate restTemplate;
+  private final DiscogsConfig discogsConfig;
+
   @Autowired
-  public ArtistSearchRestClient(RestTemplate restTemplate, DiscogsConfig discogsConfig) {
-    super(restTemplate, discogsConfig);
+  public DiscogsArtistSearchRestClientImpl(RestTemplate restTemplate, DiscogsConfig discogsConfig) {
+    this.restTemplate = restTemplate;
+    this.discogsConfig = discogsConfig;
   }
 
+  @Override
   public Optional<DiscogsArtistSearchResultContainer> searchByName(String artistQueryString, int page, int size) {
     if (StringUtils.isEmpty(artistQueryString)) {
       return Optional.empty();
@@ -44,6 +49,7 @@ public class ArtistSearchRestClient extends AbstractDiscogsRestClient {
     return Optional.of(responseEntity.getBody());
   }
 
+  @Override
   public Optional<DiscogsArtist> searchById(long artistId) {
     if (artistId <= 0) {
       return Optional.empty();

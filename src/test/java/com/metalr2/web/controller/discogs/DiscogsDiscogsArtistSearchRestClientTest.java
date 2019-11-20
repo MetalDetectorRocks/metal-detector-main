@@ -22,12 +22,12 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.metalr2.web.controller.discogs.ArtistSearchRestClient.ARTIST_ID_SEARCH_URL_FRAGMENT;
-import static com.metalr2.web.controller.discogs.ArtistSearchRestClient.ARTIST_NAME_SEARCH_URL_FRAGMENT;
+import static com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClientImpl.ARTIST_ID_SEARCH_URL_FRAGMENT;
+import static com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClientImpl.ARTIST_NAME_SEARCH_URL_FRAGMENT;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class DiscogsArtistSearchRestClientTest implements WithAssertions {
+class DiscogsDiscogsArtistSearchRestClientTest implements WithAssertions {
 
   private static final int DEFAULT_PAGE = 1;
   private static final int DEFAULT_SIZE = 10;
@@ -44,7 +44,7 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
   private RestTemplate restTemplate;
 
   @InjectMocks
-  private ArtistSearchRestClient artistSearchClient;
+  private DiscogsArtistSearchRestClientImpl artistSearchClient;
 
   @BeforeEach
   void setUp() {

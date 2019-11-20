@@ -5,7 +5,8 @@ import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ValidationException;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.followArtist.FollowArtistService;
-import com.metalr2.web.controller.discogs.ArtistSearchRestClient;
+import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClient;
+import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClientImpl;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.DiscogsPagination;
@@ -36,13 +37,13 @@ public class SearchArtistRestController {
   private static final int DEFAULT_PAGE_SIZE = 25;
   private static final int DEFAULT_PAGE = 1;
 
-  private final ArtistSearchRestClient artistSearchRestClient;
+  private final DiscogsArtistSearchRestClient discogsArtistSearchRestClient;
   private final FollowArtistService followArtistService;
 
   @Autowired
-  public SearchArtistRestController(ArtistSearchRestClient artistSearchRestClient,FollowArtistService followArtistService) {
-    this.artistSearchRestClient = artistSearchRestClient;
-    this.followArtistService    = followArtistService;
+  public SearchArtistRestController(DiscogsArtistSearchRestClient discogsArtistSearchRestClient, FollowArtistService followArtistService) {
+    this.discogsArtistSearchRestClient = discogsArtistSearchRestClient;
+    this.followArtistService = followArtistService;
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
@@ -61,7 +62,7 @@ public class SearchArtistRestController {
   }
 
   private ArtistNameSearchResponse searchArtist(ArtistSearchRequest artistSearchRequest, String publicUserId) {
-    Optional<DiscogsArtistSearchResultContainer> artistSearchResultsOptional = artistSearchRestClient.searchByName(artistSearchRequest.getArtistName(),
+    Optional<DiscogsArtistSearchResultContainer> artistSearchResultsOptional = discogsArtistSearchRestClient.searchByName(artistSearchRequest.getArtistName(),
             artistSearchRequest.getPage(), artistSearchRequest.getSize());
 
     if (artistSearchResultsOptional.isEmpty()) {
