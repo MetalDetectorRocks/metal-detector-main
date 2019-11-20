@@ -52,7 +52,7 @@ public class SearchArtistRestController {
     validateRequest(bindingResult);
 
     ArtistNameSearchResponse artistNameSearchResponse = searchArtist(artistSearchRequest, ((UserEntity)usernamePasswordAuthenticationToken.getPrincipal()).getPublicId());
-    return ResponseEntity.ok(artistNameSearchResponse);
+    return artistNameSearchResponse.getArtistSearchResults().isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(artistNameSearchResponse);
   }
 
   private void validateRequest(BindingResult bindingResult) {
@@ -66,15 +66,15 @@ public class SearchArtistRestController {
             artistSearchRequest.getPage(), artistSearchRequest.getSize());
 
     if (artistSearchResultsOptional.isEmpty()) {
-      return new ArtistNameSearchResponse(Collections.EMPTY_LIST,new Pagination(),artistSearchRequest.getArtistName());
+      return new ArtistNameSearchResponse(Collections.EMPTY_LIST,new Pagination());
     }
 
     DiscogsArtistSearchResultContainer discogsArtistSearchResults = artistSearchResultsOptional.get();
 
-    return createArtistNameSearchResponse(artistSearchRequest,discogsArtistSearchResults, publicUserId);
+    return createArtistNameSearchResponse(discogsArtistSearchResults, publicUserId);
   }
 
-  private ArtistNameSearchResponse createArtistNameSearchResponse(ArtistSearchRequest artistSearchRequest, DiscogsArtistSearchResultContainer artistSearchResults, String publicUserId) {
+  private ArtistNameSearchResponse createArtistNameSearchResponse(DiscogsArtistSearchResultContainer artistSearchResults, String publicUserId) {
     DiscogsPagination discogsPagination         = artistSearchResults.getDiscogsPagination();
     DiscogsPaginationUrls discogsPaginationUrls = discogsPagination.getUrls();
 
@@ -92,6 +92,6 @@ public class SearchArtistRestController {
     Pagination pagination = new Pagination(discogsPagination.getPagesTotal(), discogsPagination.getCurrentPage(),
             size, nextPage);
 
-    return new ArtistNameSearchResponse(dtoArtistSearchResults, pagination, artistSearchRequest.getArtistName());
+    return new ArtistNameSearchResponse(dtoArtistSearchResults, pagination);
   }
 }

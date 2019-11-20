@@ -13,7 +13,6 @@ public class ArtistNameSearchResponse {
 
   private List<ArtistSearchResult> artistSearchResults;
   private Pagination pagination;
-  private String requestedArtistName;
 
   public ArtistNameSearchResponse() {
     artistSearchResults = new ArrayList<>();
