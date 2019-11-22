@@ -7,10 +7,10 @@
     <h1>Search Artists</h1>
     <!-- Search Form -->
     <div class="mb-3">
-        <form id="searchForm">
-            <input type="text" id="artistName" class="form-control">
-            <button id="searchButton" class="btn btn-primary btn-dark font-weight-bold" type="button"
-                    th:attr="onclick=|searchArtist(1,25)|"
+        <form id="searchForm" onsubmit="return searchArtist(1,25)">
+            <label for="artistName"></label><input type="text" id="artistName" class="form-control">
+            <button id="searchButton" class="btn btn-primary btn-dark font-weight-bold" type="submit"
+                    onclick="return searchArtist(1,25)"
                     th:text="Search">Search</button>
         </form>
     </div>
