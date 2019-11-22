@@ -72,7 +72,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
   }
 
   @Test
-  @DisplayName("CREATE with valid request should create an entity and return the correct dto")
+  @DisplayName("CREATE with valid request should create an entity")
   void create_with_valid_request_should_return_201() {
     assertThat(followArtistService.exists(followArtistDto)).isFalse();
 

@@ -26,7 +26,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -107,6 +107,8 @@ class SearchArtistRestControllerIT implements WithAssertions {
     assertThat(pagination.getSize()).isEqualTo(DEFAULT_SIZE);
     assertThat(pagination.getTotalPages()).isEqualTo(DEFAULT_PAGE+1);
     assertThat(pagination.getNextPage()).isEqualTo(DEFAULT_PAGE+1);
+
+    verify(artistSearchClient,times(1)).searchByName(artistSearchRequest.getArtistName(),artistSearchRequest.getPage(),artistSearchRequest.getSize());
   }
 
   @Test
@@ -118,18 +120,22 @@ class SearchArtistRestControllerIT implements WithAssertions {
 
     // assert
     validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value());
+
+    verify(artistSearchClient,times(0)).searchByName(badArtistSearchRequest.getArtistName(),badArtistSearchRequest.getPage(),badArtistSearchRequest.getSize());
   }
 
   @Test
   @DisplayName("POST with empty request should return 404")
   void post_with_empty_request_should_return_404() {
-    ArtistSearchRequest artistSearchRequest = new ArtistSearchRequest("",DEFAULT_PAGE,DEFAULT_SIZE);
-    when(artistSearchClient.searchByName(artistSearchRequest.getArtistName(),artistSearchRequest.getPage(),artistSearchRequest.getSize()))
+    ArtistSearchRequest emptyArtistSearchRequest = new ArtistSearchRequest("",DEFAULT_PAGE,DEFAULT_SIZE);
+    when(artistSearchClient.searchByName(emptyArtistSearchRequest.getArtistName(),emptyArtistSearchRequest.getPage(),emptyArtistSearchRequest.getSize()))
             .thenReturn(Optional.empty());
 
-    ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, artistSearchRequest);
+    ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, emptyArtistSearchRequest);
 
     // assert
     validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
+
+    verify(artistSearchClient,times(1)).searchByName(emptyArtistSearchRequest.getArtistName(),emptyArtistSearchRequest.getPage(),emptyArtistSearchRequest.getSize());
   }
 }

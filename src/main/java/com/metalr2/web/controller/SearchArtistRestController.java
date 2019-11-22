@@ -6,7 +6,6 @@ import com.metalr2.model.exceptions.ValidationException;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClient;
-import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClientImpl;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.DiscogsPagination;
@@ -17,7 +16,9 @@ import com.metalr2.web.dto.response.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,7 +49,7 @@ public class SearchArtistRestController {
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<ArtistNameSearchResponse> handleSearchRequest(@Valid @RequestBody ArtistSearchRequest artistSearchRequest, BindingResult bindingResult, UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) {
+  public ResponseEntity<ArtistNameSearchResponse> handleSearchRequest(@Valid @RequestBody ArtistSearchRequest artistSearchRequest, BindingResult bindingResult, Authentication usernamePasswordAuthenticationToken) {
     validateRequest(bindingResult);
 
     ArtistNameSearchResponse artistNameSearchResponse = searchArtist(artistSearchRequest, ((UserEntity)usernamePasswordAuthenticationToken.getPrincipal()).getPublicId());
@@ -66,7 +67,7 @@ public class SearchArtistRestController {
             artistSearchRequest.getPage(), artistSearchRequest.getSize());
 
     if (artistSearchResultsOptional.isEmpty()) {
-      return new ArtistNameSearchResponse(Collections.EMPTY_LIST,new Pagination());
+      return new ArtistNameSearchResponse(Collections.emptyList(),new Pagination());
     }
 
     DiscogsArtistSearchResultContainer discogsArtistSearchResults = artistSearchResultsOptional.get();

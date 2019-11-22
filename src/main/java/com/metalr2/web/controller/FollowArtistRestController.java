@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class FollowArtistRestController {
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<Void> followArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult, UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) {
+  public ResponseEntity<Void> followArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult, Authentication usernamePasswordAuthenticationToken) {
     validateRequest(bindingResult);
 
     FollowArtistDto followArtistDto = FollowArtistDto.builder()
@@ -43,7 +44,7 @@ public class FollowArtistRestController {
   }
 
   @DeleteMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<Void> unfollowArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult, UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) {
+  public ResponseEntity<Void> unfollowArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult, Authentication usernamePasswordAuthenticationToken) {
     validateRequest(bindingResult);
 
     FollowArtistDto followArtistDto = FollowArtistDto.builder()
