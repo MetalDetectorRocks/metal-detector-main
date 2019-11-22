@@ -151,7 +151,7 @@ class FollowDiscogsArtistServiceTest implements WithAssertions {
   @DisplayName("findPerUser() returns empty list if a given user id does not exists")
   void find_per_user_returns_empty_list(){
     // given
-    when(followedArtistsRepository.findAllByPublicUserId(anyString())).thenReturn(Collections.EMPTY_LIST);
+    when(followedArtistsRepository.findAllByPublicUserId(anyString())).thenReturn(Collections.emptyList());
 
     // when
     List<FollowArtistDto> followArtistDtos = followArtistService.findPerUser(unknownUserId);

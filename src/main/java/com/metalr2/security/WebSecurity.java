@@ -2,10 +2,7 @@ package com.metalr2.security;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserRole;
-import com.metalr2.security.handler.CustomAccessDeniedHandler;
-import com.metalr2.security.handler.CustomAuthenticationFailureHandler;
-import com.metalr2.security.handler.CustomAuthenticationSuccessHandler;
-import com.metalr2.security.handler.CustomLogoutSuccessHandler;
+import com.metalr2.security.handler.*;
 import com.metalr2.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
