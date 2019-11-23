@@ -30,7 +30,8 @@ public class FollowArtistRestController {
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<Void> followArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult, Authentication usernamePasswordAuthenticationToken) {
+  public ResponseEntity<Void> followArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult,
+                                           Authentication usernamePasswordAuthenticationToken) {
     validateRequest(bindingResult);
 
     FollowArtistDto followArtistDto = FollowArtistDto.builder()
@@ -44,7 +45,8 @@ public class FollowArtistRestController {
   }
 
   @DeleteMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<Void> unfollowArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult, Authentication usernamePasswordAuthenticationToken) {
+  public ResponseEntity<Void> unfollowArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult,
+                                             Authentication usernamePasswordAuthenticationToken) {
     validateRequest(bindingResult);
 
     FollowArtistDto followArtistDto = FollowArtistDto.builder()

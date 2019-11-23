@@ -4,7 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.followArtist.FollowArtistService;
-import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClientImpl;
+import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClient;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.discogs.artist.DiscogsArtist;
 import com.metalr2.web.dto.discogs.artist.DiscogsMember;
@@ -29,15 +29,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ArtistDetailsController {
 
-  private final DiscogsArtistSearchRestClientImpl discogsArtistSearchRestClient;
+  private final DiscogsArtistSearchRestClient artistSearchClient;
   private final FollowArtistService followArtistService;
 
   private static final String DEFAULT_ARTIST_ID = "0";
   private static final String DEFAULT_ARTIST_NAME = "";
 
   @Autowired
-  public ArtistDetailsController(DiscogsArtistSearchRestClientImpl discogsArtistSearchRestClient, FollowArtistService followArtistService) {
-    this.discogsArtistSearchRestClient = discogsArtistSearchRestClient;
+  public ArtistDetailsController(DiscogsArtistSearchRestClient artistSearchClient, FollowArtistService followArtistService) {
+    this.artistSearchClient = artistSearchClient;
     this.followArtistService    = followArtistService;
   }
 
@@ -48,7 +48,7 @@ public class ArtistDetailsController {
   }
 
   private ModelAndView createArtistDetailsModelAndView(String artistName, long artistId) {
-    Optional<DiscogsArtist> artistOptional = discogsArtistSearchRestClient.searchById(artistId);
+    Optional<DiscogsArtist> artistOptional = artistSearchClient.searchById(artistId);
 
     if (artistOptional.isEmpty()) {
       return createBadArtistIdSearchRequestModelAndView(artistName, artistId);
