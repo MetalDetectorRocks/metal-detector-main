@@ -41,6 +41,8 @@ class SearchArtistRestControllerIT implements WithAssertions {
   private static final long DISCOGS_ARTIST_ID         = 252211L;
   private static final int DEFAULT_PAGE = 1;
   private static final int DEFAULT_SIZE = 10;
+  private static final int TOTAL_PAGES  = 2;
+
 
   @Autowired
   private UserRepository userRepository;
@@ -58,7 +60,7 @@ class SearchArtistRestControllerIT implements WithAssertions {
 
   @BeforeEach
   void setUp() {
-    String requestUri   = "http://" + serverAddress + ":" + port + Endpoints.Rest.ARTISTS;
+    String requestUri   = "http://" + serverAddress + ":" + port + Endpoints.Rest.ARTISTS_V1;
     requestHandler      = new RestAssuredRequestHandler<>(requestUri, USERNAME, PASSWORD);
     userRepository.save(UserEntity.builder()
             .username(USERNAME)
@@ -90,23 +92,15 @@ class SearchArtistRestControllerIT implements WithAssertions {
 
     ArtistNameSearchResponse artistNameSearchResponse = validatableResponse.extract().as(ArtistNameSearchResponse.class);
 
-    assertThat(artistNameSearchResponse).isNotNull();
-    assertThat(artistNameSearchResponse.getPagination()).isNotNull();
-
     assertThat(artistNameSearchResponse.getArtistSearchResults()).isNotNull().hasSize(1);
 
     ArtistNameSearchResponse.ArtistSearchResult artistSearchResult = artistNameSearchResponse.getArtistSearchResults().get(0);
 
-    assertThat(artistSearchResult).isNotNull();
-    assertThat(artistSearchResult.getArtistName()).isEqualTo(VALID_SEARCH_REQUEST);
-    assertThat(artistSearchResult.getId()).isEqualTo(DISCOGS_ARTIST_ID);
+    assertThat(artistSearchResult).isEqualTo(new ArtistNameSearchResponse.ArtistSearchResult(null,DISCOGS_ARTIST_ID,VALID_SEARCH_REQUEST,false));
 
     Pagination pagination = artistNameSearchResponse.getPagination();
 
-    assertThat(pagination.getCurrentPage()).isEqualTo(DEFAULT_PAGE);
-    assertThat(pagination.getSize()).isEqualTo(DEFAULT_SIZE);
-    assertThat(pagination.getTotalPages()).isEqualTo(DEFAULT_PAGE+1);
-    assertThat(pagination.getNextPage()).isEqualTo(DEFAULT_PAGE+1);
+    assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE, DEFAULT_PAGE + 1));
 
     verify(artistSearchClient,times(1)).searchByName(artistSearchRequest.getArtistName(),artistSearchRequest.getPage(),artistSearchRequest.getSize());
   }
