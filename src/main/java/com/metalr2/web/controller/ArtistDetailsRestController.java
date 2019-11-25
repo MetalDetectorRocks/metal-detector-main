@@ -46,7 +46,8 @@ public class ArtistDetailsRestController {
                                                                    Authentication authentication) {
     validateRequest(bindingResult);
 
-    return ResponseEntity.of(searchArtistDetails(artistDetailsRequest, ((UserEntity)authentication.getPrincipal()).getPublicId()));
+    Optional<ArtistDetailsResponse> artistDetailsResponse = searchArtistDetails(artistDetailsRequest, ((UserEntity)authentication.getPrincipal()).getPublicId());
+    return ResponseEntity.of(artistDetailsResponse);
   }
 
   private void validateRequest(BindingResult bindingResult) {

@@ -99,7 +99,7 @@ class SearchArtistRestControllerIT implements WithAssertions {
 
     Pagination pagination = artistNameSearchResponse.getPagination();
 
-    assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE, DEFAULT_PAGE + 1));
+    assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE));
 
     verify(artistSearchClient,times(1)).searchByName(artistSearchRequest.getArtistName(),artistSearchRequest.getPage(),artistSearchRequest.getSize());
   }

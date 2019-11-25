@@ -110,7 +110,7 @@ const createResultCards = function(artistNameSearchResponse){
 };
 
 /**
- * Builds HTML for pagination links
+ * Builds HTML for pagination buttons
  * @param artistNameSearchResponse  The json response
  */
 const createPagination = function (artistNameSearchResponse) {
@@ -118,11 +118,12 @@ const createPagination = function (artistNameSearchResponse) {
         const previousElement = document.createElement('a');
         previousElement.href = "#";
         previousElement.text = "Previous";
+        previousElement.className = "btn btn-dark btn-pagination";
         previousElement.onclick = (function (page, size) {
             return function () {
                 searchArtist(page, size)
             };
-        })(artistNameSearchResponse.pagination.nextPage, artistNameSearchResponse.pagination.size);
+        })(artistNameSearchResponse.pagination.currentPage-1, artistNameSearchResponse.pagination.size);
 
         document.getElementById('paginationContainer').appendChild(previousElement);
     }
@@ -132,6 +133,7 @@ const createPagination = function (artistNameSearchResponse) {
             const pageNumberElement = document.createElement('a');
             pageNumberElement.href = "#";
             pageNumberElement.text = index;
+            pageNumberElement.className = "btn btn-dark btn-pagination";
             pageNumberElement.onclick = (function (page, size) {
                 return function () {
                     searchArtist(page, size)
@@ -146,11 +148,12 @@ const createPagination = function (artistNameSearchResponse) {
         const nextElement = document.createElement('a');
         nextElement.href = "#";
         nextElement.text = "Next";
+        nextElement.className = "btn btn-dark btn-pagination";
         nextElement.onclick = (function (page, size) {
             return function () {
                 searchArtist(page, size)
             };
-        })(artistNameSearchResponse.pagination.nextPage, artistNameSearchResponse.pagination.size);
+        })(artistNameSearchResponse.pagination.currentPage+1, artistNameSearchResponse.pagination.size);
 
         document.getElementById('paginationContainer').appendChild(nextElement);
     }
