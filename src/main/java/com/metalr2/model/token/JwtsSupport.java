@@ -1,6 +1,5 @@
 package com.metalr2.model.token;
 
-import com.metalr2.security.ExpirationTime;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -8,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
 
@@ -24,7 +24,7 @@ public class JwtsSupport {
     TOKEN_ISSUER = tokenIssuer;
   }
 
-  public String generateToken(String subject, ExpirationTime expirationTime) {
+  public String generateToken(String subject, Duration expirationTime) {
     long currentTimeMillis = System.currentTimeMillis();
     return Jwts.builder()
                .setSubject(subject)

@@ -12,7 +12,6 @@ import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserFactory;
 import com.metalr2.model.user.UserRepository;
 import com.metalr2.model.user.UserRole;
-import com.metalr2.security.ExpirationTime;
 import com.metalr2.web.DtoFactory;
 import com.metalr2.web.DtoFactory.UserDtoFactory;
 import com.metalr2.web.dto.UserDto;
@@ -35,6 +34,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -385,7 +385,7 @@ class UserServiceTest implements WithAssertions {
     // given
     ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
     String TOKEN_STRING = "token";
-    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.EMAIL_VERIFICATION, ExpirationTime.ONE_HOUR.toMillis());
+    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.EMAIL_VERIFICATION, Duration.ofHours(1).toMillis());
     tokenEntity.getUser().setEnabled(false); // should be set to true within verification process
     when(tokenRepository.findEmailVerificationToken(TOKEN_STRING)).thenReturn(Optional.of(tokenEntity));
 

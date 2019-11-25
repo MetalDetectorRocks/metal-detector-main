@@ -9,12 +9,12 @@ import com.metalr2.model.token.TokenRepository;
 import com.metalr2.model.token.TokenType;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserRepository;
-import com.metalr2.security.ExpirationTime;
 import com.metalr2.service.email.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -45,18 +45,21 @@ public class TokenServiceImpl implements TokenService {
   @Override
   @Transactional
   public String createEmailVerificationToken(String publicUserId) {
-    return createToken(publicUserId, TokenType.EMAIL_VERIFICATION, ExpirationTime.TEN_DAYS);
+    return createToken(publicUserId, TokenType.EMAIL_VERIFICATION, Duration.ofDays(10));
   }
 
   @Override
   @Transactional
   public String createResetPasswordToken(String publicUserId) {
-    return createToken(publicUserId, TokenType.PASSWORD_RESET, ExpirationTime.ONE_HOUR);
+    return createToken(publicUserId, TokenType.PASSWORD_RESET, Duration.ofHours(1));
   }
 
-  private String createToken(String publicUserId, TokenType tokenType, ExpirationTime expirationTime) {
+  private String createToken(String publicUserId, TokenType tokenType, Duration expirationTime) {
     String      tokenString = jwtsSupport.generateToken(publicUserId, expirationTime);
-    UserEntity  userEntity  = userRepository.findByPublicId(publicUserId).orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+    UserEntity  userEntity  = userRepository.findByPublicId(publicUserId).orElseThrow(
+            () -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString())
+    );
+
     TokenEntity tokenEntity = TokenEntity.builder()
                                          .user(userEntity)
                                          .tokenString(tokenString)

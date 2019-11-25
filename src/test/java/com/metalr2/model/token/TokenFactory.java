@@ -2,8 +2,8 @@ package com.metalr2.model.token;
 
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserFactory;
-import com.metalr2.security.ExpirationTime;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -13,7 +13,7 @@ public class TokenFactory {
   private static final UserEntity userEntity     = UserFactory.createUser("JohnD", "john.d@example.com");
 
   public static TokenEntity createToken() {
-    return createToken(ExpirationTime.ONE_HOUR.toMillis());
+    return createToken(Duration.ofHours(1).toMillis());
   }
 
   public static TokenEntity createToken(TokenType tokenType, long expireInMillis) {
@@ -25,7 +25,7 @@ public class TokenFactory {
   }
 
   public static TokenEntity createToken(TokenType tokenType, UserEntity user) {
-    return createToken(tokenType, user, ExpirationTime.ONE_HOUR.toMillis());
+    return createToken(tokenType, user, Duration.ofHours(1).toMillis());
   }
 
   private static TokenEntity createToken(TokenType tokenType, UserEntity user, long expireInMillis) {
