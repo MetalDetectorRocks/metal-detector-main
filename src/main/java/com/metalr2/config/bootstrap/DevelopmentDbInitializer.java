@@ -2,7 +2,6 @@ package com.metalr2.config.bootstrap;
 
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserRole;
-import com.metalr2.web.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
