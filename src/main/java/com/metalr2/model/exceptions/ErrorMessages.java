@@ -7,9 +7,8 @@ public enum ErrorMessages {
   RESOURCE_DOES_NOT_EXIST("Resource does not exist."),
   USER_WITH_ID_NOT_FOUND("User with provided id not found."),
   USER_NOT_FOUND("User with provided email or username not found."),
-  TOKEN_NOT_FOUND("Token not found."), // what to do?
+  TOKEN_NOT_FOUND("Token not found."),
   EMAIL_VERIFICATION_TOKEN_EXPIRED("Email verification token is expired."),
-  PASSWORD_RESET_TOKEN_EXPIRED("Password reset token is expired. Please reset the password again."),
   VALIDATION_ERROR("There were errors validating your request. Please refer to the documentation for a valid request.");
 
   private final String errorMessage;
