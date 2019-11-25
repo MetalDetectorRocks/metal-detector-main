@@ -46,8 +46,15 @@ public class ArtistDetailsRestController {
                                                                    Authentication authentication) {
     validateRequest(bindingResult);
 
-    Optional<ArtistDetailsResponse> artistDetailsResponse = searchArtistDetails(artistDetailsRequest, ((UserEntity)authentication.getPrincipal()).getPublicId());
-    return ResponseEntity.of(artistDetailsResponse);
+    Optional<DiscogsArtist> artistOptional = artistSearchClient.searchById(artistDetailsRequest.getArtistId());
+
+    if (artistOptional.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    ArtistDetailsResponse artistDetailsResponse = mapSearchResult(artistOptional.get(), artistDetailsRequest,
+            ((UserEntity)authentication.getPrincipal()).getPublicId());
+    return ResponseEntity.ok(artistDetailsResponse);
   }
 
   private void validateRequest(BindingResult bindingResult) {
@@ -56,18 +63,12 @@ public class ArtistDetailsRestController {
     }
   }
 
-  private Optional<ArtistDetailsResponse> searchArtistDetails(ArtistDetailsRequest artistDetailsRequest, String publicUserId) {
-    Optional<DiscogsArtist> artistOptional = artistSearchClient.searchById(artistDetailsRequest.getArtistId());
-
-    return artistOptional.isEmpty() ? Optional.empty() : createArtistDetailsResponse(artistOptional.get(), artistDetailsRequest, publicUserId);
-  }
-
-  private Optional<ArtistDetailsResponse> createArtistDetailsResponse(DiscogsArtist discogsArtist, ArtistDetailsRequest artistDetailsRequest, String publicUserId) {
+  private ArtistDetailsResponse mapSearchResult(DiscogsArtist discogsArtist, ArtistDetailsRequest artistDetailsRequest, String publicUserId) {
     String artistProfile      = discogsArtist.getProfile().isEmpty()      ? null : discogsArtist.getProfile();
     List<String> activeMember = discogsArtist.getDiscogsMembers() == null ? null : discogsArtist.getDiscogsMembers().stream().filter(DiscogsMember::isActive).map(DiscogsMember::getName).collect(Collectors.toList());
     List<String> formerMember = discogsArtist.getDiscogsMembers() == null ? null : discogsArtist.getDiscogsMembers().stream().filter(discogsMember -> !discogsMember.isActive()).map(DiscogsMember::getName).collect(Collectors.toList());
     List<String> images       = discogsArtist.getDiscogsImages()  == null ? null : discogsArtist.getDiscogsImages().stream().map(DiscogsImage::getResourceUrl).collect(Collectors.toList());
     boolean isFollowed        = followArtistService.exists(new FollowArtistDto(publicUserId, artistDetailsRequest.getArtistName(), discogsArtist.getId()));
-    return Optional.of(new ArtistDetailsResponse(artistDetailsRequest.getArtistName(), artistDetailsRequest.getArtistId(), artistProfile, activeMember, formerMember, images, isFollowed));
+    return new ArtistDetailsResponse(artistDetailsRequest.getArtistName(), artistDetailsRequest.getArtistId(), artistProfile, activeMember, formerMember, images, isFollowed);
   }
 }

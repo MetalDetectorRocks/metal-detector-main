@@ -10,6 +10,7 @@ import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClientImpl;
 import com.metalr2.web.dto.request.ArtistDetailsRequest;
 import com.metalr2.web.dto.request.ArtistSearchRequest;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
+import com.metalr2.web.dto.response.ErrorResponse;
 import com.metalr2.web.dto.response.Pagination;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
 import io.restassured.http.ContentType;
@@ -99,14 +100,17 @@ class ArtistDetailsRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("POST with bad request should return 400")
   void post_with_bad_request_should_return_400() {
-    ArtistDetailsRequest badArtistDetailsRequest = new ArtistDetailsRequest(null,DISCOGS_ARTIST_ID);
+    ArtistDetailsRequest badArtistDetailsRequest = new ArtistDetailsRequest(null,null);
 
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, badArtistDetailsRequest);
+    ErrorResponse errorResponse = validatableResponse.extract().as(ErrorResponse.class);
 
     // assert
-    validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value());
+    validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value())
+            .contentType(ContentType.JSON);
 
-    verify(artistSearchClient,times(0)).searchById(badArtistDetailsRequest.getArtistId());
+    assertThat(errorResponse).isNotNull();
+    assertThat(errorResponse.getMessages()).hasSize(2);
   }
 
 }

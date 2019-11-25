@@ -13,6 +13,7 @@ public class ArtistDetailsRequest {
 
   @NotNull
   private String artistName;
-  private long artistId;
+  @NotNull
+  private Long artistId;
 
 }
