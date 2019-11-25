@@ -26,7 +26,7 @@ function searchArtist(page,size){
             buildResults(artistNameSearchResponse);
         },
         error: function(){
-            createNoResultsMessage();
+            createNoArtistNameSearchResultsMessage(artistName);
         }
     });
 
@@ -89,7 +89,7 @@ const createResultCards = function(artistNameSearchResponse){
         artistDetailsElement.href = "#";
         artistDetailsElement.text = "Details for " + artistSearchResult.artistName;
         artistDetailsElement.onclick = function func(){
-            return artistDetails(artistSearchResult.artistName,artistSearchResult.id);
+            artistDetails(artistSearchResult.artistName,artistSearchResult.id);
         };
         cardBody.append(artistDetailsElement);
 
@@ -111,7 +111,7 @@ const createResultCards = function(artistNameSearchResponse){
 
 /**
  * Builds HTML for pagination links
- * @param artistNameSearchResponse  JSON response
+ * @param artistNameSearchResponse  The json response
  */
 const createPagination = function (artistNameSearchResponse) {
     if (artistNameSearchResponse.pagination.currentPage > 1) {
@@ -159,13 +159,12 @@ const createPagination = function (artistNameSearchResponse) {
 /**
  * Builds HTML for the message for an empty result
  */
-const createNoResultsMessage = function () {
+const createNoArtistNameSearchResultsMessage = function (artistName) {
     clear();
 
     const noResultsMessageElement = document.createElement('div');
-    const artistName = document.getElementById('artistName').value;
     noResultsMessageElement.className = "mb-3 alert alert-danger";
-    noResultsMessageElement.role = "alter";
+    noResultsMessageElement.role = "alert";
     noResultsMessageElement.id = "noResultsMessageElement";
     noResultsMessageElement.innerText =  "No artists could be found for the given name: " + artistName;
 

@@ -1,3 +1,9 @@
+/**
+ * Send ajax request to retrieve artist details
+ * @param artistName        The artist's name
+ * @param artistId          The artist's discogs id
+ * @returns {boolean}
+ */
 function artistDetails(artistName,artistId){
     const artistDetailsRequest =
         {
@@ -17,14 +23,18 @@ function artistDetails(artistName,artistId){
         success: function(artistDetailsResponse){
             createArtistDetailsResultCard(artistDetailsResponse);
         },
-        error: function(e){
-            console.log(e.message);
+        error: function(){
+            createNoArtistDetailsMessage(artistName,artistId);
         }
     });
 
     return false;
 }
 
+/**
+ * Build the HTML for the result
+ * @param artistDetailsResponse     The json response
+ */
 const createArtistDetailsResultCard = function(artistDetailsResponse) {
     clear();
 
@@ -64,19 +74,22 @@ const createArtistDetailsResultCard = function(artistDetailsResponse) {
         const cardBodyImages = buildDefaultCardBody("Images");
         card.appendChild(cardBodyImages);
 
-        const images = document.createElement('div');
         jQuery.each(artistDetailsResponse.images, function (i, image){
             const imageElement = document.createElement('img');
             imageElement.alt = "Image of " + artistDetailsResponse.artistName;
             imageElement.src = image;
-            images.appendChild(imageElement);
+            cardBodyImages.appendChild(imageElement);
         });
-        cardBodyImages.appendChild(images);
     }
 
     document.getElementById('artistDetailsContainer').appendChild(card);
 };
 
+/**
+ * Build a an empty card body with a title
+ * @param title     The card's title
+ * @returns {HTMLDivElement}
+ */
 function buildDefaultCardBody(title) {
     const cardBody = document.createElement('div');
     cardBody.className = "card-body";
@@ -85,9 +98,15 @@ function buildDefaultCardBody(title) {
     headingElement.innerText = title;
     cardBody.appendChild(headingElement);
 
-    return cardBody
+    return cardBody;
 }
 
+/**
+ * Builds a card body with a title and a list of Strings
+ * @param title     The card's title
+ * @param list      The list of Strings
+ * @returns {HTMLDivElement}
+ */
 function buildListCardBody(title,list) {
     const cardBody = document.createElement('div');
     cardBody.className = "card-body";
@@ -95,9 +114,6 @@ function buildListCardBody(title,list) {
     const headingElement = document.createElement('h3');
     headingElement.innerText = title;
     cardBody.appendChild(headingElement);
-
-    const listArea = document.createElement('div');
-    cardBody.appendChild(listArea);
 
     const listElement = document.createElement('ul');
     jQuery.each(list, function (i, listItem){
@@ -107,5 +123,35 @@ function buildListCardBody(title,list) {
     });
     cardBody.appendChild(listElement);
 
-    return cardBody
+    return cardBody;
 }
+
+/**
+ * Builds HTML for the message for an empty result
+ */
+const createNoArtistDetailsMessage = function (artistName,artistId) {
+    clear();
+
+    const noResultsMessageElement = document.createElement('div');
+    noResultsMessageElement.className = "mb-3 alert alert-danger";
+    noResultsMessageElement.role = "alert";
+    noResultsMessageElement.id = "noResultsMessageElement";
+
+    const messageTextElement = document.createElement('p');
+    messageTextElement.innerText = "No data could be found for the given parameters:";
+    noResultsMessageElement.appendChild(messageTextElement)
+
+    const parameterListElement = document.createElement('ul');
+
+    const listItemName = document.createElement('li');
+    listItemName.innerText = "Artist name: " + artistName;
+    parameterListElement.appendChild(listItemName);
+
+    const listItemId = document.createElement('li');
+    listItemId.innerText = "Artist id: " + artistId;
+    parameterListElement.appendChild(listItemId);
+
+    noResultsMessageElement.appendChild(parameterListElement);
+
+    document.getElementById('noResultsMessageContainer').appendChild(noResultsMessageElement);
+};
