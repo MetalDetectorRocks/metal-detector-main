@@ -69,7 +69,7 @@ public class SearchArtistRestController {
   private Optional<ArtistNameSearchResponse> createArtistNameSearchResponse(DiscogsArtistSearchResultContainer artistSearchResults, String publicUserId) {
     DiscogsPagination discogsPagination = artistSearchResults.getDiscogsPagination();
 
-    int size = discogsPagination.getItemsPerPage();
+    int itemsPerPage = discogsPagination.getItemsPerPage();
 
     Set<Long> alreadyFollowedArtists = followArtistService.findPerUser(publicUserId).stream().map(FollowArtistDto::getArtistDiscogsId)
            .collect(Collectors.toSet());
@@ -80,7 +80,7 @@ public class SearchArtistRestController {
             .collect(Collectors.toList());
 
     Pagination pagination = new Pagination(discogsPagination.getPagesTotal(), discogsPagination.getCurrentPage(),
-            size);
+            itemsPerPage);
 
     return Optional.of(new ArtistNameSearchResponse(dtoArtistSearchResults, pagination));
   }

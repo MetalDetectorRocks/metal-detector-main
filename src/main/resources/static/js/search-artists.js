@@ -119,11 +119,11 @@ const createPagination = function (artistNameSearchResponse) {
         previousElement.href = "#";
         previousElement.text = "Previous";
         previousElement.className = "btn btn-dark btn-pagination";
-        previousElement.onclick = (function (page, size) {
+        previousElement.onclick = (function (page, itemsPerPage) {
             return function () {
-                searchArtist(page, size)
+                searchArtist(page, itemsPerPage)
             };
-        })(artistNameSearchResponse.pagination.currentPage-1, artistNameSearchResponse.pagination.size);
+        })(artistNameSearchResponse.pagination.currentPage-1, artistNameSearchResponse.pagination.itemsPerPage);
 
         document.getElementById('paginationContainer').appendChild(previousElement);
     }
@@ -134,11 +134,11 @@ const createPagination = function (artistNameSearchResponse) {
             pageNumberElement.href = "#";
             pageNumberElement.text = index;
             pageNumberElement.className = "btn btn-dark btn-pagination";
-            pageNumberElement.onclick = (function (page, size) {
+            pageNumberElement.onclick = (function (page, itemsPerPage) {
                 return function () {
-                    searchArtist(page, size)
+                    searchArtist(page, itemsPerPage)
                 };
-            })(index, artistNameSearchResponse.pagination.size);
+            })(index, artistNameSearchResponse.pagination.itemsPerPage);
 
             document.getElementById('paginationContainer').appendChild(pageNumberElement);
         }
@@ -149,11 +149,11 @@ const createPagination = function (artistNameSearchResponse) {
         nextElement.href = "#";
         nextElement.text = "Next";
         nextElement.className = "btn btn-dark btn-pagination";
-        nextElement.onclick = (function (page, size) {
+        nextElement.onclick = (function (page, itemsPerPage) {
             return function () {
-                searchArtist(page, size)
+                searchArtist(page, itemsPerPage)
             };
-        })(artistNameSearchResponse.pagination.currentPage+1, artistNameSearchResponse.pagination.size);
+        })(artistNameSearchResponse.pagination.currentPage+1, artistNameSearchResponse.pagination.itemsPerPage);
 
         document.getElementById('paginationContainer').appendChild(nextElement);
     }
