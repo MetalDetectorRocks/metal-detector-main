@@ -50,6 +50,7 @@ const buildResults = function(artistNameSearchResponse) {
 const clear = function () {
     $("#searchResultsContainer").empty();
     $("#paginationContainer").empty();
+    $("#artistDetailsContainer").empty();
 
     const noResultsMessageElement = document.getElementById('noResultsMessageElement');
     if (noResultsMessageElement != null) {
@@ -70,8 +71,7 @@ const createResultCards = function(artistNameSearchResponse){
         const card = document.createElement('div');
         card.className = "card";
 
-        const cardBody = document.createElement('div');
-        cardBody.className = "card-body";
+        const cardBody = buildDefaultCardBody(artistSearchResult.artistName);
         card.append(cardBody);
 
         if (artistSearchResult.thumb !== ""){
@@ -85,13 +85,12 @@ const createResultCards = function(artistNameSearchResponse){
         artistIdElement.innerText = artistSearchResult.id;
         cardBody.append(artistIdElement);
 
-        const artistNameElement = document.createElement('p');
-        artistNameElement.innerText = artistSearchResult.artistName;
-        cardBody.append(artistNameElement);
-
         const artistDetailsElement = document.createElement('a');
-        artistDetailsElement.href = "/artist-details?artistName=" + artistSearchResult.artistName + "&id=" + artistSearchResult.id;
+        artistDetailsElement.href = "#";
         artistDetailsElement.text = "Details for " + artistSearchResult.artistName;
+        artistDetailsElement.onclick = function func(){
+            return artistDetails(artistSearchResult.artistName,artistSearchResult.id);
+        };
         cardBody.append(artistDetailsElement);
 
         const breakElement = document.createElement('br');
@@ -172,20 +171,3 @@ const createNoResultsMessage = function () {
 
     document.getElementById('noResultsMessageContainer').appendChild(noResultsMessageElement);
 };
-
-/**
- * Builds the onclick function
- * @param artistName    Artist to follow
- * @param artistId      Artist's discogs id
- * @param isFollowed    true if user follows given artist
- * @param button        Button that was clicked
- * @returns {Function}
- */
-function createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, button) {
-    return function () {
-        if (isFollowed)
-            unfollowArtist(artistName,artistId,button);
-        else
-            followArtist(artistName,artistId,button);
-    };
-}

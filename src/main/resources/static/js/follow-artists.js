@@ -65,3 +65,31 @@ function unfollowArtist(artistName,artistId,el){
 
     return false;
 }
+
+/**
+ * Builds the onclick function
+ * @param artistName    Artist to follow
+ * @param artistId      Artist's discogs id
+ * @param isFollowed    true if user follows given artist
+ * @param button        Button that was clicked
+ * @returns {Function}
+ */
+function createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, button) {
+    return function () {
+        if (isFollowed)
+            unfollowArtist(artistName,artistId,button);
+        else
+            followArtist(artistName,artistId,button);
+    };
+}
+
+function createFollowArtistButton(artistName,artistId,isFollowed) {
+    const followArtistButtonElement = document.createElement('button');
+    followArtistButtonElement.id = "followArtistButton"+artistId;
+    followArtistButtonElement.type = "button";
+    followArtistButtonElement.className = "btn btn-primary btn-dark font-weight-bold";
+    followArtistButtonElement.textContent = isFollowed ? "Unfollow" : "Follow";
+    followArtistButtonElement.onclick =createOnClickFunctionFollowArtist(artistName,
+        artistId,isFollowed,followArtistButtonElement);
+    return followArtistButtonElement;
+}

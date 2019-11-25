@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import static com.metalr2.web.dto.response.ArtistNameSearchResponse.ArtistSearchResult;
 
 @RestController
-@RequestMapping({Endpoints.Rest.ARTISTS_V1})
+@RequestMapping(Endpoints.Rest.ARTISTS_V1)
 public class SearchArtistRestController {
 
   private static final int DEFAULT_PAGE_SIZE = 25;
@@ -51,11 +51,10 @@ public class SearchArtistRestController {
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<ArtistNameSearchResponse> handleSearchRequest(@Valid @RequestBody ArtistSearchRequest artistSearchRequest,
-                                                                      BindingResult bindingResult, Authentication usernamePasswordAuthenticationToken) {
+                                                                      BindingResult bindingResult, Authentication authentication) {
     validateRequest(bindingResult);
 
-    ArtistNameSearchResponse artistNameSearchResponse = searchArtist(artistSearchRequest, ((UserEntity)usernamePasswordAuthenticationToken.getPrincipal()).getPublicId());
-    return artistNameSearchResponse.getArtistSearchResults().isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(artistNameSearchResponse);
+    return ResponseEntity.of(searchArtist(artistSearchRequest, ((UserEntity)authentication.getPrincipal()).getPublicId()));
   }
 
   private void validateRequest(BindingResult bindingResult) {
@@ -64,18 +63,14 @@ public class SearchArtistRestController {
     }
   }
 
-  private ArtistNameSearchResponse searchArtist(ArtistSearchRequest artistSearchRequest, String publicUserId) {
+  private Optional<ArtistNameSearchResponse> searchArtist(ArtistSearchRequest artistSearchRequest, String publicUserId) {
     Optional<DiscogsArtistSearchResultContainer> artistSearchResultsOptional = artistSearchClient.searchByName(artistSearchRequest.getArtistName(),
             artistSearchRequest.getPage(), artistSearchRequest.getSize());
 
-    if (artistSearchResultsOptional.isEmpty()) {
-      return new ArtistNameSearchResponse(Collections.emptyList(),new Pagination());
-    }
-
-    return createArtistNameSearchResponse(artistSearchResultsOptional.get(), publicUserId);
+    return artistSearchResultsOptional.isEmpty() ? Optional.empty() : createArtistNameSearchResponse(artistSearchResultsOptional.get(), publicUserId);
   }
 
-  private ArtistNameSearchResponse createArtistNameSearchResponse(DiscogsArtistSearchResultContainer artistSearchResults, String publicUserId) {
+  private Optional<ArtistNameSearchResponse> createArtistNameSearchResponse(DiscogsArtistSearchResultContainer artistSearchResults, String publicUserId) {
     DiscogsPagination discogsPagination         = artistSearchResults.getDiscogsPagination();
     DiscogsPaginationUrls discogsPaginationUrls = discogsPagination.getUrls();
 
@@ -93,6 +88,6 @@ public class SearchArtistRestController {
     Pagination pagination = new Pagination(discogsPagination.getPagesTotal(), discogsPagination.getCurrentPage(),
             size, nextPage);
 
-    return new ArtistNameSearchResponse(dtoArtistSearchResults, pagination);
+    return Optional.of(new ArtistNameSearchResponse(dtoArtistSearchResults, pagination));
   }
 }

@@ -46,6 +46,7 @@ public class Endpoints {
   public static class Rest {
     public static final String FOLLOW_ARTISTS_V1  = "/rest/v1/follow-artist";
     public static final String ARTISTS_V1         = "/rest/v1/artist";
+    public static final String ARTIST_DETAILS_V1  = "/rest/v1/artist-details";
   }
 
   public static class AdminArea {
