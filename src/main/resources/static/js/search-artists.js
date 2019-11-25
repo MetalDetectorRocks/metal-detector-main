@@ -123,7 +123,7 @@ const createPagination = function (artistNameSearchResponse) {
             return function () {
                 searchArtist(page, size)
             };
-        })(artistNameSearchResponse.pagination.nextPage, artistNameSearchResponse.pagination.size);
+        })(artistNameSearchResponse.pagination.currentPage-1, artistNameSearchResponse.pagination.itemsPerPage);
 
         document.getElementById('paginationContainer').appendChild(previousElement);
     }
@@ -137,7 +137,7 @@ const createPagination = function (artistNameSearchResponse) {
                 return function () {
                     searchArtist(page, size)
                 };
-            })(index, artistNameSearchResponse.pagination.size);
+            })(index, artistNameSearchResponse.pagination.itemsPerPage);
 
             document.getElementById('paginationContainer').appendChild(pageNumberElement);
         }
@@ -151,7 +151,7 @@ const createPagination = function (artistNameSearchResponse) {
             return function () {
                 searchArtist(page, size)
             };
-        })(artistNameSearchResponse.pagination.nextPage, artistNameSearchResponse.pagination.size);
+        })(artistNameSearchResponse.pagination.currentPage+1, artistNameSearchResponse.pagination.itemsPerPage);
 
         document.getElementById('paginationContainer').appendChild(nextElement);
     }
