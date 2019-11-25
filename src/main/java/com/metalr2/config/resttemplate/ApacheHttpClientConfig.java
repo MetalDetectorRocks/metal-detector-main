@@ -1,5 +1,6 @@
 package com.metalr2.config.resttemplate;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
 import org.apache.http.HeaderIterator;
@@ -12,8 +13,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.protocol.HTTP;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
@@ -21,15 +20,18 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
-import static com.metalr2.config.resttemplate.HttpClientConfigConstants.*;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 @Configuration
 @EnableScheduling
+@Slf4j
 public class ApacheHttpClientConfig {
 
-  private final Logger LOG = LoggerFactory.getLogger(ApacheHttpClientConfig.class);
+  private static final int MAX_ROUTE_CONNECTIONS     = 40;
+  private static final int MAX_TOTAL_CONNECTIONS     = 40;
+  private static final int MAX_LOCALHOST_CONNECTIONS = 80;
 
   @Bean
   public PoolingHttpClientConnectionManager poolingConnectionManager() {
@@ -63,7 +65,7 @@ public class ApacheHttpClientConfig {
         }
       }
 
-      return DEFAULT_KEEP_ALIVE_TIME;
+      return Duration.ofSeconds(20).toMillis();
     };
   }
 
@@ -76,9 +78,9 @@ public class ApacheHttpClientConfig {
         // only if connection pool is initialised
         if (pool != null) {
           pool.closeExpiredConnections();
-          pool.closeIdleConnections(IDLE_CONNECTION_WAIT_TIME, TimeUnit.MILLISECONDS);
+          pool.closeIdleConnections(10, MINUTES);
 
-          LOG.info("Idle connection monitor: Closing expired and idle connections");
+          log.info("Idle connection monitor: Closing expired and idle connections");
         }
       }
     };
@@ -95,9 +97,9 @@ public class ApacheHttpClientConfig {
   @Bean
   public CloseableHttpClient httpClient() {
     RequestConfig requestConfig = RequestConfig.custom()
-            .setConnectTimeout(CONNECTION_TIMEOUT)
-            .setConnectionRequestTimeout(REQUEST_TIMEOUT)
-            .setSocketTimeout(SOCKET_TIMEOUT)
+            .setConnectTimeout((int) Duration.ofSeconds(20).toMillis()) // the time for waiting until a connection is established
+            .setConnectionRequestTimeout((int) Duration.ofSeconds(20).toMillis()) // the time for waiting for a connection from connection pool
+            .setSocketTimeout((int) Duration.ofSeconds(30).toMillis()) // the time for waiting for data
             .build();
 
     return HttpClients.custom()

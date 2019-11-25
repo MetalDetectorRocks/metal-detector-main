@@ -7,7 +7,6 @@ import com.metalr2.model.ArtifactForFramework;
 import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.token.TokenFactory;
 import com.metalr2.model.token.TokenType;
-import com.metalr2.security.ExpirationTime;
 import com.metalr2.security.WebSecurity;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
@@ -30,6 +29,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -113,7 +113,7 @@ class ResetPasswordControllerIT {
   @DisplayName("Requesting '" + Endpoints.Guest.RESET_PASSWORD + "' with valid token should return the reset password view")
   void test_reset_password_with_valid_token() throws Exception {
     final String TOKEN = "valid-token";
-    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, ExpirationTime.ONE_HOUR.toMillis());
+    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, Duration.ofHours(1).toMillis());
 
     when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
 
@@ -131,7 +131,7 @@ class ResetPasswordControllerIT {
   void test_reset_password() throws Exception {
     final String TOKEN = "valid-token";
     final String PASSWORD = "valid-password";
-    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, ExpirationTime.ONE_HOUR.toMillis());
+    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, Duration.ofHours(1).toMillis());
     when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
 
     mockMvc.perform(post(Endpoints.Guest.RESET_PASSWORD)

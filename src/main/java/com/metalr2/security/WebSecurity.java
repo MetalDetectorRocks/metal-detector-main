@@ -2,7 +2,10 @@ package com.metalr2.security;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserRole;
-import com.metalr2.security.handler.*;
+import com.metalr2.security.handler.CustomAccessDeniedHandler;
+import com.metalr2.security.handler.CustomAuthenticationFailureHandler;
+import com.metalr2.security.handler.CustomAuthenticationSuccessHandler;
+import com.metalr2.security.handler.CustomLogoutSuccessHandler;
 import com.metalr2.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.time.Duration;
 
 @EnableWebSecurity
 @Configuration
@@ -48,7 +53,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
       .and()
       .rememberMe()
         .key(REMEMBER_ME_SECRET)
-        .tokenValiditySeconds((int) ExpirationTime.TWO_WEEKS.toSeconds())
+        .tokenValiditySeconds((int) Duration.ofDays(14).toSeconds())
       .and()
       .logout()
         .logoutUrl(Endpoints.Guest.LOGOUT).permitAll()

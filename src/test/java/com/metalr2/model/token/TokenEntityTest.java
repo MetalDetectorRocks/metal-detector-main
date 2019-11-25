@@ -1,11 +1,11 @@
 package com.metalr2.model.token;
 
-import com.metalr2.security.ExpirationTime;
 import org.assertj.core.api.WithAssertions;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -16,7 +16,7 @@ class TokenEntityTest implements WithAssertions {
   @Test
   @DisplayName("All fields of a TokenEntity should have valid values after creation")
   void all_token_fields_should_have_valid_values() {
-    TokenEntity token = TokenFactory.createToken(TokenType.EMAIL_VERIFICATION, ExpirationTime.ONE_HOUR.toMillis());
+    TokenEntity token = TokenFactory.createToken(TokenType.EMAIL_VERIFICATION, Duration.ofHours(1).toMillis());
 
     LocalDateTime expectedExpirationDateTime = LocalDateTime.now().plus(1, ChronoUnit.HOURS);
     TemporalUnitLessThanOffset offset = new TemporalUnitLessThanOffset(1, ChronoUnit.SECONDS);

@@ -6,7 +6,6 @@ import com.metalr2.model.token.*;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserFactory;
 import com.metalr2.model.user.UserRepository;
-import com.metalr2.security.ExpirationTime;
 import com.metalr2.service.email.EmailService;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
@@ -20,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -57,7 +57,7 @@ class TokenServiceTest implements WithAssertions {
   @Test
   @DisplayName("getResetPasswordTokenByTokenString() for a valid token string should return the correct TokenEntity instance")
   void get_reset_password_token_by_token_string_should_return_correct_token_entity_instance() {
-    final TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, ExpirationTime.ONE_HOUR.toMillis());
+    final TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, Duration.ofHours(1).toMillis());
     when(tokenRepository.findResetPasswordToken(TOKEN)).thenReturn(Optional.of(tokenEntity));
 
     Optional<TokenEntity> result = tokenService.getResetPasswordTokenByTokenString(TOKEN);
@@ -85,12 +85,12 @@ class TokenServiceTest implements WithAssertions {
     ArgumentCaptor<TokenEntity> tokenEntityArgumentCaptor = ArgumentCaptor.forClass(TokenEntity.class);
     UserEntity userEntity = UserFactory.createUser("JohnD", "johnd@example.com");
     when(userRepository.findByPublicId(PUBLIC_USER_ID)).thenReturn(Optional.of(userEntity));
-    when(jwtsSupport.generateToken(PUBLIC_USER_ID, ExpirationTime.TEN_DAYS)).thenReturn(TOKEN);
+    when(jwtsSupport.generateToken(PUBLIC_USER_ID, Duration.ofDays(10))).thenReturn(TOKEN);
 
     String createdTokenString = tokenService.createEmailVerificationToken(PUBLIC_USER_ID);
 
     assertThat(createdTokenString).isEqualTo(TOKEN);
-    verify(jwtsSupport, times(1)).generateToken(PUBLIC_USER_ID, ExpirationTime.TEN_DAYS);
+    verify(jwtsSupport, times(1)).generateToken(PUBLIC_USER_ID, Duration.ofDays(10));
     verify(userRepository, times(1)).findByPublicId(PUBLIC_USER_ID);
     verify(tokenRepository, times(1)).save(tokenEntityArgumentCaptor.capture());
     assertThat(tokenEntityArgumentCaptor.getValue().getTokenType()).isEqualTo(TokenType.EMAIL_VERIFICATION);
@@ -102,12 +102,12 @@ class TokenServiceTest implements WithAssertions {
     ArgumentCaptor<TokenEntity> tokenEntityArgumentCaptor = ArgumentCaptor.forClass(TokenEntity.class);
     UserEntity userEntity = UserFactory.createUser("JohnD", "johnd@example.com");
     when(userRepository.findByPublicId(PUBLIC_USER_ID)).thenReturn(Optional.of(userEntity));
-    when(jwtsSupport.generateToken(PUBLIC_USER_ID, ExpirationTime.ONE_HOUR)).thenReturn(TOKEN);
+    when(jwtsSupport.generateToken(PUBLIC_USER_ID, Duration.ofHours(1))).thenReturn(TOKEN);
 
     String createdTokenString = tokenService.createResetPasswordToken(PUBLIC_USER_ID);
 
     assertThat(createdTokenString).isEqualTo(TOKEN);
-    verify(jwtsSupport, times(1)).generateToken(PUBLIC_USER_ID, ExpirationTime.ONE_HOUR);
+    verify(jwtsSupport, times(1)).generateToken(PUBLIC_USER_ID, Duration.ofHours(1));
     verify(userRepository, times(1)).findByPublicId(PUBLIC_USER_ID);
     verify(tokenRepository, times(1)).save(tokenEntityArgumentCaptor.capture());
     assertThat(tokenEntityArgumentCaptor.getValue().getTokenType()).isEqualTo(TokenType.PASSWORD_RESET);
@@ -127,7 +127,7 @@ class TokenServiceTest implements WithAssertions {
     // define mocking behaviour
     when(userOfToken.getPublicId()).thenReturn(PUBLIC_USER_ID);
     when(tokenRepository.findEmailVerificationToken(TOKEN)).thenReturn(Optional.of(tokenEntity));
-    when(jwtsSupport.generateToken(PUBLIC_USER_ID, ExpirationTime.TEN_DAYS)).thenReturn(TOKEN);
+    when(jwtsSupport.generateToken(PUBLIC_USER_ID, Duration.ofDays(10))).thenReturn(TOKEN);
     when(userRepository.findByPublicId(PUBLIC_USER_ID)).thenReturn(Optional.of(userOfToken));
 
     tokenService.resendExpiredEmailVerificationToken(TOKEN);
