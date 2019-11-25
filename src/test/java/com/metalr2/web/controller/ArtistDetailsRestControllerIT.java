@@ -40,8 +40,6 @@ class ArtistDetailsRestControllerIT implements WithAssertions {
   private static final String USERNAME                = "JohnD";
   private static final String PASSWORD                = "john.doe";
   private static final String EMAIL                   = "john.doe@example.com";
-  private static final String VALID_SEARCH_REQUEST    = "Darkthrone";
-  private static final long DISCOGS_ARTIST_ID         = 252211L;
 
   @Autowired
   private UserRepository userRepository;
@@ -111,6 +109,22 @@ class ArtistDetailsRestControllerIT implements WithAssertions {
 
     assertThat(errorResponse).isNotNull();
     assertThat(errorResponse.getMessages()).hasSize(2);
+  }
+
+  @Test
+  @DisplayName("POST with not results should return 404")
+  void post_with_no_results_should_return_404() {
+    ArtistDetailsRequest artistDetailsRequest = new ArtistDetailsRequest("Testname",0L);
+
+    when(artistSearchClient.searchById(artistDetailsRequest.getArtistId()))
+            .thenReturn(Optional.empty());
+
+    ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, artistDetailsRequest);
+
+    // assert
+    validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
+
+    verify(artistSearchClient,times(1)).searchById(0L);
   }
 
 }
