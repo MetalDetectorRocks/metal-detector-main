@@ -26,7 +26,7 @@ function searchArtist(page,size){
             buildResults(artistNameSearchResponse);
         },
         error: function(){
-            createNoResultsMessage();
+            createNoArtistNameSearchResultsMessage(artistName);
         }
     });
 
@@ -50,6 +50,7 @@ const buildResults = function(artistNameSearchResponse) {
 const clear = function () {
     $("#searchResultsContainer").empty();
     $("#paginationContainer").empty();
+    $("#artistDetailsContainer").empty();
 
     const noResultsMessageElement = document.getElementById('noResultsMessageElement');
     if (noResultsMessageElement != null) {
@@ -70,8 +71,7 @@ const createResultCards = function(artistNameSearchResponse){
         const card = document.createElement('div');
         card.className = "card";
 
-        const cardBody = document.createElement('div');
-        cardBody.className = "card-body";
+        const cardBody = buildDefaultCardBody(artistSearchResult.artistName);
         card.append(cardBody);
 
         if (artistSearchResult.thumb !== ""){
@@ -85,13 +85,12 @@ const createResultCards = function(artistNameSearchResponse){
         artistIdElement.innerText = artistSearchResult.id;
         cardBody.append(artistIdElement);
 
-        const artistNameElement = document.createElement('p');
-        artistNameElement.innerText = artistSearchResult.artistName;
-        cardBody.append(artistNameElement);
-
         const artistDetailsElement = document.createElement('a');
-        artistDetailsElement.href = "/artist-details?artistName=" + artistSearchResult.artistName + "&id=" + artistSearchResult.id;
+        artistDetailsElement.href = "#";
         artistDetailsElement.text = "Details for " + artistSearchResult.artistName;
+        artistDetailsElement.onclick = function func(){
+            artistDetails(artistSearchResult.artistName,artistSearchResult.id);
+        };
         cardBody.append(artistDetailsElement);
 
         const breakElement = document.createElement('br');
@@ -111,8 +110,8 @@ const createResultCards = function(artistNameSearchResponse){
 };
 
 /**
- * Builds HTML for pagination links
- * @param artistNameSearchResponse  JSON response
+ * Builds HTML for pagination buttons
+ * @param artistNameSearchResponse  The json response
  */
 const createPagination = function (artistNameSearchResponse) {
     if (artistNameSearchResponse.pagination.currentPage > 1) {
@@ -120,9 +119,9 @@ const createPagination = function (artistNameSearchResponse) {
         previousElement.href = "#";
         previousElement.text = "Previous";
         previousElement.className = "btn btn-dark btn-pagination";
-        previousElement.onclick = (function (page, size) {
+        previousElement.onclick = (function (page, itemsPerPage) {
             return function () {
-                searchArtist(page, size)
+                searchArtist(page, itemsPerPage)
             };
         })(artistNameSearchResponse.pagination.currentPage-1, artistNameSearchResponse.pagination.itemsPerPage);
 
@@ -135,9 +134,9 @@ const createPagination = function (artistNameSearchResponse) {
             pageNumberElement.href = "#";
             pageNumberElement.text = index;
             pageNumberElement.className = "btn btn-dark btn-pagination";
-            pageNumberElement.onclick = (function (page, size) {
+            pageNumberElement.onclick = (function (page, itemsPerPage) {
                 return function () {
-                    searchArtist(page, size)
+                    searchArtist(page, itemsPerPage)
                 };
             })(index, artistNameSearchResponse.pagination.itemsPerPage);
 
@@ -150,9 +149,9 @@ const createPagination = function (artistNameSearchResponse) {
         nextElement.href = "#";
         nextElement.text = "Next";
         nextElement.className = "btn btn-dark btn-pagination";
-        nextElement.onclick = (function (page, size) {
+        nextElement.onclick = (function (page, itemsPerPage) {
             return function () {
-                searchArtist(page, size)
+                searchArtist(page, itemsPerPage)
             };
         })(artistNameSearchResponse.pagination.currentPage+1, artistNameSearchResponse.pagination.itemsPerPage);
 
@@ -163,32 +162,14 @@ const createPagination = function (artistNameSearchResponse) {
 /**
  * Builds HTML for the message for an empty result
  */
-const createNoResultsMessage = function () {
+const createNoArtistNameSearchResultsMessage = function (artistName) {
     clear();
 
     const noResultsMessageElement = document.createElement('div');
-    const artistName = document.getElementById('artistName').value;
     noResultsMessageElement.className = "mb-3 alert alert-danger";
-    noResultsMessageElement.role = "alter";
+    noResultsMessageElement.role = "alert";
     noResultsMessageElement.id = "noResultsMessageElement";
     noResultsMessageElement.innerText =  "No artists could be found for the given name: " + artistName;
 
     document.getElementById('noResultsMessageContainer').appendChild(noResultsMessageElement);
 };
-
-/**
- * Builds the onclick function
- * @param artistName    Artist to follow
- * @param artistId      Artist's discogs id
- * @param isFollowed    true if user follows given artist
- * @param button        Button that was clicked
- * @returns {Function}
- */
-function createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, button) {
-    return function () {
-        if (isFollowed)
-            unfollowArtist(artistName,artistId,button);
-        else
-            followArtist(artistName,artistId,button);
-    };
-}

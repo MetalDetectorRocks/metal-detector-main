@@ -49,8 +49,16 @@ public class SearchArtistRestController {
                                                                       BindingResult bindingResult, Authentication authentication) {
     validateRequest(bindingResult);
 
-    Optional<ArtistNameSearchResponse> artistNameSearchResponse = searchArtist(artistSearchRequest, ((UserEntity)authentication.getPrincipal()).getPublicId());
-    return ResponseEntity.of(artistNameSearchResponse);
+    Optional<DiscogsArtistSearchResultContainer> artistSearchResultsOptional = artistSearchClient.searchByName(artistSearchRequest.getArtistName(),
+            artistSearchRequest.getPage(), artistSearchRequest.getSize());
+
+    if (artistSearchResultsOptional.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    ArtistNameSearchResponse artistNameSearchResponse = mapSearchResult(artistSearchResultsOptional.get(),
+            ((UserEntity)authentication.getPrincipal()).getPublicId());
+    return ResponseEntity.ok(artistNameSearchResponse);
   }
 
   private void validateRequest(BindingResult bindingResult) {
@@ -59,14 +67,7 @@ public class SearchArtistRestController {
     }
   }
 
-  private Optional<ArtistNameSearchResponse> searchArtist(ArtistSearchRequest artistSearchRequest, String publicUserId) {
-    Optional<DiscogsArtistSearchResultContainer> artistSearchResultsOptional = artistSearchClient.searchByName(artistSearchRequest.getArtistName(),
-            artistSearchRequest.getPage(), artistSearchRequest.getSize());
-
-    return artistSearchResultsOptional.isEmpty() ? Optional.empty() : createArtistNameSearchResponse(artistSearchResultsOptional.get(), publicUserId);
-  }
-
-  private Optional<ArtistNameSearchResponse> createArtistNameSearchResponse(DiscogsArtistSearchResultContainer artistSearchResults, String publicUserId) {
+  private ArtistNameSearchResponse mapSearchResult(DiscogsArtistSearchResultContainer artistSearchResults, String publicUserId) {
     DiscogsPagination discogsPagination = artistSearchResults.getDiscogsPagination();
 
     int itemsPerPage = discogsPagination.getItemsPerPage();
@@ -82,6 +83,6 @@ public class SearchArtistRestController {
     Pagination pagination = new Pagination(discogsPagination.getPagesTotal(), discogsPagination.getCurrentPage(),
             itemsPerPage);
 
-    return Optional.of(new ArtistNameSearchResponse(dtoArtistSearchResults, pagination));
+    return new ArtistNameSearchResponse(dtoArtistSearchResults, pagination);
   }
 }

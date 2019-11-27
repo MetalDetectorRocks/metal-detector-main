@@ -29,7 +29,6 @@ public class Endpoints {
   public static class Frontend {
     public static final String HOME                  = "/search-artists";
     public static final String SEARCH_ARTISTS        = "/search-artists";
-    public static final String ARTIST_DETAILS        = "/artist-details";
     public static final String SETTINGS              = "/settings";
     public static final String PROFILE               = "/profile";
     public static final String ARTISTS_RELEASES      = "/artists-releases";
@@ -46,6 +45,7 @@ public class Endpoints {
   public static class Rest {
     public static final String FOLLOW_ARTISTS_V1  = "/rest/v1/follow-artist";
     public static final String ARTISTS_V1         = "/rest/v1/artist";
+    public static final String ARTIST_DETAILS_V1  = "/rest/v1/artist-details";
   }
 
   public static class AdminArea {
