@@ -3,7 +3,7 @@ package com.metalr2.web.controller;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ValidationException;
-import com.metalr2.model.user.UserEntity;
+import com.metalr2.security.CurrentUser;
 import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClient;
 import com.metalr2.web.dto.FollowArtistDto;
@@ -15,7 +15,6 @@ import com.metalr2.web.dto.response.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,17 +35,20 @@ public class SearchArtistRestController {
 
   private final DiscogsArtistSearchRestClient artistSearchClient;
   private final FollowArtistService followArtistService;
+  private final CurrentUser currentUser;
 
   @Autowired
-  public SearchArtistRestController(DiscogsArtistSearchRestClient artistSearchClient, FollowArtistService followArtistService) {
+  public SearchArtistRestController(DiscogsArtistSearchRestClient artistSearchClient, FollowArtistService followArtistService,
+                                    CurrentUser currentUser) {
     this.artistSearchClient = artistSearchClient;
     this.followArtistService = followArtistService;
+    this.currentUser = currentUser;
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<ArtistNameSearchResponse> handleSearchRequest(@Valid @RequestBody ArtistSearchRequest artistSearchRequest,
-                                                                      BindingResult bindingResult, Authentication authentication) {
+                                                                      BindingResult bindingResult) {
     validateRequest(bindingResult);
 
     Optional<DiscogsArtistSearchResultContainer> artistSearchResultsOptional = artistSearchClient.searchByName(artistSearchRequest.getArtistName(),
@@ -57,7 +59,7 @@ public class SearchArtistRestController {
     }
 
     ArtistNameSearchResponse artistNameSearchResponse = mapSearchResult(artistSearchResultsOptional.get(),
-            ((UserEntity)authentication.getPrincipal()).getPublicId());
+            currentUser.getCurrentUserEntity().getPublicId());
     return ResponseEntity.ok(artistNameSearchResponse);
   }
 

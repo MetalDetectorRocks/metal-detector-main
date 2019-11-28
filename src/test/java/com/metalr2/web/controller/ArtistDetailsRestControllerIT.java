@@ -4,6 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserRepository;
 import com.metalr2.model.user.UserRole;
+import com.metalr2.security.CurrentUser;
 import com.metalr2.web.DtoFactory;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClientImpl;
@@ -18,6 +19,7 @@ import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
@@ -37,15 +40,16 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ArtistDetailsRestControllerIT implements WithAssertions {
 
-  private static final String USERNAME                = "JohnD";
-  private static final String PASSWORD                = "john.doe";
-  private static final String EMAIL                   = "john.doe@example.com";
-
-  @Autowired
-  private UserRepository userRepository;
+  private static final String USER_ID = "TestId";
 
   @MockBean
   private DiscogsArtistSearchRestClientImpl artistSearchClient;
+
+  @MockBean
+  private CurrentUser currentUser;
+
+  @Mock
+  private UserEntity userEntity;
 
   @Value("${server.address}")
   private String serverAddress;
@@ -58,19 +62,12 @@ class ArtistDetailsRestControllerIT implements WithAssertions {
   @BeforeEach
   void setUp() {
     String requestUri   = "http://" + serverAddress + ":" + port + Endpoints.Rest.ARTIST_DETAILS_V1;
-    requestHandler      = new RestAssuredRequestHandler<>(requestUri, USERNAME, PASSWORD);
-    userRepository.save(UserEntity.builder()
-            .username(USERNAME)
-            .email(EMAIL)
-            .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
-            .enabled(true)
-            .userRoles(UserRole.createUserRole())
-            .build());
+    requestHandler      = new RestAssuredRequestHandler<>(requestUri);
+
   }
 
   @AfterEach
   void tearDown() {
-    userRepository.deleteAll();
   }
 
   @Test
@@ -80,6 +77,8 @@ class ArtistDetailsRestControllerIT implements WithAssertions {
 
     when(artistSearchClient.searchById(artistDetailsRequest.getArtistId()))
             .thenReturn(Optional.of(DtoFactory.ArtistFactory.createTestArtist()));
+    when(currentUser.getCurrentUserEntity()).thenReturn(userEntity);
+    when(userEntity.getPublicId()).thenReturn(USER_ID);
 
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, artistDetailsRequest);
 

@@ -4,6 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ValidationException;
 import com.metalr2.model.user.UserEntity;
+import com.metalr2.security.CurrentUser;
 import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClient;
 import com.metalr2.web.dto.FollowArtistDto;
@@ -33,17 +34,19 @@ public class ArtistDetailsRestController {
 
   private final DiscogsArtistSearchRestClient artistSearchClient;
   private final FollowArtistService followArtistService;
+  private final CurrentUser currentUser;
 
   @Autowired
-  public ArtistDetailsRestController(DiscogsArtistSearchRestClient artistSearchClient, FollowArtistService followArtistService) {
+  public ArtistDetailsRestController(DiscogsArtistSearchRestClient artistSearchClient, FollowArtistService followArtistService,
+                                     CurrentUser currentUser) {
     this.artistSearchClient = artistSearchClient;
-    this.followArtistService    = followArtistService;
+    this.followArtistService = followArtistService;
+    this.currentUser = currentUser;
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<ArtistDetailsResponse> handleSearchRequest(@Valid @RequestBody ArtistDetailsRequest artistDetailsRequest, BindingResult bindingResult,
-                                                                   Authentication authentication) {
+  public ResponseEntity<ArtistDetailsResponse> handleSearchRequest(@Valid @RequestBody ArtistDetailsRequest artistDetailsRequest, BindingResult bindingResult) {
     validateRequest(bindingResult);
 
     Optional<DiscogsArtist> artistOptional = artistSearchClient.searchById(artistDetailsRequest.getArtistId());
@@ -53,7 +56,7 @@ public class ArtistDetailsRestController {
     }
 
     ArtistDetailsResponse artistDetailsResponse = mapSearchResult(artistOptional.get(), artistDetailsRequest,
-            ((UserEntity)authentication.getPrincipal()).getPublicId());
+            currentUser.getCurrentUserEntity().getPublicId());
     return ResponseEntity.ok(artistDetailsResponse);
   }
 
