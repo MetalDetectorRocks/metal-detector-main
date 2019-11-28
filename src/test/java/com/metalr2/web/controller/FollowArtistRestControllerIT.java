@@ -13,17 +13,23 @@ import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
+
+import static org.mockito.Mockito.*;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Tag("integration-test")
+@ExtendWith(MockitoExtension.class)
 class FollowArtistRestControllerIT implements WithAssertions {
 
   private static final String ARTIST_NAME     = "Darkthrone";
@@ -35,7 +41,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @Autowired
   private UserRepository userRepository;
 
-  @Autowired
+  @MockBean
   private FollowArtistService followArtistService;
   private FollowArtistDto followArtistDto;
   private FollowArtistRequest followArtistRequest;
@@ -74,16 +80,14 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("CREATE with valid request should create an entity")
   void create_with_valid_request_should_return_201() {
-    assertThat(followArtistService.exists(followArtistDto)).isFalse();
+    doNothing().when(followArtistService).followArtist(followArtistDto);
 
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, followArtistRequest);
 
     // assert
     validatableResponse.statusCode(HttpStatus.CREATED.value());
 
-    assertThat(followArtistService.exists(followArtistDto)).isTrue();
-
-    followArtistService.unfollowArtist(followArtistDto);
+    verify(followArtistService,times(1)).followArtist(followArtistDto);
   }
 
   @Test
@@ -105,28 +109,30 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("DELETE should should delete the entity if it exists")
   void delete_an_existing_resource_should_return_200() {
-    followArtistService.followArtist(followArtistDto);
-
-    assertThat(followArtistService.exists(followArtistDto)).isTrue();
-
     FollowArtistRequest request = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
+
+    when(followArtistService.unfollowArtist(followArtistDto)).thenReturn(true);
+
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert
     validatableResponse.statusCode(HttpStatus.OK.value());
-    assertThat(followArtistService.exists(followArtistDto)).isFalse();
+
+    verify(followArtistService,times(1)).unfollowArtist(followArtistDto);
   }
 
   @Test
   @DisplayName("DELETE should should return 404 if the entity does not exist")
   void delete_an_not_existing_resource_should_return_404() {
-    assertThat(followArtistService.exists(followArtistDto)).isFalse();
-
     FollowArtistRequest request = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
+
+    when(followArtistService.unfollowArtist(followArtistDto)).thenReturn(false);
+
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert
     validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-    assertThat(followArtistService.exists(followArtistDto)).isFalse();
+
+    verify(followArtistService,times(1)).unfollowArtist(followArtistDto);
   }
 }
