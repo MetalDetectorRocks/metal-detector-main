@@ -4,7 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserRepository;
 import com.metalr2.model.user.UserRole;
-import com.metalr2.service.followArtist.FollowArtistService;
+import com.metalr2.service.artist.FollowArtistService;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.request.FollowArtistRequest;

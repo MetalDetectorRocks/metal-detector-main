@@ -51,8 +51,6 @@ public class Endpoints {
   public static class AdminArea {
     // Users
     public static final String USERS_LIST   = "/admin/users";
-    public static final String USERS_CREATE = "/admin/users/create";
-    public static final String USERS_EDIT   = "/admin/users/edit/{id}";
   }
 
   public static class AntPattern {
