@@ -2,7 +2,7 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
-import com.metalr2.security.WebSecurityAuth;
+import com.metalr2.security.SecurityConfig;
 import com.metalr2.service.user.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(IndexController.class)
-@Import(WebSecurityAuth.class)
+@Import(SecurityConfig.class)
 @Tag("integration-test")
 class IndexControllerIT {
 

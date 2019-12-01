@@ -4,7 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserFactory;
-import com.metalr2.security.WebSecurityAuth;
+import com.metalr2.security.SecurityConfig;
 import com.metalr2.service.user.UserService;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CustomErrorController.class)
-@Import(WebSecurityAuth.class)
+@Import(SecurityConfig.class)
 @Tag("integration-test")
 class CustomErrorControllerIT implements WithAssertions {
 
