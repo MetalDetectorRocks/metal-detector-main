@@ -4,6 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.security.WebSecurity;
 import com.metalr2.service.user.UserService;
+import com.metalr2.web.controller.mvc.IndexController;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
