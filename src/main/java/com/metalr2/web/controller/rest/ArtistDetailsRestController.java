@@ -1,8 +1,6 @@
 package com.metalr2.web.controller.rest;
 
 import com.metalr2.config.constants.Endpoints;
-import com.metalr2.model.exceptions.ErrorMessages;
-import com.metalr2.model.exceptions.ValidationException;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.artist.FollowArtistService;
 import com.metalr2.service.discogs.DiscogsArtistSearchRestClient;
@@ -29,7 +27,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(Endpoints.Rest.ARTIST_DETAILS_V1)
-public class ArtistDetailsRestController {
+public class ArtistDetailsRestController implements Validatable {
 
   private final DiscogsArtistSearchRestClient artistSearchClient;
   private final FollowArtistService followArtistService;
@@ -57,12 +55,6 @@ public class ArtistDetailsRestController {
     return ResponseEntity.ok(artistDetailsResponse);
   }
 
-  private void validateRequest(BindingResult bindingResult) {
-    if (bindingResult.hasErrors()) {
-      throw new ValidationException(ErrorMessages.VALIDATION_ERROR.toDisplayString(), bindingResult.getFieldErrors());
-    }
-  }
-
   private ArtistDetailsResponse mapSearchResult(DiscogsArtist discogsArtist, ArtistDetailsRequest artistDetailsRequest, String publicUserId) {
     String artistProfile      = discogsArtist.getProfile().isEmpty()      ? null : discogsArtist.getProfile();
     List<String> activeMember = discogsArtist.getDiscogsMembers() == null ? null : discogsArtist.getDiscogsMembers().stream().filter(DiscogsMember::isActive).map(DiscogsMember::getName).collect(Collectors.toList());
@@ -71,4 +63,5 @@ public class ArtistDetailsRestController {
     boolean isFollowed        = followArtistService.exists(new FollowArtistDto(publicUserId, artistDetailsRequest.getArtistName(), discogsArtist.getId()));
     return new ArtistDetailsResponse(artistDetailsRequest.getArtistName(), artistDetailsRequest.getArtistId(), artistProfile, activeMember, formerMember, images, isFollowed);
   }
+
 }

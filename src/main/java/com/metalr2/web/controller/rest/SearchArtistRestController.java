@@ -1,8 +1,6 @@
 package com.metalr2.web.controller.rest;
 
 import com.metalr2.config.constants.Endpoints;
-import com.metalr2.model.exceptions.ErrorMessages;
-import com.metalr2.model.exceptions.ValidationException;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.artist.FollowArtistService;
 import com.metalr2.service.discogs.DiscogsArtistSearchRestClient;
@@ -32,7 +30,7 @@ import static com.metalr2.web.dto.response.ArtistNameSearchResponse.ArtistSearch
 
 @RestController
 @RequestMapping(Endpoints.Rest.ARTISTS_V1)
-public class SearchArtistRestController {
+public class SearchArtistRestController implements Validatable {
 
   private final DiscogsArtistSearchRestClient artistSearchClient;
   private final FollowArtistService followArtistService;
@@ -61,12 +59,6 @@ public class SearchArtistRestController {
     return ResponseEntity.ok(artistNameSearchResponse);
   }
 
-  private void validateRequest(BindingResult bindingResult) {
-    if (bindingResult.hasErrors()) {
-      throw new ValidationException(ErrorMessages.VALIDATION_ERROR.toDisplayString(), bindingResult.getFieldErrors());
-    }
-  }
-
   private ArtistNameSearchResponse mapSearchResult(DiscogsArtistSearchResultContainer artistSearchResults, String publicUserId) {
     DiscogsPagination discogsPagination = artistSearchResults.getDiscogsPagination();
 
@@ -85,4 +77,5 @@ public class SearchArtistRestController {
 
     return new ArtistNameSearchResponse(dtoArtistSearchResults, pagination);
   }
+
 }

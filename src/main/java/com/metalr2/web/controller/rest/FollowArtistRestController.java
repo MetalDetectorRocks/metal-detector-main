@@ -1,8 +1,6 @@
 package com.metalr2.web.controller.rest;
 
 import com.metalr2.config.constants.Endpoints;
-import com.metalr2.model.exceptions.ErrorMessages;
-import com.metalr2.model.exceptions.ValidationException;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.artist.FollowArtistService;
 import com.metalr2.web.dto.FollowArtistDto;
@@ -19,7 +17,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(Endpoints.Rest.FOLLOW_ARTISTS_V1)
-public class FollowArtistRestController {
+public class FollowArtistRestController implements Validatable {
 
   private final FollowArtistService followArtistService;
 
@@ -58,9 +56,4 @@ public class FollowArtistRestController {
     return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
   }
 
-  private void validateRequest(BindingResult bindingResult) {
-    if (bindingResult.hasErrors()) {
-      throw new ValidationException(ErrorMessages.VALIDATION_ERROR.toDisplayString(), bindingResult.getFieldErrors());
-    }
-  }
 }
