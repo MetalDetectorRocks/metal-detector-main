@@ -36,6 +36,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
 
   @MockBean
   private FollowArtistService followArtistService;
+
   private FollowArtistRequest followArtistRequest;
   private FollowArtistDto followArtistDto = new FollowArtistDto(USER_ID, ARTIST_NAME, ARTIST_DISCOGS_ID);
 
@@ -67,13 +68,15 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("CREATE with valid request should create an entity")
   void create_with_valid_request_should_return_201() {
+    // given
     doNothing().when(followArtistService).followArtist(followArtistDto);
     when(currentUserSupplier.get()).thenReturn(userEntity);
     when(userEntity.getPublicId()).thenReturn(USER_ID);
 
+    // when
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, followArtistRequest);
 
-    // assert
+    // then
     validatableResponse.statusCode(HttpStatus.CREATED.value());
     verify(followArtistService,times(1)).followArtist(followArtistDto);
   }
@@ -81,12 +84,14 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("CREATE with invalid request should return 400")
   void create_with_invalid_request_should_return_400() {
+    // given
     FollowArtistRequest invalidRequest = new FollowArtistRequest(null, ARTIST_DISCOGS_ID);
 
+    // when
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, invalidRequest);
     ErrorResponse errorResponse = validatableResponse.extract().as(ErrorResponse.class);
 
-    // assert
+    // then
     validatableResponse
             .statusCode(HttpStatus.BAD_REQUEST.value())
             .contentType(ContentType.JSON);
@@ -98,15 +103,16 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("DELETE should should delete the entity if it exists")
   void delete_an_existing_resource_should_return_200() {
+    // given
     FollowArtistRequest request = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
-
     when(followArtistService.unfollowArtist(followArtistDto)).thenReturn(true);
     when(currentUserSupplier.get()).thenReturn(userEntity);
     when(userEntity.getPublicId()).thenReturn(USER_ID);
 
+    // when
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
-    // assert
+    // then
     validatableResponse.statusCode(HttpStatus.OK.value());
     verify(followArtistService,times(1)).unfollowArtist(followArtistDto);
   }
@@ -114,15 +120,16 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("DELETE should should return 404 if the entity does not exist")
   void delete_an_not_existing_resource_should_return_404() {
+    // given
     FollowArtistRequest request = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
-
     when(followArtistService.unfollowArtist(followArtistDto)).thenReturn(false);
     when(currentUserSupplier.get()).thenReturn(userEntity);
     when(userEntity.getPublicId()).thenReturn(USER_ID);
 
+    // when
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
-    // assert
+    // then
     validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
     verify(followArtistService,times(1)).unfollowArtist(followArtistDto);
   }

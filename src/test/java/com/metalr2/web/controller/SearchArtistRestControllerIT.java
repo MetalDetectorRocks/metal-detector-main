@@ -71,16 +71,17 @@ class SearchArtistRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("POST with valid request should return 200")
   void post_with_valid_request_should_return_200() {
+    // given
     ArtistSearchRequest artistSearchRequest = new ArtistSearchRequest(VALID_SEARCH_REQUEST,DEFAULT_PAGE,DEFAULT_SIZE);
-
     when(artistSearchClient.searchByName(artistSearchRequest.getArtistName(),artistSearchRequest.getPage(),artistSearchRequest.getSize()))
             .thenReturn(Optional.of(ArtistSearchResultContainerFactory.withOneCertainResult()));
     when(currentUserSupplier.get()).thenReturn(userEntity);
     when(userEntity.getPublicId()).thenReturn(USER_ID);
 
+    // when
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, artistSearchRequest);
 
-    // assert
+    // then
     validatableResponse
             .contentType(ContentType.JSON)
             .statusCode(HttpStatus.OK.value());
@@ -100,11 +101,13 @@ class SearchArtistRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("POST with bad request should return 400")
   void post_with_bad_request_should_return_400() {
+    // given
     ArtistSearchRequest badArtistSearchRequest = new ArtistSearchRequest(null,DEFAULT_PAGE,DEFAULT_SIZE);
 
+    // when
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, badArtistSearchRequest);
 
-    // assert
+    // then
     validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value());
     verify(artistSearchClient,times(0)).searchByName(badArtistSearchRequest.getArtistName(),badArtistSearchRequest.getPage(),badArtistSearchRequest.getSize());
   }
@@ -112,13 +115,15 @@ class SearchArtistRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("POST with empty request should return 404")
   void post_with_empty_request_should_return_404() {
+    // given
     ArtistSearchRequest emptyArtistSearchRequest = new ArtistSearchRequest("",DEFAULT_PAGE,DEFAULT_SIZE);
     when(artistSearchClient.searchByName(emptyArtistSearchRequest.getArtistName(),emptyArtistSearchRequest.getPage(),emptyArtistSearchRequest.getSize()))
             .thenReturn(Optional.empty());
 
+    // when
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, emptyArtistSearchRequest);
 
-    // assert
+    // then
     validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
     verify(artistSearchClient,times(1)).searchByName(emptyArtistSearchRequest.getArtistName(),emptyArtistSearchRequest.getPage(),emptyArtistSearchRequest.getSize());
   }

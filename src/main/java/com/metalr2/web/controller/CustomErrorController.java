@@ -39,7 +39,8 @@ public class CustomErrorController implements ErrorController {
       return new ModelAndView(ViewNames.Guest.ERROR_500, Map.of("requestedURI", requestedURI), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     else if (statusCode == HttpStatus.FORBIDDEN.value()) {
-      log.warn("Access denied while requesting '{}' for user {}'", requestedURI, request.getUserPrincipal().getName());
+      log.warn("Access denied while requesting '{}' for user {}'",
+              requestedURI, request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : "[Unknown]");
       return new ModelAndView(ViewNames.Guest.ERROR_403, Map.of("requestedURI", requestedURI), HttpStatus.FORBIDDEN);
     }
 
@@ -48,4 +49,5 @@ public class CustomErrorController implements ErrorController {
     HttpStatus responseStatus = statusCode != -1 ? HttpStatus.valueOf(statusCode) : HttpStatus.I_AM_A_TEAPOT;
     return new ModelAndView(ViewNames.Guest.ERROR, Map.of("requestedURI", requestedURI), responseStatus);
   }
+
 }

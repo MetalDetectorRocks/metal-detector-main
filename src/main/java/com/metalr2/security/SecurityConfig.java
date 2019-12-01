@@ -22,7 +22,7 @@ import java.time.Duration;
 
 @EnableWebSecurity
 @Configuration
-@Profile({"!test"})
+@Profile("!test")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Value("${security.remember-me-secret}")
