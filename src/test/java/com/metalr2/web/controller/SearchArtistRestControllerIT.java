@@ -2,12 +2,13 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserEntity;
-import com.metalr2.security.CurrentUser;
-import com.metalr2.web.DtoFactory;
+import com.metalr2.security.CurrentUserSupplier;
+import com.metalr2.web.DtoFactory.ArtistSearchResultContainerFactory;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClientImpl;
 import com.metalr2.web.dto.request.ArtistSearchRequest;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
+import com.metalr2.web.dto.response.ArtistNameSearchResponse.ArtistSearchResult;
 import com.metalr2.web.dto.response.Pagination;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
@@ -44,7 +45,7 @@ class SearchArtistRestControllerIT implements WithAssertions {
   private DiscogsArtistSearchRestClientImpl artistSearchClient;
 
   @MockBean
-  private CurrentUser currentUser;
+  private CurrentUserSupplier currentUserSupplier;
 
   @Mock
   private UserEntity userEntity;
@@ -73,26 +74,24 @@ class SearchArtistRestControllerIT implements WithAssertions {
     ArtistSearchRequest artistSearchRequest = new ArtistSearchRequest(VALID_SEARCH_REQUEST,DEFAULT_PAGE,DEFAULT_SIZE);
 
     when(artistSearchClient.searchByName(artistSearchRequest.getArtistName(),artistSearchRequest.getPage(),artistSearchRequest.getSize()))
-            .thenReturn(Optional.of(DtoFactory.ArtistSearchResultContainerFactory.withOneCertainResult()));
-    when(currentUser.getCurrentUserEntity()).thenReturn(userEntity);
+            .thenReturn(Optional.of(ArtistSearchResultContainerFactory.withOneCertainResult()));
+    when(currentUserSupplier.get()).thenReturn(userEntity);
     when(userEntity.getPublicId()).thenReturn(USER_ID);
 
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, artistSearchRequest);
 
     // assert
-    validatableResponse.contentType(ContentType.JSON)
+    validatableResponse
+            .contentType(ContentType.JSON)
             .statusCode(HttpStatus.OK.value());
 
     ArtistNameSearchResponse artistNameSearchResponse = validatableResponse.extract().as(ArtistNameSearchResponse.class);
-
     assertThat(artistNameSearchResponse.getArtistSearchResults()).isNotNull().hasSize(1);
 
-    ArtistNameSearchResponse.ArtistSearchResult artistSearchResult = artistNameSearchResponse.getArtistSearchResults().get(0);
-
-    assertThat(artistSearchResult).isEqualTo(new ArtistNameSearchResponse.ArtistSearchResult(null,DISCOGS_ARTIST_ID,VALID_SEARCH_REQUEST,false));
+    ArtistSearchResult artistSearchResult = artistNameSearchResponse.getArtistSearchResults().get(0);
+    assertThat(artistSearchResult).isEqualTo(new ArtistSearchResult(null,DISCOGS_ARTIST_ID,VALID_SEARCH_REQUEST,false));
 
     Pagination pagination = artistNameSearchResponse.getPagination();
-
     assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE));
 
     verify(artistSearchClient,times(1)).searchByName(artistSearchRequest.getArtistName(),artistSearchRequest.getPage(),artistSearchRequest.getSize());
@@ -107,7 +106,6 @@ class SearchArtistRestControllerIT implements WithAssertions {
 
     // assert
     validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value());
-
     verify(artistSearchClient,times(0)).searchByName(badArtistSearchRequest.getArtistName(),badArtistSearchRequest.getPage(),badArtistSearchRequest.getSize());
   }
 
@@ -122,7 +120,7 @@ class SearchArtistRestControllerIT implements WithAssertions {
 
     // assert
     validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-
     verify(artistSearchClient,times(1)).searchByName(emptyArtistSearchRequest.getArtistName(),emptyArtistSearchRequest.getPage(),emptyArtistSearchRequest.getSize());
   }
+
 }

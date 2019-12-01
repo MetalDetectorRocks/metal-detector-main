@@ -3,7 +3,7 @@ package com.metalr2.web.controller;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ValidationException;
-import com.metalr2.security.CurrentUser;
+import com.metalr2.security.CurrentUserSupplier;
 import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClient;
 import com.metalr2.web.dto.FollowArtistDto;
@@ -35,14 +35,14 @@ public class SearchArtistRestController {
 
   private final DiscogsArtistSearchRestClient artistSearchClient;
   private final FollowArtistService followArtistService;
-  private final CurrentUser currentUser;
+  private final CurrentUserSupplier currentUserSupplier;
 
   @Autowired
   public SearchArtistRestController(DiscogsArtistSearchRestClient artistSearchClient, FollowArtistService followArtistService,
-                                    CurrentUser currentUser) {
+                                    CurrentUserSupplier currentUserSupplier) {
     this.artistSearchClient = artistSearchClient;
     this.followArtistService = followArtistService;
-    this.currentUser = currentUser;
+    this.currentUserSupplier = currentUserSupplier;
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
@@ -58,9 +58,8 @@ public class SearchArtistRestController {
       return ResponseEntity.notFound().build();
     }
 
-    ArtistNameSearchResponse artistNameSearchResponse = mapSearchResult(artistSearchResultsOptional.get(),
-            currentUser.getCurrentUserEntity().getPublicId());
-    return ResponseEntity.ok(artistNameSearchResponse);
+    ArtistNameSearchResponse response = mapSearchResult(artistSearchResultsOptional.get(), currentUserSupplier.get().getPublicId());
+    return ResponseEntity.ok(response);
   }
 
   private void validateRequest(BindingResult bindingResult) {
@@ -79,12 +78,12 @@ public class SearchArtistRestController {
 
     List<ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
             .map(artistSearchResult -> new ArtistSearchResult(artistSearchResult.getThumb(),artistSearchResult.getId(),
-                    artistSearchResult.getTitle(),alreadyFollowedArtists.contains(artistSearchResult.getId())))
+                    artistSearchResult.getTitle(), alreadyFollowedArtists.contains(artistSearchResult.getId())))
             .collect(Collectors.toList());
 
-    Pagination pagination = new Pagination(discogsPagination.getPagesTotal(), discogsPagination.getCurrentPage(),
-            itemsPerPage);
+    Pagination pagination = new Pagination(discogsPagination.getPagesTotal(), discogsPagination.getCurrentPage(), itemsPerPage);
 
     return new ArtistNameSearchResponse(dtoArtistSearchResults, pagination);
   }
+
 }

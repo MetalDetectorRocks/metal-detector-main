@@ -1,6 +1,5 @@
 package com.metalr2.security;
 
-public interface WebSecurity {
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserRole;
 import com.metalr2.security.handler.CustomAccessDeniedHandler;
@@ -11,6 +10,7 @@ import com.metalr2.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,7 +22,8 @@ import java.time.Duration;
 
 @EnableWebSecurity
 @Configuration
-public class WebSecurity extends WebSecurityConfigurerAdapter {
+@Profile({"!test"})
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Value("${security.remember-me-secret}")
   private String REMEMBER_ME_SECRET;
@@ -31,7 +32,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Autowired
-  public WebSecurity(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+  public SecurityConfig(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
     this.userService = userService;
     this.bCryptPasswordEncoder = bCryptPasswordEncoder;
   }
@@ -39,7 +40,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
-      .csrf().disable()// TODO: 13.11.19 activate again
       .authorizeRequests()
         .antMatchers(Endpoints.AntPattern.ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
         .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()

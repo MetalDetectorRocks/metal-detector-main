@@ -2,7 +2,7 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserEntity;
-import com.metalr2.security.CurrentUser;
+import com.metalr2.security.CurrentUserSupplier;
 import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.FollowArtistDto;
@@ -20,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.mockito.Mockito.*;
@@ -41,7 +40,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
   private FollowArtistDto followArtistDto = new FollowArtistDto(USER_ID, ARTIST_NAME, ARTIST_DISCOGS_ID);
 
   @MockBean
-  private CurrentUser currentUser;
+  private CurrentUserSupplier currentUserSupplier;
 
   @Mock
   private UserEntity userEntity;
@@ -69,14 +68,13 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @DisplayName("CREATE with valid request should create an entity")
   void create_with_valid_request_should_return_201() {
     doNothing().when(followArtistService).followArtist(followArtistDto);
-    when(currentUser.getCurrentUserEntity()).thenReturn(userEntity);
+    when(currentUserSupplier.get()).thenReturn(userEntity);
     when(userEntity.getPublicId()).thenReturn(USER_ID);
 
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, followArtistRequest);
 
     // assert
     validatableResponse.statusCode(HttpStatus.CREATED.value());
-
     verify(followArtistService,times(1)).followArtist(followArtistDto);
   }
 
@@ -89,7 +87,8 @@ class FollowArtistRestControllerIT implements WithAssertions {
     ErrorResponse errorResponse = validatableResponse.extract().as(ErrorResponse.class);
 
     // assert
-    validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value())
+    validatableResponse
+            .statusCode(HttpStatus.BAD_REQUEST.value())
             .contentType(ContentType.JSON);
 
     assertThat(errorResponse).isNotNull();
@@ -102,14 +101,13 @@ class FollowArtistRestControllerIT implements WithAssertions {
     FollowArtistRequest request = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
 
     when(followArtistService.unfollowArtist(followArtistDto)).thenReturn(true);
-    when(currentUser.getCurrentUserEntity()).thenReturn(userEntity);
+    when(currentUserSupplier.get()).thenReturn(userEntity);
     when(userEntity.getPublicId()).thenReturn(USER_ID);
 
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert
     validatableResponse.statusCode(HttpStatus.OK.value());
-
     verify(followArtistService,times(1)).unfollowArtist(followArtistDto);
   }
 
@@ -119,14 +117,14 @@ class FollowArtistRestControllerIT implements WithAssertions {
     FollowArtistRequest request = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
 
     when(followArtistService.unfollowArtist(followArtistDto)).thenReturn(false);
-    when(currentUser.getCurrentUserEntity()).thenReturn(userEntity);
+    when(currentUserSupplier.get()).thenReturn(userEntity);
     when(userEntity.getPublicId()).thenReturn(USER_ID);
 
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
     // assert
     validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-
     verify(followArtistService,times(1)).unfollowArtist(followArtistDto);
   }
+
 }

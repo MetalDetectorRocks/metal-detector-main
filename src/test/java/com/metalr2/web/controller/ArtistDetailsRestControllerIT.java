@@ -2,18 +2,13 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserEntity;
-import com.metalr2.model.user.UserRepository;
-import com.metalr2.model.user.UserRole;
-import com.metalr2.security.CurrentUser;
+import com.metalr2.security.CurrentUserSupplier;
 import com.metalr2.web.DtoFactory;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.controller.discogs.DiscogsArtistSearchRestClientImpl;
 import com.metalr2.web.dto.request.ArtistDetailsRequest;
-import com.metalr2.web.dto.request.ArtistSearchRequest;
-import com.metalr2.web.dto.response.ArtistNameSearchResponse;
-import com.metalr2.web.dto.response.ErrorResponse;
-import com.metalr2.web.dto.response.Pagination;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
+import com.metalr2.web.dto.response.ErrorResponse;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
@@ -21,13 +16,11 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
@@ -46,7 +39,7 @@ class ArtistDetailsRestControllerIT implements WithAssertions {
   private DiscogsArtistSearchRestClientImpl artistSearchClient;
 
   @MockBean
-  private CurrentUser currentUser;
+  private CurrentUserSupplier currentUserSupplier;
 
   @Mock
   private UserEntity userEntity;
@@ -77,7 +70,7 @@ class ArtistDetailsRestControllerIT implements WithAssertions {
 
     when(artistSearchClient.searchById(artistDetailsRequest.getArtistId()))
             .thenReturn(Optional.of(DtoFactory.ArtistFactory.createTestArtist()));
-    when(currentUser.getCurrentUserEntity()).thenReturn(userEntity);
+    when(currentUserSupplier.get()).thenReturn(userEntity);
     when(userEntity.getPublicId()).thenReturn(USER_ID);
 
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, artistDetailsRequest);

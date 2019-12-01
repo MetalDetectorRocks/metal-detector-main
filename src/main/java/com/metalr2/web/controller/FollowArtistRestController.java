@@ -3,7 +3,7 @@ package com.metalr2.web.controller;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ValidationException;
-import com.metalr2.security.CurrentUser;
+import com.metalr2.security.CurrentUserSupplier;
 import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.request.FollowArtistRequest;
@@ -21,12 +21,12 @@ import javax.validation.Valid;
 public class FollowArtistRestController {
 
   private final FollowArtistService followArtistService;
-  private final CurrentUser currentUser;
+  private final CurrentUserSupplier currentUserSupplier;
 
   @Autowired
-  public FollowArtistRestController(FollowArtistService followArtistService, CurrentUser currentUser){
+  public FollowArtistRestController(FollowArtistService followArtistService, CurrentUserSupplier currentUserSupplier){
     this.followArtistService = followArtistService;
-    this.currentUser = currentUser;
+    this.currentUserSupplier = currentUserSupplier;
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
@@ -34,7 +34,7 @@ public class FollowArtistRestController {
     validateRequest(bindingResult);
 
     FollowArtistDto followArtistDto = FollowArtistDto.builder()
-            .publicUserId(currentUser.getCurrentUserEntity().getPublicId())
+            .publicUserId(currentUserSupplier.get().getPublicId())
             .artistDiscogsId(followArtistRequest.getArtistDiscogsId())
             .artistName(followArtistRequest.getArtistName())
             .build();
@@ -48,7 +48,7 @@ public class FollowArtistRestController {
     validateRequest(bindingResult);
 
     FollowArtistDto followArtistDto = FollowArtistDto.builder()
-            .publicUserId(currentUser.getCurrentUserEntity().getPublicId())
+            .publicUserId(currentUserSupplier.get().getPublicId())
             .artistDiscogsId(followArtistRequest.getArtistDiscogsId())
             .artistName(followArtistRequest.getArtistName())
             .build();
@@ -62,4 +62,5 @@ public class FollowArtistRestController {
       throw new ValidationException(ErrorMessages.VALIDATION_ERROR.toDisplayString(), bindingResult.getFieldErrors());
     }
   }
+
 }
