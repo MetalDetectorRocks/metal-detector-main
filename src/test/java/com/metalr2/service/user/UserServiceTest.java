@@ -4,10 +4,7 @@ import com.metalr2.model.exceptions.EmailVerificationTokenExpiredException;
 import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ResourceNotFoundException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
-import com.metalr2.model.token.TokenEntity;
-import com.metalr2.model.token.TokenFactory;
-import com.metalr2.model.token.TokenRepository;
-import com.metalr2.model.token.TokenType;
+import com.metalr2.model.token.*;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserFactory;
 import com.metalr2.model.user.UserRepository;
@@ -58,6 +55,9 @@ class UserServiceTest implements WithAssertions {
   @Mock
   private BCryptPasswordEncoder passwordEncoder;
 
+  @Mock
+  private JwtsSupport jwtsSupport;
+
   @InjectMocks
   private UserServiceImpl userService;
 
@@ -67,7 +67,7 @@ class UserServiceTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport);
   }
 
   @Test

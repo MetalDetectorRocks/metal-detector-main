@@ -4,6 +4,7 @@ import com.metalr2.model.exceptions.EmailVerificationTokenExpiredException;
 import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ResourceNotFoundException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
+import com.metalr2.model.token.JwtsSupport;
 import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.token.TokenRepository;
 import com.metalr2.model.user.UserEntity;
@@ -30,13 +31,16 @@ public class UserServiceImpl implements UserService {
   private final UserRepository  userRepository;
   private final PasswordEncoder passwordEncoder;
   private final TokenRepository tokenRepository;
+  private final JwtsSupport     jwtsSupport;
   private final ModelMapper     mapper;
 
   @Autowired
-  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository) {
+  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                         TokenRepository tokenRepository, JwtsSupport jwtsSupport) {
     this.userRepository  = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.tokenRepository = tokenRepository;
+    this.jwtsSupport     = jwtsSupport;
     this.mapper          = new ModelMapper();
   }
 
@@ -139,6 +143,9 @@ public class UserServiceImpl implements UserService {
     if (tokenEntity.isExpired()) {
       throw new EmailVerificationTokenExpiredException();
     }
+
+    // get claims to check signature of token
+    jwtsSupport.getClaims(tokenString);
 
     // verify registration
     UserEntity userEntity = tokenEntity.getUser();

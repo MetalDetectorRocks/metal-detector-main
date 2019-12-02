@@ -3,6 +3,7 @@ package com.metalr2.web.controller.mvc.authentication;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
+import com.metalr2.model.token.JwtsSupport;
 import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.token.TokenService;
@@ -32,12 +33,15 @@ public class ResetPasswordController {
   private final UserService userService;
   private final TokenService tokenService;
   private final MessageSource messages;
+  private final JwtsSupport jwtsSupport;
 
   @Autowired
-  public ResetPasswordController(UserService userService, TokenService tokenService, @Qualifier("messageSource") MessageSource messages) {
+  public ResetPasswordController(UserService userService, TokenService tokenService,
+                                 @Qualifier("messageSource") MessageSource messages, JwtsSupport jwtsSupport) {
     this.userService  = userService;
     this.tokenService = tokenService;
     this.messages     = messages;
+    this.jwtsSupport  = jwtsSupport;
   }
 
   @GetMapping
@@ -82,15 +86,18 @@ public class ResetPasswordController {
   }
 
   private void changePassword(ChangePasswordRequest changePasswordRequest) {
-    // 1. get user from token
+    // 1. get claims to check signature of token
+    jwtsSupport.getClaims(changePasswordRequest.getTokenString());
+
+    // 2. get user from token
     Optional<TokenEntity> tokenEntity = tokenService.getResetPasswordTokenByTokenString(changePasswordRequest.getTokenString());
     @SuppressWarnings("OptionalGetWithoutIsPresent") // safe here, because we have validation in method showResetPasswordForm()
     UserEntity userEntity = tokenEntity.get().getUser();
 
-    // 2. set new password
+    // 3. set new password
     userService.changePassword(userEntity, changePasswordRequest.getNewPlainPassword());
 
-    // 3. remove token from database
+    // 4. remove token from database
     tokenService.deleteToken(tokenEntity.get());
   }
 

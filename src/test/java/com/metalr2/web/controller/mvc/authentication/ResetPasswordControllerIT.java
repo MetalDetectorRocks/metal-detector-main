@@ -4,6 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.ArtifactForFramework;
+import com.metalr2.model.token.JwtsSupport;
 import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.token.TokenFactory;
 import com.metalr2.model.token.TokenType;
@@ -61,6 +62,8 @@ class ResetPasswordControllerIT {
   @MockBean
   private MessageSource messages;
 
+  @MockBean
+  private JwtsSupport jwtsSupport;
 
   @MockBean
   @ArtifactForFramework
@@ -68,7 +71,7 @@ class ResetPasswordControllerIT {
 
   @AfterEach
   void tearDown() {
-    reset(userService, tokenService, messages);
+    reset(userService, tokenService, messages, jwtsSupport);
   }
 
   @Test
