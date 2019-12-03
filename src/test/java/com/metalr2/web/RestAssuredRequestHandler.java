@@ -5,6 +5,8 @@ import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
 import io.restassured.response.ValidatableResponse;
 
+import java.util.Map;
+
 import static io.restassured.RestAssured.given;
 
 public class RestAssuredRequestHandler<T> {
@@ -14,6 +16,15 @@ public class RestAssuredRequestHandler<T> {
   public RestAssuredRequestHandler(String requestUri) {
     this.requestUri = requestUri;
     RestAssured.defaultParser = Parser.JSON;
+  }
+
+  public ValidatableResponse doGet(ContentType accept, Map<String,Object> params) {
+    return given()
+            .accept(accept)
+            .params(params)
+            .when()
+            .get(requestUri)
+            .then();
   }
 
   public ValidatableResponse doPost(ContentType accept, T request) {

@@ -2,14 +2,10 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
+import com.metalr2.web.controller.mvc.SearchArtistsController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import com.metalr2.model.user.UserFactory;
-import com.metalr2.security.WebSecurity;
-import com.metalr2.service.user.UserService;
-import com.metalr2.web.controller.mvc.SearchArtistsController;
-import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.TestPropertySource;

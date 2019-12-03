@@ -1,19 +1,14 @@
-package com.metalr2.web.controller;
+package com.metalr2.web.controller.rest;
 
 import com.metalr2.config.constants.Endpoints;
-import com.metalr2.model.user.UserEntity;
-import com.metalr2.service.artist.FollowArtistService;
-import com.metalr2.model.exceptions.ErrorMessages;
-import com.metalr2.model.exceptions.ValidationException;
 import com.metalr2.security.CurrentUserSupplier;
-import com.metalr2.service.followArtist.FollowArtistService;
+import com.metalr2.service.artist.FollowArtistService;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.request.FollowArtistRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
