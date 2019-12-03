@@ -8,7 +8,7 @@ import com.metalr2.model.token.JwtsSupport;
 import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.token.TokenFactory;
 import com.metalr2.model.token.TokenType;
-import com.metalr2.security.WebSecurity;
+import com.metalr2.security.SecurityConfig;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.DtoFactory.ChangePasswordRequestFactory;
@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ResetPasswordController.class)
-@Import(WebSecurity.class)
+@Import(SecurityConfig.class)
 @Tag("integration-test")
 class ResetPasswordControllerIT {
 

@@ -5,6 +5,8 @@ import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserRepository;
 import com.metalr2.model.user.UserRole;
 import com.metalr2.service.artist.FollowArtistService;
+import com.metalr2.security.CurrentUserSupplier;
+import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.request.FollowArtistRequest;
@@ -14,8 +16,8 @@ import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,7 +27,6 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.mockito.Mockito.*;
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Tag("integration-test")
@@ -34,18 +35,18 @@ class FollowArtistRestControllerIT implements WithAssertions {
 
   private static final String ARTIST_NAME     = "Darkthrone";
   private static final long ARTIST_DISCOGS_ID = 252211L;
-  private static final String USERNAME        = "JohnD";
-  private static final String PASSWORD        = "john.doe";
-  private static final String EMAIL           = "john.doe@example.com";
-
-  @Autowired
-  private UserRepository userRepository;
+  private static final String USER_ID         = "TestId";
 
   @MockBean
   private FollowArtistService followArtistService;
-  private FollowArtistDto followArtistDto;
-  private FollowArtistRequest followArtistRequest;
 
+  private FollowArtistRequest followArtistRequest;
+  private FollowArtistDto followArtistDto = new FollowArtistDto(USER_ID, ARTIST_NAME, ARTIST_DISCOGS_ID);
+
+  @MockBean
+  private CurrentUserSupplier currentUserSupplier;
+
+  @Mock
   private UserEntity userEntity;
 
   @Value("${server.address}")
@@ -59,47 +60,43 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @BeforeEach
   void setUp() {
     String requestUri   = "http://" + serverAddress + ":" + port + Endpoints.Rest.FOLLOW_ARTISTS_V1;
-    requestHandler      = new RestAssuredRequestHandler<>(requestUri, USERNAME, PASSWORD);
+    requestHandler      = new RestAssuredRequestHandler<>(requestUri);
     followArtistRequest = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
-    userEntity          = UserEntity.builder()
-            .username(USERNAME)
-            .email(EMAIL)
-            .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
-            .enabled(true)
-            .userRoles(UserRole.createUserRole())
-            .build();
-    userRepository.save(userEntity);
-    followArtistDto     = new FollowArtistDto(userEntity.getPublicId(), ARTIST_NAME, ARTIST_DISCOGS_ID);
   }
 
   @AfterEach
   void tearDown() {
-    userRepository.deleteAll();
   }
 
   @Test
   @DisplayName("CREATE with valid request should create an entity")
   void create_with_valid_request_should_return_201() {
+    // given
     doNothing().when(followArtistService).followArtist(followArtistDto);
+    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(userEntity.getPublicId()).thenReturn(USER_ID);
 
+    // when
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, followArtistRequest);
 
-    // assert
+    // then
     validatableResponse.statusCode(HttpStatus.CREATED.value());
-
     verify(followArtistService,times(1)).followArtist(followArtistDto);
   }
 
   @Test
   @DisplayName("CREATE with invalid request should return 400")
   void create_with_invalid_request_should_return_400() {
+    // given
     FollowArtistRequest invalidRequest = new FollowArtistRequest(null, ARTIST_DISCOGS_ID);
 
+    // when
     ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, invalidRequest);
     ErrorResponse errorResponse = validatableResponse.extract().as(ErrorResponse.class);
 
-    // assert
-    validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value())
+    // then
+    validatableResponse
+            .statusCode(HttpStatus.BAD_REQUEST.value())
             .contentType(ContentType.JSON);
 
     assertThat(errorResponse).isNotNull();
@@ -109,30 +106,35 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @Test
   @DisplayName("DELETE should should delete the entity if it exists")
   void delete_an_existing_resource_should_return_200() {
+    // given
     FollowArtistRequest request = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
-
     when(followArtistService.unfollowArtist(followArtistDto)).thenReturn(true);
+    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(userEntity.getPublicId()).thenReturn(USER_ID);
 
+    // when
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
-    // assert
+    // then
     validatableResponse.statusCode(HttpStatus.OK.value());
-
     verify(followArtistService,times(1)).unfollowArtist(followArtistDto);
   }
 
   @Test
   @DisplayName("DELETE should should return 404 if the entity does not exist")
   void delete_an_not_existing_resource_should_return_404() {
+    // given
     FollowArtistRequest request = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
-
     when(followArtistService.unfollowArtist(followArtistDto)).thenReturn(false);
+    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(userEntity.getPublicId()).thenReturn(USER_ID);
 
+    // when
     ValidatableResponse validatableResponse = requestHandler.doDelete(ContentType.JSON, request);
 
-    // assert
+    // then
     validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-
     verify(followArtistService,times(1)).unfollowArtist(followArtistDto);
   }
+
 }

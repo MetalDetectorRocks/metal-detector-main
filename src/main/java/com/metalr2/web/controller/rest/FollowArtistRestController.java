@@ -1,8 +1,12 @@
-package com.metalr2.web.controller.rest;
+package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.artist.FollowArtistService;
+import com.metalr2.model.exceptions.ErrorMessages;
+import com.metalr2.model.exceptions.ValidationException;
+import com.metalr2.security.CurrentUserSupplier;
+import com.metalr2.service.followArtist.FollowArtistService;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.request.FollowArtistRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +24,20 @@ import javax.validation.Valid;
 public class FollowArtistRestController implements Validatable {
 
   private final FollowArtistService followArtistService;
+  private final CurrentUserSupplier currentUserSupplier;
 
   @Autowired
-  public FollowArtistRestController(FollowArtistService followArtistService){
+  public FollowArtistRestController(FollowArtistService followArtistService, CurrentUserSupplier currentUserSupplier){
     this.followArtistService = followArtistService;
+    this.currentUserSupplier = currentUserSupplier;
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<Void> followArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult,
-                                           Authentication usernamePasswordAuthenticationToken) {
+  public ResponseEntity<Void> followArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult) {
     validateRequest(bindingResult);
 
     FollowArtistDto followArtistDto = FollowArtistDto.builder()
-            .publicUserId(((UserEntity)usernamePasswordAuthenticationToken.getPrincipal()).getPublicId())
+            .publicUserId(currentUserSupplier.get().getPublicId())
             .artistDiscogsId(followArtistRequest.getArtistDiscogsId())
             .artistName(followArtistRequest.getArtistName())
             .build();
@@ -42,12 +47,11 @@ public class FollowArtistRestController implements Validatable {
   }
 
   @DeleteMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<Void> unfollowArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult,
-                                             Authentication usernamePasswordAuthenticationToken) {
+  public ResponseEntity<Void> unfollowArtist(@Valid @RequestBody FollowArtistRequest followArtistRequest, BindingResult bindingResult) {
     validateRequest(bindingResult);
 
     FollowArtistDto followArtistDto = FollowArtistDto.builder()
-            .publicUserId(((UserEntity)usernamePasswordAuthenticationToken.getPrincipal()).getPublicId())
+            .publicUserId(currentUserSupplier.get().getPublicId())
             .artistDiscogsId(followArtistRequest.getArtistDiscogsId())
             .artistName(followArtistRequest.getArtistName())
             .build();
