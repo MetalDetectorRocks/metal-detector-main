@@ -1,13 +1,7 @@
 package com.metalr2.web.controller;
 
-
-// ToDo DanielW: Check
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
-import com.metalr2.model.user.UserEntity;
-import com.metalr2.model.user.UserFactory;
-import com.metalr2.security.WebSecurity;
-import com.metalr2.service.user.UserService;
 import com.metalr2.web.controller.mvc.CustomErrorController;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;

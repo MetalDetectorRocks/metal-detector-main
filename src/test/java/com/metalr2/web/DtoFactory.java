@@ -8,7 +8,6 @@ import com.metalr2.web.dto.discogs.search.DiscogsPagination;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;

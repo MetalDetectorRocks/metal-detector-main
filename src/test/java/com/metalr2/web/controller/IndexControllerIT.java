@@ -2,6 +2,7 @@ package com.metalr2.web.controller;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
+import com.metalr2.web.controller.mvc.IndexController;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
