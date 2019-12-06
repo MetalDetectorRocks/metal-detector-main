@@ -4,6 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
+import com.metalr2.web.controller.mvc.SearchArtistsController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

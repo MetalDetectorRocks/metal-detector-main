@@ -43,7 +43,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
       // redirect to error page
       else {
         log.warn("Not authorized to access page {} for user with username {}", requestURI, authentication.getName());
-        log.warn("Access denied!", e);
         httpServletResponse.sendError(HttpStatus.FORBIDDEN.value(), "Not authorized");
       }
     }
