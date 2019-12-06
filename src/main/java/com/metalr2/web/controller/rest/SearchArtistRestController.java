@@ -1,7 +1,7 @@
 package com.metalr2.web.controller.rest;
 
 import com.metalr2.config.constants.Endpoints;
-import com.metalr2.model.user.UserEntity;
+import com.metalr2.security.CurrentUserSupplier;
 import com.metalr2.service.artist.FollowArtistService;
 import com.metalr2.service.discogs.DiscogsArtistSearchRestClient;
 import com.metalr2.web.dto.FollowArtistDto;
@@ -13,7 +13,6 @@ import com.metalr2.web.dto.response.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,17 +33,20 @@ public class SearchArtistRestController implements Validatable {
 
   private final DiscogsArtistSearchRestClient artistSearchClient;
   private final FollowArtistService followArtistService;
+  private final CurrentUserSupplier currentUserSupplier;
 
   @Autowired
-  public SearchArtistRestController(DiscogsArtistSearchRestClient artistSearchClient, FollowArtistService followArtistService) {
+  public SearchArtistRestController(DiscogsArtistSearchRestClient artistSearchClient, FollowArtistService followArtistService,
+                                    CurrentUserSupplier currentUserSupplier) {
     this.artistSearchClient = artistSearchClient;
     this.followArtistService = followArtistService;
+    this.currentUserSupplier = currentUserSupplier;
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<ArtistNameSearchResponse> handleSearchRequest(@Valid @RequestBody ArtistSearchRequest artistSearchRequest,
-                                                                      BindingResult bindingResult, Authentication authentication) {
+                                                                      BindingResult bindingResult) {
     validateRequest(bindingResult);
 
     Optional<DiscogsArtistSearchResultContainer> artistSearchResultsOptional = artistSearchClient.searchByName(artistSearchRequest.getArtistName(),
@@ -54,9 +56,8 @@ public class SearchArtistRestController implements Validatable {
       return ResponseEntity.notFound().build();
     }
 
-    ArtistNameSearchResponse artistNameSearchResponse = mapSearchResult(artistSearchResultsOptional.get(),
-            ((UserEntity)authentication.getPrincipal()).getPublicId());
-    return ResponseEntity.ok(artistNameSearchResponse);
+    ArtistNameSearchResponse response = mapSearchResult(artistSearchResultsOptional.get(), currentUserSupplier.get().getPublicId());
+    return ResponseEntity.ok(response);
   }
 
   private ArtistNameSearchResponse mapSearchResult(DiscogsArtistSearchResultContainer artistSearchResults, String publicUserId) {
@@ -69,11 +70,10 @@ public class SearchArtistRestController implements Validatable {
 
     List<ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
             .map(artistSearchResult -> new ArtistSearchResult(artistSearchResult.getThumb(),artistSearchResult.getId(),
-                    artistSearchResult.getTitle(),alreadyFollowedArtists.contains(artistSearchResult.getId())))
+                    artistSearchResult.getTitle(), alreadyFollowedArtists.contains(artistSearchResult.getId())))
             .collect(Collectors.toList());
 
-    Pagination pagination = new Pagination(discogsPagination.getPagesTotal(), discogsPagination.getCurrentPage(),
-            itemsPerPage);
+    Pagination pagination = new Pagination(discogsPagination.getPagesTotal(), discogsPagination.getCurrentPage(), itemsPerPage);
 
     return new ArtistNameSearchResponse(dtoArtistSearchResults, pagination);
   }
