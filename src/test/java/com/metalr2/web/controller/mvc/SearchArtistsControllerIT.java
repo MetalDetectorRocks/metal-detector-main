@@ -1,24 +1,21 @@
-package com.metalr2.web.controller;
+package com.metalr2.web.controller.mvc;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
+import com.metalr2.testutil.WithIntegrationTestProfile;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import com.metalr2.web.controller.mvc.SearchArtistsController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(SearchArtistsController.class)
-@TestPropertySource(locations = "classpath:application-test.properties")
-@Tag("integration-test")
-class SearchArtistsControllerIT {
+@WebMvcTest(value = SearchArtistsController.class, excludeAutoConfiguration = MockMvcSecurityAutoConfiguration.class)
+class SearchArtistsControllerIT implements WithIntegrationTestProfile {
 
   @Autowired
   private MockMvc mockMvc;

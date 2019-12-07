@@ -20,8 +20,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 @Service
-@Profile("prod")
 @Slf4j
+@Profile("prod")
 public class JavaMailEmailService implements EmailService {
 
   private final JavaMailSender        emailSender;

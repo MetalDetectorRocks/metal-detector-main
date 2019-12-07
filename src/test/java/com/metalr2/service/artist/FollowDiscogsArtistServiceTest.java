@@ -13,7 +13,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +21,6 @@ import java.util.Optional;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@TestPropertySource(locations = "classpath:application-test.properties")
 class FollowDiscogsArtistServiceTest implements WithAssertions {
 
   private static final String userId        = "1";

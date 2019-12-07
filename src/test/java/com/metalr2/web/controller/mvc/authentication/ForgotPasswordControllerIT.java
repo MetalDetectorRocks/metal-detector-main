@@ -5,10 +5,14 @@ import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.user.events.OnResetPasswordRequestCompleteEvent;
 import com.metalr2.service.user.UserService;
+import com.metalr2.testutil.WithIntegrationTestProfile;
 import com.metalr2.web.DtoFactory.UserDtoFactory;
 import com.metalr2.web.dto.UserDto;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -28,8 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-@Tag("integration-test")
-class ForgotPasswordControllerIT implements WithAssertions {
+class ForgotPasswordControllerIT implements WithAssertions, WithIntegrationTestProfile {
 
   private static final String EXISTING_EMAIL = "john.doe@example.com";
   private static final String NOT_EXISTING_EMAIL = "not.existing@example.com";

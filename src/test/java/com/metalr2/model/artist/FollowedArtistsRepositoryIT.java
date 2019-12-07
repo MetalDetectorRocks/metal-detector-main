@@ -1,22 +1,23 @@
 package com.metalr2.model.artist;
 
+import com.metalr2.testutil.WithIntegrationTestProfile;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @DataJpaTest
-@Tag("integration-test")
-@TestPropertySource(locations = "classpath:application-test.properties")
-class FollowedArtistsRepositoryIT implements WithAssertions {
+class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTestProfile {
 
   private static final String userId1              = "1";
   private static final String userId2              = "2";

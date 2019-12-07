@@ -1,16 +1,11 @@
 package com.metalr2;
 
-import org.junit.jupiter.api.Tag;
+import com.metalr2.testutil.WithIntegrationTestProfile;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
-import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.properties")
-@Profile("test")
-@Tag("integration-test")
-class MetalReleaseRadarApplicationIT {
+class MetalReleaseRadarApplicationIT implements WithIntegrationTestProfile {
 
   @Test
   void contextLoads() {

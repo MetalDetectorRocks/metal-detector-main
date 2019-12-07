@@ -1,9 +1,9 @@
 package com.metalr2.model;
 
+import com.metalr2.testutil.WithIntegrationTestProfile;
 import org.assertj.core.api.WithAssertions;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -17,8 +17,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @DataJpaTest
-@Tag("integration-test")
-class BaseEntityIT implements WithAssertions {
+class BaseEntityIT implements WithAssertions, WithIntegrationTestProfile {
 
   private static final String AUDITOR_USER = "ANONYMOUS";
 

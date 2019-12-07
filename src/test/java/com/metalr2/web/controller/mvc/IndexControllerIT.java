@@ -1,23 +1,20 @@
-package com.metalr2.web.controller;
+package com.metalr2.web.controller.mvc;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
-import com.metalr2.web.controller.mvc.IndexController;
-import org.junit.jupiter.api.Tag;
+import com.metalr2.testutil.WithIntegrationTestProfile;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@WebMvcTest(IndexController.class)
-@Tag("integration-test")
-@ActiveProfiles("test")
-class IndexControllerIT {
+@WebMvcTest(value = IndexController.class, excludeAutoConfiguration = MockMvcSecurityAutoConfiguration.class)
+class IndexControllerIT implements WithIntegrationTestProfile {
 
   @Autowired
   private MockMvc mockMvc;
