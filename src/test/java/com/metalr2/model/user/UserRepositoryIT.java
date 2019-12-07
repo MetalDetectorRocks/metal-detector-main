@@ -1,17 +1,18 @@
 package com.metalr2.model.user;
 
+import com.metalr2.testutil.WithIntegrationTestProfile;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 
 @DataJpaTest
-@Tag("integration-test")
-@TestPropertySource(locations = "classpath:application-test.properties")
-class UserRepositoryIT implements WithAssertions {
+class UserRepositoryIT implements WithAssertions, WithIntegrationTestProfile {
 
   @Autowired
   private UserRepository userRepository;

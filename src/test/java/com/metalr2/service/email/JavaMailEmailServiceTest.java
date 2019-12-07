@@ -4,7 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.misc.MailConfig;
 import com.metalr2.model.email.AbstractEmail;
 import com.metalr2.model.email.RegistrationVerificationEmail;
-import com.metalr2.service.util.CurrentThreadExecutor;
+import com.metalr2.testutil.CurrentThreadExecutor;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

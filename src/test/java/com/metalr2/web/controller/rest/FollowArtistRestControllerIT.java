@@ -1,9 +1,10 @@
-package com.metalr2.web.controller;
+package com.metalr2.web.controller.rest;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.security.CurrentUserSupplier;
 import com.metalr2.service.artist.FollowArtistService;
+import com.metalr2.testutil.WithIntegrationTestProfile;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.request.FollowArtistRequest;
@@ -11,24 +12,23 @@ import com.metalr2.web.dto.response.ErrorResponse;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(locations = "classpath:application-test.properties")
-@Tag("integration-test")
 @ExtendWith(MockitoExtension.class)
-class FollowArtistRestControllerIT implements WithAssertions {
+class FollowArtistRestControllerIT implements WithAssertions, WithIntegrationTestProfile {
 
   private static final String ARTIST_NAME     = "Darkthrone";
   private static final long ARTIST_DISCOGS_ID = 252211L;
@@ -46,9 +46,6 @@ class FollowArtistRestControllerIT implements WithAssertions {
   @Mock
   private UserEntity userEntity;
 
-  @Value("${server.address}")
-  private String serverAddress;
-
   @LocalServerPort
   private int port;
 
@@ -56,7 +53,7 @@ class FollowArtistRestControllerIT implements WithAssertions {
 
   @BeforeEach
   void setUp() {
-    String requestUri   = "http://" + serverAddress + ":" + port + Endpoints.Rest.FOLLOW_ARTISTS_V1;
+    String requestUri   = "http://localhost:" + port + Endpoints.Rest.FOLLOW_ARTISTS_V1;
     requestHandler      = new RestAssuredRequestHandler<>(requestUri);
     followArtistRequest = new FollowArtistRequest(ARTIST_NAME, ARTIST_DISCOGS_ID);
   }
