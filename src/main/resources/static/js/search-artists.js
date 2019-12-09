@@ -12,15 +12,11 @@ function searchArtist(page,size){
             "page" : page,
             "size" : size
         };
-    const searchArtistRequestJson = JSON.stringify(searchArtistRequest);
-    const csrfToken  = $("input[name='_csrf']").val();
 
     $.ajax({
-        method: "POST",
+        method: "GET",
         url: "/rest/v1/artist",
-        contentType: 'application/json',
-        headers: {"X-CSRF-TOKEN": csrfToken},
-        data: searchArtistRequestJson,
+        data: searchArtistRequest,
         dataType: "json",
         success: function(artistNameSearchResponse){
             buildResults(artistNameSearchResponse);

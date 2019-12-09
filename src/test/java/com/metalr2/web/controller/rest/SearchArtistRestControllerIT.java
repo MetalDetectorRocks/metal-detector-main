@@ -1,5 +1,7 @@
 package com.metalr2.web.controller.rest;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.security.CurrentUserSupplier;
@@ -26,6 +28,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -34,12 +37,13 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SearchArtistRestControllerIT implements WithAssertions, WithIntegrationTestProfile {
 
-  private static final String VALID_SEARCH_REQUEST = "Darkthrone";
-  private static final long DISCOGS_ARTIST_ID      = 252211L;
-  private static final String USER_ID              = "TestId";
-  private static final int DEFAULT_PAGE            = 1;
-  private static final int DEFAULT_SIZE            = 10;
-  private static final int TOTAL_PAGES             = 2;
+  private static final String VALID_SEARCH_REQUEST      = "Darkthrone";
+  private static final String NO_RESULT_SEARCH_REQUEST  = "NoResult";
+  private static final long DISCOGS_ARTIST_ID           = 252211L;
+  private static final String USER_ID                   = "TestId";
+  private static final int DEFAULT_PAGE                 = 1;
+  private static final int DEFAULT_SIZE                 = 10;
+  private static final int TOTAL_PAGES                  = 2;
 
   @MockBean
   private DiscogsArtistSearchRestClientImpl artistSearchClient;
@@ -54,11 +58,13 @@ class SearchArtistRestControllerIT implements WithAssertions, WithIntegrationTes
   private int port;
 
   private RestAssuredRequestHandler<ArtistSearchRequest> requestHandler;
+  private ObjectMapper mapper;
 
   @BeforeEach
   void setUp() {
     String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1;
     requestHandler    = new RestAssuredRequestHandler<>(requestUri);
+    mapper            = new ObjectMapper();
   }
 
   @AfterEach
@@ -66,17 +72,18 @@ class SearchArtistRestControllerIT implements WithAssertions, WithIntegrationTes
   }
 
   @Test
-  @DisplayName("POST with valid request should return 200")
-  void post_with_valid_request_should_return_200() {
+  @DisplayName("GET with valid request should return 200")
+  void get_with_valid_request_should_return_200() {
     // given
-    ArtistSearchRequest artistSearchRequest = new ArtistSearchRequest(VALID_SEARCH_REQUEST,DEFAULT_PAGE,DEFAULT_SIZE);
-    when(artistSearchClient.searchByName(artistSearchRequest.getArtistName(),artistSearchRequest.getPage(),artistSearchRequest.getSize()))
+    ArtistSearchRequest request = new ArtistSearchRequest(VALID_SEARCH_REQUEST,DEFAULT_PAGE,DEFAULT_SIZE);
+    Map<String,Object> requestParams = mapper.convertValue(request,new TypeReference<Map<String, Object>>() {});
+    when(artistSearchClient.searchByName(request.getArtistName(),request.getPage(),request.getSize()))
             .thenReturn(Optional.of(ArtistSearchResultContainerFactory.withOneCertainResult()));
     when(currentUserSupplier.get()).thenReturn(userEntity);
     when(userEntity.getPublicId()).thenReturn(USER_ID);
 
     // when
-    ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, artistSearchRequest);
+    ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
 
     // then
     validatableResponse
@@ -87,42 +94,44 @@ class SearchArtistRestControllerIT implements WithAssertions, WithIntegrationTes
     assertThat(artistNameSearchResponse.getArtistSearchResults()).isNotNull().hasSize(1);
 
     ArtistSearchResult artistSearchResult = artistNameSearchResponse.getArtistSearchResults().get(0);
-    assertThat(artistSearchResult).isEqualTo(new ArtistSearchResult(null,DISCOGS_ARTIST_ID,VALID_SEARCH_REQUEST,false));
+    assertThat(artistSearchResult).isEqualTo(new ArtistSearchResult(null,DISCOGS_ARTIST_ID, VALID_SEARCH_REQUEST,false));
 
     Pagination pagination = artistNameSearchResponse.getPagination();
     assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE));
 
-    verify(artistSearchClient,times(1)).searchByName(artistSearchRequest.getArtistName(),artistSearchRequest.getPage(),artistSearchRequest.getSize());
+    verify(artistSearchClient,times(1)).searchByName(request.getArtistName(),request.getPage(),request.getSize());
   }
 
   @Test
-  @DisplayName("POST with bad request should return 400")
-  void post_with_bad_request_should_return_400() {
+  @DisplayName("GET with bad request should return 400")
+  void get_with_bad_request_should_return_400() {
     // given
-    ArtistSearchRequest badArtistSearchRequest = new ArtistSearchRequest(null,DEFAULT_PAGE,DEFAULT_SIZE);
+    ArtistSearchRequest request = new ArtistSearchRequest(null,DEFAULT_PAGE,DEFAULT_SIZE);
+    Map<String,Object> requestParams = mapper.convertValue(request,new TypeReference<Map<String, Object>>() {});
 
     // when
-    ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, badArtistSearchRequest);
+    ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
 
     // then
     validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value());
-    verify(artistSearchClient,times(0)).searchByName(badArtistSearchRequest.getArtistName(),badArtistSearchRequest.getPage(),badArtistSearchRequest.getSize());
+    verify(artistSearchClient,times(0)).searchByName(request.getArtistName(),request.getPage(),request.getSize());
   }
 
   @Test
-  @DisplayName("POST with empty request should return 404")
-  void post_with_empty_request_should_return_404() {
+  @DisplayName("GET with empty result should return 404")
+  void get_with_empty_result_should_return_404() {
     // given
-    ArtistSearchRequest emptyArtistSearchRequest = new ArtistSearchRequest("",DEFAULT_PAGE,DEFAULT_SIZE);
-    when(artistSearchClient.searchByName(emptyArtistSearchRequest.getArtistName(),emptyArtistSearchRequest.getPage(),emptyArtistSearchRequest.getSize()))
+    ArtistSearchRequest request       = new ArtistSearchRequest(NO_RESULT_SEARCH_REQUEST,DEFAULT_PAGE,DEFAULT_SIZE);
+    Map<String,Object> requestParams  = mapper.convertValue(request,new TypeReference<Map<String, Object>>() {});
+    when(artistSearchClient.searchByName(request.getArtistName(),request.getPage(),request.getSize()))
             .thenReturn(Optional.empty());
 
     // when
-    ValidatableResponse validatableResponse = requestHandler.doPost(ContentType.JSON, emptyArtistSearchRequest);
+    ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
 
     // then
     validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-    verify(artistSearchClient,times(1)).searchByName(emptyArtistSearchRequest.getArtistName(),emptyArtistSearchRequest.getPage(),emptyArtistSearchRequest.getSize());
+    verify(artistSearchClient,times(1)).searchByName(request.getArtistName(),request.getPage(),request.getSize());
   }
 
 }

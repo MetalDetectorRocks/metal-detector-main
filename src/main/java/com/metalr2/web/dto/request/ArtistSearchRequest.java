@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class ArtistSearchRequest {
 
-  @NotNull
+  @NotBlank
   private String artistName;
   private int page;
   private int size;

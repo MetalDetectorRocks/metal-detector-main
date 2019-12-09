@@ -10,15 +10,11 @@ function artistDetails(artistName,artistId){
             "artistName" : artistName,
             "artistId" : artistId
         };
-    const artistDetailsRequestJson = JSON.stringify(artistDetailsRequest);
-    const csrfToken  = $("input[name='_csrf']").val();
 
     $.ajax({
-        method: "POST",
+        method: "GET",
         url: "/rest/v1/artist-details",
-        contentType: 'application/json',
-        headers: {"X-CSRF-TOKEN": csrfToken},
-        data: artistDetailsRequestJson,
+        data: artistDetailsRequest,
         dataType: "json",
         success: function(artistDetailsResponse){
             createArtistDetailsResultCard(artistDetailsResponse);
@@ -139,7 +135,7 @@ const createNoArtistDetailsMessage = function (artistName,artistId) {
 
     const messageTextElement = document.createElement('p');
     messageTextElement.innerText = "No data could be found for the given parameters:";
-    noResultsMessageElement.appendChild(messageTextElement)
+    noResultsMessageElement.appendChild(messageTextElement);
 
     const parameterListElement = document.createElement('ul');
 
