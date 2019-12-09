@@ -20,10 +20,10 @@ public class RestAssuredRequestHandler<T> {
 
   public ValidatableResponse doGet(ContentType accept, Map<String,Object> params) {
     return given()
-            .accept(accept)
-            .params(params)
+              .accept(accept)
+              .params(params)
             .when()
-            .get(requestUri)
+              .get(requestUri)
             .then();
   }
 

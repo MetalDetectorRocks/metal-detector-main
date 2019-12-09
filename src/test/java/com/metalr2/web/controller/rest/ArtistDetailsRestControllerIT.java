@@ -121,7 +121,7 @@ class ArtistDetailsRestControllerIT implements WithAssertions, WithIntegrationTe
 
     // then
     validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-    verify(artistSearchClient,times(1)).searchById(0L);
+    verify(artistSearchClient,times(1)).searchById(request.getArtistId());
   }
 
 }

@@ -99,7 +99,7 @@ class SearchArtistRestControllerIT implements WithAssertions, WithIntegrationTes
     Pagination pagination = artistNameSearchResponse.getPagination();
     assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE));
 
-    verify(artistSearchClient,times(1)).searchByName(VALID_SEARCH_REQUEST,DEFAULT_PAGE,DEFAULT_SIZE);
+    verify(artistSearchClient,times(1)).searchByName(request.getArtistName(),request.getPage(),request.getSize());
   }
 
   @Test
@@ -114,7 +114,7 @@ class SearchArtistRestControllerIT implements WithAssertions, WithIntegrationTes
 
     // then
     validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value());
-    verify(artistSearchClient,times(0)).searchByName(null,request.getPage(),request.getSize());
+    verify(artistSearchClient,times(0)).searchByName(request.getArtistName(),request.getPage(),request.getSize());
   }
 
   @Test
