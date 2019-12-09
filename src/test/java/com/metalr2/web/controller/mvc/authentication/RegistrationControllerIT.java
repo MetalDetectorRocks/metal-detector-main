@@ -9,6 +9,7 @@ import com.metalr2.model.exceptions.UserAlreadyExistsException;
 import com.metalr2.model.user.events.OnRegistrationCompleteEvent;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
+import com.metalr2.testutil.WithIntegrationTestProfile;
 import com.metalr2.web.DtoFactory.RegisterUserRequestFactory;
 import com.metalr2.web.DtoFactory.UserDtoFactory;
 import com.metalr2.web.dto.UserDto;
@@ -43,8 +44,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-@Tag("integration-test")
-class RegistrationControllerIT implements WithAssertions {
+class RegistrationControllerIT implements WithAssertions, WithIntegrationTestProfile {
 
   private static final String PARAM_USERNAME          = "username";
   private static final String PARAM_EMAIL             = "email";

@@ -9,8 +9,8 @@ import com.metalr2.security.handler.CustomLogoutSuccessHandler;
 import com.metalr2.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,7 +22,11 @@ import java.time.Duration;
 
 @EnableWebSecurity
 @Configuration
-@Profile("!test")
+@ConditionalOnProperty(
+        name = "com.metalr2.security.enabled",
+        havingValue = "true",
+        matchIfMissing = true
+)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Value("${security.remember-me-secret}")

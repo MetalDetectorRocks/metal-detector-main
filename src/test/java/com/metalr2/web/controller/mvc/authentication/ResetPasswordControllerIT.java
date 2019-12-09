@@ -8,14 +8,13 @@ import com.metalr2.model.token.JwtsSupport;
 import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.token.TokenFactory;
 import com.metalr2.model.token.TokenType;
-import com.metalr2.security.SecurityConfig;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
+import com.metalr2.testutil.WithSecurityConfig;
 import com.metalr2.web.DtoFactory.ChangePasswordRequestFactory;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -24,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
@@ -42,9 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ResetPasswordController.class)
-@Import(SecurityConfig.class)
-@Tag("integration-test")
-class ResetPasswordControllerIT {
+class ResetPasswordControllerIT implements WithSecurityConfig {
 
   private static final String PARAM_TOKEN_STRING      = "tokenString";
   private static final String PARAM_PASSWORD          = "newPlainPassword";

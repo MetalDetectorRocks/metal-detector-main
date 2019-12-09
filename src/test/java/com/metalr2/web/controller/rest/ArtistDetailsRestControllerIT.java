@@ -1,4 +1,4 @@
-package com.metalr2.web.controller;
+package com.metalr2.web.controller.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,6 +6,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.security.CurrentUserSupplier;
 import com.metalr2.service.discogs.DiscogsArtistSearchRestClientImpl;
+import com.metalr2.testutil.WithIntegrationTestProfile;
 import com.metalr2.web.DtoFactory;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.request.ArtistDetailsRequest;
@@ -14,16 +15,17 @@ import com.metalr2.web.dto.response.ErrorResponse;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
 import java.util.Optional;
@@ -31,10 +33,8 @@ import java.util.Optional;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(locations = "classpath:application-test.properties")
-@Tag("integration-test")
 @ExtendWith(MockitoExtension.class)
-class ArtistDetailsRestControllerIT implements WithAssertions {
+class ArtistDetailsRestControllerIT implements WithAssertions, WithIntegrationTestProfile {
 
   private static final String USER_ID = "TestId";
 
@@ -47,9 +47,6 @@ class ArtistDetailsRestControllerIT implements WithAssertions {
   @Mock
   private UserEntity userEntity;
 
-  @Value("${server.address}")
-  private String serverAddress;
-
   @LocalServerPort
   private int port;
 
@@ -58,8 +55,8 @@ class ArtistDetailsRestControllerIT implements WithAssertions {
 
   @BeforeEach
   void setUp() {
-    String requestUri   = "http://" + serverAddress + ":" + port + Endpoints.Rest.ARTIST_DETAILS_V1;
-    requestHandler      = new RestAssuredRequestHandler<>(requestUri);
+    String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTIST_DETAILS_V1;
+    requestHandler    = new RestAssuredRequestHandler<>(requestUri);
     mapper              = new ObjectMapper();
   }
 

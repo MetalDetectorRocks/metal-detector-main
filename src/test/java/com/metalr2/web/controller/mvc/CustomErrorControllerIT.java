@@ -1,16 +1,15 @@
-package com.metalr2.web.controller;
+package com.metalr2.web.controller.mvc;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
-import com.metalr2.web.controller.mvc.CustomErrorController;
+import com.metalr2.testutil.WithIntegrationTestProfile;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.RequestDispatcher;
@@ -18,10 +17,8 @@ import javax.servlet.RequestDispatcher;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(CustomErrorController.class)
-@ActiveProfiles("test")
-@Tag("integration-test")
-class CustomErrorControllerIT implements WithAssertions {
+@WebMvcTest(controllers = CustomErrorController.class, excludeAutoConfiguration = MockMvcSecurityAutoConfiguration.class)
+class CustomErrorControllerIT implements WithAssertions, WithIntegrationTestProfile {
 
   @Autowired
   private MockMvc mockMvc;

@@ -1,4 +1,4 @@
-package com.metalr2.service.util;
+package com.metalr2.testutil;
 
 import java.util.concurrent.Executor;
 
