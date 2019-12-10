@@ -8,11 +8,11 @@ public class RestRequestLoggingFilter extends CommonsRequestLoggingFilter {
 
   public RestRequestLoggingFilter() {
     super.setIncludeQueryString(true);
-    super.setIncludeClientInfo(true);
-    super.setIncludeHeaders(false);
     super.setIncludePayload(true);
+    super.setIncludeClientInfo(true);
     super.setMaxPayloadLength(10000);
-    super.setAfterMessagePrefix("Request data: ");
+    super.setIncludeHeaders(false);
+    super.setAfterMessagePrefix("");
   }
 
   @Override
@@ -27,7 +27,7 @@ public class RestRequestLoggingFilter extends CommonsRequestLoggingFilter {
 
   @Override
   protected void afterRequest(HttpServletRequest request, String message) {
-    logger.info(message);
+    logger.info(request.getMethod() + ": " + message);
   }
 
 }
