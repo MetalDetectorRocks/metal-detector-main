@@ -6,17 +6,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class ArtistsRepositoryTest implements WithAssertions, WithIntegrationTestProfile {
@@ -49,9 +43,7 @@ class ArtistsRepositoryTest implements WithAssertions, WithIntegrationTestProfil
     Optional<ArtistEntity> artistEntityOptional = artistsRepository.findByArtistDiscogsId(artistDiscogsId1);
 
     assertThat(artistEntityOptional).isPresent();
-    assertThat(artistEntityOptional.get().getArtistDiscogsId()).isEqualTo(artistDiscogsId1);
-    assertThat(artistEntityOptional.get().getArtistName()).isEqualTo(artistName1);
-    assertThat(artistEntityOptional.get().getThmub()).isEqualTo(thumb);
+    assertThat(artistEntityOptional.get()).isEqualTo(artist1);
   }
 
   @Test
@@ -81,19 +73,12 @@ class ArtistsRepositoryTest implements WithAssertions, WithIntegrationTestProfil
   @Test
   @DisplayName("findAllByArtistDiscogsIds() should return correct entities if they exist")
   void find_all_by_artist_discogs_ids_should_return_correct_entities() {
-    List<ArtistEntity> artistEntities = artistsRepository.findAllByArtistDiscogsIds(artistDiscogsId1,artistDiscogsId2,0L);
+    List<ArtistEntity> artistEntities = artistsRepository.findAllByArtistDiscogsIdIn(artistDiscogsId1,artistDiscogsId2,0L);
 
     assertThat(artistEntities).hasSize(2);
 
-    ArtistEntity artistEntity1 = artistEntities.get(0);
-    assertThat(artistEntity1.getArtistDiscogsId()).isEqualTo(artistDiscogsId1);
-    assertThat(artistEntity1.getArtistName()).isEqualTo(artistName1);
-    assertThat(artistEntity1.getThmub()).isEqualTo(thumb);
-
-    ArtistEntity artistEntity2 = artistEntities.get(1);
-    assertThat(artistEntity2.getArtistDiscogsId()).isEqualTo(artistDiscogsId2);
-    assertThat(artistEntity2.getArtistName()).isEqualTo(artistName2);
-    assertThat(artistEntity2.getThmub()).isNull();
+    assertThat(artistEntities.get(0)).isEqualTo(artist1);
+    assertThat(artistEntities.get(1)).isEqualTo(artist2);
   }
 
 }
