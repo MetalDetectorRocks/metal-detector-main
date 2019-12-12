@@ -44,6 +44,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
+      .csrf().ignoringAntMatchers(Endpoints.AntPattern.REST_ENDPOINTS)
+      .and()
       .authorizeRequests()
         .antMatchers(Endpoints.AntPattern.ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
         .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
