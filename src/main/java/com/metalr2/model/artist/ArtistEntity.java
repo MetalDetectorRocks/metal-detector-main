@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 @Entity(name = "artists")
 @NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
 @AllArgsConstructor
+@EqualsAndHashCode
 public class ArtistEntity extends BaseEntity {
 
   @Column(name = "artist_discogs_id", nullable = false, updatable = false)
@@ -20,7 +21,7 @@ public class ArtistEntity extends BaseEntity {
   @NonNull
   private String artistName;
 
-  @Column(name = "thmub", updatable = false)
-  private String thmub;
+  @Column(name = "thumb", updatable = false)
+  private String thumb;
 
 }

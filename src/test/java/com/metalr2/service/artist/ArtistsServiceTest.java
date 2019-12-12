@@ -2,7 +2,6 @@ package com.metalr2.service.artist;
 
 import com.metalr2.model.artist.ArtistEntity;
 import com.metalr2.model.artist.ArtistsRepository;
-import com.metalr2.model.artist.FollowedArtistEntity;
 import com.metalr2.web.dto.ArtistDto;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,12 +31,14 @@ class ArtistsServiceTest implements WithAssertions {
   @InjectMocks
   private ArtistsServiceImpl artistsService;
 
-  ArtistEntity artistEntity;
+  private ArtistEntity artistEntity;
+  private ArtistDto artistDto;
 
 
   @BeforeEach
   void setUp() {
     this.artistEntity = new ArtistEntity(artistDiscogsId, artistName, thumb);
+    this.artistDto    = new ArtistDto(artistDiscogsId, artistName, thumb);
   }
 
   @AfterEach
@@ -60,9 +59,7 @@ class ArtistsServiceTest implements WithAssertions {
     verify(artistsRepository,times(1)).findByArtistDiscogsId(artistDiscogsId);
 
     assertThat(artistOptional).isPresent();
-    assertThat(artistOptional.get().getArtistDiscogsId()).isEqualTo(artistDiscogsId);
-    assertThat(artistOptional.get().getArtistName()).isEqualTo(artistName);
-    assertThat(artistOptional.get().getThumb()).isEqualTo(thumb);
+    assertThat(artistOptional.get()).isEqualTo(artistDto);
   }
 
   @Test
@@ -84,18 +81,16 @@ class ArtistsServiceTest implements WithAssertions {
   @DisplayName("findAllByArtistDiscogsIds() should return all given entities that exist")
   void find_all_by_artist_discogs_ids_should_return_all_entities_that_exist() {
     // given
-    when(artistsRepository.findAllByArtistDiscogsIds(artistDiscogsId,0L)).thenReturn(List.of(artistEntity));
+    when(artistsRepository.findAllByArtistDiscogsIdIn(artistDiscogsId,0L)).thenReturn(List.of(artistEntity));
 
     // when
-    List<ArtistDto> artists = artistsService.findAllByArtistDiscogsIds(artistDiscogsId,0L);
+    List<ArtistDto> artists = artistsService.findAllByArtistDiscogsIdIn(artistDiscogsId,0L);
 
     // then
-    verify(artistsRepository,times(1)).findAllByArtistDiscogsIds(artistDiscogsId,0L);
+    verify(artistsRepository,times(1)).findAllByArtistDiscogsIdIn(artistDiscogsId,0L);
 
     assertThat(artists).hasSize(1);
-    assertThat(artists.get(0).getArtistDiscogsId()).isEqualTo(artistDiscogsId);
-    assertThat(artists.get(0).getArtistName()).isEqualTo(artistName);
-    assertThat(artists.get(0).getThumb()).isEqualTo(thumb);
+    assertThat(artists.get(0)).isEqualTo(artistDto);
   }
 
   @Test

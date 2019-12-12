@@ -9,7 +9,7 @@ public interface ArtistsService {
 
   Optional<ArtistDto> findByArtistDiscogsId(long artistDiscogsId);
 
-  List<ArtistDto> findAllByArtistDiscogsIds(long... artistDiscogsIds);
+  List<ArtistDto> findAllByArtistDiscogsIdIn(long... artistDiscogsIds);
 
   boolean existsByArtistDiscogsId(long artistDiscogsId);
 
