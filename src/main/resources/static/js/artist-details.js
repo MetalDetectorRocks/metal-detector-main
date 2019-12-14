@@ -5,6 +5,9 @@
  * @returns {boolean}
  */
 function artistDetails(artistName,artistId){
+    clear();
+    toggleLoader("artistDetailsContainer");
+
     const artistDetailsRequest =
         {
             "artistName" : artistName,
@@ -18,9 +21,11 @@ function artistDetails(artistName,artistId){
         dataType: "json",
         success: function(artistDetailsResponse){
             createArtistDetailsResultCard(artistDetailsResponse);
+            toggleLoader("artistDetailsContainer");
         },
         error: function(){
             createNoArtistDetailsMessage(artistName,artistId);
+            toggleLoader("artistDetailsContainer");
         }
     });
 
@@ -32,8 +37,6 @@ function artistDetails(artistName,artistId){
  * @param artistDetailsResponse     The json response
  */
 const createArtistDetailsResultCard = function(artistDetailsResponse) {
-    clear();
-
     const card = document.createElement('div');
     card.className = "card";
 
@@ -126,8 +129,6 @@ function buildListCardBody(title,list) {
  * Builds HTML for the message for an empty result
  */
 const createNoArtistDetailsMessage = function (artistName,artistId) {
-    clear();
-
     const noResultsMessageElement = document.createElement('div');
     noResultsMessageElement.className = "mb-3 alert alert-danger";
     noResultsMessageElement.role = "alert";
