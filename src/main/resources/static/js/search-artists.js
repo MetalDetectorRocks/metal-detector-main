@@ -5,6 +5,9 @@
  * @returns {boolean}
  */
 function searchArtist(page,size){
+    clear();
+    toggleLoader("searchResultsContainer");
+
     const artistName = document.getElementById('artistName').value;
     const searchArtistRequest =
         {
@@ -20,9 +23,11 @@ function searchArtist(page,size){
         dataType: "json",
         success: function(artistNameSearchResponse){
             buildResults(artistNameSearchResponse);
+            toggleLoader("searchResultsContainer");
         },
         error: function(){
             createNoArtistNameSearchResultsMessage(artistName);
+            toggleLoader("searchResultsContainer");
         }
     });
 
@@ -34,8 +39,6 @@ function searchArtist(page,size){
  * @param artistNameSearchResponse  JSON response
  */
 function buildResults(artistNameSearchResponse) {
-    clear();
-
     createNavigationElement(artistNameSearchResponse);
     createResultCards(artistNameSearchResponse);
     createNavigationElement(artistNameSearchResponse);
@@ -132,8 +135,6 @@ function createNavigationElement(artistNameSearchResponse) {
  * Builds HTML for the message for an empty result
  */
 function createNoArtistNameSearchResultsMessage(artistName) {
-    clear();
-
     const noResultsMessageElement = document.createElement('div');
     noResultsMessageElement.className = "mb-3 alert alert-danger";
     noResultsMessageElement.role = "alert";
