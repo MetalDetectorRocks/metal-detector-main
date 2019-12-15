@@ -31,7 +31,7 @@ function artistDetails(artistName,artistId){
  * Build the HTML for the result
  * @param artistDetailsResponse     The json response
  */
-const createArtistDetailsResultCard = function(artistDetailsResponse) {
+function createArtistDetailsResultCard(artistDetailsResponse) {
     clear();
 
     const card = document.createElement('div');
@@ -40,46 +40,46 @@ const createArtistDetailsResultCard = function(artistDetailsResponse) {
     const cardTitle = document.createElement('h2');
     cardTitle.className = "card-title";
     cardTitle.innerText = artistDetailsResponse.artistName;
-    card.appendChild(cardTitle);
+    card.append(cardTitle);
 
     const cardBodyButton = document.createElement('div');
     cardBodyButton.className = "card-body";
     cardBodyButton.append(createFollowArtistButton(artistDetailsResponse.artistName,artistDetailsResponse.artistId,artistDetailsResponse.isFollowed));
-    card.appendChild(cardBodyButton);
+    card.append(cardBodyButton);
 
     if (artistDetailsResponse.profile) {
         const cardBodyProfile = buildDefaultCardBody("Profile");
-        card.appendChild(cardBodyProfile);
+        card.append(cardBodyProfile);
 
         const profile = document.createElement('p');
         profile.innerText = artistDetailsResponse.profile;
-        cardBodyProfile.appendChild(profile);
+        cardBodyProfile.append(profile);
     }
 
     if (artistDetailsResponse.activeMember) {
         const cardBodyActiveMember = buildListCardBody("Active Member",artistDetailsResponse.activeMember);
-        card.appendChild(cardBodyActiveMember);
+        card.append(cardBodyActiveMember);
     }
 
     if (artistDetailsResponse.formerMember) {
         const cardBodyFormerMember = buildListCardBody("Former Member",artistDetailsResponse.formerMember);
-        card.appendChild(cardBodyFormerMember);
+        card.append(cardBodyFormerMember);
     }
 
     if (artistDetailsResponse.images) {
         const cardBodyImages = buildDefaultCardBody("Images");
-        card.appendChild(cardBodyImages);
+        card.append(cardBodyImages);
 
         jQuery.each(artistDetailsResponse.images, function (i, image){
             const imageElement = document.createElement('img');
             imageElement.alt = "Image of " + artistDetailsResponse.artistName;
             imageElement.src = image;
-            cardBodyImages.appendChild(imageElement);
+            cardBodyImages.append(imageElement);
         });
     }
 
-    document.getElementById('artistDetailsContainer').appendChild(card);
-};
+    document.getElementById('artistDetailsContainer').append(card);
+}
 
 /**
  * Build a an empty card body with a title
@@ -92,7 +92,7 @@ function buildDefaultCardBody(title) {
 
     const headingElement = document.createElement('h3');
     headingElement.innerText = title;
-    cardBody.appendChild(headingElement);
+    cardBody.append(headingElement);
 
     return cardBody;
 }
@@ -109,15 +109,15 @@ function buildListCardBody(title,list) {
 
     const headingElement = document.createElement('h3');
     headingElement.innerText = title;
-    cardBody.appendChild(headingElement);
+    cardBody.append(headingElement);
 
     const listElement = document.createElement('ul');
     jQuery.each(list, function (i, listItem){
         const listItemElement = document.createElement('li');
         listItemElement.innerText = listItem;
-        listElement.appendChild(listItemElement);
+        listElement.append(listItemElement);
     });
-    cardBody.appendChild(listElement);
+    cardBody.append(listElement);
 
     return cardBody;
 }
@@ -125,7 +125,7 @@ function buildListCardBody(title,list) {
 /**
  * Builds HTML for the message for an empty result
  */
-const createNoArtistDetailsMessage = function (artistName,artistId) {
+function createNoArtistDetailsMessage(artistName,artistId) {
     clear();
 
     const noResultsMessageElement = document.createElement('div');
@@ -135,19 +135,19 @@ const createNoArtistDetailsMessage = function (artistName,artistId) {
 
     const messageTextElement = document.createElement('p');
     messageTextElement.innerText = "No data could be found for the given parameters:";
-    noResultsMessageElement.appendChild(messageTextElement);
+    noResultsMessageElement.append(messageTextElement);
 
     const parameterListElement = document.createElement('ul');
 
     const listItemName = document.createElement('li');
     listItemName.innerText = "Artist name: " + artistName;
-    parameterListElement.appendChild(listItemName);
+    parameterListElement.append(listItemName);
 
     const listItemId = document.createElement('li');
     listItemId.innerText = "Artist id: " + artistId;
-    parameterListElement.appendChild(listItemId);
+    parameterListElement.append(listItemId);
 
-    noResultsMessageElement.appendChild(parameterListElement);
+    noResultsMessageElement.append(parameterListElement);
 
-    document.getElementById('noResultsMessageContainer').appendChild(noResultsMessageElement);
-};
+    document.getElementById('noResultsMessageContainer').append(noResultsMessageElement);
+}
