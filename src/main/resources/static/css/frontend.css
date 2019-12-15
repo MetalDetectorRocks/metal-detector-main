@@ -17,7 +17,6 @@ body {
     text-align: left;
 }
 
-
 .navbar {
     padding: 0;
     min-height: 4rem;
@@ -68,17 +67,6 @@ footer{
     margin: 0.75rem;
 }
 
-.btn-pagination {
-    margin-right: 0.5rem;
-    background-color: #ececec;
-    color: #212529;
-    padding: 0.25rem;
-}
-
-.btn-pagination:hover {
-    background-color: #777777;
-}
-
 .nav-link-artist {
     margin-right: 0;
     color: #212529;
@@ -88,6 +76,32 @@ footer{
 
 .nav-link-artist-active {
     background-color: #ececec;
+}
+
+.page-item.active .page-link {
+    z-index: 1;
+    color: #fff;
+    background-color: #343a40;
+    border: 1px solid rgba(0,0,0,.125);
+}
+
+.page-item .page-link {
+    z-index: 1;
+    color: #000;
+    background-color: #ececec;
+    border: 1px solid rgba(0,0,0,.125);
+}
+
+.page-item.disabled .page-link {
+    z-index: 1;
+    color: #000;
+    background-color: #ececec;
+    border: 1px solid rgba(0,0,0,.125);;
+}
+
+.page-link:hover {
+    color: #fff;
+    background-color: #5c6670;
 }
 
 .loader:before {

@@ -35,20 +35,20 @@ function searchArtist(page,size){
 }
 
 /**
- * Builds html with results or the message for an empty result
+ * Builds HTML with results and pagination
  * @param artistNameSearchResponse  JSON response
  */
-const buildResults = function(artistNameSearchResponse) {
+function buildResults(artistNameSearchResponse) {
+    createNavigationElement(artistNameSearchResponse);
     createResultCards(artistNameSearchResponse);
-    createPagination(artistNameSearchResponse);
-};
+    createNavigationElement(artistNameSearchResponse);
+}
 
 /**
  * Clears all containers for new search responses
  */
-const clear = function () {
+function clear() {
     $("#searchResultsContainer").empty();
-    $("#paginationContainer").empty();
     $("#artistDetailsContainer").empty();
 
     const noResultsMessageElement = document.getElementById('noResultsMessageElement');
@@ -58,13 +58,13 @@ const clear = function () {
             noResultsMessageContainer.removeChild(noResultsMessageContainer.firstChild);
         }
     }
-};
+}
 
 /**
  * Builds HTML for the result cards
  * @param artistNameSearchResponse
  */
-const createResultCards = function(artistNameSearchResponse){
+function createResultCards(artistNameSearchResponse){
     jQuery.each(artistNameSearchResponse.artistSearchResults, function (i, artistSearchResult) {
 
         const card = document.createElement('div');
@@ -104,69 +104,125 @@ const createResultCards = function(artistNameSearchResponse){
             artistSearchResult.id,artistSearchResult.isFollowed,followArtistButtonElement);
         cardBody.append(followArtistButtonElement);
 
-        document.getElementById('searchResultsContainer').appendChild(card);
+        document.getElementById('searchResultsContainer').append(card);
     });
-};
+}
 
 /**
- * Builds HTML for pagination buttons
+ * Builds HTML for pagination
  * @param artistNameSearchResponse  The json response
  */
-const createPagination = function (artistNameSearchResponse) {
-    if (artistNameSearchResponse.pagination.currentPage > 1) {
-        const previousElement = document.createElement('a');
-        previousElement.href = "#";
-        previousElement.text = "Previous";
-        previousElement.className = "btn btn-dark btn-pagination";
-        previousElement.onclick = (function (page, itemsPerPage) {
-            return function () {
-                searchArtist(page, itemsPerPage)
-            };
-        })(artistNameSearchResponse.pagination.currentPage-1, artistNameSearchResponse.pagination.itemsPerPage);
+function createNavigationElement(artistNameSearchResponse) {
+    const navElement = document.createElement("nav");
+    const listElement = document.createElement("ul");
+    listElement.className = "pagination pagination-sm justify-content-end";
+    navElement.append(listElement);
 
-        document.getElementById('paginationContainer').appendChild(previousElement);
+    // Previous link
+    createPreviousOrNextItem(artistNameSearchResponse, listElement, true);
+    // Page links
+    for (let index = 1; index <= artistNameSearchResponse.pagination.totalPages; index++) {
+        createPageLinks(artistNameSearchResponse.pagination.currentPage, artistNameSearchResponse.pagination.itemsPerPage,
+            index, listElement);
     }
+    // Next link
+    createPreviousOrNextItem(artistNameSearchResponse, listElement, false);
 
-    if (artistNameSearchResponse.pagination.totalPages > 1) {
-        for (let index = 1; index <= artistNameSearchResponse.pagination.totalPages; index++) {
-            const pageNumberElement = document.createElement('a');
-            pageNumberElement.href = "#";
-            pageNumberElement.text = index;
-            pageNumberElement.className = "btn btn-dark btn-pagination";
-            pageNumberElement.onclick = (function (page, itemsPerPage) {
-                return function () {
-                    searchArtist(page, itemsPerPage)
-                };
-            })(index, artistNameSearchResponse.pagination.itemsPerPage);
-
-            document.getElementById('paginationContainer').appendChild(pageNumberElement);
-        }
-    }
-
-    if (artistNameSearchResponse.pagination.currentPage < artistNameSearchResponse.pagination.totalPages) {
-        const nextElement = document.createElement('a');
-        nextElement.href = "#";
-        nextElement.text = "Next";
-        nextElement.className = "btn btn-dark btn-pagination";
-        nextElement.onclick = (function (page, itemsPerPage) {
-            return function () {
-                searchArtist(page, itemsPerPage)
-            };
-        })(artistNameSearchResponse.pagination.currentPage+1, artistNameSearchResponse.pagination.itemsPerPage);
-
-        document.getElementById('paginationContainer').appendChild(nextElement);
-    }
-};
+    document.getElementById('searchResultsContainer').append(navElement);
+}
 
 /**
  * Builds HTML for the message for an empty result
  */
-const createNoArtistNameSearchResultsMessage = function (artistName) {
+function createNoArtistNameSearchResultsMessage(artistName) {
     const noResultsMessageElement = document.createElement('div');
     noResultsMessageElement.className = "mb-3 alert alert-danger";
     noResultsMessageElement.role = "alert";
     noResultsMessageElement.id = "noResultsMessageElement";
     noResultsMessageElement.innerText =  "No artists could be found for the given name: " + artistName;
 
-    document.getElementById('noResultsMessageContainer').appendChild(noResultsMessageElement);
-};
+    document.getElementById('noResultsMessageContainer').append(noResultsMessageElement);
+}
+
+/**
+ * Creates pagination page links and appends them to the given element
+ * @param currentPage   The current page
+ * @param itemsPerPage  Max items per page
+ * @param index         Index number of the link
+ * @param element       Element to add page links to
+ */
+function createPageLinks(currentPage, itemsPerPage, index, element) {
+    const listItem = document.createElement("li");
+    listItem.className = "page-item";
+
+    if (index === currentPage)
+        listItem.classList.add("active");
+
+    const link = document.createElement("a");
+    link.className = "page-link";
+    link.href = "#";
+    link.text = String(index);
+    link.onclick = (function (page, itemsPerPage) {
+        return function () {
+            searchArtist(page, itemsPerPage)
+        };
+    })(index, itemsPerPage);
+
+    listItem.append(link);
+    element.append(listItem);
+}
+
+/**
+ * Create the previos or next pagination butteon
+ * @param artistNameSearchResponse  Search result
+ * @param element                   Element to append to
+ * @param previous                  True if previous shall be created, false for next
+ */
+function createPreviousOrNextItem(artistNameSearchResponse, element, previous) {
+    const item = document.createElement("li");
+    item.className = "page-item";
+
+    let text;
+    let targetPage;
+    let symbol;
+
+    if (previous){
+        text = "Previous";
+        targetPage = artistNameSearchResponse.pagination.currentPage - 1;
+        symbol = "\u00AB";
+        item.classList.add("prev");
+        if (artistNameSearchResponse.pagination.currentPage === 1)
+            item.classList.add("disabled");
+
+    } else {
+        text = "Next";
+        targetPage = artistNameSearchResponse.pagination.currentPage + 1;
+        symbol = "\u00BB";
+        item.classList.add("next");
+        if (artistNameSearchResponse.pagination.currentPage === artistNameSearchResponse.pagination.totalPages)
+            item.classList.add("disabled");
+    }
+
+    const link = document.createElement("a");
+    link.setAttribute('aria-label', text);
+    link.className = "page-link";
+    link.href = "#";
+    link.onclick = (function (page, itemsPerPage) {
+        return function () {
+            searchArtist(page, itemsPerPage)
+        };
+    })(targetPage, artistNameSearchResponse.pagination.itemsPerPage);
+
+    let span = document.createElement("span");
+    span.setAttribute('aria-hidden', true);
+    span.textContent = symbol;
+    link.append(span);
+
+    span = document.createElement("span");
+    span.className = "sr-only";
+    span.textContent = text;
+    link.append(span);
+
+    item.append(link);
+    element.append(item);
+}
