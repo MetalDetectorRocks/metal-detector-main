@@ -39,53 +39,9 @@ function artistDetails(artistName,artistId){
 function createArtistDetailsResultCard(artistDetailsResponse) {
     const card = document.createElement('div');
     card.className = "card";
+    document.getElementById('artistDetailsContainer').append(card);
 
-    const cardHeader = document.createElement("div");
-    cardHeader.className = "card-header";
-    card.append(cardHeader);
-
-    const navList = document.createElement("ul");
-    navList.className = "nav nav-tabs card-header-tabs";
-    cardHeader.append(navList);
-
-    const navItemProfile = document.createElement("li");
-    navItemProfile.className = "nav-item";
-    navList.append(navItemProfile);
-
-    const navLinkProfile = document.createElement("a");
-    navLinkProfile.className = "nav-link active";
-    navLinkProfile.id = "profileTab";
-    navLinkProfile.href = "#";
-    navLinkProfile.text = "Profile";
-    navItemProfile.append(navLinkProfile);
-
-    const navItemMembe = document.createElement("li");
-    navItemMembe.className = "nav-item";
-    navList.append(navItemMembe);
-
-    const navLinkMember = document.createElement("a");
-    navLinkMember.className = "nav-link";
-    navLinkMember.id = "MemberTab";
-    navLinkMember.href = "#";
-    navLinkMember.text = "Member";
-    navLinkMember.onclick = function () {
-        showMember(artistDetailsResponse, card, navLinkProfile, navLinkMember);
-    };
-    navItemMembe.append(navLinkMember);
-
-    const navItemImages = document.createElement("li");
-    navItemImages.className = "nav-item";
-    navList.append(navItemImages);
-
-    const navLinkImages = document.createElement("a");
-    navLinkImages.className = "nav-link";
-    navLinkImages.id = "imagesTab";
-    navLinkImages.href = "#";
-    navLinkImages.text = "Images";
-    navLinkImages.onclick = function () {
-        showImages(artistDetailsResponse, card, navLinkProfile, navLinkImages);
-    };
-    navItemImages.append(navLinkImages);
+    createNavBar(card, artistDetailsResponse);
 
     const cardTitle = document.createElement('h2');
     cardTitle.className = "card-title";
@@ -97,111 +53,147 @@ function createArtistDetailsResultCard(artistDetailsResponse) {
     cardBodyButton.append(createFollowArtistButton(artistDetailsResponse.artistName,artistDetailsResponse.artistId,artistDetailsResponse.isFollowed));
     card.append(cardBodyButton);
 
+    const cardBody = document.createElement('div');
+    cardBody.id = "artistDetailsCardBody";
+    cardBody.className = "card-body";
+    card.append(cardBody);
+
+    if (artistDetailsResponse.profile)
+        showProfile(artistDetailsResponse);
+    else if (artistDetailsResponse.activeMember || artistDetailsResponse.formerMember)
+        showMember(artistDetailsResponse);
+    else if (artistDetailsResponse.images)
+        showImages(artistDetailsResponse);
+}
+
+function createNavBar(card, artistDetailsResponse) {
+    const cardHeader = document.createElement("div");
+    cardHeader.className = "card-header";
+    card.append(cardHeader);
+
+    const navList = document.createElement("ul");
+    navList.className = "nav nav-tabs card-header-tabs";
+    cardHeader.append(navList);
+
+    const navItemProfile = createNavItem(artistDetailsResponse, "Profile");
+    navList.append(navItemProfile);
+    if (artistDetailsResponse.profile)
+        navItemProfile.onclick = function () {
+            showProfile(artistDetailsResponse);
+        };
+    else
+        navItemProfile.classList.add("disabled");
+
+    const navItemMember = createNavItem(artistDetailsResponse, "Member");
+    navList.append(navItemMember);
+    if (artistDetailsResponse.activeMember || artistDetailsResponse.formerMember)
+        navItemMember.onclick = function () {
+            showMember(artistDetailsResponse);
+        };
+    else
+        navItemMember.classList.add("disabled");
+
+    const navItemImages = createNavItem(artistDetailsResponse, "Images");
+    navList.append(navItemImages);
+    if (artistDetailsResponse.images)
+        navItemImages.onclick = function () {
+            showImages(artistDetailsResponse);
+        };
+    else
+        navItemImages.classList.add("disabled");
+}
+
+function createNavItem(artistDetailsResponse, name) {
+    const navItem = document.createElement("li");
+    navItem.className = "nav-item";
+
+    const navLink = document.createElement("a");
+    navLink.className = "nav-link";
+    navLink.id = name.toLowerCase() + "Tab";
+    navLink.href = "#";
+    navLink.text = name;
+    navItem.append(navLink);
+
+    return navItem;
+}
+
+function showProfile(artistDetailsResponse) {
+    const cardBody = document.getElementById("artistDetailsCardBody");
+
+    while (cardBody.firstChild)
+        cardBody.removeChild(cardBody.firstChild);
+
+    document.getElementById("profileTab").classList.add("active");
+    document.getElementById("memberTab").classList.remove("active");
+    document.getElementById("imagesTab").classList.remove("active");
+
     if (artistDetailsResponse.profile) {
-        const cardBodyProfile = buildDefaultCardBody("");
-        cardBodyProfile.id = "card-body";
-        card.append(cardBodyProfile);
-
         const profile = document.createElement('p');
+        profile.className = "card-text";
         profile.innerText = artistDetailsResponse.profile;
-        cardBodyProfile.append(profile);
+        cardBody.append(profile);
     }
-
-    if (artistDetailsResponse.images) {
-
-    }
-
-    document.getElementById('artistDetailsContainer').append(card);
 }
 
-function showProfile(artistDetailsResponse, card) {
-    $("#card-body").empty();
-    $("#memberTab").classList.remove("active");
-    $("#profileTab").classList.add("active");
-    $("#ImagesTab").classList.remove("active");
+function showMember(artistDetailsResponse) {
+    const cardBody = document.getElementById("artistDetailsCardBody");
 
-    const cardBodyProfile = buildDefaultCardBody("");
-    cardBodyProfile.id = "card-body";
-    card.append(cardBodyProfile);
+    while (cardBody.firstChild)
+        cardBody.removeChild(cardBody.firstChild);
 
-    const profile = document.createElement('p');
-    profile.innerText = artistDetailsResponse.profile;
-    cardBodyProfile.append(profile);
-}
-
-function showMember(artistDetailsResponse, card) {
-    $("#card-body").empty();
-    $("#memberTab").classList.add("active");
-    $("#profileTab").classList.remove("active");
-    $("#ImagesTab").classList.remove("active");
+    document.getElementById("memberTab").classList.add("active");
+    document.getElementById("profileTab").classList.remove("active");
+    document.getElementById("imagesTab").classList.remove("active");
 
     if (artistDetailsResponse.activeMember) {
-        const cardBodyActiveMember = buildListCardBody("Active Member",artistDetailsResponse.activeMember);
-        card.append(cardBodyActiveMember);
+        const headerElement = document.createElement("h4");
+        headerElement.innerText = "Active Member";
+        const listElement = createListElement(artistDetailsResponse.activeMember);
+        cardBody.append(headerElement);
+        cardBody.append(listElement);
     }
 
     if (artistDetailsResponse.formerMember) {
-        const cardBodyFormerMember = buildListCardBody("Former Member",artistDetailsResponse.formerMember);
-        card.append(cardBodyFormerMember);
+        const headerElement = document.createElement("h4");
+        headerElement.innerText = "Former Member";
+        const listElement = createListElement(artistDetailsResponse.formerMember);
+        cardBody.append(headerElement);
+        cardBody.append(listElement);
     }
 }
 
-function showImages(artistDetailsResponse, card) {
-    $("#card-body").empty();
-    $("#memberTab").classList.remove("active");
-    $("#profileTab").classList.remove("active");
-    $("#ImagesTab").classList.add("active");
+function showImages(artistDetailsResponse) {
+    const cardBody = document.getElementById("artistDetailsCardBody");
 
-    const cardBodyImages = buildDefaultCardBody("");
-    card.append(cardBodyImages);
+    while (cardBody.firstChild)
+        cardBody.removeChild(cardBody.firstChild);
+
+    document.getElementById("imagesTab").classList.add("active");
+    document.getElementById("profileTab").classList.remove("active");
+    document.getElementById("memberTab").classList.remove("active");
 
     jQuery.each(artistDetailsResponse.images, function (i, image){
         const imageElement = document.createElement('img');
         imageElement.alt = "Image of " + artistDetailsResponse.artistName;
         imageElement.src = image;
-        cardBodyImages.append(imageElement);
+        cardBody.append(imageElement);
     });
 }
 
 /**
- * Build a an empty card body with a title
- * @param title     The card's title
- * @returns {HTMLDivElement}
- */
-function buildDefaultCardBody(title) {
-    const cardBody = document.createElement('div');
-    cardBody.className = "card-body";
-
-    const headingElement = document.createElement('h3');
-    headingElement.innerText = title;
-    cardBody.append(headingElement);
-
-    return cardBody;
-}
-
-/**
- * Builds a card body with a title and a list of Strings
- * @param title     The card's title
+ * Builds a list of Strings
  * @param list      The list of Strings
  * @returns {HTMLDivElement}
  */
-function buildListCardBody(title,list) {
-    const cardBody = document.createElement('div');
-    cardBody.className = "card-body";
-
-    const headingElement = document.createElement('h3');
-    headingElement.innerText = title;
-    cardBody.append(headingElement);
-
+function createListElement(list) {
     const listElement = document.createElement('ul');
     jQuery.each(list, function (i, listItem){
         const listItemElement = document.createElement('li');
         listItemElement.innerText = listItem;
         listElement.append(listItemElement);
     });
-    cardBody.append(listElement);
 
-    return cardBody;
+    return listElement;
 }
 
 /**
