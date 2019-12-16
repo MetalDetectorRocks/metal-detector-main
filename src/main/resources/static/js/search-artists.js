@@ -70,7 +70,12 @@ function createResultCards(artistNameSearchResponse){
         const card = document.createElement('div');
         card.className = "card";
 
-        const cardBody = buildDefaultCardBody(artistSearchResult.artistName);
+        const cardBody = document.createElement('div');
+        cardBody.className = "card-body";
+
+        const headingElement = document.createElement('h3');
+        headingElement.innerText = artistSearchResult.artistName;
+        cardBody.append(headingElement);
         card.append(cardBody);
 
         if (artistSearchResult.thumb !== ""){
