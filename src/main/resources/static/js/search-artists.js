@@ -100,7 +100,7 @@ function createResultCards(artistNameSearchResponse){
         followArtistButtonElement.type = "button";
         followArtistButtonElement.className = "btn btn-primary btn-dark font-weight-bold";
         followArtistButtonElement.textContent = artistSearchResult.isFollowed ? "Unfollow" : "Follow";
-        followArtistButtonElement.onclick =createOnClickFunctionFollowArtist(artistSearchResult.artistName,
+        followArtistButtonElement.onclick = createOnClickFunctionFollowArtist(artistSearchResult.artistName,
             artistSearchResult.id,artistSearchResult.isFollowed,followArtistButtonElement);
         cardBody.append(followArtistButtonElement);
 

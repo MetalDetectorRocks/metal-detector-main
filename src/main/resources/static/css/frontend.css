@@ -81,6 +81,7 @@ footer{
 .page-item.active .page-link {
     z-index: 1;
     color: #fff;
+    font-weight: bold;
     background-color: #343a40;
     border: 1px solid rgba(0,0,0,.125);
 }
