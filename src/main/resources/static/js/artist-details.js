@@ -41,7 +41,7 @@ function createArtistDetailsResultCard(artistDetailsResponse) {
     card.className = "card";
     document.getElementById('artistDetailsContainer').append(card);
 
-    createNavBar(card, artistDetailsResponse);
+    createCardNavigation(card, artistDetailsResponse);
 
     const cardTitle = document.createElement('h2');
     cardTitle.className = "card-title";
@@ -66,7 +66,7 @@ function createArtistDetailsResultCard(artistDetailsResponse) {
         showImages(artistDetailsResponse);
 }
 
-function createNavBar(card, artistDetailsResponse) {
+function createCardNavigation(card, artistDetailsResponse) {
     const cardHeader = document.createElement("div");
     cardHeader.className = "card-header";
     card.append(cardHeader);
