@@ -12,13 +12,11 @@ function followArtist(artistName,artistId,el){
             "artistDiscogsId" : artistId
         };
     const followArtistRequestJson = JSON.stringify(followArtistRequest);
-    const csrfToken  = $("input[name='_csrf']").val();
 
     $.ajax({
         method: "POST",
         url: "/rest/v1/follow-artist",
         contentType: 'application/json',
-        headers: {"X-CSRF-TOKEN": csrfToken},
         data: followArtistRequestJson,
         success: function(){
             el.childNodes[0].nodeValue = 'Unfollow';
@@ -46,14 +44,12 @@ function unfollowArtist(artistName,artistId,el){
             "artistDiscogsId" : artistId
         };
     const followArtistRequestJson = JSON.stringify(followArtistRequest);
-    const csrfToken  = $("input[name='_csrf']").val();
 
     $.ajax({
         method: "DELETE",
         url: "/rest/v1/follow-artist",
         contentType: 'application/json',
         data: followArtistRequestJson,
-        headers: {"X-CSRF-TOKEN": csrfToken},
         success: function(){
             el.childNodes[0].nodeValue = 'Follow';
             el.onclick = createOnClickFunctionFollowArtist(artistName,artistId,false,el);
