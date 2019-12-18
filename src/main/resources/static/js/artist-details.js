@@ -71,12 +71,18 @@ function createCardNavigation(card, artistDetailsResponse) {
     cardHeader.className = "card-header";
     card.append(cardHeader);
 
+    const navElement = document.createElement("nav");
+    navElement.className = "navbar navbar-default";
+    cardHeader.append(navElement);
+
     const navList = document.createElement("ul");
-    navList.className = "nav nav-tabs card-header-tabs";
-    cardHeader.append(navList);
+    navList.className = "nav card-header-tabs";
+    // navList.className = "nav navbar-nav";
+    navElement.append(navList);
 
     const navItemProfile = createNavItem(artistDetailsResponse, "Profile");
     navList.append(navItemProfile);
+
     if (artistDetailsResponse.profile)
         navItemProfile.onclick = function () {
             showProfile(artistDetailsResponse);
@@ -86,6 +92,7 @@ function createCardNavigation(card, artistDetailsResponse) {
 
     const navItemMember = createNavItem(artistDetailsResponse, "Member");
     navList.append(navItemMember);
+
     if (artistDetailsResponse.activeMember || artistDetailsResponse.formerMember)
         navItemMember.onclick = function () {
             showMember(artistDetailsResponse);
@@ -95,6 +102,7 @@ function createCardNavigation(card, artistDetailsResponse) {
 
     const navItemImages = createNavItem(artistDetailsResponse, "Images");
     navList.append(navItemImages);
+
     if (artistDetailsResponse.images)
         navItemImages.onclick = function () {
             showImages(artistDetailsResponse);
