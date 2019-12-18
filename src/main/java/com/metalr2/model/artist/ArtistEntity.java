@@ -1,7 +1,12 @@
 package com.metalr2.model.artist;
 
 import com.metalr2.model.BaseEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,11 +15,10 @@ import javax.persistence.Entity;
 @Entity(name = "artists")
 @NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class ArtistEntity extends BaseEntity {
 
   @Column(name = "artist_discogs_id", nullable = false, updatable = false)
-  @NonNull
   private long artistDiscogsId;
 
   @Column(name = "artist_name", nullable = false, updatable = false)

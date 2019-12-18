@@ -183,7 +183,7 @@ function showImages(artistDetailsResponse) {
 /**
  * Builds a list of Strings
  * @param list      The list of Strings
- * @returns {HTMLDivElement}
+ * @returns {HTMLUListElement}
  */
 function createListElement(list) {
     const listElement = document.createElement('ul');
