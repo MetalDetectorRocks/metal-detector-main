@@ -36,6 +36,15 @@ body {
     white-space: nowrap;
 }
 
+.nav-link.active {
+    background-color: #343a40;
+}
+
+.nav-link:hover {
+    background-color: #343a40;
+    color: #fff;
+}
+
 #content-wrapper {
     padding: 5rem 1rem 1rem 1rem;
 }
