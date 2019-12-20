@@ -67,20 +67,15 @@ function createArtistDetailsResultCard(artistDetailsResponse) {
 }
 
 function createCardNavigation(card, artistDetailsResponse) {
-    const cardHeader = document.createElement("div");
-    cardHeader.className = "card-header";
+    const cardHeader = document.createElement("nav");
+    cardHeader.className = "navbar navbar-default";
     card.append(cardHeader);
 
-    const navElement = document.createElement("nav");
-    navElement.className = "navbar navbar-default";
-    cardHeader.append(navElement);
-
     const navList = document.createElement("ul");
-    navList.className = "nav card-header-tabs";
-    // navList.className = "nav navbar-nav";
-    navElement.append(navList);
+    navList.className = "nav nav-tabs card-header-tabs";
+    cardHeader.append(navList);
 
-    const navItemProfile = createNavItem(artistDetailsResponse, "Profile");
+    const navItemProfile = createNavItem(artistDetailsResponse, "profile");
     navList.append(navItemProfile);
 
     if (artistDetailsResponse.profile)
@@ -90,7 +85,7 @@ function createCardNavigation(card, artistDetailsResponse) {
     else
         navItemProfile.classList.add("disabled");
 
-    const navItemMember = createNavItem(artistDetailsResponse, "Member");
+    const navItemMember = createNavItem(artistDetailsResponse, "member");
     navList.append(navItemMember);
 
     if (artistDetailsResponse.activeMember || artistDetailsResponse.formerMember)
@@ -100,7 +95,7 @@ function createCardNavigation(card, artistDetailsResponse) {
     else
         navItemMember.classList.add("disabled");
 
-    const navItemImages = createNavItem(artistDetailsResponse, "Images");
+    const navItemImages = createNavItem(artistDetailsResponse, "images");
     navList.append(navItemImages);
 
     if (artistDetailsResponse.images)
@@ -117,7 +112,7 @@ function createNavItem(artistDetailsResponse, name) {
 
     const navLink = document.createElement("a");
     navLink.className = "nav-link";
-    navLink.id = name.toLowerCase() + "Tab";
+    navLink.id = name + "Tab";
     navLink.href = "#";
     navLink.text = name;
     navItem.append(navLink);

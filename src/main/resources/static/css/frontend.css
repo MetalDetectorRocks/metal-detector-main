@@ -36,13 +36,22 @@ body {
     white-space: nowrap;
 }
 
-.nav-link.active {
+.nav-tabs .nav-link.active {
     background-color: #343a40;
+    color: #fff;
+}
+
+.nav-tabs .nav-link {
+    color: #212529;
 }
 
 .nav-link:hover {
     background-color: #343a40;
     color: #fff;
+}
+
+.nav-item {
+    text-transform: capitalize;
 }
 
 #content-wrapper {
@@ -74,6 +83,11 @@ footer{
 
 .card-title {
     margin: 0.75rem;
+}
+
+.card-header-tabs {
+    margin-bottom: -1.85rem;
+    margin-left: 0;
 }
 
 .page-item.active .page-link {
