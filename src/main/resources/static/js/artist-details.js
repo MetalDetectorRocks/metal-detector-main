@@ -63,7 +63,7 @@ function createArtistDetailsResultCard(artistDetailsResponse) {
     else if (artistDetailsResponse.activeMember || artistDetailsResponse.formerMember)
         showMember(artistDetailsResponse);
     else if (artistDetailsResponse.images)
-        showImages(artistDetailsResponse);
+        createImageGallery(artistDetailsResponse);
 }
 
 function createCardNavigation(card, artistDetailsResponse) {
@@ -106,7 +106,7 @@ function createCardNavigation(card, artistDetailsResponse) {
 
     if (artistDetailsResponse.images)
         navItemImages.onclick = function () {
-            showImages(artistDetailsResponse);
+            createImageGallery(artistDetailsResponse)
         };
     else
         navItemImages.classList.add("disabled");
@@ -160,17 +160,31 @@ function showMember(artistDetailsResponse) {
     }
 }
 
-function showImages(artistDetailsResponse) {
+function createImageGallery(artistDetailsResponse) {
     const cardBody = document.getElementById("artistDetailsCardBody");
 
     while (cardBody.firstChild)
         cardBody.removeChild(cardBody.firstChild);
 
-    jQuery.each(artistDetailsResponse.images, function (i, image){
-        const imageElement = document.createElement('img');
-        imageElement.alt = "Image of " + artistDetailsResponse.artistName;
-        imageElement.src = image;
-        cardBody.append(imageElement);
+    const imageRow = document.createElement("div");
+    imageRow.className = "image-row";
+    cardBody.append(imageRow);
+
+    const imageSet = document.createElement("div");
+    imageSet.className = "image-set";
+    imageRow.append(imageSet);
+
+    jQuery.each(artistDetailsResponse.images, function (i, image) {
+        const link = document.createElement("a");
+        link.className = "image-link";
+        link.href = image;
+        link.setAttribute("data-lightbox","example-set");
+        imageSet.append(link);
+
+        const image1 = document.createElement("img");
+        image1.className = "image";
+        image1.src = image;
+        link.append(image1);
     });
 }
 
@@ -217,6 +231,10 @@ function createNoArtistDetailsMessage(artistName,artistId) {
 
     document.getElementById('noResultsMessageContainer').append(noResultsMessageElement);
 }
+
+$(function () {
+    $("#mdb-lightbox-ui").load("mdb-addons/mdb-lightbox-ui.html");
+});
 
 $(document).on('click', '#topheader .navbar-nav a', function () {
     $('#topheader .navbar-nav').find('li.active').removeClass('active');

@@ -54,6 +54,7 @@ body {
 #topheader .navbar-nav li > a:hover {
     background-color: #343a40;
     color: #fff;
+    text-decoration: none;
 }
 
 #topheader .navbar-nav li.active > a {
@@ -143,4 +144,30 @@ footer{
 
 @keyframes loader {
     to {transform: rotate(360deg);}
+}
+
+.image-row {
+    text-align: left;
+}
+
+.image-set {
+    box-sizing: border-box;
+}
+
+.image-link {
+    display: inline-block;
+    padding: 4px;
+    margin: 0 0.5rem 1rem 0.5rem;
+    background-color: var(--bg-color);
+    line-height: 0;
+    border-radius: var(--border-radius-large);
+}
+
+.image-link:hover {
+    background-color: #5c6670;
+}
+
+.image {
+    width: 7rem;
+    border-radius: var(--border-radius);
 }
