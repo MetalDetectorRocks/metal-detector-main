@@ -66,6 +66,11 @@ function createArtistDetailsResultCard(artistDetailsResponse) {
         createImageGallery(artistDetailsResponse);
 }
 
+/**
+ * Builds the HTML for the navigation bar
+ * @param card  The artist details card
+ * @param artistDetailsResponse The json response
+ */
 function createCardNavigation(card, artistDetailsResponse) {
     const cardHeader = document.createElement("div");
     cardHeader.className = "card-header";
@@ -80,7 +85,7 @@ function createCardNavigation(card, artistDetailsResponse) {
     navList.className = "nav navbar-nav";
     navbarElement.append(navList);
 
-    const navItemProfile = createNavItem(artistDetailsResponse, "profile");
+    const navItemProfile = createNavItem("profile");
     navItemProfile.classList.add("active");
     navList.append(navItemProfile);
 
@@ -91,7 +96,7 @@ function createCardNavigation(card, artistDetailsResponse) {
     else
         navItemProfile.classList.add("disabled");
 
-    const navItemMember = createNavItem(artistDetailsResponse, "member");
+    const navItemMember = createNavItem("member");
     navList.append(navItemMember);
 
     if (artistDetailsResponse.activeMember || artistDetailsResponse.formerMember)
@@ -101,7 +106,7 @@ function createCardNavigation(card, artistDetailsResponse) {
     else
         navItemMember.classList.add("disabled");
 
-    const navItemImages = createNavItem(artistDetailsResponse, "images");
+    const navItemImages = createNavItem("images");
     navList.append(navItemImages);
 
     if (artistDetailsResponse.images)
@@ -112,7 +117,12 @@ function createCardNavigation(card, artistDetailsResponse) {
         navItemImages.classList.add("disabled");
 }
 
-function createNavItem(artistDetailsResponse, name) {
+/**
+ * Create a standard HTML li with a link
+ * @param name  The name of the tab
+ * @returns {HTMLLIElement} The li element
+ */
+function createNavItem(name) {
     const listItem = document.createElement("li");
 
     const link = document.createElement("a");
@@ -123,6 +133,10 @@ function createNavItem(artistDetailsResponse, name) {
     return listItem;
 }
 
+/**
+ * Clears the card and shows the profile
+ * @param artistDetailsResponse The json response
+ */
 function showProfile(artistDetailsResponse) {
     const cardBody = document.getElementById("artistDetailsCardBody");
 
@@ -137,6 +151,10 @@ function showProfile(artistDetailsResponse) {
     }
 }
 
+/**
+ * Clears the card and shows the member lists
+ * @param artistDetailsResponse The json response
+ */
 function showMember(artistDetailsResponse) {
     const cardBody = document.getElementById("artistDetailsCardBody");
 
@@ -160,6 +178,10 @@ function showMember(artistDetailsResponse) {
     }
 }
 
+/**
+ * Clears the card and shows the image gallery
+ * @param artistDetailsResponse The json response
+ */
 function createImageGallery(artistDetailsResponse) {
     const cardBody = document.getElementById("artistDetailsCardBody");
 
@@ -232,11 +254,14 @@ function createNoArtistDetailsMessage(artistName,artistId) {
     document.getElementById('noResultsMessageContainer').append(noResultsMessageElement);
 }
 
-$(function () {
-    $("#mdb-lightbox-ui").load("mdb-addons/mdb-lightbox-ui.html");
-});
-
+/**
+ * Switches active nav tab on click
+ */
 $(document).on('click', '#topheader .navbar-nav a', function () {
     $('#topheader .navbar-nav').find('li.active').removeClass('active');
     $(this).parent('li').addClass('active');
+});
+
+lightbox.option({
+    'resizeDuration': 200
 });
