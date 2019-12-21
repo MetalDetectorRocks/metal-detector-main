@@ -36,22 +36,30 @@ body {
     white-space: nowrap;
 }
 
-.nav-tabs .nav-link.active {
-    background-color: #343a40;
-    color: #fff;
+#topheader .navbar {
+    min-height: 2rem;
 }
 
-.nav-tabs .nav-link {
-    color: #212529;
-}
-
-.nav-link:hover {
-    background-color: #343a40;
-    color: #fff;
-}
-
-.nav-item {
+#topheader .navbar-nav li > a {
     text-transform: capitalize;
+    color: #333;
+    transition: background-color .2s, color .2s;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    line-height: 1;
+    margin-right: 0.2rem;
+    padding: 0.4rem;
+}
+
+#topheader .navbar-nav li > a:hover {
+    background-color: #343a40;
+    color: #fff;
+}
+
+#topheader .navbar-nav li.active > a {
+    background-color: #343a40;
+    color: #fff;
+    font-weight: bold;
 }
 
 #content-wrapper {
@@ -85,9 +93,9 @@ footer{
     margin: 0.75rem;
 }
 
-.card-header-tabs {
-    margin-bottom: -1.85rem;
-    margin-left: 0;
+.card-header {
+    padding: 0;
+    min-height: 2rem;
 }
 
 .page-item.active .page-link {
