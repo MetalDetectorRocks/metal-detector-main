@@ -63,6 +63,15 @@ body {
     font-weight: bold;
 }
 
+#topheader .navbar-nav li.disabled > a {
+    color: #333;
+    pointer-events:none;
+}
+
+#topheader .navbar-nav li.disabled > a:hover {
+    background-color: inherit;
+}
+
 #content-wrapper {
     padding: 5rem 1rem 1rem 1rem;
 }
@@ -158,9 +167,8 @@ footer{
     display: inline-block;
     padding: 4px;
     margin: 0 0.5rem 1rem 0.5rem;
-    background-color: var(--bg-color);
     line-height: 0;
-    border-radius: var(--border-radius-large);
+    border-radius: 0.25rem;
 }
 
 .image-link:hover {
@@ -168,6 +176,15 @@ footer{
 }
 
 .image {
-    width: 7rem;
-    border-radius: var(--border-radius);
+    width: 10rem;
+    border-radius: 0.25rem;
+}
+
+
+.lb-nav a.lb-prev {
+    background: transparent;
+}
+
+.lb-nav a.lb-next {
+    background: transparent;
 }
