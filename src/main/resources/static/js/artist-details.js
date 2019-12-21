@@ -39,19 +39,23 @@ function artistDetails(artistName,artistId){
 function createArtistDetailsResultCard(artistDetailsResponse) {
     const card = document.createElement('div');
     card.className = "card";
+    card.id = "artistDetails";
     document.getElementById('artistDetailsContainer').append(card);
 
     createCardNavigation(card, artistDetailsResponse);
 
+    const titleContainer = document.createElement("div");
+    titleContainer.className = "row ml-2 mt-2";
+    card.append(titleContainer);
+
     const cardTitle = document.createElement('h2');
     cardTitle.className = "card-title";
     cardTitle.innerText = artistDetailsResponse.artistName;
-    card.append(cardTitle);
+    titleContainer.append(cardTitle);
 
     const cardBodyButton = document.createElement('div');
-    cardBodyButton.className = "card-body";
     cardBodyButton.append(createFollowArtistButton(artistDetailsResponse.artistName,artistDetailsResponse.artistId,artistDetailsResponse.isFollowed));
-    card.append(cardBodyButton);
+    titleContainer.append(cardBodyButton);
 
     const cardBody = document.createElement('div');
     cardBody.id = "artistDetailsCardBody";
