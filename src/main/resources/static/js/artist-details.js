@@ -67,15 +67,21 @@ function createArtistDetailsResultCard(artistDetailsResponse) {
 }
 
 function createCardNavigation(card, artistDetailsResponse) {
-    const cardHeader = document.createElement("nav");
-    cardHeader.className = "navbar navbar-default";
+    const cardHeader = document.createElement("div");
+    cardHeader.className = "card-header";
+    cardHeader.id = "topheader";
     card.append(cardHeader);
 
+    const navbarElement = document.createElement("nav");
+    navbarElement.className = "navbar navbar-expand-lg";
+    cardHeader.append(navbarElement);
+
     const navList = document.createElement("ul");
-    navList.className = "nav nav-tabs card-header-tabs";
-    cardHeader.append(navList);
+    navList.className = "nav navbar-nav";
+    navbarElement.append(navList);
 
     const navItemProfile = createNavItem(artistDetailsResponse, "profile");
+    navItemProfile.classList.add("active");
     navList.append(navItemProfile);
 
     if (artistDetailsResponse.profile)
@@ -107,17 +113,14 @@ function createCardNavigation(card, artistDetailsResponse) {
 }
 
 function createNavItem(artistDetailsResponse, name) {
-    const navItem = document.createElement("li");
-    navItem.className = "nav-item";
+    const listItem = document.createElement("li");
 
-    const navLink = document.createElement("a");
-    navLink.className = "nav-link";
-    navLink.id = name + "Tab";
-    navLink.href = "#";
-    navLink.text = name;
-    navItem.append(navLink);
+    const link = document.createElement("a");
+    link.href = "#";
+    link.text = name;
+    listItem.append(link);
 
-    return navItem;
+    return listItem;
 }
 
 function showProfile(artistDetailsResponse) {
@@ -125,10 +128,6 @@ function showProfile(artistDetailsResponse) {
 
     while (cardBody.firstChild)
         cardBody.removeChild(cardBody.firstChild);
-
-    document.getElementById("profileTab").classList.add("active");
-    document.getElementById("memberTab").classList.remove("active");
-    document.getElementById("imagesTab").classList.remove("active");
 
     if (artistDetailsResponse.profile) {
         const profile = document.createElement('p');
@@ -143,10 +142,6 @@ function showMember(artistDetailsResponse) {
 
     while (cardBody.firstChild)
         cardBody.removeChild(cardBody.firstChild);
-
-    document.getElementById("memberTab").classList.add("active");
-    document.getElementById("profileTab").classList.remove("active");
-    document.getElementById("imagesTab").classList.remove("active");
 
     if (artistDetailsResponse.activeMember) {
         const headerElement = document.createElement("h4");
@@ -170,10 +165,6 @@ function showImages(artistDetailsResponse) {
 
     while (cardBody.firstChild)
         cardBody.removeChild(cardBody.firstChild);
-
-    document.getElementById("imagesTab").classList.add("active");
-    document.getElementById("profileTab").classList.remove("active");
-    document.getElementById("memberTab").classList.remove("active");
 
     jQuery.each(artistDetailsResponse.images, function (i, image){
         const imageElement = document.createElement('img');
@@ -226,3 +217,8 @@ function createNoArtistDetailsMessage(artistName,artistId) {
 
     document.getElementById('noResultsMessageContainer').append(noResultsMessageElement);
 }
+
+$(document).on('click', '#topheader .navbar-nav a', function () {
+    $('#topheader .navbar-nav').find('li.active').removeClass('active');
+    $(this).parent('li').addClass('active');
+});
