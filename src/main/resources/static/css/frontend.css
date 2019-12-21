@@ -72,6 +72,10 @@ body {
     background-color: inherit;
 }
 
+#artistDetails .row {
+    align-items: center;
+}
+
 #content-wrapper {
     padding: 5rem 1rem 1rem 1rem;
 }
