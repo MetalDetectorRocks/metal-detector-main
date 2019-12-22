@@ -1,81 +1,97 @@
 <!DOCTYPE html>
-<html th:fragment="layout (template)" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-    <head th:fragment="headerFragment">
-        <title th:include=":: #pageTitle">Dynamic page title</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
+<html th:fragment="layout (template)" lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head th:fragment="headerFragment">
+    <title th:include=":: #pageTitle">Dynamic page title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
-        <!-- CSS -->
-        <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" href="#" rel="stylesheet" type="text/css" />
-        <link th:href="@{/css/admin.css}" href="#" rel="stylesheet" />
+    <!-- CSS -->
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" href="#" rel="stylesheet" type="text/css" />
+    <link th:href="@{/css/admin.css}" href="#" rel="stylesheet" />
 
-        <!-- JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script th:src="@{/webjars/jquery/jquery.min.js}" src="#"></script>
-        <script th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
-        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
-        <script th:src="@{/js/common.js}" src="#"></script>
+    <!-- JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script th:src="@{/webjars/jquery/jquery.min.js}" src="#"></script>
+    <script th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
+    <script th:src="@{/js/common.js}" src="#"></script>
 
-        <!-- Material Icons -->
-        <link th:href="@{/webjars/material-icons/iconfont/material-icons.css}" href="/webjars/material-icons/0.3.1/iconfont/material-icons.css" rel="stylesheet">
-    </head>
-    <body>
-
-        <!-- top bar -->
-        <nav th:fragment="copy" class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Admin Area</a>
-            <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
-            <ul class="navbar-nav px-3">
-                <li class="nav-item text-nowrap">
-                    <a id="logout-link" class="nav-link" href="#" th:href="@{/logout}">Logout</a>
+    <!-- Material Icons -->
+    <link th:href="@{/webjars/material-icons/iconfont/material-icons.css}" href="/webjars/material-icons/0.3.1/iconfont/material-icons.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Navbar-->
+    <div class="topbar shadow">
+        <nav class="navbar navbar-dark">
+            <a href="#" th:href="@{/admin}">
+                <img alt="Logo" th:src="@{/images/logo.png}" src="#" width="300" />
+            </a>
+            <ul class="nav justify-content-end">
+                <li class="nav-item"><a th:href="@{/admin/notifications}" href="#" class="nav-link"><i class="material-icons">notifications</i></a></li>
+                <li class="nav-item"><a th:href="@{/}" href="#" target="_blank" class="nav-link"><i class="material-icons">public</i></a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Profile photo" height="30" width="30" class="avatar border border-white" />
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
+                        <p class="pl-4">Signed in as <span sec:authentication="name" class="font-weight-bold">Username</span></p>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" th:href="@{/admin/profile}"><i class="material-icons pr-2">person</i>Profile</a>
+                        <a id="logout-link" class="dropdown-item" href="#" th:href="@{/logout}"><i class="material-icons pr-2">exit_to_app</i>Logout</a>
+                    </div>
                 </li>
             </ul>
         </nav>
+    </div>
 
-        <form id="logout-form" method="POST" action="#" th:action="@{/logout}">
-        </form>
+    <form id="logout-form" method="POST" action="#" th:action="@{/logout}">
+    </form>
 
-        <div class="container-fluid">
-            <div class="row">
+    <!-- Sidebar -->
+    <div class="sidebar border-right">
+        <ul class="nav flex-column pt-2">
+            <li class="nav-item h5">
+                <a href="#" th:href="@{/admin}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin'}? 'active' : ''" class="text-dark px-4 py-3">
+                    <i class="material-icons pr-2">house</i>Dashboard
+                </a>
+            </li>
+            <li class="nav-item h5">
+                <a href="#" th:href="@{/admin/import}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/import'}? 'active' : ''" class="text-dark px-4 py-3 ">
+                    <i class="material-icons pr-2">import_export</i>Import
+                </a>
+            </li>
+            <li class="nav-item h5">
+                <a href="#" th:href="@{/admin/analytics}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/analytics'}? 'active' : ''" class="text-dark px-4 py-3 ">
+                    <i class="material-icons pr-2">timeline</i>Analytics
+                </a>
+            </li>
+            <li class="nav-item h5">
+                <a href="#" th:href="@{/admin/users}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/users'}? 'active' : ''" class="text-dark px-4 py-3 ">
+                    <i class="material-icons pr-2">people</i>Users
+                </a>
+            </li>
+            <li class="nav-item h5">
+                <a href="#" th:href="@{/admin/settings}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/settings'}? 'active' : ''" class="text-dark px-4 py-3 ">
+                    <i class="material-icons pr-2">build</i>Settings
+                </a>
+            </li>
+        </ul>
+    </div>
 
-                <!-- side navigation bar -->
-                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-                    <div class="sidebar-sticky">
-                        <ul class="nav flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link active" href="/admin/users">
-                                    Users
-                                </a>
-                            </li>
-                        </ul>
-
-                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                            <span>Foobar</span>
-                        </h6>
-                        <ul class="nav flex-column mb-2">
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    Other...
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-
-                <!-- main content -->
-                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 mt-5">
-                    <th:block th:include="${template}" />
-                </main>
-
-            </div>
+    <!-- Main content -->
+    <main role="main" class="px-3 py-3">
+        <div class="content">
+            <th:block th:include="${template}" />
         </div>
+    </main>
 
-        <footer>
-        </footer>
-        <script>
-            $(document).ready( function() {
-                registerLogoutListener();
-            });
-        </script>
-    </body>
+    <!-- Footer -->
+    <footer></footer>
+
+    <script>
+        $(document).ready( function() {
+            registerLogoutListener();
+        });
+    </script>
+</body>
 </html>
