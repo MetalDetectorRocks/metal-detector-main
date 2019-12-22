@@ -33,6 +33,7 @@ public class ViewNames {
   }
 
   public static class AdminArea {
+    public static final String INDEX                     = "admin/index";
     public static final String USERS_LIST                = "admin/users/list";
     public static final String USERS_CREATE              = "admin/users/create";
     public static final String USERS_EDIT                = "admin/users/edit";
