@@ -70,7 +70,12 @@ function createResultCards(artistNameSearchResponse){
         const card = document.createElement('div');
         card.className = "card";
 
-        const cardBody = buildDefaultCardBody(artistSearchResult.artistName);
+        const cardBody = document.createElement('div');
+        cardBody.className = "card-body";
+
+        const headingElement = document.createElement('h3');
+        headingElement.innerText = artistSearchResult.artistName;
+        cardBody.append(headingElement);
         card.append(cardBody);
 
         if (artistSearchResult.thumb !== ""){
@@ -100,7 +105,7 @@ function createResultCards(artistNameSearchResponse){
         followArtistButtonElement.type = "button";
         followArtistButtonElement.className = "btn btn-primary btn-dark font-weight-bold";
         followArtistButtonElement.textContent = artistSearchResult.isFollowed ? "Unfollow" : "Follow";
-        followArtistButtonElement.onclick =createOnClickFunctionFollowArtist(artistSearchResult.artistName,
+        followArtistButtonElement.onclick = createOnClickFunctionFollowArtist(artistSearchResult.artistName,
             artistSearchResult.id,artistSearchResult.isFollowed,followArtistButtonElement);
         cardBody.append(followArtistButtonElement);
 
