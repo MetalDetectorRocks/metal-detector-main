@@ -46,7 +46,7 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public Optional<ArtistDto> findByArtistDiscogsId(long discogsId) {
+  public Optional<ArtistDto> findArtistByDiscogsId(long discogsId) {
     Optional<ArtistEntity> artistEntityOptional = artistsRepository.findByArtistDiscogsId(discogsId);
 
     if (artistEntityOptional.isEmpty()) {
@@ -58,7 +58,7 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public List<ArtistDto> findAllByArtistDiscogsIdIn(long... discogsIds) {
+  public List<ArtistDto> findAllArtistsByDiscogsIds(long... discogsIds) {
     List<ArtistEntity> artistEntities = artistsRepository.findAllByArtistDiscogsIdIn(discogsIds);
     return artistEntities.stream()
             .map(this::createArtistDto)
@@ -66,7 +66,7 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public boolean existsByArtistDiscogsId(long discogsId) {
+  public boolean existsArtistByDiscogsId(long discogsId) {
     return artistsRepository.existsByArtistDiscogsId(discogsId);
   }
 
@@ -102,12 +102,12 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public boolean exists(long discogsId) {
+  public boolean isFollowed(long discogsId) {
     return followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId(currentUserSupplier.get().getPublicId(), discogsId);
   }
 
   @Override
-  public List<FollowArtistDto> findPerUser(String publicUserId) {
+  public List<FollowArtistDto> findFollowedArtistsPerUser(String publicUserId) {
     return followedArtistsRepository.findAllByPublicUserId(publicUserId).stream()
         .map(entity -> mapper.map(entity,FollowArtistDto.class)).collect(Collectors.toList());
   }
@@ -141,7 +141,7 @@ public class ArtistsServiceImpl implements ArtistsService {
 
     int itemsPerPage = discogsPagination.getItemsPerPage();
 
-    Set<Long> alreadyFollowedArtists = findPerUser(currentUserSupplier.get().getPublicId()).stream().map(FollowArtistDto::getArtistDiscogsId)
+    Set<Long> alreadyFollowedArtists = findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId()).stream().map(FollowArtistDto::getArtistDiscogsId)
         .collect(Collectors.toSet());
 
     List<ArtistNameSearchResponse.ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
@@ -159,7 +159,7 @@ public class ArtistsServiceImpl implements ArtistsService {
     List<String> activeMember = discogsArtist.getDiscogsMembers() == null ? null : discogsArtist.getDiscogsMembers().stream().filter(DiscogsMember::isActive).map(DiscogsMember::getName).collect(Collectors.toList());
     List<String> formerMember = discogsArtist.getDiscogsMembers() == null ? null : discogsArtist.getDiscogsMembers().stream().filter(discogsMember -> !discogsMember.isActive()).map(DiscogsMember::getName).collect(Collectors.toList());
     List<String> images       = discogsArtist.getDiscogsImages()  == null ? null : discogsArtist.getDiscogsImages().stream().map(DiscogsImage::getResourceUrl).collect(Collectors.toList());
-    boolean isFollowed        = exists(discogsArtist.getId());
+    boolean isFollowed        = isFollowed(discogsArtist.getId());
     return new ArtistDetailsResponse(discogsArtist.getName(), discogsArtist.getId(), artistProfile, activeMember, formerMember, images, isFollowed);
   }
 

@@ -10,22 +10,16 @@ import java.util.Optional;
 
 public interface ArtistsService {
 
-  Optional<ArtistDto> findByArtistDiscogsId(long discogsId);
-
-  List<ArtistDto> findAllByArtistDiscogsIdIn(long... discogsIds);
-
-  boolean existsByArtistDiscogsId(long discogsId);
+  Optional<ArtistDto> findArtistByDiscogsId(long discogsId);
+  List<ArtistDto> findAllArtistsByDiscogsIds(long... discogsIds);
+  boolean existsArtistByDiscogsId(long discogsId);
 
   boolean followArtist(long discogsId);
-
   boolean unfollowArtist(long discogsId);
-
-  boolean exists(long discogsId);
-
-  List<FollowArtistDto> findPerUser(String publicUserId);
+  boolean isFollowed(long discogsId);
+  List<FollowArtistDto> findFollowedArtistsPerUser(String publicUserId);
 
   Optional<ArtistNameSearchResponse> searchDiscogsByName(String artistQueryString, int page, int size);
-
   Optional<ArtistDetailsResponse> searchDiscogsById(long artistId);
 
 }

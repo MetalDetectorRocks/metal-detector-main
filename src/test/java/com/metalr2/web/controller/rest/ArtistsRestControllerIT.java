@@ -89,6 +89,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       ArtistDetailsResponse response = validatableResponse.extract().as(ArtistDetailsResponse.class);
       assertThat(response).isNotNull();
       assertThat(response.getArtistId()).isEqualTo(VALID_ARTIST_ID);
+
       verify(artistsService, times(1)).searchDiscogsById(VALID_ARTIST_ID);
     }
 

@@ -87,13 +87,13 @@ class ArtistsServiceTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("findByArtistDiscogsId() should return the correct artist if it exists")
-    void find_by_artist_discogs_id_should_return_correct_artist() {
+    @DisplayName("findArtistByDiscogsId() should return the correct artist if it exists")
+    void find_by_discogs_id_should_return_correct_artist() {
       // given
       when(artistsRepository.findByArtistDiscogsId(DISCOGS_ID)).thenReturn(Optional.of(artistEntity));
 
       // when
-      Optional<ArtistDto> artistOptional = artistsService.findByArtistDiscogsId(DISCOGS_ID);
+      Optional<ArtistDto> artistOptional = artistsService.findArtistByDiscogsId(DISCOGS_ID);
 
       // then
       verify(artistsRepository, times(1)).findByArtistDiscogsId(DISCOGS_ID);
@@ -103,13 +103,13 @@ class ArtistsServiceTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("findByArtistDiscogsId() should return an empty optional if artist does not exist")
-    void find_by_artist_discogs_id_should_return_empty_optional() {
+    @DisplayName("findArtistByDiscogsId() should return an empty optional if artist does not exist")
+    void find_by_discogs_id_should_return_empty_optional() {
       // given
       when(artistsRepository.findByArtistDiscogsId(0L)).thenReturn(Optional.empty());
 
       // when
-      Optional<ArtistDto> artistOptional = artistsService.findByArtistDiscogsId(0L);
+      Optional<ArtistDto> artistOptional = artistsService.findArtistByDiscogsId(0L);
 
       // then
       verify(artistsRepository, times(1)).findByArtistDiscogsId(0L);
@@ -118,13 +118,13 @@ class ArtistsServiceTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("findAllByArtistDiscogsIds() should return all given entities that exist")
-    void find_all_by_artist_discogs_ids_should_return_all_entities_that_exist() {
+    @DisplayName("findAllByArtistDiscogsIdIn() should return all given entities that exist")
+    void find_all_by_discogs_ids_should_return_all_entities_that_exist() {
       // given
       when(artistsRepository.findAllByArtistDiscogsIdIn(DISCOGS_ID, 0L)).thenReturn(List.of(artistEntity));
 
       // when
-      List<ArtistDto> artists = artistsService.findAllByArtistDiscogsIdIn(DISCOGS_ID, 0L);
+      List<ArtistDto> artists = artistsService.findAllArtistsByDiscogsIds(DISCOGS_ID, 0L);
 
       // then
       verify(artistsRepository, times(1)).findAllByArtistDiscogsIdIn(DISCOGS_ID, 0L);
@@ -134,13 +134,13 @@ class ArtistsServiceTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("existsByArtistDiscogsId() should return true if given entity exists")
-    void exists_by_artist_discogs_id_should_return_true() {
+    @DisplayName("existsArtistByDiscogsId() should return true if given entity exists")
+    void exists_by_discogs_id_should_return_true() {
       // given
       when(artistsRepository.existsByArtistDiscogsId(DISCOGS_ID)).thenReturn(true);
 
       // when
-      boolean exists = artistsService.existsByArtistDiscogsId(DISCOGS_ID);
+      boolean exists = artistsService.existsArtistByDiscogsId(DISCOGS_ID);
 
       // then
       verify(artistsRepository, times(1)).existsByArtistDiscogsId(DISCOGS_ID);
@@ -149,13 +149,13 @@ class ArtistsServiceTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("existsByArtistDiscogsId() should return false if given entity does not exist")
-    void exists_by_artist_discogs_id_should_return_false() {
+    @DisplayName("existsArtistByDiscogsId() should return false if given entity does not exist")
+    void exists_by_discogs_id_should_return_false() {
       // given
       when(artistsRepository.existsByArtistDiscogsId(0L)).thenReturn(false);
 
       // when
-      boolean exists = artistsService.existsByArtistDiscogsId(0L);
+      boolean exists = artistsService.existsArtistByDiscogsId(0L);
 
       // then
       verify(artistsRepository, times(1)).existsByArtistDiscogsId(0L);
@@ -203,7 +203,6 @@ class ArtistsServiceTest implements WithAssertions {
 
       assertThat(entity.getPublicUserId()).isEqualTo(USER_ID);
       assertThat(entity.getArtistDiscogsId()).isEqualTo(DISCOGS_ID);
-
     }
 
     @Test
@@ -257,47 +256,45 @@ class ArtistsServiceTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("exists() should return true if the given combination from user id and artist discogs id exists")
-    void exists_should_return_true_for_existing_entity(){
+    @DisplayName("isFollowed() should return true if the given combination from user id and artist discogs id exists")
+    void is_followed_should_return_true_for_existing_entity(){
       // given
       when(followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(true);
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
       // when
-      boolean result = artistsService.exists(DISCOGS_ID);
+      boolean result = artistsService.isFollowed(DISCOGS_ID);
 
       // then
       assertThat(result).isTrue();
-
       verify(followedArtistsRepository, times(1)).existsByPublicUserIdAndArtistDiscogsId(USER_ID, DISCOGS_ID);
     }
 
     @Test
-    @DisplayName("exists() should return false if the given combination from user id and artist discogs id does not exist")
-    void exists_should_return_false_for_not_existing_entity(){
+    @DisplayName("isFollowed() should return false if the given combination from user id and artist discogs id does not exist")
+    void is_followed_should_return_false_for_not_existing_entity(){
       // given
       when(followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(false);
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
       // when
-      boolean result = artistsService.exists(DISCOGS_ID);
+      boolean result = artistsService.isFollowed(DISCOGS_ID);
 
       // then
       assertThat(result).isFalse();
-
       verify(followedArtistsRepository, times(1)).existsByPublicUserIdAndArtistDiscogsId(USER_ID, DISCOGS_ID);
     }
 
     @Test
-    @DisplayName("findPerUser() finds the correct entities for a given user id if it exists")
+    @DisplayName("findFollowedArtistsPerUser() finds the correct entities for a given user id if it exists")
     void find_per_user_finds_correct_entities(){
       // given
       when(followedArtistsRepository.findAllByPublicUserId(anyString())).thenReturn(Collections.singletonList(new FollowedArtistEntity(USER_ID, ARTIST_NAME, DISCOGS_ID)));
 
       // when
-      List<FollowArtistDto> followArtistDtos = artistsService.findPerUser(USER_ID);
+      List<FollowArtistDto> followArtistDtos = artistsService.findFollowedArtistsPerUser(USER_ID);
 
       // then
       assertThat(followArtistDtos).isNotEmpty();
@@ -308,17 +305,16 @@ class ArtistsServiceTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("findPerUser() returns empty list if a given user id does not exists")
+    @DisplayName("findFollowedArtistsPerUser() returns empty list if a given user id does not exists")
     void find_per_user_returns_empty_list(){
       // given
       when(followedArtistsRepository.findAllByPublicUserId(anyString())).thenReturn(Collections.emptyList());
 
       // when
-      List<FollowArtistDto> followArtistDtos = artistsService.findPerUser(USER_ID);
+      List<FollowArtistDto> followArtistDtos = artistsService.findFollowedArtistsPerUser(USER_ID);
 
       // then
       assertThat(followArtistDtos).isEmpty();
-
       verify(followedArtistsRepository, times(1)).findAllByPublicUserId(USER_ID);
     }
 
@@ -393,9 +389,7 @@ class ArtistsServiceTest implements WithAssertions {
       // then
       assertThat(responseOptional).isPresent();
 
-      ArtistDetailsResponse response = responseOptional.get();
-      assertThat(response.getArtistId()).isEqualTo(DISCOGS_ID);
-
+      assertThat(responseOptional.get().getArtistId()).isEqualTo(DISCOGS_ID);
       verify(artistSearchClient, times(1)).searchById(DISCOGS_ID);
     }
 
