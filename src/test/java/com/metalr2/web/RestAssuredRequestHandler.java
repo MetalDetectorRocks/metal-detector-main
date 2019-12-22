@@ -10,7 +10,7 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
-public class RestAssuredRequestHandler<T> {
+public class RestAssuredRequestHandler {
 
   private final String requestUri;
 
@@ -40,16 +40,6 @@ public class RestAssuredRequestHandler<T> {
            .then();
   }
 
-  public ValidatableResponse doPost(ContentType accept, T request) {
-    return given()
-              .contentType(accept)
-              .accept(accept)
-              .body(request)
-            .when()
-              .post(requestUri)
-            .then();
-  }
-
   public ValidatableResponse doPost(String pathSegment, ContentType accept) {
     return given()
            .contentType(accept)
@@ -57,16 +47,6 @@ public class RestAssuredRequestHandler<T> {
           .when()
            .post(requestUri + pathSegment)
           .then();
-  }
-
-  public ValidatableResponse doDelete(ContentType accept, T request) {
-    return given()
-              .contentType(accept)
-              .accept(accept)
-              .body(request)
-            .when()
-              .delete(requestUri)
-            .then();
   }
 
   public ValidatableResponse doDelete(String pathSegment, ContentType accept) {

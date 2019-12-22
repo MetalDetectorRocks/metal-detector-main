@@ -74,7 +74,7 @@ public class DtoFactory {
     }
   }
 
-  public static class ArtistSearchResultContainerFactory {
+  public static class DiscogsArtistSearchResultFactory {
 
     public static DiscogsArtistSearchResultContainer withOneResult() {
       return createDefaultResultContainer();
@@ -138,7 +138,7 @@ public class DtoFactory {
 
     public static DiscogsArtist createTestArtist() {
       DiscogsArtist discogsArtist = new DiscogsArtist();
-      discogsArtist.setId(1L);
+      discogsArtist.setId(252211L);
       discogsArtist.setProfile("profile");
       return discogsArtist;
     }

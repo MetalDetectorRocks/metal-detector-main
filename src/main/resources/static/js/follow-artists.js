@@ -9,8 +9,6 @@ function followArtist(artistName,artistId,el){
     $.ajax({
         method: "POST",
         url: "/rest/v1/artists/follow/" + artistId,
-        contentType: 'application/json',
-        dataType: "json",
         success: function(){
             el.childNodes[0].nodeValue = 'Unfollow';
             el.onclick = createOnClickFunctionFollowArtist(artistName,artistId,true,el);
@@ -34,8 +32,6 @@ function unfollowArtist(artistName,artistId,el){
     $.ajax({
         method: "DELETE",
         url: "/rest/v1/artists/unfollow/" + artistId,
-        contentType: 'application/json',
-        dataType: "json",
         success: function(){
             el.childNodes[0].nodeValue = 'Follow';
             el.onclick = createOnClickFunctionFollowArtist(artistName,artistId,false,el);

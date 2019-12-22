@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(Endpoints.Rest.ARTISTS_V1)
-public class ArtistsRestController implements Validatable{
+public class ArtistsRestController implements Validatable {
 
   private final ArtistsService artistsService;
 
@@ -31,7 +31,8 @@ public class ArtistsRestController implements Validatable{
     this.artistsService = artistsService;
   }
 
-  @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  @GetMapping(path = Endpoints.Rest.SEARCH,
+              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<ArtistNameSearchResponse> handleNameSearch(@Valid ArtistSearchRequest artistSearchRequest, BindingResult bindingResult) {
     validateRequest(bindingResult);
 
@@ -59,16 +60,14 @@ public class ArtistsRestController implements Validatable{
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping(path = Endpoints.Rest.FOLLOW_V1 + "/{discogsId}",
-               consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  @PostMapping(path = Endpoints.Rest.FOLLOW + "/{discogsId}")
   public ResponseEntity<Void> handleFollow(@PathVariable long discogsId) {
     boolean success = artistsService.followArtist(discogsId);
 
     return success ? ResponseEntity.status(HttpStatus.CREATED).build() : ResponseEntity.notFound().build();
   }
 
-  @DeleteMapping(path = Endpoints.Rest.UNFOLLOW_V1 + "/{discogsId}",
-                 consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  @DeleteMapping(path = Endpoints.Rest.UNFOLLOW + "/{discogsId}")
   public ResponseEntity<Void> handleUnfollow(@PathVariable long discogsId) {
     boolean success = artistsService.unfollowArtist(discogsId);
 

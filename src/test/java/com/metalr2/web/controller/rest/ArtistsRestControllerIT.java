@@ -5,13 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.testutil.WithIntegrationTestProfile;
-import com.metalr2.web.DtoFactory;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.request.ArtistSearchRequest;
-import com.metalr2.web.dto.request.FollowArtistRequest;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
-import com.metalr2.web.dto.response.ErrorResponse;
 import com.metalr2.web.dto.response.Pagination;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
@@ -32,10 +29,13 @@ import org.springframework.http.HttpStatus;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.metalr2.web.DtoFactory.ArtistDetailsResponseFactory;
+import static com.metalr2.web.DtoFactory.ArtistNameSearchResponseFactory;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -51,6 +51,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
   @LocalServerPort
   private int port;
 
+  private RestAssuredRequestHandler requestHandler;
   private ObjectMapper mapper;
 
   @Nested
@@ -58,12 +59,11 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
   @DisplayName("Test artist details search endpoint")
   class ArtistDetailsSearchTest {
 
-    private RestAssuredRequestHandler detailsSearchRequestHandler;
+    private final String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1;
 
     @BeforeEach
     void setUp() {
-      String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1;
-      detailsSearchRequestHandler = new RestAssuredRequestHandler<>(requestUri);
+      requestHandler = new RestAssuredRequestHandler(requestUri);
       mapper = new ObjectMapper();
     }
 
@@ -76,10 +76,10 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
     @DisplayName("GET with valid request should return 200")
     void get_with_valid_request_should_return_200() {
       // given
-      when(artistsService.searchDiscogsById(VALID_ARTIST_ID)).thenReturn(Optional.of(DtoFactory.ArtistDetailsResponseFactory.withResult()));
+      when(artistsService.searchDiscogsById(VALID_ARTIST_ID)).thenReturn(Optional.of(ArtistDetailsResponseFactory.withResult()));
 
       // when
-      ValidatableResponse validatableResponse = detailsSearchRequestHandler.doGet("/" + VALID_ARTIST_ID, ContentType.JSON);
+      ValidatableResponse validatableResponse = requestHandler.doGet("/" + VALID_ARTIST_ID, ContentType.JSON);
 
       // then
       validatableResponse
@@ -93,29 +93,13 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
     }
 
     @Test
-    @DisplayName("GET with bad request should return 400")
-    void get_with_bad_request_should_return_400() {
-      // when
-      ValidatableResponse validatableResponse = detailsSearchRequestHandler.doGet(ContentType.JSON);
-      ErrorResponse errorResponse = validatableResponse.extract().as(ErrorResponse.class);
-
-      // then
-      validatableResponse
-          .statusCode(HttpStatus.BAD_REQUEST.value())
-          .contentType(ContentType.JSON);
-
-      assertThat(errorResponse).isNotNull();
-      assertThat(errorResponse.getMessages()).hasSize(1);
-    }
-
-    @Test
     @DisplayName("GET with no results should return 404")
     void get_with_no_results_should_return_404() {
       // given
       when(artistsService.searchDiscogsById(INVALID_ARTIST_ID)).thenReturn(Optional.empty());
 
       // when
-      ValidatableResponse validatableResponse = detailsSearchRequestHandler.doGet("/" + INVALID_ARTIST_ID, ContentType.JSON);
+      ValidatableResponse validatableResponse = requestHandler.doGet("/" + INVALID_ARTIST_ID, ContentType.JSON);
 
       // then
       validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
@@ -133,12 +117,11 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
     private static final int DEFAULT_SIZE                 = 10;
     private static final int TOTAL_PAGES                  = 2;
 
-    private RestAssuredRequestHandler nameSearchRequestHandler;
+    private final String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1 + Endpoints.Rest.SEARCH;
 
     @BeforeEach
     void setUp() {
-      String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1;
-      nameSearchRequestHandler = new RestAssuredRequestHandler<>(requestUri);
+      requestHandler = new RestAssuredRequestHandler(requestUri);
       mapper = new ObjectMapper();
     }
 
@@ -155,10 +138,10 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       Map<String, Object> requestParams = mapper.convertValue(request, new TypeReference<Map<String, Object>>() {});
 
       when(artistsService.searchDiscogsByName(request.getArtistName(), request.getPage(), request.getSize()))
-          .thenReturn(Optional.of(DtoFactory.ArtistNameSearchResponseFactory.withOneResult()));
+          .thenReturn(Optional.of(ArtistNameSearchResponseFactory.withOneResult()));
 
       // when
-      ValidatableResponse validatableResponse = nameSearchRequestHandler.doGet(ContentType.JSON, requestParams);
+      ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
 
       // then
       validatableResponse
@@ -185,7 +168,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       Map<String, Object> requestParams = mapper.convertValue(request, new TypeReference<Map<String, Object>>() {});
 
       // when
-      ValidatableResponse validatableResponse = nameSearchRequestHandler.doGet(ContentType.JSON, requestParams);
+      ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
 
       // then
       validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value());
@@ -203,7 +186,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
           .thenReturn(Optional.empty());
 
       // when
-      ValidatableResponse validatableResponse = nameSearchRequestHandler.doGet(ContentType.JSON, requestParams);
+      ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
 
       // then
       validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
@@ -217,16 +200,17 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
   @DisplayName("Test follow/unfollow endpoints")
   class FollowArtistTest {
 
-    private RestAssuredRequestHandler<FollowArtistRequest> followRequestHandler;
-    private RestAssuredRequestHandler<FollowArtistRequest> unfollowRequestHandler;
+    private RestAssuredRequestHandler followRequestHandler;
+    private RestAssuredRequestHandler unfollowRequestHandler;
+
+    private final String followRequestUri   = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1 + Endpoints.Rest.FOLLOW;
+    private final String unfollowRequestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1 + Endpoints.Rest.UNFOLLOW;
 
     @BeforeEach
     void setUp() {
-      String followRequestUri   = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1 + Endpoints.Rest.FOLLOW_V1;
-      String unfollowRequestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1 + Endpoints.Rest.UNFOLLOW_V1;
-      followRequestHandler      = new RestAssuredRequestHandler<>(followRequestUri);
-      unfollowRequestHandler    = new RestAssuredRequestHandler<>(unfollowRequestUri);
-      mapper                    = new ObjectMapper();
+      followRequestHandler    = new RestAssuredRequestHandler(followRequestUri);
+      unfollowRequestHandler  = new RestAssuredRequestHandler(unfollowRequestUri);
+      mapper                  = new ObjectMapper();
     }
 
     @AfterEach
