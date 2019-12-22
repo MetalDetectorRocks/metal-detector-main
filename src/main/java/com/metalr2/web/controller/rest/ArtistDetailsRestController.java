@@ -49,17 +49,17 @@ public class ArtistDetailsRestController implements Validatable {
       return ResponseEntity.notFound().build();
     }
 
-    ArtistDetailsResponse response = mapSearchResult(artistOptional.get(), artistDetailsRequest, currentUserSupplier.get().getPublicId());
+    ArtistDetailsResponse response = mapSearchResult(artistOptional.get());
     return ResponseEntity.ok(response);
   }
 
-  private ArtistDetailsResponse mapSearchResult(DiscogsArtist discogsArtist, ArtistDetailsRequest artistDetailsRequest, String publicUserId) {
+  private ArtistDetailsResponse mapSearchResult(DiscogsArtist discogsArtist) {
     String artistProfile      = discogsArtist.getProfile().isEmpty()      ? null : discogsArtist.getProfile();
     List<String> activeMember = discogsArtist.getDiscogsMembers() == null ? null : discogsArtist.getDiscogsMembers().stream().filter(DiscogsMember::isActive).map(DiscogsMember::getName).collect(Collectors.toList());
     List<String> formerMember = discogsArtist.getDiscogsMembers() == null ? null : discogsArtist.getDiscogsMembers().stream().filter(discogsMember -> !discogsMember.isActive()).map(DiscogsMember::getName).collect(Collectors.toList());
     List<String> images       = discogsArtist.getDiscogsImages()  == null ? null : discogsArtist.getDiscogsImages().stream().map(DiscogsImage::getResourceUrl).collect(Collectors.toList());
-    boolean isFollowed        = followArtistService.exists(new FollowArtistDto(publicUserId, artistDetailsRequest.getArtistName(), discogsArtist.getId()));
-    return new ArtistDetailsResponse(artistDetailsRequest.getArtistName(), artistDetailsRequest.getArtistId(), artistProfile, activeMember, formerMember, images, isFollowed);
+    boolean isFollowed        = followArtistService.exists(new FollowArtistDto(currentUserSupplier.get().getPublicId(), discogsArtist.getName(), discogsArtist.getId()));
+    return new ArtistDetailsResponse(discogsArtist.getName(), discogsArtist.getId(), artistProfile, activeMember, formerMember, images, isFollowed);
   }
 
 }

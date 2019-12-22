@@ -18,7 +18,7 @@ function searchArtist(page,size){
 
     $.ajax({
         method: "GET",
-        url: "/rest/v1/artist",
+        url: "/rest/v1/artists",
         data: searchArtistRequest,
         dataType: "json",
         success: function(artistNameSearchResponse){

@@ -31,7 +31,9 @@ import org.springframework.http.HttpStatus;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -62,7 +64,7 @@ class SearchArtistRestControllerIT implements WithAssertions, WithIntegrationTes
 
   @BeforeEach
   void setUp() {
-    String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1;
+    String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTIST_V1;
     requestHandler    = new RestAssuredRequestHandler<>(requestUri);
     mapper            = new ObjectMapper();
   }

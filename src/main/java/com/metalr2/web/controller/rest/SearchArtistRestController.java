@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import static com.metalr2.web.dto.response.ArtistNameSearchResponse.ArtistSearchResult;
 
 @RestController
-@RequestMapping(Endpoints.Rest.ARTISTS_V1)
+@RequestMapping(Endpoints.Rest.ARTIST_V1)
 public class SearchArtistRestController implements Validatable {
 
   private final DiscogsArtistSearchRestClient artistSearchClient;

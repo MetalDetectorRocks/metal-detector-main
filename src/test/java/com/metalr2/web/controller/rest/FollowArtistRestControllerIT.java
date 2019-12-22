@@ -24,7 +24,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -90,8 +93,8 @@ class FollowArtistRestControllerIT implements WithAssertions, WithIntegrationTes
 
     // then
     validatableResponse
-            .statusCode(HttpStatus.BAD_REQUEST.value())
-            .contentType(ContentType.JSON);
+        .statusCode(HttpStatus.BAD_REQUEST.value())
+        .contentType(ContentType.JSON);
 
     assertThat(errorResponse).isNotNull();
     assertThat(errorResponse.getMessages()).hasSize(1);
