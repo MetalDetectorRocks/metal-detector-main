@@ -50,7 +50,9 @@ public class Endpoints {
 
   public static class AdminArea {
     public static final String INDEX        = "/admin";
-    // Users
+    public static final String IMPORT       = "/admin/import";
+    public static final String ANALYTICS    = "/admin/analytics";
+    public static final String SETTINGS     = "/admin/settings";
     public static final String USERS_LIST   = "/admin/users";
   }
 
