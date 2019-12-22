@@ -49,6 +49,7 @@ public class Endpoints {
   }
 
   public static class AdminArea {
+    public static final String INDEX        = "/admin";
     // Users
     public static final String USERS_LIST   = "/admin/users";
   }

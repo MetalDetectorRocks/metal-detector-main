@@ -58,7 +58,7 @@
                 <div class="dropdown-menu" aria-labelledby="navbarUserDropdown">
                   <a class="dropdown-item" href="#" th:href="@{/profile}">Profile</a>
                   <a class="dropdown-item" href="#" th:href="@{/settings}">Settings</a>
-                  <a class="dropdown-item" href="#" target="_blank" th:href="@{/admin/users}" sec:authorize="hasRole('ROLE_ADMINISTRATOR')">Admin area</a>
+                  <a class="dropdown-item" href="#" target="_blank" th:href="@{/admin}" sec:authorize="hasRole('ROLE_ADMINISTRATOR')">Admin area</a>
                   <div class="dropdown-divider"></div>
                   <a id="logout-link" class="dropdown-item" href="#" th:href="@{/logout}">Logout</a>
                 </div>
