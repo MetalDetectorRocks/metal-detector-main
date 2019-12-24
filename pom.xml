@@ -58,6 +58,7 @@
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <jacoco.version>0.8.5</jacoco.version>
         <rest-assured.version>3.3.0</rest-assured.version>
+        <lightbox.version>2.10.0</lightbox.version>
     </properties>
 
     <parent>
@@ -212,6 +213,12 @@
             <artifactId>material-icons</artifactId>
             <version>${material-icons.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.webjars.bower</groupId>
+            <artifactId>lightbox</artifactId>
+            <version>${lightbox.version}</version>
+        </dependency>
+
 
         <!-- Util -->
         <dependency>
