@@ -9,7 +9,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AdminIndexController {
 
-  // ToDo DanielW: Tests
   @GetMapping({Endpoints.AdminArea.INDEX})
   public ModelAndView showUsersList() {
     return new ModelAndView(ViewNames.AdminArea.INDEX);
