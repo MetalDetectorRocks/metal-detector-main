@@ -192,3 +192,20 @@ footer{
 .lb-nav a.lb-next {
     background: transparent;
 }
+
+#searchButton {
+    background-color: #fff;
+}
+
+#searchIcon {
+    /*padding-top: 0.1rem;*/
+}
+
+.material-icons.md-18 {
+    font-size: 18px;
+}
+
+.material-icons.md-dark {
+    color: rgba(0, 0, 0, 0.54);
+}
+
