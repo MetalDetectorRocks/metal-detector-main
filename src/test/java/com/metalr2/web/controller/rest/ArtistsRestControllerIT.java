@@ -90,6 +90,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       assertThat(response).isNotNull();
       assertThat(response.getArtistId()).isEqualTo(VALID_ARTIST_ID);
 
+
       verify(artistsService, times(1)).searchDiscogsById(VALID_ARTIST_ID);
     }
 
@@ -229,7 +230,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       ValidatableResponse validatableResponse = followRequestHandler.doPost("/" + VALID_ARTIST_ID, ContentType.JSON);
 
       // then
-      validatableResponse.statusCode(HttpStatus.CREATED.value());
+      validatableResponse.statusCode(HttpStatus.OK.value());
       verify(artistsService, times(1)).followArtist(VALID_ARTIST_ID);
     }
 
@@ -254,7 +255,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       when(artistsService.unfollowArtist(VALID_ARTIST_ID)).thenReturn(true);
 
       // when
-      ValidatableResponse validatableResponse = unfollowRequestHandler.doDelete("/" + VALID_ARTIST_ID, ContentType.JSON);
+      ValidatableResponse validatableResponse = unfollowRequestHandler.doPost("/" + VALID_ARTIST_ID, ContentType.JSON);
 
       // then
       validatableResponse.statusCode(HttpStatus.OK.value());
@@ -268,7 +269,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       when(artistsService.unfollowArtist(VALID_ARTIST_ID)).thenReturn(false);
 
       // when
-      ValidatableResponse validatableResponse = unfollowRequestHandler.doDelete("/" + VALID_ARTIST_ID, ContentType.JSON);
+      ValidatableResponse validatableResponse = unfollowRequestHandler.doPost("/" + VALID_ARTIST_ID, ContentType.JSON);
 
       // then
       validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());

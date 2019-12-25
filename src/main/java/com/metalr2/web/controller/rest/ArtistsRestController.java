@@ -6,11 +6,9 @@ import com.metalr2.web.dto.request.ArtistSearchRequest;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,14 +61,12 @@ public class ArtistsRestController implements Validatable {
   @PostMapping(path = Endpoints.Rest.FOLLOW + "/{discogsId}")
   public ResponseEntity<Void> handleFollow(@PathVariable long discogsId) {
     boolean success = artistsService.followArtist(discogsId);
-
-    return success ? ResponseEntity.status(HttpStatus.CREATED).build() : ResponseEntity.notFound().build();
+    return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
   }
 
-  @DeleteMapping(path = Endpoints.Rest.UNFOLLOW + "/{discogsId}")
+  @PostMapping(path = Endpoints.Rest.UNFOLLOW + "/{discogsId}")
   public ResponseEntity<Void> handleUnfollow(@PathVariable long discogsId) {
     boolean success = artistsService.unfollowArtist(discogsId);
-
     return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
   }
 

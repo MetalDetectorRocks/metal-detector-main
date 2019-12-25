@@ -20,6 +20,6 @@ public interface ArtistsService {
   List<FollowArtistDto> findFollowedArtistsPerUser(String publicUserId);
 
   Optional<ArtistNameSearchResponse> searchDiscogsByName(String artistQueryString, int page, int size);
-  Optional<ArtistDetailsResponse> searchDiscogsById(long artistId);
+  Optional<ArtistDetailsResponse> searchDiscogsById(long discogsId);
 
 }

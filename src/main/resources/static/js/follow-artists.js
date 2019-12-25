@@ -30,7 +30,7 @@ function followArtist(artistName,artistId,el){
  */
 function unfollowArtist(artistName,artistId,el){
     $.ajax({
-        method: "DELETE",
+        method: "POST",
         url: "/rest/v1/artists/unfollow/" + artistId,
         success: function(){
             el.childNodes[0].nodeValue = 'Follow';

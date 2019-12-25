@@ -47,14 +47,8 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   @Override
   public Optional<ArtistDto> findArtistByDiscogsId(long discogsId) {
-    Optional<ArtistEntity> artistEntityOptional = artistsRepository.findByArtistDiscogsId(discogsId);
-
-    if (artistEntityOptional.isEmpty()) {
-      return Optional.empty();
-    }
-
-    ArtistEntity artistEntity = artistEntityOptional.get();
-    return Optional.of(createArtistDto(artistEntity));
+    return artistsRepository.findByArtistDiscogsId(discogsId)
+        .map(this::createArtistDto);
   }
 
   @Override
@@ -79,10 +73,9 @@ public class ArtistsServiceImpl implements ArtistsService {
       return false;
     }
 
-    FollowedArtistEntity followedArtistEntity       = new FollowedArtistEntity(currentUserSupplier.get().getPublicId(),
-                                                                              artistOptional.get().getName(), discogsId);
-    FollowedArtistEntity savedFollowedArtistEntity  = followedArtistsRepository.save(followedArtistEntity);
-
+    FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(currentUserSupplier.get().getPublicId(),
+                                                                         artistOptional.get().getName(), discogsId);
+    followedArtistsRepository.save(followedArtistEntity);
     return true;
   }
 
@@ -92,13 +85,8 @@ public class ArtistsServiceImpl implements ArtistsService {
     Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(
         currentUserSupplier.get().getPublicId(), discogsId);
 
-    if (optionalFollowedArtistEntity.isEmpty()){
-      return false;
-    }
-
-    FollowedArtistEntity followedArtistEntity = optionalFollowedArtistEntity.get();
-    followedArtistsRepository.delete(followedArtistEntity);
-    return true;
+    optionalFollowedArtistEntity.ifPresent(followedArtistsRepository::delete);
+    return optionalFollowedArtistEntity.isPresent();
   }
 
   @Override
@@ -115,25 +103,13 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   public Optional<ArtistNameSearchResponse> searchDiscogsByName(String artistQueryString, int page, int size) {
     Optional<DiscogsArtistSearchResultContainer> responseOptional = artistSearchClient.searchByName(artistQueryString, page, size);
-
-    if (responseOptional.isEmpty()) {
-      return Optional.empty();
-    }
-
-    ArtistNameSearchResponse response = mapNameSearchResult(responseOptional.get());
-    return Optional.of(response);
+    return responseOptional.map(this::mapNameSearchResult);
   }
 
   @Override
-  public Optional<ArtistDetailsResponse> searchDiscogsById(long artistId) {
-    Optional<DiscogsArtist> responseOptional = artistSearchClient.searchById(artistId);
-
-    if (responseOptional.isEmpty()) {
-      return Optional.empty();
-    }
-
-    ArtistDetailsResponse response = mapDetailsSearchResult(responseOptional.get());
-    return Optional.of(response);
+  public Optional<ArtistDetailsResponse> searchDiscogsById(long discogsId) {
+    Optional<DiscogsArtist> responseOptional = artistSearchClient.searchById(discogsId);
+    return responseOptional.map(this::mapDetailsSearchResult);
   }
 
   private ArtistNameSearchResponse mapNameSearchResult(DiscogsArtistSearchResultContainer artistSearchResults) {
