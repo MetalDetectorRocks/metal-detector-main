@@ -7,6 +7,9 @@ import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.DiscogsPagination;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
 import com.metalr2.web.dto.request.RegisterUserRequest;
+import com.metalr2.web.dto.response.ArtistDetailsResponse;
+import com.metalr2.web.dto.response.ArtistNameSearchResponse;
+import com.metalr2.web.dto.response.Pagination;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,15 +21,14 @@ public class DtoFactory {
 
     public static UserDto withUsernameAndEmail(String username, String email) {
       return UserDto.builder()
-              .id(1)
-              .publicId(UUID.randomUUID().toString())
-              .username(username)
-              .email(email)
-              .plainPassword("xxx")
-              .enabled(true)
-              .build();
+          .id(1)
+          .publicId(UUID.randomUUID().toString())
+          .username(username)
+          .email(email)
+          .plainPassword("xxx")
+          .enabled(true)
+          .build();
     }
-
   }
 
   public static class RegisterUserRequestFactory {
@@ -45,13 +47,12 @@ public class DtoFactory {
 
     private static RegisterUserRequest create(String username, String email, String plainPassword, String verifyPlainPassword) {
       return RegisterUserRequest.builder()
-              .username(username)
-              .email(email)
-              .plainPassword(plainPassword)
-              .verifyPlainPassword(verifyPlainPassword)
-              .build();
+          .username(username)
+          .email(email)
+          .plainPassword(plainPassword)
+          .verifyPlainPassword(verifyPlainPassword)
+          .build();
     }
-
   }
 
   public static class ChangePasswordRequestFactory {
@@ -66,24 +67,23 @@ public class DtoFactory {
 
     private static ChangePasswordRequest create(String tokenString, String plainPassword, String verifyPlainPassword) {
       return ChangePasswordRequest.builder()
-              .tokenString(tokenString)
-              .newPlainPassword(plainPassword)
-              .verifyNewPlainPassword(verifyPlainPassword)
-              .build();
+          .tokenString(tokenString)
+          .newPlainPassword(plainPassword)
+          .verifyNewPlainPassword(verifyPlainPassword)
+          .build();
     }
-
   }
 
-  public static class ArtistSearchResultContainerFactory {
+  public static class DiscogsArtistSearchResultFactory {
 
     public static DiscogsArtistSearchResultContainer withOneResult() {
       return createDefaultResultContainer();
     }
 
     public static DiscogsArtistSearchResultContainer withOneCertainResult() {
-      DiscogsArtistSearchResultContainer container  = createDefaultResultContainer();
-      DiscogsArtistSearchResult searchResult        = new DiscogsArtistSearchResult();
-      DiscogsPagination pagination                  = new DiscogsPagination();
+      DiscogsArtistSearchResultContainer container = createDefaultResultContainer();
+      DiscogsArtistSearchResult searchResult = new DiscogsArtistSearchResult();
+      DiscogsPagination pagination = new DiscogsPagination();
 
       searchResult.setId(252211);
       searchResult.setTitle("Darkthrone");
@@ -115,18 +115,32 @@ public class DtoFactory {
 
       return resultContainer;
     }
+  }
 
+  public static class ArtistDetailsResponseFactory {
+
+    public static ArtistDetailsResponse withResult() {
+      return new ArtistDetailsResponse("Darkthrone", 252211L, null,
+                                       null, null, null, false);
+    }
+  }
+
+  public static class ArtistNameSearchResponseFactory {
+
+    public static ArtistNameSearchResponse withOneResult() {
+      return new ArtistNameSearchResponse(Collections.singletonList(
+          new ArtistNameSearchResponse.ArtistSearchResult(null, 252211L, "Darkthrone", false)),
+                                          new Pagination(2, 1, 10));
+    }
   }
 
   public static class ArtistFactory {
 
     public static DiscogsArtist createTestArtist() {
       DiscogsArtist discogsArtist = new DiscogsArtist();
-      discogsArtist.setId(1L);
+      discogsArtist.setId(252211L);
       discogsArtist.setProfile("profile");
       return discogsArtist;
     }
-
   }
-
 }

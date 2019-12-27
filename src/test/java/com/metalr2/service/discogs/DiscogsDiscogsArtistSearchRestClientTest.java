@@ -2,11 +2,16 @@ package com.metalr2.service.discogs;
 
 import com.metalr2.config.misc.DiscogsConfig;
 import com.metalr2.web.DtoFactory.ArtistFactory;
-import com.metalr2.web.DtoFactory.ArtistSearchResultContainerFactory;
+import com.metalr2.web.DtoFactory.DiscogsArtistSearchResultFactory;
 import com.metalr2.web.dto.discogs.artist.DiscogsArtist;
 import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,7 +29,10 @@ import java.util.stream.Stream;
 
 import static com.metalr2.service.discogs.DiscogsArtistSearchRestClientImpl.ARTIST_ID_SEARCH_URL_FRAGMENT;
 import static com.metalr2.service.discogs.DiscogsArtistSearchRestClientImpl.ARTIST_NAME_SEARCH_URL_FRAGMENT;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DiscogsDiscogsArtistSearchRestClientTest implements WithAssertions {
@@ -65,7 +73,7 @@ class DiscogsDiscogsArtistSearchRestClientTest implements WithAssertions {
     void search_by_name() {
       // given
       final String ARTIST_NAME_QUERY = "Darkthrone";
-      DiscogsArtistSearchResultContainer resultContainer = ArtistSearchResultContainerFactory.withOneResult();
+      DiscogsArtistSearchResultContainer resultContainer = DiscogsArtistSearchResultFactory.withOneResult();
       when(discogsConfig.getRestBaseUrl()).thenReturn(BASE_URL);
       when(restTemplate.getForEntity(SEARCH_BY_NAME_URL, DiscogsArtistSearchResultContainer.class, ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE))
               .thenReturn(ResponseEntity.ok(resultContainer));
@@ -98,8 +106,8 @@ class DiscogsDiscogsArtistSearchRestClientTest implements WithAssertions {
     }
 
     private Stream<Arguments> responseProvider() {
-      DiscogsArtistSearchResultContainer resultContainer = ArtistSearchResultContainerFactory.withOneResult();
-      DiscogsArtistSearchResultContainer emptyResultContainer = ArtistSearchResultContainerFactory.withEmptyResult();
+      DiscogsArtistSearchResultContainer resultContainer = DiscogsArtistSearchResultFactory.withOneResult();
+      DiscogsArtistSearchResultContainer emptyResultContainer = DiscogsArtistSearchResultFactory.withEmptyResult();
       return Stream.of(
               Arguments.of(null, HttpStatus.OK),
               Arguments.of(resultContainer, HttpStatus.BAD_REQUEST),
@@ -136,7 +144,7 @@ class DiscogsDiscogsArtistSearchRestClientTest implements WithAssertions {
     @DisplayName("Searching by id should return a valid result")
     void search_by_id() {
       // given
-      final long ARTIST_ID = 1L;
+      final long ARTIST_ID = 252211L;
       DiscogsArtist discogsArtist = ArtistFactory.createTestArtist();
       when(discogsConfig.getRestBaseUrl()).thenReturn(BASE_URL);
       when(restTemplate.getForEntity(SEARCH_BY_ID_URL, DiscogsArtist.class, ARTIST_ID))
