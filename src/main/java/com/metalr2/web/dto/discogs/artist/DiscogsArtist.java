@@ -10,6 +10,7 @@ import java.util.List;
 
 @Data
 @JsonPropertyOrder({
+        "name",
         "profile",
         "releases_url",
         "resource_url",
@@ -24,6 +25,9 @@ public class DiscogsArtist {
 
   @JsonProperty("id")
   private long id;
+
+  @JsonProperty("name")
+  private String name;
 
   @JsonProperty("profile")
   private String profile;

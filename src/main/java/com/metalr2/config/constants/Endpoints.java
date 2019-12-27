@@ -43,13 +43,17 @@ public class Endpoints {
   }
 
   public static class Rest {
-    public static final String FOLLOW_ARTISTS_V1  = "/rest/v1/follow-artist";
-    public static final String ARTISTS_V1         = "/rest/v1/artist";
-    public static final String ARTIST_DETAILS_V1  = "/rest/v1/artist-details";
+    public static final String ARTISTS_V1 = "/rest/v1/artists";
+    public static final String SEARCH     = "/search";
+    public static final String FOLLOW     = "/follow";
+    public static final String UNFOLLOW   = "/unfollow";
   }
 
   public static class AdminArea {
-    // Users
+    public static final String INDEX        = "/admin";
+    public static final String IMPORT       = "/admin/import";
+    public static final String ANALYTICS    = "/admin/analytics";
+    public static final String SETTINGS     = "/admin/settings";
     public static final String USERS_LIST   = "/admin/users";
   }
 

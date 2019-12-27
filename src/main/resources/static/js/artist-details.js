@@ -8,16 +8,9 @@ function artistDetails(artistName,artistId){
     clear();
     toggleLoader("artistDetailsContainer");
 
-    const artistDetailsRequest =
-        {
-            "artistName" : artistName,
-            "artistId" : artistId
-        };
-
     $.ajax({
         method: "GET",
-        url: "/rest/v1/artist-details",
-        data: artistDetailsRequest,
+        url: "/rest/v1/artists/" + artistId,
         dataType: "json",
         success: function(artistDetailsResponse){
             createArtistDetailsResultCard(artistDetailsResponse);

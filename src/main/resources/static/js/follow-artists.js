@@ -6,18 +6,9 @@
  * @returns {boolean}
  */
 function followArtist(artistName,artistId,el){
-    const followArtistRequest =
-        {
-            "artistName" : artistName,
-            "artistDiscogsId" : artistId
-        };
-    const followArtistRequestJson = JSON.stringify(followArtistRequest);
-
     $.ajax({
         method: "POST",
-        url: "/rest/v1/follow-artist",
-        contentType: 'application/json',
-        data: followArtistRequestJson,
+        url: "/rest/v1/artists/follow/" + artistId,
         success: function(){
             el.childNodes[0].nodeValue = 'Unfollow';
             el.onclick = createOnClickFunctionFollowArtist(artistName,artistId,true,el);
@@ -38,18 +29,9 @@ function followArtist(artistName,artistId,el){
  * @returns {boolean}
  */
 function unfollowArtist(artistName,artistId,el){
-    const followArtistRequest =
-        {
-            "artistName" : artistName,
-            "artistDiscogsId" : artistId
-        };
-    const followArtistRequestJson = JSON.stringify(followArtistRequest);
-
     $.ajax({
-        method: "DELETE",
-        url: "/rest/v1/follow-artist",
-        contentType: 'application/json',
-        data: followArtistRequestJson,
+        method: "POST",
+        url: "/rest/v1/artists/unfollow/" + artistId,
         success: function(){
             el.childNodes[0].nodeValue = 'Follow';
             el.onclick = createOnClickFunctionFollowArtist(artistName,artistId,false,el);

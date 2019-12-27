@@ -119,7 +119,6 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
       mockMvc.perform(createRequest())
               .andExpect(model().hasNoErrors())
               .andExpect(model().attributeExists(RegistrationController.FORM_DTO, "successMessage"))
-              .andExpect(model().attributeExists(RegistrationController.FORM_DTO, "registerUserRequest"))
               .andExpect(status().isOk())
               .andExpect(view().name(ViewNames.Guest.REGISTER));
 
