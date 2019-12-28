@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(Endpoints.Frontend.SEARCH_ARTISTS)
-public class SearchArtistsController {
+@RequestMapping(Endpoints.Frontend.HOME)
+public class HomeController {
 
   @GetMapping
-  public ModelAndView showSearchArtists() {
-    return new ModelAndView(ViewNames.Frontend.SEARCH_ARTISTS);
+  public ModelAndView showHome() {
+    return new ModelAndView(ViewNames.Frontend.HOME);
   }
 }

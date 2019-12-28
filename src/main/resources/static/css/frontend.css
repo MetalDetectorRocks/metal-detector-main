@@ -184,7 +184,6 @@ footer{
     border-radius: 0.25rem;
 }
 
-
 .lb-nav a.lb-prev {
     background: transparent;
 }
@@ -195,10 +194,7 @@ footer{
 
 #searchButton {
     background-color: #fff;
-}
-
-#searchIcon {
-    /*padding-top: 0.1rem;*/
+    border: 1px solid #ced4da;
 }
 
 .material-icons.md-18 {
@@ -209,3 +205,32 @@ footer{
     color: rgba(0, 0, 0, 0.54);
 }
 
+.input-group > .form-control:not(:first-child) {
+    border-top-left-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+}
+
+.form-control:focus {
+    border: 1px solid #ced4da;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    -o-box-shadow: none;
+    box-shadow: none;
+}
+
+.navbar-expand-lg .navbar-nav {
+    align-items: baseline;
+}
+
+.navbar-expand-lg .navbar-nav .nav-link {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.container {
+    max-width: 1280px;
+}
+
+#user-name {
+    margin-right: .5rem;
+}
