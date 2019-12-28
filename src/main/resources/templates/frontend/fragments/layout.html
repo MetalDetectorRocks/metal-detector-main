@@ -14,6 +14,7 @@
   <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" href="#" rel="stylesheet" type="text/css" />
   <link th:href="@{/webjars/lightbox/src/css/lightbox.css}" href="#" rel="stylesheet" type="text/css" />
   <link th:href="@{/css/frontend.css}" href="#" rel="stylesheet" />
+  <link th:href="@{/css/common.css}" href="#" rel="stylesheet" />
 
   <!-- JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -33,7 +34,7 @@
     <header>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-custom">
         <div class="container">
-          <a href="#" th:href="@{/search-artists}"><img class="navbar-brand mb-0 h1" th:src="@{/images/logo.png}" alt="Logo" src="#" width="300" /></a>
+          <a href="#" th:href="@{/home}"><img class="navbar-brand mb-0 h1" th:src="@{/images/logo.png}" alt="Logo" src="#" width="300" /></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -45,11 +46,12 @@
                   <div class="input-group-append">
                     <button id="searchButton" class="btn btn-outline-secondary" onclick="return searchArtist(1,10)" type="submit">
                       <span id="searchIcon" class="material-icons md-18 md-dark">search</span>
-<!--                      Button-->
                     </button>
                   </div>
                 </div>
               </li>
+            </ul>
+            <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item">
                 <a class="nav-link" href="#" th:href="@{/my-artists}" >My Artists</a>
               </li>
@@ -62,11 +64,10 @@
                   <a class="dropdown-item" href="#" th:href="@{/artists-releases}">From your Artists</a>
                 </div>
               </li>
-            </ul>
-            <ul class="navbar-nav">
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span sec:authentication="name">Username</span>
+                <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span id="user-name" sec:authentication="name">Username</span>
+                  <img src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Profile photo" height="30" width="30" class="avatar border border-white" />
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarUserDropdown">
                   <a class="dropdown-item" href="#" th:href="@{/profile}">Profile</a>
