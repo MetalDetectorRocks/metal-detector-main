@@ -188,7 +188,7 @@ class ArtistsServiceTest implements WithAssertions {
       ArgumentCaptor<FollowedArtistEntity> followArtistEntityCaptor = ArgumentCaptor.forClass(FollowedArtistEntity.class);
 
       when(artistSearchClient.searchById(DISCOGS_ID)).thenReturn(Optional.of(ArtistFactory.createTestArtist()));
-      when(followedArtistsRepository.save(any(FollowedArtistEntity.class))).thenReturn(new FollowedArtistEntity(USER_ID, ARTIST_NAME, DISCOGS_ID));
+      when(followedArtistsRepository.save(any(FollowedArtistEntity.class))).thenReturn(new FollowedArtistEntity(USER_ID, DISCOGS_ID));
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
@@ -223,7 +223,7 @@ class ArtistsServiceTest implements WithAssertions {
     @DisplayName("Unfollowing a combination of artist and user which exist should return true")
     void unfollow_existing_artist_should_return_true(){
       // given
-      when(followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(Optional.of(new FollowedArtistEntity(USER_ID, ARTIST_NAME, DISCOGS_ID)));
+      when(followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(Optional.of(new FollowedArtistEntity(USER_ID, DISCOGS_ID)));
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
@@ -234,7 +234,7 @@ class ArtistsServiceTest implements WithAssertions {
       assertThat(result).isTrue();
 
       verify(followedArtistsRepository, times(1)).findByPublicUserIdAndArtistDiscogsId(USER_ID, DISCOGS_ID);
-      verify(followedArtistsRepository, times(1)).delete(new FollowedArtistEntity(USER_ID, ARTIST_NAME, DISCOGS_ID));
+      verify(followedArtistsRepository, times(1)).delete(new FollowedArtistEntity(USER_ID, DISCOGS_ID));
     }
 
     @Test
@@ -252,7 +252,7 @@ class ArtistsServiceTest implements WithAssertions {
       assertThat(result).isFalse();
 
       verify(followedArtistsRepository, times(1)).findByPublicUserIdAndArtistDiscogsId(USER_ID, DISCOGS_ID);
-      verify(followedArtistsRepository, times(0)).delete(new FollowedArtistEntity(USER_ID, ARTIST_NAME, DISCOGS_ID));
+      verify(followedArtistsRepository, times(0)).delete(new FollowedArtistEntity(USER_ID, DISCOGS_ID));
     }
 
     @Test
@@ -291,7 +291,7 @@ class ArtistsServiceTest implements WithAssertions {
     @DisplayName("findFollowedArtistsPerUser() finds the correct entities for a given user id if it exists")
     void find_per_user_finds_correct_entities(){
       // given
-      when(followedArtistsRepository.findAllByPublicUserId(anyString())).thenReturn(Collections.singletonList(new FollowedArtistEntity(USER_ID, ARTIST_NAME, DISCOGS_ID)));
+      when(followedArtistsRepository.findAllByPublicUserId(anyString())).thenReturn(Collections.singletonList(new FollowedArtistEntity(USER_ID, DISCOGS_ID)));
 
       // when
       List<FollowArtistDto> followArtistDtos = artistsService.findFollowedArtistsPerUser(USER_ID);

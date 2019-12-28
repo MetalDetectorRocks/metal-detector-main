@@ -22,4 +22,5 @@ public interface ArtistsService {
   Optional<ArtistNameSearchResponse> searchDiscogsByName(String artistQueryString, int page, int size);
   Optional<ArtistDetailsResponse> searchDiscogsById(long discogsId);
 
+  boolean saveArtist(long discogsId);
 }
