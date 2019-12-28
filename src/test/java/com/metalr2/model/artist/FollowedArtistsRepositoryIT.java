@@ -22,13 +22,11 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
   private static final String userId1              = "1";
   private static final String userId2              = "2";
   private static final String unknownUserId        = "0";
-  private static final String artistName1          = "Darkthrone";
-  private static final String artistName2          = "Opeth";
   private static final long artistDiscogsId1       = 252211L;
   private static final long artistDiscogsId2       = 245797L;
   private static final long unknownArtistDiscogsId = 0L;
-  private static final FollowedArtistEntity FOLLOW_ARTIST_ENTITY1 = new FollowedArtistEntity(userId1, artistName1, artistDiscogsId1);
-  private static final FollowedArtistEntity FOLLOW_ARTIST_ENTITY2 = new FollowedArtistEntity(userId2, artistName2, artistDiscogsId2);
+  private static final FollowedArtistEntity FOLLOW_ARTIST_ENTITY1 = new FollowedArtistEntity(userId1, artistDiscogsId1);
+  private static final FollowedArtistEntity FOLLOW_ARTIST_ENTITY2 = new FollowedArtistEntity(userId2, artistDiscogsId2);
 
   @Autowired
   private FollowedArtistsRepository followedArtistsRepository;
@@ -52,7 +50,6 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
     assertThat(followedArtistEntitiesPerUser).hasSize(1);
     assertThat(followedArtistEntitiesPerUser.get(0).getPublicUserId()).isEqualTo(userId1);
     assertThat(followedArtistEntitiesPerUser.get(0).getArtistDiscogsId()).isEqualTo(artistDiscogsId1);
-    assertThat(followedArtistEntitiesPerUser.get(0).getArtistName()).isEqualTo(artistName1);
   }
 
   @Test
@@ -96,7 +93,6 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
     assertThat(optionalFollowedArtistEntity.isPresent()).isTrue();
     assertThat(optionalFollowedArtistEntity.get().getArtistDiscogsId()).isEqualTo(artistDiscogsId1);
     assertThat(optionalFollowedArtistEntity.get().getPublicUserId()).isEqualTo(userId1);
-    assertThat(optionalFollowedArtistEntity.get().getArtistName()).isEqualTo(artistName1);
   }
 
   @ParameterizedTest(name = "[{index}] => UserId <{0}> | ArtistDiscogsId <{1}>")

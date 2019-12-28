@@ -67,14 +67,9 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   @Transactional
   public boolean followArtist(long discogsId) {
-    Optional<DiscogsArtist> artistOptional = artistSearchClient.searchById(discogsId);
+    saveArtist(discogsId);
 
-    if (artistOptional.isEmpty()) {
-      return false;
-    }
-
-    FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(currentUserSupplier.get().getPublicId(),
-                                                                         artistOptional.get().getName(), discogsId);
+    FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(currentUserSupplier.get().getPublicId(), discogsId);
     followedArtistsRepository.save(followedArtistEntity);
     return true;
   }
@@ -112,6 +107,24 @@ public class ArtistsServiceImpl implements ArtistsService {
     return responseOptional.map(this::mapDetailsSearchResult);
   }
 
+  @Override
+  @Transactional
+  public boolean saveArtist(long discogsId) {
+    if (existsArtistByDiscogsId(discogsId)) {
+      return false;
+    }
+
+    Optional<DiscogsArtist> artistOptional = artistSearchClient.searchById(discogsId);
+
+    if (artistOptional.isEmpty()) {
+      return false;
+    }
+
+    ArtistEntity artistEntity = mapArtistEntity(artistOptional.get());
+    artistsRepository.save(artistEntity);
+    return true;
+  }
+
   private ArtistNameSearchResponse mapNameSearchResult(DiscogsArtistSearchResultContainer artistSearchResults) {
     DiscogsPagination discogsPagination = artistSearchResults.getDiscogsPagination();
 
@@ -145,6 +158,12 @@ public class ArtistsServiceImpl implements ArtistsService {
         .artistName(artistEntity.getArtistName())
         .thumb(artistEntity.getThumb())
         .build();
+  }
+
+  private ArtistEntity mapArtistEntity(DiscogsArtist artist) {
+    String thumb = artist.getDiscogsImages() != null && artist.getDiscogsImages().size() > 0 ? artist.getDiscogsImages().get(0).getResourceUrl()
+                                                                                             : null;
+    return new ArtistEntity(artist.getId(), artist.getName(), thumb);
   }
 
 }
