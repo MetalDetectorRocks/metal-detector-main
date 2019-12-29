@@ -48,7 +48,7 @@ class CustomAccessDeniedHandlerTest implements WithAssertions {
     return Stream.of(
             Arguments.of(Endpoints.Guest.ALL_GUEST_INDEX_PAGES, HttpStatus.TEMPORARY_REDIRECT, Endpoints.Frontend.HOME, null),
             Arguments.of(Endpoints.Guest.ALL_AUTH_PAGES, HttpStatus.TEMPORARY_REDIRECT, Endpoints.Frontend.STATUS, null),
-            Arguments.of(List.of(Endpoints.AdminArea.USERS_LIST), HttpStatus.FORBIDDEN, null, "Not authorized")
+            Arguments.of(List.of(Endpoints.AdminArea.USERS), HttpStatus.FORBIDDEN, null, "Not authorized")
             );
   }
 
