@@ -9,6 +9,7 @@ import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserFactory;
 import com.metalr2.model.user.UserRepository;
 import com.metalr2.model.user.UserRole;
+import com.metalr2.service.mapper.UserMapper;
 import com.metalr2.web.DtoFactory;
 import com.metalr2.web.DtoFactory.UserDtoFactory;
 import com.metalr2.web.dto.UserDto;
@@ -24,6 +25,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -58,6 +60,9 @@ class UserServiceTest implements WithAssertions {
   @Mock
   private JwtsSupport jwtsSupport;
 
+  @Spy
+  private UserMapper userMapper;
+
   @InjectMocks
   private UserServiceImpl userService;
 
@@ -67,7 +72,7 @@ class UserServiceTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, userMapper);
   }
 
   @Test

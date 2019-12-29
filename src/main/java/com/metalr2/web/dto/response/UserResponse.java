@@ -1,17 +1,23 @@
 package com.metalr2.web.dto.response;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
-@Getter
-@Setter
+@AllArgsConstructor
+@Builder
+@Data
 public class UserResponse {
 	
   private String publicId;
   private String username;
   private String email;
   private boolean enabled;
-	
+  private String role;
+  private LocalDateTime lastLogin;
+
 }

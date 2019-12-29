@@ -10,8 +10,9 @@ import com.metalr2.model.token.TokenRepository;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserRepository;
 import com.metalr2.model.user.UserRole;
+import com.metalr2.service.mapper.UserMapper;
 import com.metalr2.web.dto.UserDto;
-import org.modelmapper.ModelMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,22 +27,23 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
   private final UserRepository  userRepository;
   private final PasswordEncoder passwordEncoder;
   private final TokenRepository tokenRepository;
   private final JwtsSupport     jwtsSupport;
-  private final ModelMapper     mapper;
+  private final UserMapper      userMapper;
 
   @Autowired
   public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                         TokenRepository tokenRepository, JwtsSupport jwtsSupport) {
+                         TokenRepository tokenRepository, JwtsSupport jwtsSupport, UserMapper userMapper) {
     this.userRepository  = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.tokenRepository = tokenRepository;
     this.jwtsSupport     = jwtsSupport;
-    this.mapper          = new ModelMapper();
+    this.userMapper      = userMapper;
   }
 
   @Override
@@ -60,7 +62,7 @@ public class UserServiceImpl implements UserService {
     // persist user
     UserEntity savedUserEntity = userRepository.save(userEntity);
 
-    return mapper.map(savedUserEntity, UserDto.class);
+    return userMapper.mapToDto(savedUserEntity);
   }
 
   @Override
@@ -69,20 +71,14 @@ public class UserServiceImpl implements UserService {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
                                           .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
-    return mapper.map(userEntity, UserDto.class);
+    return userMapper.mapToDto(userEntity);
   }
 
   @Override
   @Transactional(readOnly = true)
   public Optional<UserDto> getUserByEmailOrUsername(String emailOrUsername) {
     Optional<UserEntity> userEntity = findByEmailOrUsername(emailOrUsername);
-
-    if (userEntity.isEmpty()) {
-      return Optional.empty();
-    }
-
-    UserDto userDto = mapper.map(userEntity.get(), UserDto.class);
-    return Optional.of(userDto);
+    return userEntity.map(userMapper::mapToDto);
   }
 
   @Override
@@ -94,7 +90,7 @@ public class UserServiceImpl implements UserService {
     userEntity.setEmail(userDto.getEmail());
     UserEntity updatedUserEntity = userRepository.save(userEntity);
 
-    return mapper.map(updatedUserEntity, UserDto.class);
+    return userMapper.mapToDto(updatedUserEntity);
   }
 
   @Override
@@ -110,7 +106,7 @@ public class UserServiceImpl implements UserService {
   public List<UserDto> getAllUsers() {
     return userRepository.findAll()
             .stream()
-            .map(userEntity -> mapper.map(userEntity, UserDto.class))
+            .map(userMapper::mapToDto)
             .collect(Collectors.toList());
   }
 
@@ -121,7 +117,7 @@ public class UserServiceImpl implements UserService {
 
     return userRepository.findAll(pageable)
             .stream()
-            .map(userEntity -> mapper.map(userEntity, UserDto.class))
+            .map(userMapper::mapToDto)
             .collect(Collectors.toList());
   }
 
