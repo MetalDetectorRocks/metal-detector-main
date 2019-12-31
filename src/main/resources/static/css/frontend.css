@@ -36,11 +36,11 @@ body {
     white-space: nowrap;
 }
 
-#topheader .navbar {
+.card-header .navbar {
     min-height: 2rem;
 }
 
-#topheader .navbar-nav li > a {
+.card-header .navbar-nav li > a {
     text-transform: capitalize;
     color: #333;
     transition: background-color .2s, color .2s;
@@ -51,33 +51,30 @@ body {
     padding: 0.4rem;
 }
 
-#topheader .navbar-nav li > a:hover {
+.card-header .navbar-nav li > a:hover {
     background-color: #343a40;
     color: #fff;
     text-decoration: none;
 }
 
-#topheader .navbar-nav li.active > a {
+.card-header .navbar-nav li.active > a {
     background-color: #343a40;
     color: #fff;
     font-weight: bold;
 }
 
-#topheader .navbar-nav li.disabled > a {
+.card-header .navbar-nav li.disabled > a {
     color: #333;
     pointer-events:none;
 }
 
-#topheader .navbar-nav li.disabled > a:hover {
+.card-header .navbar-nav li.disabled > a:hover {
     background-color: inherit;
 }
 
-#artistDetails .row {
-    align-items: center;
-}
-
-#content-wrapper {
-    padding: 5rem 1rem 1rem 1rem;
+.content {
+    padding-top: 5rem;
+    padding-bottom: 1rem;
 }
 
 footer{
@@ -87,11 +84,6 @@ footer{
 .footer-link:hover {
     color: #cccccc !important;
     text-decoration: none;
-}
-
-.form-control {
-    margin-bottom: 1rem;
-    width: 100%;
 }
 
 .card {
@@ -110,6 +102,10 @@ footer{
 .card-header {
     padding: 0;
     min-height: 2rem;
+}
+
+.card .row {
+    align-items: center;
 }
 
 .page-item.active .page-link {
@@ -192,11 +188,6 @@ footer{
     background: transparent;
 }
 
-#searchButton {
-    background-color: #fff;
-    border: 1px solid #ced4da;
-}
-
 .material-icons.md-18 {
     font-size: 18px;
 }
@@ -205,7 +196,7 @@ footer{
     color: rgba(0, 0, 0, 0.54);
 }
 
-.input-group > .form-control:not(:first-child) {
+.form-group > .form-control:not(:first-child) {
     border-top-left-radius: .25rem;
     border-bottom-left-radius: .25rem;
 }
@@ -219,7 +210,7 @@ footer{
 }
 
 .navbar-expand-lg .navbar-nav {
-    align-items: baseline;
+    align-items: center;
 }
 
 .navbar-expand-lg .navbar-nav .nav-link {
@@ -231,6 +222,24 @@ footer{
     max-width: 1280px;
 }
 
-#user-name {
-    margin-right: .5rem;
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #495057;
+    margin-top: 1.5rem;
+}
+
+.form-group {
+    width: 100%;
+    margin-right: 1.5rem;
 }
