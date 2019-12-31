@@ -39,18 +39,10 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-search">
-                <div class="input-group">
-                  <label for="artistName"></label><input type="text" id="artistName" placeholder="Search" class="form-control">
-                  <div class="input-group-append">
-                    <button id="searchButton" class="btn btn-outline-secondary" onclick="return searchArtist(1,10)" type="submit">
-                      <span id="searchIcon" class="material-icons md-18 md-dark">search</span>
-                    </button>
-                  </div>
-                </div>
-              </li>
-            </ul>
+            <form class="form-group has-search" onsubmit="return searchArtist(1,10)">
+              <span class="material-icons form-control-feedback">search</span>
+              <label for="artistName"></label><input id="artistName" class="form-control" type="text" placeholder="Search">
+            </form>
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item">
                 <a class="nav-link" href="#" th:href="@{/my-artists}" >My Artists</a>
@@ -65,11 +57,12 @@
                 </div>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span id="user-name" sec:authentication="name">Username</span>
+                <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <img src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Profile photo" height="30" width="30" class="avatar border border-white" />
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarUserDropdown">
+                  <p class="pl-4">Signed in as <span sec:authentication="name" class="font-weight-bold">Username</span></p>
+                  <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#" th:href="@{/profile}">Profile</a>
                   <a class="dropdown-item" href="#" th:href="@{/settings}">Settings</a>
                   <a class="dropdown-item" href="#" target="_blank" th:href="@{/admin}" sec:authorize="hasRole('ROLE_ADMINISTRATOR')">Admin area</a>
@@ -86,7 +79,7 @@
     </header>
 
     <main role="main">
-      <div class="container bg-white" id="content-wrapper">
+      <div class="container bg-white">
         <div class="content">
           <th:block th:include="${template}" />
         </div>
