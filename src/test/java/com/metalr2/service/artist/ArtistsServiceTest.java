@@ -264,7 +264,6 @@ class ArtistsServiceTest implements WithAssertions {
     @DisplayName("Following an artist for a given user id can fail")
     void follow_artist_fails(){
       // given
-      when(artistsRepository.existsByArtistDiscogsId(DISCOGS_ID)).thenReturn(false);
       when(artistSearchClient.searchById(DISCOGS_ID)).thenReturn(Optional.empty());
 
       // when
