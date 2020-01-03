@@ -67,11 +67,12 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   @Transactional
   public boolean followArtist(long discogsId) {
-    saveArtist(discogsId);
-
-    FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(currentUserSupplier.get().getPublicId(), discogsId);
-    followedArtistsRepository.save(followedArtistEntity);
-    return true;
+    if (saveArtist(discogsId)) {
+      FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(currentUserSupplier.get().getPublicId(), discogsId);
+      followedArtistsRepository.save(followedArtistEntity);
+      return true;
+    }
+    return false;
   }
 
   @Override
@@ -110,8 +111,8 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   @Transactional
   public boolean saveArtist(long discogsId) {
-    if (existsArtistByDiscogsId(discogsId)) {
-      return false;
+    if (artistsRepository.existsByArtistDiscogsId(discogsId)) {
+      return true;
     }
 
     Optional<DiscogsArtist> artistOptional = artistSearchClient.searchById(discogsId);

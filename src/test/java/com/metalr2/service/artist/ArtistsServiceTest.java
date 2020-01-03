@@ -68,6 +68,13 @@ class ArtistsServiceTest implements WithAssertions {
   private ArtistEntity artistEntity;
   private ArtistDto artistDto;
 
+  @AfterEach
+  void tearDown() {
+    reset(artistSearchClient);
+    reset(followedArtistsRepository);
+    reset(artistsRepository);
+  }
+
   @Nested
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @DisplayName("Testing artist repository")
@@ -79,11 +86,6 @@ class ArtistsServiceTest implements WithAssertions {
     void setUp() {
       artistEntity = new ArtistEntity(DISCOGS_ID, ARTIST_NAME, THUMB);
       artistDto    = new ArtistDto(DISCOGS_ID, ARTIST_NAME, THUMB);
-    }
-
-    @AfterEach
-    void tearDown() {
-      reset(artistsRepository);
     }
 
     @Test
@@ -163,6 +165,64 @@ class ArtistsServiceTest implements WithAssertions {
       assertThat(exists).isFalse();
     }
 
+    @Test
+    @DisplayName("saveArtist() should return true if new artist is saved")
+    void save_should_return_true() {
+      //given
+      when(artistSearchClient.searchById(artistEntity.getArtistDiscogsId())).thenReturn(Optional.of(ArtistFactory.createTestArtist()));
+      when(artistsRepository.save(any(ArtistEntity.class))).thenReturn(artistEntity);
+      ArgumentCaptor<ArtistEntity> argumentCaptor = ArgumentCaptor.forClass(ArtistEntity.class);
+
+      // when
+      boolean saved = artistsService.saveArtist(artistEntity.getArtistDiscogsId());
+
+      // then
+      verify(artistsRepository, times(1)).existsByArtistDiscogsId(artistEntity.getArtistDiscogsId());
+      verify(artistSearchClient, times(1)).searchById(artistEntity.getArtistDiscogsId());
+      verify(artistsRepository, times(1)).save(argumentCaptor.capture());
+
+      assertThat(saved).isTrue();
+
+      ArtistEntity resultEntity = argumentCaptor.getValue();
+      assertThat(resultEntity.getArtistDiscogsId()).isEqualTo(artistEntity.getArtistDiscogsId());
+      assertThat(resultEntity.getArtistName()).isEqualTo(artistEntity.getArtistName());
+      assertThat(resultEntity.getThumb()).isNull();
+    }
+
+    @Test
+    @DisplayName("saveArtist() should return true if artist already exists")
+    void save_should_return_true_for_existing() {
+      //given
+      when(artistsRepository.existsByArtistDiscogsId(artistEntity.getArtistDiscogsId())).thenReturn(true);
+
+      // when
+      boolean saved = artistsService.saveArtist(artistEntity.getArtistDiscogsId());
+
+      // then
+      verify(artistsRepository, times(1)).existsByArtistDiscogsId(artistEntity.getArtistDiscogsId());
+      verify(artistSearchClient, times(0)).searchById(anyLong());
+      verify(artistsRepository, times(0)).save(any(ArtistEntity.class));
+
+      assertThat(saved).isTrue();
+    }
+
+    @Test
+    @DisplayName("saveArtist() should return false if the artist is not found on discogs")
+    void save_should_return_false_if_not_found() {
+      //given
+      when(artistSearchClient.searchById(artistEntity.getArtistDiscogsId())).thenReturn(Optional.empty());
+
+      // when
+      boolean saved = artistsService.saveArtist(artistEntity.getArtistDiscogsId());
+
+      // then
+      verify(artistsRepository, times(1)).existsByArtistDiscogsId(artistEntity.getArtistDiscogsId());
+      verify(artistSearchClient, times(1)).searchById(artistEntity.getArtistDiscogsId());
+      verify(artistsRepository, times(0)).save(any(ArtistEntity.class));
+
+      assertThat(saved).isFalse();
+    }
+
   }
 
   @Nested
@@ -172,13 +232,6 @@ class ArtistsServiceTest implements WithAssertions {
 
     @BeforeEach
     void setUp() {
-
-    }
-
-    @AfterEach
-    void tearDown() {
-      reset(artistSearchClient);
-      reset(followedArtistsRepository);
     }
 
     @Test
@@ -199,6 +252,8 @@ class ArtistsServiceTest implements WithAssertions {
       assertThat(result).isTrue();
 
       verify(followedArtistsRepository, times(1)).save(followArtistEntityCaptor.capture());
+      verify(artistSearchClient, times(1)).searchById(DISCOGS_ID);
+      verify(artistsRepository, times(1)).existsByArtistDiscogsId(DISCOGS_ID);
       FollowedArtistEntity entity = followArtistEntityCaptor.getValue();
 
       assertThat(entity.getPublicUserId()).isEqualTo(USER_ID);
@@ -209,6 +264,7 @@ class ArtistsServiceTest implements WithAssertions {
     @DisplayName("Following an artist for a given user id can fail")
     void follow_artist_fails(){
       // given
+      when(artistsRepository.existsByArtistDiscogsId(DISCOGS_ID)).thenReturn(false);
       when(artistSearchClient.searchById(DISCOGS_ID)).thenReturn(Optional.empty());
 
       // when
@@ -216,6 +272,8 @@ class ArtistsServiceTest implements WithAssertions {
 
       // then
       assertThat(result).isFalse();
+      verify(artistsRepository, times(1)).existsByArtistDiscogsId(DISCOGS_ID);
+      verify(artistSearchClient, times(1)).searchById(DISCOGS_ID);
       verify(followedArtistsRepository, times(0)).save(any());
     }
 
@@ -329,9 +387,8 @@ class ArtistsServiceTest implements WithAssertions {
     private static final int SIZE         = 10;
     private static final int TOTAL_PAGES  = 2;
 
-    @AfterEach
-    void tearDown() {
-      reset(artistSearchClient);
+    @BeforeEach
+    void setUp() {
     }
 
     @Test

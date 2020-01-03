@@ -13,6 +13,7 @@ public interface ArtistsService {
   Optional<ArtistDto> findArtistByDiscogsId(long discogsId);
   List<ArtistDto> findAllArtistsByDiscogsIds(long... discogsIds);
   boolean existsArtistByDiscogsId(long discogsId);
+  boolean saveArtist(long discogsId);
 
   boolean followArtist(long discogsId);
   boolean unfollowArtist(long discogsId);
@@ -21,6 +22,4 @@ public interface ArtistsService {
 
   Optional<ArtistNameSearchResponse> searchDiscogsByName(String artistQueryString, int page, int size);
   Optional<ArtistDetailsResponse> searchDiscogsById(long discogsId);
-
-  boolean saveArtist(long discogsId);
 }

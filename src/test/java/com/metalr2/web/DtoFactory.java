@@ -138,6 +138,7 @@ public class DtoFactory {
     public static DiscogsArtist createTestArtist() {
       DiscogsArtist discogsArtist = new DiscogsArtist();
       discogsArtist.setId(252211L);
+      discogsArtist.setName("Darkthrone");
       discogsArtist.setProfile("profile");
       return discogsArtist;
     }
