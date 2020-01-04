@@ -21,7 +21,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.comparator.BooleanComparator;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -107,6 +109,7 @@ public class UserServiceImpl implements UserService {
     return userRepository.findAll()
             .stream()
             .map(userMapper::mapToDto)
+            .sorted(Comparator.comparing(UserDto::isEnabled, BooleanComparator.TRUE_LOW).thenComparing(UserDto::getRole).thenComparing(UserDto::getUsername))
             .collect(Collectors.toList());
   }
 

@@ -34,6 +34,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -306,7 +307,7 @@ class UserServiceTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Requesting all users should return a list of all users")
+  @DisplayName("Should return all users")
   void get_all_users() {
     // given
     UserEntity user1 = UserFactory.createUser("a", "a@example.com");
@@ -318,11 +319,46 @@ class UserServiceTest implements WithAssertions {
 
     // then
     assertThat(userDtoList).hasSize(2);
-    assertThat(userDtoList.get(0).getUsername()).isEqualTo(user1.getUsername());
-    assertThat(userDtoList.get(0).getEmail()).isEqualTo(user1.getEmail());
-    assertThat(userDtoList.get(1).getUsername()).isEqualTo(user2.getUsername());
-    assertThat(userDtoList.get(1).getEmail()).isEqualTo(user2.getEmail());
+    assertThat(userDtoList.get(0)).isEqualTo(userMapper.mapToDto(user1));
+    assertThat(userDtoList.get(1)).isEqualTo(userMapper.mapToDto(user2));
+  }
+
+  @Test
+  @DisplayName("Should use UserRepository to return a list of all users")
+  void get_all_users_uses_user_repository() {
+    // given
+    when(userRepository.findAll()).thenReturn(Collections.emptyList());
+
+    // when
+    userService.getAllUsers();
+
+    // then
     verify(userRepository, times(1)).findAll();
+  }
+
+  @Test
+  @DisplayName("Should return all users in a certain order")
+  void get_all_users_ordered() {
+    // given
+    UserEntity user1 = UserFactory.createUser("a1", UserRole.ROLE_USER, false);
+    UserEntity user2 = UserFactory.createUser("b1", UserRole.ROLE_USER, true);
+    UserEntity user3 = UserFactory.createUser("a2", UserRole.ROLE_USER, true);
+    UserEntity user4 = UserFactory.createUser("c1", UserRole.ROLE_ADMINISTRATOR, false);
+    UserEntity user5 = UserFactory.createUser("c2", UserRole.ROLE_ADMINISTRATOR, true);
+    UserEntity user6 = UserFactory.createUser("a3", UserRole.ROLE_ADMINISTRATOR, true);
+    when(userRepository.findAll()).thenReturn(List.of(user1, user2, user3, user4, user5, user6));
+
+    // when
+    List<UserDto> userDtoList = userService.getAllUsers();
+
+    // then
+    assertThat(userDtoList).hasSize(6);
+    assertThat(userDtoList.get(0)).isEqualTo(userMapper.mapToDto(user6));
+    assertThat(userDtoList.get(1)).isEqualTo(userMapper.mapToDto(user5));
+    assertThat(userDtoList.get(2)).isEqualTo(userMapper.mapToDto(user3));
+    assertThat(userDtoList.get(3)).isEqualTo(userMapper.mapToDto(user2));
+    assertThat(userDtoList.get(4)).isEqualTo(userMapper.mapToDto(user4));
+    assertThat(userDtoList.get(5)).isEqualTo(userMapper.mapToDto(user1));
   }
 
   @Test

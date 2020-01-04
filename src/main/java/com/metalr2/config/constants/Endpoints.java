@@ -48,7 +48,7 @@ public class Endpoints {
     public static final String FOLLOW     = "/follow";
     public static final String UNFOLLOW   = "/unfollow";
 
-    public static final String USERS      = "rest/v1/users";
+    public static final String USERS      = "/rest/v1/users";
   }
 
   public static class AdminArea {

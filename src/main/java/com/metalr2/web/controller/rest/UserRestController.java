@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,18 +27,15 @@ public class UserRestController {
     this.mapper = new ModelMapper();
   }
 
-  // ToDo DanielW: Test
   @GetMapping(USERS)
   public ResponseEntity<List<UserResponse>> getAllUsers() {
     List<UserResponse> response = userService.getAllUsers().stream()
             .map(userDto -> mapper.map(userDto, UserResponse.class))
-            .sorted(Comparator.comparing(UserResponse::isEnabled).thenComparing(UserResponse::getRole).thenComparing(UserResponse::getUsername))
             .collect(Collectors.toList());
 
     return ResponseEntity.ok(response);
   }
 
-  // ToDo DanielW: Test
   @GetMapping(USERS + "/{id}")
   public ResponseEntity<UserResponse> getUser(@PathVariable(name = "id") String publicUserId) {
     UserDto userDto = userService.getUserByPublicId(publicUserId);
