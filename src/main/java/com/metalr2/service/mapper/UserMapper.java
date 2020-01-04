@@ -26,6 +26,7 @@ public class UserMapper implements Mappable<UserEntity, UserDto> {
   @Override
   public UserDto mapToDto(UserEntity entity) {
     UserDto userDto = mapper.map(entity, UserDto.class);
+    userDto.setCreationDate(entity.getCreatedDateTime());
     userDto.setRole(determinRoleName(entity));
 
     return userDto;

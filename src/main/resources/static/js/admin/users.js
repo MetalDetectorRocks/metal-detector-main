@@ -12,8 +12,6 @@ $(document).ready(function () {
  */
 function requestUsersFromServer() {
     clearHtmlTable();
-
-    // ToDo DanielW: Cell rendering
     $('#user-table').DataTable( {
         'ajax': {
             'url': '/rest/v1/users',
@@ -24,18 +22,36 @@ function requestUsersFromServer() {
         'columns': [
             {'data': 'username'},
             {'data': 'email'},
-            {'data': 'roleAsHtml'},
-            {'data': 'statusAsHtml'},
+            {'data': 'role'},
+            {'data': 'enabled'},
             {'data': 'lastLogin'},
-            {'data': 'actionsAsHtml'}
+            {'data': 'creationDate'}
         ],
-        'columnDefs': [
+        "columnDefs": [
             {
-                'target': [5],
-                'orderable': false
+                "render": function ( data ) {
+                    if (data === 'Administrator') {
+                        return '<span class="badge badge-danger">' + data + '</span>';
+                    }
+                    else {
+                        return '<span class="badge badge-info">' + data + '</span>';
+                    }
+                },
+                "targets": 2
+            },
+            {
+                "render": function ( data ) {
+                    if (data) {
+                        return '<span class="badge badge-success">Enabled</span>';
+                    }
+                    else {
+                        return '<span class="badge badge-secondary">Disabled</span>';
+                    }
+                },
+                "targets": 3
             }
         ]
-    } );
+    });
 }
 
 /**

@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -28,14 +29,17 @@ class UserMapperTest implements WithAssertions {
   void map_entity_to_dto() {
     // given
     UserEntity entity = UserFactory.createUser(USERNAME, EMAIL);
+    entity.setPublicId("dummy-public-id");
+    entity.setCreatedDateTime(new Date());
     UserDto expected = UserDto.builder()
-            .publicId(null) // is always null in test scenario
+            .publicId(entity.getPublicId())
             .username(USERNAME)
             .email(EMAIL)
             .plainPassword(null) // is only mapped from dto to entity
             .role("User")
             .enabled(true)
             .lastLogin(null) // feature is currently not available
+            .creationDate(entity.getCreatedDateTime())
             .build();
 
     // when

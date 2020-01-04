@@ -23,5 +23,6 @@ public class UserDto implements Serializable {
   private boolean enabled;
   private String role;
   private LocalDateTime lastLogin;
+  private LocalDateTime creationDate;
 
 }

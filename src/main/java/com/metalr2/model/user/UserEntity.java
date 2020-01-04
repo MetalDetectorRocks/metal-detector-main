@@ -1,5 +1,6 @@
 package com.metalr2.model.user;
 
+import com.metalr2.model.ArtifactForFramework;
 import com.metalr2.model.BaseEntity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -59,7 +60,11 @@ public class UserEntity extends BaseEntity implements UserDetails {
     this.enabled           = enabled;
   }
 
-  @SuppressWarnings("unused") // used for model mapper
+  public void setPublicId(String newPublicId) {
+    this.publicId = checkInitialValueAssignment(this.publicId, newPublicId);
+  }
+
+  @ArtifactForFramework // used for model mapper
   public void setUsername(String username) {
     if (this.username != null && ! this.username.isEmpty()) {
       throw new UnsupportedOperationException("The username must not be changed.");
