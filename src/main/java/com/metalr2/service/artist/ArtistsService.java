@@ -13,7 +13,7 @@ public interface ArtistsService {
   Optional<ArtistDto> findArtistByDiscogsId(long discogsId);
   List<ArtistDto> findAllArtistsByDiscogsIds(long... discogsIds);
   boolean existsArtistByDiscogsId(long discogsId);
-  boolean saveArtist(long discogsId);
+  boolean fetchAndSaveArtist(long discogsId);
 
   boolean followArtist(long discogsId);
   boolean unfollowArtist(long discogsId);

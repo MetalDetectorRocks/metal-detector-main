@@ -67,7 +67,8 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   @Transactional
   public boolean followArtist(long discogsId) {
-    if (saveArtist(discogsId)) {
+    boolean artistAlreadyExistsOrSavedSuccessfully = fetchAndSaveArtist(discogsId);
+    if (artistAlreadyExistsOrSavedSuccessfully) {
       FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(currentUserSupplier.get().getPublicId(), discogsId);
       followedArtistsRepository.save(followedArtistEntity);
       return true;
@@ -110,7 +111,7 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   @Override
   @Transactional
-  public boolean saveArtist(long discogsId) {
+  public boolean fetchAndSaveArtist(long discogsId) {
     if (artistsRepository.existsByArtistDiscogsId(discogsId)) {
       return true;
     }
