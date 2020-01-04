@@ -4,29 +4,28 @@
  * @param size          Requested page size
  * @returns {boolean}
  */
-function searchArtist(page,size){
+function search(searchRequest){
     clear();
     toggleLoader("searchResultsContainer");
 
-    const artistName = document.getElementById('artistName').value;
-    const searchArtistRequest =
+    const parameter =
         {
-            "artistName" : artistName,
-            "page" : page,
-            "size" : size
+            "query" : searchRequest.query,
+            "page" : searchRequest.page,
+            "size" : searchRequest.size
         };
 
     $.ajax({
         method: "GET",
         url: "/rest/v1/artists/search",
-        data: searchArtistRequest,
+        data: parameter,
         dataType: "json",
-        success: function(artistNameSearchResponse){
-            buildResults(artistNameSearchResponse);
+        success: function(searchResponse){
+            buildResults(searchResponse);
             toggleLoader("searchResultsContainer");
         },
         error: function(){
-            createNoArtistNameSearchResultsMessage(artistName);
+            createNoResultsMessage(searchRequest.query);
             toggleLoader("searchResultsContainer");
         }
     });
@@ -36,12 +35,12 @@ function searchArtist(page,size){
 
 /**
  * Builds HTML with results and pagination
- * @param artistNameSearchResponse  JSON response
+ * @param searchResponse  JSON response
  */
-function buildResults(artistNameSearchResponse) {
-    createNavigationElement(artistNameSearchResponse);
-    createResultCards(artistNameSearchResponse);
-    createNavigationElement(artistNameSearchResponse);
+function buildResults(searchResponse) {
+    createNavigationElement(searchResponse);
+    createResultCards(searchResponse);
+    createNavigationElement(searchResponse);
 }
 
 /**
@@ -49,7 +48,7 @@ function buildResults(artistNameSearchResponse) {
  */
 function clear() {
     $("#searchResultsContainer").empty();
-    $("#artistDetailsContainer").empty();
+    $("#artistDetailsContainer").empty(); // todo: adapat clear for multiple pages
 
     const noResultsMessageElement = document.getElementById('noResultsMessageElement');
     if (noResultsMessageElement != null) {
@@ -62,11 +61,10 @@ function clear() {
 
 /**
  * Builds HTML for the result cards
- * @param artistNameSearchResponse
+ * @param searchResponse
  */
-function createResultCards(artistNameSearchResponse){
-    jQuery.each(artistNameSearchResponse.artistSearchResults, function (i, artistSearchResult) {
-
+function createResultCards(searchResponse){
+    jQuery.each(searchResponse.searchResults, function (i, searchResult) {
         const card = document.createElement('div');
         card.className = "card";
 
@@ -74,26 +72,28 @@ function createResultCards(artistNameSearchResponse){
         cardBody.className = "card-body";
 
         const headingElement = document.createElement('h3');
-        headingElement.innerText = artistSearchResult.artistName;
+        headingElement.innerText = searchResult.artistName;
         cardBody.append(headingElement);
         card.append(cardBody);
 
-        if (artistSearchResult.thumb !== ""){
+        console.log(headingElement.innerText);
+
+        if (searchResult.thumb !== ""){
             const thumbElement = document.createElement('img');
-            thumbElement.alt = 'Thumb for ' + artistSearchResult.artistName;
-            thumbElement.src = artistSearchResult.thumb;
+            thumbElement.alt = 'Thumb for ' + searchResult.artistName;
+            thumbElement.src = searchResult.thumb;
             cardBody.append(thumbElement);
         }
 
         const artistIdElement = document.createElement('p');
-        artistIdElement.innerText = artistSearchResult.id;
+        artistIdElement.innerText = searchResult.id;
         cardBody.append(artistIdElement);
 
         const artistDetailsElement = document.createElement('a');
         artistDetailsElement.href = "#";
-        artistDetailsElement.text = "Details for " + artistSearchResult.artistName;
+        artistDetailsElement.text = "Details for " + searchResult.artistName;
         artistDetailsElement.onclick = function func(){
-            artistDetails(artistSearchResult.artistName,artistSearchResult.id);
+            artistDetails(searchResult.artistName,searchResult.id);
         };
         cardBody.append(artistDetailsElement);
 
@@ -101,12 +101,12 @@ function createResultCards(artistNameSearchResponse){
         cardBody.append(breakElement);
 
         const followArtistButtonElement = document.createElement('button');
-        followArtistButtonElement.id = "followArtistButton" + artistSearchResult.id;
+        followArtistButtonElement.id = "followArtistButton" + searchResult.id;
         followArtistButtonElement.type = "button";
         followArtistButtonElement.className = "btn btn-primary btn-dark font-weight-bold";
-        followArtistButtonElement.textContent = artistSearchResult.isFollowed ? "Unfollow" : "Follow";
-        followArtistButtonElement.onclick = createOnClickFunctionFollowArtist(artistSearchResult.artistName,
-            artistSearchResult.id,artistSearchResult.isFollowed,followArtistButtonElement);
+        followArtistButtonElement.textContent = searchResult.isFollowed ? "Unfollow" : "Follow";
+        followArtistButtonElement.onclick = createOnClickFunctionFollowArtist(searchResult.artistName,
+            searchResult.id,searchResult.isFollowed,followArtistButtonElement);
         cardBody.append(followArtistButtonElement);
 
         document.getElementById('searchResultsContainer').append(card);
@@ -115,23 +115,23 @@ function createResultCards(artistNameSearchResponse){
 
 /**
  * Builds HTML for pagination
- * @param artistNameSearchResponse  The json response
+ * @param searchResponse  The json response
  */
-function createNavigationElement(artistNameSearchResponse) {
+function createNavigationElement(searchResponse) {
     const navElement = document.createElement("nav");
     const listElement = document.createElement("ul");
     listElement.className = "pagination pagination-sm justify-content-end";
     navElement.append(listElement);
 
     // Previous link
-    createPreviousOrNextItem(artistNameSearchResponse, listElement, true);
+    createPreviousOrNextItem(searchResponse, listElement, true);
     // Page links
-    for (let index = 1; index <= artistNameSearchResponse.pagination.totalPages; index++) {
-        createPageLinks(artistNameSearchResponse.pagination.currentPage, artistNameSearchResponse.pagination.itemsPerPage,
+    for (let index = 1; index <= searchResponse.pagination.totalPages; index++) {
+        createPageLinks(searchResponse.pagination.currentPage, searchResponse.pagination.itemsPerPage,
             index, listElement);
     }
     // Next link
-    createPreviousOrNextItem(artistNameSearchResponse, listElement, false);
+    createPreviousOrNextItem(searchResponse, listElement, false);
 
     document.getElementById('searchResultsContainer').append(navElement);
 }
@@ -139,12 +139,12 @@ function createNavigationElement(artistNameSearchResponse) {
 /**
  * Builds HTML for the message for an empty result
  */
-function createNoArtistNameSearchResultsMessage(artistName) {
+function createNoResultsMessage(query) {
     const noResultsMessageElement = document.createElement('div');
     noResultsMessageElement.className = "mb-3 alert alert-danger";
     noResultsMessageElement.role = "alert";
     noResultsMessageElement.id = "noResultsMessageElement";
-    noResultsMessageElement.innerText =  "No artists could be found for the given name: " + artistName;
+    noResultsMessageElement.innerText =  "No results could be found for the given query: " + query;
 
     document.getElementById('noResultsMessageContainer').append(noResultsMessageElement);
 }
@@ -169,7 +169,7 @@ function createPageLinks(currentPage, itemsPerPage, index, element) {
     link.text = String(index);
     link.onclick = (function (page, itemsPerPage) {
         return function () {
-            searchArtist(page, itemsPerPage)
+            search(page, itemsPerPage)
         };
     })(index, itemsPerPage);
 
@@ -179,11 +179,11 @@ function createPageLinks(currentPage, itemsPerPage, index, element) {
 
 /**
  * Create the previos or next pagination butteon
- * @param artistNameSearchResponse  Search result
+ * @param searchResponse  Search result
  * @param element                   Element to append to
  * @param previous                  True if previous shall be created, false for next
  */
-function createPreviousOrNextItem(artistNameSearchResponse, element, previous) {
+function createPreviousOrNextItem(searchResponse, element, previous) {
     const item = document.createElement("li");
     item.className = "page-item";
 
@@ -193,18 +193,18 @@ function createPreviousOrNextItem(artistNameSearchResponse, element, previous) {
 
     if (previous){
         text = "Previous";
-        targetPage = artistNameSearchResponse.pagination.currentPage - 1;
+        targetPage = searchResponse.pagination.currentPage - 1;
         symbol = "\u00AB";
         item.classList.add("prev");
-        if (artistNameSearchResponse.pagination.currentPage === 1)
+        if (searchResponse.pagination.currentPage === 1)
             item.classList.add("disabled");
 
     } else {
         text = "Next";
-        targetPage = artistNameSearchResponse.pagination.currentPage + 1;
+        targetPage = searchResponse.pagination.currentPage + 1;
         symbol = "\u00BB";
         item.classList.add("next");
-        if (artistNameSearchResponse.pagination.currentPage === artistNameSearchResponse.pagination.totalPages)
+        if (searchResponse.pagination.currentPage === searchResponse.pagination.totalPages)
             item.classList.add("disabled");
     }
 
@@ -214,9 +214,9 @@ function createPreviousOrNextItem(artistNameSearchResponse, element, previous) {
     link.href = "#";
     link.onclick = (function (page, itemsPerPage) {
         return function () {
-            searchArtist(page, itemsPerPage)
+            search(page, itemsPerPage)
         };
-    })(targetPage, artistNameSearchResponse.pagination.itemsPerPage);
+    })(targetPage, searchResponse.pagination.itemsPerPage);
 
     let span = document.createElement("span");
     span.setAttribute('aria-hidden', true);

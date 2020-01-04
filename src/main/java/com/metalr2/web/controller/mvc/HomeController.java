@@ -15,4 +15,5 @@ public class HomeController {
   public ModelAndView showHome() {
     return new ModelAndView(ViewNames.Frontend.HOME);
   }
+
 }

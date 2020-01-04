@@ -14,8 +14,8 @@ import com.metalr2.web.dto.discogs.misc.DiscogsImage;
 import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.DiscogsPagination;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.Pagination;
+import com.metalr2.web.dto.response.SearchResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -101,7 +101,7 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public Optional<ArtistNameSearchResponse> searchDiscogsByName(String artistQueryString, int page, int size) {
+  public Optional<SearchResponse> searchDiscogsByName(String artistQueryString, int page, int size) {
     Optional<DiscogsArtistSearchResultContainer> responseOptional = artistSearchClient.searchByName(artistQueryString, page, size);
     return responseOptional.map(this::mapNameSearchResult);
   }
@@ -112,7 +112,7 @@ public class ArtistsServiceImpl implements ArtistsService {
     return responseOptional.map(this::mapDetailsSearchResult);
   }
 
-  private ArtistNameSearchResponse mapNameSearchResult(DiscogsArtistSearchResultContainer artistSearchResults) {
+  private SearchResponse mapNameSearchResult(DiscogsArtistSearchResultContainer artistSearchResults) {
     DiscogsPagination discogsPagination = artistSearchResults.getDiscogsPagination();
 
     int itemsPerPage = discogsPagination.getItemsPerPage();
@@ -120,14 +120,14 @@ public class ArtistsServiceImpl implements ArtistsService {
     Set<Long> alreadyFollowedArtists = findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId()).stream().map(FollowArtistDto::getArtistDiscogsId)
         .collect(Collectors.toSet());
 
-    List<ArtistNameSearchResponse.ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
-        .map(artistSearchResult -> new ArtistNameSearchResponse.ArtistSearchResult(artistSearchResult.getThumb(), artistSearchResult.getId(),
-                                                                                   artistSearchResult.getTitle(), alreadyFollowedArtists.contains(artistSearchResult.getId())))
+    List<SearchResponse.SearchResult> dtoSearchResults = artistSearchResults.getResults().stream()
+        .map(artistSearchResult -> new SearchResponse.SearchResult(artistSearchResult.getThumb(), artistSearchResult.getId(),
+                                                                   artistSearchResult.getTitle(), alreadyFollowedArtists.contains(artistSearchResult.getId())))
         .collect(Collectors.toList());
 
     Pagination pagination = new Pagination(discogsPagination.getPagesTotal(), discogsPagination.getCurrentPage(), itemsPerPage);
 
-    return new ArtistNameSearchResponse(dtoArtistSearchResults, pagination);
+    return new SearchResponse(dtoSearchResults, pagination);
   }
 
   private ArtistDetailsResponse mapDetailsSearchResult(DiscogsArtist discogsArtist) {

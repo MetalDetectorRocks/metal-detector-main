@@ -23,7 +23,7 @@
   <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
   <script th:src="@{/webjars/lightbox//src/js/lightbox.js}" src="#"></script>
   <script th:src="@{/js/common.js}" src="#"></script>
-  <script th:src="@{/js/search-artists.js}" src="#"></script>
+  <script th:src="@{/js/search.js}" src="#"></script>
   <script th:src="@{/js/follow-artists.js}" src="#"></script>
   <script th:src="@{/js/artist-details.js}" src="#"></script>
 
@@ -39,9 +39,9 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <form class="form-group has-search" onsubmit="return searchArtist(1,10)">
+            <form id="searchForm" class="form-group has-search" action="#" th:action="@{/artists/search}" method="GET">
               <span class="material-icons form-control-feedback">search</span>
-              <label for="artistName"></label><input id="artistName" class="form-control" type="text" placeholder="Search">
+              <label for="query"></label><input id="query" type="text" class="form-control" th:name="query" placeholder="Search">
             </form>
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item">

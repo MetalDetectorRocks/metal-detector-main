@@ -3,7 +3,7 @@ package com.metalr2.service.artist;
 import com.metalr2.web.dto.ArtistDto;
 import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.ArtistNameSearchResponse;
+import com.metalr2.web.dto.response.SearchResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +19,7 @@ public interface ArtistsService {
   boolean isFollowed(long discogsId);
   List<FollowArtistDto> findFollowedArtistsPerUser(String publicUserId);
 
-  Optional<ArtistNameSearchResponse> searchDiscogsByName(String artistQueryString, int page, int size);
+  Optional<SearchResponse> searchDiscogsByName(String artistQueryString, int page, int size);
   Optional<ArtistDetailsResponse> searchDiscogsById(long discogsId);
 
 }
