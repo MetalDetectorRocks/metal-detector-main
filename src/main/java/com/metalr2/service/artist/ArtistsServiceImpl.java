@@ -26,6 +26,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.metalr2.web.dto.response.SearchResponse.SearchResult;
+
 @Service
 public class ArtistsServiceImpl implements ArtistsService {
 
@@ -135,9 +137,9 @@ public class ArtistsServiceImpl implements ArtistsService {
     Set<Long> alreadyFollowedArtists = findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId()).stream().map(FollowArtistDto::getArtistDiscogsId)
         .collect(Collectors.toSet());
 
-    List<SearchResponse.SearchResult> dtoSearchResults = artistSearchResults.getResults().stream()
-        .map(artistSearchResult -> new SearchResponse.SearchResult(artistSearchResult.getThumb(), artistSearchResult.getId(),
-                                                                   artistSearchResult.getTitle(), alreadyFollowedArtists.contains(artistSearchResult.getId())))
+    List<SearchResult> dtoSearchResults = artistSearchResults.getResults().stream()
+        .map(artistSearchResult -> new SearchResult(artistSearchResult.getThumb(), artistSearchResult.getId(),
+                                                    artistSearchResult.getTitle(), alreadyFollowedArtists.contains(artistSearchResult.getId())))
         .collect(Collectors.toList());
 
     Pagination pagination = new Pagination(discogsPagination.getPagesTotal(), discogsPagination.getCurrentPage(), itemsPerPage);
