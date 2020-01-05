@@ -109,7 +109,6 @@ public class ArtistsServiceImpl implements ArtistsService {
     return responseOptional.map(this::mapDetailsSearchResult);
   }
 
-  private SearchResponse mapNameSearchResult(DiscogsArtistSearchResultContainer artistSearchResults) {
   @Override
   @Transactional
   public boolean fetchAndSaveArtist(long discogsId) {
@@ -128,7 +127,7 @@ public class ArtistsServiceImpl implements ArtistsService {
     return true;
   }
 
-  private ArtistNameSearchResponse mapNameSearchResult(DiscogsArtistSearchResultContainer artistSearchResults) {
+  private SearchResponse mapNameSearchResult(DiscogsArtistSearchResultContainer artistSearchResults) {
     DiscogsPagination discogsPagination = artistSearchResults.getDiscogsPagination();
 
     int itemsPerPage = discogsPagination.getItemsPerPage();
