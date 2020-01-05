@@ -8,7 +8,9 @@
     <div id="artistDetailsContainer"></div>
     <div id="noResultsMessageContainer"></div>
     <script th:inline="javascript">
-      artistDetails([[${discogsId}]])
+      $(document).ready(function () {
+        artistDetails([[${discogsId}]])
+      })
     </script>
     </body>
 </html>

@@ -6,6 +6,12 @@
 function artistDetails(artistId){
     toggleLoader("artistDetailsContainer");
 
+    if (!validateArtistDetails(artistId)) {
+        const message = "No data could be found for the given id: " + artistId;
+        validationOrAjaxFailed(message, 'artistDetailsContainer');
+        return false;
+    }
+
     $.ajax({
         method: "GET",
         url: "/rest/v1/artists/" + artistId,
@@ -15,13 +21,21 @@ function artistDetails(artistId){
             toggleLoader("artistDetailsContainer");
         },
         error: function(){
-            const noResultMessage = "No data could be found for the given id: " + artistId;
-            createNoResultsMessage(noResultMessage);
-            toggleLoader("artistDetailsContainer");
+            const message = "No data could be found for the given id: " + artistId;
+            validationOrAjaxFailed(message, 'artistDetailsContainer');
         }
     });
 
     return false;
+}
+
+/**
+ * Basic validation for search parameters
+ * @param artistId      The artist's discogs id as path parameter
+ * @returns {boolean}
+ */
+function validateArtistDetails(artistId) {
+    return !Number.isNaN(artistId) && artistId > 0;
 }
 
 /**
@@ -76,33 +90,40 @@ function createCardNavigation(card, artistDetailsResponse) {
     navbarElement.append(navList);
 
     const navItemProfile = createNavItem("profile");
-    navItemProfile.classList.add("active");
     navList.append(navItemProfile);
 
-    if (artistDetailsResponse.profile)
+    if (artistDetailsResponse.profile) {
+        navItemProfile.classList.add("active");
         navItemProfile.onclick = function () {
             showProfile(artistDetailsResponse);
         };
+    }
     else
         navItemProfile.classList.add("disabled");
 
     const navItemMember = createNavItem("member");
     navList.append(navItemMember);
 
-    if (artistDetailsResponse.activeMember || artistDetailsResponse.formerMember)
+    if (artistDetailsResponse.activeMember || artistDetailsResponse.formerMember) {
+        if (!navItemProfile.classList.contains("active"))
+            navItemMember.classList.add("active");
         navItemMember.onclick = function () {
             showMember(artistDetailsResponse);
         };
+    }
     else
         navItemMember.classList.add("disabled");
 
     const navItemImages = createNavItem("images");
     navList.append(navItemImages);
 
-    if (artistDetailsResponse.images)
+    if (artistDetailsResponse.images) {
+        if (!navItemProfile.classList.contains("active") && !navItemMember.classList.contains("active"))
+            navItemImages.classList.add("active");
         navItemImages.onclick = function () {
             createImageGallery(artistDetailsResponse)
         };
+    }
     else
         navItemImages.classList.add("disabled");
 }

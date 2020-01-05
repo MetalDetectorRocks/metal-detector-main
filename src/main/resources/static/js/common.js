@@ -60,3 +60,13 @@ function createFollowArtistButton(artistName,artistId,isFollowed) {
       artistId,isFollowed,followArtistButtonElement);
     return followArtistButtonElement;
 }
+
+/**
+ * Tasks when validation or ajax fails
+ * @param message       The message to be displayed
+ * @param containerId   The container to toggle the loader at
+ */
+function validationOrAjaxFailed(message, containerId) {
+    createNoResultsMessage(message);
+    toggleLoader(containerId);
+}

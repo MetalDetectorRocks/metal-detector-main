@@ -14,11 +14,12 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(Endpoints.Frontend.ARTISTS)
 public class ArtistsController {
 
-  private static final String DEFAULT_PAGE = "1";
-  private static final String DEFAULT_SIZE = "10";
+  private static final String DEFAULT_QUERY = "";
+  private static final String DEFAULT_PAGE  = "1";
+  private static final String DEFAULT_SIZE  = "10";
 
   @GetMapping(path = "/search")
-  public ModelAndView showSearch(@RequestParam(value = "query", defaultValue = "") String query,
+  public ModelAndView showSearch(@RequestParam(value = "query", defaultValue = DEFAULT_QUERY) String query,
                                  @RequestParam(value = "page", defaultValue = DEFAULT_PAGE) int page,
                                  @RequestParam(value = "size", defaultValue = DEFAULT_SIZE) int size) {
     return new ModelAndView(ViewNames.Frontend.SEARCH, "searchRequest", new SearchRequest(query,page,size));

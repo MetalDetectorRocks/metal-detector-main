@@ -8,7 +8,9 @@
     <div id="searchResultsContainer" class="mb-3"></div>
     <div id="noResultsMessageContainer"></div>
     <script th:inline="javascript">
-      search([[${searchRequest}]])
+      $(document).ready(function () {
+        search([[${searchRequest}]])
+      })
     </script>
     </body>
 </html>

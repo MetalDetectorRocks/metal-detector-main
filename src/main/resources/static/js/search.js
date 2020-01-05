@@ -6,6 +6,12 @@
 function search(searchRequest){
     toggleLoader("searchResultsContainer");
 
+    if (!validateSearch(searchRequest)) {
+        const message = "No results could be found for the given query: " + searchRequest.query;
+        validationOrAjaxFailed(message, 'searchResultsContainer');
+        return false;
+    }
+
     const parameter =
         {
             "query" : searchRequest.query,
@@ -23,13 +29,24 @@ function search(searchRequest){
             toggleLoader("searchResultsContainer");
         },
         error: function(){
-            const noResultMessage = "No results could be found for the given query: " + searchRequest.query;
-            createNoResultsMessage(noResultMessage);
-            toggleLoader("searchResultsContainer");
+            const message = "No results could be found for the given query: " + searchRequest.query;
+            validationOrAjaxFailed(message, 'searchResultsContainer');
         }
     });
 
     return false;
+}
+
+/**
+ * Basic validation for search parameters
+ * @param searchRequest The request containing query, page and size
+ * @returns {boolean}
+ */
+function validateSearch(searchRequest) {
+    const query = String(searchRequest.query);
+    const page = searchRequest.page;
+    const size = searchRequest.size;
+    return query && !Number.isNaN(page) && !Number.isNaN(size) && page > 0 && size > 0;
 }
 
 /**
