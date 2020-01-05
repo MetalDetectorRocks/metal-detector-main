@@ -46,6 +46,8 @@ public class Endpoints {
     public static final String SEARCH     = "/search";
     public static final String FOLLOW     = "/follow";
     public static final String UNFOLLOW   = "/unfollow";
+
+    public static final String USERS      = "/rest/v1/users";
   }
 
   public static class AdminArea {
@@ -53,7 +55,8 @@ public class Endpoints {
     public static final String IMPORT       = "/admin/import";
     public static final String ANALYTICS    = "/admin/analytics";
     public static final String SETTINGS     = "/admin/settings";
-    public static final String USERS_LIST   = "/admin/users";
+    public static final String USERS        = "/admin/users";
+    public static final String PROFILE      = "/admin/profile";
   }
 
   public static class AntPattern {

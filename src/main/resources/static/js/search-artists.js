@@ -4,7 +4,7 @@
  * @param size          Requested page size
  * @returns {boolean}
  */
-function searchArtist(page,size){
+function searchArtist(page,size) {
     clear();
     toggleLoader("searchResultsContainer");
 
@@ -64,7 +64,7 @@ function clear() {
  * Builds HTML for the result cards
  * @param artistNameSearchResponse
  */
-function createResultCards(artistNameSearchResponse){
+function createResultCards(artistNameSearchResponse) {
     jQuery.each(artistNameSearchResponse.artistSearchResults, function (i, artistSearchResult) {
 
         const card = document.createElement('div');

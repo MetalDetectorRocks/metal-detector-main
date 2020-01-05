@@ -18,6 +18,26 @@ class UserEntityTest implements WithAssertions {
   @Autowired
   private BCryptPasswordEncoder passwordEncoder;
 
+  @DisplayName("Public Id tests")
+  @Nested
+  class PublicIdTests {
+
+    @Test
+    @DisplayName("It is not allowed to set a new value for 'publicId'")
+    void reset_public_id_should_not_be_possible() {
+      // given
+      UserEntity user = UserFactory.createUser("Test", "test@test.com");
+      user.setPublicId("foo");
+
+      // when
+      Throwable throwable = catchThrowable(() -> user.setPublicId("bar"));
+
+      // then
+      assertThat(throwable).isInstanceOf(UnsupportedOperationException.class);
+    }
+
+  }
+
   @DisplayName("Username tests")
   @Nested
   class UsernameTests {

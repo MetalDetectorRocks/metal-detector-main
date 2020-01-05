@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -15,11 +16,13 @@ public class UserDto implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private long id;
   private String publicId;
   private String username;
   private String email;
   private String plainPassword;
   private boolean enabled;
+  private String role;
+  private LocalDateTime lastLogin;
+  private LocalDateTime creationDate;
 
 }

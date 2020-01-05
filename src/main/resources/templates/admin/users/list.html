@@ -5,29 +5,28 @@
     </head>
     <body>
         <h1 class="h2 text-dark">Users</h1>
-        <table class="table table-hover">
+
+        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="new-admin-user-button" data-toggle="modal" data-target="#admin-user-create-dialog">
+            New Administrator
+        </button>
+
+        <table id="user-table" class="table table-striped table-hover mt-3">
             <thead>
-            <tr>
-                <th scope="col">User name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Status</th>
-                <th scope="col">Actions</th>
-            </tr>
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Last Login</th>
+                    <th scope="col">Creation Date</th>
+                </tr>
             </thead>
-            <tbody>
-            <tr th:each="user : ${users}">
-                <td th:text="${user.username}"></td>
-                <td th:text="${user.email}"></td>
-                <td>
-                    <span th:if="${user.enabled}" class="badge badge-success">Enabled</span>
-                    <span th:unless="${user.enabled}" class="badge badge-secondary">Disabled</span>
-                </td>
-                <td>
-                    <a href="#"><i class="material-icons table-action-icon">edit</i></a>
-                    <a href="#"><i class="material-icons table-action-icon">delete</i></a>
-                </td>
-            </tr>
+            <tbody id="user-data">
             </tbody>
         </table>
+
+        <div id="admin-user-create-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div th:replace="admin/users/create :: dialog"></div>
+        </div>
     </body>
 </html>

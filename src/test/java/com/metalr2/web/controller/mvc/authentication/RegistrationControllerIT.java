@@ -123,7 +123,6 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
               .andExpect(view().name(ViewNames.Guest.REGISTER));
 
       verify(userService, times(1)).createUser(userDtoCaptor.capture());
-      assertThat(userDtoCaptor.getValue().getId()).isEqualTo(0);
       assertThat(userDtoCaptor.getValue().getPublicId()).isNullOrEmpty();
       assertThat(userDtoCaptor.getValue().getUsername()).isEqualTo(paramValues.get(PARAM_USERNAME));
       assertThat(userDtoCaptor.getValue().getEmail()).isEqualTo(paramValues.get(PARAM_EMAIL));

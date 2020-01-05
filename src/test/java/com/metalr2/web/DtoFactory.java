@@ -21,7 +21,6 @@ public class DtoFactory {
 
     public static UserDto withUsernameAndEmail(String username, String email) {
       return UserDto.builder()
-          .id(1)
           .publicId(UUID.randomUUID().toString())
           .username(username)
           .email(email)
