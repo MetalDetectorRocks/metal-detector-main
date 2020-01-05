@@ -39,9 +39,8 @@ public class ViewNames {
     public static final String IMPORT                    = "admin/import";
     public static final String ANALYTICS                 = "admin/analytics";
     public static final String SETTINGS                  = "admin/settings";
-    public static final String USERS_LIST                = "admin/users/list";
-    public static final String USERS_CREATE              = "admin/users/create";
-    public static final String USERS_EDIT                = "admin/users/edit";
+    public static final String USERS                     = "admin/users/list";
+    public static final String PROFILE                   = "admin/profile";
   }
 
   public static class EmailTemplates {

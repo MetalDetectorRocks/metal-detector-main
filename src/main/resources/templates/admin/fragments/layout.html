@@ -19,6 +19,13 @@
 
     <!-- Material Icons -->
     <link th:href="@{/webjars/material-icons/iconfont/material-icons.css}" href="/webjars/material-icons/0.3.1/iconfont/material-icons.css" rel="stylesheet">
+
+    <!-- ToDo DanielW: Include JavaScript and CSS files only on the pages where they are actually needed (https://trello.com/c/OS3QBFFS) -->
+    <script th:src="@{/js/admin/users.js}" src="#"></script>
+    <link th:href="@{/css/datatables.custom.css}" href="#" rel="stylesheet" />
+    <script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}" src="#"></script>
+    <script th:src="@{/webjars/datatables/js/dataTables.bootstrap4.min.js}" src="#"></script>
+    <link th:href="@{/webjars/datatables/css/dataTables.bootstrap4.min.css}" href="#" rel="stylesheet" type="text/css" />
 </head>
 <body>
     <!-- Top Navbar-->
@@ -28,8 +35,8 @@
                 <img alt="Logo" th:src="@{/images/logo.png}" src="#" width="300" />
             </a>
             <ul class="nav justify-content-end">
-                <li class="nav-item"><a th:href="@{/admin/notifications}" href="#" class="nav-link"><i class="material-icons">notifications</i></a></li>
-                <li class="nav-item"><a th:href="@{/}" href="#" target="_blank" class="nav-link"><i class="material-icons">public</i></a></li>
+                <li class="nav-item"><a th:href="@{/admin/notifications}" href="#" class="nav-link"><i class="material-icons" style="padding-top: 0.2rem">notifications</i></a></li>
+                <li class="nav-item"><a th:href="@{/}" href="#" target="_blank" class="nav-link"><i class="material-icons" style="padding-top: 0.2rem">public</i></a></li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Profile photo" height="30" width="30" class="avatar border border-white" />

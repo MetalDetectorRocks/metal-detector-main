@@ -67,16 +67,13 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   @Transactional
   public boolean followArtist(long discogsId) {
-    Optional<DiscogsArtist> artistOptional = artistSearchClient.searchById(discogsId);
-
-    if (artistOptional.isEmpty()) {
-      return false;
+    boolean artistAlreadyExistsOrSavedSuccessfully = fetchAndSaveArtist(discogsId);
+    if (artistAlreadyExistsOrSavedSuccessfully) {
+      FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(currentUserSupplier.get().getPublicId(), discogsId);
+      followedArtistsRepository.save(followedArtistEntity);
+      return true;
     }
-
-    FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(currentUserSupplier.get().getPublicId(),
-                                                                         artistOptional.get().getName(), discogsId);
-    followedArtistsRepository.save(followedArtistEntity);
-    return true;
+    return false;
   }
 
   @Override
@@ -113,6 +110,25 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   private SearchResponse mapNameSearchResult(DiscogsArtistSearchResultContainer artistSearchResults) {
+  @Override
+  @Transactional
+  public boolean fetchAndSaveArtist(long discogsId) {
+    if (artistsRepository.existsByArtistDiscogsId(discogsId)) {
+      return true;
+    }
+
+    Optional<DiscogsArtist> artistOptional = artistSearchClient.searchById(discogsId);
+
+    if (artistOptional.isEmpty()) {
+      return false;
+    }
+
+    ArtistEntity artistEntity = mapArtistEntity(artistOptional.get());
+    artistsRepository.save(artistEntity);
+    return true;
+  }
+
+  private ArtistNameSearchResponse mapNameSearchResult(DiscogsArtistSearchResultContainer artistSearchResults) {
     DiscogsPagination discogsPagination = artistSearchResults.getDiscogsPagination();
 
     int itemsPerPage = discogsPagination.getItemsPerPage();
@@ -145,6 +161,12 @@ public class ArtistsServiceImpl implements ArtistsService {
         .artistName(artistEntity.getArtistName())
         .thumb(artistEntity.getThumb())
         .build();
+  }
+
+  private ArtistEntity mapArtistEntity(DiscogsArtist artist) {
+    String thumb = artist.getDiscogsImages() != null && artist.getDiscogsImages().size() > 0 ? artist.getDiscogsImages().get(0).getResourceUrl()
+                                                                                             : null;
+    return new ArtistEntity(artist.getId(), artist.getName(), thumb);
   }
 
 }

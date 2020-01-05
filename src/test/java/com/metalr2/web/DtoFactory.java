@@ -21,7 +21,6 @@ public class DtoFactory {
 
     public static UserDto withUsernameAndEmail(String username, String email) {
       return UserDto.builder()
-          .id(1)
           .publicId(UUID.randomUUID().toString())
           .username(username)
           .email(email)
@@ -139,6 +138,7 @@ public class DtoFactory {
     public static DiscogsArtist createTestArtist() {
       DiscogsArtist discogsArtist = new DiscogsArtist();
       discogsArtist.setId(252211L);
+      discogsArtist.setName("Darkthrone");
       discogsArtist.setProfile("profile");
       return discogsArtist;
     }

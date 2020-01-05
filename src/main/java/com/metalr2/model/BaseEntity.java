@@ -57,4 +57,33 @@ public abstract class BaseEntity {
     return lastModifiedDateTime != null ? lastModifiedDateTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime() : null;
   }
 
+  public void setCreatedDateTime(Date newCreatedDateTime) {
+    this.createdDateTime = checkInitialValueAssignment(this.createdDateTime, newCreatedDateTime);
+  }
+
+  public void setCreatedBy(String newCreatedBy) {
+    this.createdBy = checkInitialValueAssignment(this.createdBy, newCreatedBy);
+  }
+
+  public void setLastModifiedDateTime(Date newLastModifiedDateTime) {
+    this.lastModifiedDateTime = checkInitialValueAssignment(this.lastModifiedDateTime, newLastModifiedDateTime);
+  }
+
+  public void setLastModifiedBy(String newLastModifiedBy) {
+    this.lastModifiedBy = checkInitialValueAssignment(this.lastModifiedBy, newLastModifiedBy);
+  }
+
+  /*
+   * At runtime the value is automatically set by Spring. This method allows you to set a value
+   * if the class is used in a unit test, for example.
+   */
+  protected  <T> T checkInitialValueAssignment(T oldValue, T newValue) {
+    if (oldValue != null) {
+      throw new UnsupportedOperationException("It's not allowed to reset the value!");
+    }
+    else {
+      return newValue;
+    }
+  }
+
 }

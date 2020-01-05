@@ -13,12 +13,7 @@ import com.metalr2.web.dto.response.SearchResponse;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,11 +26,7 @@ import java.util.Optional;
 
 import static com.metalr2.web.DtoFactory.ArtistDetailsResponseFactory;
 import static com.metalr2.web.DtoFactory.ArtistNameSearchResponseFactory;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -89,7 +80,6 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       ArtistDetailsResponse response = validatableResponse.extract().as(ArtistDetailsResponse.class);
       assertThat(response).isNotNull();
       assertThat(response.getArtistId()).isEqualTo(VALID_ARTIST_ID);
-
 
       verify(artistsService, times(1)).searchDiscogsById(VALID_ARTIST_ID);
     }
