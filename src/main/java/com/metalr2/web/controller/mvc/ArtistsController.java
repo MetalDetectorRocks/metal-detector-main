@@ -18,7 +18,7 @@ public class ArtistsController {
   private static final String DEFAULT_PAGE  = "1";
   private static final String DEFAULT_SIZE  = "10";
 
-  @GetMapping(path = "/search")
+  @GetMapping(path = Endpoints.Frontend.SEARCH)
   public ModelAndView showSearch(@RequestParam(value = "query", defaultValue = DEFAULT_QUERY) String query,
                                  @RequestParam(value = "page", defaultValue = DEFAULT_PAGE) int page,
                                  @RequestParam(value = "size", defaultValue = DEFAULT_SIZE) int size) {

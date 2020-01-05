@@ -24,9 +24,9 @@ class ArtistsControllerIT implements WithIntegrationTestProfile {
   private MockMvc mockMvc;
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Frontend.ARTISTS + "/search" + "' should return the view to search artists")
+  @DisplayName("Requesting '" + Endpoints.Frontend.ARTISTS + Endpoints.Frontend.SEARCH + "' should return the view to search artists")
   void get_search_should_return_search_artists_view() throws Exception {
-    mockMvc.perform(get(Endpoints.Frontend.ARTISTS + "/search")
+    mockMvc.perform(get(Endpoints.Frontend.ARTISTS + Endpoints.Frontend.SEARCH)
                         .param("query", "Darkthrone")
                         .param("page","1")
                         .param("size","10"))
