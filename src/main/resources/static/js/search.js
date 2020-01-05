@@ -1,22 +1,26 @@
 /**
  * Send ajax request to search for an artist
- * @param searchRequest     The search request with query, page and size
  * @returns {boolean}
  */
-function search(searchRequest){
+function search(){
     toggleLoader("searchResultsContainer");
 
-    if (!validateSearch(searchRequest)) {
-        const message = "No results could be found for the given query: " + searchRequest.query;
+    const url = new URL(window.location.href);
+    const query = url.searchParams.get("query");
+    const page = url.searchParams.get("page");
+    const size = url.searchParams.get("size");
+
+    if (!validateSearch(query, page, size)) {
+        const message = "No results could be found for the given query: " + query;
         validationOrAjaxFailed(message, 'searchResultsContainer');
         return false;
     }
 
     const parameter =
         {
-            "query" : searchRequest.query,
-            "page" : searchRequest.page,
-            "size" : searchRequest.size
+            "query" : query,
+            "page" : page,
+            "size" : size
         };
 
     $.ajax({
@@ -25,11 +29,11 @@ function search(searchRequest){
         data: parameter,
         dataType: "json",
         success: function(searchResponse){
-            buildResults(searchRequest.query, searchResponse);
+            buildResults(query, searchResponse);
             toggleLoader("searchResultsContainer");
         },
         error: function(){
-            const message = "No results could be found for the given query: " + searchRequest.query;
+            const message = "No results could be found for the given query: " + query;
             validationOrAjaxFailed(message, 'searchResultsContainer');
         }
     });
@@ -39,13 +43,12 @@ function search(searchRequest){
 
 /**
  * Basic validation for search parameters
- * @param searchRequest The request containing query, page and size
  * @returns {boolean}
+ * @param query The search query
+ * @param page  The wanted page
+ * @param size  Elements per page
  */
-function validateSearch(searchRequest) {
-    const query = String(searchRequest.query);
-    const page = searchRequest.page;
-    const size = searchRequest.size;
+function validateSearch(query, page, size) {
     return query && !Number.isNaN(page) && !Number.isNaN(size) && page > 0 && size > 0;
 }
 

@@ -1,10 +1,12 @@
 /**
  * Send ajax request to retrieve artist details
- * @param artistId          The artist's discogs id
  * @returns {boolean}
  */
-function artistDetails(artistId){
+function artistDetails(){
     toggleLoader("artistDetailsContainer");
+
+    const pathArray = window.location.pathname.split("/");
+    const artistId = pathArray[pathArray.length-1];
 
     if (!validateArtistDetails(artistId)) {
         const message = "No data could be found for the given id: " + artistId;

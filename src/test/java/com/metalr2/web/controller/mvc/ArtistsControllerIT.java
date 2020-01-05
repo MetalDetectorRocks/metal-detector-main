@@ -26,14 +26,9 @@ class ArtistsControllerIT implements WithIntegrationTestProfile {
   @Test
   @DisplayName("Requesting '" + Endpoints.Frontend.ARTISTS + Endpoints.Frontend.SEARCH + "' should return the view to search artists")
   void get_search_should_return_search_artists_view() throws Exception {
-    mockMvc.perform(get(Endpoints.Frontend.ARTISTS + Endpoints.Frontend.SEARCH)
-                        .param("query", "Darkthrone")
-                        .param("page","1")
-                        .param("size","10"))
-        .andExpect(status().isOk())
+    mockMvc.perform(get(Endpoints.Frontend.ARTISTS + Endpoints.Frontend.SEARCH))
         .andExpect(view().name(ViewNames.Frontend.SEARCH))
-        .andExpect(model().size(1))
-        .andExpect(model().attributeExists("searchRequest"))
+        .andExpect(model().size(0))
         .andExpect(content().contentType("text/html;charset=UTF-8"))
         .andExpect(content().string(containsString("Search")));
   }
@@ -44,8 +39,7 @@ class ArtistsControllerIT implements WithIntegrationTestProfile {
     mockMvc.perform(get(Endpoints.Frontend.ARTISTS + "/123456"))
         .andExpect(status().isOk())
         .andExpect(view().name(ViewNames.Frontend.ARTIST_DETAILS))
-        .andExpect(model().size(1))
-        .andExpect(model().attributeExists("discogsId"))
+        .andExpect(model().size(0))
         .andExpect(content().contentType("text/html;charset=UTF-8"));
   }
 }
