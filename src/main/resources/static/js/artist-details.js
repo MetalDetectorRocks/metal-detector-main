@@ -1,11 +1,9 @@
 /**
  * Send ajax request to retrieve artist details
- * @param artistName        The artist's name
  * @param artistId          The artist's discogs id
  * @returns {boolean}
  */
-function artistDetails(artistName,artistId){
-    clear();
+function artistDetails(artistId){
     toggleLoader("artistDetailsContainer");
 
     $.ajax({
@@ -17,7 +15,8 @@ function artistDetails(artistName,artistId){
             toggleLoader("artistDetailsContainer");
         },
         error: function(){
-            createNoArtistDetailsMessage(artistName,artistId);
+            const noResultMessage = "No data could be found for the given id: " + artistId;
+            createNoResultsMessage(noResultMessage);
             toggleLoader("artistDetailsContainer");
         }
     });
@@ -30,6 +29,8 @@ function artistDetails(artistName,artistId){
  * @param artistDetailsResponse     The json response
  */
 function createArtistDetailsResultCard(artistDetailsResponse) {
+    document.getElementById('artistName').innerText = artistDetailsResponse.artistName;
+
     const card = document.createElement('div');
     card.className = "card";
     card.id = "artistDetails";
@@ -37,18 +38,10 @@ function createArtistDetailsResultCard(artistDetailsResponse) {
 
     createCardNavigation(card, artistDetailsResponse);
 
-    const titleContainer = document.createElement("div");
-    titleContainer.className = "row ml-2 mt-2";
-    card.append(titleContainer);
-
-    const cardTitle = document.createElement('h2');
-    cardTitle.className = "card-title";
-    cardTitle.innerText = artistDetailsResponse.artistName;
-    titleContainer.append(cardTitle);
-
     const cardBodyButton = document.createElement('div');
+    cardBodyButton.className = "card-body";
     cardBodyButton.append(createFollowArtistButton(artistDetailsResponse.artistName,artistDetailsResponse.artistId,artistDetailsResponse.isFollowed));
-    titleContainer.append(cardBodyButton);
+    card.append(cardBodyButton);
 
     const cardBody = document.createElement('div');
     cardBody.id = "artistDetailsCardBody";
@@ -224,38 +217,10 @@ function createListElement(list) {
 }
 
 /**
- * Builds HTML for the message for an empty result
- */
-function createNoArtistDetailsMessage(artistName,artistId) {
-    const noResultsMessageElement = document.createElement('div');
-    noResultsMessageElement.className = "mb-3 alert alert-danger";
-    noResultsMessageElement.role = "alert";
-    noResultsMessageElement.id = "noResultsMessageElement";
-
-    const messageTextElement = document.createElement('p');
-    messageTextElement.innerText = "No data could be found for the given parameters:";
-    noResultsMessageElement.append(messageTextElement);
-
-    const parameterListElement = document.createElement('ul');
-
-    const listItemName = document.createElement('li');
-    listItemName.innerText = "Artist name: " + artistName;
-    parameterListElement.append(listItemName);
-
-    const listItemId = document.createElement('li');
-    listItemId.innerText = "Artist id: " + artistId;
-    parameterListElement.append(listItemId);
-
-    noResultsMessageElement.append(parameterListElement);
-
-    document.getElementById('noResultsMessageContainer').append(noResultsMessageElement);
-}
-
-/**
  * Switches active nav tab on click
  */
-$(document).on('click', '#topheader .navbar-nav a', function () {
-    $('#topheader .navbar-nav').find('li.active').removeClass('active');
+$(document).on('click', '.navbar-nav a', function () {
+    $('.navbar-nav').find('li.active').removeClass('active');
     $(this).parent('li').addClass('active');
 });
 

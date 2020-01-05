@@ -1,11 +1,9 @@
 /**
  * Send ajax request to search for an artist
- * @param page          Requested page
- * @param size          Requested page size
+ * @param searchRequest     The search request with query, page and size
  * @returns {boolean}
  */
 function search(searchRequest){
-    clear();
     toggleLoader("searchResultsContainer");
 
     const parameter =
@@ -21,11 +19,12 @@ function search(searchRequest){
         data: parameter,
         dataType: "json",
         success: function(searchResponse){
-            buildResults(searchResponse);
+            buildResults(searchRequest.query, searchResponse);
             toggleLoader("searchResultsContainer");
         },
         error: function(){
-            createNoResultsMessage(searchRequest.query);
+            const noResultMessage = "No results could be found for the given query: " + searchRequest.query;
+            createNoResultsMessage(noResultMessage);
             toggleLoader("searchResultsContainer");
         }
     });
@@ -35,28 +34,13 @@ function search(searchRequest){
 
 /**
  * Builds HTML with results and pagination
+ * @param query           The user's query
  * @param searchResponse  JSON response
  */
-function buildResults(searchResponse) {
-    createNavigationElement(searchResponse);
+function buildResults(query, searchResponse) {
+    createNavigationElement(query, searchResponse);
     createResultCards(searchResponse);
-    createNavigationElement(searchResponse);
-}
-
-/**
- * Clears all containers for new search responses
- */
-function clear() {
-    $("#searchResultsContainer").empty();
-    $("#artistDetailsContainer").empty(); // todo: adapat clear for multiple pages
-
-    const noResultsMessageElement = document.getElementById('noResultsMessageElement');
-    if (noResultsMessageElement != null) {
-        const noResultsMessageContainer = document.getElementById('noResultsMessageContainer');
-        while (noResultsMessageContainer.firstChild) {
-            noResultsMessageContainer.removeChild(noResultsMessageContainer.firstChild);
-        }
-    }
+    createNavigationElement(query, searchResponse);
 }
 
 /**
@@ -76,8 +60,6 @@ function createResultCards(searchResponse){
         cardBody.append(headingElement);
         card.append(cardBody);
 
-        console.log(headingElement.innerText);
-
         if (searchResult.thumb !== ""){
             const thumbElement = document.createElement('img');
             thumbElement.alt = 'Thumb for ' + searchResult.artistName;
@@ -90,23 +72,15 @@ function createResultCards(searchResponse){
         cardBody.append(artistIdElement);
 
         const artistDetailsElement = document.createElement('a');
-        artistDetailsElement.href = "#";
+        artistDetailsElement.href = "/artists/" + searchResult.id;
         artistDetailsElement.text = "Details for " + searchResult.artistName;
-        artistDetailsElement.onclick = function func(){
-            artistDetails(searchResult.artistName,searchResult.id);
-        };
         cardBody.append(artistDetailsElement);
 
         const breakElement = document.createElement('br');
         cardBody.append(breakElement);
 
-        const followArtistButtonElement = document.createElement('button');
-        followArtistButtonElement.id = "followArtistButton" + searchResult.id;
-        followArtistButtonElement.type = "button";
-        followArtistButtonElement.className = "btn btn-primary btn-dark font-weight-bold";
-        followArtistButtonElement.textContent = searchResult.isFollowed ? "Unfollow" : "Follow";
-        followArtistButtonElement.onclick = createOnClickFunctionFollowArtist(searchResult.artistName,
-            searchResult.id,searchResult.isFollowed,followArtistButtonElement);
+        const followArtistButtonElement = createFollowArtistButton(searchResult.artistName,
+          searchResult.id, searchResult.isFollowed);
         cardBody.append(followArtistButtonElement);
 
         document.getElementById('searchResultsContainer').append(card);
@@ -115,63 +89,46 @@ function createResultCards(searchResponse){
 
 /**
  * Builds HTML for pagination
+ * @param query           The user's query
  * @param searchResponse  The json response
  */
-function createNavigationElement(searchResponse) {
+function createNavigationElement(query, searchResponse) {
     const navElement = document.createElement("nav");
     const listElement = document.createElement("ul");
     listElement.className = "pagination pagination-sm justify-content-end";
     navElement.append(listElement);
 
     // Previous link
-    createPreviousOrNextItem(searchResponse, listElement, true);
+    createPreviousOrNextItem(query, searchResponse, listElement, true);
     // Page links
     for (let index = 1; index <= searchResponse.pagination.totalPages; index++) {
-        createPageLinks(searchResponse.pagination.currentPage, searchResponse.pagination.itemsPerPage,
-            index, listElement);
+        createPageLinks(query, searchResponse, index, listElement);
     }
     // Next link
-    createPreviousOrNextItem(searchResponse, listElement, false);
+    createPreviousOrNextItem(query, searchResponse, listElement, false);
 
     document.getElementById('searchResultsContainer').append(navElement);
 }
 
 /**
- * Builds HTML for the message for an empty result
- */
-function createNoResultsMessage(query) {
-    const noResultsMessageElement = document.createElement('div');
-    noResultsMessageElement.className = "mb-3 alert alert-danger";
-    noResultsMessageElement.role = "alert";
-    noResultsMessageElement.id = "noResultsMessageElement";
-    noResultsMessageElement.innerText =  "No results could be found for the given query: " + query;
-
-    document.getElementById('noResultsMessageContainer').append(noResultsMessageElement);
-}
-
-/**
  * Creates pagination page links and appends them to the given element
- * @param currentPage   The current page
- * @param itemsPerPage  Max items per page
- * @param index         Index number of the link
- * @param element       Element to add page links to
+ * @param query             The user's query
+ * @param searchResponse    Search result object
+ * @param index             Index number of the link
+ * @param element           Element to add page links to
  */
-function createPageLinks(currentPage, itemsPerPage, index, element) {
+function createPageLinks(query, searchResponse, index, element) {
     const listItem = document.createElement("li");
     listItem.className = "page-item";
 
-    if (index === currentPage)
+    if (index === searchResponse.pagination.currentPage)
         listItem.classList.add("active");
 
     const link = document.createElement("a");
     link.className = "page-link";
-    link.href = "#";
+    link.href = "/artists/search?query=" + query + "&page=" + index
+                + "&size=" + searchResponse.pagination.itemsPerPage;
     link.text = String(index);
-    link.onclick = (function (page, itemsPerPage) {
-        return function () {
-            search(page, itemsPerPage)
-        };
-    })(index, itemsPerPage);
 
     listItem.append(link);
     element.append(listItem);
@@ -179,11 +136,12 @@ function createPageLinks(currentPage, itemsPerPage, index, element) {
 
 /**
  * Create the previos or next pagination butteon
- * @param searchResponse  Search result
- * @param element                   Element to append to
- * @param previous                  True if previous shall be created, false for next
+ * @param query             The user's query
+ * @param searchResponse    Search result object
+ * @param element           Element to append to
+ * @param previous          True if previous shall be created, false for next
  */
-function createPreviousOrNextItem(searchResponse, element, previous) {
+function createPreviousOrNextItem(query, searchResponse, element, previous) {
     const item = document.createElement("li");
     item.className = "page-item";
 
@@ -211,12 +169,8 @@ function createPreviousOrNextItem(searchResponse, element, previous) {
     const link = document.createElement("a");
     link.setAttribute('aria-label', text);
     link.className = "page-link";
-    link.href = "#";
-    link.onclick = (function (page, itemsPerPage) {
-        return function () {
-            search(page, itemsPerPage)
-        };
-    })(targetPage, searchResponse.pagination.itemsPerPage);
+    link.href = "/artists/search?query=" + query + "&page=" + targetPage
+                + "&size=" + searchResponse.pagination.itemsPerPage;
 
     let span = document.createElement("span");
     span.setAttribute('aria-hidden', true);

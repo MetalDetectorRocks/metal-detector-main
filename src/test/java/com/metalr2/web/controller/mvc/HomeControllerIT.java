@@ -24,14 +24,14 @@ class HomeControllerIT implements WithIntegrationTestProfile {
   private MockMvc mockMvc;
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Frontend.HOME + "' should return the view to search artists")
-  void get_should_return_search_artists_view() throws Exception {
+  @DisplayName("Requesting '" + Endpoints.Frontend.HOME + "' should return the home view")
+  void get_should_return_home_view() throws Exception {
     mockMvc.perform(get(Endpoints.Frontend.HOME))
               .andExpect(status().isOk())
               .andExpect(view().name(ViewNames.Frontend.HOME))
               .andExpect(model().size(0))
               .andExpect(content().contentType("text/html;charset=UTF-8"))
-              .andExpect(content().string(containsString("Search")));
+              .andExpect(content().string(containsString("Home")));
   }
 
 }
