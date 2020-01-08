@@ -58,7 +58,6 @@ function validateSearch(query, page, size) {
  * @param searchResponse  JSON response
  */
 function buildResults(query, searchResponse) {
-    createNavigationElement(query, searchResponse);
     createResultCards(searchResponse);
     createNavigationElement(query, searchResponse);
 }
