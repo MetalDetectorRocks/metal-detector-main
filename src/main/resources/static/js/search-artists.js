@@ -39,7 +39,6 @@ function searchArtist(page,size) {
  * @param artistNameSearchResponse  JSON response
  */
 function buildResults(artistNameSearchResponse) {
-    createNavigationElement(artistNameSearchResponse);
     createResultCards(artistNameSearchResponse);
     createNavigationElement(artistNameSearchResponse);
 }
