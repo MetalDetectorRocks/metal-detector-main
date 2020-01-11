@@ -6,14 +6,6 @@ function registerLogoutListener() {
 }
 
 /**
- * Toggles the loading indicator. Has to be called twice (on/off)
- * @param id    ID to show loader at
- */
-function toggleLoader(id) {
-    document.getElementById(id).classList.toggle("loader");
-}
-
-/**
  * Set the onscroll function
  */
 $(document).ready(function () {

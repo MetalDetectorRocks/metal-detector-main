@@ -6,10 +6,10 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.testutil.WithIntegrationTestProfile;
 import com.metalr2.web.RestAssuredRequestHandler;
-import com.metalr2.web.dto.request.ArtistSearchRequest;
+import com.metalr2.web.dto.request.SearchRequest;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.Pagination;
+import com.metalr2.web.dto.response.SearchResponse;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
@@ -126,10 +126,10 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
     @DisplayName("GET with valid request should return 200")
     void get_with_valid_request_should_return_200() {
       // given
-      ArtistSearchRequest request = new ArtistSearchRequest(VALID_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE);
+      SearchRequest request = new SearchRequest(VALID_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE);
       Map<String, Object> requestParams = mapper.convertValue(request, new TypeReference<Map<String, Object>>() {});
 
-      when(artistsService.searchDiscogsByName(request.getArtistName(), request.getPage(), request.getSize()))
+      when(artistsService.searchDiscogsByName(request.getQuery(), request.getPage(), request.getSize()))
           .thenReturn(Optional.of(ArtistNameSearchResponseFactory.withOneResult()));
 
       // when
@@ -140,23 +140,23 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
           .contentType(ContentType.JSON)
           .statusCode(HttpStatus.OK.value());
 
-      ArtistNameSearchResponse artistNameSearchResponse = validatableResponse.extract().as(ArtistNameSearchResponse.class);
-      assertThat(artistNameSearchResponse.getArtistSearchResults()).isNotNull().hasSize(1);
+      SearchResponse searchResponse = validatableResponse.extract().as(SearchResponse.class);
+      assertThat(searchResponse.getSearchResults()).isNotNull().hasSize(1);
 
-      ArtistNameSearchResponse.ArtistSearchResult artistSearchResult = artistNameSearchResponse.getArtistSearchResults().get(0);
-      assertThat(artistSearchResult).isEqualTo(new ArtistNameSearchResponse.ArtistSearchResult(null, VALID_ARTIST_ID, VALID_SEARCH_REQUEST, false));
+      SearchResponse.SearchResult searchResult = searchResponse.getSearchResults().get(0);
+      assertThat(searchResult).isEqualTo(new SearchResponse.SearchResult(null, VALID_ARTIST_ID, VALID_SEARCH_REQUEST, false));
 
-      Pagination pagination = artistNameSearchResponse.getPagination();
+      Pagination pagination = searchResponse.getPagination();
       assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE));
 
-      verify(artistsService, times(1)).searchDiscogsByName(request.getArtistName(), request.getPage(), request.getSize());
+      verify(artistsService, times(1)).searchDiscogsByName(request.getQuery(), request.getPage(), request.getSize());
     }
 
     @Test
     @DisplayName("GET with bad request should return 400")
     void get_with_bad_request_should_return_400() {
       // given
-      ArtistSearchRequest request = new ArtistSearchRequest(null, DEFAULT_PAGE, DEFAULT_SIZE);
+      SearchRequest request = new SearchRequest(null, DEFAULT_PAGE, DEFAULT_SIZE);
       Map<String, Object> requestParams = mapper.convertValue(request, new TypeReference<Map<String, Object>>() {});
 
       // when
@@ -164,17 +164,17 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
 
       // then
       validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value());
-      verify(artistsService, times(0)).searchDiscogsByName(request.getArtistName(), request.getPage(), request.getSize());
+      verify(artistsService, times(0)).searchDiscogsByName(request.getQuery(), request.getPage(), request.getSize());
     }
 
     @Test
     @DisplayName("GET with empty result should return 404")
     void get_with_empty_result_should_return_404() {
       // given
-      ArtistSearchRequest request = new ArtistSearchRequest(NO_RESULT_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE);
+      SearchRequest request = new SearchRequest(NO_RESULT_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE);
       Map<String, Object> requestParams = mapper.convertValue(request, new TypeReference<Map<String, Object>>() {});
 
-      when(artistsService.searchDiscogsByName(request.getArtistName(), request.getPage(), request.getSize()))
+      when(artistsService.searchDiscogsByName(request.getQuery(), request.getPage(), request.getSize()))
           .thenReturn(Optional.empty());
 
       // when
@@ -182,7 +182,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
 
       // then
       validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-      verify(artistsService, times(1)).searchDiscogsByName(request.getArtistName(), request.getPage(), request.getSize());
+      verify(artistsService, times(1)).searchDiscogsByName(request.getQuery(), request.getPage(), request.getSize());
     }
 
   }

@@ -8,8 +8,8 @@ import com.metalr2.web.dto.discogs.search.DiscogsPagination;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.Pagination;
+import com.metalr2.web.dto.response.SearchResponse;
 
 import java.util.Collections;
 import java.util.List;
@@ -126,10 +126,10 @@ public class DtoFactory {
 
   public static class ArtistNameSearchResponseFactory {
 
-    public static ArtistNameSearchResponse withOneResult() {
-      return new ArtistNameSearchResponse(Collections.singletonList(
-          new ArtistNameSearchResponse.ArtistSearchResult(null, 252211L, "Darkthrone", false)),
-                                          new Pagination(2, 1, 10));
+    public static SearchResponse withOneResult() {
+      return new SearchResponse(Collections.singletonList(
+          new SearchResponse.SearchResult(null, 252211L, "Darkthrone", false)),
+                                new Pagination(2, 1, 10));
     }
   }
 

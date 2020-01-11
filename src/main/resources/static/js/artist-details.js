@@ -1,12 +1,18 @@
 /**
  * Send ajax request to retrieve artist details
- * @param artistName        The artist's name
- * @param artistId          The artist's discogs id
  * @returns {boolean}
  */
-function artistDetails(artistName,artistId){
-    clear();
+function artistDetails(){
     toggleLoader("artistDetailsContainer");
+
+    const pathArray = window.location.pathname.split("/");
+    const artistId = pathArray[pathArray.length-1];
+
+    if (!validateArtistDetails(artistId)) {
+        const message = "No data could be found for the given id: " + artistId;
+        validationOrAjaxFailed(message, 'artistDetailsContainer');
+        return false;
+    }
 
     $.ajax({
         method: "GET",
@@ -17,8 +23,8 @@ function artistDetails(artistName,artistId){
             toggleLoader("artistDetailsContainer");
         },
         error: function(){
-            createNoArtistDetailsMessage(artistName,artistId);
-            toggleLoader("artistDetailsContainer");
+            const message = "No data could be found for the given id: " + artistId;
+            validationOrAjaxFailed(message, 'artistDetailsContainer');
         }
     });
 
@@ -26,10 +32,21 @@ function artistDetails(artistName,artistId){
 }
 
 /**
+ * Basic validation for search parameters
+ * @param artistId      The artist's discogs id as path parameter
+ * @returns {boolean}
+ */
+function validateArtistDetails(artistId) {
+    return !Number.isNaN(artistId) && artistId > 0;
+}
+
+/**
  * Build the HTML for the result
  * @param artistDetailsResponse     The json response
  */
 function createArtistDetailsResultCard(artistDetailsResponse) {
+    document.getElementById('artistName').innerText = artistDetailsResponse.artistName;
+
     const card = document.createElement('div');
     card.className = "card";
     card.id = "artistDetails";
@@ -37,18 +54,10 @@ function createArtistDetailsResultCard(artistDetailsResponse) {
 
     createCardNavigation(card, artistDetailsResponse);
 
-    const titleContainer = document.createElement("div");
-    titleContainer.className = "row ml-2 mt-2";
-    card.append(titleContainer);
-
-    const cardTitle = document.createElement('h2');
-    cardTitle.className = "card-title";
-    cardTitle.innerText = artistDetailsResponse.artistName;
-    titleContainer.append(cardTitle);
-
     const cardBodyButton = document.createElement('div');
+    cardBodyButton.className = "card-body";
     cardBodyButton.append(createFollowArtistButton(artistDetailsResponse.artistName,artistDetailsResponse.artistId,artistDetailsResponse.isFollowed));
-    titleContainer.append(cardBodyButton);
+    card.append(cardBodyButton);
 
     const cardBody = document.createElement('div');
     cardBody.id = "artistDetailsCardBody";
@@ -83,33 +92,40 @@ function createCardNavigation(card, artistDetailsResponse) {
     navbarElement.append(navList);
 
     const navItemProfile = createNavItem("profile");
-    navItemProfile.classList.add("active");
     navList.append(navItemProfile);
 
-    if (artistDetailsResponse.profile)
+    if (artistDetailsResponse.profile) {
+        navItemProfile.classList.add("active");
         navItemProfile.onclick = function () {
             showProfile(artistDetailsResponse);
         };
+    }
     else
         navItemProfile.classList.add("disabled");
 
     const navItemMember = createNavItem("member");
     navList.append(navItemMember);
 
-    if (artistDetailsResponse.activeMember || artistDetailsResponse.formerMember)
+    if (artistDetailsResponse.activeMember || artistDetailsResponse.formerMember) {
+        if (!navItemProfile.classList.contains("active"))
+            navItemMember.classList.add("active");
         navItemMember.onclick = function () {
             showMember(artistDetailsResponse);
         };
+    }
     else
         navItemMember.classList.add("disabled");
 
     const navItemImages = createNavItem("images");
     navList.append(navItemImages);
 
-    if (artistDetailsResponse.images)
+    if (artistDetailsResponse.images) {
+        if (!navItemProfile.classList.contains("active") && !navItemMember.classList.contains("active"))
+            navItemImages.classList.add("active");
         navItemImages.onclick = function () {
             createImageGallery(artistDetailsResponse)
         };
+    }
     else
         navItemImages.classList.add("disabled");
 }
@@ -224,38 +240,10 @@ function createListElement(list) {
 }
 
 /**
- * Builds HTML for the message for an empty result
- */
-function createNoArtistDetailsMessage(artistName,artistId) {
-    const noResultsMessageElement = document.createElement('div');
-    noResultsMessageElement.className = "mb-3 alert alert-danger";
-    noResultsMessageElement.role = "alert";
-    noResultsMessageElement.id = "noResultsMessageElement";
-
-    const messageTextElement = document.createElement('p');
-    messageTextElement.innerText = "No data could be found for the given parameters:";
-    noResultsMessageElement.append(messageTextElement);
-
-    const parameterListElement = document.createElement('ul');
-
-    const listItemName = document.createElement('li');
-    listItemName.innerText = "Artist name: " + artistName;
-    parameterListElement.append(listItemName);
-
-    const listItemId = document.createElement('li');
-    listItemId.innerText = "Artist id: " + artistId;
-    parameterListElement.append(listItemId);
-
-    noResultsMessageElement.append(parameterListElement);
-
-    document.getElementById('noResultsMessageContainer').append(noResultsMessageElement);
-}
-
-/**
  * Switches active nav tab on click
  */
-$(document).on('click', '#topheader .navbar-nav a', function () {
-    $('#topheader .navbar-nav').find('li.active').removeClass('active');
+$(document).on('click', '.navbar-nav a', function () {
+    $('.navbar-nav').find('li.active').removeClass('active');
     $(this).parent('li').addClass('active');
 });
 

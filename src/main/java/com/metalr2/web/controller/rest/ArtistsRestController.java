@@ -2,9 +2,9 @@ package com.metalr2.web.controller.rest;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.service.artist.ArtistsService;
-import com.metalr2.web.dto.request.ArtistSearchRequest;
+import com.metalr2.web.dto.request.SearchRequest;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.ArtistNameSearchResponse;
+import com.metalr2.web.dto.response.SearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +31,12 @@ public class ArtistsRestController implements Validatable {
 
   @GetMapping(path = Endpoints.Rest.SEARCH,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<ArtistNameSearchResponse> handleNameSearch(@Valid ArtistSearchRequest artistSearchRequest, BindingResult bindingResult) {
+  public ResponseEntity<SearchResponse> handleNameSearch(@Valid SearchRequest searchRequest, BindingResult bindingResult) {
     validateRequest(bindingResult);
 
-    Optional<ArtistNameSearchResponse> responseOptional = artistsService.searchDiscogsByName(artistSearchRequest.getArtistName(),
-                                                                                             artistSearchRequest.getPage(),
-                                                                                             artistSearchRequest.getSize());
+    Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(searchRequest.getQuery(),
+                                                                                   searchRequest.getPage(),
+                                                                                   searchRequest.getSize());
 
     if (responseOptional.isEmpty()) {
       return ResponseEntity.notFound().build();
