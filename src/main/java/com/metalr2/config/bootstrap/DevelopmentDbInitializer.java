@@ -63,6 +63,19 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
     entityManager.persist(mariaThompson);
     entityManager.persist(mikeMiller);
     entityManager.persist(administrator);
+
+//    ArtistEntity opeth = new ArtistEntity(245797L, "Opeth", null);
+//    ArtistEntity darkthrone = new ArtistEntity(252211L, "Darkthrone", null);
+//
+//    entityManager.persist(opeth);
+//    entityManager.persist(darkthrone);
+//
+//    FollowedArtistEntity followedArtistEntityOpeth = new FollowedArtistEntity(administrator.getPublicId(), opeth.getArtistDiscogsId());
+//    FollowedArtistEntity followedArtistEntityDarkthrone = new FollowedArtistEntity(administrator.getPublicId(), darkthrone.getArtistDiscogsId());
+//
+//    entityManager.persist(followedArtistEntityOpeth);
+//    entityManager.persist(followedArtistEntityDarkthrone);
+
   }
 
 }

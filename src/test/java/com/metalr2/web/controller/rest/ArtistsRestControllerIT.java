@@ -13,7 +13,12 @@ import com.metalr2.web.dto.response.Pagination;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +31,10 @@ import java.util.Optional;
 
 import static com.metalr2.web.DtoFactory.ArtistDetailsResponseFactory;
 import static com.metalr2.web.DtoFactory.ArtistNameSearchResponseFactory;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -50,7 +58,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
   @DisplayName("Test artist details search endpoint")
   class ArtistDetailsSearchTest {
 
-    private final String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1;
+    private final String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS;
 
     @BeforeEach
     void setUp() {
@@ -109,7 +117,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
     private static final int DEFAULT_SIZE                 = 10;
     private static final int TOTAL_PAGES                  = 2;
 
-    private final String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1 + Endpoints.Rest.SEARCH;
+    private final String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH;
 
     @BeforeEach
     void setUp() {
@@ -195,8 +203,8 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
     private RestAssuredRequestHandler followRequestHandler;
     private RestAssuredRequestHandler unfollowRequestHandler;
 
-    private final String followRequestUri   = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1 + Endpoints.Rest.FOLLOW;
-    private final String unfollowRequestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS_V1 + Endpoints.Rest.UNFOLLOW;
+    private final String followRequestUri   = "http://localhost:" + port + Endpoints.Rest.ARTISTS + Endpoints.Rest.FOLLOW;
+    private final String unfollowRequestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS + Endpoints.Rest.UNFOLLOW;
 
     @BeforeEach
     void setUp() {

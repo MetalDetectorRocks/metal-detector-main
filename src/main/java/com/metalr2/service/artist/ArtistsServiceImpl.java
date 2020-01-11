@@ -7,7 +7,6 @@ import com.metalr2.model.artist.FollowedArtistsRepository;
 import com.metalr2.security.CurrentUserSupplier;
 import com.metalr2.service.discogs.DiscogsArtistSearchRestClient;
 import com.metalr2.web.dto.ArtistDto;
-import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.discogs.artist.DiscogsArtist;
 import com.metalr2.web.dto.discogs.artist.DiscogsMember;
 import com.metalr2.web.dto.discogs.misc.DiscogsImage;
@@ -15,6 +14,7 @@ import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.DiscogsPagination;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
+import com.metalr2.web.dto.response.MyArtistsResponse;
 import com.metalr2.web.dto.response.Pagination;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +23,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.metalr2.web.dto.response.MyArtistsResponse.Artist;
 
 @Service
 public class ArtistsServiceImpl implements ArtistsService {
+
+  private static final int DEFAULT_PAGE = 1;
 
   private final ArtistsRepository artistsRepository;
   private final FollowedArtistsRepository followedArtistsRepository;
@@ -92,9 +95,29 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public List<FollowArtistDto> findFollowedArtistsPerUser(String publicUserId) {
-    return followedArtistsRepository.findAllByPublicUserId(publicUserId).stream()
-        .map(entity -> mapper.map(entity,FollowArtistDto.class)).collect(Collectors.toList());
+  public MyArtistsResponse findFollowedArtistsPerUser(String publicUserId) {
+    List<FollowedArtistEntity> followedArtistEntities = followedArtistsRepository.findAllByPublicUserId(publicUserId);
+    return mapMyArtistResponse(followedArtistEntities);
+  }
+
+  @Override
+  public MyArtistsResponse findFollowedArtistsPerUser(String publicUserId, int page, int size) {
+    List<FollowedArtistEntity> followedArtistEntities = followedArtistsRepository.findAllByPublicUserId(publicUserId);
+    int fromIndex = page * size - size;
+    int toIndex   = page * size;
+    MyArtistsResponse response = mapMyArtistResponse(followedArtistEntities.subList(fromIndex,toIndex));
+    response.setPagination(mapPagination(followedArtistEntities.size(), page, size));
+    return response;
+  }
+
+  @Override
+  public MyArtistsResponse findFollowedArtistsForCurrentUser() {
+    return findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId());
+  }
+
+  @Override
+  public MyArtistsResponse findFollowedArtistsForCurrentUser(int page, int size) {
+    return findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId(), page, size);
   }
 
   @Override
@@ -132,8 +155,8 @@ public class ArtistsServiceImpl implements ArtistsService {
 
     int itemsPerPage = discogsPagination.getItemsPerPage();
 
-    Set<Long> alreadyFollowedArtists = findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId()).stream().map(FollowArtistDto::getArtistDiscogsId)
-        .collect(Collectors.toSet());
+    List<Long> alreadyFollowedArtists = findFollowedArtistsForCurrentUser().getMyArtists().stream().map(Artist::getDiscogsId)
+        .collect(Collectors.toList());
 
     List<ArtistNameSearchResponse.ArtistSearchResult> dtoArtistSearchResults = artistSearchResults.getResults().stream()
         .map(artistSearchResult -> new ArtistNameSearchResponse.ArtistSearchResult(artistSearchResult.getThumb(), artistSearchResult.getId(),
@@ -156,7 +179,7 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   private ArtistDto createArtistDto(ArtistEntity artistEntity) {
     return ArtistDto.builder()
-        .artistDiscogsId(artistEntity.getArtistDiscogsId())
+        .discogsId(artistEntity.getArtistDiscogsId())
         .artistName(artistEntity.getArtistName())
         .thumb(artistEntity.getThumb())
         .build();
@@ -166,6 +189,17 @@ public class ArtistsServiceImpl implements ArtistsService {
     String thumb = artist.getDiscogsImages() != null && artist.getDiscogsImages().size() > 0 ? artist.getDiscogsImages().get(0).getResourceUrl()
                                                                                              : null;
     return new ArtistEntity(artist.getId(), artist.getName(), thumb);
+  }
+
+  private MyArtistsResponse mapMyArtistResponse(List<FollowedArtistEntity> followedArtistEntities) {
+    List<ArtistDto> artistDtos = findAllArtistsByDiscogsIds(followedArtistEntities.stream().mapToLong(FollowedArtistEntity::getArtistDiscogsId).toArray());
+    List<Artist> artists = artistDtos.stream().map(artistDto -> mapper.map(artistDto,Artist.class)).collect(Collectors.toList());
+    return new MyArtistsResponse(artists);
+  }
+
+  private Pagination mapPagination(int totalElements, int page, int size) {
+    int totalPages = totalElements % size == 0 ? totalElements / size : totalElements / size + 1;
+    return new Pagination(totalPages, page, size);
   }
 
 }

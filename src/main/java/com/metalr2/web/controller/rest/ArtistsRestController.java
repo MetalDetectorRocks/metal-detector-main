@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(Endpoints.Rest.ARTISTS_V1)
+@RequestMapping(Endpoints.Rest.ARTISTS)
 public class ArtistsRestController implements Validatable {
 
   private final ArtistsService artistsService;

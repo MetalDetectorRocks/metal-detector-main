@@ -42,10 +42,11 @@ public class Endpoints {
   }
 
   public static class Rest {
-    public static final String ARTISTS_V1 = "/rest/v1/artists";
+    public static final String ARTISTS    = "/rest/v1/artists";
     public static final String SEARCH     = "/search";
     public static final String FOLLOW     = "/follow";
     public static final String UNFOLLOW   = "/unfollow";
+    public static final String MY_ARTISTS = "/rest/v1/my-artists";
 
     public static final String USERS      = "/rest/v1/users";
   }
