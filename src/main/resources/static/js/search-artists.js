@@ -8,10 +8,10 @@ function searchArtist(page,size) {
     clear();
     toggleLoader("searchResultsContainer");
 
-    const artistName = document.getElementById('artistName').value;
+    const query = document.getElementById('query').value;
     const searchArtistRequest =
         {
-            "artistName" : artistName,
+            "query" : query,
             "page" : page,
             "size" : size
         };
@@ -26,7 +26,7 @@ function searchArtist(page,size) {
             toggleLoader("searchResultsContainer");
         },
         error: function(){
-            createNoArtistNameSearchResultsMessage(artistName);
+            createNoArtistNameSearchResultsMessage(query);
             toggleLoader("searchResultsContainer");
         }
     });

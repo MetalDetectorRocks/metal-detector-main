@@ -21,22 +21,11 @@ import java.util.stream.Stream;
 @DataJpaTest
 class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTestProfile {
 
-//  private static final String userId1              = "1";
-//  private static final String userId2              = "2";
-//  private static final String unknownUserId        = "0";
-//  private static final long artistDiscogsId1       = 252211L;
-//  private static final long artistDiscogsId2       = 245797L;
-//  private static final long unknownArtistDiscogsId = 0L;
-//  private static final FollowedArtistEntity FOLLOW_ARTIST_ENTITY1 = new FollowedArtistEntity(userId1, artistDiscogsId1);
-//  private static final FollowedArtistEntity FOLLOW_ARTIST_ENTITY2 = new FollowedArtistEntity(userId2, artistDiscogsId2);
-
   @Autowired
   private FollowedArtistsRepository followedArtistsRepository;
 
   @BeforeEach
   void setup() {
-//    followedArtistsRepository.save(FOLLOW_ARTIST_ENTITY1);
-//    followedArtistsRepository.save(FOLLOW_ARTIST_ENTITY2);
     followedArtistsRepository.saveAll(DtoFactory.FollowArtistFactory.createFollowArtistEntities(6));
   }
 
@@ -48,11 +37,15 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
   @Test
   @DisplayName("findAllByPublicUserId() finds the correct entities for a given user id if it exists")
   void find_all_by_user_id_should_return_correct_entities() {
-    List<FollowedArtistEntity> followedArtistEntitiesPerUser = followedArtistsRepository.findAllByPublicUserId("1");
+    List<FollowedArtistEntity> entities = followedArtistsRepository.findAllByPublicUserId("1");
 
-    assertThat(followedArtistEntitiesPerUser).hasSize(1);
-    assertThat(followedArtistEntitiesPerUser.get(0).getPublicUserId()).isEqualTo("1");
-    assertThat(followedArtistEntitiesPerUser.get(0).getArtistDiscogsId()).isEqualTo(1L);
+    assertThat(entities).hasSize(6);
+
+    for (int i = 0; i < entities.size(); i++) {
+      FollowedArtistEntity entity = entities.get(i);
+      assertThat(entity.getPublicUserId()).isEqualTo("1");
+      assertThat(entity.getArtistDiscogsId()).isEqualTo(i+1);
+    }
   }
 
   @Test

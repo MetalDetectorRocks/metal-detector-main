@@ -18,6 +18,7 @@ import com.metalr2.web.dto.response.MyArtistsResponse;
 import com.metalr2.web.dto.response.Pagination;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +30,6 @@ import static com.metalr2.web.dto.response.MyArtistsResponse.Artist;
 
 @Service
 public class ArtistsServiceImpl implements ArtistsService {
-
-  private static final int DEFAULT_PAGE = 1;
 
   private final ArtistsRepository artistsRepository;
   private final FollowedArtistsRepository followedArtistsRepository;
@@ -101,12 +100,10 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public MyArtistsResponse findFollowedArtistsPerUser(String publicUserId, int page, int size) {
-    List<FollowedArtistEntity> followedArtistEntities = followedArtistsRepository.findAllByPublicUserId(publicUserId);
-    int fromIndex = page * size - size;
-    int toIndex   = page * size;
-    MyArtistsResponse response = mapMyArtistResponse(followedArtistEntities.subList(fromIndex,toIndex));
-    response.setPagination(mapPagination(followedArtistEntities.size(), page, size));
+  public MyArtistsResponse findFollowedArtistsPerUser(String publicUserId, Pageable pageable) {
+    List<FollowedArtistEntity> followedArtistEntities = followedArtistsRepository.findAllByPublicUserId(publicUserId, pageable);
+    MyArtistsResponse response = mapMyArtistResponse(followedArtistEntities);
+    response.setPagination(mapPagination(followedArtistEntities.size(), pageable));
     return response;
   }
 
@@ -116,8 +113,8 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public MyArtistsResponse findFollowedArtistsForCurrentUser(int page, int size) {
-    return findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId(), page, size);
+  public MyArtistsResponse findFollowedArtistsForCurrentUser(Pageable pageable) {
+    return findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId(), pageable);
   }
 
   @Override
@@ -197,9 +194,9 @@ public class ArtistsServiceImpl implements ArtistsService {
     return new MyArtistsResponse(artists);
   }
 
-  private Pagination mapPagination(int totalElements, int page, int size) {
-    int totalPages = totalElements % size == 0 ? totalElements / size : totalElements / size + 1;
-    return new Pagination(totalPages, page, size);
+  private Pagination mapPagination(int totalElements, Pageable pageable) {
+    int totalPages = totalElements % pageable.getPageSize() == 0 ? totalElements / pageable.getPageSize() : totalElements / pageable.getPageSize() + 1;
+    return new Pagination(totalPages, pageable.getPageNumber(), pageable.getPageSize());
   }
 
 }

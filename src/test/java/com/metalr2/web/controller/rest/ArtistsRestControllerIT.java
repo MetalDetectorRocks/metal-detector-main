@@ -1,12 +1,9 @@
 package com.metalr2.web.controller.rest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.testutil.WithIntegrationTestProfile;
 import com.metalr2.web.RestAssuredRequestHandler;
-import com.metalr2.web.dto.request.ArtistSearchRequest;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.Pagination;
@@ -26,6 +23,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -51,7 +49,6 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
   private int port;
 
   private RestAssuredRequestHandler requestHandler;
-  private ObjectMapper mapper;
 
   @Nested
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -63,7 +60,6 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
     @BeforeEach
     void setUp() {
       requestHandler = new RestAssuredRequestHandler(requestUri);
-      mapper = new ObjectMapper();
     }
 
     @AfterEach
@@ -122,7 +118,6 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
     @BeforeEach
     void setUp() {
       requestHandler = new RestAssuredRequestHandler(requestUri);
-      mapper = new ObjectMapper();
     }
 
     @AfterEach
@@ -134,10 +129,12 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
     @DisplayName("GET with valid request should return 200")
     void get_with_valid_request_should_return_200() {
       // given
-      ArtistSearchRequest request = new ArtistSearchRequest(VALID_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE);
-      Map<String, Object> requestParams = mapper.convertValue(request, new TypeReference<Map<String, Object>>() {});
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("query", VALID_SEARCH_REQUEST);
+      requestParams.put("page", DEFAULT_PAGE);
+      requestParams.put("size", DEFAULT_SIZE);
 
-      when(artistsService.searchDiscogsByName(request.getArtistName(), request.getPage(), request.getSize()))
+      when(artistsService.searchDiscogsByName(VALID_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE))
           .thenReturn(Optional.of(ArtistNameSearchResponseFactory.withOneResult()));
 
       // when
@@ -157,32 +154,19 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       Pagination pagination = artistNameSearchResponse.getPagination();
       assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE));
 
-      verify(artistsService, times(1)).searchDiscogsByName(request.getArtistName(), request.getPage(), request.getSize());
-    }
-
-    @Test
-    @DisplayName("GET with bad request should return 400")
-    void get_with_bad_request_should_return_400() {
-      // given
-      ArtistSearchRequest request = new ArtistSearchRequest(null, DEFAULT_PAGE, DEFAULT_SIZE);
-      Map<String, Object> requestParams = mapper.convertValue(request, new TypeReference<Map<String, Object>>() {});
-
-      // when
-      ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
-
-      // then
-      validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value());
-      verify(artistsService, times(0)).searchDiscogsByName(request.getArtistName(), request.getPage(), request.getSize());
+      verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE);
     }
 
     @Test
     @DisplayName("GET with empty result should return 404")
     void get_with_empty_result_should_return_404() {
       // given
-      ArtistSearchRequest request = new ArtistSearchRequest(NO_RESULT_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE);
-      Map<String, Object> requestParams = mapper.convertValue(request, new TypeReference<Map<String, Object>>() {});
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("query", NO_RESULT_SEARCH_REQUEST);
+      requestParams.put("page", DEFAULT_PAGE);
+      requestParams.put("size", DEFAULT_SIZE);
 
-      when(artistsService.searchDiscogsByName(request.getArtistName(), request.getPage(), request.getSize()))
+      when(artistsService.searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE))
           .thenReturn(Optional.empty());
 
       // when
@@ -190,9 +174,8 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
 
       // then
       validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-      verify(artistsService, times(1)).searchDiscogsByName(request.getArtistName(), request.getPage(), request.getSize());
+      verify(artistsService, times(1)).searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE);
     }
-
   }
 
   @Nested
@@ -210,7 +193,6 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
     void setUp() {
       followRequestHandler    = new RestAssuredRequestHandler(followRequestUri);
       unfollowRequestHandler  = new RestAssuredRequestHandler(unfollowRequestUri);
-      mapper                  = new ObjectMapper();
     }
 
     @AfterEach
@@ -273,7 +255,5 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
       verify(artistsService, times(1)).unfollowArtist(VALID_ARTIST_ID);
     }
-
   }
-
 }

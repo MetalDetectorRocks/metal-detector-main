@@ -17,7 +17,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.metalr2.web.DtoFactory.MyArtistsResponseFactory;
 import static org.mockito.Mockito.reset;
@@ -55,10 +59,14 @@ class MyArtistsRestControllerIT implements WithAssertions, WithIntegrationTestPr
   @DisplayName("GET should return 200 and results if present")
   void get_should_return_200_and_results() {
     // given
-    when(artistsService.findFollowedArtistsForCurrentUser(1,1)).thenReturn(MyArtistsResponseFactory.withOneResult());
+    PageRequest pageRequest = PageRequest.of(1,1);
+    when(artistsService.findFollowedArtistsForCurrentUser(pageRequest)).thenReturn(MyArtistsResponseFactory.withOneResult());
 
     // when
-    ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON);
+    Map<String,Object> params = new HashMap<>();
+    params.put("page", 1);
+    params.put("size", 1);
+    ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, params);
 
     // then
     validatableResponse
@@ -73,17 +81,21 @@ class MyArtistsRestControllerIT implements WithAssertions, WithIntegrationTestPr
     assertThat(response.getMyArtists().get(0).getArtistName()).isEqualTo(ARTIST_NAME);
     assertThat(response.getPagination()).isNotNull();
 
-    verify(artistsService, times(1)).findFollowedArtistsForCurrentUser(1,1);
+    verify(artistsService, times(1)).findFollowedArtistsForCurrentUser(pageRequest);
   }
 
   @Test
   @DisplayName("GET should return 200 and empty list if nothing is present")
   void get_should_return_200_and_empty_list() {
     // given
-    when(artistsService.findFollowedArtistsForCurrentUser(1,1)).thenReturn(MyArtistsResponseFactory.withEmptyResult());
+    PageRequest pageRequest = PageRequest.of(1,1);
+    when(artistsService.findFollowedArtistsForCurrentUser(pageRequest)).thenReturn(MyArtistsResponseFactory.withEmptyResult());
 
     // when
-    ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON);
+    Map<String,Object> params = new HashMap<>();
+    params.put("page", 1);
+    params.put("size", 1);
+    ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, params);
 
     // then
     validatableResponse
@@ -96,7 +108,7 @@ class MyArtistsRestControllerIT implements WithAssertions, WithIntegrationTestPr
     assertThat(response.getMyArtists()).isEmpty();
     assertThat(response.getPagination()).isNull();
 
-    verify(artistsService, times(1)).findFollowedArtistsForCurrentUser(1,1);
+    verify(artistsService, times(1)).findFollowedArtistsForCurrentUser(pageRequest);
   }
 
 }

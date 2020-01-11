@@ -6,6 +6,8 @@ import org.springframework.validation.BindingResult;
 
 public interface Validatable {
 
+  // // TODO: 11.01.20 Delete after merge?
+
   default void validateRequest(BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
       throw new ValidationException(ErrorMessages.VALIDATION_ERROR.toDisplayString(), bindingResult.getFieldErrors());
