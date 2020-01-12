@@ -44,7 +44,7 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
     for (int i = 0; i < entities.size(); i++) {
       FollowedArtistEntity entity = entities.get(i);
       assertThat(entity.getPublicUserId()).isEqualTo("1");
-      assertThat(entity.getArtistDiscogsId()).isEqualTo(i+1);
+      assertThat(entity.getDiscogsId()).isEqualTo(i+1);
     }
   }
 
@@ -59,7 +59,7 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
   @Test
   @DisplayName("Should return true for existing combination of user id and artist discogs id")
   void exists_by_user_id_and_artist_discogs_id() {
-    boolean result = followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId("1", 1L);
+    boolean result = followedArtistsRepository.existsByPublicUserIdAndDiscogsId("1", 1L);
 
     assertThat(result).isTrue();
   }
@@ -69,7 +69,7 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
   @MethodSource("inputProviderExistsByFalse")
   @DisplayName("Should return false for not existing combinations of user id and artist discogs id")
   void exists_by_user_id_and_artist_discogs_id(String userId, long artistDiscogsId) {
-    boolean result = followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
+    boolean result = followedArtistsRepository.existsByPublicUserIdAndDiscogsId(userId, artistDiscogsId);
 
     assertThat(result).isFalse();
   }
@@ -84,10 +84,10 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
   @Test
   @DisplayName("Should return optional containing the correct entity for existing combinations of user id and artist discogs id")
   void find_by_user_id_and_artist_discogs_id_should_return_valid_optional() {
-    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId("1", 1L);
+    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndDiscogsId("1", 1L);
 
     assertThat(optionalFollowedArtistEntity.isPresent()).isTrue();
-    assertThat(optionalFollowedArtistEntity.get().getArtistDiscogsId()).isEqualTo(1L);
+    assertThat(optionalFollowedArtistEntity.get().getDiscogsId()).isEqualTo(1L);
     assertThat(optionalFollowedArtistEntity.get().getPublicUserId()).isEqualTo("1");
   }
 
@@ -95,7 +95,7 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
   @MethodSource("inputProviderFalseArguments")
   @DisplayName("Should return an empty optional for not existing or faulty combinations of user id and artist discogs id")
   void find_by_user_id_and_artist_discogs_id_should_return_empty_optional(String userId, long artistDiscogsId) {
-    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
+    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndDiscogsId(userId, artistDiscogsId);
 
     assertThat(optionalFollowedArtistEntity).isEmpty();
   }
@@ -110,10 +110,10 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
   @Test
   @DisplayName("findAllByPublicUserIdAndArtistDiscogsIdIn() should return a list with correct results")
   void find_all_by_user_id_discogs_ids_should_return_correct_results() {
-    List<FollowedArtistEntity> entities = followedArtistsRepository.findAllByPublicUserIdAndArtistDiscogsIdIn("1", 1L, 0L);
+    List<FollowedArtistEntity> entities = followedArtistsRepository.findAllByPublicUserIdAndDiscogsIdIn("1", 1L, 0L);
 
     assertThat(entities).hasSize(1);
-    assertThat(entities.get(0).getArtistDiscogsId()).isEqualTo(1L);
+    assertThat(entities.get(0).getDiscogsId()).isEqualTo(1L);
     assertThat(entities.get(0).getPublicUserId()).isEqualTo("1");
   }
 
@@ -124,10 +124,10 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
 
     assertThat(entities).hasSize(2);
 
-    assertThat(entities.get(0).getArtistDiscogsId()).isEqualTo(3L);
+    assertThat(entities.get(0).getDiscogsId()).isEqualTo(3L);
     assertThat(entities.get(0).getPublicUserId()).isEqualTo("1");
 
-    assertThat(entities.get(1).getArtistDiscogsId()).isEqualTo(4L);
+    assertThat(entities.get(1).getDiscogsId()).isEqualTo(4L);
     assertThat(entities.get(1).getPublicUserId()).isEqualTo("1");
   }
 }

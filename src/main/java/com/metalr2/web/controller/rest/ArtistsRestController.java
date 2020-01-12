@@ -3,7 +3,7 @@ package com.metalr2.web.controller.rest;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.ArtistNameSearchResponse;
+import com.metalr2.web.dto.response.SearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -30,17 +30,17 @@ public class ArtistsRestController {
   }
 
   @GetMapping(path = Endpoints.Rest.SEARCH,
-              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<ArtistNameSearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
-                                                                   @PageableDefault(page = 0, size = 10) Pageable pageable) {
-    Optional<ArtistNameSearchResponse> responseOptional = artistsService.searchDiscogsByName(query,
-                                                                                             pageable.getPageNumber(),
-                                                                                             pageable.getPageSize());
+      produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  public ResponseEntity<SearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
+                                                         @PageableDefault(page = 0, size = 10) Pageable pageable) {
+    Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(query,
+                                                                                   pageable.getPageNumber(),
+                                                                                   pageable.getPageSize());
     return ResponseEntity.of(responseOptional);
   }
 
   @GetMapping(path = "/{discogsId}",
-              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+      produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<ArtistDetailsResponse> handleDetailsSearchRequest(@PathVariable long discogsId) {
     Optional<ArtistDetailsResponse> responseOptional = artistsService.searchDiscogsById(discogsId);
     return ResponseEntity.of(responseOptional);
@@ -57,5 +57,4 @@ public class ArtistsRestController {
     boolean success = artistsService.unfollowArtist(discogsId);
     return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
   }
-
 }

@@ -12,11 +12,11 @@ public interface FollowedArtistsRepository extends JpaRepository<FollowedArtistE
 
   List<FollowedArtistEntity> findAllByPublicUserId(String publicUserId);
 
-  boolean existsByPublicUserIdAndArtistDiscogsId(String publicUserId, long artistDiscogsId);
+  boolean existsByPublicUserIdAndDiscogsId(String publicUserId, long discogsId);
 
-  Optional<FollowedArtistEntity> findByPublicUserIdAndArtistDiscogsId(String publicUserId, long artistDiscogsId);
+  Optional<FollowedArtistEntity> findByPublicUserIdAndDiscogsId(String publicUserId, long discogsId);
 
-  List<FollowedArtistEntity> findAllByPublicUserIdAndArtistDiscogsIdIn(String publicUserId, long... artistDiscgogsIds);
+  List<FollowedArtistEntity> findAllByPublicUserIdAndDiscogsIdIn(String publicUserId, long... discgogsIds);
 
   List<FollowedArtistEntity> findAllByPublicUserId(String publicUserId, Pageable pageable);
 

@@ -9,7 +9,6 @@ import com.metalr2.security.CurrentUserSupplier;
 import com.metalr2.service.discogs.DiscogsArtistSearchRestClient;
 import com.metalr2.web.dto.ArtistDto;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.MyArtistsResponse;
 import com.metalr2.web.dto.response.Pagination;
 import com.metalr2.web.dto.response.SearchResponse;
@@ -260,7 +259,7 @@ class ArtistsServiceTest implements WithAssertions {
       FollowedArtistEntity entity = followArtistEntityCaptor.getValue();
 
       assertThat(entity.getPublicUserId()).isEqualTo(USER_ID);
-      assertThat(entity.getArtistDiscogsId()).isEqualTo(DISCOGS_ID);
+      assertThat(entity.getDiscogsId()).isEqualTo(DISCOGS_ID);
     }
 
     @Test
@@ -281,7 +280,7 @@ class ArtistsServiceTest implements WithAssertions {
     @DisplayName("Unfollowing a combination of artist and user which exist should return true")
     void unfollow_existing_artist_should_return_true(){
       // given
-      when(followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(Optional.of(new FollowedArtistEntity(USER_ID, DISCOGS_ID)));
+      when(followedArtistsRepository.findByPublicUserIdAndDiscogsId(anyString(), anyLong())).thenReturn(Optional.of(new FollowedArtistEntity(USER_ID, DISCOGS_ID)));
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
@@ -291,7 +290,7 @@ class ArtistsServiceTest implements WithAssertions {
       // then
       assertThat(result).isTrue();
 
-      verify(followedArtistsRepository, times(1)).findByPublicUserIdAndArtistDiscogsId(USER_ID, DISCOGS_ID);
+      verify(followedArtistsRepository, times(1)).findByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID);
       verify(followedArtistsRepository, times(1)).delete(new FollowedArtistEntity(USER_ID, DISCOGS_ID));
     }
 
@@ -299,7 +298,7 @@ class ArtistsServiceTest implements WithAssertions {
     @DisplayName("Unfollowing a combination of artist and user which do not exist should return false")
     void unfollow_not_existing_artist_should_return_false(){
       // given
-      when(followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(Optional.empty());
+      when(followedArtistsRepository.findByPublicUserIdAndDiscogsId(anyString(), anyLong())).thenReturn(Optional.empty());
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
@@ -309,7 +308,7 @@ class ArtistsServiceTest implements WithAssertions {
       // then
       assertThat(result).isFalse();
 
-      verify(followedArtistsRepository, times(1)).findByPublicUserIdAndArtistDiscogsId(USER_ID, DISCOGS_ID);
+      verify(followedArtistsRepository, times(1)).findByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID);
       verify(followedArtistsRepository, times(0)).delete(new FollowedArtistEntity(USER_ID, DISCOGS_ID));
     }
 
@@ -317,7 +316,7 @@ class ArtistsServiceTest implements WithAssertions {
     @DisplayName("isFollowed() should return true if the given combination from user id and artist discogs id exists")
     void is_followed_should_return_true_for_existing_entity(){
       // given
-      when(followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(true);
+      when(followedArtistsRepository.existsByPublicUserIdAndDiscogsId(anyString(), anyLong())).thenReturn(true);
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
@@ -326,14 +325,14 @@ class ArtistsServiceTest implements WithAssertions {
 
       // then
       assertThat(result).isTrue();
-      verify(followedArtistsRepository, times(1)).existsByPublicUserIdAndArtistDiscogsId(USER_ID, DISCOGS_ID);
+      verify(followedArtistsRepository, times(1)).existsByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID);
     }
 
     @Test
     @DisplayName("isFollowed() should return false if the given combination from user id and artist discogs id does not exist")
     void is_followed_should_return_false_for_not_existing_entity(){
       // given
-      when(followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId(anyString(), anyLong())).thenReturn(false);
+      when(followedArtistsRepository.existsByPublicUserIdAndDiscogsId(anyString(), anyLong())).thenReturn(false);
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
@@ -342,7 +341,7 @@ class ArtistsServiceTest implements WithAssertions {
 
       // then
       assertThat(result).isFalse();
-      verify(followedArtistsRepository, times(1)).existsByPublicUserIdAndArtistDiscogsId(USER_ID, DISCOGS_ID);
+      verify(followedArtistsRepository, times(1)).existsByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID);
     }
 
     @Test

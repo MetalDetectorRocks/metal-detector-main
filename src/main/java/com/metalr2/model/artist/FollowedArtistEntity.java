@@ -21,7 +21,7 @@ public class FollowedArtistEntity extends BaseEntity implements Serializable {
   @NonNull
   private String publicUserId;
 
-  @Column(name = "artist_discogs_id", nullable = false, updatable = false)
-  private long artistDiscogsId;
+  @Column(name = "discogs_id", nullable = false, updatable = false)
+  private long discogsId;
 
 }

@@ -2,10 +2,9 @@ package com.metalr2.service.artist;
 
 import com.metalr2.web.dto.ArtistDto;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.MyArtistsResponse;
-import org.springframework.data.domain.Pageable;
 import com.metalr2.web.dto.response.SearchResponse;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;

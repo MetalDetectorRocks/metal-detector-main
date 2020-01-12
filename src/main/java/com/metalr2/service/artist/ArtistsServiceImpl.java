@@ -13,7 +13,6 @@ import com.metalr2.web.dto.discogs.misc.DiscogsImage;
 import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.DiscogsPagination;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.MyArtistsResponse;
 import com.metalr2.web.dto.response.Pagination;
 import com.metalr2.web.dto.response.SearchResponse;
@@ -83,7 +82,7 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   @Transactional
   public boolean unfollowArtist(long discogsId) {
-    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(
+    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndDiscogsId(
         currentUserSupplier.get().getPublicId(), discogsId);
 
     optionalFollowedArtistEntity.ifPresent(followedArtistsRepository::delete);
@@ -92,7 +91,7 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   @Override
   public boolean isFollowed(long discogsId) {
-    return followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId(currentUserSupplier.get().getPublicId(), discogsId);
+    return followedArtistsRepository.existsByPublicUserIdAndDiscogsId(currentUserSupplier.get().getPublicId(), discogsId);
   }
 
   @Override
@@ -191,7 +190,7 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   private MyArtistsResponse mapMyArtistResponse(List<FollowedArtistEntity> followedArtistEntities) {
-    List<ArtistDto> artistDtos = findAllArtistsByDiscogsIds(followedArtistEntities.stream().mapToLong(FollowedArtistEntity::getArtistDiscogsId).toArray());
+    List<ArtistDto> artistDtos = findAllArtistsByDiscogsIds(followedArtistEntities.stream().mapToLong(FollowedArtistEntity::getDiscogsId).toArray());
     List<Artist> artists = artistDtos.stream().map(artistDto -> mapper.map(artistDto,Artist.class)).collect(Collectors.toList());
     return new MyArtistsResponse(artists);
   }

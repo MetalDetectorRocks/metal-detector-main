@@ -5,7 +5,6 @@ import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.testutil.WithIntegrationTestProfile;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.Pagination;
 import com.metalr2.web.dto.response.SearchResponse;
 import io.restassured.http.ContentType;
@@ -156,21 +155,6 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE));
 
       verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE);
-    }
-
-    @Test
-    @DisplayName("GET with bad request should return 400")
-    void get_with_bad_request_should_return_400() {
-      // given
-      SearchRequest request = new SearchRequest(null, DEFAULT_PAGE, DEFAULT_SIZE);
-      Map<String, Object> requestParams = mapper.convertValue(request, new TypeReference<Map<String, Object>>() {});
-
-      // when
-      ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
-
-      // then
-      validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value());
-      verify(artistsService, times(0)).searchDiscogsByName(request.getQuery(), request.getPage(), request.getSize());
     }
 
     @Test

@@ -10,7 +10,6 @@ import com.metalr2.web.dto.discogs.search.DiscogsPagination;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.MyArtistsResponse;
 import com.metalr2.web.dto.response.Pagination;
 import com.metalr2.web.dto.response.SearchResponse;
