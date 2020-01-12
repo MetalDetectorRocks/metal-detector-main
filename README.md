@@ -71,7 +71,7 @@ To start the application locally in DEV profile, the following preparatory actio
     - `security.token-secret` for JWT
     - `security.remember-me-secret` for remember me functionality
 
-It is also possible to define all mentioned connection details and secrets as environment variables. In this case no .properties variables need to be changed. The names of the environment variables are already in the .properties files. You can define the environment variables, for example, within a Run Configuration in IntelliJ.
+It is also possible to define all mentioned connection details and secrets as environment variables. In this case no .properties variables need to be changed. The names of the environment variables are already in the .properties files. You can define the environment variables for example within a Run Configuration in IntelliJ.
 
 If you start the application with the default Spring profile or with the profile 'dev', all emails sent by the application will be displayed on the console. No emails are sent via an SMTP server. If you want the application to send emails via an SMTP server, you must start the application with the Spring profile 'prod'. 
 
@@ -88,7 +88,7 @@ To start the application locally in PROD profile, the following preparatory acti
     - `spring.mail.password`
     - `spring.mail.properties.from`
 
-It is also possible to define all mentioned connection details and secrets as environment variables. In this case no .properties variables need to be changed. The names of the environment variables are already in the .properties files. You can define the environment variables, for example, within a Run Configuration in IntelliJ.
+It is also possible to define all mentioned connection details and secrets as environment variables. In this case no .properties variables need to be changed. The names of the environment variables are already in the .properties files. You can define the environment variables for example within a Run Configuration in IntelliJ.
 
 <a name="start-application"></a>
 ## 4 Start the application
