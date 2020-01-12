@@ -43,28 +43,30 @@ To start the application locally in DEV profile, the following preparatory actio
 2. Install Docker CE
 
 3. Create folder `.secrets` below the project root directory and create the following files within this folder
-  - `mrr_butler_mysql_password.txt`
-  - `mrr_butler_mysql_root_password.txt`
-  - `mrr_mysql_password.txt`
-  - `mrr_mysql_root_password.txt`
+    - `mrr_butler_mysql_password.txt`
+    - `mrr_butler_mysql_root_password.txt`
+    - `mrr_mysql_password.txt`
+    - `mrr_mysql_root_password.txt`
 
-4. A password of your choice can be entered in each file created. The files are used for the `docker-compose.yml` file, which becomes relevant in a moment.
+4. Enter a password of your choice in each file created. The files are used for the `docker-compose.yml` file, which becomes relevant in a moment.
 
-5. Run `docker-compose.yml` via command `docker-compose up -d --no-recreate`. This starts all peripheral docker containers that are needed locally to run the Metal Release Radar Application:
-  - `mrr-mysql`: MySQL database for Metal Release Radar application 
-  - `mrr-phpmyadmin`: phpmyadmin for Metal Release Radars MySQL database
-  - `mrr-butler-mysql`: MySQL database for Metal Release Butler application 
-  - `mrr-butler-phpmyadmin`: phpmyadmin for Metal Release Butlers MySQL database
-  - `mrr-butler`: Metal Release Butler Spring Boot application
+5. Expose the environment variable `BUTLER_MYSQL_PASSWORD` with value from file `mrr_butler_mysql_root_password.txt` to inject the database password into the Metal Release Butler docker container.
 
-6. Define the data source connection details in file `application.properties` for mysql connection:
+6. Run `docker-compose.yml` via command `docker-compose up -d --no-recreate`. This starts all peripheral docker containers that are needed locally to run the Metal Release Radar Application:
+    - `mrr-mysql`: MySQL database for Metal Release Radar application 
+    - `mrr-phpmyadmin`: phpmyadmin for Metal Release Radars MySQL database
+    - `mrr-butler-mysql`: MySQL database for Metal Release Butler application 
+    - `mrr-butler-phpmyadmin`: phpmyadmin for Metal Release Butlers MySQL database
+    - `mrr-butler`: Metal Release Butler Spring Boot application
+
+7. Define the data source connection details in file `application.properties` for mysql connection:
     - `spring.datasource.username` (`root` or must match with `MYSQL_USER` of serive `mrr-mysql` from `docker-compose.yml` file)
     - `spring.datasource.password` (password from `mrr_mysql_password.txt` or `mrr_mysql_root_password.txt`)
     - `spring.datasource.url` (`jdbc:mysql://localhost:3306/metal-release-radar?useUnicode\=true&characterEncoding\=utf-8&serverTimezone\=UTC`, database name must match `MYSQL_DATABASE` of serive `mrr-mysql` from `docker-compose.yml` file)
 
-7. Deposit your Discogs Access Token for the property `discogs.access-token` in file `application.properties` (see [Discogs API Documentation](https://www.discogs.com/developers/) for further information).
+8. Deposit your Discogs Access Token for the property `discogs.access-token` in file `application.properties` (see [Discogs API Documentation](https://www.discogs.com/developers/) for further information).
 
-8. Define the following secrets (you can choose any value you want) in file `application.properties`:
+9. Define the following secrets (you can choose any value you want) in file `application.properties`:
     - `security.token-issuer` for JWT
     - `security.token-secret` for JWT
     - `security.remember-me-secret` for remember me functionality
@@ -78,7 +80,7 @@ If you start the application with the default Spring profile or with the profile
 
 To start the application locally in PROD profile, the following preparatory actions are necessary:
 
-1. Complete all steps from [ Run application locally (DEV profile) ](#run-application-locally-dev).
+1. Complete all steps from [Run application locally (DEV profile)](#run-application-locally-dev).
 
 2. Define the email server connection details in file `application-prod.properties`. Define at least the following properties for the connection:
     - `spring.mail.host`
