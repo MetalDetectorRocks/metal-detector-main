@@ -12,6 +12,7 @@ import com.metalr2.web.dto.response.ArtistDetailsResponse;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.MyArtistsResponse;
 import com.metalr2.web.dto.response.Pagination;
+import com.metalr2.web.dto.response.SearchResponse;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -497,17 +498,17 @@ class ArtistsServiceTest implements WithAssertions {
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
       // when
-      Optional<ArtistNameSearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PAGE, SIZE);
+      Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PAGE, SIZE);
 
       // then
       assertThat(responseOptional).isPresent();
 
-      ArtistNameSearchResponse response = responseOptional.get();
+      SearchResponse response = responseOptional.get();
 
-      assertThat(response.getArtistSearchResults()).isNotNull().hasSize(1);
+      assertThat(response.getSearchResults()).isNotNull().hasSize(1);
 
-      ArtistNameSearchResponse.ArtistSearchResult artistSearchResult = response.getArtistSearchResults().get(0);
-      assertThat(artistSearchResult).isEqualTo(new ArtistNameSearchResponse.ArtistSearchResult(null, DISCOGS_ID, ARTIST_NAME, false));
+      SearchResponse.SearchResult searchResult = response.getSearchResults().get(0);
+      assertThat(searchResult).isEqualTo(new SearchResponse.SearchResult(null, DISCOGS_ID, ARTIST_NAME, false));
 
       Pagination pagination = response.getPagination();
       assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, PAGE, SIZE));
@@ -522,7 +523,7 @@ class ArtistsServiceTest implements WithAssertions {
       when(artistSearchClient.searchByName(anyString(), anyInt(), anyInt())).thenReturn(Optional.empty());
 
       //when
-      Optional<ArtistNameSearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PAGE, SIZE);
+      Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PAGE, SIZE);
 
       // then
       assertThat(responseOptional).isEmpty();

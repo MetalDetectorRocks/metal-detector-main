@@ -8,19 +8,19 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class ArtistNameSearchResponse {
+public class SearchResponse {
 
-  private List<ArtistSearchResult> artistSearchResults;
+  private List<SearchResult> searchResults;
   private Pagination pagination;
 
-  public ArtistNameSearchResponse() {
-    artistSearchResults = new ArrayList<>();
+  public SearchResponse() {
+    searchResults = new ArrayList<>();
     pagination = new Pagination();
   }
 
   @Data
   @AllArgsConstructor
-  public static class ArtistSearchResult {
+  public static class SearchResult {
 
     private String thumb;
     private long id;

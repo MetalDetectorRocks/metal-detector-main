@@ -13,6 +13,7 @@ import com.metalr2.web.dto.response.ArtistDetailsResponse;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.MyArtistsResponse;
 import com.metalr2.web.dto.response.Pagination;
+import com.metalr2.web.dto.response.SearchResponse;
 
 import java.util.Collections;
 import java.util.List;
@@ -134,9 +135,9 @@ public class DtoFactory {
 
   public static class ArtistNameSearchResponseFactory {
 
-    public static ArtistNameSearchResponse withOneResult() {
-      return new ArtistNameSearchResponse(Collections.singletonList(
-          new ArtistNameSearchResponse.ArtistSearchResult(null, DISCOGS_ID, ARTIST_NAME, false)),
+    public static SearchResponse withOneResult() {
+      return new SearchResponse(Collections.singletonList(
+          new SearchResponse.SearchResult(null, DISCOGS_ID, ARTIST_NAME, false)),
                                           new Pagination(2, 1, 10));
     }
   }

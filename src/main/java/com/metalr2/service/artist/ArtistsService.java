@@ -5,6 +5,7 @@ import com.metalr2.web.dto.response.ArtistDetailsResponse;
 import com.metalr2.web.dto.response.ArtistNameSearchResponse;
 import com.metalr2.web.dto.response.MyArtistsResponse;
 import org.springframework.data.domain.Pageable;
+import com.metalr2.web.dto.response.SearchResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public interface ArtistsService {
   MyArtistsResponse findFollowedArtistsForCurrentUser();
   MyArtistsResponse findFollowedArtistsForCurrentUser(Pageable pageable);
 
-  Optional<ArtistNameSearchResponse> searchDiscogsByName(String artistQueryString, int page, int size);
+  Optional<SearchResponse> searchDiscogsByName(String artistQueryString, int page, int size);
   Optional<ArtistDetailsResponse> searchDiscogsById(long discogsId);
 
 }
