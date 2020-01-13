@@ -20,6 +20,7 @@ function requestUsersFromServer() {
         },
         'pagingType': 'simple_numbers',
         'columns': [
+            {'data': 'publicId'},
             {'data': 'username'},
             {'data': 'email'},
             {'data': 'role'},
@@ -37,7 +38,7 @@ function requestUsersFromServer() {
                         return '<span class="badge badge-info">' + data + '</span>';
                     }
                 },
-                "targets": 2
+                "targets": 3
             },
             {
                 "render": function ( data ) {
@@ -48,7 +49,11 @@ function requestUsersFromServer() {
                         return '<span class="badge badge-secondary">Disabled</span>';
                     }
                 },
-                "targets": 3
+                "targets": 4
+            },
+            {
+                "targets": [0],
+                "visible": false
             }
         ]
     });
