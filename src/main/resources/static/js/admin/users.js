@@ -2,9 +2,21 @@
  * Load all users on load or reload
  */
 $(document).ready(function () {
-    requestUsersFromServer();
+    let userTable = requestUsersFromServer();
+
+    // ToDo DanielW: move in separate method
+    $(document).on("click", "#user-table tbody tr", function() {
+        let data = userTable.row( this ).data();
+        $('#update-user-dialog').modal('show');
+    });
+
+    // create form
     $("#create-user-button").button().on("click", createUser);
-    $("#cancel-create-user-button").button().on("click", resetUserForm);
+    $("#cancel-create-user-button").button().on("click", resetCreateUserForm);
+
+    // update form
+    $("#update-user-button").button().on("click", updateUser);
+    $("#cancel-update-user-button").button().on("click", resetUpdateUserForm);
 });
 
 /**
@@ -12,7 +24,7 @@ $(document).ready(function () {
  */
 function requestUsersFromServer() {
     clearHtmlTable();
-    $('#user-table').DataTable( {
+    return $('#user-table').DataTable({
         'ajax': {
             'url': '/rest/v1/users',
             'type': 'GET',
@@ -30,7 +42,7 @@ function requestUsersFromServer() {
         ],
         "columnDefs": [
             {
-                "render": function ( data ) {
+                "render": function (data) {
                     if (data === 'Administrator') {
                         return '<span class="badge badge-danger">' + data + '</span>';
                     }
@@ -41,7 +53,7 @@ function requestUsersFromServer() {
                 "targets": 3
             },
             {
-                "render": function ( data ) {
+                "render": function (data) {
                     if (data) {
                         return '<span class="badge badge-success">Enabled</span>';
                     }
@@ -70,15 +82,24 @@ function clearHtmlTable() {
  * Creates a new administrator user.
  */
 function createUser () {
-    sendUserCreateRequest();
-    resetUserForm();
-    $('#admin-user-create-dialog').modal('hide');
+    sendCreateUserRequest();
+    resetCreateUserForm();
+    $('#create-admin-user-dialog').modal('hide');
+}
+
+/**
+ * Updates certain user.
+ */
+function updateUser () {
+    sendUpdateUserRequest();
+    resetUpdateUserForm();
+    $('#update-user-dialog').modal('hide');
 }
 
 /**
  * Create a new user on the server.
  */
-function sendUserCreateRequest() {
+function sendCreateUserRequest() {
     const user = {
         username: $("#username").val(),
         email: $("#email").val(),
@@ -100,8 +121,22 @@ function sendUserCreateRequest() {
 }
 
 /**
+ * Update a certain user on the server.
+ */
+function sendUpdateUserRequest() {
+    alert("ToDo"); // ToDo DanielW: Implement
+}
+
+/**
  * Reset the user create form
  */
-function resetUserForm() {
-    document.getElementById("create-admin-user-form").reset();
+function resetCreateUserForm() {
+    $("#create-admin-user-form")[0].reset();
+}
+
+/**
+ * Reset the user update form
+ */
+function resetUpdateUserForm() {
+    $("#update-user-form")[0].reset();
 }

@@ -6,7 +6,7 @@
     <body>
         <h1 class="h2 text-dark">Users</h1>
 
-        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="new-admin-user-button" data-toggle="modal" data-target="#admin-user-create-dialog">
+        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="new-admin-user-button" data-toggle="modal" data-target="#create-admin-user-dialog">
             New Administrator
         </button>
 
@@ -26,8 +26,14 @@
             </tbody>
         </table>
 
-        <div id="admin-user-create-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <!-- Create Form -->
+        <div id="create-admin-user-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
             <div th:replace="admin/users/create :: dialog"></div>
+        </div>
+
+        <!-- Update Form -->
+        <div id="update-user-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div th:replace="admin/users/update :: dialog"></div>
         </div>
     </body>
 </html>
