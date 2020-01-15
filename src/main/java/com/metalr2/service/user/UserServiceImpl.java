@@ -26,6 +26,7 @@ import org.springframework.util.comparator.BooleanComparator;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,17 +52,29 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public UserDto createUser(UserDto userDto) {
+    return createUserEntity(userDto, UserRole.createUserRole(), false);
+  }
+
+  @Override
+  @Transactional
+  // ToDo DanielW: Test
+  // ToDo Danielw: Brauchen wir die SuperUser Rolle überhaupt noch? Einen wirklichen Usecase gibt es nicht
+  public UserDto createAdministrator(UserDto userDto) {
+    return createUserEntity(userDto, UserRole.createSuperUserRole(), true);
+  }
+
+  private UserDto createUserEntity(UserDto userDto, Set<UserRole> roles, boolean enabled) {
     checkIfUserAlreadyExists(userDto.getUsername(), userDto.getEmail());
 
     // create user
     UserEntity userEntity = UserEntity.builder()
-            .username(userDto.getUsername())
-            .email(userDto.getEmail())
-            .password(passwordEncoder.encode(userDto.getPlainPassword()))
-            .userRoles(UserRole.createUserRole())
-            .build();
+        .username(userDto.getUsername())
+        .email(userDto.getEmail())
+        .password(passwordEncoder.encode(userDto.getPlainPassword()))
+        .userRoles(roles)
+        .enabled(enabled)
+        .build();
 
-    // persist user
     UserEntity savedUserEntity = userRepository.save(userEntity);
 
     return userMapper.mapToDto(savedUserEntity);

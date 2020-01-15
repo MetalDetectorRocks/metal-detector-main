@@ -1,12 +1,14 @@
+let userTable;
+
 /**
  * Load all users on load or reload
  */
 $(document).ready(function () {
-    let userTable = requestUsersFromServer();
+    userTable = requestUsersFromServer();
 
     // ToDo DanielW: move in separate method
     $(document).on("click", "#user-table tbody tr", function() {
-        let data = userTable.row( this ).data();
+        let data = userTable.row(this).data();
         $('#update-user-dialog').modal('show');
     });
 
@@ -40,6 +42,7 @@ function requestUsersFromServer() {
             {'data': 'lastLogin'},
             {'data': 'creationDate'}
         ],
+        "autoWidth": false, // fixes window resizing issue
         "columnDefs": [
             {
                 "render": function (data) {
@@ -100,20 +103,21 @@ function updateUser () {
  * Create a new user on the server.
  */
 function sendCreateUserRequest() {
-    const user = {
+    const createRequest = {
         username: $("#username").val(),
         email: $("#email").val(),
         plainPassword: $("#plainPassword").val(),
         verifyPlainPassword: $("#verifyPlainPassword").val()
     };
 
-    const successCallback = function () {
-        requestUsersFromServer();
+    const successCallback = function (createResponse) {
+        console.log(createResponse);
+        userTable.row.add(createResponse).draw(false);
     };
 
     $.post({
         url: '/rest/v1/users',
-        data: JSON.stringify(user),
+        data: JSON.stringify(createRequest),
         type: 'POST',
         contentType: 'application/json',
         success: successCallback
