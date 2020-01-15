@@ -2,8 +2,10 @@ package com.metalr2.service.releases;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.metalr2.config.misc.ReleaseButlerConfig;
 import com.metalr2.web.dto.releases.ReleasesRequest;
 import com.metalr2.web.dto.releases.ReleasesResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,34 +20,32 @@ import java.util.Collections;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class ReleasesServiceImpl implements ReleasesService {
 
-  private static final String ALL_RELEASES_URL_FRAGMENT = "rest/v1/releases/all";
-  private static final String BASE_URL_BUTLER = "http://localhost:8095/metal-release-butler/";
+  private static final String ALL_RELEASES_URL_FRAGMENT = "/rest/v1/releases";
 
   private final RestTemplate restTemplate;
+  private final ReleaseButlerConfig releaseButlerConfig;
   private final ObjectMapper mapper;
 
   @Autowired
-  public ReleasesServiceImpl(RestTemplate restTemplate) {
+  public ReleasesServiceImpl(RestTemplate restTemplate, ReleaseButlerConfig releaseButlerConfig) {
     this.restTemplate = restTemplate;
+    this.releaseButlerConfig = releaseButlerConfig;
     this.mapper = new ObjectMapper();
   }
 
   @Override
   public Optional<ReleasesResponse> getReleases(ReleasesRequest request) {
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
-    HttpEntity<String> requestEntity;
+    String requestBody = mapRequestBody(request);
 
-    try {
-      requestEntity = new HttpEntity<>(mapper.writeValueAsString(request), headers);
-    } catch (JsonProcessingException e){
+    if (requestBody == null) {
       return Optional.empty();
     }
 
-    ResponseEntity<ReleasesResponse> responseEntity = restTemplate.postForEntity(BASE_URL_BUTLER + ALL_RELEASES_URL_FRAGMENT,
+    HttpEntity<String> requestEntity = createHttpEntity(requestBody);
+    ResponseEntity<ReleasesResponse> responseEntity = restTemplate.postForEntity(releaseButlerConfig.getRestBaseUrl() + ALL_RELEASES_URL_FRAGMENT,
                                                                                  requestEntity, ReleasesResponse.class);
 
     ReleasesResponse response = responseEntity.getBody();
@@ -54,5 +54,27 @@ public class ReleasesServiceImpl implements ReleasesService {
     }
 
     return Optional.of(response);
+  }
+
+  private String mapRequestBody(ReleasesRequest request) {
+    String requestBody;
+
+    try {
+      requestBody = mapper.writeValueAsString(request);
+    }
+    catch (JsonProcessingException e) {
+      log.warn("Exception parsing release request: " + request.toString());
+      return null;
+    }
+
+    return requestBody;
+  }
+
+  private HttpEntity<String> createHttpEntity(String requestBody) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
+    return new HttpEntity<>(requestBody, headers);
   }
 }

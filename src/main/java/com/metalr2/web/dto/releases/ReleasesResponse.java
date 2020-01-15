@@ -9,26 +9,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @JsonPropertyOrder({
-    "currentPage",
-    "size",
-    "totalPages",
     "totalReleases",
     "releases"
 })
 @NoArgsConstructor
 public class ReleasesResponse {
-
-  @JsonProperty("currentPage")
-  private int currentPage;
-
-  @JsonProperty("size")
-  private int size;
-
-  @JsonProperty("totalPages")
-  private int totalPages;
-
-  @JsonProperty("totalReleases")
-  private long totalReleases;
 
   @JsonProperty("releases")
   private Iterable<ReleaseDto> releases;
