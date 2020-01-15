@@ -23,17 +23,17 @@ import java.util.Optional;
 @Slf4j
 public class ReleasesServiceImpl implements ReleasesService {
 
-  private static final String ALL_RELEASES_URL_FRAGMENT = "/rest/v1/releases";
+  static final String ALL_RELEASES_URL_FRAGMENT = "/rest/v1/releases";
 
   private final RestTemplate restTemplate;
   private final ReleaseButlerConfig releaseButlerConfig;
   private final ObjectMapper mapper;
 
   @Autowired
-  public ReleasesServiceImpl(RestTemplate restTemplate, ReleaseButlerConfig releaseButlerConfig) {
+  public ReleasesServiceImpl(RestTemplate restTemplate, ReleaseButlerConfig releaseButlerConfig, ObjectMapper mapper) {
     this.restTemplate = restTemplate;
     this.releaseButlerConfig = releaseButlerConfig;
-    this.mapper = new ObjectMapper();
+    this.mapper = mapper;
   }
 
   @Override

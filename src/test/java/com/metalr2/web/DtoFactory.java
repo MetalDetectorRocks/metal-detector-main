@@ -5,12 +5,16 @@ import com.metalr2.web.dto.discogs.artist.DiscogsArtist;
 import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResult;
 import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.DiscogsPagination;
+import com.metalr2.web.dto.releases.ReleaseDto;
+import com.metalr2.web.dto.releases.ReleasesResponse;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
 import com.metalr2.web.dto.response.Pagination;
 import com.metalr2.web.dto.response.SearchResponse;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -141,6 +145,32 @@ public class DtoFactory {
       discogsArtist.setName("Darkthrone");
       discogsArtist.setProfile("profile");
       return discogsArtist;
+    }
+  }
+
+  public static class ReleasesResponseFactory {
+
+    public static ReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
+      return new ReleasesResponse(Collections.singletonList(ReleaseDtoFactory.withOneResult("A1", releaseDate)));
+    }
+
+    public static ReleasesResponse withEmptyResult() {
+      return new ReleasesResponse(Collections.emptyList());
+    }
+  }
+
+  public static class ReleaseDtoFactory {
+
+    public static ReleaseDto withOneResult(String artist, LocalDate releaseDate) {
+      return new ReleaseDto(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate");
+    }
+
+    static List<ReleaseDto> withMultipleResults(int number, LocalDate releaseDate) {
+      List<ReleaseDto> dtos = new ArrayList<>();
+      for (int i = 0; i < number; i++) {
+        dtos.add(new ReleaseDto("A" + i, Collections.singletonList("A" + i), "T", releaseDate, "releaseDate"));
+      }
+      return dtos;
     }
   }
 }
