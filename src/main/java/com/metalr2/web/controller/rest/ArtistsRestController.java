@@ -30,9 +30,9 @@ public class ArtistsRestController {
   }
 
   @GetMapping(path = Endpoints.Rest.SEARCH,
-      produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<SearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
-                                                         @PageableDefault(page = 0, size = 10) Pageable pageable) {
+                                                         @PageableDefault Pageable pageable) {
     Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(query,
                                                                                    pageable.getPageNumber(),
                                                                                    pageable.getPageSize());
@@ -40,7 +40,7 @@ public class ArtistsRestController {
   }
 
   @GetMapping(path = "/{discogsId}",
-      produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<ArtistDetailsResponse> handleDetailsSearchRequest(@PathVariable long discogsId) {
     Optional<ArtistDetailsResponse> responseOptional = artistsService.searchDiscogsById(discogsId);
     return ResponseEntity.of(responseOptional);
