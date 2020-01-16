@@ -32,6 +32,7 @@ import java.util.Optional;
 
 import static com.metalr2.web.DtoFactory.ArtistDetailsResponseFactory;
 import static com.metalr2.web.DtoFactory.ArtistNameSearchResponseFactory;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -176,7 +177,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
 
       // then
       validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value());
-      verify(artistsService, times(0)).searchDiscogsByName(request.getQuery(), request.getPage(), request.getSize());
+      verify(artistsService, never()).searchDiscogsByName(request.getQuery(), request.getPage(), request.getSize());
     }
 
     @Test

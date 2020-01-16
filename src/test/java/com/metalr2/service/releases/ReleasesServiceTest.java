@@ -60,6 +60,9 @@ class ReleasesServiceTest implements WithAssertions {
   @InjectMocks
   private ReleasesServiceImpl releasesService;
 
+  @Captor
+  private ArgumentCaptor<HttpEntity<String>> argumentCaptor;
+
   @BeforeEach
   void setUp() {
   }
@@ -73,7 +76,8 @@ class ReleasesServiceTest implements WithAssertions {
   @DisplayName("getReleases() should return valid result")
   void get_releases_valid_result() throws JsonProcessingException {
     // given
-    ReleasesResponse responseMock = DtoFactory.ReleasesResponseFactory.withOneResult("A1", LocalDate.of(2020, 1, 1));
+    LocalDate releaseDate = LocalDate.of(2020, 1, 1);
+    ReleasesResponse responseMock = DtoFactory.ReleasesResponseFactory.withOneResult("A1", releaseDate);
     ReleasesRequest request = new ReleasesRequest();
     when(releaseButlerConfig.getRestBaseUrl()).thenReturn(BASE_URL);
     when(restTemplate.postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ReleasesResponse.class)))
@@ -88,7 +92,7 @@ class ReleasesServiceTest implements WithAssertions {
 
     ReleasesResponse response = responseOptional.get();
     assertThat(response.getReleases()).hasSize(1);
-    assertThat(response.getReleases().iterator().next()).isEqualTo(DtoFactory.ReleaseDtoFactory.withOneResult("A1", LocalDate.of(2020, 1, 1)));
+    assertThat(response.getReleases().iterator().next()).isEqualTo(DtoFactory.ReleaseDtoFactory.withOneResult("A1", releaseDate));
 
     verify(mapper, times(1)).writeValueAsString(request);
     verify(restTemplate, times(1)).postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ReleasesResponse.class));
@@ -97,7 +101,7 @@ class ReleasesServiceTest implements WithAssertions {
 
   @ParameterizedTest(name = "[{index}] => Result <{0}> | HttpStatus <{1}>")
   @MethodSource("responseProvider")
-  @DisplayName("getReleases() should return empty result on parsing error")
+  @DisplayName("getReleases() should return empty result on when butler sends no usable response")
   void get_releases_empty_response(ReleasesResponse responseMock, HttpStatus httpStatus) throws JsonProcessingException {
     // given
     ReleasesRequest request = new ReleasesRequest();
@@ -118,7 +122,7 @@ class ReleasesServiceTest implements WithAssertions {
   }
 
   private static Stream<Arguments> responseProvider() {
-    ReleasesResponse result = ReleasesResponseFactory.withOneResult("A1", LocalDate.of(2020, 1, 1));
+    ReleasesResponse result = ReleasesResponseFactory.withOneResult("A1", LocalDate.now());
     ReleasesResponse emptyResult = ReleasesResponseFactory.withEmptyResult();
     return Stream.of(
         Arguments.of(null, HttpStatus.OK),
@@ -142,14 +146,11 @@ class ReleasesServiceTest implements WithAssertions {
     verify(mapper, times(1)).writeValueAsString(request);
   }
 
-  @Captor
-  private ArgumentCaptor<HttpEntity<String>> argumentCaptor;
-
   @Test
   @DisplayName("Test http entity request")
   void test_http_entity() throws JsonProcessingException {
     // given
-    ReleasesResponse responseMock = DtoFactory.ReleasesResponseFactory.withOneResult("A1", LocalDate.of(2020, 1, 1));
+    ReleasesResponse responseMock = DtoFactory.ReleasesResponseFactory.withOneResult("A1", LocalDate.now());
     ReleasesRequest request = new ReleasesRequest();
     when(releaseButlerConfig.getRestBaseUrl()).thenReturn(BASE_URL);
     when(restTemplate.postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ReleasesResponse.class)))

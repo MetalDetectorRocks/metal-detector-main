@@ -35,6 +35,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -195,8 +196,8 @@ class ArtistsServiceTest implements WithAssertions {
 
       // then
       verify(artistsRepository, times(1)).existsByArtistDiscogsId(artistEntity.getArtistDiscogsId());
-      verify(artistSearchClient, times(0)).searchById(anyLong());
-      verify(artistsRepository, times(0)).save(any(ArtistEntity.class));
+      verify(artistSearchClient, never()).searchById(anyLong());
+      verify(artistsRepository, never()).save(any(ArtistEntity.class));
 
       assertThat(saved).isTrue();
     }
@@ -213,7 +214,7 @@ class ArtistsServiceTest implements WithAssertions {
       // then
       verify(artistsRepository, times(1)).existsByArtistDiscogsId(artistEntity.getArtistDiscogsId());
       verify(artistSearchClient, times(1)).searchById(artistEntity.getArtistDiscogsId());
-      verify(artistsRepository, times(0)).save(any(ArtistEntity.class));
+      verify(artistsRepository, never()).save(any(ArtistEntity.class));
 
       assertThat(saved).isFalse();
     }
@@ -265,7 +266,7 @@ class ArtistsServiceTest implements WithAssertions {
 
       // then
       assertThat(result).isFalse();
-      verify(followedArtistsRepository, times(0)).save(any());
+      verify(followedArtistsRepository, never()).save(any());
     }
 
     @Test
@@ -301,7 +302,7 @@ class ArtistsServiceTest implements WithAssertions {
       assertThat(result).isFalse();
 
       verify(followedArtistsRepository, times(1)).findByPublicUserIdAndArtistDiscogsId(USER_ID, DISCOGS_ID);
-      verify(followedArtistsRepository, times(0)).delete(new FollowedArtistEntity(USER_ID, DISCOGS_ID));
+      verify(followedArtistsRepository, never()).delete(new FollowedArtistEntity(USER_ID, DISCOGS_ID));
     }
 
     @Test
