@@ -13,7 +13,6 @@ import com.metalr2.web.dto.discogs.misc.DiscogsImage;
 import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.DiscogsPagination;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.MyArtistsResponse;
 import com.metalr2.web.dto.response.Pagination;
 import com.metalr2.web.dto.response.SearchResponse;
 import org.modelmapper.ModelMapper;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.metalr2.web.dto.response.MyArtistsResponse.Artist;
 import static com.metalr2.web.dto.response.SearchResponse.SearchResult;
 
 @Service
@@ -95,27 +93,35 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public MyArtistsResponse findFollowedArtistsPerUser(String publicUserId) {
-    List<FollowedArtistEntity> followedArtistEntities = followedArtistsRepository.findAllByPublicUserId(publicUserId);
-    return mapMyArtistResponse(followedArtistEntities);
+  public List<ArtistDto> findFollowedArtistsPerUser(String publicUserId) {
+    List<FollowedArtistEntity> followedArtistEntities = followedArtistsRepository.findByPublicUserId(publicUserId);
+    return mapArtistDtos(followedArtistEntities);
   }
 
   @Override
-  public MyArtistsResponse findFollowedArtistsPerUser(String publicUserId, Pageable pageable) {
-    List<FollowedArtistEntity> followedArtistEntities = followedArtistsRepository.findAllByPublicUserId(publicUserId, pageable);
-    MyArtistsResponse response = mapMyArtistResponse(followedArtistEntities);
-    response.setPagination(mapPagination(followedArtistEntities.size(), pageable));
-    return response;
+  public List<ArtistDto> findFollowedArtistsPerUser(String publicUserId, Pageable pageable) {
+    List<FollowedArtistEntity> followedArtistEntities = followedArtistsRepository.findByPublicUserId(publicUserId, pageable);
+    return mapArtistDtos(followedArtistEntities);
   }
 
   @Override
-  public MyArtistsResponse findFollowedArtistsForCurrentUser() {
+  public List<ArtistDto> findFollowedArtistsForCurrentUser() {
     return findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId());
   }
 
   @Override
-  public MyArtistsResponse findFollowedArtistsForCurrentUser(Pageable pageable) {
+  public List<ArtistDto> findFollowedArtistsForCurrentUser(Pageable pageable) {
     return findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId(), pageable);
+  }
+
+  @Override
+  public long countFollowedArtistsPerUser(String publicUserId) {
+    return followedArtistsRepository.countByPublicUserId(publicUserId);
+  }
+
+  @Override
+  public long countFollowedArtistsForCurrentUser() {
+    return countFollowedArtistsPerUser(currentUserSupplier.get().getPublicId());
   }
 
   @Override
@@ -153,7 +159,7 @@ public class ArtistsServiceImpl implements ArtistsService {
 
     int itemsPerPage = discogsPagination.getItemsPerPage();
 
-    List<Long> alreadyFollowedArtists = findFollowedArtistsForCurrentUser().getMyArtists().stream().map(Artist::getDiscogsId)
+    List<Long> alreadyFollowedArtists = findFollowedArtistsForCurrentUser().stream().map(ArtistDto::getDiscogsId)
         .collect(Collectors.toList());
 
     List<SearchResult> dtoSearchResults = artistSearchResults.getResults().stream()
@@ -189,15 +195,8 @@ public class ArtistsServiceImpl implements ArtistsService {
     return new ArtistEntity(artist.getId(), artist.getName(), thumb);
   }
 
-  private MyArtistsResponse mapMyArtistResponse(List<FollowedArtistEntity> followedArtistEntities) {
-    List<ArtistDto> artistDtos = findAllArtistsByDiscogsIds(followedArtistEntities.stream().mapToLong(FollowedArtistEntity::getDiscogsId).toArray());
-    List<Artist> artists = artistDtos.stream().map(artistDto -> mapper.map(artistDto,Artist.class)).collect(Collectors.toList());
-    return new MyArtistsResponse(artists);
-  }
-
-  private Pagination mapPagination(int totalElements, Pageable pageable) {
-    int totalPages = totalElements % pageable.getPageSize() == 0 ? totalElements / pageable.getPageSize() : totalElements / pageable.getPageSize() + 1;
-    return new Pagination(totalPages, pageable.getPageNumber(), pageable.getPageSize());
+  private List<ArtistDto> mapArtistDtos(List<FollowedArtistEntity> followedArtistEntities) {
+    return findAllArtistsByDiscogsIds(followedArtistEntities.stream().mapToLong(FollowedArtistEntity::getDiscogsId).toArray());
   }
 
 }

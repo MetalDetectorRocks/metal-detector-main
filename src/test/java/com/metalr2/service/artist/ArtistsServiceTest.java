@@ -9,7 +9,6 @@ import com.metalr2.security.CurrentUserSupplier;
 import com.metalr2.service.discogs.DiscogsArtistSearchRestClient;
 import com.metalr2.web.dto.ArtistDto;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.MyArtistsResponse;
 import com.metalr2.web.dto.response.Pagination;
 import com.metalr2.web.dto.response.SearchResponse;
 import org.assertj.core.api.WithAssertions;
@@ -32,13 +31,12 @@ import org.springframework.data.domain.PageRequest;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.metalr2.web.DtoFactory.ArtistEntityFactory;
 import static com.metalr2.web.DtoFactory.ArtistFactory;
 import static com.metalr2.web.DtoFactory.DiscogsArtistSearchResultFactory;
-import static com.metalr2.web.DtoFactory.FollowArtistFactory;
-import static com.metalr2.web.dto.response.MyArtistsResponse.Artist;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyLong;
@@ -51,9 +49,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ArtistsServiceTest implements WithAssertions {
 
-  private static final long DISCOGS_ID    = 252211L;
+  private static final long DISCOGS_ID = 252211L;
   private static final String ARTIST_NAME = "Darkthrone";
-  private static final String USER_ID     = "TestId";
+  private static final String USER_ID = "TestId";
 
   @Mock
   private CurrentUserSupplier currentUserSupplier;
@@ -86,11 +84,10 @@ class ArtistsServiceTest implements WithAssertions {
   @DisplayName("Testing artist repository")
   class ArtistRepositoryTest {
 
-
     @BeforeEach
     void setUp() {
       artistEntity = new ArtistEntity(DISCOGS_ID, ARTIST_NAME, null);
-      artistDto    = new ArtistDto(DISCOGS_ID, ARTIST_NAME, null);
+      artistDto = new ArtistDto(DISCOGS_ID, ARTIST_NAME, null);
     }
 
     @Test
@@ -225,7 +222,6 @@ class ArtistsServiceTest implements WithAssertions {
 
       assertThat(saved).isFalse();
     }
-
   }
 
   @Nested
@@ -239,7 +235,7 @@ class ArtistsServiceTest implements WithAssertions {
 
     @Test
     @DisplayName("Following an artist for a given user id should work")
-    void follow_artist_succeeds(){
+    void follow_artist_succeeds() {
       // given
       ArgumentCaptor<FollowedArtistEntity> followArtistEntityCaptor = ArgumentCaptor.forClass(FollowedArtistEntity.class);
 
@@ -264,7 +260,7 @@ class ArtistsServiceTest implements WithAssertions {
 
     @Test
     @DisplayName("Following an artist for a given user id can fail")
-    void follow_artist_fails(){
+    void follow_artist_fails() {
       // given
       when(artistSearchClient.searchById(DISCOGS_ID)).thenReturn(Optional.empty());
 
@@ -278,7 +274,7 @@ class ArtistsServiceTest implements WithAssertions {
 
     @Test
     @DisplayName("Unfollowing a combination of artist and user which exist should return true")
-    void unfollow_existing_artist_should_return_true(){
+    void unfollow_existing_artist_should_return_true() {
       // given
       when(followedArtistsRepository.findByPublicUserIdAndDiscogsId(anyString(), anyLong())).thenReturn(Optional.of(new FollowedArtistEntity(USER_ID, DISCOGS_ID)));
       when(currentUserSupplier.get()).thenReturn(userEntity);
@@ -296,7 +292,7 @@ class ArtistsServiceTest implements WithAssertions {
 
     @Test
     @DisplayName("Unfollowing a combination of artist and user which do not exist should return false")
-    void unfollow_not_existing_artist_should_return_false(){
+    void unfollow_not_existing_artist_should_return_false() {
       // given
       when(followedArtistsRepository.findByPublicUserIdAndDiscogsId(anyString(), anyLong())).thenReturn(Optional.empty());
       when(currentUserSupplier.get()).thenReturn(userEntity);
@@ -314,7 +310,7 @@ class ArtistsServiceTest implements WithAssertions {
 
     @Test
     @DisplayName("isFollowed() should return true if the given combination from user id and artist discogs id exists")
-    void is_followed_should_return_true_for_existing_entity(){
+    void is_followed_should_return_true_for_existing_entity() {
       // given
       when(followedArtistsRepository.existsByPublicUserIdAndDiscogsId(anyString(), anyLong())).thenReturn(true);
       when(currentUserSupplier.get()).thenReturn(userEntity);
@@ -330,7 +326,7 @@ class ArtistsServiceTest implements WithAssertions {
 
     @Test
     @DisplayName("isFollowed() should return false if the given combination from user id and artist discogs id does not exist")
-    void is_followed_should_return_false_for_not_existing_entity(){
+    void is_followed_should_return_false_for_not_existing_entity() {
       // given
       when(followedArtistsRepository.existsByPublicUserIdAndDiscogsId(anyString(), anyLong())).thenReturn(false);
       when(currentUserSupplier.get()).thenReturn(userEntity);
@@ -346,91 +342,70 @@ class ArtistsServiceTest implements WithAssertions {
 
     @Test
     @DisplayName("findFollowedArtistsPerUser() finds the correct entities for a given user id if it exists")
-    void find_per_user_finds_correct_entities(){
+    void find_per_user_finds_correct_entities() {
       // given
-      when(followedArtistsRepository.findAllByPublicUserId(anyString())).thenReturn(Collections.singletonList(new FollowedArtistEntity(USER_ID, DISCOGS_ID)));
+      when(followedArtistsRepository.findByPublicUserId(anyString())).thenReturn(Collections.singletonList(new FollowedArtistEntity(USER_ID, DISCOGS_ID)));
       when(artistsRepository.findAllByArtistDiscogsIdIn(any())).thenReturn(Collections.singletonList(new ArtistEntity(DISCOGS_ID, ARTIST_NAME, null)));
 
       // when
-      MyArtistsResponse myArtists = artistsService.findFollowedArtistsPerUser(USER_ID);
+      List<ArtistDto> myArtists = artistsService.findFollowedArtistsPerUser(USER_ID);
 
       // then
-      assertThat(myArtists.getMyArtists()).isNotEmpty();
-      assertThat(myArtists.getMyArtists().get(0).getDiscogsId()).isEqualTo(DISCOGS_ID);
+      assertThat(myArtists).isNotEmpty();
+      assertThat(myArtists.get(0).getDiscogsId()).isEqualTo(DISCOGS_ID);
 
-      verify(followedArtistsRepository, times(1)).findAllByPublicUserId(USER_ID);
+      verify(followedArtistsRepository, times(1)).findByPublicUserId(USER_ID);
     }
 
-    @ParameterizedTest(name = "[{index}] => FollowedArtists <{0}> | PageRequest<{1}> | Offset <{2}> | PagesExpected <{3}>")
+    @ParameterizedTest(name = "[{index}] => MockedFollowedArtists <{0}> | PageRequest<{1}> | Offset <{2}> | MockedEntities <{3}>")
     @MethodSource(value = "inputProviderPagination")
     @DisplayName("findFollowedArtistsPerUser() finds the correct entities with pagination for a given user id if it exists")
-    void find_per_user_finds_correct_entities_pagination(int followedArtists, PageRequest pageRequest, int offset){
+    void find_per_user_finds_correct_entities_pagination(List<FollowedArtistEntity> followedArtists, PageRequest pageRequest, int offset, List<ArtistEntity> mockedArtistEntities) {
       // given
-      when(followedArtistsRepository.findAllByPublicUserId(USER_ID, pageRequest)).thenReturn(FollowArtistFactory.createFollowArtistEntities(followedArtists));
-      when(artistsRepository.findAllByArtistDiscogsIdIn(any())).thenReturn(ArtistEntityFactory.createArtistEntities(pageRequest.getPageSize(), offset));
+      when(followedArtistsRepository.findByPublicUserId(USER_ID, pageRequest)).thenReturn(followedArtists);
+      when(artistsRepository.findAllByArtistDiscogsIdIn(any())).thenReturn(mockedArtistEntities);
 
       // when
-      MyArtistsResponse myArtists = artistsService.findFollowedArtistsPerUser(USER_ID, pageRequest);
+      List<ArtistDto> myArtists = artistsService.findFollowedArtistsPerUser(USER_ID, pageRequest);
 
       // then
-      assertThat(myArtists.getMyArtists()).isNotEmpty();
+      assertThat(myArtists).isNotEmpty();
 
-      List<Artist> myArtistEntities = myArtists.getMyArtists();
-
-      for (int i = 0; i < myArtistEntities.size(); i++) {
-        Artist artist = myArtistEntities.get(i);
+      for (int i = 0; i < myArtists.size(); i++) {
+        ArtistDto artist = myArtists.get(i);
         int expectedId = offset + i + 1;
         assertThat(artist.getDiscogsId()).isEqualTo(expectedId);
         assertThat(artist.getArtistName()).isEqualTo(String.valueOf(expectedId));
         assertThat(artist.getThumb()).isNull();
       }
 
-      verify(followedArtistsRepository, times(1)).findAllByPublicUserId(USER_ID, pageRequest);
-      verify(artistsRepository, times(1)).findAllByArtistDiscogsIdIn(any());
-    }
-
-    @ParameterizedTest(name = "[{index}] => FollowedArtists <{0}> | PageRequest<{1}> | Offset <{2}> | PagesExpected <{3}>")
-    @MethodSource(value = "inputProviderPagination")
-    @DisplayName("findFollowedArtistsPerUser() finds the correct entities with pagination for a given user id if it exists")
-    void find_per_user_finds_correct_entities_pagination_test(int followedArtists, PageRequest pageRequest, int offset, int totalPagesExpected){
-      // given
-      when(followedArtistsRepository.findAllByPublicUserId(USER_ID, pageRequest)).thenReturn(FollowArtistFactory.createFollowArtistEntities(followedArtists));
-      when(artistsRepository.findAllByArtistDiscogsIdIn(any())).thenReturn(ArtistEntityFactory.createArtistEntities(pageRequest.getPageSize(), offset));
-
-      // when
-      MyArtistsResponse myArtists = artistsService.findFollowedArtistsPerUser(USER_ID, pageRequest);
-
-      // then
-      Pagination pagination = myArtists.getPagination();
-
-      assertThat(pagination).isNotNull();
-      assertThat(pagination.getCurrentPage()).isEqualTo(pageRequest.getPageNumber());
-      assertThat(pagination.getItemsPerPage()).isEqualTo(pageRequest.getPageSize());
-      assertThat(pagination.getTotalPages()).isEqualTo(totalPagesExpected);
-
-      verify(followedArtistsRepository, times(1)).findAllByPublicUserId(USER_ID, pageRequest);
+      verify(followedArtistsRepository, times(1)).findByPublicUserId(USER_ID, pageRequest);
       verify(artistsRepository, times(1)).findAllByArtistDiscogsIdIn(any());
     }
 
     private Stream<Arguments> inputProviderPagination() {
+      List<FollowedArtistEntity> mockedFollowedArtists1 = IntStream.range(1, 7).mapToObj(entity -> new FollowedArtistEntity(String.valueOf(entity), entity)).collect(Collectors.toList());
+      List<FollowedArtistEntity> mockedFollowedArtists2 = IntStream.range(1, 21).mapToObj(entity -> new FollowedArtistEntity(String.valueOf(entity), entity)).collect(Collectors.toList());
+      List<ArtistEntity> mockedArtistEntities1 = IntStream.range(4, 7).mapToObj(entity -> new ArtistEntity(entity, String.valueOf(entity), null)).collect(Collectors.toList());
+      List<ArtistEntity> mockedArtistEntities2 = IntStream.range(11, 13).mapToObj(entity -> new ArtistEntity(entity, String.valueOf(entity), null)).collect(Collectors.toList());
       return Stream.of(
-          Arguments.of(6, PageRequest.of(2, 3), 3, 2),
-          Arguments.of(20, PageRequest.of(10, 2), 10, 10)
+          Arguments.of(mockedFollowedArtists1, PageRequest.of(2, 3), 3, mockedArtistEntities1),
+          Arguments.of(mockedFollowedArtists2, PageRequest.of(10, 2), 10, mockedArtistEntities2)
       );
     }
 
     @Test
     @DisplayName("findFollowedArtistsPerUser() returns empty list if a given user id does not exists")
-    void find_per_user_returns_empty_list(){
+    void find_per_user_returns_empty_list() {
       // given
-      when(followedArtistsRepository.findAllByPublicUserId(anyString())).thenReturn(Collections.emptyList());
+      when(followedArtistsRepository.findByPublicUserId(anyString())).thenReturn(Collections.emptyList());
 
       // when
-      MyArtistsResponse myArtists = artistsService.findFollowedArtistsPerUser(USER_ID);
+      List<ArtistDto> myArtists = artistsService.findFollowedArtistsPerUser(USER_ID);
 
       // then
-      assertThat(myArtists.getMyArtists()).isEmpty();
-      verify(followedArtistsRepository, times(1)).findAllByPublicUserId(USER_ID);
+      assertThat(myArtists).isEmpty();
+      verify(followedArtistsRepository, times(1)).findByPublicUserId(USER_ID);
     }
 
     @Test
@@ -439,15 +414,15 @@ class ArtistsServiceTest implements WithAssertions {
       // given
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
-      when(followedArtistsRepository.findAllByPublicUserId(USER_ID)).thenReturn(Collections.singletonList(new FollowedArtistEntity(USER_ID, DISCOGS_ID)));
+      when(followedArtistsRepository.findByPublicUserId(USER_ID)).thenReturn(Collections.singletonList(new FollowedArtistEntity(USER_ID, DISCOGS_ID)));
       when(artistsRepository.findAllByArtistDiscogsIdIn(DISCOGS_ID)).thenReturn(Collections.singletonList(new ArtistEntity(DISCOGS_ID, ARTIST_NAME, null)));
 
       // when
-      MyArtistsResponse myArtists = artistsService.findFollowedArtistsForCurrentUser();
+      List<ArtistDto> myArtists = artistsService.findFollowedArtistsForCurrentUser();
 
       // then
-      assertThat(myArtists.getMyArtists()).hasSize(1);
-      assertThat(myArtists.getMyArtists().get(0).getDiscogsId()).isEqualTo(DISCOGS_ID);
+      assertThat(myArtists).hasSize(1);
+      assertThat(myArtists.get(0).getDiscogsId()).isEqualTo(DISCOGS_ID);
 
       verify(currentUserSupplier, times(1)).get();
       String publicId = verify(userEntity, times(1)).getPublicId();
@@ -457,19 +432,50 @@ class ArtistsServiceTest implements WithAssertions {
     @DisplayName("findFollowedArtistsForCurrentUser() calls findFollowedArtistsPerUser() with current user id and page request")
     void find_for_current_user_pageable() {
       // given
-      PageRequest pageRequest = PageRequest.of(1,1);
+      PageRequest pageRequest = PageRequest.of(1, 1);
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
-      when(followedArtistsRepository.findAllByPublicUserId(USER_ID, pageRequest)).thenReturn(Collections.singletonList(new FollowedArtistEntity(USER_ID, DISCOGS_ID)));
+      when(followedArtistsRepository.findByPublicUserId(USER_ID, pageRequest)).thenReturn(Collections.singletonList(new FollowedArtistEntity(USER_ID, DISCOGS_ID)));
       when(artistsRepository.findAllByArtistDiscogsIdIn(DISCOGS_ID)).thenReturn(Collections.singletonList(new ArtistEntity(DISCOGS_ID, ARTIST_NAME, null)));
 
       // when
-      MyArtistsResponse myArtists = artistsService.findFollowedArtistsForCurrentUser(pageRequest);
+      List<ArtistDto> myArtists = artistsService.findFollowedArtistsForCurrentUser(pageRequest);
 
       // then
-      assertThat(myArtists.getMyArtists()).hasSize(1);
-      assertThat(myArtists.getMyArtists().get(0).getDiscogsId()).isEqualTo(DISCOGS_ID);
+      assertThat(myArtists).hasSize(1);
+      assertThat(myArtists.get(0).getDiscogsId()).isEqualTo(DISCOGS_ID);
 
+      verify(currentUserSupplier, times(1)).get();
+      String publicId = verify(userEntity, times(1)).getPublicId();
+    }
+
+    @Test
+    @DisplayName("countFollowedArtistsPerUser() counts correct number of entities")
+    void count_per_user() {
+      // given
+      when(followedArtistsRepository.countByPublicUserId(USER_ID)).thenReturn(10L);
+
+      // when
+      long numberOfEntities = artistsService.countFollowedArtistsPerUser(USER_ID);
+
+      // then
+      assertThat(numberOfEntities).isEqualTo(10);
+      verify(followedArtistsRepository, times(1)).countByPublicUserId(USER_ID);
+    }
+
+    @Test
+    @DisplayName("countFollowedArtistsForCurrentUser() calls findFollowedArtistsPerUser() with current user id")
+    void count_for_current_user() {
+      // given
+      when(followedArtistsRepository.countByPublicUserId(USER_ID)).thenReturn(10L);
+      when(currentUserSupplier.get()).thenReturn(userEntity);
+      when(userEntity.getPublicId()).thenReturn(USER_ID);
+
+      // when
+      long numberOfEntities = artistsService.countFollowedArtistsForCurrentUser();
+
+      // then
+      assertThat(numberOfEntities).isEqualTo(10);
       verify(currentUserSupplier, times(1)).get();
       String publicId = verify(userEntity, times(1)).getPublicId();
     }
@@ -480,9 +486,9 @@ class ArtistsServiceTest implements WithAssertions {
   @DisplayName("Testing name and id search")
   class SearchTest {
 
-    private static final int PAGE         = 1;
-    private static final int SIZE         = 10;
-    private static final int TOTAL_PAGES  = 2;
+    private static final int PAGE = 1;
+    private static final int SIZE = 10;
+    private static final int TOTAL_PAGES = 2;
 
     @BeforeEach
     void setUp() {
@@ -490,7 +496,7 @@ class ArtistsServiceTest implements WithAssertions {
 
     @Test
     @DisplayName("searchDiscogsByName() returns retuns a valid result")
-    void search_by_name_returns_valid_result(){
+    void search_by_name_returns_valid_result() {
       // given
       when(artistSearchClient.searchByName(ARTIST_NAME, PAGE, SIZE)).thenReturn(Optional.of(DiscogsArtistSearchResultFactory.withOneCertainResult()));
       when(currentUserSupplier.get()).thenReturn(userEntity);
@@ -512,12 +518,12 @@ class ArtistsServiceTest implements WithAssertions {
       Pagination pagination = response.getPagination();
       assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, PAGE, SIZE));
 
-      verify(artistSearchClient,times(1)).searchByName(ARTIST_NAME, PAGE, SIZE);
+      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PAGE, SIZE);
     }
 
     @Test
     @DisplayName("searchDiscogsByName() returns returns empty result")
-    void search_by_name_returns_empy_result(){
+    void search_by_name_returns_empy_result() {
       // given
       when(artistSearchClient.searchByName(anyString(), anyInt(), anyInt())).thenReturn(Optional.empty());
 
@@ -531,7 +537,7 @@ class ArtistsServiceTest implements WithAssertions {
 
     @Test
     @DisplayName("searchDiscogsById() returns returns a valid result")
-    void search_by_id_returns_valid_result(){
+    void search_by_id_returns_valid_result() {
       // given
       when(artistSearchClient.searchById(DISCOGS_ID)).thenReturn(Optional.of(ArtistFactory.createTestArtist()));
       when(currentUserSupplier.get()).thenReturn(userEntity);
@@ -549,7 +555,7 @@ class ArtistsServiceTest implements WithAssertions {
 
     @Test
     @DisplayName("searchDiscogsById() returns empty result")
-    void search_by_id_returns_empty_result(){
+    void search_by_id_returns_empty_result() {
       // given
       when(artistSearchClient.searchById(anyLong())).thenReturn(Optional.empty());
 
@@ -560,7 +566,5 @@ class ArtistsServiceTest implements WithAssertions {
       assertThat(responseOptional).isEmpty();
       verify(artistSearchClient, times(1)).searchById(DISCOGS_ID);
     }
-
   }
-
 }

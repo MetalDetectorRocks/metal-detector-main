@@ -2,7 +2,6 @@ package com.metalr2.service.artist;
 
 import com.metalr2.web.dto.ArtistDto;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.MyArtistsResponse;
 import com.metalr2.web.dto.response.SearchResponse;
 import org.springframework.data.domain.Pageable;
 
@@ -19,10 +18,12 @@ public interface ArtistsService {
   boolean followArtist(long discogsId);
   boolean unfollowArtist(long discogsId);
   boolean isFollowed(long discogsId);
-  MyArtistsResponse findFollowedArtistsPerUser(String publicUserId);
-  MyArtistsResponse findFollowedArtistsPerUser(String publicUserId, Pageable pageable);
-  MyArtistsResponse findFollowedArtistsForCurrentUser();
-  MyArtistsResponse findFollowedArtistsForCurrentUser(Pageable pageable);
+  List<ArtistDto> findFollowedArtistsPerUser(String publicUserId);
+  List<ArtistDto> findFollowedArtistsPerUser(String publicUserId, Pageable pageable);
+  List<ArtistDto> findFollowedArtistsForCurrentUser();
+  List<ArtistDto> findFollowedArtistsForCurrentUser(Pageable pageable);
+  long countFollowedArtistsPerUser(String publicUserId);
+  long countFollowedArtistsForCurrentUser();
 
   Optional<SearchResponse> searchDiscogsByName(String artistQueryString, int page, int size);
   Optional<ArtistDetailsResponse> searchDiscogsById(long discogsId);

@@ -10,14 +10,14 @@ import java.util.Optional;
 @Repository
 public interface FollowedArtistsRepository extends JpaRepository<FollowedArtistEntity, Long> {
 
-  List<FollowedArtistEntity> findAllByPublicUserId(String publicUserId);
+  List<FollowedArtistEntity> findByPublicUserId(String publicUserId);
 
   boolean existsByPublicUserIdAndDiscogsId(String publicUserId, long discogsId);
 
   Optional<FollowedArtistEntity> findByPublicUserIdAndDiscogsId(String publicUserId, long discogsId);
 
-  List<FollowedArtistEntity> findAllByPublicUserIdAndDiscogsIdIn(String publicUserId, long... discgogsIds);
+  List<FollowedArtistEntity> findByPublicUserId(String publicUserId, Pageable pageable);
 
-  List<FollowedArtistEntity> findAllByPublicUserId(String publicUserId, Pageable pageable);
+  long countByPublicUserId(String publicUserId);
 
 }

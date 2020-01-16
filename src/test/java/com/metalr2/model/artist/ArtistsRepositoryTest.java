@@ -13,8 +13,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -29,7 +27,11 @@ class ArtistsRepositoryTest implements WithAssertions, WithIntegrationTestProfil
 
   @BeforeEach
   void setUp() {
-    artistsRepository.saveAll(ArtistEntityFactory.createArtistEntities(3));
+    artistsRepository.save(ArtistEntityFactory.createArtistEntity(1L, "1", null));
+    artistsRepository.save(ArtistEntityFactory.createArtistEntity(2L, "2", null));
+    artistsRepository.save(ArtistEntityFactory.createArtistEntity(3L, "3", null));
+    artistsRepository.save(ArtistEntityFactory.createArtistEntity(4L, "4", null));
+    artistsRepository.save(ArtistEntityFactory.createArtistEntity(5L, "5", null));
   }
 
   @AfterEach
@@ -37,8 +39,8 @@ class ArtistsRepositoryTest implements WithAssertions, WithIntegrationTestProfil
     artistsRepository.deleteAll();
   }
 
-  @ParameterizedTest
-  @ValueSource(longs = {1,2,3})
+  @ParameterizedTest(name = "[{index}] => Entity <{0}>")
+  @ValueSource(longs = {1, 2, 3})
   @DisplayName("findByArtistDiscogsId() finds the correct entity for a given artist id if it exists")
   void find_by_artist_discogs_id_should_return_correct_entity(long entity) {
     Optional<ArtistEntity> artistEntityOptional = artistsRepository.findByArtistDiscogsId(entity);
@@ -56,8 +58,8 @@ class ArtistsRepositoryTest implements WithAssertions, WithIntegrationTestProfil
     assertThat(artistEntityOptional).isEmpty();
   }
 
-  @ParameterizedTest
-  @ValueSource(longs = {1,2,3})
+  @ParameterizedTest(name = "[{index}] => Entity <{0}>")
+  @ValueSource(longs = {1, 2, 3})
   @DisplayName("existsByArtistDiscogsId() should return true if artist exists")
   void exists_by_artist_discogs_id_should_return_true(long entity) {
     boolean exists = artistsRepository.existsByArtistDiscogsId(entity);
@@ -82,8 +84,8 @@ class ArtistsRepositoryTest implements WithAssertions, WithIntegrationTestProfil
 
     for (int i = 0; i < artistEntities.size(); i++) {
       ArtistEntity entity = artistEntities.get(i);
-      assertThat(entity.getArtistName()).isEqualTo(String.valueOf(i+1));
-      assertThat(entity.getArtistDiscogsId()).isEqualTo(i+1);
+      assertThat(entity.getArtistName()).isEqualTo(String.valueOf(i + 1));
+      assertThat(entity.getArtistDiscogsId()).isEqualTo(i + 1);
       assertThat(entity.getThumb()).isNull();
     }
   }
@@ -91,25 +93,24 @@ class ArtistsRepositoryTest implements WithAssertions, WithIntegrationTestProfil
   @ParameterizedTest(name = "[{index}] => DiscogsIds <{0}>")
   @MethodSource("inputProviderDiscogsIds")
   @DisplayName("findAllByArtistDiscogsIds() should return correct entities if they exist")
-  void find_all_by_artist_discogs_ids_should_return_correct_entities_parametrized(List<Long> discogsIds) {
-    List<ArtistEntity> artistEntities = artistsRepository.findAllByArtistDiscogsIdIn(discogsIds.stream().mapToLong(Long::longValue).toArray());
+  void find_all_by_artist_discogs_ids_should_return_correct_entities_parametrized(long[] discogsIds) {
+    List<ArtistEntity> artistEntities = artistsRepository.findAllByArtistDiscogsIdIn(discogsIds);
 
-    assertThat(artistEntities).hasSize(discogsIds.size());
+    assertThat(artistEntities).hasSize(discogsIds.length);
 
-    for (int i = 0; i < discogsIds.size(); i++) {
+    for (int i = 0; i < discogsIds.length; i++) {
       ArtistEntity entity = artistEntities.get(i);
-      assertThat(entity.getArtistName()).isEqualTo(String.valueOf(i+1));
-      assertThat(entity.getArtistDiscogsId()).isEqualTo(i+1);
+      assertThat(entity.getArtistName()).isEqualTo(String.valueOf(i + 1));
+      assertThat(entity.getArtistDiscogsId()).isEqualTo(i + 1);
       assertThat(entity.getThumb()).isNull();
     }
   }
 
   private static Stream<Arguments> inputProviderDiscogsIds() {
     return Stream.of(
-        Arguments.of(Arrays.asList(2L, 1L)),
-        Arguments.of(Collections.singletonList(1L)),
-        Arguments.of(Collections.emptyList())
+        Arguments.of((Object) new long[] {2L, 1L}),
+        Arguments.of((Object) new long[] {1L}),
+        Arguments.of((Object) new long[] {})
     );
   }
-
 }

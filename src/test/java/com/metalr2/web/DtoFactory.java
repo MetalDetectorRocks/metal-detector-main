@@ -10,7 +10,6 @@ import com.metalr2.web.dto.discogs.search.DiscogsPagination;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
-import com.metalr2.web.dto.response.MyArtistsResponse;
 import com.metalr2.web.dto.response.Pagination;
 import com.metalr2.web.dto.response.SearchResponse;
 
@@ -137,20 +136,7 @@ public class DtoFactory {
     public static SearchResponse withOneResult() {
       return new SearchResponse(Collections.singletonList(
           new SearchResponse.SearchResult(null, DISCOGS_ID, ARTIST_NAME, false)),
-                                          new Pagination(2, 1, 10));
-    }
-  }
-
-  public static class MyArtistsResponseFactory {
-
-    public static MyArtistsResponse withOneResult() {
-      return new MyArtistsResponse(Collections.singletonList(
-          new MyArtistsResponse.Artist(DISCOGS_ID, ARTIST_NAME, null)),
-                                   new Pagination());
-    }
-
-    public static MyArtistsResponse withEmptyResult() {
-      return new MyArtistsResponse(Collections.emptyList(), null);
+                                new Pagination(2, 1, 10));
     }
   }
 
@@ -172,7 +158,7 @@ public class DtoFactory {
     }
 
     public static List<FollowedArtistEntity> createFollowArtistEntities(int amount) {
-      return LongStream.range(1, amount+1).mapToObj(entity -> createFollowArtistEntity("1", entity)).collect(Collectors.toList());
+      return LongStream.range(1, amount + 1).mapToObj(entity -> createFollowArtistEntity("1", entity)).collect(Collectors.toList());
     }
   }
 
@@ -182,12 +168,5 @@ public class DtoFactory {
       return new ArtistEntity(discogsId, artistName, thumb);
     }
 
-    public static List<ArtistEntity> createArtistEntities(int amount) {
-      return LongStream.range(1, amount+1).mapToObj(entity -> createArtistEntity(entity,String.valueOf(entity),null)).collect(Collectors.toList());
-    }
-
-    public static List<ArtistEntity> createArtistEntities(int amount, int offset) {
-      return LongStream.range(1, amount+1).mapToObj(entity -> createArtistEntity(entity+offset,String.valueOf(entity+offset),null)).collect(Collectors.toList());
-    }
   }
 }
