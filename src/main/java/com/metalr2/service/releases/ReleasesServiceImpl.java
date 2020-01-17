@@ -3,6 +3,7 @@ package com.metalr2.service.releases;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.metalr2.config.misc.ReleaseButlerConfig;
+import com.metalr2.web.dto.releases.ReleaseDto;
 import com.metalr2.web.dto.releases.ReleasesRequest;
 import com.metalr2.web.dto.releases.ReleasesResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +18,15 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
 public class ReleasesServiceImpl implements ReleasesService {
 
-  static final String ALL_RELEASES_URL_FRAGMENT = "/rest/v1/releases";
+  static final String ALL_RELEASES_URL_FRAGMENT = "/rest/v1/releases/unpaginated";
 
   private final RestTemplate restTemplate;
   private final ReleaseButlerConfig releaseButlerConfig;
@@ -37,11 +40,11 @@ public class ReleasesServiceImpl implements ReleasesService {
   }
 
   @Override
-  public Optional<ReleasesResponse> getReleases(ReleasesRequest request) {
+  public List<ReleaseDto> getReleases(ReleasesRequest request) {
     String requestBody = mapRequestBody(request);
 
     if (requestBody == null) {
-      return Optional.empty();
+      return Collections.emptyList();
     }
 
     HttpEntity<String> requestEntity = createHttpEntity(requestBody);
@@ -50,10 +53,10 @@ public class ReleasesServiceImpl implements ReleasesService {
 
     ReleasesResponse response = responseEntity.getBody();
     if (response == null || responseEntity.getStatusCode() != HttpStatus.OK || !response.getReleases().iterator().hasNext()) {
-      return Optional.empty();
+      return Collections.emptyList();
     }
 
-    return Optional.of(response);
+    return StreamSupport.stream(response.getReleases().spliterator(), false).collect(Collectors.toList());
   }
 
   private String mapRequestBody(ReleasesRequest request) {

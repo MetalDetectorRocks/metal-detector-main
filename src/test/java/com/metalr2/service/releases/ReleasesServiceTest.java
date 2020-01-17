@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.metalr2.config.misc.ReleaseButlerConfig;
 import com.metalr2.web.DtoFactory;
+import com.metalr2.web.dto.releases.ReleaseDto;
 import com.metalr2.web.dto.releases.ReleasesRequest;
 import com.metalr2.web.dto.releases.ReleasesResponse;
 import org.assertj.core.api.WithAssertions;
@@ -30,7 +31,7 @@ import org.springframework.web.client.RestTemplate;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Optional;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static com.metalr2.service.releases.ReleasesServiceImpl.ALL_RELEASES_URL_FRAGMENT;
@@ -85,14 +86,11 @@ class ReleasesServiceTest implements WithAssertions {
     when(mapper.writeValueAsString(request)).thenReturn("body");
 
     // when
-    Optional<ReleasesResponse> responseOptional = releasesService.getReleases(request);
+    List<ReleaseDto> releases = releasesService.getReleases(request);
 
     // then
-    assertThat(responseOptional).isPresent();
-
-    ReleasesResponse response = responseOptional.get();
-    assertThat(response.getReleases()).hasSize(1);
-    assertThat(response.getReleases().iterator().next()).isEqualTo(DtoFactory.ReleaseDtoFactory.withOneResult("A1", releaseDate));
+    assertThat(releases).hasSize(1);
+    assertThat(releases.get(0)).isEqualTo(DtoFactory.ReleaseDtoFactory.withOneResult("A1", releaseDate));
 
     verify(mapper, times(1)).writeValueAsString(request);
     verify(restTemplate, times(1)).postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ReleasesResponse.class));
@@ -111,10 +109,10 @@ class ReleasesServiceTest implements WithAssertions {
     when(mapper.writeValueAsString(request)).thenReturn("body");
 
     // when
-    Optional<ReleasesResponse> responseOptional = releasesService.getReleases(request);
+    List<ReleaseDto> releases = releasesService.getReleases(request);
 
     // then
-    assertThat(responseOptional).isEmpty();
+    assertThat(releases).isEmpty();
 
     verify(mapper, times(1)).writeValueAsString(request);
     verify(restTemplate, times(1)).postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ReleasesResponse.class));
@@ -139,10 +137,10 @@ class ReleasesServiceTest implements WithAssertions {
     when(mapper.writeValueAsString(request)).thenThrow(new JsonProcessingException("Error"){});
 
     // when
-    Optional<ReleasesResponse> responseOptional = releasesService.getReleases(request);
+    List<ReleaseDto> releases = releasesService.getReleases(request);
 
     // then
-    assertThat(responseOptional).isEmpty();
+    assertThat(releases).isEmpty();
     verify(mapper, times(1)).writeValueAsString(request);
   }
 

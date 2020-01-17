@@ -14,7 +14,6 @@ import com.metalr2.web.dto.response.Pagination;
 import com.metalr2.web.dto.response.SearchResponse;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -163,14 +162,6 @@ public class DtoFactory {
 
     public static ReleaseDto withOneResult(String artist, LocalDate releaseDate) {
       return new ReleaseDto(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate");
-    }
-
-    static List<ReleaseDto> withMultipleResults(int number, LocalDate releaseDate) {
-      List<ReleaseDto> dtos = new ArrayList<>();
-      for (int i = 0; i < number; i++) {
-        dtos.add(new ReleaseDto("A" + i, Collections.singletonList("A" + i), "T", releaseDate, "releaseDate"));
-      }
-      return dtos;
     }
   }
 }
