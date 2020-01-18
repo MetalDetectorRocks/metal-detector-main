@@ -11,30 +11,28 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @DataJpaTest
 class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTestProfile {
 
-  private static final String userId1              = "1";
-  private static final String userId2              = "2";
-  private static final String unknownUserId        = "0";
-  private static final long artistDiscogsId1       = 252211L;
-  private static final long artistDiscogsId2       = 245797L;
-  private static final long unknownArtistDiscogsId = 0L;
-  private static final FollowedArtistEntity FOLLOW_ARTIST_ENTITY1 = new FollowedArtistEntity(userId1, artistDiscogsId1);
-  private static final FollowedArtistEntity FOLLOW_ARTIST_ENTITY2 = new FollowedArtistEntity(userId2, artistDiscogsId2);
+  private static final String USER_ID = "1";
+  private static final String FALSE_USER_ID = "0";
+  private static final long DISCOGS_ID = 1L;
+  private static final long FALSE_DISCOGS_ID = 0L;
 
   @Autowired
   private FollowedArtistsRepository followedArtistsRepository;
 
   @BeforeEach
   void setup() {
-    followedArtistsRepository.save(FOLLOW_ARTIST_ENTITY1);
-    followedArtistsRepository.save(FOLLOW_ARTIST_ENTITY2);
+    followedArtistsRepository.saveAll(IntStream.range(1, 7).mapToObj(entity -> new FollowedArtistEntity(USER_ID, entity)).collect(Collectors.toList()));
   }
 
   @AfterEach
@@ -45,17 +43,21 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
   @Test
   @DisplayName("findAllByPublicUserId() finds the correct entities for a given user id if it exists")
   void find_all_by_user_id_should_return_correct_entities() {
-    List<FollowedArtistEntity> followedArtistEntitiesPerUser = followedArtistsRepository.findAllByPublicUserId(userId1);
+    List<FollowedArtistEntity> entities = followedArtistsRepository.findByPublicUserId(USER_ID);
 
-    assertThat(followedArtistEntitiesPerUser).hasSize(1);
-    assertThat(followedArtistEntitiesPerUser.get(0).getPublicUserId()).isEqualTo(userId1);
-    assertThat(followedArtistEntitiesPerUser.get(0).getArtistDiscogsId()).isEqualTo(artistDiscogsId1);
+    assertThat(entities).hasSize(6);
+
+    for (int i = 0; i < entities.size(); i++) {
+      FollowedArtistEntity entity = entities.get(i);
+      assertThat(entity.getPublicUserId()).isEqualTo(USER_ID);
+      assertThat(entity.getDiscogsId()).isEqualTo(i+1);
+    }
   }
 
   @Test
   @DisplayName("findAllByPublicUserId() returns empty list for a given user id if it does not exist")
   void find_all_by_user_id_should_return_empty_list() {
-    List<FollowedArtistEntity> notFollowedArtistEntitiesPerUser = followedArtistsRepository.findAllByPublicUserId(unknownUserId);
+    List<FollowedArtistEntity> notFollowedArtistEntitiesPerUser = followedArtistsRepository.findByPublicUserId("0");
 
     assertThat(notFollowedArtistEntitiesPerUser).isEmpty();
   }
@@ -63,7 +65,7 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
   @Test
   @DisplayName("Should return true for existing combination of user id and artist discogs id")
   void exists_by_user_id_and_artist_discogs_id() {
-    boolean result = followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId(userId1, artistDiscogsId1);
+    boolean result = followedArtistsRepository.existsByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID);
 
     assertThat(result).isTrue();
   }
@@ -73,41 +75,71 @@ class FollowedArtistsRepositoryIT implements WithAssertions, WithIntegrationTest
   @MethodSource("inputProviderExistsByFalse")
   @DisplayName("Should return false for not existing combinations of user id and artist discogs id")
   void exists_by_user_id_and_artist_discogs_id(String userId, long artistDiscogsId) {
-    boolean result = followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
+    boolean result = followedArtistsRepository.existsByPublicUserIdAndDiscogsId(userId, artistDiscogsId);
 
     assertThat(result).isFalse();
   }
 
   private static Stream<Arguments> inputProviderExistsByFalse() {
     return Stream.of(
-            Arguments.of(unknownUserId, artistDiscogsId1),
-            Arguments.of(userId1, unknownArtistDiscogsId)
+            Arguments.of(FALSE_USER_ID, DISCOGS_ID),
+            Arguments.of(USER_ID, FALSE_DISCOGS_ID)
     );
   }
 
   @Test
   @DisplayName("Should return optional containing the correct entity for existing combinations of user id and artist discogs id")
   void find_by_user_id_and_artist_discogs_id_should_return_valid_optional() {
-    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(userId1, artistDiscogsId1);
+    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID);
 
     assertThat(optionalFollowedArtistEntity.isPresent()).isTrue();
-    assertThat(optionalFollowedArtistEntity.get().getArtistDiscogsId()).isEqualTo(artistDiscogsId1);
-    assertThat(optionalFollowedArtistEntity.get().getPublicUserId()).isEqualTo(userId1);
+    assertThat(optionalFollowedArtistEntity.get().getDiscogsId()).isEqualTo(DISCOGS_ID);
+    assertThat(optionalFollowedArtistEntity.get().getPublicUserId()).isEqualTo(USER_ID);
   }
 
   @ParameterizedTest(name = "[{index}] => UserId <{0}> | ArtistDiscogsId <{1}>")
   @MethodSource("inputProviderFalseArguments")
   @DisplayName("Should return an empty optional for not existing or faulty combinations of user id and artist discogs id")
   void find_by_user_id_and_artist_discogs_id_should_return_empty_optional(String userId, long artistDiscogsId) {
-    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(userId, artistDiscogsId);
+    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndDiscogsId(userId, artistDiscogsId);
 
     assertThat(optionalFollowedArtistEntity).isEmpty();
   }
 
   private static Stream<Arguments> inputProviderFalseArguments() {
     return Stream.of(
-            Arguments.of(unknownUserId, artistDiscogsId1),
-            Arguments.of(null, artistDiscogsId1)
+            Arguments.of(FALSE_USER_ID, DISCOGS_ID),
+            Arguments.of(null, DISCOGS_ID)
+    );
+  }
+
+  @Test
+  @DisplayName("findAllByPublicUserId(id, pageable) should return correct paginated items")
+  void find_all_by_discogs_id_paginated() {
+    List<FollowedArtistEntity> entities = followedArtistsRepository.findByPublicUserId(USER_ID, PageRequest.of(1, 2));
+
+    assertThat(entities).hasSize(2);
+
+    assertThat(entities.get(0).getDiscogsId()).isEqualTo(3L);
+    assertThat(entities.get(0).getPublicUserId()).isEqualTo(USER_ID);
+
+    assertThat(entities.get(1).getDiscogsId()).isEqualTo(4L);
+    assertThat(entities.get(1).getPublicUserId()).isEqualTo(USER_ID);
+  }
+
+  @ParameterizedTest(name = "[{index}] => UserID <{0}> | Expected Number <{1}>")
+  @MethodSource("userIdProvider")
+  @DisplayName("countByPublicUserId() should return correct number of items")
+  void count_by_public_user_id(String userId, int expected) {
+    long numberOfEntities = followedArtistsRepository.countByPublicUserId(userId);
+
+    assertThat(numberOfEntities).isEqualTo(expected);
+  }
+
+  private static Stream<Arguments> userIdProvider() {
+    return Stream.of(
+        Arguments.of(FALSE_USER_ID, 0),
+        Arguments.of(USER_ID, 6)
     );
   }
 }

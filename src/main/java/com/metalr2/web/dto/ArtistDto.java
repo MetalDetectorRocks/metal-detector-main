@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ArtistDto {
 
-  private long artistDiscogsId;
+  private long discogsId;
   private String artistName;
   private String thumb;
 
