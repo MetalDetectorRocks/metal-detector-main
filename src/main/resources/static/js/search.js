@@ -118,25 +118,62 @@ function createNavigationElement(query, searchResponse) {
     navElement.append(listElement);
 
     // Previous link
-    createPreviousOrNextItem(query, searchResponse, listElement, true);
+    if (searchResponse.pagination.currentPage > 1)
+        createPreviousOrNextItem(query, searchResponse, listElement, true);
+
     // Page links
-    for (let index = 1; index <= searchResponse.pagination.totalPages; index++) {
-        createPageLinks(query, searchResponse, index, listElement);
+    if (searchResponse.pagination.totalPages <= 5) {
+        for (let index = 1; index <= searchResponse.pagination.totalPages; index++) {
+            createPageLink(query, searchResponse, index, listElement);
+        }
+    } else {
+        // Show first five pages
+        for (let index = 1; index <= 5; index++) {
+            createPageLink(query, searchResponse, index, listElement);
+        }
+
+        // Show first placeholder
+        if ( searchResponse.pagination.currentPage < 5 || searchResponse.pagination.currentPage > 7)
+            createPlaceholder(listElement);
+
+        // Show one before current page
+        if (searchResponse.pagination.currentPage > 6)
+            createPageLink(query, searchResponse, searchResponse.pagination.currentPage - 1, listElement);
+
+        // Show current page
+        if (searchResponse.pagination.currentPage > 5) {
+            createPageLink(query, searchResponse, searchResponse.pagination.currentPage, listElement);
+        }
+
+        // Show one after current page
+        if ( searchResponse.pagination.currentPage > 4 &&
+          searchResponse.pagination.currentPage < searchResponse.pagination.totalPages - 1)
+            createPageLink(query, searchResponse, searchResponse.pagination.currentPage + 1, listElement);
+
+        // Show second placeholder
+        if (searchResponse.pagination.currentPage > 4 && searchResponse.pagination.currentPage < searchResponse.pagination.totalPages - 2)
+            createPlaceholder(listElement);
+
+        // Show last page
+        if (searchResponse.pagination.currentPage !== searchResponse.pagination.totalPages)
+            createPageLink(query, searchResponse, searchResponse.pagination.totalPages, listElement);
     }
+
     // Next link
-    createPreviousOrNextItem(query, searchResponse, listElement, false);
+    if (searchResponse.pagination.currentPage < searchResponse.pagination.totalPages)
+        createPreviousOrNextItem(query, searchResponse, listElement, false);
 
     document.getElementById('searchResultsContainer').append(navElement);
 }
 
 /**
- * Creates pagination page links and appends them to the given element
+ * Creates pagination page link and appends it to the given element
  * @param query             The user's query
  * @param searchResponse    Search result object
  * @param index             Index number of the link
  * @param element           Element to add page links to
  */
-function createPageLinks(query, searchResponse, index, element) {
+function createPageLink(query, searchResponse, index, element) {
     const listItem = document.createElement("li");
     listItem.className = "page-item";
 
@@ -150,6 +187,22 @@ function createPageLinks(query, searchResponse, index, element) {
     link.text = String(index);
 
     listItem.append(link);
+    element.append(listItem);
+}
+
+/**
+ * Creates a pagination placeholder
+ * @param element   Element to add placeholder to
+ */
+function createPlaceholder(element) {
+    const listItem = document.createElement("li");
+    listItem.className = "page-item";
+
+    const text = document.createElement("p");
+    text.className = "page-link";
+    text.textContent = "...";
+
+    listItem.append(text);
     element.append(listItem);
 }
 
@@ -173,16 +226,12 @@ function createPreviousOrNextItem(query, searchResponse, element, previous) {
         targetPage = searchResponse.pagination.currentPage - 1;
         symbol = "\u00AB";
         item.classList.add("prev");
-        if (searchResponse.pagination.currentPage === 1)
-            item.classList.add("disabled");
 
     } else {
         text = "Next";
         targetPage = searchResponse.pagination.currentPage + 1;
         symbol = "\u00BB";
         item.classList.add("next");
-        if (searchResponse.pagination.currentPage === searchResponse.pagination.totalPages)
-            item.classList.add("disabled");
     }
 
     const link = document.createElement("a");
