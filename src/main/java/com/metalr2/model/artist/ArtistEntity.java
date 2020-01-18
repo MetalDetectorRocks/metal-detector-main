@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.Entity;
 @Entity(name = "artists")
 @NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
 @AllArgsConstructor
+@ToString
 @EqualsAndHashCode(callSuper = false)
 public class ArtistEntity extends BaseEntity {
 

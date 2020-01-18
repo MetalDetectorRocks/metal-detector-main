@@ -7,7 +7,6 @@ import com.metalr2.model.artist.FollowedArtistsRepository;
 import com.metalr2.security.CurrentUserSupplier;
 import com.metalr2.service.discogs.DiscogsArtistSearchRestClient;
 import com.metalr2.web.dto.ArtistDto;
-import com.metalr2.web.dto.FollowArtistDto;
 import com.metalr2.web.dto.discogs.artist.DiscogsArtist;
 import com.metalr2.web.dto.discogs.artist.DiscogsMember;
 import com.metalr2.web.dto.discogs.misc.DiscogsImage;
@@ -18,12 +17,12 @@ import com.metalr2.web.dto.response.Pagination;
 import com.metalr2.web.dto.response.SearchResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.metalr2.web.dto.response.SearchResponse.SearchResult;
@@ -81,7 +80,7 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   @Transactional
   public boolean unfollowArtist(long discogsId) {
-    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndArtistDiscogsId(
+    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndDiscogsId(
         currentUserSupplier.get().getPublicId(), discogsId);
 
     optionalFollowedArtistEntity.ifPresent(followedArtistsRepository::delete);
@@ -90,13 +89,39 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   @Override
   public boolean isFollowed(long discogsId) {
-    return followedArtistsRepository.existsByPublicUserIdAndArtistDiscogsId(currentUserSupplier.get().getPublicId(), discogsId);
+    return followedArtistsRepository.existsByPublicUserIdAndDiscogsId(currentUserSupplier.get().getPublicId(), discogsId);
   }
 
   @Override
-  public List<FollowArtistDto> findFollowedArtistsPerUser(String publicUserId) {
-    return followedArtistsRepository.findAllByPublicUserId(publicUserId).stream()
-        .map(entity -> mapper.map(entity,FollowArtistDto.class)).collect(Collectors.toList());
+  public List<ArtistDto> findFollowedArtistsPerUser(String publicUserId) {
+    List<FollowedArtistEntity> followedArtistEntities = followedArtistsRepository.findByPublicUserId(publicUserId);
+    return mapArtistDtos(followedArtistEntities);
+  }
+
+  @Override
+  public List<ArtistDto> findFollowedArtistsPerUser(String publicUserId, Pageable pageable) {
+    List<FollowedArtistEntity> followedArtistEntities = followedArtistsRepository.findByPublicUserId(publicUserId, pageable);
+    return mapArtistDtos(followedArtistEntities);
+  }
+
+  @Override
+  public List<ArtistDto> findFollowedArtistsForCurrentUser() {
+    return findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId());
+  }
+
+  @Override
+  public List<ArtistDto> findFollowedArtistsForCurrentUser(Pageable pageable) {
+    return findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId(), pageable);
+  }
+
+  @Override
+  public long countFollowedArtistsPerUser(String publicUserId) {
+    return followedArtistsRepository.countByPublicUserId(publicUserId);
+  }
+
+  @Override
+  public long countFollowedArtistsForCurrentUser() {
+    return countFollowedArtistsPerUser(currentUserSupplier.get().getPublicId());
   }
 
   @Override
@@ -134,8 +159,8 @@ public class ArtistsServiceImpl implements ArtistsService {
 
     int itemsPerPage = discogsPagination.getItemsPerPage();
 
-    Set<Long> alreadyFollowedArtists = findFollowedArtistsPerUser(currentUserSupplier.get().getPublicId()).stream().map(FollowArtistDto::getArtistDiscogsId)
-        .collect(Collectors.toSet());
+    List<Long> alreadyFollowedArtists = findFollowedArtistsForCurrentUser().stream().map(ArtistDto::getDiscogsId)
+        .collect(Collectors.toList());
 
     List<SearchResult> dtoSearchResults = artistSearchResults.getResults().stream()
         .map(artistSearchResult -> new SearchResult(artistSearchResult.getThumb(), artistSearchResult.getId(),
@@ -158,7 +183,7 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   private ArtistDto createArtistDto(ArtistEntity artistEntity) {
     return ArtistDto.builder()
-        .artistDiscogsId(artistEntity.getArtistDiscogsId())
+        .discogsId(artistEntity.getArtistDiscogsId())
         .artistName(artistEntity.getArtistName())
         .thumb(artistEntity.getThumb())
         .build();
@@ -168,6 +193,10 @@ public class ArtistsServiceImpl implements ArtistsService {
     String thumb = artist.getDiscogsImages() != null && artist.getDiscogsImages().size() > 0 ? artist.getDiscogsImages().get(0).getResourceUrl()
                                                                                              : null;
     return new ArtistEntity(artist.getId(), artist.getName(), thumb);
+  }
+
+  private List<ArtistDto> mapArtistDtos(List<FollowedArtistEntity> followedArtistEntities) {
+    return findAllArtistsByDiscogsIds(followedArtistEntities.stream().mapToLong(FollowedArtistEntity::getDiscogsId).toArray());
   }
 
 }

@@ -1,5 +1,7 @@
 package com.metalr2.web;
 
+import com.metalr2.model.artist.ArtistEntity;
+import com.metalr2.model.artist.FollowedArtistEntity;
 import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.discogs.artist.DiscogsArtist;
 import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResult;
@@ -17,8 +19,13 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 public class DtoFactory {
+
+  private static final long DISCOGS_ID = 252211L;
+  private static final String ARTIST_NAME = "Darkthrone";
 
   public static class UserDtoFactory {
 
@@ -122,7 +129,7 @@ public class DtoFactory {
   public static class ArtistDetailsResponseFactory {
 
     public static ArtistDetailsResponse withResult() {
-      return new ArtistDetailsResponse("Darkthrone", 252211L, null,
+      return new ArtistDetailsResponse(ARTIST_NAME, DISCOGS_ID, null,
                                        null, null, null, false);
     }
   }
@@ -131,7 +138,7 @@ public class DtoFactory {
 
     public static SearchResponse withOneResult() {
       return new SearchResponse(Collections.singletonList(
-          new SearchResponse.SearchResult(null, 252211L, "Darkthrone", false)),
+          new SearchResponse.SearchResult(null, DISCOGS_ID, ARTIST_NAME, false)),
                                 new Pagination(2, 1, 10));
     }
   }
@@ -147,21 +154,22 @@ public class DtoFactory {
     }
   }
 
-  public static class ReleasesResponseFactory {
+  public static class FollowArtistFactory {
 
-    public static ReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
-      return new ReleasesResponse(Collections.singletonList(ReleaseDtoFactory.withOneResult("A1", releaseDate)));
+    public static FollowedArtistEntity createFollowArtistEntity(String userId, long discogsId) {
+      return new FollowedArtistEntity(userId, discogsId);
     }
 
-    public static ReleasesResponse withEmptyResult() {
-      return new ReleasesResponse(Collections.emptyList());
+    public static List<FollowedArtistEntity> createFollowArtistEntities(int amount) {
+      return LongStream.range(1, amount + 1).mapToObj(entity -> createFollowArtistEntity("1", entity)).collect(Collectors.toList());
     }
   }
 
-  public static class ReleaseDtoFactory {
+  public static class ArtistEntityFactory {
 
-    public static ReleaseDto withOneResult(String artist, LocalDate releaseDate) {
-      return new ReleaseDto(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate");
+    public static ArtistEntity createArtistEntity(long discogsId, String artistName, String thumb) {
+      return new ArtistEntity(discogsId, artistName, thumb);
     }
+
   }
 }
