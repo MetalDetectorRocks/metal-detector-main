@@ -1,7 +1,6 @@
 package com.metalr2.web;
 
 import com.metalr2.model.artist.ArtistEntity;
-import com.metalr2.model.artist.FollowedArtistEntity;
 import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.discogs.artist.DiscogsArtist;
 import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResult;
@@ -19,8 +18,6 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
 
 public class DtoFactory {
 
@@ -154,22 +151,28 @@ public class DtoFactory {
     }
   }
 
-  public static class FollowArtistFactory {
-
-    public static FollowedArtistEntity createFollowArtistEntity(String userId, long discogsId) {
-      return new FollowedArtistEntity(userId, discogsId);
-    }
-
-    public static List<FollowedArtistEntity> createFollowArtistEntities(int amount) {
-      return LongStream.range(1, amount + 1).mapToObj(entity -> createFollowArtistEntity("1", entity)).collect(Collectors.toList());
-    }
-  }
-
   public static class ArtistEntityFactory {
 
     public static ArtistEntity createArtistEntity(long discogsId, String artistName, String thumb) {
       return new ArtistEntity(discogsId, artistName, thumb);
     }
+  }
 
+  public static class ReleasesResponseFactory {
+
+    public static ReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
+      return new ReleasesResponse(Collections.singletonList(ReleaseDtoFactory.withOneResult(artist, releaseDate)));
+    }
+
+    public static ReleasesResponse withEmptyResult() {
+      return new ReleasesResponse(Collections.emptyList());
+    }
+  }
+
+  public static class ReleaseDtoFactory {
+
+    public static ReleaseDto withOneResult(String artist, LocalDate releaseDate) {
+      return new ReleaseDto(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate");
+    }
   }
 }

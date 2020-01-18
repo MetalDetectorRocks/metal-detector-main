@@ -13,8 +13,4 @@ public class MyArtistsResponse {
   private List<ArtistDto> myArtists;
   private Pagination pagination;
 
-  public MyArtistsResponse(List<ArtistDto> artists) {
-    this.myArtists = artists;
-  }
-
 }
