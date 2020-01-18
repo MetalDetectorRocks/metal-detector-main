@@ -81,22 +81,22 @@ function createResultCards(searchResponse){
 
         if (searchResult.thumb !== ""){
             const thumbElement = document.createElement('img');
+            thumbElement.className = "card-image";
             thumbElement.alt = 'Thumb for ' + searchResult.artistName;
             thumbElement.src = searchResult.thumb;
             cardBody.append(thumbElement);
         }
 
-        const artistIdElement = document.createElement('p');
-        artistIdElement.innerText = searchResult.id;
-        cardBody.append(artistIdElement);
+        const breakElement = document.createElement('br');
+        cardBody.append(breakElement);
 
         const artistDetailsElement = document.createElement('a');
         artistDetailsElement.href = "/artists/" + searchResult.id;
         artistDetailsElement.text = "Details for " + searchResult.artistName;
         cardBody.append(artistDetailsElement);
 
-        const breakElement = document.createElement('br');
-        cardBody.append(breakElement);
+        const breakElement2 = document.createElement('br');
+        cardBody.append(breakElement2);
 
         const followArtistButtonElement = createFollowArtistButton(searchResult.artistName,
           searchResult.id, searchResult.isFollowed);
@@ -187,22 +187,6 @@ function createPageLink(query, searchResponse, index, element) {
     link.text = String(index);
 
     listItem.append(link);
-    element.append(listItem);
-}
-
-/**
- * Creates a pagination placeholder
- * @param element   Element to add placeholder to
- */
-function createPlaceholder(element) {
-    const listItem = document.createElement("li");
-    listItem.className = "page-item";
-
-    const text = document.createElement("p");
-    text.className = "page-link";
-    text.textContent = "...";
-
-    listItem.append(text);
     element.append(listItem);
 }
 

@@ -17,7 +17,6 @@ public class WebConfig implements WebMvcConfigurer {
     registry.addViewController(Endpoints.Frontend.PROFILE).setViewName(ViewNames.Frontend.PROFILE);
     registry.addViewController(Endpoints.Frontend.ARTISTS_RELEASES).setViewName(ViewNames.Frontend.ARTISTS_RELEASES);
     registry.addViewController(Endpoints.Frontend.ALL_RELEASES).setViewName(ViewNames.Frontend.ALL_RELEASES);
-    registry.addViewController(Endpoints.Frontend.MY_ARTISTS).setViewName(ViewNames.Frontend.MY_ARTISTS);
     registry.addViewController(Endpoints.Frontend.REPORT_ARTIST_RELEASE).setViewName(ViewNames.Frontend.REPORT_ARTIST_RELEASE);
     registry.addViewController(Endpoints.Frontend.ABOUT).setViewName(ViewNames.Frontend.ABOUT);
     registry.addViewController(Endpoints.Frontend.TEAM).setViewName(ViewNames.Frontend.TEAM);
