@@ -104,6 +104,10 @@ footer{
     min-height: 2rem;
 }
 
+.card-image {
+    max-height: 150px;
+}
+
 .card .row {
     align-items: center;
 }
