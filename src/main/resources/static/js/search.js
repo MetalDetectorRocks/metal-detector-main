@@ -133,7 +133,7 @@ function createNavigationElement(query, searchResponse) {
         }
 
         // Show first placeholder
-        if ( searchResponse.pagination.currentPage < 5 || searchResponse.pagination.currentPage > 7)
+        if (searchResponse.pagination.currentPage < 5 || searchResponse.pagination.currentPage > 7)
             createPlaceholder(listElement);
 
         // Show one before current page
@@ -146,8 +146,8 @@ function createNavigationElement(query, searchResponse) {
         }
 
         // Show one after current page
-        if ( searchResponse.pagination.currentPage > 4 &&
-          searchResponse.pagination.currentPage < searchResponse.pagination.totalPages - 1)
+        if (searchResponse.pagination.currentPage > 4 &&
+            searchResponse.pagination.currentPage < searchResponse.pagination.totalPages - 1)
             createPageLink(query, searchResponse, searchResponse.pagination.currentPage + 1, listElement);
 
         // Show second placeholder
