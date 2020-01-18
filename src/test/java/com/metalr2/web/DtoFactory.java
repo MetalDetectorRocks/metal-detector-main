@@ -136,7 +136,7 @@ public class DtoFactory {
     public static SearchResponse withOneResult() {
       return new SearchResponse(Collections.singletonList(
           new SearchResponse.SearchResult(null, DISCOGS_ID, ARTIST_NAME, false)),
-                                new Pagination(2, 1, 10));
+                                new Pagination(1, 1, 10));
     }
   }
 

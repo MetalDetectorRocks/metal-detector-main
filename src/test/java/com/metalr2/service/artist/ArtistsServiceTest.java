@@ -489,7 +489,7 @@ class ArtistsServiceTest implements WithAssertions {
 
     private static final int PAGE         = 1;
     private static final int SIZE         = 10;
-    private static final int TOTAL_PAGES  = 2;
+    private static final int TOTAL_PAGES  = 1;
 
     @BeforeEach
     void setUp() {

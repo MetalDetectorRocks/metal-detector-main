@@ -111,7 +111,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
     private static final String NO_RESULT_SEARCH_REQUEST = "NoResult";
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_SIZE = 10;
-    private static final int TOTAL_PAGES = 2;
+    private static final int TOTAL_PAGES = 1;
 
     private final String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH;
 
