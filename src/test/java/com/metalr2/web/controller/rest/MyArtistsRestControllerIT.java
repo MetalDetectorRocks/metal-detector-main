@@ -62,7 +62,7 @@ class MyArtistsRestControllerIT implements WithAssertions, WithIntegrationTestPr
   @DisplayName("GET should return 200 and results if present")
   void get_should_return_200_and_results() {
     // given
-    PageRequest pageRequest = PageRequest.of(PAGE, SIZE);
+    PageRequest pageRequest = PageRequest.of(PAGE - 1, SIZE);
     when(artistsService.findFollowedArtistsForCurrentUser(pageRequest)).thenReturn(Collections.singletonList(
         new ArtistDto(DISCOGS_ID, ARTIST_NAME, null)));
     when(artistsService.countFollowedArtistsForCurrentUser()).thenReturn(1L);
@@ -97,7 +97,7 @@ class MyArtistsRestControllerIT implements WithAssertions, WithIntegrationTestPr
   @DisplayName("GET should return 200 and empty list if nothing is present")
   void get_should_return_200_and_empty_list() {
     // given
-    PageRequest pageRequest = PageRequest.of(PAGE, SIZE);
+    PageRequest pageRequest = PageRequest.of(PAGE - 1, SIZE);
     when(artistsService.findFollowedArtistsForCurrentUser(pageRequest)).thenReturn(Collections.emptyList());
     when(artistsService.countFollowedArtistsForCurrentUser()).thenReturn(0L);
 
