@@ -14,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import javax.sql.DataSource;
 
@@ -45,9 +44,7 @@ class IndexControllerIT implements WithSecurityConfig {
   @DisplayName("GET on index should return index view for anonymous user")
   @WithAnonymousUser
   void given_index_uri_then_return_index_view(String endpoint) throws Exception {
-    ResultActions resultActions = mockMvc.perform(get(endpoint));
-
-    resultActions
+    mockMvc.perform(get(endpoint))
         .andExpect(status().isOk())
         .andExpect(view().name(ViewNames.Guest.INDEX))
         .andExpect(model().size(0))
