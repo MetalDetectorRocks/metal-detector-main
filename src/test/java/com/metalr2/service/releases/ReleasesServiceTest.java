@@ -1,6 +1,5 @@
 package com.metalr2.service.releases;
 
-import com.metalr2.testutil.WithIntegrationTestProfile;
 import com.metalr2.web.DtoFactory;
 import com.metalr2.web.dto.releases.ReleaseDto;
 import com.metalr2.web.dto.releases.ReleasesRequest;
@@ -40,7 +39,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ReleasesServiceTest implements WithAssertions, WithIntegrationTestProfile {
+class ReleasesServiceTest implements WithAssertions {
 
   private static  final String ALL_RELEASES_URL = "url";
 
