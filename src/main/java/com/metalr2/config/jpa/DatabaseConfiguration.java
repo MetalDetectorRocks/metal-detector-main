@@ -19,11 +19,11 @@ import java.util.Optional;
 @EnableJpaAuditing
 public class DatabaseConfiguration {
 
-  private final Environment env;
+  private final Environment environment;
 
   @Autowired
-  public DatabaseConfiguration(Environment env) {
-    this.env = env;
+  public DatabaseConfiguration(Environment environment) {
+    this.environment = environment;
   }
 
   @Bean
@@ -47,10 +47,10 @@ public class DatabaseConfiguration {
   @Bean
   public DataSource dataSource() {
     DriverManagerDataSource dataSource = new DriverManagerDataSource();
-    dataSource.setDriverClassName(Objects.requireNonNull(env.getProperty("spring.datasource.driver-class-name")));
-    dataSource.setUrl(env.getProperty("spring.datasource.url"));
-    dataSource.setUsername(env.getProperty("spring.datasource.username"));
-    dataSource.setPassword(env.getProperty("spring.datasource.password"));
+    dataSource.setDriverClassName(Objects.requireNonNull(environment.getProperty("spring.datasource.driver-class-name")));
+    dataSource.setUrl(environment.getProperty("spring.datasource.url"));
+    dataSource.setUsername(environment.getProperty("spring.datasource.username"));
+    dataSource.setPassword(environment.getProperty("spring.datasource.password"));
     return dataSource;
   }
 }
