@@ -28,16 +28,25 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 
+import javax.sql.DataSource;
 import java.time.Duration;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.instanceOf;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(ResetPasswordController.class)
 class ResetPasswordControllerIT implements WithSecurityConfig {
@@ -54,6 +63,9 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
 
   @MockBean
   private TokenService tokenService;
+
+  @MockBean
+  private DataSource dataSource;
 
   @MockBean
   private MessageSource messages;
