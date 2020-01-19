@@ -10,6 +10,7 @@ import com.metalr2.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,7 +18,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 
+import javax.sql.DataSource;
 import java.time.Duration;
 
 @EnableWebSecurity
@@ -33,11 +37,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private String REMEMBER_ME_SECRET;
 
   private final UserService userService;
+  private final DataSource dataSource;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Autowired
-  public SecurityConfig(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+  public SecurityConfig(UserService userService, DataSource dataSource, BCryptPasswordEncoder bCryptPasswordEncoder) {
     this.userService = userService;
+    this.dataSource = dataSource;
     this.bCryptPasswordEncoder = bCryptPasswordEncoder;
   }
 
@@ -59,8 +65,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .failureHandler(new CustomAuthenticationFailureHandler())
       .and()
       .rememberMe()
-        .key(REMEMBER_ME_SECRET)
         .tokenValiditySeconds((int) Duration.ofDays(14).toSeconds())
+        .rememberMeServices(persistentTokenBasedRememberMeServices())
       .and()
       .logout()
         .logoutUrl(Endpoints.Guest.LOGOUT).permitAll()
@@ -76,6 +82,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
+  }
+
+  @Bean
+  public PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices() {
+    return new PersistentTokenBasedRememberMeServices(REMEMBER_ME_SECRET, userService, jdbcTokenRepository());
+  }
+
+  @Bean
+  public JdbcTokenRepositoryImpl jdbcTokenRepository() {
+    JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+    jdbcTokenRepository.setCreateTableOnStartup(false);
+    jdbcTokenRepository.setDataSource(dataSource);
+    return jdbcTokenRepository;
   }
 
 }
