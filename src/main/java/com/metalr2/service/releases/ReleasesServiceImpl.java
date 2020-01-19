@@ -1,13 +1,11 @@
 package com.metalr2.service.releases;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.metalr2.config.misc.ReleaseButlerConfig;
 import com.metalr2.web.dto.releases.ReleaseDto;
 import com.metalr2.web.dto.releases.ReleasesRequest;
 import com.metalr2.web.dto.releases.ReleasesResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,30 +24,19 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class ReleasesServiceImpl implements ReleasesService {
 
-  static final String ALL_RELEASES_URL_FRAGMENT = "/rest/v1/releases/unpaginated";
-
   private final RestTemplate restTemplate;
-  private final ReleaseButlerConfig releaseButlerConfig;
-  private final ObjectMapper mapper;
+  private final String allReleasesUrl;
 
   @Autowired
-  public ReleasesServiceImpl(RestTemplate restTemplate, ReleaseButlerConfig releaseButlerConfig, ObjectMapper mapper) {
+  public ReleasesServiceImpl(RestTemplate restTemplate, @Value("${metal.release.buter.unpaginated.releases.endpoint}") String allReleasesUrl) {
     this.restTemplate = restTemplate;
-    this.releaseButlerConfig = releaseButlerConfig;
-    this.mapper = mapper;
+    this.allReleasesUrl = allReleasesUrl;
   }
 
   @Override
   public List<ReleaseDto> getReleases(ReleasesRequest request) {
-    String requestBody = mapRequestBody(request);
-
-    if (requestBody == null) {
-      return Collections.emptyList();
-    }
-
-    HttpEntity<String> requestEntity = createHttpEntity(requestBody);
-    ResponseEntity<ReleasesResponse> responseEntity = restTemplate.postForEntity(releaseButlerConfig.getRestBaseUrl() + ALL_RELEASES_URL_FRAGMENT,
-                                                                                 requestEntity, ReleasesResponse.class);
+    HttpEntity<ReleasesRequest> requestEntity = createHttpEntity(request);
+    ResponseEntity<ReleasesResponse> responseEntity = restTemplate.postForEntity(allReleasesUrl, requestEntity, ReleasesResponse.class);
 
     ReleasesResponse response = responseEntity.getBody();
     if (response == null || responseEntity.getStatusCode() != HttpStatus.OK || !response.getReleases().iterator().hasNext()) {
@@ -59,25 +46,11 @@ public class ReleasesServiceImpl implements ReleasesService {
     return StreamSupport.stream(response.getReleases().spliterator(), false).collect(Collectors.toList());
   }
 
-  private String mapRequestBody(ReleasesRequest request) {
-    String requestBody;
-
-    try {
-      requestBody = mapper.writeValueAsString(request);
-    }
-    catch (JsonProcessingException e) {
-      log.warn("Exception parsing release request: " + request.toString());
-      return null;
-    }
-
-    return requestBody;
-  }
-
-  private HttpEntity<String> createHttpEntity(String requestBody) {
+  private HttpEntity<ReleasesRequest> createHttpEntity(ReleasesRequest request) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
-    return new HttpEntity<>(requestBody, headers);
+    return new HttpEntity<>(request, headers);
   }
 }
