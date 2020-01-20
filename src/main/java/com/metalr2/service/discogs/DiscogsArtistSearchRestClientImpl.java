@@ -6,6 +6,7 @@ import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRes
   }
 
   @Override
-  public Optional<DiscogsArtistSearchResultContainer> searchByName(String artistQueryString, int page, int size) {
+  public Optional<DiscogsArtistSearchResultContainer> searchByName(String artistQueryString, Pageable pageable) {
     if (StringUtils.isEmpty(artistQueryString)) {
       return Optional.empty();
     }
@@ -38,8 +39,8 @@ public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRes
     ResponseEntity<DiscogsArtistSearchResultContainer> responseEntity = restTemplate.getForEntity(discogsConfig.getRestBaseUrl() + ARTIST_NAME_SEARCH_URL_FRAGMENT,
             DiscogsArtistSearchResultContainer.class,
             artistQueryString,
-            page,
-            size);
+            pageable.getPageNumber(),
+            pageable.getPageSize());
 
     DiscogsArtistSearchResultContainer resultContainer = responseEntity.getBody();
     if (resultContainer == null || responseEntity.getStatusCode() != HttpStatus.OK || resultContainer.getResults().isEmpty()) {

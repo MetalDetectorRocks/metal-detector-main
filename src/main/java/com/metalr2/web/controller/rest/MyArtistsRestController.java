@@ -29,8 +29,8 @@ public class MyArtistsRestController {
   }
 
   @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<MyArtistsResponse> getMyArtists(@PageableDefault Pageable pageable) {
-    List<ArtistDto> artists = artistsService.findFollowedArtistsForCurrentUser(PageRequest.of(pageable.getPageNumber()-1, pageable.getPageSize()));
+  public ResponseEntity<MyArtistsResponse> getMyArtists(@PageableDefault(page = 1) Pageable pageable) {
+    List<ArtistDto> artists = artistsService.findFollowedArtistsForCurrentUser(PageRequest.of(pageable.getPageNumber() - 1, pageable.getPageSize()));
     long totalArtists = artistsService.countFollowedArtistsForCurrentUser();
     Pagination pagination = new Pagination(totalArtists, pageable.getPageNumber(), pageable.getPageSize());
     MyArtistsResponse response = new MyArtistsResponse(artists, pagination);

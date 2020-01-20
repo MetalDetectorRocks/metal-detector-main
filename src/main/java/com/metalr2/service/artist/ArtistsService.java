@@ -25,7 +25,7 @@ public interface ArtistsService {
   long countFollowedArtistsPerUser(String publicUserId);
   long countFollowedArtistsForCurrentUser();
 
-  Optional<SearchResponse> searchDiscogsByName(String artistQueryString, int page, int size);
+  Optional<SearchResponse> searchDiscogsByName(String artistQueryString, Pageable pageable);
   Optional<ArtistDetailsResponse> searchDiscogsById(long discogsId);
 
 }
