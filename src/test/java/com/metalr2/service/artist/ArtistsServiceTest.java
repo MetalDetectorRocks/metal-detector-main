@@ -37,7 +37,6 @@ import java.util.stream.Stream;
 
 import static com.metalr2.web.DtoFactory.ArtistFactory;
 import static com.metalr2.web.DtoFactory.DiscogsArtistSearchResultFactory;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyString;
@@ -499,12 +498,12 @@ class ArtistsServiceTest implements WithAssertions {
     @DisplayName("searchDiscogsByName() returns retuns a valid result")
     void search_by_name_returns_valid_result() {
       // given
-      when(artistSearchClient.searchByName(ARTIST_NAME, PAGE, SIZE)).thenReturn(Optional.of(DiscogsArtistSearchResultFactory.withOneCertainResult()));
+      when(artistSearchClient.searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE))).thenReturn(Optional.of(DiscogsArtistSearchResultFactory.withOneCertainResult()));
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
       // when
-      Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PAGE, SIZE);
+      Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
 
       // then
       assertThat(responseOptional).isPresent();
@@ -519,21 +518,21 @@ class ArtistsServiceTest implements WithAssertions {
       Pagination pagination = response.getPagination();
       assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, PAGE, SIZE));
 
-      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PAGE, SIZE);
+      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
     }
 
     @Test
     @DisplayName("searchDiscogsByName() returns returns empty result")
     void search_by_name_returns_empy_result() {
       // given
-      when(artistSearchClient.searchByName(anyString(), anyInt(), anyInt())).thenReturn(Optional.empty());
+      when(artistSearchClient.searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE))).thenReturn(Optional.empty());
 
       //when
-      Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PAGE, SIZE);
+      Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
 
       // then
       assertThat(responseOptional).isEmpty();
-      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PAGE, SIZE);
+      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
     }
 
     @Test

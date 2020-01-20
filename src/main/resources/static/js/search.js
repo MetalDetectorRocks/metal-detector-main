@@ -49,7 +49,7 @@ function search(){
  * @param size  Elements per page
  */
 function validateSearch(query, page, size) {
-    return query && !Number.isNaN(page) && !Number.isNaN(size) && page > 0 && size > 0;
+    return query && !Number.isNaN(page) && !Number.isNaN(size);
 }
 
 /**
@@ -95,8 +95,7 @@ function createResultCards(searchResponse){
         artistDetailsElement.text = "Details for " + searchResult.artistName;
         cardBody.append(artistDetailsElement);
 
-        const breakElement2 = document.createElement('br');
-        cardBody.append(breakElement2);
+        cardBody.append(breakElement.cloneNode(false));
 
         const followArtistButtonElement = createFollowArtistButton(searchResult.artistName,
           searchResult.id, searchResult.isFollowed);
