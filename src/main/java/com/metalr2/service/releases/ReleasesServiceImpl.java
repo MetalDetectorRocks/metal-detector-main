@@ -17,8 +17,6 @@ import org.springframework.web.client.RestTemplate;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -39,11 +37,11 @@ public class ReleasesServiceImpl implements ReleasesService {
     ResponseEntity<ReleasesResponse> responseEntity = restTemplate.postForEntity(allReleasesUrl, requestEntity, ReleasesResponse.class);
 
     ReleasesResponse response = responseEntity.getBody();
-    if (response == null || responseEntity.getStatusCode() != HttpStatus.OK || !response.getReleases().iterator().hasNext()) {
+    if (response == null || responseEntity.getStatusCode() != HttpStatus.OK || response.getReleases().isEmpty()) {
       return Collections.emptyList();
     }
 
-    return StreamSupport.stream(response.getReleases().spliterator(), false).collect(Collectors.toList());
+    return response.getReleases();
   }
 
   private HttpEntity<ReleasesRequest> createHttpEntity(ReleasesRequest request) {
