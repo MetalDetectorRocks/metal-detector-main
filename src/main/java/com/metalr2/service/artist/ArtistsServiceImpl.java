@@ -167,7 +167,7 @@ public class ArtistsServiceImpl implements ArtistsService {
                                                     artistSearchResult.getTitle(), alreadyFollowedArtists.contains(artistSearchResult.getId())))
         .collect(Collectors.toList());
 
-    Pagination pagination = new Pagination(discogsPagination.getPagesTotal(), discogsPagination.getCurrentPage(), itemsPerPage);
+    Pagination pagination = new Pagination(discogsPagination.getItemsTotal(), discogsPagination.getCurrentPage(), itemsPerPage);
 
     return new SearchResponse(dtoSearchResults, pagination);
   }
