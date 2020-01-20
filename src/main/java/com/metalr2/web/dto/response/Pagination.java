@@ -1,16 +1,22 @@
 package com.metalr2.web.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class Pagination {
 
   private int totalPages;
   private int currentPage;
   private int itemsPerPage;
+
+  public Pagination(long total, int page, int size) {
+    this.totalPages = (int) Math.ceil((double) total / size);
+    this.currentPage = page;
+    this.itemsPerPage = size;
+  }
 
 }

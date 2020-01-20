@@ -38,9 +38,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProfile {
 
-  private static final long VALID_ARTIST_ID         = 252211L;
-  private static final long INVALID_ARTIST_ID       = 0L;
-  private static final String VALID_SEARCH_REQUEST  = "Darkthrone";
+  private static final long VALID_ARTIST_ID = 252211L;
+  private static final long INVALID_ARTIST_ID = 0L;
+  private static final String VALID_SEARCH_REQUEST = "Darkthrone";
 
   @MockBean
   private ArtistsService artistsService;
@@ -108,10 +108,10 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
   @DisplayName("Test artist name search endpoint")
   class ArtistNameSearchTest {
 
-    private static final String NO_RESULT_SEARCH_REQUEST  = "NoResult";
-    private static final int DEFAULT_PAGE                 = 1;
-    private static final int DEFAULT_SIZE                 = 10;
-    private static final int TOTAL_PAGES                  = 2;
+    private static final String NO_RESULT_SEARCH_REQUEST = "NoResult";
+    private static final int DEFAULT_PAGE = 1;
+    private static final int DEFAULT_SIZE = 10;
+    private static final int TOTAL_PAGES = 1;
 
     private final String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH;
 

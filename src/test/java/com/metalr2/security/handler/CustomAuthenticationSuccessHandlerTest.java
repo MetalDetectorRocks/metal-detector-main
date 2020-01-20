@@ -31,7 +31,7 @@ class CustomAuthenticationSuccessHandlerTest implements WithAssertions {
     Authentication authentication = new TestingAuthenticationToken("principal", "credentials");
     authenticationSuccessHandler.onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
 
-    assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.MOVED_TEMPORARILY.value());
+    assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.FOUND.value());
     assertThat(httpServletResponse.getRedirectedUrl()).isEqualTo(Endpoints.Frontend.HOME);
   }
 
