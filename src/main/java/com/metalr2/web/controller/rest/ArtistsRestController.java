@@ -32,7 +32,7 @@ public class ArtistsRestController {
   @GetMapping(path = Endpoints.Rest.SEARCH,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<SearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
-                                                         @PageableDefault(page = 1) Pageable pageable) {
+                                                         @PageableDefault Pageable pageable) {
     Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(query, pageable);
     return ResponseEntity.of(responseOptional);
   }

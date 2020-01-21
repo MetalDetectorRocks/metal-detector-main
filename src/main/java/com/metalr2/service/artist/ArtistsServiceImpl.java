@@ -167,7 +167,8 @@ public class ArtistsServiceImpl implements ArtistsService {
                                                     artistSearchResult.getTitle(), alreadyFollowedArtists.contains(artistSearchResult.getId())))
         .collect(Collectors.toList());
 
-    Pagination pagination = new Pagination(discogsPagination.getItemsTotal(), discogsPagination.getCurrentPage(), itemsPerPage);
+    // Discogs works with page "1" being the first page, see https://trello.com/c/euiR6RPp
+    Pagination pagination = new Pagination(discogsPagination.getItemsTotal(), discogsPagination.getCurrentPage() - 1, itemsPerPage);
 
     return new SearchResponse(dtoSearchResults, pagination);
   }
