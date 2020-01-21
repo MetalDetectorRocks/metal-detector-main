@@ -33,9 +33,7 @@ public class ArtistsRestController {
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<SearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
                                                          @PageableDefault Pageable pageable) {
-    Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(query,
-                                                                                   pageable.getPageNumber(),
-                                                                                   pageable.getPageSize());
+    Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(query, pageable);
     return ResponseEntity.of(responseOptional);
   }
 

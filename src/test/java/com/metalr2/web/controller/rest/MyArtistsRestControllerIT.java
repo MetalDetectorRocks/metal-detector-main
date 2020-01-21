@@ -36,7 +36,7 @@ class MyArtistsRestControllerIT implements WithAssertions, WithIntegrationTestPr
 
   private static final long DISCOGS_ID = 252211L;
   private static final String ARTIST_NAME = "Darkthrone";
-  private static final int PAGE = 1;
+  private static final int PAGE = 0;
   private static final int SIZE = 10;
 
   @MockBean
@@ -62,8 +62,7 @@ class MyArtistsRestControllerIT implements WithAssertions, WithIntegrationTestPr
   @DisplayName("GET should return 200 and results if present")
   void get_should_return_200_and_results() {
     // given
-    PageRequest pageRequest = PageRequest.of(PAGE, SIZE);
-    when(artistsService.findFollowedArtistsForCurrentUser(pageRequest)).thenReturn(Collections.singletonList(
+    when(artistsService.findFollowedArtistsForCurrentUser(PageRequest.of(PAGE, SIZE))).thenReturn(Collections.singletonList(
         new ArtistDto(DISCOGS_ID, ARTIST_NAME, null)));
     when(artistsService.countFollowedArtistsForCurrentUser()).thenReturn(1L);
 
@@ -89,7 +88,7 @@ class MyArtistsRestControllerIT implements WithAssertions, WithIntegrationTestPr
     assertThat(response.getPagination().getItemsPerPage()).isEqualTo(SIZE);
     assertThat(response.getPagination().getCurrentPage()).isEqualTo(PAGE);
 
-    verify(artistsService, times(1)).findFollowedArtistsForCurrentUser(pageRequest);
+    verify(artistsService, times(1)).findFollowedArtistsForCurrentUser(PageRequest.of(PAGE, SIZE));
     verify(artistsService, times(1)).countFollowedArtistsForCurrentUser();
   }
 

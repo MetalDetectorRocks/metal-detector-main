@@ -63,3 +63,19 @@ function validationOrAjaxFailed(message, containerId) {
   createNoResultsMessage(message);
   toggleLoader(containerId);
 }
+
+/**
+ * Creates a pagination placeholder
+ * @param element   Element to add placeholder to
+ */
+function createPlaceholder(element) {
+  const listItem = document.createElement("li");
+  listItem.className = "page-item";
+
+  const text = document.createElement("p");
+  text.className = "page-link";
+  text.textContent = "...";
+
+  listItem.append(text);
+  element.append(listItem);
+}

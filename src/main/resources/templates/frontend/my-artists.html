@@ -4,6 +4,13 @@
       <title id="pageTitle">My artists | Metal Release Radar</title>
   </head>
   <body>
-    <h1>My Artists</h1>
+  <h1>My Artists</h1>
+  <div id="myArtistsContainer" class="mb-3"></div>
+  <div id="noResultsMessageContainer"></div>
+  <script th:inline="javascript">
+    $(document).ready(function () {
+      showMyArtists()
+    })
+  </script>
   </body>
 </html>

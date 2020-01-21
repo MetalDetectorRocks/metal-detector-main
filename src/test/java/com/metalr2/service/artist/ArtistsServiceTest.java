@@ -37,10 +37,10 @@ import java.util.stream.Stream;
 
 import static com.metalr2.web.DtoFactory.ArtistFactory;
 import static com.metalr2.web.DtoFactory.DiscogsArtistSearchResultFactory;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -49,9 +49,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ArtistsServiceTest implements WithAssertions {
 
-  private static final long DISCOGS_ID = 252211L;
+  private static final long DISCOGS_ID    = 252211L;
   private static final String ARTIST_NAME = "Darkthrone";
-  private static final String USER_ID = "TestId";
+  private static final String USER_ID     = "TestId";
 
   @Mock
   private CurrentUserSupplier currentUserSupplier;
@@ -87,7 +87,7 @@ class ArtistsServiceTest implements WithAssertions {
     @BeforeEach
     void setUp() {
       artistEntity = new ArtistEntity(DISCOGS_ID, ARTIST_NAME, null);
-      artistDto = new ArtistDto(DISCOGS_ID, ARTIST_NAME, null);
+      artistDto    = new ArtistDto(DISCOGS_ID, ARTIST_NAME, null);
     }
 
     @Test
@@ -200,8 +200,8 @@ class ArtistsServiceTest implements WithAssertions {
 
       // then
       verify(artistsRepository, times(1)).existsByArtistDiscogsId(artistEntity.getArtistDiscogsId());
-      verify(artistSearchClient, times(0)).searchById(anyLong());
-      verify(artistsRepository, times(0)).save(any(ArtistEntity.class));
+      verify(artistSearchClient, never()).searchById(anyLong());
+      verify(artistsRepository, never()).save(any(ArtistEntity.class));
 
       assertThat(saved).isTrue();
     }
@@ -218,7 +218,7 @@ class ArtistsServiceTest implements WithAssertions {
       // then
       verify(artistsRepository, times(1)).existsByArtistDiscogsId(artistEntity.getArtistDiscogsId());
       verify(artistSearchClient, times(1)).searchById(artistEntity.getArtistDiscogsId());
-      verify(artistsRepository, times(0)).save(any(ArtistEntity.class));
+      verify(artistsRepository, never()).save(any(ArtistEntity.class));
 
       assertThat(saved).isFalse();
     }
@@ -269,7 +269,7 @@ class ArtistsServiceTest implements WithAssertions {
 
       // then
       assertThat(result).isFalse();
-      verify(followedArtistsRepository, times(0)).save(any());
+      verify(followedArtistsRepository, never()).save(any());
     }
 
     @Test
@@ -305,7 +305,7 @@ class ArtistsServiceTest implements WithAssertions {
       assertThat(result).isFalse();
 
       verify(followedArtistsRepository, times(1)).findByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID);
-      verify(followedArtistsRepository, times(0)).delete(new FollowedArtistEntity(USER_ID, DISCOGS_ID));
+      verify(followedArtistsRepository, never()).delete(new FollowedArtistEntity(USER_ID, DISCOGS_ID));
     }
 
     @Test
@@ -486,9 +486,9 @@ class ArtistsServiceTest implements WithAssertions {
   @DisplayName("Testing name and id search")
   class SearchTest {
 
-    private static final int PAGE = 1;
-    private static final int SIZE = 10;
-    private static final int TOTAL_PAGES = 2;
+    private static final int PAGE         = 1;
+    private static final int SIZE         = 10;
+    private static final int TOTAL_PAGES  = 1;
 
     @BeforeEach
     void setUp() {
@@ -498,12 +498,12 @@ class ArtistsServiceTest implements WithAssertions {
     @DisplayName("searchDiscogsByName() returns retuns a valid result")
     void search_by_name_returns_valid_result() {
       // given
-      when(artistSearchClient.searchByName(ARTIST_NAME, PAGE, SIZE)).thenReturn(Optional.of(DiscogsArtistSearchResultFactory.withOneCertainResult()));
+      when(artistSearchClient.searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE))).thenReturn(Optional.of(DiscogsArtistSearchResultFactory.withOneCertainResult()));
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
       // when
-      Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PAGE, SIZE);
+      Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
 
       // then
       assertThat(responseOptional).isPresent();
@@ -516,23 +516,23 @@ class ArtistsServiceTest implements WithAssertions {
       assertThat(searchResult).isEqualTo(new SearchResponse.SearchResult(null, DISCOGS_ID, ARTIST_NAME, false));
 
       Pagination pagination = response.getPagination();
-      assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, PAGE, SIZE));
+      assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, PAGE - 1, SIZE));
 
-      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PAGE, SIZE);
+      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
     }
 
     @Test
     @DisplayName("searchDiscogsByName() returns returns empty result")
     void search_by_name_returns_empy_result() {
       // given
-      when(artistSearchClient.searchByName(anyString(), anyInt(), anyInt())).thenReturn(Optional.empty());
+      when(artistSearchClient.searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE))).thenReturn(Optional.empty());
 
       //when
-      Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PAGE, SIZE);
+      Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
 
       // then
       assertThat(responseOptional).isEmpty();
-      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PAGE, SIZE);
+      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
     }
 
     @Test

@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
@@ -38,9 +39,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProfile {
 
-  private static final long VALID_ARTIST_ID         = 252211L;
-  private static final long INVALID_ARTIST_ID       = 0L;
-  private static final String VALID_SEARCH_REQUEST  = "Darkthrone";
+  private static final long VALID_ARTIST_ID = 252211L;
+  private static final long INVALID_ARTIST_ID = 0L;
+  private static final String VALID_SEARCH_REQUEST = "Darkthrone";
 
   @MockBean
   private ArtistsService artistsService;
@@ -108,10 +109,10 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
   @DisplayName("Test artist name search endpoint")
   class ArtistNameSearchTest {
 
-    private static final String NO_RESULT_SEARCH_REQUEST  = "NoResult";
-    private static final int DEFAULT_PAGE                 = 1;
-    private static final int DEFAULT_SIZE                 = 10;
-    private static final int TOTAL_PAGES                  = 2;
+    private static final String NO_RESULT_SEARCH_REQUEST = "NoResult";
+    private static final int DEFAULT_PAGE = 1;
+    private static final int DEFAULT_SIZE = 10;
+    private static final int TOTAL_PAGES = 1;
 
     private final String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH;
 
@@ -134,7 +135,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       requestParams.put("page", DEFAULT_PAGE);
       requestParams.put("size", DEFAULT_SIZE);
 
-      when(artistsService.searchDiscogsByName(VALID_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE))
+      when(artistsService.searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE)))
           .thenReturn(Optional.of(ArtistNameSearchResponseFactory.withOneResult()));
 
       // when
@@ -154,7 +155,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       Pagination pagination = searchResponse.getPagination();
       assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE));
 
-      verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE);
+      verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
     }
 
     @Test
@@ -166,7 +167,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       requestParams.put("page", DEFAULT_PAGE);
       requestParams.put("size", DEFAULT_SIZE);
 
-      when(artistsService.searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE))
+      when(artistsService.searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE)))
           .thenReturn(Optional.empty());
 
       // when
@@ -174,7 +175,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
 
       // then
       validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-      verify(artistsService, times(1)).searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, DEFAULT_PAGE, DEFAULT_SIZE);
+      verify(artistsService, times(1)).searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
     }
   }
 
