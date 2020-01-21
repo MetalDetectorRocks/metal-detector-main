@@ -6,8 +6,10 @@ function showMyArtists() {
   toggleLoader("myArtistsContainer");
 
   const url = new URL(window.location.href);
-  const page = url.searchParams.get("page");
   const size = url.searchParams.get("size");
+  let page = url.searchParams.get("page");
+
+  if (page != null) page--;
 
   const parameter =
     {
@@ -96,49 +98,49 @@ function createNavigationElementMyArtists(myArtists) {
   navElement.append(listElement);
 
   // Previous link
-  if (myArtists.pagination.currentPage > 1)
+  if (myArtists.pagination.currentPage > 0)
     createPreviousOrNextItemMyArtists(myArtists, listElement, true);
 
   // Page links
   if (myArtists.pagination.totalPages <= 5) {
-    for (let index = 1; index <= myArtists.pagination.totalPages; index++) {
+    for (let index = 0; index < myArtists.pagination.totalPages; index++) {
       createPageLinkMyArtists(myArtists, index, listElement);
     }
   } else {
     // Show first five pages
-    for (let index = 1; index <= 5; index++) {
+    for (let index = 0; index < 5; index++) {
       createPageLinkMyArtists(myArtists, index, listElement);
     }
 
     // Show first placeholder
-    if (myArtists.pagination.currentPage < 5 || myArtists.pagination.currentPage > 7)
+    if (myArtists.pagination.currentPage < 4 || myArtists.pagination.currentPage > 6)
       createPlaceholder(listElement);
 
     // Show one before current page
-    if (myArtists.pagination.currentPage > 6)
+    if (myArtists.pagination.currentPage > 5)
       createPageLinkMyArtists(myArtists, myArtists.pagination.currentPage - 1, listElement);
 
     // Show current page
-    if (myArtists.pagination.currentPage > 5) {
+    if (myArtists.pagination.currentPage > 4) {
       createPageLinkMyArtists(myArtists, myArtists.pagination.currentPage, listElement);
     }
 
     // Show one after current page
-    if (myArtists.pagination.currentPage > 4 &&
-        myArtists.pagination.currentPage < myArtists.pagination.totalPages - 1)
+    if (myArtists.pagination.currentPage > 3 &&
+        myArtists.pagination.currentPage < myArtists.pagination.totalPages - 2)
       createPageLinkMyArtists(myArtists, myArtists.pagination.currentPage + 1, listElement);
 
     // Show second placeholder
-    if (myArtists.pagination.currentPage > 4 && myArtists.pagination.currentPage < myArtists.pagination.totalPages - 2)
+    if (myArtists.pagination.currentPage > 3 && myArtists.pagination.currentPage < myArtists.pagination.totalPages - 2)
       createPlaceholder(listElement);
 
     // Show last page
-    if (myArtists.pagination.currentPage !== myArtists.pagination.totalPages)
-      createPageLinkMyArtists(myArtists, myArtists.pagination.totalPages, listElement);
+    if (myArtists.pagination.currentPage !== myArtists.pagination.totalPages - 1)
+      createPageLinkMyArtists(myArtists, myArtists.pagination.totalPages - 1, listElement);
   }
 
   // Next link
-  if (myArtists.pagination.currentPage < myArtists.pagination.totalPages)
+  if (myArtists.pagination.currentPage + 1 < myArtists.pagination.totalPages)
     createPreviousOrNextItemMyArtists(myArtists, listElement, false);
 
   document.getElementById('myArtistsContainer').append(navElement);
@@ -159,8 +161,8 @@ function createPageLinkMyArtists(myArtists, index, element) {
 
   const link = document.createElement("a");
   link.className = "page-link";
-  link.href = "/my-artists?page=" + index + "&size=" + myArtists.pagination.itemsPerPage;
-  link.text = String(index);
+  link.href = "/my-artists?page=" + (index+1) + "&size=" + myArtists.pagination.itemsPerPage;
+  link.text = String(index+1);
 
   listItem.append(link);
   element.append(listItem);
@@ -182,13 +184,13 @@ function createPreviousOrNextItemMyArtists(myArtists, element, previous) {
 
   if (previous){
     text = "Previous";
-    targetPage = myArtists.pagination.currentPage - 1;
+    targetPage = myArtists.pagination.currentPage;
     symbol = "\u00AB";
     item.classList.add("prev");
 
   } else {
     text = "Next";
-    targetPage = myArtists.pagination.currentPage + 1;
+    targetPage = myArtists.pagination.currentPage + 2;
     symbol = "\u00BB";
     item.classList.add("next");
   }

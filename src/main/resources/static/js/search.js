@@ -117,49 +117,49 @@ function createNavigationElement(query, searchResponse) {
     navElement.append(listElement);
 
     // Previous link
-    if (searchResponse.pagination.currentPage > 1)
+    if (searchResponse.pagination.currentPage > 0)
         createPreviousOrNextItem(query, searchResponse, listElement, true);
 
     // Page links
     if (searchResponse.pagination.totalPages <= 5) {
-        for (let index = 1; index <= searchResponse.pagination.totalPages; index++) {
+        for (let index = 0; index < searchResponse.pagination.totalPages; index++) {
             createPageLink(query, searchResponse, index, listElement);
         }
     } else {
         // Show first five pages
-        for (let index = 1; index <= 5; index++) {
+        for (let index = 0; index < 5; index++) {
             createPageLink(query, searchResponse, index, listElement);
         }
 
         // Show first placeholder
-        if (searchResponse.pagination.currentPage < 5 || searchResponse.pagination.currentPage > 7)
+        if (searchResponse.pagination.currentPage < 4 || searchResponse.pagination.currentPage > 6)
             createPlaceholder(listElement);
 
         // Show one before current page
-        if (searchResponse.pagination.currentPage > 6)
+        if (searchResponse.pagination.currentPage > 5)
             createPageLink(query, searchResponse, searchResponse.pagination.currentPage - 1, listElement);
 
         // Show current page
-        if (searchResponse.pagination.currentPage > 5) {
+        if (searchResponse.pagination.currentPage > 4) {
             createPageLink(query, searchResponse, searchResponse.pagination.currentPage, listElement);
         }
 
         // Show one after current page
-        if (searchResponse.pagination.currentPage > 4 &&
-            searchResponse.pagination.currentPage < searchResponse.pagination.totalPages - 1)
+        if (searchResponse.pagination.currentPage > 3 &&
+            searchResponse.pagination.currentPage < searchResponse.pagination.totalPages - 2)
             createPageLink(query, searchResponse, searchResponse.pagination.currentPage + 1, listElement);
 
         // Show second placeholder
-        if (searchResponse.pagination.currentPage > 4 && searchResponse.pagination.currentPage < searchResponse.pagination.totalPages - 2)
+        if (searchResponse.pagination.currentPage > 3 && searchResponse.pagination.currentPage < searchResponse.pagination.totalPages - 2)
             createPlaceholder(listElement);
 
         // Show last page
-        if (searchResponse.pagination.currentPage !== searchResponse.pagination.totalPages)
-            createPageLink(query, searchResponse, searchResponse.pagination.totalPages, listElement);
+        if (searchResponse.pagination.currentPage !== searchResponse.pagination.totalPages - 1)
+            createPageLink(query, searchResponse, searchResponse.pagination.totalPages - 1, listElement);
     }
 
     // Next link
-    if (searchResponse.pagination.currentPage < searchResponse.pagination.totalPages)
+    if (searchResponse.pagination.currentPage + 1 < searchResponse.pagination.totalPages)
         createPreviousOrNextItem(query, searchResponse, listElement, false);
 
     document.getElementById('searchResultsContainer').append(navElement);
@@ -181,9 +181,9 @@ function createPageLink(query, searchResponse, index, element) {
 
     const link = document.createElement("a");
     link.className = "page-link";
-    link.href = "/artists/search?query=" + query + "&page=" + index
+    link.href = "/artists/search?query=" + query + "&page=" + (index+1)
                 + "&size=" + searchResponse.pagination.itemsPerPage;
-    link.text = String(index);
+    link.text = String((index+1));
 
     listItem.append(link);
     element.append(listItem);
@@ -206,13 +206,13 @@ function createPreviousOrNextItem(query, searchResponse, element, previous) {
 
     if (previous){
         text = "Previous";
-        targetPage = searchResponse.pagination.currentPage - 1;
+        targetPage = searchResponse.pagination.currentPage;
         symbol = "\u00AB";
         item.classList.add("prev");
 
     } else {
         text = "Next";
-        targetPage = searchResponse.pagination.currentPage + 1;
+        targetPage = searchResponse.pagination.currentPage + 2;
         symbol = "\u00BB";
         item.classList.add("next");
     }

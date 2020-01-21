@@ -516,7 +516,7 @@ class ArtistsServiceTest implements WithAssertions {
       assertThat(searchResult).isEqualTo(new SearchResponse.SearchResult(null, DISCOGS_ID, ARTIST_NAME, false));
 
       Pagination pagination = response.getPagination();
-      assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, PAGE, SIZE));
+      assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, PAGE - 1, SIZE));
 
       verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
     }
