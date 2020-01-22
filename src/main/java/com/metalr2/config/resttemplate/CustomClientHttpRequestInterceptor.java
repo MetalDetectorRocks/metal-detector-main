@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Slf4j
-public class CustomClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+public class  CustomClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
   private final DiscogsConfig discogsConfig;
 
