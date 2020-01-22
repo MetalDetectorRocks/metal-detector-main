@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.sql.DataSource;
@@ -20,7 +19,6 @@ import javax.sql.DataSource;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -51,15 +49,15 @@ class IndexControllerIT implements WithSecurityConfig {
         .andExpect(content().contentType("text/html;charset=UTF-8"));
   }
 
-  @ParameterizedTest(name = "[{index}] => Endpoint <{0}>")
-  @ValueSource(strings = {Endpoints.Guest.INDEX, Endpoints.Guest.SLASH_INDEX})
-  @DisplayName("GET on index should return home view for logged in user")
-  @WithMockUser
-  void given_index_uri_then_return_home_view(String endpoint) throws Exception {
-    mockMvc.perform(get(endpoint))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl(Endpoints.Frontend.HOME))
-        .andExpect(view().name("redirect:" + Endpoints.Frontend.HOME))
-        .andExpect(model().size(0));
-  }
+//  @ParameterizedTest(name = "[{index}] => Endpoint <{0}>")
+//  @ValueSource(strings = {Endpoints.Guest.INDEX, Endpoints.Guest.SLASH_INDEX})
+//  @DisplayName("GET on index should return home view for logged in user")
+//  @WithMockUser
+//  void given_index_uri_then_return_home_view(String endpoint) throws Exception {
+//    mockMvc.perform(get(endpoint))
+//        .andExpect(status().is3xxRedirection())
+//        .andExpect(redirectedUrl(Endpoints.Frontend.HOME))
+//        .andExpect(view().name("redirect:" + Endpoints.Frontend.HOME))
+//        .andExpect(model().size(0));
+//  }
 }
