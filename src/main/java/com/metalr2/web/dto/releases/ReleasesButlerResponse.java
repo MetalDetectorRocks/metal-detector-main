@@ -14,7 +14,7 @@ import java.util.List;
 @EqualsAndHashCode
 @ToString
 @NoArgsConstructor
-public class ReleasesResponse {
+public class ReleasesButlerResponse {
 
   @JsonProperty("releases")
   private List<ReleaseDto> releases;

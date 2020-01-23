@@ -49,6 +49,16 @@ public class RestAssuredRequestHandler {
           .then();
   }
 
+  public ValidatableResponse doPost(Object request, ContentType accept) {
+    return given()
+            .accept(accept)
+            .contentType(accept)
+            .body(request)
+          .when()
+            .post(requestUri)
+          .then();
+  }
+
   public ValidatableResponse doDelete(String pathSegment, ContentType accept) {
     return given()
             .contentType(accept)
