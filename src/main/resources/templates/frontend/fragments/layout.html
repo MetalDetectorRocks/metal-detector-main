@@ -13,8 +13,11 @@
   <!-- CSS -->
   <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" href="#" rel="stylesheet" type="text/css" />
   <link th:href="@{/webjars/lightbox/src/css/lightbox.css}" href="#" rel="stylesheet" type="text/css" />
+  <link th:href="@{/webjars/datatables/css/dataTables.bootstrap4.min.css}" href="#" rel="stylesheet" type="text/css" />
   <link th:href="@{/css/frontend.css}" href="#" rel="stylesheet" />
   <link th:href="@{/css/common.css}" href="#" rel="stylesheet" />
+  <link th:href="@{/css/datatables.custom.css}" href="#" rel="stylesheet" />
+
 
   <!-- JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -22,12 +25,15 @@
   <script th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
   <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
   <script th:src="@{/webjars/lightbox//src/js/lightbox.js}" src="#"></script>
+  <script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}" src="#"></script>
+  <script th:src="@{/webjars/datatables/js/dataTables.bootstrap4.min.js}" src="#"></script>
   <script th:src="@{/js/common.js}" src="#"></script>
   <script th:src="@{/js/util.js}" src="#"></script>
   <script th:src="@{/js/search.js}" src="#"></script>
   <script th:src="@{/js/follow-artists.js}" src="#"></script>
   <script th:src="@{/js/artist-details.js}" src="#"></script>
   <script th:src="@{/js/my-artists.js}" src="#"></script>
+  <script th:src="@{/js/releases.js}" src="#"></script>
 
   <!-- Material Icons -->
   <link th:href="@{/webjars/material-icons/iconfont/material-icons.css}" href="/webjars/material-icons/0.3.1/iconfont/material-icons.css" rel="stylesheet">
@@ -49,14 +55,8 @@
               <li class="nav-item">
                 <a class="nav-link" href="#" th:href="@{/my-artists}" >My Artists</a>
               </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarUpcomingReleasesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Upcoming Releases
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarUpcomingReleasesDropdown">
-                  <a class="dropdown-item" href="#" th:href="@{/all-releases}">All Releases</a>
-                  <a class="dropdown-item" href="#" th:href="@{/artists-releases}">From your Artists</a>
-                </div>
+              <li class="nav-item">
+                <a class="nav-link" href="#" th:href="@{/releases}" >Releases</a>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

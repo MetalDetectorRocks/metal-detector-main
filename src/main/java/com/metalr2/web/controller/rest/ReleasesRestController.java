@@ -3,6 +3,7 @@ package com.metalr2.web.controller.rest;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ValidationException;
+import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.service.releases.ReleasesService;
 import com.metalr2.web.dto.releases.ButlerReleasesRequest;
 import com.metalr2.web.dto.request.DetectorReleasesRequest;
@@ -26,11 +27,13 @@ import java.util.stream.Collectors;
 public class ReleasesRestController {
 
   private final ReleasesService releasesService;
+  private final ArtistsService artistsService;
   private final ModelMapper mapper;
 
   @Autowired
-  public ReleasesRestController(ReleasesService releasesService, ModelMapper mapper) {
+  public ReleasesRestController(ReleasesService releasesService, ArtistsService artistsService, ModelMapper mapper) {
     this.releasesService = releasesService;
+    this.artistsService = artistsService;
     this.mapper = mapper;
   }
 
