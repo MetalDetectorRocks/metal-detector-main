@@ -1,8 +1,8 @@
 package com.metalr2.service.releases;
 
 import com.metalr2.web.dto.releases.ReleaseDto;
-import com.metalr2.web.dto.releases.ReleasesRequest;
-import com.metalr2.web.dto.releases.ReleasesResponse;
+import com.metalr2.web.dto.releases.ReleasesButlerRequest;
+import com.metalr2.web.dto.releases.ReleasesButlerResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,11 +32,11 @@ public class ReleasesServiceImpl implements ReleasesService {
   }
 
   @Override
-  public List<ReleaseDto> getReleases(ReleasesRequest request) {
-    HttpEntity<ReleasesRequest> requestEntity = createHttpEntity(request);
-    ResponseEntity<ReleasesResponse> responseEntity = restTemplate.postForEntity(allReleasesUrl, requestEntity, ReleasesResponse.class);
+  public List<ReleaseDto> getReleases(ReleasesButlerRequest request) {
+    HttpEntity<ReleasesButlerRequest> requestEntity = createHttpEntity(request);
+    ResponseEntity<ReleasesButlerResponse> responseEntity = restTemplate.postForEntity(allReleasesUrl, requestEntity, ReleasesButlerResponse.class);
 
-    ReleasesResponse response = responseEntity.getBody();
+    ReleasesButlerResponse response = responseEntity.getBody();
     if (response == null || responseEntity.getStatusCode() != HttpStatus.OK || response.getReleases().isEmpty()) {
       return Collections.emptyList();
     }
@@ -44,7 +44,7 @@ public class ReleasesServiceImpl implements ReleasesService {
     return response.getReleases();
   }
 
-  private HttpEntity<ReleasesRequest> createHttpEntity(ReleasesRequest request) {
+  private HttpEntity<ReleasesButlerRequest> createHttpEntity(ReleasesButlerRequest request) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
