@@ -41,9 +41,9 @@ public class ReleasesRestController {
       throw new ValidationException(ErrorMessages.VALIDATION_ERROR.toDisplayString(), bindingResult.getFieldErrors());
     }
 
-    List<ReleasesResponse> releaseDtos = releasesService.getReleases(mapper.map(request, ReleasesButlerRequest.class)).stream()
+    List<ReleasesResponse> releaseResponses = releasesService.getReleases(mapper.map(request, ReleasesButlerRequest.class)).stream()
         .map(releaseDto -> mapper.map(releaseDto, ReleasesResponse.class))
         .collect(Collectors.toList());
-    return ResponseEntity.ok(releaseDtos);
+    return ResponseEntity.ok(releaseResponses);
   }
 }
