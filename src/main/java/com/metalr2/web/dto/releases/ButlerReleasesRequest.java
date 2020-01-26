@@ -20,7 +20,7 @@ import java.time.LocalDate;
     "dateTo",
     "artists"
 })
-public class ReleasesButlerRequest {
+public class ButlerReleasesRequest {
 
   @JsonProperty("dateFrom")
   private LocalDate dateFrom;
