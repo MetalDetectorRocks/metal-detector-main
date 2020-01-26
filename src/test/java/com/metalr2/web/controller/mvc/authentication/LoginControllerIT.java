@@ -17,10 +17,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.sql.DataSource;
 import java.util.stream.Stream;
@@ -36,6 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -89,12 +93,23 @@ class LoginControllerIT implements WithSecurityConfig {
   }
 
   @Test
-  @DisplayName("Login with valid credentials should be ok")
-  void login_with_valid_credentials_should_be_ok() throws Exception {
-    mockMvc.perform(post(Endpoints.Guest.LOGIN)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .param(PARAM_USERNAME, USERNAME)
-                .param(PARAM_PASSWORD, PASSWORD))
+  @DisplayName("Requesting secured resource should redirect to login page")
+  void requesting_secured_resource_should_redirect_to_login_page() throws Exception {
+    mockMvc.perform(get(Endpoints.AdminArea.INDEX))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrlPattern("**/" + Endpoints.Guest.LOGIN));
+  }
+
+  @Test
+  @DisplayName("Login with valid credentials should be redirect to home page")
+  void login_with_valid_credentials_should_be_redirect_to_home_page() throws Exception {
+    MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(Endpoints.Guest.LOGIN)
+            .with(SecurityMockMvcRequestPostProcessors.csrf())
+            .param(PARAM_USERNAME, USERNAME)
+            .param(PARAM_PASSWORD, PASSWORD)
+            .session(new MockHttpSession());
+
+    mockMvc.perform(requestBuilder)
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl(Endpoints.Frontend.HOME));
 

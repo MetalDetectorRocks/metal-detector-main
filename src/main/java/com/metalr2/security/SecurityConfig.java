@@ -4,6 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.model.user.UserRole;
 import com.metalr2.security.handler.CustomAccessDeniedHandler;
 import com.metalr2.security.handler.CustomAuthenticationFailureHandler;
+import com.metalr2.security.handler.CustomAuthenticationSuccessHandler;
 import com.metalr2.security.handler.CustomLogoutSuccessHandler;
 import com.metalr2.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 
 import javax.sql.DataSource;
@@ -59,8 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .formLogin()
         .loginPage(Endpoints.Guest.LOGIN)
         .loginProcessingUrl(Endpoints.Guest.LOGIN)
-        .defaultSuccessUrl(Endpoints.Frontend.HOME)
-//        .successHandler(new CustomAuthenticationSuccessHandler())
+        .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
         .failureHandler(new CustomAuthenticationFailureHandler())
       .and()
       .rememberMe()
