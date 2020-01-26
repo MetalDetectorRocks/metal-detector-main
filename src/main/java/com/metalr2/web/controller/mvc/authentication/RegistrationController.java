@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,12 +60,20 @@ public class RegistrationController {
   }
 
   @GetMapping(Endpoints.Guest.REGISTER)
-  public ModelAndView showRegistrationForm() {
+  public ModelAndView showRegistrationForm(Authentication authentication) {
+    if (authentication != null && authentication.isAuthenticated()) {
+      return new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
+    }
     return new ModelAndView(ViewNames.Guest.REGISTER);
   }
 
   @PostMapping(Endpoints.Guest.REGISTER)
-  public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult) {
+  public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult,
+                                          Authentication authentication) {
+    if (authentication != null && authentication.isAuthenticated()) {
+      return new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
+    }
+
     // show registration form if there are validation errors
     if (bindingResult.hasErrors()) {
       return new ModelAndView(ViewNames.Guest.REGISTER, HttpStatus.BAD_REQUEST);
@@ -98,7 +107,11 @@ public class RegistrationController {
   }
 
   @GetMapping(Endpoints.Guest.REGISTRATION_VERIFICATION)
-  public ModelAndView verifyRegistration(@RequestParam(value="token") String tokenString) {
+  public ModelAndView verifyRegistration(@RequestParam(value="token") String tokenString, Authentication authentication) {
+    if (authentication != null && authentication.isAuthenticated()) {
+      return new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
+    }
+
     String param = "verificationSuccess";
 
     try{
@@ -115,7 +128,11 @@ public class RegistrationController {
   }
 
   @GetMapping(Endpoints.Guest.RESEND_VERIFICATION_TOKEN)
-  public ModelAndView resendEmailVerificationToken(@RequestParam(value="token") String tokenString) {
+  public ModelAndView resendEmailVerificationToken(@RequestParam(value="token") String tokenString, Authentication authentication) {
+    if (authentication != null && authentication.isAuthenticated()) {
+      return new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
+    }
+
     String param = "resendVerificationTokenSuccess";
 
     try{
@@ -127,5 +144,4 @@ public class RegistrationController {
 
     return new ModelAndView("redirect:" + Endpoints.Guest.LOGIN + "?" + param);
   }
-
 }

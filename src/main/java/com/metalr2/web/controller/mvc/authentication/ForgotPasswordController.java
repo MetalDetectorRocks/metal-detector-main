@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,12 +53,20 @@ public class ForgotPasswordController {
   }
 
   @GetMapping
-  public ModelAndView showForgotPasswordForm() {
+  public ModelAndView showForgotPasswordForm(Authentication authentication) {
+    if (authentication != null && authentication.isAuthenticated()) {
+      return new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
+    }
     return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD);
   }
 
   @PostMapping
-  public ModelAndView requestPasswordReset(@Valid @ModelAttribute ForgotPasswordRequest forgotPasswordRequest, BindingResult bindingResult) {
+  public ModelAndView requestPasswordReset(@Valid @ModelAttribute ForgotPasswordRequest forgotPasswordRequest, BindingResult bindingResult,
+                                           Authentication authentication) {
+    if (authentication != null && authentication.isAuthenticated()) {
+      return new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
+    }
+
     // show forgot password form if there are validation errors
     if (bindingResult.hasErrors()) {
       return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
@@ -78,5 +87,4 @@ public class ForgotPasswordController {
 
     return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, viewModel, HttpStatus.OK);
   }
-
 }

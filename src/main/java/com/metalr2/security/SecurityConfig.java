@@ -55,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .authorizeRequests()
         .antMatchers(Endpoints.AntPattern.ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
         .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
-        .antMatchers(Endpoints.AntPattern.AUTH_PAGES).anonymous()
+        .antMatchers(Endpoints.AntPattern.AUTH_PAGES).permitAll()
         .anyRequest().authenticated()
       .and()
       .formLogin()
