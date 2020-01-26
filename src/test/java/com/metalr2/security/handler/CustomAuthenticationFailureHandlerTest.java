@@ -31,7 +31,7 @@ class CustomAuthenticationFailureHandlerTest implements WithAssertions {
   void forward_to_login_page_if_user_is_disabled() throws Exception {
     authenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, new DisabledException("dummy"));
 
-    assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.MOVED_TEMPORARILY.value());
+    assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.FOUND.value());
     assertThat(httpServletResponse.getHeader(HttpHeaders.LOCATION)).isEqualTo(Endpoints.Guest.LOGIN + "?disabled");
   }
 
@@ -40,7 +40,7 @@ class CustomAuthenticationFailureHandlerTest implements WithAssertions {
   void forward_to_login_page_if_user_has_bad_credentials() throws Exception {
     authenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, new BadCredentialsException("dummy"));
 
-    assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.MOVED_TEMPORARILY.value());
+    assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.FOUND.value());
     assertThat(httpServletResponse.getRedirectedUrl()).isEqualTo(Endpoints.Guest.LOGIN + "?badCredentials");
   }
 

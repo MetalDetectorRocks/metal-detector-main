@@ -20,6 +20,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -79,7 +80,7 @@ class DiscogsDiscogsArtistSearchRestClientTest implements WithAssertions {
               .thenReturn(ResponseEntity.ok(resultContainer));
 
       // when
-      Optional<DiscogsArtistSearchResultContainer> result = artistSearchClient.searchByName(ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE);
+      Optional<DiscogsArtistSearchResultContainer> result = artistSearchClient.searchByName(ARTIST_NAME_QUERY, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
 
       // then
       assertThat(result).isPresent();
@@ -98,7 +99,7 @@ class DiscogsDiscogsArtistSearchRestClientTest implements WithAssertions {
               .thenReturn(ResponseEntity.status(httpStatus).body(resultContainer));
 
       // when
-      Optional<DiscogsArtistSearchResultContainer> result = artistSearchClient.searchByName(ARTIST_NAME_QUERY, DEFAULT_PAGE, DEFAULT_SIZE);
+      Optional<DiscogsArtistSearchResultContainer> result = artistSearchClient.searchByName(ARTIST_NAME_QUERY, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
 
       // then
       assertThat(result).isEmpty();
@@ -120,7 +121,7 @@ class DiscogsDiscogsArtistSearchRestClientTest implements WithAssertions {
     @DisplayName("Searching by name with null or empty artist name should return an empty optional")
     void search_by_name_with_invalid_artist_name(String artistName) {
       // when
-      Optional<DiscogsArtistSearchResultContainer> result = artistSearchClient.searchByName(artistName, DEFAULT_PAGE, DEFAULT_SIZE);
+      Optional<DiscogsArtistSearchResultContainer> result = artistSearchClient.searchByName(artistName, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
 
       // then
       assertThat(result).isEmpty();

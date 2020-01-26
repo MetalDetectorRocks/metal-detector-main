@@ -1,5 +1,6 @@
 package com.metalr2.model.artist;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,10 +10,14 @@ import java.util.Optional;
 @Repository
 public interface FollowedArtistsRepository extends JpaRepository<FollowedArtistEntity, Long> {
 
-  List<FollowedArtistEntity> findAllByPublicUserId(String publicUserId);
+  List<FollowedArtistEntity> findByPublicUserId(String publicUserId);
 
-  boolean existsByPublicUserIdAndArtistDiscogsId(String publicUserId, long artistDiscogsId);
+  boolean existsByPublicUserIdAndDiscogsId(String publicUserId, long discogsId);
 
-  Optional<FollowedArtistEntity> findByPublicUserIdAndArtistDiscogsId(String publicUserId, long artistDiscogsId);
+  Optional<FollowedArtistEntity> findByPublicUserIdAndDiscogsId(String publicUserId, long discogsId);
+
+  List<FollowedArtistEntity> findByPublicUserId(String publicUserId, Pageable pageable);
+
+  long countByPublicUserId(String publicUserId);
 
 }
