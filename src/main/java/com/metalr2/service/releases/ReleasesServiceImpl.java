@@ -37,7 +37,11 @@ public class ReleasesServiceImpl implements ReleasesService {
     ResponseEntity<ButlerReleasesResponse> responseEntity = restTemplate.postForEntity(allReleasesUrl, requestEntity, ButlerReleasesResponse.class);
 
     ButlerReleasesResponse response = responseEntity.getBody();
-    if (response == null || responseEntity.getStatusCode() != HttpStatus.OK || response.getReleases().isEmpty()) {
+    boolean shouldNotHappen = response == null || responseEntity.getStatusCode() != HttpStatus.OK;
+
+    if (shouldNotHappen || response.getReleases().isEmpty()) {
+      if (shouldNotHappen)
+        log.warn("Could not get releases for request: " + request + ". Response: " + responseEntity.getStatusCode());
       return Collections.emptyList();
     }
 
