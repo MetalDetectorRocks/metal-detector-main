@@ -1,24 +1,16 @@
 let userTable;
 
-/**
- * Load all users on load or reload
- */
 $(document).ready(function () {
     userTable = requestUsersFromServer();
 
-    // ToDo DanielW: move in separate method
-    $(document).on("click", "#user-table tbody tr", function() {
-        let data = userTable.row(this).data();
-        $('#update-user-dialog').modal('show');
-    });
-
-    // create form
+    // create administrator
     $("#create-user-button").button().on("click", createUser);
     $("#cancel-create-user-button").button().on("click", resetCreateUserForm);
 
-    // update form
+    // update user
     $("#update-user-button").button().on("click", updateUser);
     $("#cancel-update-user-button").button().on("click", resetUpdateUserForm);
+    $(document).on("click", "#user-table tbody tr", showUpdateForm);
 });
 
 /**
@@ -40,7 +32,7 @@ function requestUsersFromServer() {
             {'data': 'role'},
             {'data': 'enabled'},
             {'data': 'lastLogin'},
-            {'data': 'creationDate'}
+            {'data': 'createdDateTime'}
         ],
         "autoWidth": false, // fixes window resizing issue
         "columnDefs": [
@@ -91,6 +83,28 @@ function createUser () {
 }
 
 /**
+ * Shows the update form and fills form with values from the selected user.
+ */
+function showUpdateForm() {
+    let data = userTable.row(this).data();
+    $('#update-user-dialog').modal('show');
+
+    // master data
+    $('#updatePublicId').val(data.publicId);
+    $('#updateUsername').val(data.username);
+    $('#updateEmail').val(data.email);
+    $('#updateRole').val(data.role);
+    $('#updateStatus').val(data.enabled ? 'Enabled' : 'Disabled');
+
+    // meta data
+    $('#updateLastLogin').val(data.lastLogin);
+    $('#updateCreatedBy').val(data.createdBy);
+    $('#updateCreatedDateTime').val(data.createdDateTime);
+    $('#updateLastModifiedBy').val(data.lastModifiedBy);
+    $('#updateLastModifiedDateTime').val(data.lastModifiedDateTime);
+}
+
+/**
  * Updates certain user.
  */
 function updateUser () {
@@ -111,7 +125,6 @@ function sendCreateUserRequest() {
     };
 
     const successCallback = function (createResponse) {
-        console.log(createResponse);
         userTable.row.add(createResponse).draw(false);
     };
 

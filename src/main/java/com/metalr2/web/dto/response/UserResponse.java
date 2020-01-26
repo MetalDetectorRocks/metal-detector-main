@@ -19,6 +19,9 @@ public class UserResponse {
   private boolean enabled;
   private String role;
   private LocalDateTime lastLogin;
-  private LocalDateTime creationDate;
+  private String createdBy;
+  private LocalDateTime createdDateTime;
+  private LocalDateTime lastModifiedDateTime;
+  private String lastModifiedBy;
 
 }

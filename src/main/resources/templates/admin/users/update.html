@@ -13,25 +13,115 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="#" id="update-user-form">
-                    <fieldset>
-                        <!-- Username-->
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-master-data-tab" data-toggle="tab" href="#nav-master-data" role="tab" aria-controls="nav-home" aria-selected="true">Master data</a>
+                        <a class="nav-item nav-link" id="nav-meta-data-tab" data-toggle="tab" href="#nav-meta-data" role="tab" aria-controls="nav-home" aria-selected="true">Meta data</a>
+                        <a class="nav-item nav-link" id="nav-login-log-tab" data-toggle="tab" href="#nav-login-log" role="tab" aria-controls="nav-profile" aria-selected="false">Login log</a>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <!-- Master data -->
+                    <div class="tab-pane fade show active mt-3 ml-2" id="nav-master-data" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <form method="post" action="#" id="update-user-form">
+                            <fieldset>
+                                <!-- Public Id -->
+                                <div class="form-group row">
+                                    <label for="updatePublicId" class="col-sm-4 col-form-label">Public Id</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="updatePublicId" readonly class="form-control-plaintext" />
+                                    </div>
+                                </div>
+
+                                <!-- Username-->
+                                <div class="form-group row">
+                                    <label for="updateUsername" class="col-sm-4 col-form-label">Username</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="updateUsername" readonly class="form-control-plaintext" />
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="form-group row">
+                                    <label for="updateEmail" class="col-sm-4 col-form-label">Email</label>
+                                    <div class="col-sm-8">
+                                        <input type="email" id="updateEmail" readonly class="form-control-plaintext" />
+                                    </div>
+                                </div>
+
+                                <!-- Role -->
+                                <div class="form-group row">
+                                    <label for="updateRole" class="col-sm-4 col-form-label">Role</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="updateRole">
+                                            <option>Administrator</option>
+                                            <option>User</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="form-group row">
+                                    <label for="updateStatus" class="col-sm-4 col-form-label">Status</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="updateStatus">
+                                            <option>Enabled</option>
+                                            <option>Disabled</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+
+                    <!-- Meta data -->
+                    <div class="tab-pane fade mt-3 ml-2" id="nav-meta-data" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <!-- Last login -->
                         <div class="form-group row">
-                            <label for="updateUsername" class="col-sm-4 col-form-label">Username</label>
+                            <label for="updateLastLogin" class="col-sm-4 col-form-label">Last login</label>
                             <div class="col-sm-8">
-                                <input type="text" id="updateUsername" class="form-control" autocomplete="username" required autofocus />
+                                <input type="text" id="updateLastLogin" readonly class="form-control-plaintext" />
                             </div>
                         </div>
 
-                        <!-- Email -->
+                        <!-- Created by -->
                         <div class="form-group row">
-                            <label for="updateEmail" class="col-sm-4 col-form-label">Email</label>
+                            <label for="updateCreatedBy" class="col-sm-4 col-form-label">Created by</label>
                             <div class="col-sm-8">
-                                <input type="email" id="updateEmail" class="form-control" required />
+                                <input type="text" id="updateCreatedBy" readonly class="form-control-plaintext" />
                             </div>
                         </div>
-                    </fieldset>
-                </form>
+
+                        <!-- Creation date-->
+                        <div class="form-group row">
+                            <label for="updateCreatedDateTime" class="col-sm-4 col-form-label">Creation date</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="updateCreatedDateTime" readonly class="form-control-plaintext" />
+                            </div>
+                        </div>
+
+                        <!-- Last modified by -->
+                        <div class="form-group row">
+                            <label for="updateLastModifiedBy" class="col-sm-4 col-form-label">Last modified by</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="updateLastModifiedBy" readonly class="form-control-plaintext" />
+                            </div>
+                        </div>
+
+                        <!-- Last modified date-->
+                        <div class="form-group row">
+                            <label for="updateLastModifiedDateTime" class="col-sm-4 col-form-label">Last modified date</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="updateLastModifiedDateTime" readonly class="form-control-plaintext" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Login log -->
+                    <div class="tab-pane fade mt-3 ml-2" id="nav-login-log" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <p>not yet implemented</p>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary btn-sm" id="update-user-button">Update</button>
