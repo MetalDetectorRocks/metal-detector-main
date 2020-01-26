@@ -5,6 +5,7 @@ import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ValidationException;
 import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.service.releases.ReleasesService;
+import com.metalr2.web.dto.ArtistDto;
 import com.metalr2.web.dto.releases.ButlerReleasesRequest;
 import com.metalr2.web.dto.request.DetectorReleasesRequest;
 import com.metalr2.web.dto.response.DetectorReleasesResponse;
@@ -47,6 +48,8 @@ public class ReleasesRestController {
     List<DetectorReleasesResponse> releaseResponses = releasesService.getReleases(mapper.map(request, ButlerReleasesRequest.class)).stream()
         .map(releaseDto -> mapper.map(releaseDto, DetectorReleasesResponse.class))
         .collect(Collectors.toList());
+    List<String> followedArtistsNames = artistsService.findFollowedArtistsForCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
+    releaseResponses.forEach(releaseResponse -> releaseResponse.setIsFollowed(String.valueOf(followedArtistsNames.contains(releaseResponse.getArtist()))));
     return ResponseEntity.ok(releaseResponses);
   }
 }

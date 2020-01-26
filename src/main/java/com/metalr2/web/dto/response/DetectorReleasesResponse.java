@@ -21,6 +21,6 @@ public class DetectorReleasesResponse {
   private String albumTitle;
   private LocalDate releaseDate;
   private String estimatedReleaseDate;
-  private Boolean isFollowed;
+  private String isFollowed;
 
 }

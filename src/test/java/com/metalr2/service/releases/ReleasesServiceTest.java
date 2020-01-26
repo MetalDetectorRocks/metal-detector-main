@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.metalr2.web.DtoFactory.ReleasesButlerResponseFactory;
+import static com.metalr2.web.DtoFactory.ButlerReleasesResponseFactory;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
@@ -66,7 +66,7 @@ class ReleasesServiceTest implements WithAssertions {
   void get_releases_valid_result() {
     // given
     LocalDate releaseDate = LocalDate.of(2020, 1, 1);
-    ButlerReleasesResponse responseMock = ReleasesButlerResponseFactory.withOneResult("A1", releaseDate);
+    ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.withOneResult("A1", releaseDate);
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     when(restTemplate.postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ButlerReleasesResponse.class)))
         .thenReturn(ResponseEntity.ok(responseMock));
@@ -100,8 +100,8 @@ class ReleasesServiceTest implements WithAssertions {
   }
 
   private static Stream<Arguments> responseProvider() {
-    ButlerReleasesResponse result = ReleasesButlerResponseFactory.withOneResult("A1", LocalDate.now());
-    ButlerReleasesResponse emptyResult = ReleasesButlerResponseFactory.withEmptyResult();
+    ButlerReleasesResponse result = ButlerReleasesResponseFactory.withOneResult("A1", LocalDate.now());
+    ButlerReleasesResponse emptyResult = ButlerReleasesResponseFactory.withEmptyResult();
     return Stream.of(
         Arguments.of(null, HttpStatus.OK),
         Arguments.of(result, HttpStatus.BAD_REQUEST),
@@ -113,7 +113,7 @@ class ReleasesServiceTest implements WithAssertions {
   @DisplayName("Test http entity request")
   void test_http_entity() {
     // given
-    ButlerReleasesResponse responseMock = ReleasesButlerResponseFactory.withOneResult("A1", LocalDate.now());
+    ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.withOneResult("A1", LocalDate.now());
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     when(restTemplate.postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ButlerReleasesResponse.class)))
         .thenReturn(ResponseEntity.ok(responseMock));

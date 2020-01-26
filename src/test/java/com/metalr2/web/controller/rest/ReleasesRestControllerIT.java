@@ -1,6 +1,7 @@
 package com.metalr2.web.controller.rest;
 
 import com.metalr2.config.constants.Endpoints;
+import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.service.releases.ReleasesService;
 import com.metalr2.testutil.WithIntegrationTestProfile;
 import com.metalr2.web.DtoFactory;
@@ -47,6 +48,9 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
   private ReleasesService releasesService;
 
   @MockBean
+  private ArtistsService artistsService;
+
+  @MockBean
   ModelMapper modelMapper;
 
   @LocalServerPort
@@ -60,7 +64,7 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
 
   @AfterEach
   void tearDown() {
-    reset(releasesService);
+    reset(releasesService, artistsService);
   }
 
   private RestAssuredRequestHandler requestHandler;
@@ -72,6 +76,7 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
     // given
     when(releasesService.getReleases(requestButler)).thenReturn(mockedDtos);
     when(modelMapper.map(request, ButlerReleasesRequest.class)).thenReturn(requestButler);
+    when(artistsService.findFollowedArtistsForCurrentUser()).thenReturn(Collections.emptyList());
 
     for (int i = 0; i < mockedDtos.size(); i++) {
       when(modelMapper.map(mockedDtos.get(i), DetectorReleasesResponse.class)).thenReturn(expectedResponses.get(i));
@@ -99,9 +104,9 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
     ReleaseDto releaseDto2 = DtoFactory.ReleaseDtoFactory.withOneResult("A2", date);
     ReleaseDto releaseDto3 = DtoFactory.ReleaseDtoFactory.withOneResult("A3", date);
 
-    DetectorReleasesResponse releaseResponse1 = DtoFactory.ReleaseResponseFactory.withOneResult("A1", date);
-    DetectorReleasesResponse releaseResponse2 = DtoFactory.ReleaseResponseFactory.withOneResult("A2", date);
-    DetectorReleasesResponse releaseResponse3 = DtoFactory.ReleaseResponseFactory.withOneResult("A3", date);
+    DetectorReleasesResponse releaseResponse1 = DtoFactory.DetectorReleaseResponseFactory.withOneResult("A1", date);
+    DetectorReleasesResponse releaseResponse2 = DtoFactory.DetectorReleaseResponseFactory.withOneResult("A2", date);
+    DetectorReleasesResponse releaseResponse3 = DtoFactory.DetectorReleaseResponseFactory.withOneResult("A3", date);
 
     ButlerReleasesRequest requestAllButler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
     DetectorReleasesRequest requestAll = new DetectorReleasesRequest(null, null, Collections.emptyList());
@@ -132,5 +137,4 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
         .contentType(ContentType.JSON)
         .statusCode(HttpStatus.BAD_REQUEST.value());
   }
-
 }
