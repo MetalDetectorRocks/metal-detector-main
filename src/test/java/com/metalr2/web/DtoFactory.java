@@ -6,13 +6,13 @@ import com.metalr2.web.dto.discogs.artist.DiscogsArtist;
 import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResult;
 import com.metalr2.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import com.metalr2.web.dto.discogs.search.DiscogsPagination;
+import com.metalr2.web.dto.releases.ButlerReleasesResponse;
 import com.metalr2.web.dto.releases.ReleaseDto;
-import com.metalr2.web.dto.releases.ReleasesButlerResponse;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
+import com.metalr2.web.dto.response.DetectorReleasesResponse;
 import com.metalr2.web.dto.response.Pagination;
-import com.metalr2.web.dto.response.ReleasesResponse;
 import com.metalr2.web.dto.response.SearchResponse;
 
 import java.time.LocalDate;
@@ -161,12 +161,12 @@ public class DtoFactory {
 
   public static class ReleasesButlerResponseFactory {
 
-    public static ReleasesButlerResponse withOneResult(String artist, LocalDate releaseDate) {
-      return new ReleasesButlerResponse(Collections.singletonList(ReleaseDtoFactory.withOneResult(artist, releaseDate)));
+    public static ButlerReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
+      return new ButlerReleasesResponse(Collections.singletonList(ReleaseDtoFactory.withOneResult(artist, releaseDate)));
     }
 
-    public static ReleasesButlerResponse withEmptyResult() {
-      return new ReleasesButlerResponse(Collections.emptyList());
+    public static ButlerReleasesResponse withEmptyResult() {
+      return new ButlerReleasesResponse(Collections.emptyList());
     }
   }
 
@@ -179,8 +179,8 @@ public class DtoFactory {
 
   public static class ReleaseResponseFactory {
 
-    public static ReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
-      return new ReleasesResponse(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate");
+    public static DetectorReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
+      return new DetectorReleasesResponse(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate");
     }
   }
 }

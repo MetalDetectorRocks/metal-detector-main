@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class ReleasesRequest {
+public class DetectorReleasesRequest {
 
   @Nullable
   private LocalDate dateFrom;

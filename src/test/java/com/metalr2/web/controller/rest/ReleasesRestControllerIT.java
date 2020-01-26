@@ -5,10 +5,10 @@ import com.metalr2.service.releases.ReleasesService;
 import com.metalr2.testutil.WithIntegrationTestProfile;
 import com.metalr2.web.DtoFactory;
 import com.metalr2.web.RestAssuredRequestHandler;
+import com.metalr2.web.dto.releases.ButlerReleasesRequest;
 import com.metalr2.web.dto.releases.ReleaseDto;
-import com.metalr2.web.dto.releases.ReleasesButlerRequest;
-import com.metalr2.web.dto.request.ReleasesRequest;
-import com.metalr2.web.dto.response.ReleasesResponse;
+import com.metalr2.web.dto.request.DetectorReleasesRequest;
+import com.metalr2.web.dto.response.DetectorReleasesResponse;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
@@ -68,13 +68,13 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
   @ParameterizedTest(name = "[{index}] => ButlerRequest <{0}> | RestControllerRequest <{1}> | MockedDtos <{2}> | ExpectedResponses <{3}>")
   @MethodSource("inputProvider")
   @DisplayName("POST should return valid results")
-  void post_valid_result(ReleasesButlerRequest requestButler, ReleasesRequest request, List<ReleaseDto> mockedDtos, List<ReleasesResponse> expectedResponses) {
+  void post_valid_result(ButlerReleasesRequest requestButler, DetectorReleasesRequest request, List<ReleaseDto> mockedDtos, List<DetectorReleasesResponse> expectedResponses) {
     // given
     when(releasesService.getReleases(requestButler)).thenReturn(mockedDtos);
-    when(modelMapper.map(request, ReleasesButlerRequest.class)).thenReturn(requestButler);
+    when(modelMapper.map(request, ButlerReleasesRequest.class)).thenReturn(requestButler);
 
     for (int i = 0; i < mockedDtos.size(); i++) {
-      when(modelMapper.map(mockedDtos.get(i), ReleasesResponse.class)).thenReturn(expectedResponses.get(i));
+      when(modelMapper.map(mockedDtos.get(i), DetectorReleasesResponse.class)).thenReturn(expectedResponses.get(i));
     }
 
     // when
@@ -85,12 +85,12 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
         .contentType(ContentType.JSON)
         .statusCode(HttpStatus.OK.value());
 
-    List<ReleasesResponse> response = validatableResponse.extract().body().jsonPath().getList(".", ReleasesResponse.class);
+    List<DetectorReleasesResponse> response = validatableResponse.extract().body().jsonPath().getList(".", DetectorReleasesResponse.class);
 
     assertThat(response).isEqualTo(expectedResponses);
     verify(releasesService, times(1)).getReleases(requestButler);
-    verify(modelMapper, times(1)).map(request, ReleasesButlerRequest.class);
-    verify(modelMapper, times(mockedDtos.size())).map(any(), eq(ReleasesResponse.class));
+    verify(modelMapper, times(1)).map(request, ButlerReleasesRequest.class);
+    verify(modelMapper, times(mockedDtos.size())).map(any(), eq(DetectorReleasesResponse.class));
   }
 
   private static Stream<Arguments> inputProvider() {
@@ -99,18 +99,18 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
     ReleaseDto releaseDto2 = DtoFactory.ReleaseDtoFactory.withOneResult("A2", date);
     ReleaseDto releaseDto3 = DtoFactory.ReleaseDtoFactory.withOneResult("A3", date);
 
-    ReleasesResponse releaseResponse1 = DtoFactory.ReleaseResponseFactory.withOneResult("A1", date);
-    ReleasesResponse releaseResponse2 = DtoFactory.ReleaseResponseFactory.withOneResult("A2", date);
-    ReleasesResponse releaseResponse3 = DtoFactory.ReleaseResponseFactory.withOneResult("A3", date);
+    DetectorReleasesResponse releaseResponse1 = DtoFactory.ReleaseResponseFactory.withOneResult("A1", date);
+    DetectorReleasesResponse releaseResponse2 = DtoFactory.ReleaseResponseFactory.withOneResult("A2", date);
+    DetectorReleasesResponse releaseResponse3 = DtoFactory.ReleaseResponseFactory.withOneResult("A3", date);
 
-    ReleasesButlerRequest requestAllButler = new ReleasesButlerRequest(null, null, Collections.singletonList("A1"));
-    ReleasesRequest requestAll = new ReleasesRequest(null, null, Collections.emptyList());
+    ButlerReleasesRequest requestAllButler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
+    DetectorReleasesRequest requestAll = new DetectorReleasesRequest(null, null, Collections.emptyList());
 
-    ReleasesButlerRequest requestA1Butler = new ReleasesButlerRequest(null, null, Collections.singletonList("A1"));
-    ReleasesRequest requestA1 = new ReleasesRequest(null, null, Collections.emptyList());
+    ButlerReleasesRequest requestA1Butler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
+    DetectorReleasesRequest requestA1 = new DetectorReleasesRequest(null, null, Collections.emptyList());
 
-    ReleasesButlerRequest requestA4Butler = new ReleasesButlerRequest(null, null, Collections.singletonList("A1"));
-    ReleasesRequest requestA4 = new ReleasesRequest(null, null, Collections.emptyList());
+    ButlerReleasesRequest requestA4Butler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
+    DetectorReleasesRequest requestA4 = new DetectorReleasesRequest(null, null, Collections.emptyList());
 
     return Stream.of(
         Arguments.of(requestAllButler, requestAll, List.of(releaseDto1, releaseDto2, releaseDto3), List.of(releaseResponse1, releaseResponse2, releaseResponse3)),
@@ -122,7 +122,7 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
   @DisplayName("POST with bad requests should return 400")
   void bad_requests() {
     // given
-    ReleasesRequest request = new ReleasesRequest(null, null, null);
+    DetectorReleasesRequest request = new DetectorReleasesRequest(null, null, null);
 
     // when
     ValidatableResponse validatableResponse = requestHandler.doPost(request, ContentType.JSON);
