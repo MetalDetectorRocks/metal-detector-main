@@ -27,12 +27,12 @@ public class UserMapper implements Mappable<UserEntity, UserDto> {
   public UserDto mapToDto(UserEntity entity) {
     UserDto userDto = mapper.map(entity, UserDto.class);
     userDto.setCreationDate(entity.getCreatedDateTime());
-    userDto.setRole(determinRoleName(entity));
+    userDto.setRole(determineRoleName(entity));
 
     return userDto;
   }
 
-  private String determinRoleName(UserEntity userEntity) {
+  private String determineRoleName(UserEntity userEntity) {
     if (userEntity.isAdministrator() || userEntity.isSuperUser()) {
       return "Administrator";
     }
