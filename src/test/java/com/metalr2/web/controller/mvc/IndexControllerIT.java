@@ -39,6 +39,7 @@ class IndexControllerIT implements WithSecurityConfig {
   @MockBean
   private DataSource dataSource;
 
+
   @ParameterizedTest(name = "[{index}] => Endpoint <{0}>")
   @ValueSource(strings = {Endpoints.Guest.INDEX, Endpoints.Guest.SLASH_INDEX})
   @DisplayName("GET on index should return index view for anonymous user")
@@ -58,6 +59,7 @@ class IndexControllerIT implements WithSecurityConfig {
   void given_index_uri_then_return_home_view(String endpoint) throws Exception {
     mockMvc.perform(get(endpoint))
         .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl(Endpoints.Frontend.HOME));
+        .andExpect(redirectedUrl(Endpoints.Frontend.HOME))
+        .andExpect(model().size(0));
   }
 }

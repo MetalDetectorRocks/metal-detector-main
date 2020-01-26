@@ -13,10 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -45,7 +50,12 @@ public class ResetPasswordController {
   }
 
   @GetMapping
-  public ModelAndView showResetPasswordForm(@RequestParam(value="token") String tokenString, Model model, RedirectAttributes redirectAttributes) {
+  public ModelAndView showResetPasswordForm(@RequestParam(value="token") String tokenString, Model model, RedirectAttributes redirectAttributes,
+                                            Authentication authentication) {
+    if (authentication != null && authentication.isAuthenticated()) {
+      return new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
+    }
+
     Optional<TokenEntity> tokenEntity = tokenService.getResetPasswordTokenByTokenString(tokenString);
 
     // check whether token exists
@@ -72,7 +82,12 @@ public class ResetPasswordController {
   }
 
   @PostMapping
-  public ModelAndView resetPassword(@Valid @ModelAttribute ChangePasswordRequest changePasswordRequest, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+  public ModelAndView resetPassword(@Valid @ModelAttribute ChangePasswordRequest changePasswordRequest, BindingResult bindingResult, RedirectAttributes redirectAttributes,
+                                    Authentication authentication) {
+    if (authentication != null && authentication.isAuthenticated()) {
+      return new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
+    }
+
     // show reset password form if there are validation errors
     if (bindingResult.hasErrors()) {
       redirectAttributes.addFlashAttribute(BindingResult.class.getName() + "." + FORM_DTO, bindingResult);
@@ -100,5 +115,4 @@ public class ResetPasswordController {
     // 4. remove token from database
     tokenService.deleteToken(tokenEntity.get());
   }
-
 }

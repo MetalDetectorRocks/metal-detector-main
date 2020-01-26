@@ -20,6 +20,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -83,6 +85,7 @@ class LoginControllerIT implements WithSecurityConfig {
 
   @Test
   @DisplayName("Requesting '" + Endpoints.Guest.LOGIN + "' should return the view to login")
+  @WithAnonymousUser
   void given_login_uri_should_return_login_view() throws Exception {
     mockMvc.perform(get(Endpoints.Guest.LOGIN))
             .andExpect(status().isOk())
@@ -94,6 +97,7 @@ class LoginControllerIT implements WithSecurityConfig {
 
   @Test
   @DisplayName("Requesting secured resource should redirect to login page")
+  @WithAnonymousUser
   void requesting_secured_resource_should_redirect_to_login_page() throws Exception {
     mockMvc.perform(get(Endpoints.AdminArea.INDEX))
             .andExpect(status().is3xxRedirection())
@@ -102,6 +106,7 @@ class LoginControllerIT implements WithSecurityConfig {
 
   @Test
   @DisplayName("Login with valid credentials should be redirect to home page")
+  @WithAnonymousUser
   void login_with_valid_credentials_should_be_redirect_to_home_page() throws Exception {
     MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(Endpoints.Guest.LOGIN)
             .with(SecurityMockMvcRequestPostProcessors.csrf())
@@ -119,6 +124,7 @@ class LoginControllerIT implements WithSecurityConfig {
   @ParameterizedTest(name = "[{index}]: Username <{0}> and Password <{1}>")
   @MethodSource("credentialProvider")
   @DisplayName("Login with bad credentials should fail")
+  @WithAnonymousUser
   void login_with_bad_credentials_should_fail(String username, String plainPassword) throws Exception {
     mockMvc.perform(post(Endpoints.Guest.LOGIN)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
@@ -141,6 +147,16 @@ class LoginControllerIT implements WithSecurityConfig {
             Arguments.of(USERNAME, null),
             Arguments.of(USERNAME, "invalid-password")
     );
+  }
+
+  @Test
+  @DisplayName("GET on login should return home view for logged in user")
+  @WithMockUser
+  void given_index_uri_then_return_home_view() throws Exception {
+    mockMvc.perform(get(Endpoints.Guest.LOGIN))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(Endpoints.Frontend.HOME))
+        .andExpect(model().size(0));
   }
 
   @TestConfiguration
