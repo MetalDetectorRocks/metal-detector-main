@@ -31,5 +31,4 @@ public class ReleasesControllerIT implements WithIntegrationTestProfile {
         .andExpect(content().contentType("text/html;charset=UTF-8"))
         .andExpect(content().string(containsString("Search")));
   }
-
 }
