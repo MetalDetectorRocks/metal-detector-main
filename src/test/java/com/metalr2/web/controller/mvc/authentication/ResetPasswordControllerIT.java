@@ -8,6 +8,7 @@ import com.metalr2.model.token.JwtsSupport;
 import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.token.TokenFactory;
 import com.metalr2.model.token.TokenType;
+import com.metalr2.service.redirection.RedirectionService;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.testutil.WithSecurityConfig;
@@ -74,12 +75,15 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
   private JwtsSupport jwtsSupport;
 
   @MockBean
+  private RedirectionService redirectionService;
+
+  @MockBean
   @ArtifactForFramework
   private BCryptPasswordEncoder passwordEncoder; // for WebSecurity
 
   @AfterEach
   void tearDown() {
-    reset(userService, tokenService, messages, jwtsSupport);
+    reset(userService, tokenService, messages, jwtsSupport, redirectionService);
   }
 
   @Test

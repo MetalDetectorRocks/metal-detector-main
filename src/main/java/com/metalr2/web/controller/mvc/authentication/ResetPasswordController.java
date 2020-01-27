@@ -6,6 +6,7 @@ import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.token.JwtsSupport;
 import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.user.UserEntity;
+import com.metalr2.service.redirection.RedirectionService;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
@@ -39,21 +40,25 @@ public class ResetPasswordController {
   private final TokenService tokenService;
   private final MessageSource messages;
   private final JwtsSupport jwtsSupport;
+  private final RedirectionService redirectionService;
 
   @Autowired
   public ResetPasswordController(UserService userService, TokenService tokenService,
-                                 @Qualifier("messageSource") MessageSource messages, JwtsSupport jwtsSupport) {
-    this.userService  = userService;
+                                 @Qualifier("messageSource") MessageSource messages, JwtsSupport jwtsSupport,
+                                 RedirectionService redirectionService) {
+    this.userService = userService;
     this.tokenService = tokenService;
-    this.messages     = messages;
-    this.jwtsSupport  = jwtsSupport;
+    this.messages = messages;
+    this.jwtsSupport = jwtsSupport;
+    this.redirectionService = redirectionService;
   }
 
   @GetMapping
-  public ModelAndView showResetPasswordForm(@RequestParam(value="token") String tokenString, Model model, RedirectAttributes redirectAttributes,
+  public ModelAndView showResetPasswordForm(@RequestParam(value = "token") String tokenString, Model model, RedirectAttributes redirectAttributes,
                                             Authentication authentication) {
-    if (authentication != null && authentication.isAuthenticated()) {
-      return new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
+    Optional<ModelAndView> redirectionOptional = redirectionService.getRedirectionIfNeeded(authentication);
+    if (redirectionOptional.isPresent()) {
+      return redirectionOptional.get();
     }
 
     Optional<TokenEntity> tokenEntity = tokenService.getResetPasswordTokenByTokenString(tokenString);
@@ -72,7 +77,7 @@ public class ResetPasswordController {
     else {
       // The model may contain a form request dto with validation messages from previous request (see resetPassword() method).
       // To display the errors correctly in the HTML file, this attribute must continue to be used and must not be overwritten by a new attribute.
-      if (! model.asMap().containsKey(FORM_DTO)) {
+      if (!model.asMap().containsKey(FORM_DTO)) {
         // create new ChangePasswordRequest if model has no attribute
         model.addAttribute(ChangePasswordRequest.builder().tokenString(tokenString).build());
       }
@@ -84,8 +89,9 @@ public class ResetPasswordController {
   @PostMapping
   public ModelAndView resetPassword(@Valid @ModelAttribute ChangePasswordRequest changePasswordRequest, BindingResult bindingResult, RedirectAttributes redirectAttributes,
                                     Authentication authentication) {
-    if (authentication != null && authentication.isAuthenticated()) {
-      return new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
+    Optional<ModelAndView> redirectionOptional = redirectionService.getRedirectionIfNeeded(authentication);
+    if (redirectionOptional.isPresent()) {
+      return redirectionOptional.get();
     }
 
     // show reset password form if there are validation errors
@@ -107,7 +113,7 @@ public class ResetPasswordController {
     // 2. get user from token
     Optional<TokenEntity> tokenEntity = tokenService.getResetPasswordTokenByTokenString(changePasswordRequest.getTokenString());
     @SuppressWarnings("OptionalGetWithoutIsPresent") // safe here, because we have validation in method showResetPasswordForm()
-    UserEntity userEntity = tokenEntity.get().getUser();
+        UserEntity userEntity = tokenEntity.get().getUser();
 
     // 3. set new password
     userService.changePassword(userEntity, changePasswordRequest.getNewPlainPassword());

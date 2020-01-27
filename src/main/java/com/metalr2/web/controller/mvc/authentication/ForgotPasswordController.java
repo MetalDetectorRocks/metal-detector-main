@@ -5,6 +5,7 @@ import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.ArtifactForFramework;
 import com.metalr2.model.user.events.OnResetPasswordRequestCompleteEvent;
+import com.metalr2.service.redirection.RedirectionService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.request.ForgotPasswordRequest;
@@ -35,15 +36,17 @@ public class ForgotPasswordController {
   static final String FORM_DTO = "forgotPasswordRequest";
 
   private final ApplicationEventPublisher eventPublisher;
-  private final UserService               userService;
-  private final MessageSource             messages;
+  private final UserService userService;
+  private final MessageSource messages;
+  private final RedirectionService redirectionService;
 
   @Autowired
   public ForgotPasswordController(UserService userService, ApplicationEventPublisher eventPublisher,
-                                  @Qualifier("messageSource") MessageSource messages) {
-    this.userService    = userService;
+                                  @Qualifier("messageSource") MessageSource messages, RedirectionService redirectionService) {
+    this.userService = userService;
     this.eventPublisher = eventPublisher;
-    this.messages       = messages;
+    this.messages = messages;
+    this.redirectionService = redirectionService;
   }
 
   @ModelAttribute(FORM_DTO)
@@ -54,17 +57,16 @@ public class ForgotPasswordController {
 
   @GetMapping
   public ModelAndView showForgotPasswordForm(Authentication authentication) {
-    if (authentication != null && authentication.isAuthenticated()) {
-      return new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
-    }
-    return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD);
+    Optional<ModelAndView> redirectionOptional = redirectionService.getRedirectionIfNeeded(authentication);
+    return redirectionOptional.orElseGet(() -> new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD));
   }
 
   @PostMapping
   public ModelAndView requestPasswordReset(@Valid @ModelAttribute ForgotPasswordRequest forgotPasswordRequest, BindingResult bindingResult,
                                            Authentication authentication) {
-    if (authentication != null && authentication.isAuthenticated()) {
-      return new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
+    Optional<ModelAndView> redirectionOptional = redirectionService.getRedirectionIfNeeded(authentication);
+    if (redirectionOptional.isPresent()) {
+      return redirectionOptional.get();
     }
 
     // show forgot password form if there are validation errors
