@@ -4,6 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.user.events.OnResetPasswordRequestCompleteEvent;
+import com.metalr2.service.redirection.RedirectionService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.testutil.WithIntegrationTestProfile;
 import com.metalr2.web.DtoFactory.UserDtoFactory;
@@ -22,14 +23,23 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Locale;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(MockitoExtension.class)
 class ForgotPasswordControllerIT implements WithAssertions, WithIntegrationTestProfile {
@@ -46,6 +56,9 @@ class ForgotPasswordControllerIT implements WithAssertions, WithIntegrationTestP
   @Mock
   private MessageSource messages;
 
+  @Mock
+  private RedirectionService redirectionService;
+
   @InjectMocks
   private ForgotPasswordController controller;
 
@@ -60,16 +73,30 @@ class ForgotPasswordControllerIT implements WithAssertions, WithIntegrationTestP
 
   @AfterEach
   void tearDown() {
-    reset(userService, messages);
+    reset(userService, messages, redirectionService);
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Guest.FORGOT_PASSWORD + "' should return the view to request a new password")
+  @DisplayName("Requesting '" + Endpoints.Guest.FORGOT_PASSWORD + "' should return the view to request a new password for anonymous users")
   void given_forgot_password_uri_should_return_forgot_password_view() throws Exception {
     mockMvc.perform(get(Endpoints.Guest.FORGOT_PASSWORD))
             .andExpect(status().isOk())
             .andExpect(view().name(ViewNames.Guest.FORGOT_PASSWORD))
             .andExpect(model().attributeExists(ForgotPasswordController.FORM_DTO));
+  }
+
+  @Test
+  @DisplayName("Requesting '" + Endpoints.Guest.FORGOT_PASSWORD + "' should return redirection for logged in users")
+  void given_forgot_password_uri_should_return_redirect() throws Exception {
+    ModelAndView redirectionModelAndView = new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
+    when(redirectionService.getRedirectionIfNeeded(any())).thenReturn(Optional.of(redirectionModelAndView));
+
+    mockMvc.perform(get(Endpoints.Guest.FORGOT_PASSWORD))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(Endpoints.Frontend.HOME))
+        .andExpect(model().attributeExists(ForgotPasswordController.FORM_DTO));
+
+    verify(redirectionService, times(1)).getRedirectionIfNeeded(any());
   }
 
   @Test
