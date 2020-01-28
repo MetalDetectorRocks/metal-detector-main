@@ -8,7 +8,6 @@ import com.metalr2.model.exceptions.EmailVerificationTokenExpiredException;
 import com.metalr2.model.exceptions.ResourceNotFoundException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
 import com.metalr2.model.user.events.OnRegistrationCompleteEvent;
-import com.metalr2.service.redirection.RedirectionService;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.UserDto;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +30,6 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 @Controller
 public class RegistrationController {
@@ -44,17 +41,15 @@ public class RegistrationController {
   private final TokenService tokenService;
   private final MessageSource messages;
   private final ModelMapper mapper;
-  private final RedirectionService redirectionService;
 
   @Autowired
   public RegistrationController(UserService userService, TokenService tokenService, ApplicationEventPublisher eventPublisher,
-                                @Qualifier("messageSource") MessageSource messages, RedirectionService redirectionService) {
+                                @Qualifier("messageSource") MessageSource messages) {
     this.userService = userService;
     this.tokenService = tokenService;
     this.eventPublisher = eventPublisher;
     this.messages = messages;
     this.mapper = new ModelMapper();
-    this.redirectionService = redirectionService;
   }
 
   @ModelAttribute(FORM_DTO)
@@ -64,19 +59,12 @@ public class RegistrationController {
   }
 
   @GetMapping(Endpoints.Guest.REGISTER)
-  public ModelAndView showRegistrationForm(Authentication authentication) {
-    Optional<ModelAndView> redirectionOptional = redirectionService.getRedirectionIfNeeded(authentication);
-    return redirectionOptional.orElseGet(() -> new ModelAndView(ViewNames.Guest.REGISTER));
+  public ModelAndView showRegistrationForm() {
+    return new ModelAndView(ViewNames.Guest.REGISTER);
   }
 
   @PostMapping(Endpoints.Guest.REGISTER)
-  public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult,
-                                          Authentication authentication) {
-    Optional<ModelAndView> redirectionOptional = redirectionService.getRedirectionIfNeeded(authentication);
-    if (redirectionOptional.isPresent()) {
-      return redirectionOptional.get();
-    }
-
+  public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult) {
     // show registration form if there are validation errors
     if (bindingResult.hasErrors()) {
       return new ModelAndView(ViewNames.Guest.REGISTER, HttpStatus.BAD_REQUEST);
@@ -110,12 +98,7 @@ public class RegistrationController {
   }
 
   @GetMapping(Endpoints.Guest.REGISTRATION_VERIFICATION)
-  public ModelAndView verifyRegistration(@RequestParam(value = "token") String tokenString, Authentication authentication) {
-    Optional<ModelAndView> redirectionOptional = redirectionService.getRedirectionIfNeeded(authentication);
-    if (redirectionOptional.isPresent()) {
-      return redirectionOptional.get();
-    }
-
+  public ModelAndView verifyRegistration(@RequestParam(value = "token") String tokenString) {
     String param = "verificationSuccess";
 
     try {
@@ -132,12 +115,7 @@ public class RegistrationController {
   }
 
   @GetMapping(Endpoints.Guest.RESEND_VERIFICATION_TOKEN)
-  public ModelAndView resendEmailVerificationToken(@RequestParam(value = "token") String tokenString, Authentication authentication) {
-    Optional<ModelAndView> redirectionOptional = redirectionService.getRedirectionIfNeeded(authentication);
-    if (redirectionOptional.isPresent()) {
-      return redirectionOptional.get();
-    }
-
+  public ModelAndView resendEmailVerificationToken(@RequestParam(value = "token") String tokenString) {
     String param = "resendVerificationTokenSuccess";
 
     try {

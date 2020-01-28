@@ -8,7 +8,7 @@ import com.metalr2.model.token.JwtsSupport;
 import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.token.TokenFactory;
 import com.metalr2.model.token.TokenType;
-import com.metalr2.service.redirection.RedirectionService;
+import com.metalr2.security.RedirectionHandlerInterceptor;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.testutil.WithSecurityConfig;
@@ -21,6 +21,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
@@ -49,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@WebMvcTest(ResetPasswordController.class)
+@WebMvcTest(value = ResetPasswordController.class, excludeAutoConfiguration = WebMvcAutoConfiguration.class)
 class ResetPasswordControllerIT implements WithSecurityConfig {
 
   private static final String PARAM_TOKEN_STRING      = "tokenString";
@@ -75,7 +76,7 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
   private JwtsSupport jwtsSupport;
 
   @MockBean
-  private RedirectionService redirectionService;
+  private RedirectionHandlerInterceptor redirectionHandlerInterceptor;
 
   @MockBean
   @ArtifactForFramework
@@ -83,7 +84,7 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
 
   @AfterEach
   void tearDown() {
-    reset(userService, tokenService, messages, jwtsSupport, redirectionService);
+    reset(userService, tokenService, messages, jwtsSupport);
   }
 
   @Test
@@ -165,7 +166,7 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
 
   @ParameterizedTest(name = "[{index}]: {0}")
   @MethodSource("changePasswordRequestProvider")
-  @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with invalid change password request should be fail")
+  @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with invalid change password request should fail")
   void test_reset_password_with_invalid_request(ChangePasswordRequest request) throws Exception {
     mockMvc.perform(post(Endpoints.Guest.RESET_PASSWORD)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
@@ -193,5 +194,4 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
             Arguments.of(ChangePasswordRequestFactory.withPassword(null, null))
     );
   }
-
 }

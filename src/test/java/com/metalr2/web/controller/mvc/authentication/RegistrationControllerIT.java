@@ -7,7 +7,6 @@ import com.metalr2.model.exceptions.EmailVerificationTokenExpiredException;
 import com.metalr2.model.exceptions.ResourceNotFoundException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
 import com.metalr2.model.user.events.OnRegistrationCompleteEvent;
-import com.metalr2.service.redirection.RedirectionService;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.testutil.WithIntegrationTestProfile;
@@ -35,16 +34,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -83,9 +79,6 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
   @Mock
   private MessageSource messages;
 
-  @Mock
-  private RedirectionService redirectionService;
-
   @InjectMocks
   private RegistrationController controller;
 
@@ -107,31 +100,17 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
   @AfterEach
   void tearDown() {
     paramValues.clear();
-    reset(userService, tokenService, messages, redirectionService);
+    reset(userService, tokenService, messages);
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Guest.REGISTER + "' should return the view to register for an anonymous user")
+  @DisplayName("Requesting '" + Endpoints.Guest.REGISTER + "' should return the view to register")
   void given_register_uri_should_return_register_view() throws Exception {
     mockMvc.perform(get(Endpoints.Guest.REGISTER))
         .andExpect(model().hasNoErrors())
         .andExpect(model().attributeExists(RegistrationController.FORM_DTO))
         .andExpect(status().isOk())
         .andExpect(view().name(ViewNames.Guest.REGISTER));
-  }
-
-  @Test
-  @DisplayName("Requesting '" + Endpoints.Guest.REGISTER + "' should redirect to Home for registered user")
-  void given_register_uri_should_return_redirect() throws Exception {
-    ModelAndView redirectionModelAndView = new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
-    when(redirectionService.getRedirectionIfNeeded(any())).thenReturn(Optional.of(redirectionModelAndView));
-
-    ResultActions actions = mockMvc.perform(get(Endpoints.Guest.REGISTER));
-    actions.andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl(Endpoints.Frontend.HOME))
-        .andExpect(model().size(1));
-
-    verify(redirectionService, times(1)).getRedirectionIfNeeded(any());
   }
 
   @Nested

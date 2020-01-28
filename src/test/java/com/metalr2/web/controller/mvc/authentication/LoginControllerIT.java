@@ -3,7 +3,7 @@ package com.metalr2.web.controller.mvc.authentication;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.user.UserFactory;
-import com.metalr2.service.redirection.RedirectionService;
+import com.metalr2.security.RedirectionHandlerInterceptor;
 import com.metalr2.service.user.UserService;
 import com.metalr2.testutil.WithSecurityConfig;
 import org.junit.jupiter.api.AfterEach;
@@ -14,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,10 +26,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.sql.DataSource;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsString;
@@ -46,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@WebMvcTest(LoginController.class)
+@WebMvcTest(value = LoginController.class, excludeAutoConfiguration = WebMvcAutoConfiguration.class)
 class LoginControllerIT implements WithSecurityConfig {
 
   private static final String PARAM_USERNAME = "username";
@@ -64,10 +63,10 @@ class LoginControllerIT implements WithSecurityConfig {
   private BCryptPasswordEncoder passwordEncoder;
 
   @MockBean
-  private DataSource dataSource;
+  private RedirectionHandlerInterceptor redirectionHandlerInterceptor;
 
   @MockBean
-  private RedirectionService redirectionService;
+  private DataSource dataSource;
 
   @BeforeEach
   void setup() {
@@ -84,7 +83,7 @@ class LoginControllerIT implements WithSecurityConfig {
 
   @AfterEach
   void tearDown() {
-    reset(userService, redirectionService);
+    reset(userService);
   }
 
   @Test
@@ -147,20 +146,6 @@ class LoginControllerIT implements WithSecurityConfig {
             Arguments.of(USERNAME, null),
             Arguments.of(USERNAME, "invalid-password")
     );
-  }
-
-  @Test
-  @DisplayName("GET on login should return home view for logged in user")
-  void given_index_uri_then_return_home_view() throws Exception {
-    ModelAndView redirectionModelAndView = new ModelAndView("redirect:" + Endpoints.Frontend.HOME);
-    when(redirectionService.getRedirectionIfNeeded(any())).thenReturn(Optional.of(redirectionModelAndView));
-
-    mockMvc.perform(get(Endpoints.Guest.LOGIN))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl(Endpoints.Frontend.HOME))
-        .andExpect(model().size(0));
-
-    verify(redirectionService, times(1)).getRedirectionIfNeeded(any());
   }
 
   @TestConfiguration
