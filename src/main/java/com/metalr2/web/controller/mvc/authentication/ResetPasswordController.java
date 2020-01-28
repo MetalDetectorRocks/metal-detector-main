@@ -6,7 +6,6 @@ import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.token.JwtsSupport;
 import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.user.UserEntity;
-import com.metalr2.service.redirection.RedirectionService;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,27 +38,18 @@ public class ResetPasswordController {
   private final TokenService tokenService;
   private final MessageSource messages;
   private final JwtsSupport jwtsSupport;
-  private final RedirectionService redirectionService;
 
   @Autowired
   public ResetPasswordController(UserService userService, TokenService tokenService,
-                                 @Qualifier("messageSource") MessageSource messages, JwtsSupport jwtsSupport,
-                                 RedirectionService redirectionService) {
+                                 @Qualifier("messageSource") MessageSource messages, JwtsSupport jwtsSupport) {
     this.userService = userService;
     this.tokenService = tokenService;
     this.messages = messages;
     this.jwtsSupport = jwtsSupport;
-    this.redirectionService = redirectionService;
   }
 
   @GetMapping
-  public ModelAndView showResetPasswordForm(@RequestParam(value = "token") String tokenString, Model model, RedirectAttributes redirectAttributes,
-                                            Authentication authentication) {
-    Optional<ModelAndView> redirectionOptional = redirectionService.getRedirectionIfNeeded(authentication);
-    if (redirectionOptional.isPresent()) {
-      return redirectionOptional.get();
-    }
-
+  public ModelAndView showResetPasswordForm(@RequestParam(value = "token") String tokenString, Model model, RedirectAttributes redirectAttributes) {
     Optional<TokenEntity> tokenEntity = tokenService.getResetPasswordTokenByTokenString(tokenString);
 
     // check whether token exists
@@ -87,13 +76,7 @@ public class ResetPasswordController {
   }
 
   @PostMapping
-  public ModelAndView resetPassword(@Valid @ModelAttribute ChangePasswordRequest changePasswordRequest, BindingResult bindingResult, RedirectAttributes redirectAttributes,
-                                    Authentication authentication) {
-    Optional<ModelAndView> redirectionOptional = redirectionService.getRedirectionIfNeeded(authentication);
-    if (redirectionOptional.isPresent()) {
-      return redirectionOptional.get();
-    }
-
+  public ModelAndView resetPassword(@Valid @ModelAttribute ChangePasswordRequest changePasswordRequest, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
     // show reset password form if there are validation errors
     if (bindingResult.hasErrors()) {
       redirectAttributes.addFlashAttribute(BindingResult.class.getName() + "." + FORM_DTO, bindingResult);
