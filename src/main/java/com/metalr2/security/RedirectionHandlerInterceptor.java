@@ -9,7 +9,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 
 @Component
 public class RedirectionHandlerInterceptor implements HandlerInterceptor {
@@ -23,15 +22,12 @@ public class RedirectionHandlerInterceptor implements HandlerInterceptor {
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-    if (Arrays.asList(Endpoints.AntPattern.AUTH_PAGES).contains(request.getRequestURI())
-        && currentUserSupplier.get() != null) {
+    if (currentUserSupplier.get() != null) {
       response.setContentType("text/plain");
       sendRedirect(request, response);
       return false;
     }
-    else {
-      return true;
-    }
+    return true;
   }
 
   @Override
