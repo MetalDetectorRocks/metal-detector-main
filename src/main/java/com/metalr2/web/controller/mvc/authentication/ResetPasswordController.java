@@ -96,7 +96,7 @@ public class ResetPasswordController {
     // 2. get user from token
     Optional<TokenEntity> tokenEntity = tokenService.getResetPasswordTokenByTokenString(changePasswordRequest.getTokenString());
     @SuppressWarnings("OptionalGetWithoutIsPresent") // safe here, because we have validation in method showResetPasswordForm()
-        UserEntity userEntity = tokenEntity.get().getUser();
+    UserEntity userEntity = tokenEntity.get().getUser();
 
     // 3. set new password
     userService.changePassword(userEntity, changePasswordRequest.getNewPlainPassword());

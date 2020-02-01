@@ -7,14 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class CurrentUserSupplierImpl implements CurrentUserSupplier {
 
-  private final String ANONYMOUS_USER_NAME = "anonymousUser";
+  private static final String ANONYMOUS_USER_NAME = "anonymousUser";
 
   @Override
   public UserEntity get() {
-    if (SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals(ANONYMOUS_USER_NAME)){
-      return null;
-    }
-    return (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    return principal.equals(ANONYMOUS_USER_NAME) ? null : (UserEntity) principal;
   }
 
 }

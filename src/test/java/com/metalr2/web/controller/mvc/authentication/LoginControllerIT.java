@@ -3,9 +3,7 @@ package com.metalr2.web.controller.mvc.authentication;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.user.UserFactory;
-import com.metalr2.security.RedirectionHandlerInterceptor;
-import com.metalr2.service.user.UserService;
-import com.metalr2.testutil.WithSecurityConfig;
+import com.metalr2.testutil.BaseWebMvcTestWithSecurity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,21 +11,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.sql.DataSource;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsString;
@@ -46,27 +37,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(value = LoginController.class, excludeAutoConfiguration = WebMvcAutoConfiguration.class)
-class LoginControllerIT implements WithSecurityConfig {
+class LoginControllerIT extends BaseWebMvcTestWithSecurity {
 
   private static final String PARAM_USERNAME = "username";
   private static final String PARAM_PASSWORD = "password";
   private static final String USERNAME       = "JohnD";
   private static final String PASSWORD       = "plain-password";
-
-  @Autowired
-  private MockMvc mockMvc;
-
-  @MockBean
-  private UserService userService;
-
-  @Autowired
-  private BCryptPasswordEncoder passwordEncoder;
-
-  @MockBean
-  private RedirectionHandlerInterceptor redirectionHandlerInterceptor;
-
-  @MockBean
-  private DataSource dataSource;
 
   @BeforeEach
   void setup() {
@@ -146,15 +122,5 @@ class LoginControllerIT implements WithSecurityConfig {
             Arguments.of(USERNAME, null),
             Arguments.of(USERNAME, "invalid-password")
     );
-  }
-
-  @TestConfiguration
-  static class TestConfig {
-
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-      return new BCryptPasswordEncoder();
-    }
-
   }
 }
