@@ -15,5 +15,4 @@ public class ReleasesController {
   public ModelAndView showReleases() {
     return new ModelAndView(ViewNames.Frontend.RELEASES);
   }
-
 }

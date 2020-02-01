@@ -1,37 +1,31 @@
 <!DOCTYPE html>
 <html th:replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-  <head th:include="frontend/fragments/layout :: headerFragment">
-      <title id="pageTitle">Releases | Metal Release Radar</title>
-  </head>
-  <body>
-  <h1>Upcoming Releases</h1>
+<head th:include="frontend/fragments/layout :: headerFragment">
+    <title id="pageTitle">Releases | Metal Release Radar</title>
+</head>
+<body>
+<h1>Upcoming Releases</h1>
 
-  <label for="followed-artists-checkbox"></label><input id="followed-artists-checkbox" type="checkbox" name="followedArtists"> Show releases for followed artists<br>
+<div class="mb-3">
+    <label for="followed-artists-checkbox" hidden></label><input id="followed-artists-checkbox" type="checkbox" name="followedArtists"> Show releases for followed artists<br>
+    <div class="block"><label for="date-from" style="width: 80px">Date from</label><input id="date-from" type="date" class="date-filter"></div>
+    <div class="block"><label for="date-to" style="width: 80px">Date to</label><input id="date-to" type="date" class="date-filter"></div>
+</div>
 
-  <table id="releases-table" class="table table-striped table-hover mt-3">
+<table id="releases-table" class="table table-striped table-hover mt-3">
     <thead>
     <tr>
-      <th scope="col">Artist</th>
-      <th scope="col">Addition Artists</th>
-      <th scope="col">Album Title</th>
-      <th scope="col">Release Date</th>
-      <th scope="col">Estimated Release Date</th>
-      <th scope="col">Is Followed</th>
+        <th scope="col">Artist</th>
+        <th scope="col">Addition Artists</th>
+        <th scope="col">Album Title</th>
+        <th scope="col">Release Date</th>
+        <th scope="col">Estimated Release Date</th>
+        <th scope="col">Is Followed</th>
+        <th scope="col">Release Date</th>
     </tr>
     </thead>
     <tbody id="releases-data">
     </tbody>
-  </table>
-
-  <script th:inline="javascript">
-    $(document).ready(function () {
-      getReleases();
-
-      const table = $("#releases-table").DataTable();
-      $("#followed-artists-checkbox").change(function(){
-        table.draw();
-      });
-    })
-  </script>
-  </body>
+</table>
+</body>
 </html>
