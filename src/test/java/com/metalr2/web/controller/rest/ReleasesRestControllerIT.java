@@ -33,8 +33,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -78,10 +76,6 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
     when(modelMapper.map(request, ButlerReleasesRequest.class)).thenReturn(requestButler);
     when(artistsService.findFollowedArtistsForCurrentUser()).thenReturn(Collections.emptyList());
 
-    for (int i = 0; i < mockedDtos.size(); i++) {
-      when(modelMapper.map(mockedDtos.get(i), DetectorReleasesResponse.class)).thenReturn(expectedResponses.get(i));
-    }
-
     // when
     ValidatableResponse validatableResponse = requestHandler.doPost(request, ContentType.JSON);
 
@@ -95,7 +89,21 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
     assertThat(response).isEqualTo(expectedResponses);
     verify(releasesService, times(1)).getReleases(requestButler);
     verify(modelMapper, times(1)).map(request, ButlerReleasesRequest.class);
-    verify(modelMapper, times(mockedDtos.size())).map(any(), eq(DetectorReleasesResponse.class));
+  }
+
+  @Test
+  @DisplayName("POST with bad requests should return 400")
+  void bad_requests() {
+    // given
+    DetectorReleasesRequest request = new DetectorReleasesRequest(null, null, null);
+
+    // when
+    ValidatableResponse validatableResponse = requestHandler.doPost(request, ContentType.JSON);
+
+    // then
+    validatableResponse
+        .contentType(ContentType.JSON)
+        .statusCode(HttpStatus.BAD_REQUEST.value());
   }
 
   private static Stream<Arguments> inputProvider() {
@@ -121,20 +129,5 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
         Arguments.of(requestAllButler, requestAll, List.of(releaseDto1, releaseDto2, releaseDto3), List.of(releaseResponse1, releaseResponse2, releaseResponse3)),
         Arguments.of(requestA1Butler, requestA1, List.of(releaseDto1), List.of(releaseResponse1)),
         Arguments.of(requestA4Butler, requestA4, Collections.emptyList(), Collections.emptyList()));
-  }
-
-  @Test
-  @DisplayName("POST with bad requests should return 400")
-  void bad_requests() {
-    // given
-    DetectorReleasesRequest request = new DetectorReleasesRequest(null, null, null);
-
-    // when
-    ValidatableResponse validatableResponse = requestHandler.doPost(request, ContentType.JSON);
-
-    // then
-    validatableResponse
-        .contentType(ContentType.JSON)
-        .statusCode(HttpStatus.BAD_REQUEST.value());
   }
 }

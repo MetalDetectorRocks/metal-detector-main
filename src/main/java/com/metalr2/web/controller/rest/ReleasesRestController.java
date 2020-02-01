@@ -7,6 +7,7 @@ import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.service.releases.ReleasesService;
 import com.metalr2.web.dto.ArtistDto;
 import com.metalr2.web.dto.releases.ButlerReleasesRequest;
+import com.metalr2.web.dto.releases.ReleaseDto;
 import com.metalr2.web.dto.request.DetectorReleasesRequest;
 import com.metalr2.web.dto.response.DetectorReleasesResponse;
 import org.modelmapper.ModelMapper;
@@ -39,17 +40,26 @@ public class ReleasesRestController {
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+      produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<List<DetectorReleasesResponse>> getReleases(@Valid @RequestBody DetectorReleasesRequest request, BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
       throw new ValidationException(ErrorMessages.VALIDATION_ERROR.toDisplayString(), bindingResult.getFieldErrors());
     }
 
-    List<DetectorReleasesResponse> releaseResponses = releasesService.getReleases(mapper.map(request, ButlerReleasesRequest.class)).stream()
-        .map(releaseDto -> mapper.map(releaseDto, DetectorReleasesResponse.class))
-        .collect(Collectors.toList());
+    List<ReleaseDto> releaseDtos = releasesService.getReleases(mapper.map(request, ButlerReleasesRequest.class));
+    return ResponseEntity.ok(mapReleasesResponse(releaseDtos));
+  }
+
+  private List<DetectorReleasesResponse> mapReleasesResponse(List<ReleaseDto> releaseDtos) {
     List<String> followedArtistsNames = artistsService.findFollowedArtistsForCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
-    releaseResponses.forEach(releaseResponse -> releaseResponse.setIsFollowed(String.valueOf(followedArtistsNames.contains(releaseResponse.getArtist()))));
-    return ResponseEntity.ok(releaseResponses);
+    return releaseDtos.stream().map(dto -> DetectorReleasesResponse.builder()
+        .artist(dto.getArtist())
+        .additionalArtists(dto.getAdditionalArtists())
+        .albumTitle(dto.getAlbumTitle())
+        .releaseDate(dto.getReleaseDate())
+        .estimatedReleaseDate(dto.getEstimatedReleaseDate())
+        .isFollowed(String.valueOf(followedArtistsNames.contains(dto.getArtist())))
+        .build())
+        .collect(Collectors.toList());
   }
 }
