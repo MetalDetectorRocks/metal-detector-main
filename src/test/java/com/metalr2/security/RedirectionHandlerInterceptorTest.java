@@ -25,20 +25,20 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
   @Mock
   private UserEntity userEntity;
 
-  MockHttpServletRequest request;
-  MockHttpServletResponse response;
+  private MockHttpServletRequest request;
+  private MockHttpServletResponse response;
 
   @InjectMocks
   private RedirectionHandlerInterceptor redirectionHandlerInterceptor;
 
   @BeforeEach
-  private void setup() {
+  void setup() {
     request = new MockHttpServletRequest();
     response = new MockHttpServletResponse();
   }
 
   @AfterEach
-  private void tearDown() {
+  void tearDown() {
     reset(currentUserSupplier, userEntity);
   }
 

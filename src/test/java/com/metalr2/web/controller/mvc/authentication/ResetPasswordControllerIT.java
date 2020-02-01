@@ -3,15 +3,12 @@ package com.metalr2.web.controller.mvc.authentication;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
-import com.metalr2.model.ArtifactForFramework;
 import com.metalr2.model.token.JwtsSupport;
 import com.metalr2.model.token.TokenEntity;
 import com.metalr2.model.token.TokenFactory;
 import com.metalr2.model.token.TokenType;
-import com.metalr2.security.RedirectionHandlerInterceptor;
 import com.metalr2.service.token.TokenService;
-import com.metalr2.service.user.UserService;
-import com.metalr2.testutil.WithSecurityConfig;
+import com.metalr2.testutil.BaseWebMvcTestWithSecurity;
 import com.metalr2.web.DtoFactory.ChangePasswordRequestFactory;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
 import org.junit.jupiter.api.AfterEach;
@@ -20,16 +17,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 
-import javax.sql.DataSource;
 import java.time.Duration;
 import java.util.Locale;
 import java.util.Optional;
@@ -51,36 +44,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(value = ResetPasswordController.class)
-class ResetPasswordControllerIT implements WithSecurityConfig {
+class ResetPasswordControllerIT extends BaseWebMvcTestWithSecurity {
 
   private static final String PARAM_TOKEN_STRING      = "tokenString";
   private static final String PARAM_PASSWORD          = "newPlainPassword";
   private static final String PARAM_VERIFY_PASSWORD   = "verifyNewPlainPassword";
 
-  @Autowired
-  private MockMvc mockMvc;
-
-  @MockBean
-  private UserService userService;
-
   @MockBean
   private TokenService tokenService;
-
-  @MockBean
-  private DataSource dataSource;
 
   @MockBean
   private MessageSource messages;
 
   @MockBean
   private JwtsSupport jwtsSupport;
-
-  @MockBean
-  private RedirectionHandlerInterceptor redirectionHandlerInterceptor;
-
-  @MockBean
-  @ArtifactForFramework
-  private BCryptPasswordEncoder passwordEncoder; // for WebSecurity
 
   @AfterEach
   void tearDown() {
@@ -94,7 +71,7 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
     final String TOKEN = "not-existing-token";
     when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.empty());
     when(messages.getMessage(MessageKeys.ForgotPassword.TOKEN_DOES_NOT_EXIST, null, Locale.US)).thenReturn(ERROR_MESSAGE);
-    when(redirectionHandlerInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+    when(redirectionInterceptor.preHandle(any(), any(), any())).thenReturn(true);
 
     mockMvc.perform(get(Endpoints.Guest.RESET_PASSWORD + "?token={token}", TOKEN))
            .andExpect(model().hasNoErrors())
@@ -115,7 +92,7 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
 
     when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
     when(messages.getMessage(MessageKeys.ForgotPassword.TOKEN_IS_EXPIRED, null, Locale.US)).thenReturn(ERROR_MESSAGE);
-    when(redirectionHandlerInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+    when(redirectionInterceptor.preHandle(any(), any(), any())).thenReturn(true);
 
     mockMvc.perform(get(Endpoints.Guest.RESET_PASSWORD + "?token={token}", TOKEN))
             .andExpect(model().hasNoErrors())
@@ -134,7 +111,7 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
     TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, Duration.ofHours(1).toMillis());
 
     when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
-    when(redirectionHandlerInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+    when(redirectionInterceptor.preHandle(any(), any(), any())).thenReturn(true);
 
     mockMvc.perform(get(Endpoints.Guest.RESET_PASSWORD + "?token={token}", TOKEN))
             .andExpect(model().hasNoErrors())
@@ -152,7 +129,7 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
     final String PASSWORD = "valid-password";
     TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, Duration.ofHours(1).toMillis());
     when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
-    when(redirectionHandlerInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+    when(redirectionInterceptor.preHandle(any(), any(), any())).thenReturn(true);
 
     mockMvc.perform(post(Endpoints.Guest.RESET_PASSWORD)
               .with(SecurityMockMvcRequestPostProcessors.csrf())
@@ -172,7 +149,7 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
   @MethodSource("changePasswordRequestProvider")
   @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with invalid change password request should fail")
   void test_reset_password_with_invalid_request(ChangePasswordRequest request) throws Exception {
-    when(redirectionHandlerInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+    when(redirectionInterceptor.preHandle(any(), any(), any())).thenReturn(true);
 
     mockMvc.perform(post(Endpoints.Guest.RESET_PASSWORD)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
