@@ -13,5 +13,4 @@ public class IndexController {
   public ModelAndView showIndex() {
     return new ModelAndView(ViewNames.Guest.INDEX);
   }
-
 }

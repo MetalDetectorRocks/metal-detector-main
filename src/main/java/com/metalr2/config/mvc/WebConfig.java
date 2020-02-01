@@ -2,13 +2,23 @@ package com.metalr2.config.mvc;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
+import com.metalr2.security.RedirectionHandlerInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+  private final RedirectionHandlerInterceptor redirectionHandlerInterceptor;
+
+  @Autowired
+  public WebConfig(RedirectionHandlerInterceptor redirectionHandlerInterceptor) {
+    this.redirectionHandlerInterceptor = redirectionHandlerInterceptor;
+  }
 
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
@@ -37,4 +47,8 @@ public class WebConfig implements WebMvcConfigurer {
             .resourceChain(false);
   }
 
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(redirectionHandlerInterceptor).addPathPatterns(Endpoints.AntPattern.AUTH_PAGES);
+  }
 }
