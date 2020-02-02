@@ -22,7 +22,6 @@ public class RestRequestLoggingFilter extends CommonsRequestLoggingFilter {
 
   @Override
   protected void beforeRequest(HttpServletRequest request, String message) {
-    // do nothing
   }
 
   @Override
