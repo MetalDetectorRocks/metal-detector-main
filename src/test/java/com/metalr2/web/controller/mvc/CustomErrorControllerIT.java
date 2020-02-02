@@ -2,26 +2,23 @@ package com.metalr2.web.controller.mvc;
 
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
-import com.metalr2.testutil.WithIntegrationTestProfile;
+import com.metalr2.testutil.BaseWebMvcTest;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.RequestDispatcher;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(controllers = CustomErrorController.class, excludeAutoConfiguration = MockMvcSecurityAutoConfiguration.class)
-class CustomErrorControllerIT implements WithAssertions, WithIntegrationTestProfile {
-
-  @Autowired
-  private MockMvc mockMvc;
+class CustomErrorControllerIT extends BaseWebMvcTest implements WithAssertions {
 
   @Test
   @DisplayName("Return 404 page if no controller for the requested URI was found")

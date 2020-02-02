@@ -16,7 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -38,14 +42,14 @@ public class ResetPasswordController {
   @Autowired
   public ResetPasswordController(UserService userService, TokenService tokenService,
                                  @Qualifier("messageSource") MessageSource messages, JwtsSupport jwtsSupport) {
-    this.userService  = userService;
+    this.userService = userService;
     this.tokenService = tokenService;
-    this.messages     = messages;
-    this.jwtsSupport  = jwtsSupport;
+    this.messages = messages;
+    this.jwtsSupport = jwtsSupport;
   }
 
   @GetMapping
-  public ModelAndView showResetPasswordForm(@RequestParam(value="token") String tokenString, Model model, RedirectAttributes redirectAttributes) {
+  public ModelAndView showResetPasswordForm(@RequestParam(value = "token") String tokenString, Model model, RedirectAttributes redirectAttributes) {
     Optional<TokenEntity> tokenEntity = tokenService.getResetPasswordTokenByTokenString(tokenString);
 
     // check whether token exists
@@ -62,7 +66,7 @@ public class ResetPasswordController {
     else {
       // The model may contain a form request dto with validation messages from previous request (see resetPassword() method).
       // To display the errors correctly in the HTML file, this attribute must continue to be used and must not be overwritten by a new attribute.
-      if (! model.asMap().containsKey(FORM_DTO)) {
+      if (!model.asMap().containsKey(FORM_DTO)) {
         // create new ChangePasswordRequest if model has no attribute
         model.addAttribute(ChangePasswordRequest.builder().tokenString(tokenString).build());
       }
@@ -100,5 +104,4 @@ public class ResetPasswordController {
     // 4. remove token from database
     tokenService.deleteToken(tokenEntity.get());
   }
-
 }

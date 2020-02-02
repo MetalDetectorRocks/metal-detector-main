@@ -34,15 +34,15 @@ public class ForgotPasswordController {
   static final String FORM_DTO = "forgotPasswordRequest";
 
   private final ApplicationEventPublisher eventPublisher;
-  private final UserService               userService;
-  private final MessageSource             messages;
+  private final UserService userService;
+  private final MessageSource messages;
 
   @Autowired
   public ForgotPasswordController(UserService userService, ApplicationEventPublisher eventPublisher,
                                   @Qualifier("messageSource") MessageSource messages) {
-    this.userService    = userService;
+    this.userService = userService;
     this.eventPublisher = eventPublisher;
-    this.messages       = messages;
+    this.messages = messages;
   }
 
   @ModelAttribute(FORM_DTO)
@@ -78,5 +78,4 @@ public class ForgotPasswordController {
 
     return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, viewModel, HttpStatus.OK);
   }
-
 }

@@ -1,8 +1,8 @@
 package com.metalr2.service.releases;
 
+import com.metalr2.web.dto.releases.ButlerReleasesRequest;
+import com.metalr2.web.dto.releases.ButlerReleasesResponse;
 import com.metalr2.web.dto.releases.ReleaseDto;
-import com.metalr2.web.dto.releases.ReleasesRequest;
-import com.metalr2.web.dto.releases.ReleasesResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,19 +32,23 @@ public class ReleasesServiceImpl implements ReleasesService {
   }
 
   @Override
-  public List<ReleaseDto> getReleases(ReleasesRequest request) {
-    HttpEntity<ReleasesRequest> requestEntity = createHttpEntity(request);
-    ResponseEntity<ReleasesResponse> responseEntity = restTemplate.postForEntity(allReleasesUrl, requestEntity, ReleasesResponse.class);
+  public List<ReleaseDto> getReleases(ButlerReleasesRequest request) {
+    HttpEntity<ButlerReleasesRequest> requestEntity = createHttpEntity(request);
+    ResponseEntity<ButlerReleasesResponse> responseEntity = restTemplate.postForEntity(allReleasesUrl, requestEntity, ButlerReleasesResponse.class);
 
-    ReleasesResponse response = responseEntity.getBody();
-    if (response == null || responseEntity.getStatusCode() != HttpStatus.OK || response.getReleases().isEmpty()) {
+    ButlerReleasesResponse response = responseEntity.getBody();
+    boolean shouldNotHappen = response == null || responseEntity.getStatusCode() != HttpStatus.OK;
+
+    if (shouldNotHappen || response.getReleases().isEmpty()) {
+      if (shouldNotHappen)
+        log.warn("Could not get releases for request: " + request + ". Response: " + responseEntity.getStatusCode());
       return Collections.emptyList();
     }
 
     return response.getReleases();
   }
 
-  private HttpEntity<ReleasesRequest> createHttpEntity(ReleasesRequest request) {
+  private HttpEntity<ButlerReleasesRequest> createHttpEntity(ButlerReleasesRequest request) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
