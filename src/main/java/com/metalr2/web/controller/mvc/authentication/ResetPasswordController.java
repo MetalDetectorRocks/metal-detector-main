@@ -3,9 +3,7 @@ package com.metalr2.web.controller.mvc.authentication;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
-import com.metalr2.model.token.JwtsSupport;
 import com.metalr2.model.token.TokenEntity;
-import com.metalr2.model.user.UserEntity;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.request.ChangePasswordRequest;
@@ -16,7 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -33,19 +35,17 @@ public class ResetPasswordController {
   private final UserService userService;
   private final TokenService tokenService;
   private final MessageSource messages;
-  private final JwtsSupport jwtsSupport;
 
   @Autowired
   public ResetPasswordController(UserService userService, TokenService tokenService,
-                                 @Qualifier("messageSource") MessageSource messages, JwtsSupport jwtsSupport) {
-    this.userService  = userService;
+                                 @Qualifier("messageSource") MessageSource messages) {
+    this.userService = userService;
     this.tokenService = tokenService;
-    this.messages     = messages;
-    this.jwtsSupport  = jwtsSupport;
+    this.messages = messages;
   }
 
   @GetMapping
-  public ModelAndView showResetPasswordForm(@RequestParam(value="token") String tokenString, Model model, RedirectAttributes redirectAttributes) {
+  public ModelAndView showResetPasswordForm(@RequestParam(value = "token") String tokenString, Model model, RedirectAttributes redirectAttributes) {
     Optional<TokenEntity> tokenEntity = tokenService.getResetPasswordTokenByTokenString(tokenString);
 
     // check whether token exists
@@ -62,7 +62,7 @@ public class ResetPasswordController {
     else {
       // The model may contain a form request dto with validation messages from previous request (see resetPassword() method).
       // To display the errors correctly in the HTML file, this attribute must continue to be used and must not be overwritten by a new attribute.
-      if (! model.asMap().containsKey(FORM_DTO)) {
+      if (!model.asMap().containsKey(FORM_DTO)) {
         // create new ChangePasswordRequest if model has no attribute
         model.addAttribute(ChangePasswordRequest.builder().tokenString(tokenString).build());
       }
@@ -80,25 +80,8 @@ public class ResetPasswordController {
       return new ModelAndView("redirect:" + Endpoints.Guest.RESET_PASSWORD + "?token=" + changePasswordRequest.getTokenString());
     }
 
-    changePassword(changePasswordRequest);
+    userService.changePassword(changePasswordRequest.getTokenString(), changePasswordRequest.getNewPlainPassword());
 
     return new ModelAndView("redirect:" + Endpoints.Guest.LOGIN + "?resetSuccess");
   }
-
-  private void changePassword(ChangePasswordRequest changePasswordRequest) {
-    // 1. get claims to check signature of token
-    jwtsSupport.getClaims(changePasswordRequest.getTokenString());
-
-    // 2. get user from token
-    Optional<TokenEntity> tokenEntity = tokenService.getResetPasswordTokenByTokenString(changePasswordRequest.getTokenString());
-    @SuppressWarnings("OptionalGetWithoutIsPresent") // safe here, because we have validation in method showResetPasswordForm()
-    UserEntity userEntity = tokenEntity.get().getUser();
-
-    // 3. set new password
-    userService.changePassword(userEntity, changePasswordRequest.getNewPlainPassword());
-
-    // 4. remove token from database
-    tokenService.deleteToken(tokenEntity.get());
-  }
-
 }

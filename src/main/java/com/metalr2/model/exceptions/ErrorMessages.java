@@ -8,7 +8,7 @@ public enum ErrorMessages {
   USER_WITH_ID_NOT_FOUND("User with provided id not found."),
   USER_NOT_FOUND("User with provided email or username not found."),
   TOKEN_NOT_FOUND("Token not found."),
-  EMAIL_VERIFICATION_TOKEN_EXPIRED("Email verification token is expired."),
+  TOKEN_EXPIRED("Token is expired."),
   VALIDATION_ERROR("There were errors validating your request. Please refer to the documentation for a valid request.");
 
   private final String errorMessage;

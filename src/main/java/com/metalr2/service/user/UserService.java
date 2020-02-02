@@ -1,6 +1,5 @@
 package com.metalr2.service.user;
 
-import com.metalr2.model.user.UserEntity;
 import com.metalr2.web.dto.UserDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -25,6 +24,6 @@ public interface UserService extends UserDetailsService {
 
   void verifyEmailToken(String tokenString);
 
-  void changePassword(UserEntity userEntity, String newPassword);
+  void changePassword(String tokenString, String newPassword);
 	
 }

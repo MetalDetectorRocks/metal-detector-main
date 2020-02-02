@@ -34,17 +34,25 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.instanceOf;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(ResetPasswordController.class)
 class ResetPasswordControllerIT implements WithSecurityConfig {
 
-  private static final String PARAM_TOKEN_STRING      = "tokenString";
-  private static final String PARAM_PASSWORD          = "newPlainPassword";
-  private static final String PARAM_VERIFY_PASSWORD   = "verifyNewPlainPassword";
+  private static final String PARAM_TOKEN_STRING = "tokenString";
+  private static final String PARAM_PASSWORD = "newPlainPassword";
+  private static final String PARAM_VERIFY_PASSWORD = "verifyNewPlainPassword";
 
   @Autowired
   private MockMvc mockMvc;
@@ -79,10 +87,10 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
     when(messages.getMessage(MessageKeys.ForgotPassword.TOKEN_DOES_NOT_EXIST, null, Locale.US)).thenReturn(ERROR_MESSAGE);
 
     mockMvc.perform(get(Endpoints.Guest.RESET_PASSWORD + "?token={token}", TOKEN))
-           .andExpect(model().hasNoErrors())
-           .andExpect(flash().attribute("resetPasswordError", ERROR_MESSAGE))
-           .andExpect(status().is3xxRedirection())
-           .andExpect(redirectedUrl(Endpoints.Guest.FORGOT_PASSWORD));
+        .andExpect(model().hasNoErrors())
+        .andExpect(flash().attribute("resetPasswordError", ERROR_MESSAGE))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(Endpoints.Guest.FORGOT_PASSWORD));
 
     verify(tokenService, times(1)).getResetPasswordTokenByTokenString(TOKEN);
     verify(messages, times(1)).getMessage(MessageKeys.ForgotPassword.TOKEN_DOES_NOT_EXIST, null, Locale.US);
@@ -99,10 +107,10 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
     when(messages.getMessage(MessageKeys.ForgotPassword.TOKEN_IS_EXPIRED, null, Locale.US)).thenReturn(ERROR_MESSAGE);
 
     mockMvc.perform(get(Endpoints.Guest.RESET_PASSWORD + "?token={token}", TOKEN))
-            .andExpect(model().hasNoErrors())
-            .andExpect(flash().attribute("resetPasswordError", ERROR_MESSAGE))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl(Endpoints.Guest.FORGOT_PASSWORD));
+        .andExpect(model().hasNoErrors())
+        .andExpect(flash().attribute("resetPasswordError", ERROR_MESSAGE))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(Endpoints.Guest.FORGOT_PASSWORD));
 
     verify(tokenService, times(1)).getResetPasswordTokenByTokenString(TOKEN);
     verify(messages, times(1)).getMessage(MessageKeys.ForgotPassword.TOKEN_IS_EXPIRED, null, Locale.US);
@@ -117,10 +125,10 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
     when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
 
     mockMvc.perform(get(Endpoints.Guest.RESET_PASSWORD + "?token={token}", TOKEN))
-            .andExpect(model().hasNoErrors())
-            .andExpect(model().attributeExists(ResetPasswordController.FORM_DTO))
-            .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.Guest.RESET_PASSWORD));
+        .andExpect(model().hasNoErrors())
+        .andExpect(model().attributeExists(ResetPasswordController.FORM_DTO))
+        .andExpect(status().isOk())
+        .andExpect(view().name(ViewNames.Guest.RESET_PASSWORD));
 
     verify(tokenService, times(1)).getResetPasswordTokenByTokenString(TOKEN);
   }
@@ -130,21 +138,17 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
   void test_reset_password() throws Exception {
     final String TOKEN = "valid-token";
     final String PASSWORD = "valid-password";
-    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, Duration.ofHours(1).toMillis());
-    when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
 
     mockMvc.perform(post(Endpoints.Guest.RESET_PASSWORD)
-              .with(SecurityMockMvcRequestPostProcessors.csrf())
-              .param(PARAM_TOKEN_STRING, TOKEN)
-              .param(PARAM_PASSWORD, PASSWORD)
-              .param(PARAM_VERIFY_PASSWORD, PASSWORD))
-           .andExpect(model().errorCount(0))
-           .andExpect(status().is3xxRedirection())
-           .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?resetSuccess"));
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .param(PARAM_TOKEN_STRING, TOKEN)
+                        .param(PARAM_PASSWORD, PASSWORD)
+                        .param(PARAM_VERIFY_PASSWORD, PASSWORD))
+        .andExpect(model().errorCount(0))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?resetSuccess"));
 
-    verify(tokenService, times(1)).getResetPasswordTokenByTokenString(TOKEN);
-    verify(userService, times(1)).changePassword(tokenEntity.getUser(), PASSWORD);
-    verify(tokenService, times(1)).deleteToken(tokenEntity);
+    verify(userService, times(1)).changePassword(TOKEN, PASSWORD);
   }
 
   @ParameterizedTest(name = "[{index}]: {0}")
@@ -152,30 +156,29 @@ class ResetPasswordControllerIT implements WithSecurityConfig {
   @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with invalid change password request should be fail")
   void test_reset_password_with_invalid_request(ChangePasswordRequest request) throws Exception {
     mockMvc.perform(post(Endpoints.Guest.RESET_PASSWORD)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .param(PARAM_TOKEN_STRING, request.getTokenString())
-                .param(PARAM_PASSWORD, request.getNewPlainPassword())
-                .param(PARAM_VERIFY_PASSWORD, request.getVerifyNewPlainPassword()))
-            .andExpect(flash().attribute(ResetPasswordController.FORM_DTO, instanceOf(ChangePasswordRequest.class)))
-            .andExpect(flash().attribute(BindingResult.class.getName() + "." + ResetPasswordController.FORM_DTO, instanceOf(BindingResult.class)))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl(Endpoints.Guest.RESET_PASSWORD + "?token=" + request.getTokenString()));
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .param(PARAM_TOKEN_STRING, request.getTokenString())
+                        .param(PARAM_PASSWORD, request.getNewPlainPassword())
+                        .param(PARAM_VERIFY_PASSWORD, request.getVerifyNewPlainPassword()))
+        .andExpect(flash().attribute(ResetPasswordController.FORM_DTO, instanceOf(ChangePasswordRequest.class)))
+        .andExpect(flash().attribute(BindingResult.class.getName() + "." + ResetPasswordController.FORM_DTO, instanceOf(BindingResult.class)))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(Endpoints.Guest.RESET_PASSWORD + "?token=" + request.getTokenString()));
 
     verifyZeroInteractions(tokenService, userService);
   }
 
   private static Stream<Arguments> changePasswordRequestProvider() {
     return Stream.of(
-            // invalid token strings
-            Arguments.of(ChangePasswordRequestFactory.withTokenString("")),
-            Arguments.of(ChangePasswordRequestFactory.withTokenString(null)),
+        // invalid token strings
+        Arguments.of(ChangePasswordRequestFactory.withTokenString("")),
+        Arguments.of(ChangePasswordRequestFactory.withTokenString(null)),
 
-            // invalid passwords
-            Arguments.of(ChangePasswordRequestFactory.withPassword("secret-password", "other-secret-password")),
-            Arguments.of(ChangePasswordRequestFactory.withPassword("secret", "secret")),
-            Arguments.of(ChangePasswordRequestFactory.withPassword("", "")),
-            Arguments.of(ChangePasswordRequestFactory.withPassword(null, null))
+        // invalid passwords
+        Arguments.of(ChangePasswordRequestFactory.withPassword("secret-password", "other-secret-password")),
+        Arguments.of(ChangePasswordRequestFactory.withPassword("secret", "secret")),
+        Arguments.of(ChangePasswordRequestFactory.withPassword("", "")),
+        Arguments.of(ChangePasswordRequestFactory.withPassword(null, null))
     );
   }
-
 }

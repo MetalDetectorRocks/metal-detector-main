@@ -1,15 +1,20 @@
 package com.metalr2.service.user;
 
-import com.metalr2.model.exceptions.EmailVerificationTokenExpiredException;
 import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ResourceNotFoundException;
+import com.metalr2.model.exceptions.TokenExpiredException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
-import com.metalr2.model.token.*;
+import com.metalr2.model.token.JwtsSupport;
+import com.metalr2.model.token.TokenEntity;
+import com.metalr2.model.token.TokenFactory;
+import com.metalr2.model.token.TokenRepository;
+import com.metalr2.model.token.TokenType;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserFactory;
 import com.metalr2.model.user.UserRepository;
 import com.metalr2.model.user.UserRole;
 import com.metalr2.service.mapper.UserMapper;
+import com.metalr2.service.token.TokenService;
 import com.metalr2.web.DtoFactory;
 import com.metalr2.web.DtoFactory.UserDtoFactory;
 import com.metalr2.web.dto.UserDto;
@@ -39,15 +44,25 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest implements WithAssertions {
 
-  private static final String USERNAME           = "JohnD";
-  private static final String EMAIL              = "john.doe@example.com";
+  private static final String USERNAME = "JohnD";
+  private static final String EMAIL = "john.doe@example.com";
   private static final String DUPLICATE_USERNAME = "Duplicate";
-  private static final String DUPLICATE_EMAIL    = "duplicate@example.com";
+  private final static String DUPLICATE_EMAIL = "duplicate@example.com";
+  private final String TOKEN = "user-token";
+  private final String NEW_PLAIN_PASSWORD = "new-plain-password";
+  private final String NEW_ENCRYPTED_PASSWORD = "encryption".repeat(6); // an encrypted password must be 60 characters long
 
   @Mock
   private TokenRepository tokenRepository;
@@ -57,6 +72,9 @@ class UserServiceTest implements WithAssertions {
 
   @Mock
   private BCryptPasswordEncoder passwordEncoder;
+
+  @Mock
+  private TokenService tokenService;
 
   @Mock
   private JwtsSupport jwtsSupport;
@@ -73,7 +91,7 @@ class UserServiceTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, userMapper);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, userMapper, tokenService);
   }
 
   @Test
@@ -135,10 +153,10 @@ class UserServiceTest implements WithAssertions {
 
   private static Stream<Arguments> userDtoProvider() {
     return Stream.of(
-            Arguments.of(DUPLICATE_USERNAME, EMAIL, UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS),
-            Arguments.of(DUPLICATE_EMAIL, EMAIL, UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS),
-            Arguments.of(USERNAME, DUPLICATE_EMAIL, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS),
-            Arguments.of(USERNAME, DUPLICATE_USERNAME, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS)
+        Arguments.of(DUPLICATE_USERNAME, EMAIL, UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS),
+        Arguments.of(DUPLICATE_EMAIL, EMAIL, UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS),
+        Arguments.of(USERNAME, DUPLICATE_EMAIL, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS),
+        Arguments.of(USERNAME, DUPLICATE_USERNAME, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS)
     );
   }
 
@@ -238,8 +256,8 @@ class UserServiceTest implements WithAssertions {
     String NEW_EMAIL = "updatedEmail@example.com";
 
     ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
-    UserDto                    userDtoForUpdate = UserDtoFactory.withUsernameAndEmail(USERNAME, NEW_EMAIL);
-    UserEntity                 user             = UserFactory.createUser(USERNAME, EMAIL);
+    UserDto userDtoForUpdate = UserDtoFactory.withUsernameAndEmail(USERNAME, NEW_EMAIL);
+    UserEntity user = UserFactory.createUser(USERNAME, EMAIL);
 
     when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
     // return the same user without changing the mail is ok here, we don't want to concentrate on the DTO conversion in this test
@@ -279,7 +297,7 @@ class UserServiceTest implements WithAssertions {
   void delete_user_for_existing_user() {
     // given
     String PUBLIC_ID = "public-id";
-    UserEntity user  = UserFactory.createUser(USERNAME, EMAIL);
+    UserEntity user = UserFactory.createUser(USERNAME, EMAIL);
     when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
 
     // when
@@ -458,36 +476,66 @@ class UserServiceTest implements WithAssertions {
   @DisplayName("Verifying the registration with an expired token should throw exception")
   void verify_registration_with_expired_token() throws InterruptedException {
     // given
-    String TOKEN_STRING = "token";
     TokenEntity tokenEntity = TokenFactory.createToken(TokenType.EMAIL_VERIFICATION, 1);
-    when(tokenRepository.findEmailVerificationToken(TOKEN_STRING)).thenReturn(Optional.of(tokenEntity));
+    when(tokenRepository.findEmailVerificationToken(TOKEN)).thenReturn(Optional.of(tokenEntity));
 
     // when
     Thread.sleep(1); // wait 1ms so that the token can expire
-    Throwable throwable = catchThrowable(() -> userService.verifyEmailToken(TOKEN_STRING));
+    Throwable throwable = catchThrowable(() -> userService.verifyEmailToken(TOKEN));
 
     // then
-    assertThat(throwable).isInstanceOf(EmailVerificationTokenExpiredException.class);
-    assertThat(throwable).hasMessageContaining(ErrorMessages.EMAIL_VERIFICATION_TOKEN_EXPIRED.toDisplayString());
+    assertThat(throwable).isInstanceOf(TokenExpiredException.class);
+    assertThat(throwable).hasMessageContaining(ErrorMessages.TOKEN_EXPIRED.toDisplayString());
   }
 
   @Test
-  @DisplayName("Changing the password of an user should work")
+  @DisplayName("Changing the password of a user should work")
   void change_password() {
     // given
-    final String NEW_PLAIN_PASSWORD     = "new-plain-password";
-    final String NEW_ENCRYPTED_PASSWORD = "encryption".repeat(6); // an encrypted password must be 60 characters long
-
     ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
     UserEntity userEntity = UserFactory.createUser(USERNAME, EMAIL);
+    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, userEntity);
+    when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
     when(passwordEncoder.encode(NEW_PLAIN_PASSWORD)).thenReturn(NEW_ENCRYPTED_PASSWORD);
 
     // when
-    userService.changePassword(userEntity, NEW_PLAIN_PASSWORD);
+    userService.changePassword(TOKEN, NEW_PLAIN_PASSWORD);
 
     // then
     verify(userRepository, times(1)).save(userEntityCaptor.capture());
+    verify(tokenService, times(1)).getResetPasswordTokenByTokenString(TOKEN);
+    verify(tokenService, times(1)).deleteToken(tokenEntity);
+    verify(jwtsSupport, times(1)).getClaims(TOKEN);
     assertThat(userEntityCaptor.getValue().getPassword()).isEqualTo(NEW_ENCRYPTED_PASSWORD);
   }
 
+  @Test
+  @DisplayName("changePassword() should throw exception if token does not exist")
+  void change_password_should_throw_resource_not_found() {
+    // given
+    when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.empty());
+
+    // when
+    Throwable throwable = catchThrowable(() -> userService.changePassword(TOKEN, NEW_PLAIN_PASSWORD));
+
+    // then
+    assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
+    assertThat(throwable).hasMessageContaining(ErrorMessages.TOKEN_NOT_FOUND.toDisplayString());
+  }
+
+  @Test
+  @DisplayName("Changing the password with an expired token should throw exception")
+  void change_password_should_throw_token_expired() throws InterruptedException {
+    // given
+    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, 1);
+    when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
+
+    // when
+    Thread.sleep(1); // wait 1ms so that the token can expire
+    Throwable throwable = catchThrowable(() -> userService.changePassword(TOKEN, NEW_PLAIN_PASSWORD));
+
+    // then
+    assertThat(throwable).isInstanceOf(TokenExpiredException.class);
+    assertThat(throwable).hasMessageContaining(ErrorMessages.TOKEN_EXPIRED.toDisplayString());
+  }
 }

@@ -3,8 +3,8 @@ package com.metalr2.web.controller.mvc.authentication;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
-import com.metalr2.model.exceptions.EmailVerificationTokenExpiredException;
 import com.metalr2.model.exceptions.ResourceNotFoundException;
+import com.metalr2.model.exceptions.TokenExpiredException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
 import com.metalr2.model.user.events.OnRegistrationCompleteEvent;
 import com.metalr2.service.token.TokenService;
@@ -15,7 +15,12 @@ import com.metalr2.web.DtoFactory.UserDtoFactory;
 import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,9 +44,16 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(MockitoExtension.class)
 class RegistrationControllerIT implements WithAssertions, WithIntegrationTestProfile {
@@ -240,7 +252,7 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
     @Test
     @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with expired token should return the login view with error message")
     void given_expired_token_on_registration_verification_uri_should_redirect_to_login_view() throws Exception {
-      doThrow(EmailVerificationTokenExpiredException.class).when(userService).verifyEmailToken(EXPIRED_TOKEN);
+      doThrow(TokenExpiredException.class).when(userService).verifyEmailToken(EXPIRED_TOKEN);
 
       mockMvc.perform(get(Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + EXPIRED_TOKEN))
               .andExpect(status().is3xxRedirection())
