@@ -57,9 +57,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  // ToDo DanielW: Test
   public UserDto createAdministrator(UserDto userDto) {
-    return createUserEntity(userDto, UserRole.createSuperUserRole(), true);
+    return createUserEntity(userDto, UserRole.createAdministratorRole(), true);
   }
 
   private UserDto createUserEntity(UserDto userDto, Set<UserRole> roles, boolean enabled) {

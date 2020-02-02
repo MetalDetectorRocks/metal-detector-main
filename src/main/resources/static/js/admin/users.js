@@ -80,12 +80,15 @@ function clearHtmlTable() {
  */
 function createAdministrator () {
     $.post({
-      url: '/rest/v1/users',
-      data: createAdministratorCreateRequest(),
-      type: 'POST',
-      contentType: 'application/json',
-      success: onCreateAdministratorSuccess,
-      error: onCreateAdministratorError
+        url: '/rest/v1/users',
+        data: createAdministratorCreateRequest(),
+        type: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        success: onCreateAdministratorSuccess,
+        error: onCreateAdministratorError
     });
 }
 
