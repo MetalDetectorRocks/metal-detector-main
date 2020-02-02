@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 import static com.metalr2.web.DtoFactory.ArtistEntityFactory;
 
 @DataJpaTest
-class ArtistsRepositoryTest implements WithAssertions, WithIntegrationTestProfile {
+class ArtistsRepositoryIT implements WithAssertions, WithIntegrationTestProfile {
 
   @Autowired
   private ArtistsRepository artistsRepository;

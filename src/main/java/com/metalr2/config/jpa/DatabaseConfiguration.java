@@ -30,5 +30,4 @@ public class DatabaseConfiguration {
       return () -> Optional.of("ANONYMOUS");
     }
   }
-
 }
