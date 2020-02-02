@@ -121,7 +121,7 @@ function onCreateAdministratorError(errorResponse) {
     const validationMessageArea = $('#create-admin-user-validation-area');
     validationMessageArea.addClass("alert alert-danger");
 
-    if (errorResponse.status === 400) {
+    if (errorResponse.status === 422) { // UNPROCESSABLE_ENTITY
         validationMessageArea.append("The following errors occurred during server-side validation:");
         const errorsList = $('<ul>', {class: "errors mb-0"}).append(
             errorResponse.responseJSON.messages.map(message =>
@@ -130,7 +130,7 @@ function onCreateAdministratorError(errorResponse) {
         );
         validationMessageArea.append(errorsList);
     }
-    else if (errorResponse.status === 409) {
+    else if (errorResponse.status === 409) { // CONFLICT
         validationMessageArea.append(errorResponse.responseJSON.messages[0]);
     }
     else {

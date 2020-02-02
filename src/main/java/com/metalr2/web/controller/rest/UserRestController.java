@@ -6,6 +6,7 @@ import com.metalr2.web.dto.request.RegisterUserRequest;
 import com.metalr2.web.dto.response.UserResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,14 +52,14 @@ public class UserRestController {
     return ResponseEntity.ok(response);
   }
 
-  // ToDo DanielW: Test
-  @PostMapping(USERS)
+  @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<UserResponse> createUser(@Valid @RequestBody RegisterUserRequest request) {
     UserDto userDto = mapper.map(request, UserDto.class);
     UserDto createdUserDto = userService.createAdministrator(userDto);
     UserResponse response = mapper.map(createdUserDto, UserResponse.class);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
 }
