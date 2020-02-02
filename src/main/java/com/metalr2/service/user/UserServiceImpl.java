@@ -58,7 +58,6 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   // ToDo DanielW: Test
-  // ToDo Danielw: Brauchen wir die SuperUser Rolle überhaupt noch? Einen wirklichen Usecase gibt es nicht
   public UserDto createAdministrator(UserDto userDto) {
     return createUserEntity(userDto, UserRole.createSuperUserRole(), true);
   }

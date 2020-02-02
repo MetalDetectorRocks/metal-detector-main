@@ -27,5 +27,5 @@ public class ErrorResponse {
     this.timestamp = LocalDateTime.now();
     this.messages  = messages;
   }
-	
+
 }

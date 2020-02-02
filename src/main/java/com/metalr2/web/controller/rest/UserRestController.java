@@ -1,6 +1,5 @@
 package com.metalr2.web.controller.rest;
 
-import com.metalr2.model.exceptions.UserAlreadyExistsException;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.request.RegisterUserRequest;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,19 +50,11 @@ public class UserRestController {
 
   // ToDo DanielW: Test
   @PostMapping(USERS)
-  public ResponseEntity<UserResponse> createUser(@RequestBody RegisterUserRequest request) {
+  public ResponseEntity<UserResponse> createUser(@Valid @RequestBody RegisterUserRequest request) {
     UserDto userDto = mapper.map(request, UserDto.class);
-    UserDto createdUserDto;
-
-    try{
-      createdUserDto = userService.createAdministrator(userDto);
-    }
-    catch (UserAlreadyExistsException e) {
-      // ToDo DanielW: Better error handling
-      return ResponseEntity.badRequest().build();
-    }
-
+    UserDto createdUserDto = userService.createAdministrator(userDto);
     UserResponse response = mapper.map(createdUserDto, UserResponse.class);
+
     return ResponseEntity.ok(response);
   }
 

@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -21,8 +24,8 @@ public class AppExceptionsHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(AppExceptionsHandler.class);
 
-  @ExceptionHandler(value = ValidationException.class)
-  public ResponseEntity<ErrorResponse> handleBadRequests(ValidationException exception, WebRequest webRequest) {
+  @ExceptionHandler(value = MethodArgumentNotValidException.class)
+  public ResponseEntity<ErrorResponse> handleBadRequests(MethodArgumentNotValidException exception, WebRequest webRequest) {
     LOG.warn(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.BAD_REQUEST);
   }
@@ -49,11 +52,28 @@ public class AppExceptionsHandler {
     return new ErrorResponse(exception.getMessage());
   }
 
-  private ErrorResponse createErrorResponse(ValidationException exception) {
-    List<String> messages = exception.getFieldErrors().stream()
-                                                      .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
-                                                      .collect(Collectors.toList());
-    return new ErrorResponse(messages);
+  private ErrorResponse createErrorResponse(MethodArgumentNotValidException exception) {
+    List<String> fieldErrors = exception.getBindingResult().getAllErrors()
+        .stream()
+        .map(this::transformFieldError)
+        .sorted()
+        .collect(Collectors.toList());
+
+    return new ErrorResponse(fieldErrors);
+  }
+
+  private String transformFieldError(ObjectError error) {
+    if (error instanceof FieldError) {
+      return "Error regarding field '" +
+             ((FieldError) error).getField() +
+             "': " +
+             error.getDefaultMessage() +
+             ".";
+    }
+    else {
+      return error.getDefaultMessage();
+    }
+
   }
 	
 }

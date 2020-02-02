@@ -4,13 +4,15 @@ $(document).ready(function () {
     userTable = requestUsersFromServer();
 
     // create administrator
-    $("#create-user-button").button().on("click", createUser);
+    $("#create-user-button").button().on("click", createAdministrator);
     $("#cancel-create-user-button").button().on("click", resetCreateUserForm);
+    $("#create-admin-user-form-close").button().on("click", resetCreateUserForm);
 
     // update user
     $("#update-user-button").button().on("click", updateUser);
     $("#cancel-update-user-button").button().on("click", resetUpdateUserForm);
     $(document).on("click", "#user-table tbody tr", showUpdateForm);
+    $("#update-user-form-close").button().on("click", resetUpdateUserForm);
 });
 
 /**
@@ -74,12 +76,66 @@ function clearHtmlTable() {
 }
 
 /**
- * Creates a new administrator user.
+ * Create a new administrator on the server.
  */
-function createUser () {
-    sendCreateUserRequest();
+function createAdministrator () {
+    $.post({
+      url: '/rest/v1/users',
+      data: createAdministratorCreateRequest(),
+      type: 'POST',
+      contentType: 'application/json',
+      success: onCreateAdministratorSuccess,
+      error: onCreateAdministratorError
+    });
+}
+
+/**
+ * Creates the json payload from html form to create a new administrator.
+ * @returns {string} Stringified json payload to create a new administrator.
+ */
+function createAdministratorCreateRequest() {
+    return JSON.stringify({
+        username: $("#username").val(),
+        email: $("#email").val(),
+        plainPassword: $("#plainPassword").val(),
+        verifyPlainPassword: $("#verifyPlainPassword").val()
+    });
+}
+
+/**
+ * Success callback for creating a new administrator.
+ * @param createResponse The json response
+ */
+function onCreateAdministratorSuccess(createResponse) {
+    userTable.row.add(createResponse).draw(false);
     resetCreateUserForm();
     $('#create-admin-user-dialog').modal('hide');
+}
+
+/**
+ * Error callback for creating a new administrator.
+ * @param errorResponse The json response
+ */
+function onCreateAdministratorError(errorResponse) {
+    resetCreateAdminUserValidationArea();
+    const validationMessageArea = $('#create-admin-user-validation-area');
+    validationMessageArea.addClass("alert alert-danger");
+
+    if (errorResponse.status === 400) {
+        validationMessageArea.append("The following errors occurred during server-side validation:");
+        const errorsList = $('<ul>', {class: "errors mb-0"}).append(
+            errorResponse.responseJSON.messages.map(message =>
+                $("<li>").text(message)
+            )
+        );
+        validationMessageArea.append(errorsList);
+    }
+    else if (errorResponse.status === 409) {
+        validationMessageArea.append(errorResponse.responseJSON.messages[0]);
+    }
+    else {
+        validationMessageArea.append("An unexpected error has occurred. Please try again at a later time.");
+    }
 }
 
 /**
@@ -105,7 +161,7 @@ function showUpdateForm() {
 }
 
 /**
- * Updates certain user.
+ * Updates a certain user.
  */
 function updateUser () {
     sendUpdateUserRequest();
@@ -114,46 +170,40 @@ function updateUser () {
 }
 
 /**
- * Create a new user on the server.
- */
-function sendCreateUserRequest() {
-    const createRequest = {
-        username: $("#username").val(),
-        email: $("#email").val(),
-        plainPassword: $("#plainPassword").val(),
-        verifyPlainPassword: $("#verifyPlainPassword").val()
-    };
-
-    const successCallback = function (createResponse) {
-        userTable.row.add(createResponse).draw(false);
-    };
-
-    $.post({
-        url: '/rest/v1/users',
-        data: JSON.stringify(createRequest),
-        type: 'POST',
-        contentType: 'application/json',
-        success: successCallback
-    });
-}
-
-/**
- * Update a certain user on the server.
+ * Sends the update request to the server.
  */
 function sendUpdateUserRequest() {
-    alert("ToDo"); // ToDo DanielW: Implement
+    // ToDo: https://trello.com/c/iEGmTlRI
 }
 
 /**
- * Reset the user create form
+ * Resets the user create form.
  */
 function resetCreateUserForm() {
     $("#create-admin-user-form")[0].reset();
+    resetCreateAdminUserValidationArea();
 }
 
 /**
- * Reset the user update form
+ * Resets the user update form.
  */
 function resetUpdateUserForm() {
     $("#update-user-form")[0].reset();
+    resetUpdateUserValidationArea();
+}
+
+/**
+ * Resets the validation area in create admin user form.
+ */
+function resetCreateAdminUserValidationArea() {
+    const validationMessageArea = $('#create-admin-user-validation-area');
+    validationMessageArea.removeClass('alert alert-danger');
+    validationMessageArea.empty();
+}
+
+/**
+ * Resets the validation area in update user form.
+ */
+function resetUpdateUserValidationArea() {
+    // ToDo: https://trello.com/c/iEGmTlRI
 }
