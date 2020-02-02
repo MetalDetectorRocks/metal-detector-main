@@ -1,9 +1,9 @@
 package com.metalr2.service.releases;
 
 import com.metalr2.web.DtoFactory;
+import com.metalr2.web.dto.releases.ButlerReleasesRequest;
+import com.metalr2.web.dto.releases.ButlerReleasesResponse;
 import com.metalr2.web.dto.releases.ReleaseDto;
-import com.metalr2.web.dto.releases.ReleasesRequest;
-import com.metalr2.web.dto.releases.ReleasesResponse;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.metalr2.web.DtoFactory.ReleasesResponseFactory;
+import static com.metalr2.web.DtoFactory.ReleasesButlerResponseFactory;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
@@ -49,7 +49,7 @@ class ReleasesServiceTest implements WithAssertions {
   private ReleasesServiceImpl releasesService;
 
   @Captor
-  private ArgumentCaptor<HttpEntity<ReleasesRequest>> argumentCaptor;
+  private ArgumentCaptor<HttpEntity<ButlerReleasesRequest>> argumentCaptor;
 
   @BeforeEach
   void setUp() {
@@ -66,9 +66,9 @@ class ReleasesServiceTest implements WithAssertions {
   void get_releases_valid_result() {
     // given
     LocalDate releaseDate = LocalDate.of(2020, 1, 1);
-    ReleasesResponse responseMock = DtoFactory.ReleasesResponseFactory.withOneResult("A1", releaseDate);
-    ReleasesRequest request = new ReleasesRequest();
-    when(restTemplate.postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ReleasesResponse.class)))
+    ButlerReleasesResponse responseMock = ReleasesButlerResponseFactory.withOneResult("A1", releaseDate);
+    ButlerReleasesRequest request = new ButlerReleasesRequest();
+    when(restTemplate.postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ButlerReleasesResponse.class)))
         .thenReturn(ResponseEntity.ok(responseMock));
 
     // when
@@ -78,16 +78,16 @@ class ReleasesServiceTest implements WithAssertions {
     assertThat(releases).hasSize(1);
     assertThat(releases.get(0)).isEqualTo(DtoFactory.ReleaseDtoFactory.withOneResult("A1", releaseDate));
 
-    verify(restTemplate, times(1)).postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ReleasesResponse.class));
+    verify(restTemplate, times(1)).postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ButlerReleasesResponse.class));
   }
 
   @ParameterizedTest(name = "[{index}] => Result <{0}> | HttpStatus <{1}>")
   @MethodSource("responseProvider")
   @DisplayName("getReleases() should return empty result on when butler sends no usable response")
-  void get_releases_empty_response(ReleasesResponse responseMock, HttpStatus httpStatus) {
+  void get_releases_empty_response(ButlerReleasesResponse responseMock, HttpStatus httpStatus) {
     // given
-    ReleasesRequest request = new ReleasesRequest();
-    when(restTemplate.postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ReleasesResponse.class)))
+    ButlerReleasesRequest request = new ButlerReleasesRequest();
+    when(restTemplate.postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ButlerReleasesResponse.class)))
         .thenReturn(ResponseEntity.status(httpStatus).body(responseMock));
 
     // when
@@ -96,12 +96,12 @@ class ReleasesServiceTest implements WithAssertions {
     // then
     assertThat(releases).isEmpty();
 
-    verify(restTemplate, times(1)).postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ReleasesResponse.class));
+    verify(restTemplate, times(1)).postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ButlerReleasesResponse.class));
   }
 
   private static Stream<Arguments> responseProvider() {
-    ReleasesResponse result = ReleasesResponseFactory.withOneResult("A1", LocalDate.now());
-    ReleasesResponse emptyResult = ReleasesResponseFactory.withEmptyResult();
+    ButlerReleasesResponse result = ReleasesButlerResponseFactory.withOneResult("A1", LocalDate.now());
+    ButlerReleasesResponse emptyResult = ReleasesButlerResponseFactory.withEmptyResult();
     return Stream.of(
         Arguments.of(null, HttpStatus.OK),
         Arguments.of(result, HttpStatus.BAD_REQUEST),
@@ -113,18 +113,18 @@ class ReleasesServiceTest implements WithAssertions {
   @DisplayName("Test http entity request")
   void test_http_entity() {
     // given
-    ReleasesResponse responseMock = DtoFactory.ReleasesResponseFactory.withOneResult("A1", LocalDate.now());
-    ReleasesRequest request = new ReleasesRequest();
-    when(restTemplate.postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ReleasesResponse.class)))
+    ButlerReleasesResponse responseMock = ReleasesButlerResponseFactory.withOneResult("A1", LocalDate.now());
+    ButlerReleasesRequest request = new ButlerReleasesRequest();
+    when(restTemplate.postForEntity(eq(ALL_RELEASES_URL), any(HttpEntity.class), eq(ButlerReleasesResponse.class)))
         .thenReturn(ResponseEntity.ok(responseMock));
 
     // when
     releasesService.getReleases(request);
 
     // then
-    verify(restTemplate, times(1)).postForEntity(eq(ALL_RELEASES_URL), argumentCaptor.capture(), eq(ReleasesResponse.class));
+    verify(restTemplate, times(1)).postForEntity(eq(ALL_RELEASES_URL), argumentCaptor.capture(), eq(ButlerReleasesResponse.class));
 
-    HttpEntity<ReleasesRequest> httpEntity = argumentCaptor.getValue();
+    HttpEntity<ButlerReleasesRequest> httpEntity = argumentCaptor.getValue();
     HttpHeaders headers = httpEntity.getHeaders();
 
     assertThat(httpEntity.getBody()).isEqualTo(request);

@@ -58,12 +58,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class RegistrationControllerIT implements WithAssertions, WithIntegrationTestProfile {
 
-  private static final String PARAM_USERNAME          = "username";
-  private static final String PARAM_EMAIL             = "email";
-  private static final String PARAM_PASSWORD          = "plainPassword";
-  private static final String PARAM_VERIFY_PASSWORD   = "verifyPlainPassword";
-  private static final String NOT_EXISTING_TOKEN      = "not_existing_token";
-  private static final String EXPIRED_TOKEN           = "expired_token";
+  private static final String PARAM_USERNAME = "username";
+  private static final String PARAM_EMAIL = "email";
+  private static final String PARAM_PASSWORD = "plainPassword";
+  private static final String PARAM_VERIFY_PASSWORD = "verifyPlainPassword";
+  private static final String NOT_EXISTING_TOKEN = "not_existing_token";
+  private static final String EXPIRED_TOKEN = "expired_token";
 
   private Map<String, String> paramValues = new HashMap<>();
 
@@ -85,7 +85,7 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
   private MockMvc mockMvc;
 
   @BeforeEach
-  void setup(){
+  void setup() {
     // Since ApplicationEventPublisher is not a bean, we cannot work with @WebMvcTest at this point and have to mock the controller
     // we want to test ourselves and initialize the MockMvc itself.
     mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
@@ -107,10 +107,10 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
   @DisplayName("Requesting '" + Endpoints.Guest.REGISTER + "' should return the view to register")
   void given_register_uri_should_return_register_view() throws Exception {
     mockMvc.perform(get(Endpoints.Guest.REGISTER))
-            .andExpect(model().hasNoErrors())
-            .andExpect(model().attributeExists(RegistrationController.FORM_DTO))
-            .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.Guest.REGISTER));
+        .andExpect(model().hasNoErrors())
+        .andExpect(model().attributeExists(RegistrationController.FORM_DTO))
+        .andExpect(status().isOk())
+        .andExpect(view().name(ViewNames.Guest.REGISTER));
   }
 
   @Nested
@@ -129,10 +129,10 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
       ArgumentCaptor<OnRegistrationCompleteEvent> eventCaptor = ArgumentCaptor.forClass(OnRegistrationCompleteEvent.class);
 
       mockMvc.perform(createRequest())
-              .andExpect(model().hasNoErrors())
-              .andExpect(model().attributeExists(RegistrationController.FORM_DTO, "successMessage"))
-              .andExpect(status().isOk())
-              .andExpect(view().name(ViewNames.Guest.REGISTER));
+          .andExpect(model().hasNoErrors())
+          .andExpect(model().attributeExists(RegistrationController.FORM_DTO, "successMessage"))
+          .andExpect(status().isOk())
+          .andExpect(view().name(ViewNames.Guest.REGISTER));
 
       verify(userService, times(1)).createUser(userDtoCaptor.capture());
       assertThat(userDtoCaptor.getValue().getPublicId()).isNullOrEmpty();
@@ -156,31 +156,31 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
       paramValues.put(PARAM_VERIFY_PASSWORD, request.getVerifyPlainPassword());
 
       mockMvc.perform(createRequest())
-              .andExpect(model().errorCount(expectedErrorCount))
-              .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, incorrectFieldNames))
-              .andExpect(status().isBadRequest())
-              .andExpect(view().name(ViewNames.Guest.REGISTER));
+          .andExpect(model().errorCount(expectedErrorCount))
+          .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, incorrectFieldNames))
+          .andExpect(status().isBadRequest())
+          .andExpect(view().name(ViewNames.Guest.REGISTER));
     }
 
     private Stream<Arguments> registerUserRequestProvider() {
       return Stream.of(
-              // invalid username
-              Arguments.of(RegisterUserRequestFactory.withUsername(""), 1, new String[] {PARAM_USERNAME}),
-              Arguments.of(RegisterUserRequestFactory.withUsername("    "), 1, new String[] {PARAM_USERNAME}),
-              Arguments.of(RegisterUserRequestFactory.withUsername(null), 1, new String[] {PARAM_USERNAME}),
+          // invalid username
+          Arguments.of(RegisterUserRequestFactory.withUsername(""), 1, new String[] {PARAM_USERNAME}),
+          Arguments.of(RegisterUserRequestFactory.withUsername("    "), 1, new String[] {PARAM_USERNAME}),
+          Arguments.of(RegisterUserRequestFactory.withUsername(null), 1, new String[] {PARAM_USERNAME}),
 
-              // invalid email
-              Arguments.of(RegisterUserRequestFactory.withEmail("john.doe.example.de"), 1, new String[] {PARAM_EMAIL}),
-              Arguments.of(RegisterUserRequestFactory.withEmail(""), 1, new String[] {PARAM_EMAIL}),
-              Arguments.of(RegisterUserRequestFactory.withEmail("    "), 2, new String[] {PARAM_EMAIL}),
-              Arguments.of(RegisterUserRequestFactory.withEmail("@com"), 1, new String[] {PARAM_EMAIL}),
-              Arguments.of(RegisterUserRequestFactory.withEmail(null), 1, new String[] {PARAM_EMAIL}),
+          // invalid email
+          Arguments.of(RegisterUserRequestFactory.withEmail("john.doe.example.de"), 1, new String[] {PARAM_EMAIL}),
+          Arguments.of(RegisterUserRequestFactory.withEmail(""), 1, new String[] {PARAM_EMAIL}),
+          Arguments.of(RegisterUserRequestFactory.withEmail("    "), 2, new String[] {PARAM_EMAIL}),
+          Arguments.of(RegisterUserRequestFactory.withEmail("@com"), 1, new String[] {PARAM_EMAIL}),
+          Arguments.of(RegisterUserRequestFactory.withEmail(null), 1, new String[] {PARAM_EMAIL}),
 
-              // invalid passwords
-              Arguments.of(RegisterUserRequestFactory.withPassword("secret-password", "other-secret-password"), 1, new String[] {}),
-              Arguments.of(RegisterUserRequestFactory.withPassword("secret", "secret"), 2, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD}),
-              Arguments.of(RegisterUserRequestFactory.withPassword("", ""), 4, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD}),
-              Arguments.of(RegisterUserRequestFactory.withPassword(null, null), 2, new String[] {PARAM_VERIFY_PASSWORD})
+          // invalid passwords
+          Arguments.of(RegisterUserRequestFactory.withPassword("secret-password", "other-secret-password"), 1, new String[] {}),
+          Arguments.of(RegisterUserRequestFactory.withPassword("secret", "secret"), 2, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD}),
+          Arguments.of(RegisterUserRequestFactory.withPassword("", ""), 4, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD}),
+          Arguments.of(RegisterUserRequestFactory.withPassword(null, null), 2, new String[] {PARAM_VERIFY_PASSWORD})
       );
     }
 
@@ -190,10 +190,10 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
       when(userService.createUser(any(UserDto.class))).thenThrow(UserAlreadyExistsException.createUserWithUsernameAlreadyExistsException());
 
       mockMvc.perform(createRequest())
-              .andExpect(model().errorCount(1))
-              .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, PARAM_USERNAME))
-              .andExpect(status().isBadRequest())
-              .andExpect(view().name(ViewNames.Guest.REGISTER));
+          .andExpect(model().errorCount(1))
+          .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, PARAM_USERNAME))
+          .andExpect(status().isBadRequest())
+          .andExpect(view().name(ViewNames.Guest.REGISTER));
     }
 
     @Test
@@ -202,22 +202,21 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
       when(userService.createUser(any(UserDto.class))).thenThrow(UserAlreadyExistsException.createUserWithEmailAlreadyExistsException());
 
       mockMvc.perform(createRequest())
-              .andExpect(model().errorCount(1))
-              .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, PARAM_EMAIL))
-              .andExpect(status().isBadRequest())
-              .andExpect(view().name(ViewNames.Guest.REGISTER));
+          .andExpect(model().errorCount(1))
+          .andExpect(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, PARAM_EMAIL))
+          .andExpect(status().isBadRequest())
+          .andExpect(view().name(ViewNames.Guest.REGISTER));
     }
 
     private MockHttpServletRequestBuilder createRequest() {
       return MockMvcRequestBuilders
-              .post(Endpoints.Guest.REGISTER)
-              .accept(MediaType.TEXT_HTML)
-              .param(PARAM_USERNAME, paramValues.get(PARAM_USERNAME))
-              .param(PARAM_EMAIL, paramValues.get(PARAM_EMAIL))
-              .param(PARAM_PASSWORD, paramValues.get(PARAM_PASSWORD))
-              .param(PARAM_VERIFY_PASSWORD, paramValues.get(PARAM_VERIFY_PASSWORD));
+          .post(Endpoints.Guest.REGISTER)
+          .accept(MediaType.TEXT_HTML)
+          .param(PARAM_USERNAME, paramValues.get(PARAM_USERNAME))
+          .param(PARAM_EMAIL, paramValues.get(PARAM_EMAIL))
+          .param(PARAM_PASSWORD, paramValues.get(PARAM_PASSWORD))
+          .param(PARAM_VERIFY_PASSWORD, paramValues.get(PARAM_VERIFY_PASSWORD));
     }
-
   }
 
   @Nested
@@ -230,9 +229,9 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
       String token = "valid_token";
 
       mockMvc.perform(get(Endpoints.Guest.REGISTRATION_VERIFICATION + "?token={token}", token))
-              .andExpect(model().hasNoErrors())
-              .andExpect(status().is3xxRedirection())
-              .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?verificationSuccess"));
+          .andExpect(model().hasNoErrors())
+          .andExpect(status().is3xxRedirection())
+          .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?verificationSuccess"));
 
       verify(userService, times(1)).verifyEmailToken(token);
     }
@@ -243,8 +242,8 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
       doThrow(ResourceNotFoundException.class).when(userService).verifyEmailToken(NOT_EXISTING_TOKEN);
 
       mockMvc.perform(get(Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + NOT_EXISTING_TOKEN))
-              .andExpect(status().is3xxRedirection())
-              .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenNotFound"));
+          .andExpect(status().is3xxRedirection())
+          .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenNotFound"));
 
       verify(userService, times(1)).verifyEmailToken(NOT_EXISTING_TOKEN);
     }
@@ -255,12 +254,11 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
       doThrow(TokenExpiredException.class).when(userService).verifyEmailToken(EXPIRED_TOKEN);
 
       mockMvc.perform(get(Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + EXPIRED_TOKEN))
-              .andExpect(status().is3xxRedirection())
-              .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenExpired&token=" + EXPIRED_TOKEN));
+          .andExpect(status().is3xxRedirection())
+          .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenExpired&token=" + EXPIRED_TOKEN));
 
       verify(userService, times(1)).verifyEmailToken(EXPIRED_TOKEN);
     }
-
   }
 
   @Nested
@@ -273,8 +271,8 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
       final String VALID_TOKEN = "valid-token";
 
       mockMvc.perform(get(Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "?token=" + VALID_TOKEN))
-              .andExpect(status().is3xxRedirection())
-              .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?resendVerificationTokenSuccess"));
+          .andExpect(status().is3xxRedirection())
+          .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?resendVerificationTokenSuccess"));
 
       verify(tokenService, times(1)).resendExpiredEmailVerificationToken(VALID_TOKEN);
     }
@@ -285,12 +283,10 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
       doThrow(ResourceNotFoundException.class).when(tokenService).resendExpiredEmailVerificationToken(NOT_EXISTING_TOKEN);
 
       mockMvc.perform(get(Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "?token=" + NOT_EXISTING_TOKEN))
-              .andExpect(status().is3xxRedirection())
-              .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenNotFound"));
+          .andExpect(status().is3xxRedirection())
+          .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenNotFound"));
 
       verify(tokenService, times(1)).resendExpiredEmailVerificationToken(NOT_EXISTING_TOKEN);
     }
-
   }
-
 }

@@ -3,8 +3,7 @@ package com.metalr2.web.controller.mvc.authentication;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.user.UserFactory;
-import com.metalr2.service.user.UserService;
-import com.metalr2.testutil.WithSecurityConfig;
+import com.metalr2.testutil.BaseWebMvcTestWithSecurity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,40 +11,38 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@WebMvcTest(LoginController.class)
-class LoginControllerIT implements WithSecurityConfig {
+@WebMvcTest(value = LoginController.class, excludeAutoConfiguration = WebMvcAutoConfiguration.class)
+class LoginControllerIT extends BaseWebMvcTestWithSecurity {
 
   private static final String PARAM_USERNAME = "username";
   private static final String PARAM_PASSWORD = "password";
   private static final String USERNAME       = "JohnD";
   private static final String PASSWORD       = "plain-password";
-
-  @Autowired
-  private MockMvc mockMvc;
-
-  @MockBean
-  private UserService userService;
-
-  @Autowired
-  private BCryptPasswordEncoder passwordEncoder;
 
   @BeforeEach
   void setup() {
@@ -77,12 +74,23 @@ class LoginControllerIT implements WithSecurityConfig {
   }
 
   @Test
-  @DisplayName("Login with valid credentials should be ok")
-  void login_with_valid_credentials_should_be_ok() throws Exception {
-    mockMvc.perform(post(Endpoints.Guest.LOGIN)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .param(PARAM_USERNAME, USERNAME)
-                .param(PARAM_PASSWORD, PASSWORD))
+  @DisplayName("Requesting secured resource should redirect to login page")
+  void requesting_secured_resource_should_redirect_to_login_page() throws Exception {
+    mockMvc.perform(get(Endpoints.AdminArea.INDEX))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrlPattern("**/" + Endpoints.Guest.LOGIN));
+  }
+
+  @Test
+  @DisplayName("Login with valid credentials should be redirect to home page")
+  void login_with_valid_credentials_should_be_redirect_to_home_page() throws Exception {
+    MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(Endpoints.Guest.LOGIN)
+            .with(SecurityMockMvcRequestPostProcessors.csrf())
+            .param(PARAM_USERNAME, USERNAME)
+            .param(PARAM_PASSWORD, PASSWORD)
+            .session(new MockHttpSession());
+
+    mockMvc.perform(requestBuilder)
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl(Endpoints.Frontend.HOME));
 
@@ -115,15 +123,4 @@ class LoginControllerIT implements WithSecurityConfig {
             Arguments.of(USERNAME, "invalid-password")
     );
   }
-
-  @TestConfiguration
-  static class TestConfig {
-
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-      return new BCryptPasswordEncoder();
-    }
-
-  }
-
 }

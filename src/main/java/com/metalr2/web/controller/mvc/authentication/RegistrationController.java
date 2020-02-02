@@ -37,19 +37,19 @@ public class RegistrationController {
   static final String FORM_DTO = "registerUserRequest";
 
   private final ApplicationEventPublisher eventPublisher;
-  private final UserService               userService;
-  private final TokenService              tokenService;
-  private final MessageSource             messages;
-  private final ModelMapper               mapper;
+  private final UserService userService;
+  private final TokenService tokenService;
+  private final MessageSource messages;
+  private final ModelMapper mapper;
 
   @Autowired
   public RegistrationController(UserService userService, TokenService tokenService, ApplicationEventPublisher eventPublisher,
                                 @Qualifier("messageSource") MessageSource messages) {
-    this.userService    = userService;
-    this.tokenService   = tokenService;
+    this.userService = userService;
+    this.tokenService = tokenService;
     this.eventPublisher = eventPublisher;
-    this.messages       = messages;
-    this.mapper         = new ModelMapper();
+    this.messages = messages;
+    this.mapper = new ModelMapper();
   }
 
   @ModelAttribute(FORM_DTO)
@@ -74,7 +74,7 @@ public class RegistrationController {
     UserDto createdUserDto;
     UserDto userDto = mapper.map(registerUserRequest, UserDto.class);
 
-    try{
+    try {
       createdUserDto = userService.createUser(userDto);
     }
     catch (UserAlreadyExistsException e) {
@@ -98,10 +98,10 @@ public class RegistrationController {
   }
 
   @GetMapping(Endpoints.Guest.REGISTRATION_VERIFICATION)
-  public ModelAndView verifyRegistration(@RequestParam(value="token") String tokenString) {
+  public ModelAndView verifyRegistration(@RequestParam(value = "token") String tokenString) {
     String param = "verificationSuccess";
 
-    try{
+    try {
       userService.verifyEmailToken(tokenString);
     }
     catch (TokenExpiredException e) {
@@ -115,10 +115,10 @@ public class RegistrationController {
   }
 
   @GetMapping(Endpoints.Guest.RESEND_VERIFICATION_TOKEN)
-  public ModelAndView resendEmailVerificationToken(@RequestParam(value="token") String tokenString) {
+  public ModelAndView resendEmailVerificationToken(@RequestParam(value = "token") String tokenString) {
     String param = "resendVerificationTokenSuccess";
 
-    try{
+    try {
       tokenService.resendExpiredEmailVerificationToken(tokenString);
     }
     catch (ResourceNotFoundException e) {
@@ -127,5 +127,4 @@ public class RegistrationController {
 
     return new ModelAndView("redirect:" + Endpoints.Guest.LOGIN + "?" + param);
   }
-
 }
