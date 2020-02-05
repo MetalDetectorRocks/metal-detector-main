@@ -17,7 +17,6 @@ public class DatabaseConfiguration {
   @Bean
   public AuditorAware<String> auditorAware() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
     if (authentication != null) {
       Object principal = authentication.getPrincipal();
       if (principal instanceof UserDetails) {

@@ -97,11 +97,11 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
   }
 
   private void createFollowedArtists(String userId) {
-    FollowedArtistEntity followedArtistEntityOpeth = new FollowedArtistEntity(userId, OPETH_DISCOGS_ID);
-    FollowedArtistEntity followedArtistEntityDarkthrone = new FollowedArtistEntity(userId, DARKTHRONE_DISCOGS_ID);
+    FollowedArtistEntity opeth = new FollowedArtistEntity(userId, OPETH_DISCOGS_ID);
+    FollowedArtistEntity darkthrone = new FollowedArtistEntity(userId, DARKTHRONE_DISCOGS_ID);
 
-    entityManager.persist(followedArtistEntityOpeth);
-    entityManager.persist(followedArtistEntityDarkthrone);
+    entityManager.persist(opeth);
+    entityManager.persist(darkthrone);
   }
 
 }

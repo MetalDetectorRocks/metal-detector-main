@@ -119,7 +119,7 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
   }
 
   @Test
-  @DisplayName("POST with bad requests should return 400")
+  @DisplayName("POST with invalid requests should return 400")
   void bad_requests() {
     // given
     DetectorReleasesRequest request = new DetectorReleasesRequest(null, null, null);
