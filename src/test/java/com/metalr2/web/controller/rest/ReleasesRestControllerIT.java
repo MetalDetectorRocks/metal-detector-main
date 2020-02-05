@@ -34,6 +34,8 @@ import java.util.stream.Stream;
 
 import static com.metalr2.web.DtoFactory.DetectorReleaseResponseFactory;
 import static com.metalr2.web.DtoFactory.ReleaseDtoFactory;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -77,6 +79,10 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
     when(modelMapper.map(request, ButlerReleasesRequest.class)).thenReturn(requestButler);
     when(artistsService.findFollowedArtistsForCurrentUser()).thenReturn(Collections.emptyList());
 
+    for (int i = 0; i < mockedDtos.size(); i++) {
+      when(modelMapper.map(mockedDtos.get(i), DetectorReleasesResponse.class)).thenReturn(expectedResponses.get(i));
+    }
+
     // when
     ValidatableResponse validatableResponse = requestHandler.doPost(request, ContentType.JSON);
 
@@ -90,6 +96,7 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
     assertThat(response).isEqualTo(expectedResponses);
     verify(releasesService, times(1)).getReleases(requestButler);
     verify(modelMapper, times(1)).map(request, ButlerReleasesRequest.class);
+    verify(modelMapper, times(mockedDtos.size())).map(any(), eq(DetectorReleasesResponse.class));
   }
 
   @Test
