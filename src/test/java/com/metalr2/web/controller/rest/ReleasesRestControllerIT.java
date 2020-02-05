@@ -119,7 +119,7 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
   }
 
   @Test
-  @DisplayName("POST with invalid requests should return 409")
+  @DisplayName("POST with invalid requests should return 400")
   void bad_requests() {
     // given
     DetectorReleasesRequest request = new DetectorReleasesRequest(null, null, null);
@@ -130,7 +130,7 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
     // then
     validatableResponse
         .contentType(ContentType.JSON)
-        .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
+        .statusCode(HttpStatus.BAD_REQUEST.value());
   }
 
 }

@@ -27,7 +27,7 @@ public class AppExceptionsHandler {
   @ExceptionHandler(value = MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException exception, WebRequest webRequest) {
     LOG.warn(webRequest.getContextPath() + ": " + exception.getMessage());
-    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY);
+    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(value = UserAlreadyExistsException.class)

@@ -36,8 +36,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.metalr2.web.DtoFactory.*;
-import static org.mockito.Mockito.*;
+import static com.metalr2.web.DtoFactory.RegisterUserRequestFactory;
+import static com.metalr2.web.DtoFactory.UserDtoFactory;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -231,7 +237,7 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
           .extract().as(ErrorResponse.class);
     }
 
-    @DisplayName("Should return status 422 if creating of administrator don't pass validation")
+    @DisplayName("Should return status 400 if creating of administrator don't pass validation")
     @MethodSource("registerUserRequestProvider")
     @ParameterizedTest
     void should_return_422(RegisterUserRequest request, int expectedErrorCount) {
@@ -240,7 +246,7 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
 
       // then
       response.contentType(ContentType.JSON)
-          .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
+          .statusCode(HttpStatus.BAD_REQUEST.value());
 
       ErrorResponse errorResponse = response.extract().as(ErrorResponse.class);
       System.out.println(errorResponse);
