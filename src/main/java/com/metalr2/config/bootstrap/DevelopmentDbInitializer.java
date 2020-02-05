@@ -100,13 +100,12 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
   }
 
   private void createFollowedArtists(String userId) {
-    FollowedArtistEntity followedArtistEntityOpeth = new FollowedArtistEntity(userId, OPETH_DISCOGS_ID);
-    FollowedArtistEntity followedArtistEntityDarkthrone = new FollowedArtistEntity(userId, DARKTHRONE_DISCOGS_ID);
-    FollowedArtistEntity followedArtistEntityMayhem = new FollowedArtistEntity(userId, MAYHEM_DISCOGS_ID);
+    FollowedArtistEntity opeth = new FollowedArtistEntity(userId, OPETH_DISCOGS_ID);
+    FollowedArtistEntity darkthrone = new FollowedArtistEntity(userId, DARKTHRONE_DISCOGS_ID);
+    FollowedArtistEntity mayhem = new FollowedArtistEntity(userId, MAYHEM_DISCOGS_ID);
 
-    entityManager.persist(followedArtistEntityOpeth);
-    entityManager.persist(followedArtistEntityDarkthrone);
-    entityManager.persist(followedArtistEntityMayhem);
+    entityManager.persist(opeth);
+    entityManager.persist(darkthrone);
+    entityManager.persist(mayhem);
   }
-
 }

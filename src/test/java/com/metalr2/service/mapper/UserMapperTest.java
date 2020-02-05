@@ -30,7 +30,10 @@ class UserMapperTest implements WithAssertions {
     // given
     UserEntity entity = UserFactory.createUser(USERNAME, EMAIL);
     entity.setPublicId("dummy-public-id");
+    entity.setCreatedBy("Creator");
     entity.setCreatedDateTime(new Date());
+    entity.setLastModifiedBy("Modifier");
+    entity.setLastModifiedDateTime(new Date());
     UserDto expected = UserDto.builder()
             .publicId(entity.getPublicId())
             .username(USERNAME)
@@ -39,7 +42,10 @@ class UserMapperTest implements WithAssertions {
             .role("User")
             .enabled(true)
             .lastLogin(null) // feature is currently not available
-            .creationDate(entity.getCreatedDateTime())
+            .createdBy(entity.getCreatedBy())
+            .createdDateTime(entity.getCreatedDateTime())
+            .lastModifiedBy(entity.getLastModifiedBy())
+            .lastModifiedDateTime(entity.getLastModifiedDateTime())
             .build();
 
     // when

@@ -1,8 +1,6 @@
 package com.metalr2.web.controller.rest;
 
 import com.metalr2.config.constants.Endpoints;
-import com.metalr2.model.exceptions.ErrorMessages;
-import com.metalr2.model.exceptions.ValidationException;
 import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.service.releases.ReleasesService;
 import com.metalr2.web.dto.ArtistDto;
@@ -14,7 +12,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

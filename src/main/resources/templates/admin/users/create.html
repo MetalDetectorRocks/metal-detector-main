@@ -4,17 +4,17 @@
         <title>Create User</title>
     </head>
     <body>
-        <!--ToDo DanielW: Validierung -->
-        <!--ToDo DanielW: Passworthinweis -->
         <div th:fragment="dialog" class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Create new Administrator</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title">Create new Administrator</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="create-admin-user-form-close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div id="create-admin-user-validation-area" class="small" role="alert">
+                    </div>
                     <form method="post" action="#" id="create-admin-user-form">
                         <fieldset>
                             <!-- Username-->
@@ -38,6 +38,7 @@
                                 <label for="plainPassword" class="col-sm-4 col-form-label">Password</label>
                                 <div class="col-sm-8">
                                     <input type="password" id="plainPassword" class="form-control" autocomplete="new-password" required />
+                                    <small id="emailHelp" class="form-text text-muted">Make sure the password has at least 8 characters.</small>
                                 </div>
                             </div>
 
