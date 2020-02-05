@@ -4,7 +4,6 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.service.releases.ReleasesService;
 import com.metalr2.testutil.WithIntegrationTestProfile;
-import com.metalr2.web.DtoFactory;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.releases.ButlerReleasesRequest;
 import com.metalr2.web.dto.releases.ReleaseDto;
@@ -33,6 +32,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.metalr2.web.DtoFactory.DetectorReleaseResponseFactory;
+import static com.metalr2.web.DtoFactory.ReleaseDtoFactory;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -108,13 +109,13 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
 
   private static Stream<Arguments> inputProvider() {
     LocalDate date = LocalDate.now();
-    ReleaseDto releaseDto1 = DtoFactory.ReleaseDtoFactory.withOneResult("A1", date);
-    ReleaseDto releaseDto2 = DtoFactory.ReleaseDtoFactory.withOneResult("A2", date);
-    ReleaseDto releaseDto3 = DtoFactory.ReleaseDtoFactory.withOneResult("A3", date);
+    ReleaseDto releaseDto1 = ReleaseDtoFactory.withOneResult("A1", date);
+    ReleaseDto releaseDto2 = ReleaseDtoFactory.withOneResult("A2", date);
+    ReleaseDto releaseDto3 = ReleaseDtoFactory.withOneResult("A3", date);
 
-    DetectorReleasesResponse releaseResponse1 = DtoFactory.DetectorReleaseResponseFactory.withOneResult("A1", date);
-    DetectorReleasesResponse releaseResponse2 = DtoFactory.DetectorReleaseResponseFactory.withOneResult("A2", date);
-    DetectorReleasesResponse releaseResponse3 = DtoFactory.DetectorReleaseResponseFactory.withOneResult("A3", date);
+    DetectorReleasesResponse releaseResponse1 = DetectorReleaseResponseFactory.withOneResult("A1", date);
+    DetectorReleasesResponse releaseResponse2 = DetectorReleaseResponseFactory.withOneResult("A2", date);
+    DetectorReleasesResponse releaseResponse3 = DetectorReleaseResponseFactory.withOneResult("A3", date);
 
     ButlerReleasesRequest requestAllButler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
     DetectorReleasesRequest requestAll = new DetectorReleasesRequest(null, null, Collections.emptyList());

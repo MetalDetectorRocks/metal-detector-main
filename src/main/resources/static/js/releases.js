@@ -1,5 +1,5 @@
 /**
- * Request users from REST endpoint via AJAX using DataTable jQuery Plugin.
+ * Request releases from REST endpoint via AJAX using DataTable jQuery Plugin.
  */
 function getReleases() {
   clearReleasesTable();
@@ -25,23 +25,20 @@ function getReleases() {
       {"data": "albumTitle"},
       {"data": "releaseDate"},
       {"data": "estimatedReleaseDate"},
-      {"data": "isFollowed"},
-      {"data": "releaseDate"}
+      {"data": "followed"}
     ],
     "columnDefs": [
       {
         "render": function (data) {
-          const year = data.substring(0, 4);
-          const month = data.substring(5, 7);
-          const day = data.substring(8, 10);
-          const releaseDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
-          return dateFormatter.format(releaseDate);
+          if (data) {
+            return "true";
+          }
+          else {
+            return "false";
+          }
         },
-        "targets": 3
-      },
-      {
         "visible": false,
-        "targets": [5, 6]
+        "targets": 5
       }
     ]
   });
@@ -80,6 +77,7 @@ $.fn.dataTable.ext.search.push(
       return data[6] >= dateFrom && data[6] <= dateTo;
     }
     if (dateFrom) {
+      console.log(dateFrom + " " + data[6]);
       return data[6] >= dateFrom;
     }
     else if (dateTo) {

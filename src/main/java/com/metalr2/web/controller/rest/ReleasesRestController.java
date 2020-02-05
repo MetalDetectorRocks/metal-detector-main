@@ -37,26 +37,18 @@ public class ReleasesRestController {
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-      produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<List<DetectorReleasesResponse>> getReleases(@Valid @RequestBody DetectorReleasesRequest request, BindingResult bindingResult) {
-    if (bindingResult.hasErrors()) {
-      throw new ValidationException(ErrorMessages.VALIDATION_ERROR.toDisplayString(), bindingResult.getFieldErrors());
-    }
-
+               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  public ResponseEntity<List<DetectorReleasesResponse>> getReleases(@Valid @RequestBody DetectorReleasesRequest request) {
     List<ReleaseDto> releaseDtos = releasesService.getReleases(mapper.map(request, ButlerReleasesRequest.class));
     return ResponseEntity.ok(mapReleasesResponse(releaseDtos));
   }
 
   private List<DetectorReleasesResponse> mapReleasesResponse(List<ReleaseDto> releaseDtos) {
     List<String> followedArtistsNames = artistsService.findFollowedArtistsForCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
-    return releaseDtos.stream().map(dto -> DetectorReleasesResponse.builder()
-        .artist(dto.getArtist())
-        .additionalArtists(dto.getAdditionalArtists())
-        .albumTitle(dto.getAlbumTitle())
-        .releaseDate(dto.getReleaseDate())
-        .estimatedReleaseDate(dto.getEstimatedReleaseDate())
-        .isFollowed(String.valueOf(followedArtistsNames.contains(dto.getArtist())))
-        .build())
-        .collect(Collectors.toList());
+    return releaseDtos.stream().map(dto -> {
+      DetectorReleasesResponse response = mapper.map(dto, DetectorReleasesResponse.class);
+      response.setFollowed(followedArtistsNames.contains(dto.getArtist()));
+      return response;
+    }).collect(Collectors.toList());
   }
 }

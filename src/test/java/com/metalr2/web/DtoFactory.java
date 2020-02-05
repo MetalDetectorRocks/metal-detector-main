@@ -188,7 +188,7 @@ public class DtoFactory {
   public static class DetectorReleaseResponseFactory {
 
     public static DetectorReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
-      return new DetectorReleasesResponse(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate", "false");
+      return new DetectorReleasesResponse(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate", false);
     }
   }
 }
