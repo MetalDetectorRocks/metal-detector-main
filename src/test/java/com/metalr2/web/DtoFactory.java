@@ -167,7 +167,7 @@ public class DtoFactory {
     }
   }
 
-  public static class ReleasesButlerResponseFactory {
+  public static class ButlerReleasesResponseFactory {
 
     public static ButlerReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
       return new ButlerReleasesResponse(Collections.singletonList(ReleaseDtoFactory.withOneResult(artist, releaseDate)));
@@ -185,10 +185,10 @@ public class DtoFactory {
     }
   }
 
-  public static class ReleaseResponseFactory {
+  public static class DetectorReleaseResponseFactory {
 
     public static DetectorReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
-      return new DetectorReleasesResponse(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate");
+      return new DetectorReleasesResponse(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate", false);
     }
   }
 }

@@ -23,8 +23,7 @@ public class ViewNames {
     public static final String ARTIST_DETAILS            = "frontend/artist-details";
     public static final String SETTINGS                  = "frontend/settings";
     public static final String PROFILE                   = "frontend/profile";
-    public static final String ARTISTS_RELEASES          = "frontend/artists-releases";
-    public static final String ALL_RELEASES              = "frontend/all-releases";
+    public static final String RELEASES                  = "frontend/releases";
     public static final String MY_ARTISTS                = "frontend/my-artists";
     public static final String REPORT_ARTIST_RELEASE     = "frontend/report-artist-release";
     public static final String ABOUT                     = "frontend/about";
