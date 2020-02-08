@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.Collections;
+import java.util.Set;
 
 @SpringJUnitConfig
 class UserEntityTest implements WithAssertions {
@@ -35,7 +36,6 @@ class UserEntityTest implements WithAssertions {
       // then
       assertThat(throwable).isInstanceOf(UnsupportedOperationException.class);
     }
-
   }
 
   @DisplayName("Username tests")
@@ -52,7 +52,6 @@ class UserEntityTest implements WithAssertions {
       assertThat(throwable).isInstanceOf(UnsupportedOperationException.class);
       assertThat(throwable).hasMessage("The username must not be changed.");
     }
-
   }
 
   @DisplayName("User role tests")
@@ -66,7 +65,6 @@ class UserEntityTest implements WithAssertions {
 
       assertThat(user.isUser()).isTrue();
       assertThat(user.isAdministrator()).isFalse();
-      assertThat(user.isSuperUser()).isFalse();
     }
 
     @Test
@@ -76,39 +74,56 @@ class UserEntityTest implements WithAssertions {
 
       assertThat(user.isUser()).isFalse();
       assertThat(user.isAdministrator()).isTrue();
-      assertThat(user.isSuperUser()).isFalse();
     }
 
     @Test
-    @DisplayName("isSuperUser() should return true for user of role 'ROLE_USER' and 'ROLE_ADMINISTRATOR'")
-    void is_super_user_should_return_true_for_user_of_role_super_user() {
-      UserEntity user = UserFactory.createSuperUser();
+    @DisplayName("changing roles should be possible")
+    void changing_user_roles_should_be_possible() {
+      UserEntity user = UserFactory.createUser("user", "mail");
 
-      assertThat(user.isUser()).isTrue();
-      assertThat(user.isAdministrator()).isTrue();
-      assertThat(user.isSuperUser()).isTrue();
-    }
-
-    @Test
-    @DisplayName("adding and removing roles should be possible")
-    void update_of_user_roles_should_be_possible() {
-      UserEntity user = UserFactory.createSuperUser();
+      assertThat(user.isAdministrator()).isFalse();
 
       user.setUserRoles(UserRole.createAdministratorRole());
-      assertThat(user.isAdministrator()).isTrue();
 
-      user.setUserRoles(UserRole.createSuperUserRole());
-      assertThat(user.isSuperUser()).isTrue();
+      assertThat(user.isAdministrator()).isTrue();
+    }
+
+    @Test
+    @DisplayName("removing roles should be possible")
+    void removing_user_roles_should_be_possible() {
+      UserEntity user = UserFactory.createUser("user", "mail");
+
+      assertThat(user.isAdministrator()).isFalse();
+
+      Set<UserRole> roles = UserRole.createAdministratorRole();
+      roles.addAll(UserRole.createUserRole());
+
+      user.setUserRoles(roles);
+
+      assertThat(user.isAdministrator()).isTrue();
+      assertThat(user.isUser()).isTrue();
 
       boolean removeResult = user.removeUserRole(UserRole.ROLE_ADMINISTRATOR);
+      assertThat(user.isAdministrator()).isFalse();
       assertThat(user.isUser()).isTrue();
       assertThat(removeResult).isTrue();
     }
 
     @Test
+    @DisplayName("removing the last role should throw an exception")
+    void removing_last_role_should_throw_exception() {
+      UserEntity user = UserFactory.createAdministrator();
+
+      Throwable removeLastRole = catchThrowable(() -> user.removeUserRole(UserRole.ROLE_ADMINISTRATOR));
+
+      assertThat(removeLastRole).isInstanceOf(IllegalArgumentException.class);
+      assertThat(removeLastRole).hasMessage("At least one user role must be set!");
+    }
+
+    @Test
     @DisplayName("updating the user roles with an empty set should throw an exception")
     void update_of_user_roles_with_empty_set_should_throw_exception() {
-      UserEntity user = UserFactory.createSuperUser();
+      UserEntity user = UserFactory.createAdministrator();
 
       Throwable setEmptyCollection = catchThrowable(() -> user.setUserRoles(Collections.emptySet()));
 
@@ -119,14 +134,13 @@ class UserEntityTest implements WithAssertions {
     @Test
     @DisplayName("updating the user roles with an null set should throw an exception")
     void update_of_user_roles_with_null_value_should_throw_exception() {
-      UserEntity user = UserFactory.createSuperUser();
+      UserEntity user = UserFactory.createAdministrator();
 
       Throwable setNullValue = catchThrowable(() -> user.setUserRoles(null));
 
       assertThat(setNullValue).isInstanceOf(IllegalArgumentException.class);
       assertThat(setNullValue).hasMessage("At least one user role must be set!");
     }
-
   }
 
   @DisplayName("Email tests")
@@ -148,7 +162,6 @@ class UserEntityTest implements WithAssertions {
       user.setEmail(null);
       assertThat(user.getEmail()).isEmpty();
     }
-
   }
 
   @DisplayName("Password tests")
@@ -159,7 +172,7 @@ class UserEntityTest implements WithAssertions {
     @DisplayName("updating the password with valid values should be possible")
     void update_of_password_with_valid_value_should_be_possible() {
       String newEncryptedPassword = passwordEncoder.encode("test1234");
-      UserEntity user = UserFactory.createSuperUser();
+      UserEntity user = UserFactory.createAdministrator();
 
       assertThat(user.getPassword()).isNotEqualTo(newEncryptedPassword);
       user.setPassword(newEncryptedPassword);
@@ -169,7 +182,7 @@ class UserEntityTest implements WithAssertions {
     @Test
     @DisplayName("updating the password with a null value should throw an exception")
     void update_password_with_null_value_should_throw_exception() {
-      UserEntity user = UserFactory.createSuperUser();
+      UserEntity user = UserFactory.createAdministrator();
 
       Throwable setNullPassword = catchThrowable(() -> user.setPassword(null));
 
@@ -180,14 +193,13 @@ class UserEntityTest implements WithAssertions {
     @Test
     @DisplayName("updating the password with an empty value should throw an exception")
     void update_password_with_empty_value_should_throw_exception() {
-      UserEntity user = UserFactory.createSuperUser();
+      UserEntity user = UserFactory.createAdministrator();
 
       Throwable setEmptyPassword = catchThrowable(() -> user.setPassword(""));
 
       assertThat(setEmptyPassword).isInstanceOf(IllegalArgumentException.class);
       assertThat(setEmptyPassword).hasMessage("It seems that the new password has not been correctly encrypted.");
     }
-
   }
 
   @TestConfiguration
@@ -199,5 +211,4 @@ class UserEntityTest implements WithAssertions {
     }
 
   }
-
 }

@@ -50,5 +50,4 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
   private void persistSuccessfulLogin() {
     // ToDo: persist date and time of login (https://trello.com/c/VxTNVHQ6)
   }
-
 }

@@ -77,7 +77,6 @@ $.fn.dataTable.ext.search.push(
       return data[6] >= dateFrom && data[6] <= dateTo;
     }
     if (dateFrom) {
-      console.log(dateFrom + " " + data[6]);
       return data[6] >= dateFrom;
     }
     else if (dateTo) {

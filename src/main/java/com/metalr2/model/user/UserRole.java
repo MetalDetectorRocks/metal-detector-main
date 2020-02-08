@@ -36,12 +36,4 @@ public enum UserRole {
 
     return userRoleSet;
   }
-
-  public static Set<UserRole> createSuperUserRole() {
-    Set<UserRole> superUserRoleSet = createUserRole();
-    superUserRoleSet.add(ROLE_ADMINISTRATOR);
-
-    return superUserRoleSet;
-  }
-
 }
