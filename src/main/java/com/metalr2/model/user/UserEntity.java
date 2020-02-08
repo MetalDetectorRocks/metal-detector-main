@@ -2,12 +2,23 @@ package com.metalr2.model.user;
 
 import com.metalr2.model.ArtifactForFramework;
 import com.metalr2.model.BaseEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.PrePersist;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
@@ -16,7 +27,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
 @EqualsAndHashCode(callSuper = true)
-@Entity(name="users")
+@Entity(name = "users")
 public class UserEntity extends BaseEntity implements UserDetails {
 
   private static final int ENCRYPTED_PASSWORD_LENGTH = 60;
@@ -24,10 +35,10 @@ public class UserEntity extends BaseEntity implements UserDetails {
   @Column(name = "public_id", nullable = false, unique = true, updatable = false)
   private String publicId;
 
-  @Column(name = "username", nullable = false, length=50, unique = true, updatable = false)
+  @Column(name = "username", nullable = false, length = 50, unique = true, updatable = false)
   private String username;
 
-  @Column(name = "email", nullable = false, length=120, unique = true)
+  @Column(name = "email", nullable = false, length = 120, unique = true)
   private String email;
 
   @Column(name = "encrypted_password", nullable = false, length = ENCRYPTED_PASSWORD_LENGTH)
@@ -53,11 +64,11 @@ public class UserEntity extends BaseEntity implements UserDetails {
   @Builder
   public UserEntity(@NonNull String username, @NonNull String email, @NonNull String password,
                     @NonNull Set<UserRole> userRoles, boolean enabled) {
-    this.username          = username;
-    this.email             = email;
-    this.password          = password;
-    this.userRoles         = userRoles;
-    this.enabled           = enabled;
+    this.username = username;
+    this.email = email;
+    this.password = password;
+    this.userRoles = userRoles;
+    this.enabled = enabled;
   }
 
   public void setPublicId(String newPublicId) {
@@ -66,7 +77,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
   @ArtifactForFramework // used for model mapper
   public void setUsername(String username) {
-    if (this.username != null && ! this.username.isEmpty()) {
+    if (this.username != null && !this.username.isEmpty()) {
       throw new UnsupportedOperationException("The username must not be changed.");
     }
 
@@ -99,6 +110,10 @@ public class UserEntity extends BaseEntity implements UserDetails {
   }
 
   public boolean removeUserRole(UserRole userRole) {
+    if (userRoles.equals(Set.of(userRole))) {
+      throw new IllegalArgumentException("At least one user role must be set!");
+    }
+
     return userRoles.remove(userRole);
   }
 
@@ -108,10 +123,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
   public boolean isAdministrator() {
     return userRoles.contains(UserRole.ROLE_ADMINISTRATOR);
-  }
-
-  public boolean isSuperUser() {
-    return isUser() && isAdministrator();
   }
 
   @Override
@@ -129,5 +140,4 @@ public class UserEntity extends BaseEntity implements UserDetails {
       publicId = UUID.randomUUID().toString();
     }
   }
-
 }

@@ -70,15 +70,6 @@ class UserMapperTest implements WithAssertions {
     assertThat(result.getRole()).isEqualTo(expectedDtoRole);
   }
 
-  private static Stream<Arguments> userRoleProvider() {
-    return Stream.of(
-            Arguments.of(UserRole.createUserRole(), "User"),
-            Arguments.of(UserRole.createAdministratorRole(), "Administrator"),
-            Arguments.of(UserRole.createSuperUserRole(), "Administrator"),
-            Arguments.of(Set.of("Unkown role"), "Unknown")
-    );
-  }
-
   @Test
   @DisplayName("Should not map a UserDto to UserEntity")
   void map_dto_to_entity() {
@@ -92,4 +83,11 @@ class UserMapperTest implements WithAssertions {
     assertThat(throwable).isInstanceOf(UnsupportedOperationException.class);
   }
 
+  private static Stream<Arguments> userRoleProvider() {
+    return Stream.of(
+        Arguments.of(UserRole.createUserRole(), "User"),
+        Arguments.of(UserRole.createAdministratorRole(), "Administrator"),
+        Arguments.of(Set.of("Unknown role"), "Unknown")
+    );
+  }
 }

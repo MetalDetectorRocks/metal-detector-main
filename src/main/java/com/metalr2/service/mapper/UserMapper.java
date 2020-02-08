@@ -32,7 +32,7 @@ public class UserMapper implements Mappable<UserEntity, UserDto> {
   }
 
   private String determineRoleName(UserEntity userEntity) {
-    if (userEntity.isAdministrator() || userEntity.isSuperUser()) {
+    if (userEntity.isAdministrator()) {
       return "Administrator";
     }
     else if (userEntity.isUser()) {
@@ -43,5 +43,4 @@ public class UserMapper implements Mappable<UserEntity, UserDto> {
       return "Unknown";
     }
   }
-
 }

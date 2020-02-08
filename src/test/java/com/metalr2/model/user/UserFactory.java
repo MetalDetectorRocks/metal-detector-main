@@ -43,15 +43,4 @@ public class UserFactory {
             .enabled(true)
             .build();
   }
-
-  static UserEntity createSuperUser() {
-    return UserEntity.builder()
-            .username("super-user")
-            .email("super-user@example.com")
-            .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
-            .userRoles(UserRole.createSuperUserRole())
-            .enabled(true)
-            .build();
-  }
-
 }

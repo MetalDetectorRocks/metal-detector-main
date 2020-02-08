@@ -81,7 +81,7 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
         .email("administrator@example.com")
         .password("$2a$10$SHReFWSMijakmT6GTC/EN.kLY4RYvqfcLsjDibRMEMeYCqPPbcNE6")
         .enabled(true)
-        .userRoles(UserRole.createSuperUserRole())
+        .userRoles(UserRole.createAdministratorRole())
         .build();
 
     entityManager.persist(administrator);
