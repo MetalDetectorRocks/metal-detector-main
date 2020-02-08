@@ -58,7 +58,7 @@ class CustomClientErrorHandlerTest implements WithAssertions {
 
   @ParameterizedTest(name = "[{index}] => Response <{0}>")
   @MethodSource("inputProviderNoError")
-  @DisplayName("Should return true for 2xx and 3xx return codes")
+  @DisplayName("Should return false for 2xx and 3xx return codes")
   void has_error_should_return_false(ClientHttpResponse response) throws IOException {
     // when
     boolean hasError = errorHandler.hasError(response);
