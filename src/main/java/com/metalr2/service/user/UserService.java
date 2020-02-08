@@ -10,6 +10,8 @@ public interface UserService extends UserDetailsService {
 
   UserDto createUser(UserDto userDto);
 
+  UserDto createAdministrator(UserDto userDto);
+
   UserDto getUserByPublicId(String publicId);
 
   Optional<UserDto> getUserByEmailOrUsername(String emailOrUsername);

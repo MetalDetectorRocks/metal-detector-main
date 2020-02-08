@@ -22,7 +22,9 @@ import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -70,7 +72,7 @@ class UserServiceTest implements WithAssertions {
   @Mock
   private UserRepository userRepository;
 
-  @Mock
+  @Spy
   private BCryptPasswordEncoder passwordEncoder;
 
   @Mock
@@ -94,70 +96,153 @@ class UserServiceTest implements WithAssertions {
     reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, userMapper, tokenService);
   }
 
-  @Test
-  @DisplayName("Creating a new user with a username and email that does not already exist should work")
-  void create_user_with_unique_username_and_email_should_be_ok() {
-    // given
-    ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
-    UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
-    when(userRepository.existsByEmail(anyString())).thenReturn(false);
-    when(userRepository.existsByUsername(anyString())).thenReturn(false);
-    when(passwordEncoder.encode(anyString())).thenReturn("encrypted-password");
-    when(userRepository.save(any(UserEntity.class))).thenReturn(UserFactory.createUser(USERNAME, EMAIL));
+  @DisplayName("Create user tests")
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @Nested
+  class CreateUserTest {
 
-    // when
-    UserDto createdUserDto = userService.createUser(userDto);
+    @Test
+    @DisplayName("Should return UserDto")
+    void should_return_user_dto() {
+      // given
+      UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      UserEntity expectedUserEntity = UserFactory.createUser(USERNAME, EMAIL);
+      when(userRepository.save(any(UserEntity.class))).thenReturn(expectedUserEntity);
 
-    // then
-    verify(userRepository, times(1)).save(userEntityCaptor.capture());
-    verify(userRepository, times(2)).existsByEmail(anyString());
-    verify(userRepository, times(2)).existsByUsername(anyString());
+      // when
+      UserDto createdUserDto = userService.createUser(givenUserDto);
 
-    assertThat(createdUserDto).isNotNull();
-    assertThat(createdUserDto.getUsername()).isEqualTo(USERNAME);
-    assertThat(createdUserDto.getEmail()).isEqualTo(EMAIL);
+      // then
+      assertThat(createdUserDto).isEqualTo(userMapper.mapToDto(expectedUserEntity));
+    }
 
-    assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(USERNAME);
-    assertThat(userEntityCaptor.getValue().getEmail()).isEqualTo(EMAIL);
-    assertThat(userEntityCaptor.getValue().getPassword()).isEqualTo("encrypted-password");
-    assertThat(userEntityCaptor.getValue().getUserRoles()).containsExactly(UserRole.ROLE_USER);
-    assertThat(userEntityCaptor.getValue().isEnabled()).isFalse();
+    @DisplayName("Should pass disabled UserEntity with Role USER to UserRepository")
+    @Test
+    void should_use_user_repository() {
+      // given
+      ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
+      UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      when(userRepository.save(any(UserEntity.class))).thenReturn(UserFactory.createUser(USERNAME, EMAIL));
+
+      // when
+      userService.createUser(givenUserDto);
+
+      // then
+      verify(userRepository, times(1)).save(userEntityCaptor.capture());
+      UserEntity passedUserEntity = userEntityCaptor.getValue();
+      assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
+      assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
+      assertThat(passedUserEntity.getPassword()).isNotEmpty();
+      assertThat(passedUserEntity.getUserRoles()).containsExactly(UserRole.ROLE_USER);
+      assertThat(passedUserEntity.isEnabled()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Creating a new user should check if email or username is already used")
+    void should_check_email_and_username() {
+      // given
+      UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      when(userRepository.save(any(UserEntity.class))).thenReturn(UserFactory.createUser(USERNAME, EMAIL));
+
+      // when
+      userService.createUser(userDto);
+
+      // then
+      verify(userRepository, times(2)).existsByEmail(anyString());
+      verify(userRepository, times(2)).existsByUsername(anyString());
+    }
+
+    @ParameterizedTest(name = "[{index}] => Username <{0}> | Email <{1}>")
+    @MethodSource("userDtoProvider")
+    @DisplayName("Creating a new user with a username and email that already exists should throw exception")
+    void create_user_with_username_or_email_that_already_exists_should_throw_exception(String username, String email, UserAlreadyExistsException.Reason reason) {
+      // given
+      UserDto userDto = DtoFactory.UserDtoFactory.withUsernameAndEmail(username, email);
+
+      when(userRepository.existsByUsername(anyString())).thenAnswer(invocationOnMock -> {
+        String usernameArg = invocationOnMock.getArgument(0);
+        return usernameArg.equalsIgnoreCase(DUPLICATE_USERNAME) || usernameArg.equalsIgnoreCase(DUPLICATE_EMAIL);
+      });
+
+      when(userRepository.existsByEmail(anyString())).thenAnswer(invocationOnMock -> {
+        String emailArg = invocationOnMock.getArgument(0);
+        return emailArg.equalsIgnoreCase(DUPLICATE_EMAIL) || emailArg.equalsIgnoreCase(DUPLICATE_USERNAME);
+      });
+
+      // when
+      Throwable throwable = catchThrowable(() -> userService.createUser(userDto));
+
+      // then
+      assertThat(throwable).isInstanceOf(UserAlreadyExistsException.class);
+      assertThat(((UserAlreadyExistsException) throwable).getReason()).isEqualTo(reason);
+      verify(userRepository, atMost(2)).existsByEmail(anyString());
+      verify(userRepository, atMost(2)).existsByUsername(anyString());
+    }
+
+    private Stream<Arguments> userDtoProvider() {
+      return Stream.of(
+          Arguments.of(DUPLICATE_USERNAME, EMAIL, UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS),
+          Arguments.of(DUPLICATE_EMAIL, EMAIL, UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS),
+          Arguments.of(USERNAME, DUPLICATE_EMAIL, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS),
+          Arguments.of(USERNAME, DUPLICATE_USERNAME, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS)
+      );
+    }
   }
 
-  @ParameterizedTest(name = "[{index}] => Username <{0}> | Email <{1}>")
-  @MethodSource("userDtoProvider")
-  @DisplayName("Creating a new user with a username and email that already exists should throw exception")
-  void create_user_with_username_or_email_that_already_exists_should_throw_exception(String username, String email, UserAlreadyExistsException.Reason reason) {
-    // given
-    UserDto userDto = DtoFactory.UserDtoFactory.withUsernameAndEmail(username, email);
+  @DisplayName("Create administrator tests")
+  @Nested
+  class CreateAdministratorTest {
 
-    when(userRepository.existsByUsername(anyString())).thenAnswer(invocationOnMock -> {
-      String usernameArg = invocationOnMock.getArgument(0);
-      return usernameArg.equalsIgnoreCase(DUPLICATE_USERNAME) || usernameArg.equalsIgnoreCase(DUPLICATE_EMAIL);
-    });
+    @Test
+    @DisplayName("Should return UserDto")
+    void should_return_user_dto() {
+      // given
+      UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      UserEntity expectedUserEntity = UserFactory.createUser(USERNAME, EMAIL);
+      when(userRepository.save(any(UserEntity.class))).thenReturn(expectedUserEntity);
 
-    when(userRepository.existsByEmail(anyString())).thenAnswer(invocationOnMock -> {
-      String emailArg = invocationOnMock.getArgument(0);
-      return emailArg.equalsIgnoreCase(DUPLICATE_EMAIL) || emailArg.equalsIgnoreCase(DUPLICATE_USERNAME);
-    });
+      // when
+      UserDto createdUserDto = userService.createAdministrator(givenUserDto);
 
-    // when
-    Throwable throwable = catchThrowable(() -> userService.createUser(userDto));
+      // then
+      assertThat(createdUserDto).isEqualTo(userMapper.mapToDto(expectedUserEntity));
+    }
 
-    // then
-    assertThat(throwable).isInstanceOf(UserAlreadyExistsException.class);
-    assertThat(((UserAlreadyExistsException) throwable).getReason()).isEqualTo(reason);
-    verify(userRepository, atMost(2)).existsByEmail(anyString());
-    verify(userRepository, atMost(2)).existsByUsername(anyString());
-  }
+    @Test
+    @DisplayName("Should check if email or username is already used")
+    void should_check_email_and_username() {
+      // given
+      UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      when(userRepository.save(any(UserEntity.class))).thenReturn(UserFactory.createUser(USERNAME, EMAIL));
 
-  private static Stream<Arguments> userDtoProvider() {
-    return Stream.of(
-        Arguments.of(DUPLICATE_USERNAME, EMAIL, UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS),
-        Arguments.of(DUPLICATE_EMAIL, EMAIL, UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS),
-        Arguments.of(USERNAME, DUPLICATE_EMAIL, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS),
-        Arguments.of(USERNAME, DUPLICATE_USERNAME, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS)
-    );
+      // when
+      userService.createAdministrator(userDto);
+
+      // then
+      verify(userRepository, times(2)).existsByEmail(anyString());
+      verify(userRepository, times(2)).existsByUsername(anyString());
+    }
+
+    @DisplayName("Should pass enabled UserEntity with Role ADMINISTRATOR to UserRepository")
+    @Test
+    void should_use_user_repository() {
+      // given
+      ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
+      UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      when(userRepository.save(any(UserEntity.class))).thenReturn(UserFactory.createUser(USERNAME, EMAIL));
+
+      // when
+      userService.createAdministrator(givenUserDto);
+
+      // then
+      verify(userRepository, times(1)).save(userEntityCaptor.capture());
+      UserEntity passedUserEntity = userEntityCaptor.getValue();
+      assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
+      assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
+      assertThat(passedUserEntity.getPassword()).isNotEmpty();
+      assertThat(passedUserEntity.getUserRoles()).containsExactly(UserRole.ROLE_ADMINISTRATOR);
+      assertThat(passedUserEntity.isEnabled()).isTrue();
+    }
   }
 
   @Test

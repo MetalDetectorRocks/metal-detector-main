@@ -27,6 +27,7 @@ import org.springframework.util.comparator.BooleanComparator;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +42,6 @@ public class UserServiceImpl implements UserService {
   private final TokenService tokenService;
 
   @Autowired
-
   public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
                          TokenRepository tokenRepository, JwtsSupport jwtsSupport, UserMapper userMapper,
                          TokenService tokenService) {
@@ -56,6 +56,16 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public UserDto createUser(UserDto userDto) {
+    return createUserEntity(userDto, UserRole.createUserRole(), false);
+  }
+
+  @Override
+  @Transactional
+  public UserDto createAdministrator(UserDto userDto) {
+    return createUserEntity(userDto, UserRole.createAdministratorRole(), true);
+  }
+
+  private UserDto createUserEntity(UserDto userDto, Set<UserRole> roles, boolean enabled) {
     checkIfUserAlreadyExists(userDto.getUsername(), userDto.getEmail());
 
     // create user
@@ -63,10 +73,10 @@ public class UserServiceImpl implements UserService {
         .username(userDto.getUsername())
         .email(userDto.getEmail())
         .password(passwordEncoder.encode(userDto.getPlainPassword()))
-        .userRoles(UserRole.createUserRole())
+        .userRoles(roles)
+        .enabled(enabled)
         .build();
 
-    // persist user
     UserEntity savedUserEntity = userRepository.save(userEntity);
 
     return userMapper.mapToDto(savedUserEntity);
@@ -76,7 +86,7 @@ public class UserServiceImpl implements UserService {
   @Transactional(readOnly = true)
   public UserDto getUserByPublicId(String publicId) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
-        .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+                                          .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
     return userMapper.mapToDto(userEntity);
   }
@@ -92,7 +102,7 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public UserDto updateUser(String publicId, UserDto userDto) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
-        .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+                                          .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
     userEntity.setEmail(userDto.getEmail());
     UserEntity updatedUserEntity = userRepository.save(userEntity);
@@ -104,7 +114,7 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public void deleteUser(String publicId) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
-        .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+                                          .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
     userRepository.delete(userEntity);
   }
 
@@ -112,10 +122,10 @@ public class UserServiceImpl implements UserService {
   @Transactional(readOnly = true)
   public List<UserDto> getAllUsers() {
     return userRepository.findAll()
-        .stream()
-        .map(userMapper::mapToDto)
-        .sorted(Comparator.comparing(UserDto::isEnabled, BooleanComparator.TRUE_LOW).thenComparing(UserDto::getRole).thenComparing(UserDto::getUsername))
-        .collect(Collectors.toList());
+            .stream()
+            .map(userMapper::mapToDto)
+            .sorted(Comparator.comparing(UserDto::isEnabled, BooleanComparator.TRUE_LOW).thenComparing(UserDto::getRole).thenComparing(UserDto::getUsername))
+            .collect(Collectors.toList());
   }
 
   @Override
@@ -124,16 +134,16 @@ public class UserServiceImpl implements UserService {
     Pageable pageable = PageRequest.of(page, limit);
 
     return userRepository.findAll(pageable)
-        .stream()
-        .map(userMapper::mapToDto)
-        .collect(Collectors.toList());
+            .stream()
+            .map(userMapper::mapToDto)
+            .collect(Collectors.toList());
   }
 
   @Override
   @Transactional(readOnly = true)
   public UserDetails loadUserByUsername(String emailOrUsername) throws UsernameNotFoundException {
     return findByEmailOrUsername(emailOrUsername)
-        .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND.toDisplayString()));
+           .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND.toDisplayString()));
   }
 
   @Override
@@ -141,7 +151,7 @@ public class UserServiceImpl implements UserService {
   public void verifyEmailToken(String tokenString) {
     // check if token exists
     TokenEntity tokenEntity = tokenRepository.findEmailVerificationToken(tokenString)
-        .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
+                                             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
 
     // check if token is expired
     if (tokenEntity.isExpired()) {

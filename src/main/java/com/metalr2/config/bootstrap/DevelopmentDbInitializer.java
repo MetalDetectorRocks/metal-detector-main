@@ -24,6 +24,7 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
 
   private final long OPETH_DISCOGS_ID = 245797L;
   private final long DARKTHRONE_DISCOGS_ID = 252211L;
+  private final long MAYHEM_DISCOGS_ID = 252211L;
 
   @Autowired
   public DevelopmentDbInitializer(EntityManager entityManager) {
@@ -91,17 +92,20 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
   private void createArtists() {
     ArtistEntity opeth = new ArtistEntity(OPETH_DISCOGS_ID, "Opeth", null);
     ArtistEntity darkthrone = new ArtistEntity(DARKTHRONE_DISCOGS_ID, "Darkthrone", null);
+    ArtistEntity mayhem = new ArtistEntity(MAYHEM_DISCOGS_ID, "Mayhem", null);
 
     entityManager.persist(opeth);
     entityManager.persist(darkthrone);
+    entityManager.persist(mayhem);
   }
 
   private void createFollowedArtists(String userId) {
-    FollowedArtistEntity followedArtistEntityOpeth = new FollowedArtistEntity(userId, OPETH_DISCOGS_ID);
-    FollowedArtistEntity followedArtistEntityDarkthrone = new FollowedArtistEntity(userId, DARKTHRONE_DISCOGS_ID);
+    FollowedArtistEntity opeth = new FollowedArtistEntity(userId, OPETH_DISCOGS_ID);
+    FollowedArtistEntity darkthrone = new FollowedArtistEntity(userId, DARKTHRONE_DISCOGS_ID);
+    FollowedArtistEntity mayhem = new FollowedArtistEntity(userId, MAYHEM_DISCOGS_ID);
 
-    entityManager.persist(followedArtistEntityOpeth);
-    entityManager.persist(followedArtistEntityDarkthrone);
+    entityManager.persist(opeth);
+    entityManager.persist(darkthrone);
+    entityManager.persist(mayhem);
   }
-
 }

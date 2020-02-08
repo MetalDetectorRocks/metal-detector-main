@@ -1,9 +1,9 @@
 package com.metalr2.web.controller.rest;
 
 import com.metalr2.config.constants.Endpoints;
+import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.service.releases.ReleasesService;
 import com.metalr2.testutil.WithIntegrationTestProfile;
-import com.metalr2.web.DtoFactory;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.releases.ButlerReleasesRequest;
 import com.metalr2.web.dto.releases.ReleaseDto;
@@ -32,6 +32,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.metalr2.web.DtoFactory.DetectorReleaseResponseFactory;
+import static com.metalr2.web.DtoFactory.ReleaseDtoFactory;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
@@ -47,6 +49,9 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
   private ReleasesService releasesService;
 
   @MockBean
+  private ArtistsService artistsService;
+
+  @MockBean
   ModelMapper modelMapper;
 
   @LocalServerPort
@@ -60,7 +65,7 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
 
   @AfterEach
   void tearDown() {
-    reset(releasesService);
+    reset(releasesService, artistsService);
   }
 
   private RestAssuredRequestHandler requestHandler;
@@ -72,6 +77,7 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
     // given
     when(releasesService.getReleases(requestButler)).thenReturn(mockedDtos);
     when(modelMapper.map(request, ButlerReleasesRequest.class)).thenReturn(requestButler);
+    when(artistsService.findFollowedArtistsForCurrentUser()).thenReturn(Collections.emptyList());
 
     for (int i = 0; i < mockedDtos.size(); i++) {
       when(modelMapper.map(mockedDtos.get(i), DetectorReleasesResponse.class)).thenReturn(expectedResponses.get(i));
@@ -93,31 +99,6 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
     verify(modelMapper, times(mockedDtos.size())).map(any(), eq(DetectorReleasesResponse.class));
   }
 
-  private static Stream<Arguments> inputProvider() {
-    LocalDate date = LocalDate.now();
-    ReleaseDto releaseDto1 = DtoFactory.ReleaseDtoFactory.withOneResult("A1", date);
-    ReleaseDto releaseDto2 = DtoFactory.ReleaseDtoFactory.withOneResult("A2", date);
-    ReleaseDto releaseDto3 = DtoFactory.ReleaseDtoFactory.withOneResult("A3", date);
-
-    DetectorReleasesResponse releaseResponse1 = DtoFactory.ReleaseResponseFactory.withOneResult("A1", date);
-    DetectorReleasesResponse releaseResponse2 = DtoFactory.ReleaseResponseFactory.withOneResult("A2", date);
-    DetectorReleasesResponse releaseResponse3 = DtoFactory.ReleaseResponseFactory.withOneResult("A3", date);
-
-    ButlerReleasesRequest requestAllButler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
-    DetectorReleasesRequest requestAll = new DetectorReleasesRequest(null, null, Collections.emptyList());
-
-    ButlerReleasesRequest requestA1Butler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
-    DetectorReleasesRequest requestA1 = new DetectorReleasesRequest(null, null, Collections.emptyList());
-
-    ButlerReleasesRequest requestA4Butler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
-    DetectorReleasesRequest requestA4 = new DetectorReleasesRequest(null, null, Collections.emptyList());
-
-    return Stream.of(
-        Arguments.of(requestAllButler, requestAll, List.of(releaseDto1, releaseDto2, releaseDto3), List.of(releaseResponse1, releaseResponse2, releaseResponse3)),
-        Arguments.of(requestA1Butler, requestA1, List.of(releaseDto1), List.of(releaseResponse1)),
-        Arguments.of(requestA4Butler, requestA4, Collections.emptyList(), Collections.emptyList()));
-  }
-
   @Test
   @DisplayName("POST with bad requests should return 400")
   void bad_requests() {
@@ -133,4 +114,28 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestPro
         .statusCode(HttpStatus.BAD_REQUEST.value());
   }
 
+  private static Stream<Arguments> inputProvider() {
+    LocalDate date = LocalDate.now();
+    ReleaseDto releaseDto1 = ReleaseDtoFactory.withOneResult("A1", date);
+    ReleaseDto releaseDto2 = ReleaseDtoFactory.withOneResult("A2", date);
+    ReleaseDto releaseDto3 = ReleaseDtoFactory.withOneResult("A3", date);
+
+    DetectorReleasesResponse releaseResponse1 = DetectorReleaseResponseFactory.withOneResult("A1", date);
+    DetectorReleasesResponse releaseResponse2 = DetectorReleaseResponseFactory.withOneResult("A2", date);
+    DetectorReleasesResponse releaseResponse3 = DetectorReleaseResponseFactory.withOneResult("A3", date);
+
+    ButlerReleasesRequest requestAllButler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
+    DetectorReleasesRequest requestAll = new DetectorReleasesRequest(null, null, Collections.emptyList());
+
+    ButlerReleasesRequest requestA1Butler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
+    DetectorReleasesRequest requestA1 = new DetectorReleasesRequest(null, null, Collections.emptyList());
+
+    ButlerReleasesRequest requestA4Butler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
+    DetectorReleasesRequest requestA4 = new DetectorReleasesRequest(null, null, Collections.emptyList());
+
+    return Stream.of(
+        Arguments.of(requestAllButler, requestAll, List.of(releaseDto1, releaseDto2, releaseDto3), List.of(releaseResponse1, releaseResponse2, releaseResponse3)),
+        Arguments.of(requestA1Butler, requestA1, List.of(releaseDto1), List.of(releaseResponse1)),
+        Arguments.of(requestA4Butler, requestA4, Collections.emptyList(), Collections.emptyList()));
+  }
 }

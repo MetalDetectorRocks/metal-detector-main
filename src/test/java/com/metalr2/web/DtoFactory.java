@@ -27,6 +27,10 @@ public class DtoFactory {
 
   public static class UserDtoFactory {
 
+    public static UserDto createDefault() {
+      return withUsernameAndEmail("JohnD", "john.d@example.com");
+    }
+
     public static UserDto withUsernameAndEmail(String username, String email) {
       return UserDto.builder()
           .publicId(UUID.randomUUID().toString())
@@ -39,6 +43,10 @@ public class DtoFactory {
   }
 
   public static class RegisterUserRequestFactory {
+
+    public static RegisterUserRequest createDefault() {
+      return create("JohnD", "john.d@example.com", "valid-password", "valid-password");
+    }
 
     public static RegisterUserRequest withUsername(String username) {
       return create(username, "john.d@example.com", "valid-password", "valid-password");
@@ -159,7 +167,7 @@ public class DtoFactory {
     }
   }
 
-  public static class ReleasesButlerResponseFactory {
+  public static class ButlerReleasesResponseFactory {
 
     public static ButlerReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
       return new ButlerReleasesResponse(Collections.singletonList(ReleaseDtoFactory.withOneResult(artist, releaseDate)));
@@ -177,10 +185,10 @@ public class DtoFactory {
     }
   }
 
-  public static class ReleaseResponseFactory {
+  public static class DetectorReleaseResponseFactory {
 
     public static DetectorReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
-      return new DetectorReleasesResponse(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate");
+      return new DetectorReleasesResponse(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate", false);
     }
   }
 }

@@ -5,3 +5,7 @@
   vertical-align: middle;
   border-radius: 3em;
 }
+
+.clickable-table {
+  cursor: pointer;
+}
