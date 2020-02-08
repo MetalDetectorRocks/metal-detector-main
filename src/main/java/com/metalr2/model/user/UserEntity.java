@@ -24,6 +24,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.metalr2.model.user.UserRole.ROLE_ADMINISTRATOR;
+import static com.metalr2.model.user.UserRole.ROLE_USER;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
 @EqualsAndHashCode(callSuper = true)
@@ -111,7 +114,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
   public boolean removeUserRole(UserRole userRole) {
     if (userRoles.equals(Set.of(userRole))) {
-      throw new IllegalArgumentException("At least one user role must be set!");
+      throw new IllegalStateException("At least one user role must be set!");
     }
 
     return userRoles.remove(userRole);
@@ -139,5 +142,9 @@ public class UserEntity extends BaseEntity implements UserDetails {
     if (publicId == null) {
       publicId = UUID.randomUUID().toString();
     }
+  }
+
+  public UserRole getHighestRole() {
+    return userRoles.contains(ROLE_ADMINISTRATOR) ? ROLE_ADMINISTRATOR : ROLE_USER;
   }
 }
