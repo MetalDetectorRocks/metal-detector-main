@@ -3,8 +3,8 @@ package com.metalr2.web.controller.mvc.authentication;
 import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
-import com.metalr2.model.exceptions.EmailVerificationTokenExpiredException;
 import com.metalr2.model.exceptions.ResourceNotFoundException;
+import com.metalr2.model.exceptions.TokenExpiredException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
 import com.metalr2.model.user.events.OnRegistrationCompleteEvent;
 import com.metalr2.service.token.TokenService;
@@ -251,7 +251,7 @@ class RegistrationControllerIT implements WithAssertions, WithIntegrationTestPro
     @Test
     @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with expired token should return the login view with error message")
     void given_expired_token_on_registration_verification_uri_should_redirect_to_login_view() throws Exception {
-      doThrow(EmailVerificationTokenExpiredException.class).when(userService).verifyEmailToken(EXPIRED_TOKEN);
+      doThrow(TokenExpiredException.class).when(userService).verifyEmailToken(EXPIRED_TOKEN);
 
       mockMvc.perform(get(Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + EXPIRED_TOKEN))
           .andExpect(status().is3xxRedirection())

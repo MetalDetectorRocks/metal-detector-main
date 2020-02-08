@@ -1,8 +1,8 @@
 package com.metalr2.service.user;
 
-import com.metalr2.model.exceptions.EmailVerificationTokenExpiredException;
 import com.metalr2.model.exceptions.ErrorMessages;
 import com.metalr2.model.exceptions.ResourceNotFoundException;
+import com.metalr2.model.exceptions.TokenExpiredException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
 import com.metalr2.model.token.JwtsSupport;
 import com.metalr2.model.token.TokenEntity;
@@ -11,6 +11,7 @@ import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserRepository;
 import com.metalr2.model.user.UserRole;
 import com.metalr2.service.mapper.UserMapper;
+import com.metalr2.service.token.TokenService;
 import com.metalr2.web.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,20 +34,23 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-  private final UserRepository  userRepository;
+  private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final TokenRepository tokenRepository;
-  private final JwtsSupport     jwtsSupport;
-  private final UserMapper      userMapper;
+  private final JwtsSupport jwtsSupport;
+  private final UserMapper userMapper;
+  private final TokenService tokenService;
 
   @Autowired
   public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                         TokenRepository tokenRepository, JwtsSupport jwtsSupport, UserMapper userMapper) {
-    this.userRepository  = userRepository;
+                         TokenRepository tokenRepository, JwtsSupport jwtsSupport, UserMapper userMapper,
+                         TokenService tokenService) {
+    this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.tokenRepository = tokenRepository;
-    this.jwtsSupport     = jwtsSupport;
-    this.userMapper      = userMapper;
+    this.jwtsSupport = jwtsSupport;
+    this.userMapper = userMapper;
+    this.tokenService = tokenService;
   }
 
   @Override
@@ -138,8 +142,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(readOnly = true)
   public UserDetails loadUserByUsername(String emailOrUsername) throws UsernameNotFoundException {
-    return findByEmailOrUsername(emailOrUsername)
-           .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND.toDisplayString()));
+    return findByEmailOrUsername(emailOrUsername).orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND.toDisplayString()));
   }
 
   @Override
@@ -151,7 +154,7 @@ public class UserServiceImpl implements UserService {
 
     // check if token is expired
     if (tokenEntity.isExpired()) {
-      throw new EmailVerificationTokenExpiredException();
+      throw new TokenExpiredException();
     }
 
     // get claims to check signature of token
@@ -167,9 +170,27 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void changePassword(UserEntity userEntity, String newPassword) {
+  public void changePassword(String tokenString, String newPassword) {
+    // 1. get claims to check signature of token
+    jwtsSupport.getClaims(tokenString);
+
+    // 2. get user from token if it exists
+    TokenEntity tokenEntity = tokenService.getResetPasswordTokenByTokenString(tokenString)
+                                          .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
+
+    // 3. check if token is expired
+    if (tokenEntity.isExpired()) {
+      throw new TokenExpiredException();
+    }
+
+    UserEntity userEntity = tokenEntity.getUser();
+
+    // 4. set new password
     userEntity.setPassword(passwordEncoder.encode(newPassword));
     userRepository.save(userEntity);
+
+    // 5. remove token from database
+    tokenService.deleteToken(tokenEntity);
   }
 
   private Optional<UserEntity> findByEmailOrUsername(String emailOrUsername) {
@@ -196,5 +217,4 @@ public class UserServiceImpl implements UserService {
       throw UserAlreadyExistsException.createUserWithEmailAlreadyExistsException();
     }
   }
-
 }
