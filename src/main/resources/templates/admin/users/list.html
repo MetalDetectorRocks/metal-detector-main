@@ -6,13 +6,14 @@
     <body>
         <h1 class="h2 text-dark">Users</h1>
 
-        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="new-admin-user-button" data-toggle="modal" data-target="#admin-user-create-dialog">
+        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="new-admin-user-button" data-toggle="modal" data-target="#create-admin-user-dialog">
             New Administrator
         </button>
 
-        <table id="user-table" class="table table-striped table-hover mt-3">
+        <table id="user-table" class="table table-striped table-hover mt-3 clickable-table">
             <thead>
                 <tr>
+                    <th scope="col">Public Id</th>
                     <th scope="col">Username</th>
                     <th scope="col">Email</th>
                     <th scope="col">Role</th>
@@ -25,8 +26,14 @@
             </tbody>
         </table>
 
-        <div id="admin-user-create-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <!-- Create Form -->
+        <div id="create-admin-user-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
             <div th:replace="admin/users/create :: dialog"></div>
+        </div>
+
+        <!-- Update Form -->
+        <div id="update-user-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div th:replace="admin/users/update :: dialog"></div>
         </div>
     </body>
 </html>

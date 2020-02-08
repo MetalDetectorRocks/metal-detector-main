@@ -32,8 +32,7 @@ public class Endpoints {
     public static final String SEARCH                = "/search";
     public static final String SETTINGS              = "/settings";
     public static final String PROFILE               = "/profile";
-    public static final String ARTISTS_RELEASES      = "/artists-releases";
-    public static final String ALL_RELEASES          = "/all-releases";
+    public static final String RELEASES              = "/releases";
     public static final String MY_ARTISTS            = "/my-artists";
     public static final String REPORT_ARTIST_RELEASE = "/report-artist-release";
     public static final String ABOUT                 = "/about";
