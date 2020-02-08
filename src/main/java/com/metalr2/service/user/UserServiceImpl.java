@@ -142,8 +142,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(readOnly = true)
   public UserDetails loadUserByUsername(String emailOrUsername) throws UsernameNotFoundException {
-    return findByEmailOrUsername(emailOrUsername)
-           .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND.toDisplayString()));
+    return findByEmailOrUsername(emailOrUsername).orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND.toDisplayString()));
   }
 
   @Override
@@ -177,7 +176,7 @@ public class UserServiceImpl implements UserService {
 
     // 2. get user from token if it exists
     TokenEntity tokenEntity = tokenService.getResetPasswordTokenByTokenString(tokenString)
-        .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
+                                          .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
 
     // 3. check if token is expired
     if (tokenEntity.isExpired()) {

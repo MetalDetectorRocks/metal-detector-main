@@ -595,7 +595,7 @@ class UserServiceTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("changePassword() should throw exception if token does not exist")
+  @DisplayName("Changing the password should throw exception if token does not exist")
   void change_password_should_throw_resource_not_found() {
     // given
     when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.empty());
