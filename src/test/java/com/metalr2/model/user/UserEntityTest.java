@@ -116,7 +116,7 @@ class UserEntityTest implements WithAssertions {
 
       Throwable removeLastRole = catchThrowable(() -> user.removeUserRole(UserRole.ROLE_ADMINISTRATOR));
 
-      assertThat(removeLastRole).isInstanceOf(IllegalArgumentException.class);
+      assertThat(removeLastRole).isInstanceOf(IllegalStateException.class);
       assertThat(removeLastRole).hasMessage("At least one user role must be set!");
     }
 

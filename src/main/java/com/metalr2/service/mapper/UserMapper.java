@@ -26,21 +26,7 @@ public class UserMapper implements Mappable<UserEntity, UserDto> {
   @Override
   public UserDto mapToDto(UserEntity entity) {
     UserDto userDto = mapper.map(entity, UserDto.class);
-    userDto.setRole(determineRoleName(entity));
-
+    userDto.setRole(entity.getHighestRole().getDisplayName());
     return userDto;
-  }
-
-  private String determineRoleName(UserEntity userEntity) {
-    if (userEntity.isAdministrator()) {
-      return "Administrator";
-    }
-    else if (userEntity.isUser()) {
-      return "User";
-    }
-    else {
-      log.warn("Unknown user role found for user with id {}", userEntity.getPublicId());
-      return "Unknown";
-    }
   }
 }

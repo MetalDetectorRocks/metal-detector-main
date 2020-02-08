@@ -86,8 +86,7 @@ class UserMapperTest implements WithAssertions {
   private static Stream<Arguments> userRoleProvider() {
     return Stream.of(
         Arguments.of(UserRole.createUserRole(), "User"),
-        Arguments.of(UserRole.createAdministratorRole(), "Administrator"),
-        Arguments.of(Set.of("Unknown role"), "Unknown")
+        Arguments.of(UserRole.createAdministratorRole(), "Administrator")
     );
   }
 }

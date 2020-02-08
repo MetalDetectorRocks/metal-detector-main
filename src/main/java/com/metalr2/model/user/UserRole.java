@@ -11,17 +11,27 @@ public enum UserRole {
   ROLE_USER {
     @Override
     public String getName() {
-      return "USER";
+      return getDisplayName().toUpperCase();
+    }
+    @Override
+    public String getDisplayName() {
+      return "User";
     }
   },
   ROLE_ADMINISTRATOR {
     @Override
     public String getName() {
-      return "ADMINISTRATOR";
+      return getDisplayName().toUpperCase();
+    }
+    @Override
+    public String getDisplayName() {
+      return "Administrator";
     }
   };
 
   public abstract String getName();
+
+  public abstract String getDisplayName();
 
   public static Set<UserRole> createUserRole() {
     Set<UserRole> userRoleSet = new HashSet<>();
