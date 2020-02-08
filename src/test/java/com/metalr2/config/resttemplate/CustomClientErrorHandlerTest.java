@@ -34,20 +34,20 @@ class CustomClientErrorHandlerTest implements WithAssertions {
   private CustomClientErrorHandler errorHandler = new CustomClientErrorHandler();
 
   @BeforeEach
-  private void setUp() {
+  void setUp() {
     listAppender = new ListAppender<>();
     listAppender.start();
     logger.addAppender(listAppender);
   }
 
   @AfterEach
-  private void tearDown() {
+  void tearDown() {
     logger.detachAppender(listAppender);
   }
 
   @ParameterizedTest(name = "[{index}] => Response <{0}>")
   @MethodSource("inputProviderHasError")
-  @DisplayName("hasError() should return true for 4xx and 5xx errors")
+  @DisplayName("Should return true for 4xx and 5xx errors")
   void has_error_should_return_true(ClientHttpResponse response) throws IOException {
     // when
     boolean hasError = errorHandler.hasError(response);
@@ -56,8 +56,19 @@ class CustomClientErrorHandlerTest implements WithAssertions {
     assertThat(hasError).isTrue();
   }
 
+  @ParameterizedTest(name = "[{index}] => Response <{0}>")
+  @MethodSource("inputProviderNoError")
+  @DisplayName("Should return true for 2xx and 3xx return codes")
+  void has_error_should_return_false(ClientHttpResponse response) throws IOException {
+    // when
+    boolean hasError = errorHandler.hasError(response);
+
+    // then
+    assertThat(hasError).isFalse();
+  }
+
   @Test
-  @DisplayName("handleError() should log the error")
+  @DisplayName("Should log 4xx and 5xx errors")
   void handle_error_should_log() throws IOException, URISyntaxException {
     // when
     errorHandler.handleError(new URI("https://www.metal-detector.rocks"), HttpMethod.GET, new MockClientHttpResponse(new byte[0], HttpStatus.NOT_FOUND));
@@ -75,6 +86,13 @@ class CustomClientErrorHandlerTest implements WithAssertions {
         Arguments.of(new MockClientHttpResponse(new byte[0], HttpStatus.BAD_REQUEST)),
         Arguments.of(new MockClientHttpResponse(new byte[0], HttpStatus.INTERNAL_SERVER_ERROR)),
         Arguments.of(new MockClientHttpResponse(new byte[0], HttpStatus.SERVICE_UNAVAILABLE))
+    );
+  }
+
+  private static Stream<Arguments> inputProviderNoError() {
+    return Stream.of(
+        Arguments.of(new MockClientHttpResponse(new byte[0], HttpStatus.OK)),
+        Arguments.of(new MockClientHttpResponse(new byte[0], HttpStatus.TEMPORARY_REDIRECT))
     );
   }
 }
