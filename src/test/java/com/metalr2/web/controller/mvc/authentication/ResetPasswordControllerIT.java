@@ -46,9 +46,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = ResetPasswordController.class)
 class ResetPasswordControllerIT extends BaseWebMvcTestWithSecurity {
 
-  private static final String PARAM_TOKEN_STRING      = "tokenString";
-  private static final String PARAM_PASSWORD          = "newPlainPassword";
-  private static final String PARAM_VERIFY_PASSWORD   = "verifyNewPlainPassword";
+  private static final String PARAM_TOKEN_STRING = "tokenString";
+  private static final String PARAM_PASSWORD = "newPlainPassword";
+  private static final String PARAM_VERIFY_PASSWORD = "verifyNewPlainPassword";
 
   @MockBean
   private TokenService tokenService;
@@ -74,10 +74,10 @@ class ResetPasswordControllerIT extends BaseWebMvcTestWithSecurity {
     when(redirectionInterceptor.preHandle(any(), any(), any())).thenReturn(true);
 
     mockMvc.perform(get(Endpoints.Guest.RESET_PASSWORD + "?token={token}", TOKEN))
-           .andExpect(model().hasNoErrors())
-           .andExpect(flash().attribute("resetPasswordError", ERROR_MESSAGE))
-           .andExpect(status().is3xxRedirection())
-           .andExpect(redirectedUrl(Endpoints.Guest.FORGOT_PASSWORD));
+        .andExpect(model().hasNoErrors())
+        .andExpect(flash().attribute("resetPasswordError", ERROR_MESSAGE))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(Endpoints.Guest.FORGOT_PASSWORD));
 
     verify(tokenService, times(1)).getResetPasswordTokenByTokenString(TOKEN);
     verify(messages, times(1)).getMessage(MessageKeys.ForgotPassword.TOKEN_DOES_NOT_EXIST, null, Locale.US);
@@ -95,10 +95,10 @@ class ResetPasswordControllerIT extends BaseWebMvcTestWithSecurity {
     when(redirectionInterceptor.preHandle(any(), any(), any())).thenReturn(true);
 
     mockMvc.perform(get(Endpoints.Guest.RESET_PASSWORD + "?token={token}", TOKEN))
-            .andExpect(model().hasNoErrors())
-            .andExpect(flash().attribute("resetPasswordError", ERROR_MESSAGE))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl(Endpoints.Guest.FORGOT_PASSWORD));
+        .andExpect(model().hasNoErrors())
+        .andExpect(flash().attribute("resetPasswordError", ERROR_MESSAGE))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(Endpoints.Guest.FORGOT_PASSWORD));
 
     verify(tokenService, times(1)).getResetPasswordTokenByTokenString(TOKEN);
     verify(messages, times(1)).getMessage(MessageKeys.ForgotPassword.TOKEN_IS_EXPIRED, null, Locale.US);
@@ -114,10 +114,10 @@ class ResetPasswordControllerIT extends BaseWebMvcTestWithSecurity {
     when(redirectionInterceptor.preHandle(any(), any(), any())).thenReturn(true);
 
     mockMvc.perform(get(Endpoints.Guest.RESET_PASSWORD + "?token={token}", TOKEN))
-            .andExpect(model().hasNoErrors())
-            .andExpect(model().attributeExists(ResetPasswordController.FORM_DTO))
-            .andExpect(status().isOk())
-            .andExpect(view().name(ViewNames.Guest.RESET_PASSWORD));
+        .andExpect(model().hasNoErrors())
+        .andExpect(model().attributeExists(ResetPasswordController.FORM_DTO))
+        .andExpect(status().isOk())
+        .andExpect(view().name(ViewNames.Guest.RESET_PASSWORD));
 
     verify(tokenService, times(1)).getResetPasswordTokenByTokenString(TOKEN);
   }
@@ -127,22 +127,18 @@ class ResetPasswordControllerIT extends BaseWebMvcTestWithSecurity {
   void test_reset_password() throws Exception {
     final String TOKEN = "valid-token";
     final String PASSWORD = "valid-password";
-    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, Duration.ofHours(1).toMillis());
-    when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
     when(redirectionInterceptor.preHandle(any(), any(), any())).thenReturn(true);
 
     mockMvc.perform(post(Endpoints.Guest.RESET_PASSWORD)
-              .with(SecurityMockMvcRequestPostProcessors.csrf())
-              .param(PARAM_TOKEN_STRING, TOKEN)
-              .param(PARAM_PASSWORD, PASSWORD)
-              .param(PARAM_VERIFY_PASSWORD, PASSWORD))
-           .andExpect(model().errorCount(0))
-           .andExpect(status().is3xxRedirection())
-           .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?resetSuccess"));
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .param(PARAM_TOKEN_STRING, TOKEN)
+                        .param(PARAM_PASSWORD, PASSWORD)
+                        .param(PARAM_VERIFY_PASSWORD, PASSWORD))
+        .andExpect(model().errorCount(0))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?resetSuccess"));
 
-    verify(tokenService, times(1)).getResetPasswordTokenByTokenString(TOKEN);
-    verify(userService, times(1)).changePassword(tokenEntity.getUser(), PASSWORD);
-    verify(tokenService, times(1)).deleteToken(tokenEntity);
+    verify(userService, times(1)).changePassword(TOKEN, PASSWORD);
   }
 
   @ParameterizedTest(name = "[{index}]: {0}")
@@ -152,29 +148,29 @@ class ResetPasswordControllerIT extends BaseWebMvcTestWithSecurity {
     when(redirectionInterceptor.preHandle(any(), any(), any())).thenReturn(true);
 
     mockMvc.perform(post(Endpoints.Guest.RESET_PASSWORD)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .param(PARAM_TOKEN_STRING, request.getTokenString())
-                .param(PARAM_PASSWORD, request.getNewPlainPassword())
-                .param(PARAM_VERIFY_PASSWORD, request.getVerifyNewPlainPassword()))
-            .andExpect(flash().attribute(ResetPasswordController.FORM_DTO, instanceOf(ChangePasswordRequest.class)))
-            .andExpect(flash().attribute(BindingResult.class.getName() + "." + ResetPasswordController.FORM_DTO, instanceOf(BindingResult.class)))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl(Endpoints.Guest.RESET_PASSWORD + "?token=" + request.getTokenString()));
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .param(PARAM_TOKEN_STRING, request.getTokenString())
+                        .param(PARAM_PASSWORD, request.getNewPlainPassword())
+                        .param(PARAM_VERIFY_PASSWORD, request.getVerifyNewPlainPassword()))
+        .andExpect(flash().attribute(ResetPasswordController.FORM_DTO, instanceOf(ChangePasswordRequest.class)))
+        .andExpect(flash().attribute(BindingResult.class.getName() + "." + ResetPasswordController.FORM_DTO, instanceOf(BindingResult.class)))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(Endpoints.Guest.RESET_PASSWORD + "?token=" + request.getTokenString()));
 
     verifyZeroInteractions(tokenService, userService);
   }
 
   private static Stream<Arguments> changePasswordRequestProvider() {
     return Stream.of(
-            // invalid token strings
-            Arguments.of(ChangePasswordRequestFactory.withTokenString("")),
-            Arguments.of(ChangePasswordRequestFactory.withTokenString(null)),
+        // invalid token strings
+        Arguments.of(ChangePasswordRequestFactory.withTokenString("")),
+        Arguments.of(ChangePasswordRequestFactory.withTokenString(null)),
 
-            // invalid passwords
-            Arguments.of(ChangePasswordRequestFactory.withPassword("secret-password", "other-secret-password")),
-            Arguments.of(ChangePasswordRequestFactory.withPassword("secret", "secret")),
-            Arguments.of(ChangePasswordRequestFactory.withPassword("", "")),
-            Arguments.of(ChangePasswordRequestFactory.withPassword(null, null))
+        // invalid passwords
+        Arguments.of(ChangePasswordRequestFactory.withPassword("secret-password", "other-secret-password")),
+        Arguments.of(ChangePasswordRequestFactory.withPassword("secret", "secret")),
+        Arguments.of(ChangePasswordRequestFactory.withPassword("", "")),
+        Arguments.of(ChangePasswordRequestFactory.withPassword(null, null))
     );
   }
 }

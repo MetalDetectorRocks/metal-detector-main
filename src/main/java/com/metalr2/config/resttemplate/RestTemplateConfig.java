@@ -36,5 +36,4 @@ public class RestTemplateConfig {
             .interceptors(new CustomClientHttpRequestInterceptor(discogsConfig))
             .build();
   }
-
 }

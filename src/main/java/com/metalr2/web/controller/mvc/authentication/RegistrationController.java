@@ -4,8 +4,8 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.config.constants.MessageKeys;
 import com.metalr2.config.constants.ViewNames;
 import com.metalr2.model.ArtifactForFramework;
-import com.metalr2.model.exceptions.EmailVerificationTokenExpiredException;
 import com.metalr2.model.exceptions.ResourceNotFoundException;
+import com.metalr2.model.exceptions.TokenExpiredException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
 import com.metalr2.model.user.events.OnRegistrationCompleteEvent;
 import com.metalr2.service.token.TokenService;
@@ -104,7 +104,7 @@ public class RegistrationController {
     try {
       userService.verifyEmailToken(tokenString);
     }
-    catch (EmailVerificationTokenExpiredException e) {
+    catch (TokenExpiredException e) {
       param = "tokenExpired&token=" + tokenString;
     }
     catch (ResourceNotFoundException e) {
