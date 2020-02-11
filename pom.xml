@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.metalr2</groupId>
-    <artifactId>metal-release-radar</artifactId>
+    <groupId>rocks.metal-detector</groupId>
+    <artifactId>metal-detector-main</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
-    <name>Metal Release Radar</name>
+    <name>Metal Detector</name>
     <description>Mark your favourite bands and get informed about their new releases.</description>
 
     <developers>
@@ -17,26 +17,19 @@
             <name>Daniel Wagner</name>
             <email>wagner.daniel87@gmail.com</email>
             <roles>
-                <role>architect</role>
-                <role>developer</role>
+                <role>Developer</role>
+                <role>Deployment Engineer</role>
             </roles>
             <timezone>Germany/Berlin</timezone>
-            <properties>
-                <!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> -->
-            </properties>
         </developer>
         <developer>
             <id>nilsd</id>
             <name>Nils Dammenhayn</name>
             <email>nilsdam@aol.com</email>
             <roles>
-                <role>architect</role>
-                <role>developer</role>
+                <role>Developer</role>
             </roles>
             <timezone>Germany/Berlin</timezone>
-            <properties>
-                <!-- <picUrl>http://www.example.com/jdoe/pic</picUrl> -->
-            </properties>
         </developer>
     </developers>
 
