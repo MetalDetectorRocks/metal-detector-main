@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MetalReleaseRadarApplicationIT implements WithIntegrationTestProfile {
+class MetalDetectorApplicationIT implements WithIntegrationTestProfile {
 
   @Test
   void contextLoads() {
