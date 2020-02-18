@@ -4,16 +4,16 @@ import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.request.RegisterUserRequest;
 import com.metalr2.web.dto.response.UserResponse;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -24,16 +24,11 @@ import static com.metalr2.config.constants.Endpoints.Rest.USERS;
 
 @RestController
 @RequestMapping(USERS)
+@AllArgsConstructor
 public class UserRestController {
 
   private final UserService userService;
   private final ModelMapper mapper;
-
-  @Autowired
-  public UserRestController(UserService userService) {
-    this.userService = userService;
-    this.mapper = new ModelMapper();
-  }
 
   @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<List<UserResponse>> getAllUsers() {
