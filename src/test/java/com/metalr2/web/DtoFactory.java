@@ -37,6 +37,7 @@ public class DtoFactory {
           .username(username)
           .email(email)
           .plainPassword("xxx")
+          .role("User")
           .enabled(true)
           .build();
     }

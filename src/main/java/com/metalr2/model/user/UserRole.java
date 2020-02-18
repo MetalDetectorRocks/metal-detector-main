@@ -46,4 +46,14 @@ public enum UserRole {
 
     return userRoleSet;
   }
+
+  public static Set<UserRole> getRoleFromString(String role) {
+    if (role.toLowerCase().equals("administrator")) {
+      return createAdministratorRole();
+    }
+    else if (role.toLowerCase().equals("user")) {
+      return createUserRole();
+    }
+    throw new IllegalArgumentException("Role '" + role + "' not found!");
+  }
 }

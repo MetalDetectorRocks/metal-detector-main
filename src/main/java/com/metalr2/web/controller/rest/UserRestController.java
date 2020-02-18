@@ -3,6 +3,7 @@ package com.metalr2.web.controller.rest;
 import com.metalr2.service.user.UserService;
 import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.request.RegisterUserRequest;
+import com.metalr2.web.dto.request.UpdateUserRequest;
 import com.metalr2.web.dto.response.UserResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -52,8 +54,8 @@ public class UserRestController {
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  @PutMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<UserResponse> createUser(@Valid @RequestBody RegisterUserRequest request) {
     UserDto userDto = mapper.map(request, UserDto.class);
     UserDto createdUserDto = userService.createAdministrator(userDto);
@@ -62,4 +64,13 @@ public class UserRestController {
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
+  @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest request) {
+    UserDto userDto = mapper.map(request, UserDto.class);
+    UserDto updatedUserDto = userService.updateUser(request.getPublicUserId(), userDto);
+    UserResponse response = mapper.map(updatedUserDto, UserResponse.class);
+
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
 }
