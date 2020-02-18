@@ -5,7 +5,7 @@ import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.web.dto.ArtistDto;
 import com.metalr2.web.dto.response.MyArtistsResponse;
 import com.metalr2.web.dto.response.Pagination;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
@@ -18,14 +18,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(Endpoints.Rest.MY_ARTISTS)
+@AllArgsConstructor
 public class MyArtistsRestController {
 
   private final ArtistsService artistsService;
-
-  @Autowired
-  public MyArtistsRestController(ArtistsService artistsService) {
-    this.artistsService = artistsService;
-  }
 
   @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<MyArtistsResponse> getMyArtists(@PageableDefault Pageable pageable) {
