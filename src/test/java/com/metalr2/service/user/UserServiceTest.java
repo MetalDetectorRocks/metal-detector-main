@@ -13,6 +13,7 @@ import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserFactory;
 import com.metalr2.model.user.UserRepository;
 import com.metalr2.model.user.UserRole;
+import com.metalr2.security.CurrentUserSupplier;
 import com.metalr2.service.mapper.UserMapper;
 import com.metalr2.service.token.TokenService;
 import com.metalr2.web.DtoFactory;
@@ -46,6 +47,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.metalr2.model.user.UserRole.ROLE_ADMINISTRATOR;
+import static com.metalr2.model.user.UserRole.ROLE_USER;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atMost;
@@ -61,7 +64,8 @@ class UserServiceTest implements WithAssertions {
   private static final String USERNAME = "JohnD";
   private static final String EMAIL = "john.doe@example.com";
   private static final String DUPLICATE_USERNAME = "Duplicate";
-  private final static String DUPLICATE_EMAIL = "duplicate@example.com";
+  private static final String DUPLICATE_EMAIL = "duplicate@example.com";
+  private static final String PUBLIC_ID = "public-id";
   private final String TOKEN = "user-token";
   private final String NEW_PLAIN_PASSWORD = "new-plain-password";
   private final String NEW_ENCRYPTED_PASSWORD = "encryption".repeat(6); // an encrypted password must be 60 characters long
@@ -81,6 +85,9 @@ class UserServiceTest implements WithAssertions {
   @Mock
   private JwtsSupport jwtsSupport;
 
+  @Mock
+  private CurrentUserSupplier currentUserSupplier;
+
   @Spy
   private UserMapper userMapper;
 
@@ -93,7 +100,7 @@ class UserServiceTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, userMapper, tokenService);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, userMapper, tokenService, currentUserSupplier);
   }
 
   @DisplayName("Create user tests")
@@ -133,7 +140,7 @@ class UserServiceTest implements WithAssertions {
       assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
       assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
       assertThat(passedUserEntity.getPassword()).isNotEmpty();
-      assertThat(passedUserEntity.getUserRoles()).containsExactly(UserRole.ROLE_USER);
+      assertThat(passedUserEntity.getUserRoles()).containsExactly(ROLE_USER);
       assertThat(passedUserEntity.isEnabled()).isFalse();
     }
 
@@ -240,7 +247,7 @@ class UserServiceTest implements WithAssertions {
       assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
       assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
       assertThat(passedUserEntity.getPassword()).isNotEmpty();
-      assertThat(passedUserEntity.getUserRoles()).containsExactly(UserRole.ROLE_ADMINISTRATOR);
+      assertThat(passedUserEntity.getUserRoles()).containsExactly(ROLE_ADMINISTRATOR);
       assertThat(passedUserEntity.isEnabled()).isTrue();
     }
   }
@@ -249,7 +256,6 @@ class UserServiceTest implements WithAssertions {
   @DisplayName("Requesting an existing user by his public id should work")
   void get_user_by_public_id_for_existing_user() {
     // given
-    String PUBLIC_ID = "public-id";
     UserEntity user = UserFactory.createUser(USERNAME, EMAIL);
     when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
 
@@ -266,7 +272,6 @@ class UserServiceTest implements WithAssertions {
   @DisplayName("Requesting a not existing user by a public id should throw exception")
   void get_user_by_public_id_for_not_existing_user() {
     // given
-    String PUBLIC_ID = "public-id";
     when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.empty());
 
     // when
@@ -334,16 +339,15 @@ class UserServiceTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Updating an existing user should update the email address of the user")
-  void update_user_for_existing_user() {
+  @DisplayName("Updating an existing user should update the user's role")
+  void update_user_role_for_existing_user() {
     // given
-    String PUBLIC_ID = "public-id";
-    String NEW_EMAIL = "updatedEmail@example.com";
-
     ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
-    UserDto userDtoForUpdate = UserDtoFactory.withUsernameAndEmail(USERNAME, NEW_EMAIL);
+    UserDto userDtoForUpdate = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+    userDtoForUpdate.setRole("Administrator");
     UserEntity user = UserFactory.createUser(USERNAME, EMAIL);
 
+    when(currentUserSupplier.get()).thenReturn(user);
     when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
     // return the same user without changing the mail is ok here, we don't want to concentrate on the DTO conversion in this test
     when(userRepository.save(any())).thenReturn(user);
@@ -354,16 +358,42 @@ class UserServiceTest implements WithAssertions {
     // then
     verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
     verify(userRepository, times(1)).save(userEntityCaptor.capture());
+    verify(currentUserSupplier, times(1)).get();
     assertThat(userDto).isNotNull();
     assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
-    assertThat(userEntityCaptor.getValue().getEmail()).isEqualTo(NEW_EMAIL);
+    assertThat(userEntityCaptor.getValue().getUserRoles()).containsExactly(ROLE_ADMINISTRATOR);
+  }
+
+  @Test
+  @DisplayName("Updating an existing user should update the user's status")
+  void update_user_status_for_existing_user() {
+    // given
+    ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
+    UserDto userDtoForUpdate = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+    userDtoForUpdate.setEnabled(false);
+    UserEntity user = UserFactory.createUser(USERNAME, EMAIL);
+
+    when(currentUserSupplier.get()).thenReturn(user);
+    when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
+    // return the same user without changing the mail is ok here, we don't want to concentrate on the DTO conversion in this test
+    when(userRepository.save(any())).thenReturn(user);
+
+    // when
+    UserDto userDto = userService.updateUser(PUBLIC_ID, userDtoForUpdate);
+
+    // then
+    verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
+    verify(userRepository, times(1)).save(userEntityCaptor.capture());
+    verify(currentUserSupplier, times(1)).get();
+    assertThat(userDto).isNotNull();
+    assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
+    assertThat(userEntityCaptor.getValue().isEnabled()).isFalse();
   }
 
   @Test
   @DisplayName("Updating a not existing user should throw exception")
   void update_user_for_not_existing_user() {
     // given
-    String PUBLIC_ID = "public-id";
     String NEW_EMAIL = "updatedEmail@example.com";
     UserDto userDtoForUpdate = UserDtoFactory.withUsernameAndEmail(USERNAME, NEW_EMAIL);
     when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.empty());
@@ -378,10 +408,55 @@ class UserServiceTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("Updating should fail if an admin tries to remove his own role")
+  void update_should_fail_when_admin_removes_his_role() {
+    // given
+    UserDto userDtoForUpdate = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+    userDtoForUpdate.setRole("User");
+    UserEntity user = UserFactory.createUser(USERNAME, EMAIL);
+    user.setPublicId(PUBLIC_ID);
+    user.setUserRoles(UserRole.createAdministratorRole());
+
+    when(currentUserSupplier.get()).thenReturn(user);
+    when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
+
+    // when
+    Throwable throwable = catchThrowable(() -> userService.updateUser(PUBLIC_ID, userDtoForUpdate));
+
+    // then
+    verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
+    verify(currentUserSupplier, times(1)).get();
+    assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+    assertThat(throwable).hasMessage(ErrorMessages.ADMINISTRATOR_DISCARD_ROLE.toDisplayString());
+  }
+
+  @Test
+  @DisplayName("Updating should fail if an admin tries to disable himself")
+  void update_should_fail_when_admin_disabled() {
+    // given
+    UserDto userDtoForUpdate = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+    userDtoForUpdate.setEnabled(false);
+    UserEntity user = UserFactory.createUser(USERNAME, EMAIL);
+    user.setPublicId(PUBLIC_ID);
+    user.setUserRoles(UserRole.createAdministratorRole());
+
+    when(currentUserSupplier.get()).thenReturn(user);
+    when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
+
+    // when
+    Throwable throwable = catchThrowable(() -> userService.updateUser(PUBLIC_ID, userDtoForUpdate));
+
+    // then
+    verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
+    verify(currentUserSupplier, times(1)).get();
+    assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+    assertThat(throwable).hasMessage(ErrorMessages.ADMINISTRATOR_CANNOT_DISABLE_HIMSELF.toDisplayString());
+  }
+
+  @Test
   @DisplayName("Deleting an existing user should delete the user")
   void delete_user_for_existing_user() {
     // given
-    String PUBLIC_ID = "public-id";
     UserEntity user = UserFactory.createUser(USERNAME, EMAIL);
     when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
 
@@ -397,7 +472,6 @@ class UserServiceTest implements WithAssertions {
   @DisplayName("Deleting a not existing user should throw exception")
   void delete_user_for_not_existing_user() {
     // given
-    String PUBLIC_ID = "public-id";
     when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.empty());
 
     // when
@@ -443,12 +517,12 @@ class UserServiceTest implements WithAssertions {
   @DisplayName("Should return all users in a certain order")
   void get_all_users_ordered() {
     // given
-    UserEntity user1 = UserFactory.createUser("a1", UserRole.ROLE_USER, false);
-    UserEntity user2 = UserFactory.createUser("b1", UserRole.ROLE_USER, true);
-    UserEntity user3 = UserFactory.createUser("a2", UserRole.ROLE_USER, true);
-    UserEntity user4 = UserFactory.createUser("c1", UserRole.ROLE_ADMINISTRATOR, false);
-    UserEntity user5 = UserFactory.createUser("c2", UserRole.ROLE_ADMINISTRATOR, true);
-    UserEntity user6 = UserFactory.createUser("a3", UserRole.ROLE_ADMINISTRATOR, true);
+    UserEntity user1 = UserFactory.createUser("a1", ROLE_USER, false);
+    UserEntity user2 = UserFactory.createUser("b1", ROLE_USER, true);
+    UserEntity user3 = UserFactory.createUser("a2", ROLE_USER, true);
+    UserEntity user4 = UserFactory.createUser("c1", ROLE_ADMINISTRATOR, false);
+    UserEntity user5 = UserFactory.createUser("c2", ROLE_ADMINISTRATOR, true);
+    UserEntity user6 = UserFactory.createUser("a3", ROLE_ADMINISTRATOR, true);
     when(userRepository.findAll()).thenReturn(List.of(user1, user2, user3, user4, user5, user6));
 
     // when

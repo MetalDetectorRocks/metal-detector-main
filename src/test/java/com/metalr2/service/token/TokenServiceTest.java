@@ -2,7 +2,13 @@ package com.metalr2.service.token;
 
 import com.metalr2.model.email.AbstractEmail;
 import com.metalr2.model.email.RegistrationVerificationEmail;
-import com.metalr2.model.token.*;
+import com.metalr2.model.exceptions.ErrorMessages;
+import com.metalr2.model.exceptions.ResourceNotFoundException;
+import com.metalr2.model.token.JwtsSupport;
+import com.metalr2.model.token.TokenEntity;
+import com.metalr2.model.token.TokenFactory;
+import com.metalr2.model.token.TokenRepository;
+import com.metalr2.model.token.TokenType;
 import com.metalr2.model.user.UserEntity;
 import com.metalr2.model.user.UserFactory;
 import com.metalr2.model.user.UserRepository;
@@ -22,7 +28,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Duration;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TokenServiceTest implements WithAssertions {
@@ -114,6 +124,21 @@ class TokenServiceTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("Creating a token should fail if user is not found")
+  void create_token_should_fail_if_user_not_found() {
+    // given
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.empty());
+
+    // when
+    Throwable throwable = catchThrowable(() -> tokenService.createResetPasswordToken(PUBLIC_USER_ID));
+
+    // then
+    assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
+    assertThat(throwable).hasMessageContaining(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString());
+    verify(userRepository, times(1)).findByPublicId(anyString());
+  }
+
+  @Test
   @DisplayName("resendExpiredEmailVerificationToken() should send...")
   void resend_expired_email_verification_token_should_send_new_email() {
     // create token entity for mocking with spied user
@@ -149,5 +174,4 @@ class TokenServiceTest implements WithAssertions {
 
     verify(tokenRepository, times(1)).delete(tokenEntity);
   }
-
 }

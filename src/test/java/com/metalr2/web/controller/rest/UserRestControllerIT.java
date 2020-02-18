@@ -5,9 +5,11 @@ import com.metalr2.model.exceptions.ResourceNotFoundException;
 import com.metalr2.model.exceptions.UserAlreadyExistsException;
 import com.metalr2.service.user.UserService;
 import com.metalr2.testutil.WithIntegrationTestProfile;
+import com.metalr2.web.DtoFactory;
 import com.metalr2.web.RestAssuredRequestHandler;
 import com.metalr2.web.dto.UserDto;
 import com.metalr2.web.dto.request.RegisterUserRequest;
+import com.metalr2.web.dto.request.UpdateUserRequest;
 import com.metalr2.web.dto.response.ErrorResponse;
 import com.metalr2.web.dto.response.UserResponse;
 import io.restassured.http.ContentType;
@@ -38,6 +40,7 @@ import java.util.stream.Stream;
 
 import static com.metalr2.web.DtoFactory.RegisterUserRequestFactory;
 import static com.metalr2.web.DtoFactory.UserDtoFactory;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.reset;
@@ -48,6 +51,8 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
 class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile {
+
+  private static final String USER_ID = "public-user-id";
 
   @MockBean
   private UserService userService;
@@ -154,7 +159,6 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
     @DisplayName("Should use UserService to return a certain user")
     void should_use_user_service() {
       // given
-      final String USER_ID = "1234";
       when(userService.getUserByPublicId(USER_ID)).thenReturn(new UserDto());
 
       // when
@@ -168,7 +172,6 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
     @DisplayName("Should return 404 if no user exist")
     void should_return_404() {
       // given
-      final String USER_ID = "1234";
       when(userService.getUserByPublicId(USER_ID)).thenThrow(new ResourceNotFoundException("msg"));
 
       // when
@@ -185,8 +188,8 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
   @Nested
   class CreateUserTest {
 
-    @DisplayName("Should pass expected UserDto to UserService")
     @Test
+    @DisplayName("Should pass expected UserDto to UserService")
     void should_use_user_service() {
       // given
       RegisterUserRequest request = RegisterUserRequestFactory.createDefault();
@@ -195,15 +198,15 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
       ArgumentCaptor<UserDto> userDtoCaptor = ArgumentCaptor.forClass(UserDto.class);
 
       // when
-      requestHandler.doPost(request, ContentType.JSON);
+      requestHandler.doPut(request, ContentType.JSON);
 
       // then
       verify(userService, times(1)).createAdministrator(userDtoCaptor.capture());
       assertThat(userDtoCaptor.getValue()).isEqualTo(expectedPassedUserDto);
     }
 
-    @DisplayName("Should return UserResponse and status 201 if creating of administrator was successful")
     @Test
+    @DisplayName("Should return UserResponse and status 201 if creating of administrator was successful")
     void should_return_201() {
       // given
       RegisterUserRequest request = RegisterUserRequestFactory.createDefault();
@@ -211,7 +214,7 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
       when(userService.createAdministrator(any())).thenReturn(createdUserDto);
 
       // when
-      ValidatableResponse response = requestHandler.doPost(request, ContentType.JSON);
+      ValidatableResponse response = requestHandler.doPut(request, ContentType.JSON);
 
       // then
       response.contentType(ContentType.JSON)
@@ -221,15 +224,15 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
       assertThat(user).isEqualTo(modelMapper.map(createdUserDto, UserResponse.class));
     }
 
-    @DisplayName("Should return status 409 and ErrorResponse if user with username or email already exists")
     @Test
+    @DisplayName("Should return status 409 and ErrorResponse if user with username or email already exists")
     void should_return_409() {
       // given
       RegisterUserRequest request = RegisterUserRequestFactory.createDefault();
       when(userService.createAdministrator(any())).thenThrow(UserAlreadyExistsException.class);
 
       // when
-      ValidatableResponse response = requestHandler.doPost(request, ContentType.JSON);
+      ValidatableResponse response = requestHandler.doPut(request, ContentType.JSON);
 
       // then
       response.contentType(ContentType.JSON)
@@ -237,12 +240,12 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
           .extract().as(ErrorResponse.class);
     }
 
-    @DisplayName("Should return status 400 if creating of administrator don't pass validation")
-    @MethodSource("registerUserRequestProvider")
     @ParameterizedTest
-    void should_return_422(RegisterUserRequest request, int expectedErrorCount) {
+    @MethodSource("registerUserRequestProvider")
+    @DisplayName("Should return status 400 if creating of administrator does not pass validation")
+    void should_return_400(RegisterUserRequest request, int expectedErrorCount) {
       // when
-      ValidatableResponse response = requestHandler.doPost(request, ContentType.JSON);
+      ValidatableResponse response = requestHandler.doPut(request, ContentType.JSON);
 
       // then
       response.contentType(ContentType.JSON)
@@ -275,6 +278,59 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
 
           // all null
           Arguments.of(RegisterUserRequest.builder().build(), 4)
+      );
+    }
+  }
+
+  @Nested
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @DisplayName("Update user tests")
+  class UpdateUserTest {
+
+    @Test
+    @DisplayName("Should return 200 if updating user is successful")
+    void should_return_200() {
+      // given
+      final String NEW_ROLE = "Administrator";
+      UpdateUserRequest updateUserRequest = new UpdateUserRequest(USER_ID, NEW_ROLE, false);
+      UserDto userDto = DtoFactory.UserDtoFactory.createDefault();
+      userDto.setRole(NEW_ROLE);
+      userDto.setEnabled(false);
+      when(userService.updateUser(USER_ID, modelMapper.map(updateUserRequest, UserDto.class))).thenReturn(userDto);
+
+      // when
+      ValidatableResponse response = requestHandler.doPost(updateUserRequest, ContentType.JSON);
+
+      // then
+      response.contentType(ContentType.JSON)
+              .statusCode(HttpStatus.OK.value());
+
+      UserResponse user = response.extract().as(UserResponse.class);
+      assertThat(user.getRole()).isEqualTo(NEW_ROLE);
+      assertThat(user.isEnabled()).isFalse();
+      verify(userService, times(1)).updateUser(eq(USER_ID), any());
+    }
+
+    @ParameterizedTest
+    @MethodSource("inputProvider")
+    @DisplayName("Should return 400 for faulty requests")
+    void should_return_400(String userId, String role, boolean enabled) {
+      // given
+      UpdateUserRequest updateUserRequest = new UpdateUserRequest(userId, role, enabled);
+
+      // when
+      ValidatableResponse response = requestHandler.doPost(updateUserRequest, ContentType.JSON);
+
+      // then
+      response.contentType(ContentType.JSON)
+              .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    private Stream<Arguments> inputProvider() {
+      return Stream.of(
+          Arguments.of("", "", false),
+          Arguments.of("id", "", false),
+          Arguments.of("", "role", false)
       );
     }
   }
