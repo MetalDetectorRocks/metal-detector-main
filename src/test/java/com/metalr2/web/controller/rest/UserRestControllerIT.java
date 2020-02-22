@@ -198,7 +198,7 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
       ArgumentCaptor<UserDto> userDtoCaptor = ArgumentCaptor.forClass(UserDto.class);
 
       // when
-      requestHandler.doPut(request, ContentType.JSON);
+      requestHandler.doPost(request, ContentType.JSON);
 
       // then
       verify(userService, times(1)).createAdministrator(userDtoCaptor.capture());
@@ -214,7 +214,7 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
       when(userService.createAdministrator(any())).thenReturn(createdUserDto);
 
       // when
-      ValidatableResponse response = requestHandler.doPut(request, ContentType.JSON);
+      ValidatableResponse response = requestHandler.doPost(request, ContentType.JSON);
 
       // then
       response.contentType(ContentType.JSON)
@@ -232,7 +232,7 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
       when(userService.createAdministrator(any())).thenThrow(UserAlreadyExistsException.class);
 
       // when
-      ValidatableResponse response = requestHandler.doPut(request, ContentType.JSON);
+      ValidatableResponse response = requestHandler.doPost(request, ContentType.JSON);
 
       // then
       response.contentType(ContentType.JSON)
@@ -245,7 +245,7 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
     @DisplayName("Should return status 400 if creating of administrator does not pass validation")
     void should_return_400(RegisterUserRequest request, int expectedErrorCount) {
       // when
-      ValidatableResponse response = requestHandler.doPut(request, ContentType.JSON);
+      ValidatableResponse response = requestHandler.doPost(request, ContentType.JSON);
 
       // then
       response.contentType(ContentType.JSON)
@@ -299,7 +299,7 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
       when(userService.updateUser(USER_ID, modelMapper.map(updateUserRequest, UserDto.class))).thenReturn(userDto);
 
       // when
-      ValidatableResponse response = requestHandler.doPost(updateUserRequest, ContentType.JSON);
+      ValidatableResponse response = requestHandler.doPut(updateUserRequest, ContentType.JSON);
 
       // then
       response.contentType(ContentType.JSON)
