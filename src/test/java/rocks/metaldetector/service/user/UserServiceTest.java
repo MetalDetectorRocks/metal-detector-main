@@ -34,6 +34,7 @@ import rocks.metaldetector.model.user.UserEntity;
 import rocks.metaldetector.model.user.UserFactory;
 import rocks.metaldetector.model.user.UserRepository;
 import rocks.metaldetector.model.user.UserRole;
+import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.mapper.UserMapper;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.web.DtoFactory.UserDtoFactory;
@@ -45,8 +46,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.metalr2.model.user.UserRole.ROLE_ADMINISTRATOR;
-import static com.metalr2.model.user.UserRole.ROLE_USER;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atMost;
@@ -55,6 +54,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static rocks.metaldetector.model.user.UserRole.ROLE_ADMINISTRATOR;
+import static rocks.metaldetector.model.user.UserRole.ROLE_USER;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest implements WithAssertions {

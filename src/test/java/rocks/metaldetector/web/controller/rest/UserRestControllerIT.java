@@ -1,5 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
+import com.metalr2.web.dto.request.UpdateUserRequest;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
@@ -291,7 +292,7 @@ class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile
       // given
       final String NEW_ROLE = "Administrator";
       UpdateUserRequest updateUserRequest = new UpdateUserRequest(USER_ID, NEW_ROLE, false);
-      UserDto userDto = DtoFactory.UserDtoFactory.createDefault();
+      UserDto userDto = UserDtoFactory.createDefault();
       userDto.setRole(NEW_ROLE);
       userDto.setEnabled(false);
       when(userService.updateUser(USER_ID, modelMapper.map(updateUserRequest, UserDto.class))).thenReturn(userDto);

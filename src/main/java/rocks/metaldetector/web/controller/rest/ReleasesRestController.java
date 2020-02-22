@@ -1,5 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -13,6 +13,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.model.email.AbstractEmail;
 import rocks.metaldetector.model.email.RegistrationVerificationEmail;
+import rocks.metaldetector.model.exceptions.ErrorMessages;
+import rocks.metaldetector.model.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.model.token.JwtsSupport;
 import rocks.metaldetector.model.token.TokenEntity;
 import rocks.metaldetector.model.token.TokenFactory;
@@ -26,11 +28,11 @@ import rocks.metaldetector.service.email.EmailService;
 import java.time.Duration;
 import java.util.Optional;
 
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.anyString;
 
 @ExtendWith(MockitoExtension.class)
 class TokenServiceTest implements WithAssertions {

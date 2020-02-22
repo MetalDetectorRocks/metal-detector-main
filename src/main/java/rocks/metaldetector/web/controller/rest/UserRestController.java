@@ -1,5 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
+import com.metalr2.web.dto.request.UpdateUserRequest;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;

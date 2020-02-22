@@ -20,6 +20,7 @@ import rocks.metaldetector.model.token.TokenRepository;
 import rocks.metaldetector.model.user.UserEntity;
 import rocks.metaldetector.model.user.UserRepository;
 import rocks.metaldetector.model.user.UserRole;
+import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.mapper.UserMapper;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.web.dto.UserDto;
@@ -30,7 +31,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.metalr2.model.user.UserRole.ROLE_ADMINISTRATOR;
+import static rocks.metaldetector.model.user.UserRole.ROLE_ADMINISTRATOR;
 
 @Service
 @Slf4j
