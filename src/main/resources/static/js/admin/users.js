@@ -82,14 +82,14 @@ function createAdministrator () {
     $.post({
         url: '/rest/v1/users',
         data: createAdministratorCreateRequest(),
-        type: 'PUT',
+        type: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
         },
         success: onCreateAdministratorSuccess,
         error: function (errorResponse) {
-            onCreateUpdateError(errorResponse, '#create-admin-user-validation-area')
+            onCreateError(errorResponse, '#create-admin-user-validation-area')
         }
     });
 }
@@ -120,9 +120,27 @@ function onCreateAdministratorSuccess(createResponse) {
 /**
  * Error callback for creating a new administrator.
  * @param errorResponse     The json response
+ * @param validationAreaId  ID of the area to display errors (create)
+ */
+function onCreateError(errorResponse, validationAreaId) {
+    onError(errorResponse, validationAreaId);
+}
+
+/**
+ * Error callback for updating a user.
+ * @param errorResponse     The json response
+ * @param validationAreaId  ID of the area to display errors (update)
+ */
+function onUpdateError(errorResponse, validationAreaId) {
+    onError(errorResponse, validationAreaId);
+}
+
+/**
+ * Error callback.
+ * @param errorResponse     The json response
  * @param validationAreaId  ID of the area to display errors (create/update)
  */
-function onCreateUpdateError(errorResponse, validationAreaId) {
+function onError(errorResponse, validationAreaId) {
     resetValidationArea(validationAreaId);
     const validationMessageArea = $(validationAreaId);
     validationMessageArea.addClass("alert alert-danger");
@@ -130,9 +148,9 @@ function onCreateUpdateError(errorResponse, validationAreaId) {
     if (errorResponse.status === 400) { // BAD REQUEST
         validationMessageArea.append("The following errors occurred during server-side validation:");
         const errorsList = $('<ul>', {class: "errors mb-0"}).append(
-            errorResponse.responseJSON.messages.map(message =>
-                $("<li>").text(message)
-            )
+          errorResponse.responseJSON.messages.map(message =>
+            $("<li>").text(message)
+          )
         );
         validationMessageArea.append(errorsList);
     }
@@ -194,14 +212,14 @@ function sendUpdateUserRequest() {
     $.post({
         url: '/rest/v1/users',
         data: createUpdateUserRequest(),
-        type: 'POST',
+        type: 'PUT',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
         },
         success: onUpdateUserSuccess,
         error: function (errorResponse) {
-            onCreateUpdateError(errorResponse, '#update-user-validation-area')
+            onUpdateError(errorResponse, '#update-user-validation-area')
         }
     });
 }
@@ -211,7 +229,7 @@ function sendUpdateUserRequest() {
  * @param updateResponse The json response
  */
 function onUpdateUserSuccess(updateResponse) {
-    userTable.rows().every(function (rowIndex, tableLoop, rowLoop) {
+    userTable.rows().every(function (rowIndex) {
         if (userTable.cell(rowIndex, 1).data() === updateResponse.username) {
             userTable.cell(rowIndex, 3).data(updateResponse.role);
             userTable.cell(rowIndex, 4).data(updateResponse.enabled);

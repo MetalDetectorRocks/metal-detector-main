@@ -49,8 +49,8 @@ public class UserRestController {
     return ResponseEntity.ok(response);
   }
 
-  @PutMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<UserResponse> createUser(@Valid @RequestBody RegisterUserRequest request) {
     UserDto userDto = mapper.map(request, UserDto.class);
     UserDto createdUserDto = userService.createAdministrator(userDto);
@@ -59,8 +59,8 @@ public class UserRestController {
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
-  @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  @PutMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest request) {
     UserDto userDto = mapper.map(request, UserDto.class);
     UserDto updatedUserDto = userService.updateUser(request.getPublicUserId(), userDto);

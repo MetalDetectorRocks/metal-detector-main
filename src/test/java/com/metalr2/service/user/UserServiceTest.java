@@ -424,8 +424,6 @@ class UserServiceTest implements WithAssertions {
     Throwable throwable = catchThrowable(() -> userService.updateUser(PUBLIC_ID, userDtoForUpdate));
 
     // then
-    verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
-    verify(currentUserSupplier, times(1)).get();
     assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
     assertThat(throwable).hasMessage(ErrorMessages.ADMINISTRATOR_DISCARD_ROLE.toDisplayString());
   }
@@ -447,8 +445,6 @@ class UserServiceTest implements WithAssertions {
     Throwable throwable = catchThrowable(() -> userService.updateUser(PUBLIC_ID, userDtoForUpdate));
 
     // then
-    verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
-    verify(currentUserSupplier, times(1)).get();
     assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
     assertThat(throwable).hasMessage(ErrorMessages.ADMINISTRATOR_CANNOT_DISABLE_HIMSELF.toDisplayString());
   }
