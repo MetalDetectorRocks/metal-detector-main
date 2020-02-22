@@ -4,7 +4,7 @@ import com.metalr2.config.constants.Endpoints;
 import com.metalr2.service.artist.ArtistsService;
 import com.metalr2.web.dto.response.ArtistDetailsResponse;
 import com.metalr2.web.dto.response.SearchResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
@@ -20,14 +20,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(Endpoints.Rest.ARTISTS)
+@AllArgsConstructor
 public class ArtistsRestController {
 
   private final ArtistsService artistsService;
-
-  @Autowired
-  public ArtistsRestController(ArtistsService artistsService) {
-    this.artistsService = artistsService;
-  }
 
   @GetMapping(path = Endpoints.Rest.SEARCH,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
