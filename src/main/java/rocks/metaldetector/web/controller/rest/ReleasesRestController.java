@@ -1,7 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,18 +22,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(Endpoints.Rest.RELEASES)
+@AllArgsConstructor
 public class ReleasesRestController {
 
   private final ReleasesService releasesService;
   private final ArtistsService artistsService;
   private final ModelMapper mapper;
-
-  @Autowired
-  public ReleasesRestController(ReleasesService releasesService, ArtistsService artistsService, ModelMapper mapper) {
-    this.releasesService = releasesService;
-    this.artistsService = artistsService;
-    this.mapper = mapper;
-  }
 
   @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})

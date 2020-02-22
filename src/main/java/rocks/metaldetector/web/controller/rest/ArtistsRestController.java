@@ -1,6 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
@@ -20,14 +20,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(Endpoints.Rest.ARTISTS)
+@AllArgsConstructor
 public class ArtistsRestController {
 
   private final ArtistsService artistsService;
-
-  @Autowired
-  public ArtistsRestController(ArtistsService artistsService) {
-    this.artistsService = artistsService;
-  }
 
   @GetMapping(path = Endpoints.Rest.SEARCH,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})

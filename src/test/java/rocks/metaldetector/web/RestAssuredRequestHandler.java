@@ -59,13 +59,13 @@ public class RestAssuredRequestHandler {
           .then();
   }
 
-  public ValidatableResponse doDelete(String pathSegment, ContentType accept) {
+  public ValidatableResponse doPut(Object request, ContentType accept) {
     return given()
-            .contentType(accept)
             .accept(accept)
-           .when()
-            .delete(requestUri + pathSegment)
-           .then();
+            .contentType(accept)
+            .body(request)
+          .when()
+            .put(requestUri)
+          .then();
   }
-
 }

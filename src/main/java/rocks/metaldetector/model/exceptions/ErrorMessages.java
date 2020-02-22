@@ -4,6 +4,8 @@ public enum ErrorMessages {
 
   USER_WITH_EMAIL_ALREADY_EXISTS("This email address has already been used, please choose another one."),
   USER_WITH_USERNAME_ALREADY_EXISTS("This username has already been used, please choose another one."),
+  ADMINISTRATOR_CANNOT_DISABLE_HIMSELF("An administrator cannot deactivate himself."),
+  ADMINISTRATOR_DISCARD_ROLE("An administrator cannot discard his role."),
   RESOURCE_DOES_NOT_EXIST("Resource does not exist."),
   USER_WITH_ID_NOT_FOUND("User with provided id not found."),
   USER_NOT_FOUND("User with provided email or username not found."),

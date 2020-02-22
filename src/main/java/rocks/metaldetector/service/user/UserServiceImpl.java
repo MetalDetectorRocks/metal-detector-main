@@ -30,6 +30,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.metalr2.model.user.UserRole.ROLE_ADMINISTRATOR;
+
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
@@ -40,17 +42,19 @@ public class UserServiceImpl implements UserService {
   private final JwtsSupport jwtsSupport;
   private final UserMapper userMapper;
   private final TokenService tokenService;
+  private final CurrentUserSupplier currentUserSupplier;
 
   @Autowired
   public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
                          TokenRepository tokenRepository, JwtsSupport jwtsSupport, UserMapper userMapper,
-                         TokenService tokenService) {
+                         TokenService tokenService, CurrentUserSupplier currentUserSupplier) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.tokenRepository = tokenRepository;
     this.jwtsSupport = jwtsSupport;
     this.userMapper = userMapper;
     this.tokenService = tokenService;
+    this.currentUserSupplier = currentUserSupplier;
   }
 
   @Override
@@ -104,7 +108,16 @@ public class UserServiceImpl implements UserService {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
                                           .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
-    userEntity.setEmail(userDto.getEmail());
+    if (publicId.equals(currentUserSupplier.get().getPublicId())) {
+      if (!userDto.isEnabled())
+        throw new IllegalArgumentException(ErrorMessages.ADMINISTRATOR_CANNOT_DISABLE_HIMSELF.toDisplayString());
+      if (userEntity.isAdministrator() && !UserRole.getRoleFromString(userDto.getRole()).contains(ROLE_ADMINISTRATOR))
+        throw new IllegalArgumentException(ErrorMessages.ADMINISTRATOR_DISCARD_ROLE.toDisplayString());
+    }
+
+    userEntity.setUserRoles(UserRole.getRoleFromString(userDto.getRole()));
+    userEntity.setEnabled(userDto.isEnabled());
+
     UserEntity updatedUserEntity = userRepository.save(userEntity);
 
     return userMapper.mapToDto(updatedUserEntity);
