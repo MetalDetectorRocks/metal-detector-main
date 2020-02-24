@@ -1,6 +1,5 @@
 package rocks.metaldetector.web.controller.rest;
 
-import com.metalr2.web.dto.request.UpdateUserRequest;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.dto.UserDto;
 import rocks.metaldetector.web.dto.request.RegisterUserRequest;
+import rocks.metaldetector.web.dto.request.UpdateUserRequest;
 import rocks.metaldetector.web.dto.response.UserResponse;
 
 import javax.validation.Valid;

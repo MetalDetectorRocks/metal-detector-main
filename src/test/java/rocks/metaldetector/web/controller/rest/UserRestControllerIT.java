@@ -1,6 +1,5 @@
 package rocks.metaldetector.web.controller.rest;
 
-import com.metalr2.web.dto.request.UpdateUserRequest;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
@@ -32,6 +31,7 @@ import rocks.metaldetector.web.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
 import rocks.metaldetector.web.dto.UserDto;
 import rocks.metaldetector.web.dto.request.RegisterUserRequest;
+import rocks.metaldetector.web.dto.request.UpdateUserRequest;
 import rocks.metaldetector.web.dto.response.ErrorResponse;
 import rocks.metaldetector.web.dto.response.UserResponse;
 

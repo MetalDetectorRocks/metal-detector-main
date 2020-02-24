@@ -1,4 +1,4 @@
-package com.metalr2.web.dto.request;
+package rocks.metaldetector.web.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

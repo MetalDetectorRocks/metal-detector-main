@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>rocks.metal-detector</groupId>
-    <artifactId>metal-detector-main</artifactId>
+    <artifactId>metal-detector-webapp</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
     <name>Metal Detector</name>
