@@ -16,7 +16,7 @@
 
 <a name="introduction"></a>
 ## 1 Introduction
-This repository contains the source code for the Metal Release Radar application. The application is currently under development. 
+This repository contains the source code for the Metal Detector application. The application is a Spring Boot application and currently under development. 
 
 The following features are planned:
 - Mark your favorite metal bands
@@ -30,7 +30,7 @@ The application uses the REST API from Discogs.
 Clone the source code via:
 
 ```
-git clone https://github.com/DanielW1987/metal-release-radar.git
+git clone https://github.com/metaldetectorrocks/metal-detector.git
 ```
 
 <a name="run-application-locally-dev"></a>
@@ -43,26 +43,24 @@ To start the application locally in DEV profile, the following preparatory actio
 2. Install Docker CE
 
 3. Create folder `.secrets` below the project root directory and create the following files within this folder
-    - `mrr_butler_mysql_password.txt`
-    - `mrr_butler_mysql_root_password.txt`
-    - `mrr_mysql_password.txt`
-    - `mrr_mysql_root_password.txt`
+    - `butler_db_root_password.txt`
+    - `detector_db_root_password.txt`
 
 4. Enter a password of your choice in each file created. The files are used for the `docker-compose.yml` file, which becomes relevant in a moment.
 
-5. Expose the environment variable `BUTLER_MYSQL_PASSWORD` with value from file `mrr_butler_mysql_root_password.txt` to inject the database password into the Metal Release Butler docker container.
+5. Expose the environment variable `BUTLER_DB_ROOT_PASSWORD` with value from file `butler_db_root_password.txt` to inject the database password into the Metal Release Butler docker container.
 
-6. Run `docker-compose.yml` via command `docker-compose up -d --no-recreate`. This starts all peripheral docker containers that are needed locally to run the Metal Release Radar Application:
-    - `mrr-mysql`: MySQL database for Metal Release Radar application 
-    - `mrr-phpmyadmin`: phpmyadmin for Metal Release Radars MySQL database
-    - `mrr-butler-mysql`: MySQL database for Metal Release Butler application 
-    - `mrr-butler-phpmyadmin`: phpmyadmin for Metal Release Butlers MySQL database
-    - `mrr-butler`: Metal Release Butler Spring Boot application
+6. Run `docker-compose.yml` via command `docker-compose up -d --no-recreate`. This starts all peripheral docker containers that are needed locally to run the Metal Detector Application:
+    - `detector-db`: The database for Metal Detector application (currently MySQL)
+    - `detector-phpmyadmin`: phpmyadmin for Metal Detectors database
+    - `butler-db`: The database for Metal Release Butler application 
+    - `butler-phpmyadmin`: phpmyadmin for Metal Release Butlers database
+    - `butler-app`: Metal Release Butler Spring Boot application
 
-7. Define the data source connection details in file `application.properties` for mysql connection:
-    - `spring.datasource.username` (`root` or must match with `MYSQL_USER` of serive `mrr-mysql` from `docker-compose.yml` file)
-    - `spring.datasource.password` (password from `mrr_mysql_password.txt` or `mrr_mysql_root_password.txt`)
-    - `spring.datasource.url` (`jdbc:mysql://localhost:3306/metal-release-radar?useUnicode\=true&characterEncoding\=utf-8&serverTimezone\=UTC`, database name must match `MYSQL_DATABASE` of serive `mrr-mysql` from `docker-compose.yml` file)
+7. Define the data source connection details in file `application.properties`:
+    - `spring.datasource.username` (you have to use user `root`)
+    - `spring.datasource.password` (password from `detector_db_root_password.txt`)
+    - `spring.datasource.url` (`jdbc:mysql://localhost:3306/metal-detector?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&useSSL=false`, database name must match `MYSQL_DATABASE` of service `detector-db` from `docker-compose.yml` file)
 
 8. Deposit your Discogs Access Token for the property `discogs.access-token` in file `application.properties` (see [Discogs API Documentation](https://www.discogs.com/developers/) for further information).
 
@@ -97,7 +95,7 @@ via Maven
 - Execute command `mvn install` and after that `mvn springboot:run` in root directory
 
 via your IDE
-- Execute main class `com.metalr2.MetalReleaseRadarApplication`
+- Execute main class `rocks.metal.detector.MetalDetectorApplication`
 
 Go to your web browser and visit `http://localhost:8090`.
 You can log in via the URL `http://localhost:8090/login`. 
