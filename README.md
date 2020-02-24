@@ -1,5 +1,3 @@
-![Logo](https://github.com/Waginator/metal-release-radar/blob/master/misc/logo.png) 
-
 [![CircleCI](https://circleci.com/gh/DanielW1987/metal-release-radar/tree/master.svg?style=svg)](https://circleci.com/gh/DanielW1987/metal-release-radar/tree/master)
 [![Coverage Status](https://coveralls.io/repos/github/DanielW1987/metal-release-radar/badge.svg?branch=master)](https://coveralls.io/github/DanielW1987/metal-release-radar?branch=master)
 
