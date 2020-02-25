@@ -97,7 +97,7 @@ via Maven
 - Execute command `mvn install` and after that `mvn springboot:run` in root directory
 
 via your IDE
-- Execute main class `rocks.metal.detector.MetalDetectorApplication`
+- Execute main class `rocks.metaldetector.MetalDetectorApplication`
 
 Go to your web browser and visit `http://localhost:8090`.
 You can log in via the URL `http://localhost:8090/login`. 
