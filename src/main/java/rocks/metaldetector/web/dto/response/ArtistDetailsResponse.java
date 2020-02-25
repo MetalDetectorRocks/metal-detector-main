@@ -1,0 +1,20 @@
+package rocks.metaldetector.web.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+public class ArtistDetailsResponse {
+
+  private String artistName;
+  private long artistId;
+  private String profile;
+  private List<String> activeMember;
+  private List<String> formerMember;
+  private List<String> images;
+  private Boolean isFollowed;
+
+}
