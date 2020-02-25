@@ -78,13 +78,15 @@ If you start the application with the default Spring profile or with the profile
 
 To start the application locally in PROD profile, the following preparatory actions are necessary:
 
-1. Complete all steps from [Run application locally (DEV profile)](#run-application-locally-dev).
+1. Complete steps 1 to 9 from [Run application locally (DEV profile)](#run-application-locally-dev).
 
 2. Define the email server connection details in file `application-prod.properties`. Define at least the following properties for the connection:
     - `spring.mail.host`
     - `spring.mail.username`
     - `spring.mail.password`
     - `spring.mail.properties.from`
+    
+3. Configure the profile 'prod' for example via your IntelliJ Run Configuration or via `spring.profiles.active=prod` in the file `application.properties`
 
 It is also possible to define all mentioned connection details and secrets as environment variables. In this case no .properties variables need to be changed. The names of the environment variables are already in the .properties files. You can define the environment variables for example within a Run Configuration in IntelliJ.
 
