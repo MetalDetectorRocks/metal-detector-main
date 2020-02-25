@@ -67,7 +67,7 @@ To start the application locally in DEV profile, the following preparatory actio
     - `security.token-secret` for JWT
     - `security.remember-me-secret` for remember me functionality
     
-10. Configure the profile 'dev' for example via your IntelliJ Run Configuration or via `spring.profiles.active=dev` in the file `application.properties`     
+10. Configure the profile `dev` for example via your IntelliJ Run Configuration or via `spring.profiles.active=dev` in the file `application.properties`     
 
 It is also possible to define all mentioned connection details and secrets as environment variables. In this case no .properties variables need to be changed. The names of the environment variables are already in the .properties files. You can define the environment variables for example within a Run Configuration in IntelliJ.
 
@@ -86,7 +86,7 @@ To start the application locally in PROD profile, the following preparatory acti
     - `spring.mail.password`
     - `spring.mail.properties.from`
     
-3. Configure the profile 'prod' for example via your IntelliJ Run Configuration or via `spring.profiles.active=prod` in the file `application.properties`
+3. Configure the profile `prod` for example via your IntelliJ Run Configuration or via `spring.profiles.active=prod` in the file `application.properties`
 
 It is also possible to define all mentioned connection details and secrets as environment variables. In this case no .properties variables need to be changed. The names of the environment variables are already in the .properties files. You can define the environment variables for example within a Run Configuration in IntelliJ.
 
