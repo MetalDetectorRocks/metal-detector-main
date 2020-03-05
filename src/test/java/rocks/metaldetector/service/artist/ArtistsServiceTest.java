@@ -26,7 +26,6 @@ import rocks.metaldetector.service.discogs.DiscogsArtistSearchRestClient;
 import rocks.metaldetector.web.DtoFactory.ArtistFactory;
 import rocks.metaldetector.web.DtoFactory.DiscogsArtistSearchResultFactory;
 import rocks.metaldetector.web.dto.ArtistDto;
-import rocks.metaldetector.web.dto.response.ArtistDetailsResponse;
 import rocks.metaldetector.web.dto.response.Pagination;
 import rocks.metaldetector.web.dto.response.SearchResponse;
 
@@ -533,38 +532,6 @@ class ArtistsServiceTest implements WithAssertions {
       // then
       assertThat(responseOptional).isEmpty();
       verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
-    }
-
-    @Test
-    @DisplayName("searchDiscogsById() returns returns a valid result")
-    void search_by_id_returns_valid_result() {
-      // given
-      when(artistSearchClient.searchById(DISCOGS_ID)).thenReturn(Optional.of(ArtistFactory.createTestArtist()));
-      when(currentUserSupplier.get()).thenReturn(userEntity);
-      when(userEntity.getPublicId()).thenReturn(USER_ID);
-
-      // when
-      Optional<ArtistDetailsResponse> responseOptional = artistsService.searchDiscogsById(DISCOGS_ID);
-
-      // then
-      assertThat(responseOptional).isPresent();
-
-      assertThat(responseOptional.get().getArtistId()).isEqualTo(DISCOGS_ID);
-      verify(artistSearchClient, times(1)).searchById(DISCOGS_ID);
-    }
-
-    @Test
-    @DisplayName("searchDiscogsById() returns empty result")
-    void search_by_id_returns_empty_result() {
-      // given
-      when(artistSearchClient.searchById(anyLong())).thenReturn(Optional.empty());
-
-      // when
-      Optional<ArtistDetailsResponse> responseOptional = artistsService.searchDiscogsById(DISCOGS_ID);
-
-      // then
-      assertThat(responseOptional).isEmpty();
-      verify(artistSearchClient, times(1)).searchById(DISCOGS_ID);
     }
   }
 }

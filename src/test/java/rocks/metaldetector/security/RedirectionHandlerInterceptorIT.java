@@ -75,6 +75,6 @@ class RedirectionHandlerInterceptorIT implements WithAssertions, WithIntegration
   }
 
   private static Stream<Arguments> inputProviderWithoutHandler() {
-    return Arrays.stream(new String[] {Endpoints.Frontend.SEARCH, Endpoints.Rest.SEARCH, Endpoints.AdminArea.INDEX}).map(Arguments::of);
+    return Arrays.stream(new String[] {Endpoints.Rest.SEARCH, Endpoints.AdminArea.INDEX}).map(Arguments::of);
   }
 }

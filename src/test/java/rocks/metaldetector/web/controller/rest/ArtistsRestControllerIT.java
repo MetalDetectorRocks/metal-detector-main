@@ -20,7 +20,6 @@ import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.testutil.WithIntegrationTestProfile;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
-import rocks.metaldetector.web.dto.response.ArtistDetailsResponse;
 import rocks.metaldetector.web.dto.response.Pagination;
 import rocks.metaldetector.web.dto.response.SearchResponse;
 
@@ -32,7 +31,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static rocks.metaldetector.web.DtoFactory.ArtistDetailsResponseFactory;
 import static rocks.metaldetector.web.DtoFactory.ArtistNameSearchResponseFactory;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -50,59 +48,6 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
   private int port;
 
   private RestAssuredRequestHandler requestHandler;
-
-  @Nested
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  @DisplayName("Test artist details search endpoint")
-  class ArtistDetailsSearchTest {
-
-    private final String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS;
-
-    @BeforeEach
-    void setUp() {
-      requestHandler = new RestAssuredRequestHandler(requestUri);
-    }
-
-    @AfterEach
-    void tearDown() {
-      reset(artistsService);
-    }
-
-    @Test
-    @DisplayName("GET with valid request should return 200")
-    void get_with_valid_request_should_return_200() {
-      // given
-      when(artistsService.searchDiscogsById(VALID_ARTIST_ID)).thenReturn(Optional.of(ArtistDetailsResponseFactory.withResult()));
-
-      // when
-      ValidatableResponse validatableResponse = requestHandler.doGet("/" + VALID_ARTIST_ID, ContentType.JSON);
-
-      // then
-      validatableResponse
-          .contentType(ContentType.JSON)
-          .statusCode(HttpStatus.OK.value());
-
-      ArtistDetailsResponse response = validatableResponse.extract().as(ArtistDetailsResponse.class);
-      assertThat(response).isNotNull();
-      assertThat(response.getArtistId()).isEqualTo(VALID_ARTIST_ID);
-
-      verify(artistsService, times(1)).searchDiscogsById(VALID_ARTIST_ID);
-    }
-
-    @Test
-    @DisplayName("GET with no results should return 404")
-    void get_with_no_results_should_return_404() {
-      // given
-      when(artistsService.searchDiscogsById(INVALID_ARTIST_ID)).thenReturn(Optional.empty());
-
-      // when
-      ValidatableResponse validatableResponse = requestHandler.doGet("/" + INVALID_ARTIST_ID, ContentType.JSON);
-
-      // then
-      validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-      verify(artistsService, times(1)).searchDiscogsById(INVALID_ARTIST_ID);
-    }
-  }
 
   @Nested
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)

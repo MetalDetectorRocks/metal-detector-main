@@ -13,11 +13,8 @@ import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.discogs.DiscogsArtistSearchRestClient;
 import rocks.metaldetector.web.dto.ArtistDto;
 import rocks.metaldetector.web.dto.discogs.artist.DiscogsArtist;
-import rocks.metaldetector.web.dto.discogs.artist.DiscogsMember;
-import rocks.metaldetector.web.dto.discogs.misc.DiscogsImage;
 import rocks.metaldetector.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
 import rocks.metaldetector.web.dto.discogs.search.DiscogsPagination;
-import rocks.metaldetector.web.dto.response.ArtistDetailsResponse;
 import rocks.metaldetector.web.dto.response.Pagination;
 import rocks.metaldetector.web.dto.response.SearchResponse;
 
@@ -131,12 +128,6 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public Optional<ArtistDetailsResponse> searchDiscogsById(long discogsId) {
-    Optional<DiscogsArtist> responseOptional = artistSearchClient.searchById(discogsId);
-    return responseOptional.map(this::mapDetailsSearchResult);
-  }
-
-  @Override
   @Transactional
   public boolean fetchAndSaveArtist(long discogsId) {
     if (artistsRepository.existsByArtistDiscogsId(discogsId)) {
@@ -171,15 +162,6 @@ public class ArtistsServiceImpl implements ArtistsService {
     Pagination pagination = new Pagination(discogsPagination.getItemsTotal(), discogsPagination.getCurrentPage() - 1, itemsPerPage);
 
     return new SearchResponse(dtoSearchResults, pagination);
-  }
-
-  private ArtistDetailsResponse mapDetailsSearchResult(DiscogsArtist discogsArtist) {
-    String artistProfile      = discogsArtist.getProfile().isEmpty()      ? null : discogsArtist.getProfile();
-    List<String> activeMember = discogsArtist.getDiscogsMembers() == null ? null : discogsArtist.getDiscogsMembers().stream().filter(DiscogsMember::isActive).map(DiscogsMember::getName).collect(Collectors.toList());
-    List<String> formerMember = discogsArtist.getDiscogsMembers() == null ? null : discogsArtist.getDiscogsMembers().stream().filter(discogsMember -> !discogsMember.isActive()).map(DiscogsMember::getName).collect(Collectors.toList());
-    List<String> images       = discogsArtist.getDiscogsImages()  == null ? null : discogsArtist.getDiscogsImages().stream().map(DiscogsImage::getResourceUrl).collect(Collectors.toList());
-    boolean isFollowed        = isFollowed(discogsArtist.getId());
-    return new ArtistDetailsResponse(discogsArtist.getName(), discogsArtist.getId(), artistProfile, activeMember, formerMember, images, isFollowed);
   }
 
   private ArtistDto createArtistDto(ArtistEntity artistEntity) {

@@ -72,13 +72,6 @@ function createMyArtistsCards(myArtists){
     const breakElement = document.createElement('br');
     cardBody.append(breakElement);
 
-    const artistDetailsElement = document.createElement('a');
-    artistDetailsElement.href = "/artists/" + artist.discogsId;
-    artistDetailsElement.text = "Details for " + artist.artistName;
-    cardBody.append(artistDetailsElement);
-
-    cardBody.append(breakElement.cloneNode(false));
-
     const followArtistButtonElement = createFollowArtistButton(artist.artistName,
       artist.discogsId, true);
     cardBody.append(followArtistButtonElement);
