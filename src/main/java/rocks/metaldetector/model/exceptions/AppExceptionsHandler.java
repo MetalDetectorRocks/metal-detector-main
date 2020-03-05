@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import rocks.metaldetector.web.dto.response.ErrorResponse;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,9 +41,15 @@ public class AppExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.NOT_FOUND);
   }
 
+  @ExceptionHandler(value = {AccessDeniedException.class})
+  public ResponseEntity<ErrorResponse> handleAccessDeniedException(RuntimeException exception, WebRequest webRequest) {
+    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
+    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.FORBIDDEN);
+  }
+
   @ExceptionHandler(value = {Exception.class})
   public ResponseEntity<ErrorResponse> handleAllOtherExceptions(Exception exception, WebRequest webRequest) {
-    log.error(webRequest.getContextPath() + ": " + exception.getMessage(), exception);
+    log.error(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
