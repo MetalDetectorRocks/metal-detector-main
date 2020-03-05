@@ -20,7 +20,6 @@ public class ViewNames {
   public static class Frontend {
     public static final String HOME                      = "frontend/home";
     public static final String SEARCH                    = "frontend/search";
-    public static final String ARTIST_DETAILS            = "frontend/artist-details";
     public static final String SETTINGS                  = "frontend/settings";
     public static final String PROFILE                   = "frontend/profile";
     public static final String RELEASES                  = "frontend/releases";

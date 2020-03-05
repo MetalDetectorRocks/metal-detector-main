@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.web.dto.response.ArtistDetailsResponse;
 import rocks.metaldetector.web.dto.response.SearchResponse;
 
 import java.util.Optional;
@@ -30,13 +29,6 @@ public class ArtistsRestController {
   public ResponseEntity<SearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
                                                          @PageableDefault Pageable pageable) {
     Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(query, pageable);
-    return ResponseEntity.of(responseOptional);
-  }
-
-  @GetMapping(path = "/{discogsId}",
-              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<ArtistDetailsResponse> handleDetailsSearchRequest(@PathVariable long discogsId) {
-    Optional<ArtistDetailsResponse> responseOptional = artistsService.searchDiscogsById(discogsId);
     return ResponseEntity.of(responseOptional);
   }
 

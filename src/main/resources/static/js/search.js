@@ -90,13 +90,6 @@ function createResultCards(searchResponse){
         const breakElement = document.createElement('br');
         cardBody.append(breakElement);
 
-        const artistDetailsElement = document.createElement('a');
-        artistDetailsElement.href = "/artists/" + searchResult.id;
-        artistDetailsElement.text = "Details for " + searchResult.artistName;
-        cardBody.append(artistDetailsElement);
-
-        cardBody.append(breakElement.cloneNode(false));
-
         const followArtistButtonElement = createFollowArtistButton(searchResult.artistName,
           searchResult.id, searchResult.isFollowed);
         cardBody.append(followArtistButtonElement);
