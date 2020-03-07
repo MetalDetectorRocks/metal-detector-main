@@ -2,8 +2,8 @@ package rocks.metaldetector.web.controller.mvc;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.testutil.BaseWebMvcTest;
@@ -15,7 +15,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@WebMvcTest(value = ArtistsController.class, excludeAutoConfiguration = MockMvcSecurityAutoConfiguration.class)
+@WebMvcTest(value = ArtistsController.class)
+@WithMockUser
 class ArtistsControllerIT extends BaseWebMvcTest {
 
   @Test
