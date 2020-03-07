@@ -61,7 +61,7 @@ function createMyArtistsCards(myArtists){
     cardBody.append(headingElement);
     card.append(cardBody);
 
-    if (artist.thumb !== ""){
+    if (artist.thumb){
       const thumbElement = document.createElement('img');
       thumbElement.className = "card-image";
       thumbElement.alt = 'Thumb for ' + artist.artistName;

@@ -79,7 +79,7 @@ function createResultCards(searchResponse){
         cardBody.append(headingElement);
         card.append(cardBody);
 
-        if (searchResult.thumb !== ""){
+        if (searchResult.thumb){
             const thumbElement = document.createElement('img');
             thumbElement.className = "card-image";
             thumbElement.alt = 'Thumb for ' + searchResult.artistName;
