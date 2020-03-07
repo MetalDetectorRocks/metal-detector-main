@@ -53,6 +53,7 @@
         <rest-assured.version>4.2.0</rest-assured.version>
         <lightbox.version>2.10.0</lightbox.version>
         <datatables.version>1.10.20</datatables.version>
+        <webjars-locator-core.version>0.39</webjars-locator-core.version>
     </properties>
 
     <parent>
@@ -188,11 +189,11 @@
         </dependency>
 
         <!-- Web JARs-->
-<!--        <dependency>-->
-<!--            <groupId>org.webjars</groupId>-->
-<!--            <artifactId>webjars-locator</artifactId>-->
-<!--            <version>${webjars-locator-core.version}</version>1-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator</artifactId>
+            <version>${webjars-locator-core.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
