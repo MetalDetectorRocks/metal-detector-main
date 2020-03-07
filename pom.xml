@@ -38,8 +38,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
-        <junit-jupiter.version>5.5.0-M1</junit-jupiter.version>
-        <mockito.version>2.23.0</mockito.version>
+        <junit-jupiter.version>5.6.0</junit-jupiter.version>
+        <mockito.version>3.1.0</mockito.version>
         <hibernate-validator.version>6.1.0.Alpha2</hibernate-validator.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <modelmapper.version>2.3.0</modelmapper.version>

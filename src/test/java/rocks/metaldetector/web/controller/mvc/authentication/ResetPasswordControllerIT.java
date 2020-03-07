@@ -33,7 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -157,7 +157,7 @@ class ResetPasswordControllerIT extends BaseWebMvcTestWithSecurity {
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(Endpoints.Guest.RESET_PASSWORD + "?token=" + request.getTokenString()));
 
-    verifyZeroInteractions(tokenService, userService);
+    verifyNoInteractions(tokenService, userService);
   }
 
   private static Stream<Arguments> changePasswordRequestProvider() {
