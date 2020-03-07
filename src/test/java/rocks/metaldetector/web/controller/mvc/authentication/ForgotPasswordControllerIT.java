@@ -29,7 +29,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -112,9 +112,9 @@ class ForgotPasswordControllerIT implements WithAssertions, WithIntegrationTestP
             .andExpect(view().name(ViewNames.Guest.FORGOT_PASSWORD));
 
     // then
-    verifyZeroInteractions(userService);
-    verifyZeroInteractions(messages);
-    verifyZeroInteractions(eventPublisher);
+    verifyNoInteractions(userService);
+    verifyNoInteractions(messages);
+    verifyNoInteractions(eventPublisher);
   }
 
   @Test
@@ -134,7 +134,6 @@ class ForgotPasswordControllerIT implements WithAssertions, WithIntegrationTestP
     // then
     verify(userService, times(1)).getUserByEmailOrUsername(NOT_EXISTING_EMAIL);
     verify(messages, times(1)).getMessage(MessageKeys.ForgotPassword.USER_DOES_NOT_EXIST, null, Locale.US);
-    verifyZeroInteractions(eventPublisher);
+    verifyNoInteractions(eventPublisher);
   }
-
 }
