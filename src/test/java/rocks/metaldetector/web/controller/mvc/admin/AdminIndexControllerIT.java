@@ -2,8 +2,8 @@ package rocks.metaldetector.web.controller.mvc.admin;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.testutil.BaseWebMvcTest;
 
@@ -13,11 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static rocks.metaldetector.config.constants.Endpoints.AdminArea;
 
-@WebMvcTest(value = AdminIndexController.class, excludeAutoConfiguration = MockMvcSecurityAutoConfiguration.class)
+@WebMvcTest(value = AdminIndexController.class)
 class AdminIndexControllerIT extends BaseWebMvcTest {
 
     @Test
     @DisplayName("Should return admin index page when requesting uri '" + AdminArea.INDEX + "'")
+    @WithMockUser
     void should_return_admin_index_page() throws Exception {
         mockMvc.perform(get(AdminArea.INDEX))
                 .andExpect(status().isOk())

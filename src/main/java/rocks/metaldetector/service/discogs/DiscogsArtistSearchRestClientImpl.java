@@ -1,7 +1,6 @@
 package rocks.metaldetector.service.discogs;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -32,7 +31,7 @@ public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRes
 
   @Override
   public Optional<DiscogsArtistSearchResultContainer> searchByName(String artistQueryString, Pageable pageable) {
-    if (StringUtils.isEmpty(artistQueryString)) {
+    if (artistQueryString == null || artistQueryString.isEmpty()) {
       return Optional.empty();
     }
 
