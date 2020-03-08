@@ -22,7 +22,7 @@
           <input type="text" id="username" class="form-control" name="username"
                  th:class="${#fields.hasErrors('username')}? 'form-control is-invalid' : 'form-control'"
                  th:field="*{username}"
-                 placeholder="#"
+                 placeholder=""
                  autocomplete="username"
                  required autofocus>
           <div class="invalid-feedback" th:errors="*{username}">Username error</div>
@@ -34,7 +34,7 @@
           <input type="email" id="email" class="form-control" name="email"
                  th:class="${#fields.hasErrors('email')}? 'form-control is-invalid' : 'form-control'"
                  th:field="*{email}"
-                 placeholder="#"
+                 placeholder=""
                  required>
           <div class="invalid-feedback" th:errors="*{email}">Email error</div>
           <label for="email">Email address</label>
@@ -46,7 +46,7 @@
           <input type="password" id="plainPassword" class="form-control" name="plainPassword"
                  th:class="${#fields.hasErrors('plainPassword')}? 'form-control is-invalid' : 'form-control'"
                  th:field="*{plainPassword}"
-                 placeholder="#"
+                 placeholder=""
                  autocomplete="new-password"
                  required>
           <div class="invalid-feedback" th:errors="*{plainPassword}">Password error</div>
@@ -58,7 +58,7 @@
           <input type="password" id="verifyPlainPassword" class="form-control" name="verifyPlainPassword"
                  th:class="${#fields.hasErrors('verifyPlainPassword')}? 'form-control is-invalid' : 'form-control'"
                  th:field="*{verifyPlainPassword}"
-                 placeholder="#"
+                 placeholder=""
                  autocomplete="new-password"
                  required>
           <div class="invalid-feedback" th:errors="*{verifyPlainPassword}">Verify password error</div>
