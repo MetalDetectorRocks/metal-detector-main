@@ -79,7 +79,7 @@ function createResultCards(searchResponse){
         cardBody.append(headingElement);
         card.append(cardBody);
 
-        if (searchResult.thumb !== ""){
+        if (searchResult.thumb){
             const thumbElement = document.createElement('img');
             thumbElement.className = "card-image";
             thumbElement.alt = 'Thumb for ' + searchResult.artistName;
@@ -89,13 +89,6 @@ function createResultCards(searchResponse){
 
         const breakElement = document.createElement('br');
         cardBody.append(breakElement);
-
-        const artistDetailsElement = document.createElement('a');
-        artistDetailsElement.href = "/artists/" + searchResult.id;
-        artistDetailsElement.text = "Details for " + searchResult.artistName;
-        cardBody.append(artistDetailsElement);
-
-        cardBody.append(breakElement.cloneNode(false));
 
         const followArtistButtonElement = createFollowArtistButton(searchResult.artistName,
           searchResult.id, searchResult.isFollowed);

@@ -10,7 +10,6 @@ import rocks.metaldetector.web.dto.releases.ButlerReleasesResponse;
 import rocks.metaldetector.web.dto.releases.ReleaseDto;
 import rocks.metaldetector.web.dto.request.ChangePasswordRequest;
 import rocks.metaldetector.web.dto.request.RegisterUserRequest;
-import rocks.metaldetector.web.dto.response.ArtistDetailsResponse;
 import rocks.metaldetector.web.dto.response.DetectorReleasesResponse;
 import rocks.metaldetector.web.dto.response.Pagination;
 import rocks.metaldetector.web.dto.response.SearchResponse;
@@ -130,14 +129,6 @@ public class DtoFactory {
       resultContainer.setResults(List.of(discogsArtistSearchResult));
 
       return resultContainer;
-    }
-  }
-
-  public static class ArtistDetailsResponseFactory {
-
-    public static ArtistDetailsResponse withResult() {
-      return new ArtistDetailsResponse(ARTIST_NAME, DISCOGS_ID, null,
-                                       null, null, null, false);
     }
   }
 

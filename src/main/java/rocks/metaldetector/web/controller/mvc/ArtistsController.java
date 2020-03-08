@@ -12,14 +12,9 @@ import rocks.metaldetector.config.constants.ViewNames;
 @RequestMapping(Endpoints.Frontend.ARTISTS)
 public class ArtistsController {
 
-  @GetMapping(path = Endpoints.Frontend.SEARCH)
+  @GetMapping
   public ModelAndView showSearch() {
     return new ModelAndView(ViewNames.Frontend.SEARCH);
-  }
-
-  @GetMapping(path = "/{discogsId}")
-  public ModelAndView showArtistDetails(@PathVariable String discogsId) {
-    return new ModelAndView(ViewNames.Frontend.ARTIST_DETAILS);
   }
 
 }

@@ -2,7 +2,6 @@ package rocks.metaldetector.service.artist;
 
 import org.springframework.data.domain.Pageable;
 import rocks.metaldetector.web.dto.ArtistDto;
-import rocks.metaldetector.web.dto.response.ArtistDetailsResponse;
 import rocks.metaldetector.web.dto.response.SearchResponse;
 
 import java.util.List;
@@ -26,6 +25,5 @@ public interface ArtistsService {
   long countFollowedArtistsForCurrentUser();
 
   Optional<SearchResponse> searchDiscogsByName(String artistQueryString, Pageable pageable);
-  Optional<ArtistDetailsResponse> searchDiscogsById(long discogsId);
 
 }
