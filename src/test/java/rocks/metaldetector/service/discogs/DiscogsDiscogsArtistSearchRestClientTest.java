@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.config.misc.DiscogsConfig;
+import rocks.metaldetector.testutil.BaseWebMvcTest;
 import rocks.metaldetector.web.DtoFactory.ArtistFactory;
 import rocks.metaldetector.web.DtoFactory.DiscogsArtistSearchResultFactory;
 import rocks.metaldetector.web.dto.discogs.artist.DiscogsArtist;
@@ -133,7 +134,6 @@ class DiscogsDiscogsArtistSearchRestClientTest implements WithAssertions {
               Arguments.of((String) null)
       );
     }
-
   }
 
   @Nested
