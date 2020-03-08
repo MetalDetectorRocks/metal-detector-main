@@ -1,4 +1,3 @@
-[![CircleCI](https://circleci.com/gh/DanielW1987/metal-release-radar/tree/master.svg?style=svg)](https://circleci.com/gh/DanielW1987/metal-release-radar/tree/master)
 [![Coverage Status](https://coveralls.io/repos/github/DanielW1987/metal-release-radar/badge.svg?branch=master)](https://coveralls.io/github/DanielW1987/metal-release-radar?branch=master)
 
 ## Table of contents
@@ -28,7 +27,7 @@ The application uses the REST API from Discogs.
 Clone the source code via:
 
 ```
-git clone https://github.com/metaldetectorrocks/metal-detector.git
+git clone https://github.com/MetalDetectorRocks/metal-detector-main.git
 ```
 
 <a name="run-application-locally-dev"></a>
@@ -94,7 +93,7 @@ It is also possible to define all mentioned connection details and secrets as en
 ## 5 Start the application
 
 via Maven
-- Execute command `mvn install` and after that `mvn springboot:run` in root directory
+- Execute command `mvn clean package spring-boot:run` in root directory
 
 via your IDE
 - Execute main class `rocks.metaldetector.MetalDetectorApplication`
