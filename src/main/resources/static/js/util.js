@@ -47,7 +47,7 @@ function createFollowArtistButton(artistName,artistId,isFollowed) {
   const followArtistButtonElement = document.createElement('button');
   followArtistButtonElement.id = "followArtistButton"+artistId;
   followArtistButtonElement.type = "button";
-  followArtistButtonElement.className = "btn btn-primary btn-dark font-weight-bold follow-artist-button";
+  followArtistButtonElement.className = "btn btn-primary btn-dark font-weight-bold mt-2";
   followArtistButtonElement.textContent = isFollowed ? "Unfollow" : "Follow";
   followArtistButtonElement.onclick =createOnClickFunctionFollowArtist(artistName,
     artistId,isFollowed,followArtistButtonElement);
