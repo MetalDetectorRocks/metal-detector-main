@@ -2,6 +2,7 @@ package rocks.metaldetector.web.controller.rest;
 
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import io.restassured.module.mockmvc.config.RestAssuredMockMvcConfig;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
@@ -29,9 +30,11 @@ import rocks.metaldetector.web.dto.response.UserResponse;
 
 import java.util.List;
 
+import static io.restassured.module.mockmvc.config.MockMvcConfig.mockMvcConfig;
 import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,8 +57,10 @@ public class UserRestControllerTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    MockMvcBuilder mockMvcBuilder = MockMvcBuilders.standaloneSetup(new UserRestController(userService, modelMapper));
-    RestAssuredMockMvc.standaloneSetup(mockMvcBuilder);
+    underTest = new UserRestController(userService, modelMapper);
+    MockMvcBuilder mockMvcBuilder = MockMvcBuilders.standaloneSetup(underTest);
+    RestAssuredMockMvc.standaloneSetup(mockMvcBuilder,
+                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)));
     mockMvc = mockMvcBuilder.build();
   }
 
