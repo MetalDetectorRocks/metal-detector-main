@@ -16,24 +16,17 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContext;
-import org.springframework.test.context.TestPropertySource;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.model.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.model.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.testutil.WithIntegrationTestProfile;
-import rocks.metaldetector.testutil.WithSecurityConfig;
 import rocks.metaldetector.web.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.web.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
@@ -57,12 +50,11 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
-@TestPropertySource(locations = "classpath:application-integrationtest.properties")
-class UserRestControllerIT implements WithAssertions, WithSecurityConfig {
+class UserRestControllerIT implements WithAssertions, WithIntegrationTestProfile {
 
   private static final String USER_ID = "public-user-id";
 
-  @Autowired
+  @MockBean
   private UserService userService;
 
   @SpyBean
@@ -80,7 +72,7 @@ class UserRestControllerIT implements WithAssertions, WithSecurityConfig {
 
   @AfterEach
   void tearDown() {
-//    reset(userService);
+    reset(userService);
   }
 
   @DisplayName("Get all users tests")
@@ -89,26 +81,25 @@ class UserRestControllerIT implements WithAssertions, WithSecurityConfig {
 
     @Test
     @DisplayName("Should return all users")
-    @WithMockUser(roles = {"ADMINISTRATOR"})
     void should_return_all_users() {
       // given
       UserDto dto1 = UserDtoFactory.withUsernameAndEmail("user1", "user1@example.com");
       UserDto dto2 = UserDtoFactory.withUsernameAndEmail("user2", "user2@example.com");
       UserDto dto3 = UserDtoFactory.withUsernameAndEmail("user3", "user3@example.com");
-//      when(userService.getAllUsers()).thenReturn(List.of(dto1, dto2, dto3));
+      when(userService.getAllUsers()).thenReturn(List.of(dto1, dto2, dto3));
 
       // when
       ValidatableResponse response = requestHandler.doGet(ContentType.JSON);
 
       // then
       response.contentType(ContentType.JSON)
-              .statusCode(HttpStatus.OK.value());
+          .statusCode(HttpStatus.OK.value());
 
       List<UserResponse> userList = response.extract().body().jsonPath().getList(".", UserResponse.class);
-      assertThat(userList).hasSize(1);
-//      assertThat(userList.get(0)).isEqualTo(modelMapper.map(dto1, UserResponse.class));
-//      assertThat(userList.get(1)).isEqualTo(modelMapper.map(dto2, UserResponse.class));
-//      assertThat(userList.get(2)).isEqualTo(modelMapper.map(dto3, UserResponse.class));
+      assertThat(userList).hasSize(3);
+      assertThat(userList.get(0)).isEqualTo(modelMapper.map(dto1, UserResponse.class));
+      assertThat(userList.get(1)).isEqualTo(modelMapper.map(dto2, UserResponse.class));
+      assertThat(userList.get(2)).isEqualTo(modelMapper.map(dto3, UserResponse.class));
     }
 
     @Test
@@ -122,7 +113,7 @@ class UserRestControllerIT implements WithAssertions, WithSecurityConfig {
 
       // then
       response.contentType(ContentType.JSON)
-              .statusCode(HttpStatus.OK.value());
+          .statusCode(HttpStatus.OK.value());
 
       List<UserResponse> userList = response.extract().body().jsonPath().getList(".", UserResponse.class);
       assertThat(userList).isEmpty();
@@ -158,7 +149,7 @@ class UserRestControllerIT implements WithAssertions, WithSecurityConfig {
 
       // then
       response.contentType(ContentType.JSON)
-              .statusCode(HttpStatus.OK.value());
+          .statusCode(HttpStatus.OK.value());
 
       UserResponse user = response.extract().as(UserResponse.class);
       assertThat(user).isEqualTo(modelMapper.map(dto, UserResponse.class));
@@ -188,7 +179,7 @@ class UserRestControllerIT implements WithAssertions, WithSecurityConfig {
 
       // then
       response.contentType(ContentType.JSON)
-              .statusCode(HttpStatus.NOT_FOUND.value());
+          .statusCode(HttpStatus.NOT_FOUND.value());
     }
   }
 
@@ -312,7 +303,7 @@ class UserRestControllerIT implements WithAssertions, WithSecurityConfig {
 
       // then
       response.contentType(ContentType.JSON)
-              .statusCode(HttpStatus.OK.value());
+          .statusCode(HttpStatus.OK.value());
 
       UserResponse user = response.extract().as(UserResponse.class);
       assertThat(user.getRole()).isEqualTo(NEW_ROLE);
@@ -332,7 +323,7 @@ class UserRestControllerIT implements WithAssertions, WithSecurityConfig {
 
       // then
       response.contentType(ContentType.JSON)
-              .statusCode(HttpStatus.BAD_REQUEST.value());
+          .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     private Stream<Arguments> inputProvider() {
