@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(MockitoExtension.class)
-class ForgotPasswordControllerIT implements WithAssertions, WithIntegrationTestProfile {
+class ForgotPasswordControllerIT implements WithAssertions {
 
   private static final String EXISTING_EMAIL = "john.doe@example.com";
   private static final String NOT_EXISTING_EMAIL = "not.existing@example.com";
