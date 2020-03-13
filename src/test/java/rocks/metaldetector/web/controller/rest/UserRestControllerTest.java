@@ -2,66 +2,75 @@ package rocks.metaldetector.web.controller.rest;
 
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import io.restassured.module.mockmvc.config.RestAssuredMockMvcConfig;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
+import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
+import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.MimeTypeUtils;
 import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.model.exceptions.ResourceNotFoundException;
+import rocks.metaldetector.model.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.web.DtoFactory;
+import rocks.metaldetector.web.DtoFactory.RegisterUserRequestFactory;
+import rocks.metaldetector.web.DtoFactory.UserDtoFactory;
+import rocks.metaldetector.web.RestAssuredMockMvcUtils;
+import rocks.metaldetector.web.RestAssuredRequestHandler;
 import rocks.metaldetector.web.dto.UserDto;
+import rocks.metaldetector.web.dto.request.RegisterUserRequest;
+import rocks.metaldetector.web.dto.request.UpdateUserRequest;
+import rocks.metaldetector.web.dto.response.ErrorResponse;
 import rocks.metaldetector.web.dto.response.UserResponse;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
-import static io.restassured.module.mockmvc.config.MockMvcConfig.mockMvcConfig;
-import static org.hamcrest.Matchers.hasItems;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class UserRestControllerTest implements WithAssertions {
+class UserRestControllerTest implements WithAssertions {
 
-  private static final String REQUEST_URI = "http://localhost" + Endpoints.Rest.USERS;
+  private static final String USER_ID = "public-user-id";
 
   @Mock
   private UserService userService;
 
   @Spy
-  ModelMapper modelMapper;
+  private ModelMapper modelMapper;
 
   @InjectMocks
   private UserRestController underTest;
 
-  private MockMvc mockMvc;
+  private RestAssuredMockMvcUtils restAssuredUtils;
 
   @BeforeEach
   void setup() {
-    underTest = new UserRestController(userService, modelMapper);
-    MockMvcBuilder mockMvcBuilder = MockMvcBuilders.standaloneSetup(underTest);
-    RestAssuredMockMvc.standaloneSetup(mockMvcBuilder,
+    restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS);
+    RestAssuredMockMvc.standaloneSetup(underTest,
                                        springSecurity((request, response, chain) -> chain.doFilter(request, response)));
-    mockMvc = mockMvcBuilder.build();
   }
 
   @AfterEach
@@ -69,42 +78,254 @@ public class UserRestControllerTest implements WithAssertions {
     reset(userService);
   }
 
-  @Test
-  @DisplayName("Should return all users")
-  void should_return_all_users_mockMvc() throws Exception {
-    // given
-    UserDto dto1 = DtoFactory.UserDtoFactory.withUsernameAndEmail("user1", "user1@example.com");
-    UserDto dto2 = DtoFactory.UserDtoFactory.withUsernameAndEmail("user2", "user2@example.com");
-    UserDto dto3 = DtoFactory.UserDtoFactory.withUsernameAndEmail("user3", "user3@example.com");
-    when(userService.getAllUsers()).thenReturn(List.of(dto1, dto2, dto3));
+  @DisplayName("Get all users tests")
+  @Nested
+  class GetAllUsersTest {
 
-    ResultActions result = mockMvc.perform(get(REQUEST_URI).accept(MimeTypeUtils.APPLICATION_JSON_VALUE));
+    @Test
+    @DisplayName("Should return all users")
+    void should_return_all_users() {
+      // given
+      UserDto dto1 = UserDtoFactory.withUsernameAndEmail("user1", "user1@example.com");
+      UserDto dto2 = UserDtoFactory.withUsernameAndEmail("user2", "user2@example.com");
+      UserDto dto3 = UserDtoFactory.withUsernameAndEmail("user3", "user3@example.com");
+      when(userService.getAllUsers()).thenReturn(List.of(dto1, dto2, dto3));
 
-    result.andExpect(status().isOk());
-    result.andExpect(jsonPath("$.length()").value(3));
-//    result.andExpect(jsonPath("$", hasItems(List.of(dto1, dto2, dto3))));
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doGet(ContentType.JSON);
+
+      // then
+      response.statusCode(HttpStatus.OK.value());
+
+      List<UserResponse> userList = response.extract().body().jsonPath().getList(".", UserResponse.class);
+      assertThat(userList).hasSize(3);
+      assertThat(userList.get(0)).isEqualTo(modelMapper.map(dto1, UserResponse.class));
+      assertThat(userList.get(1)).isEqualTo(modelMapper.map(dto2, UserResponse.class));
+      assertThat(userList.get(2)).isEqualTo(modelMapper.map(dto3, UserResponse.class));
+    }
+
+    @Test
+    @DisplayName("Should return empty response if no users exist")
+    void should_return_empty_response() {
+      // given
+      when(userService.getAllUsers()).thenReturn(Collections.emptyList());
+
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doGet(ContentType.JSON);
+
+      // then
+      response.statusCode(HttpStatus.OK.value());
+
+      List<UserResponse> userList = response.extract().body().jsonPath().getList(".", UserResponse.class);
+      assertThat(userList).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Should use UserService to return all users")
+    void should_use_user_service() {
+      // given
+      when(userService.getAllUsers()).thenReturn(Collections.emptyList());
+
+      // when
+      restAssuredUtils.doGet(ContentType.JSON);
+
+      // then
+      verify(userService, times((1))).getAllUsers();
+    }
   }
 
-  @Test
-  @DisplayName("Should return all users")
-  void should_return_all_users_rest_assured() {
-    // given
-    UserDto dto1 = DtoFactory.UserDtoFactory.withUsernameAndEmail("user1", "user1@example.com");
-    UserDto dto2 = DtoFactory.UserDtoFactory.withUsernameAndEmail("user2", "user2@example.com");
-    UserDto dto3 = DtoFactory.UserDtoFactory.withUsernameAndEmail("user3", "user3@example.com");
-    when(userService.getAllUsers()).thenReturn(List.of(dto1, dto2, dto3));
+  @DisplayName("Get certain user tests")
+  @Nested
+  class GetCertainUserTest {
 
-    MockMvcResponse response = RestAssuredMockMvc.given()
-        .accept(ContentType.JSON)
-        .when()
-        .get(REQUEST_URI);
+    @Test
+    @DisplayName("Should return a certain user")
+    void should_return_a_certain_user() {
+      // given
+      UserDto dto = UserDtoFactory.withUsernameAndEmail("user1", "user1@example.com");
+      when(userService.getUserByPublicId(anyString())).thenReturn(dto);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK.value());
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doGet("/dummy-user-id", ContentType.JSON);
 
-    List<UserResponse> userList = response.jsonPath().getList(".", UserResponse.class);
-    assertThat(userList).hasSize(3);
-    assertThat(userList.get(0)).isEqualTo(modelMapper.map(dto1, UserResponse.class));
-    assertThat(userList.get(1)).isEqualTo(modelMapper.map(dto2, UserResponse.class));
-    assertThat(userList.get(2)).isEqualTo(modelMapper.map(dto3, UserResponse.class));
+      // then
+      response.statusCode(HttpStatus.OK.value());
+
+      UserResponse user = response.extract().as(UserResponse.class);
+      assertThat(user).isEqualTo(modelMapper.map(dto, UserResponse.class));
+    }
+
+    @Test
+    @DisplayName("Should use UserService to return a certain user")
+    void should_use_user_service() {
+      // given
+      when(userService.getUserByPublicId(USER_ID)).thenReturn(new UserDto());
+
+      // when
+      restAssuredUtils.doGet("/" + USER_ID, ContentType.JSON);
+
+      // then
+      verify(userService, times(1)).getUserByPublicId(USER_ID);
+    }
+
+    @Test
+    @DisplayName("Should return 404 if no user exist")
+    void should_return_404() {
+      // given
+      when(userService.getUserByPublicId(USER_ID)).thenThrow(new ResourceNotFoundException("msg"));
+
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doGet("/" + USER_ID, ContentType.JSON);
+
+      // then
+      response.statusCode(HttpStatus.NOT_FOUND.value());
+    }
+  }
+
+  @DisplayName("Create user tests")
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @Nested
+  class CreateUserTest {
+
+    @Test
+    @DisplayName("Should pass expected UserDto to UserService")
+    void should_use_user_service() {
+      // given
+      RegisterUserRequest request = RegisterUserRequestFactory.createDefault();
+      UserDto expectedPassedUserDto = modelMapper.map(request, UserDto.class);
+      when(userService.createAdministrator(any())).thenReturn(UserDtoFactory.createDefault());
+      ArgumentCaptor<UserDto> userDtoCaptor = ArgumentCaptor.forClass(UserDto.class);
+
+      // when
+      restAssuredUtils.doPost(request, ContentType.JSON);
+
+      // then
+      verify(userService, times(1)).createAdministrator(userDtoCaptor.capture());
+      assertThat(userDtoCaptor.getValue()).isEqualTo(expectedPassedUserDto);
+    }
+
+    @Test
+    @DisplayName("Should return UserResponse and status 201 if creating of administrator was successful")
+    void should_return_201() {
+      // given
+      RegisterUserRequest request = RegisterUserRequestFactory.createDefault();
+      UserDto createdUserDto = UserDtoFactory.createDefault();
+      when(userService.createAdministrator(any())).thenReturn(createdUserDto);
+
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doPost(request, ContentType.JSON);
+
+      // then
+      response.statusCode(HttpStatus.CREATED.value());
+
+      UserResponse user = response.extract().as(UserResponse.class);
+      assertThat(user).isEqualTo(modelMapper.map(createdUserDto, UserResponse.class));
+    }
+
+    @Test
+    @DisplayName("Should return status 409 and ErrorResponse if user with username or email already exists")
+    void should_return_409() {
+      // given
+      RegisterUserRequest request = RegisterUserRequestFactory.createDefault();
+      when(userService.createAdministrator(any())).thenThrow(UserAlreadyExistsException.class);
+
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doPost(request, ContentType.JSON);
+
+      // then
+      response.statusCode(HttpStatus.CONFLICT.value())
+          .extract().as(ErrorResponse.class);
+    }
+
+    @ParameterizedTest
+    @MethodSource("registerUserRequestProvider")
+    @DisplayName("Should return status 400 if creating of administrator does not pass validation")
+    void should_return_400(RegisterUserRequest request, int expectedErrorCount) {
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doPost(request, ContentType.JSON);
+
+      // then
+      response.statusCode(HttpStatus.BAD_REQUEST.value());
+
+      ErrorResponse errorResponse = response.extract().as(ErrorResponse.class);
+      System.out.println(errorResponse);
+      assertThat(errorResponse.getMessages()).hasSize(expectedErrorCount);
+    }
+
+    private Stream<Arguments> registerUserRequestProvider() {
+      return Stream.of(
+          // invalid username
+          Arguments.of(RegisterUserRequestFactory.withUsername(""), 1),
+          Arguments.of(RegisterUserRequestFactory.withUsername("    "), 1),
+          Arguments.of(RegisterUserRequestFactory.withUsername(null), 1),
+
+          // invalid email
+          Arguments.of(RegisterUserRequestFactory.withEmail("john.doe.example.de"), 1),
+          Arguments.of(RegisterUserRequestFactory.withEmail(""), 1),
+          Arguments.of(RegisterUserRequestFactory.withEmail("    "), 2),
+          Arguments.of(RegisterUserRequestFactory.withEmail("@com"), 1),
+          Arguments.of(RegisterUserRequestFactory.withEmail(null), 1),
+
+          // invalid passwords
+          Arguments.of(RegisterUserRequestFactory.withPassword("secret-password", "other-secret-password"), 1),
+          Arguments.of(RegisterUserRequestFactory.withPassword("secret", "secret"), 2),
+          Arguments.of(RegisterUserRequestFactory.withPassword("", ""), 4),
+          Arguments.of(RegisterUserRequestFactory.withPassword(null, null), 2),
+
+          // all null
+          Arguments.of(RegisterUserRequest.builder().build(), 4)
+      );
+    }
+  }
+
+  @Nested
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @DisplayName("Update user tests")
+  class UpdateUserTest {
+
+    @Test
+    @DisplayName("Should return 200 if updating user is successful")
+    void should_return_200() {
+      // given
+      final String NEW_ROLE = "Administrator";
+      UpdateUserRequest updateUserRequest = new UpdateUserRequest(USER_ID, NEW_ROLE, false);
+      UserDto userDto = UserDtoFactory.createDefault();
+      userDto.setRole(NEW_ROLE);
+      userDto.setEnabled(false);
+      when(userService.updateUser(USER_ID, modelMapper.map(updateUserRequest, UserDto.class))).thenReturn(userDto);
+
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doPut(updateUserRequest, ContentType.JSON);
+
+      // then
+      response.statusCode(HttpStatus.OK.value());
+
+      UserResponse user = response.extract().as(UserResponse.class);
+      assertThat(user.getRole()).isEqualTo(NEW_ROLE);
+      assertThat(user.isEnabled()).isFalse();
+      verify(userService, times(1)).updateUser(eq(USER_ID), any());
+    }
+
+    @ParameterizedTest
+    @MethodSource("inputProvider")
+    @DisplayName("Should return 400 for faulty requests")
+    void should_return_400(String userId, String role, boolean enabled) {
+      // given
+      UpdateUserRequest updateUserRequest = new UpdateUserRequest(userId, role, enabled);
+
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doPost(updateUserRequest, ContentType.JSON);
+
+      // then
+      response.statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    private Stream<Arguments> inputProvider() {
+      return Stream.of(
+          Arguments.of("", "", false),
+          Arguments.of("id", "", false),
+          Arguments.of("", "role", false)
+      );
+    }
   }
 }
