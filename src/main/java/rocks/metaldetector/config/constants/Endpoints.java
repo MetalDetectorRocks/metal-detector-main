@@ -60,6 +60,7 @@ public class Endpoints {
     public static final String IMPORT       = "/admin/import";
     public static final String ANALYTICS    = "/admin/analytics";
     public static final String SETTINGS     = "/admin/settings";
+    public static final String RELEASES     = "/admin/releases";
     public static final String USERS        = "/admin/users";
     public static final String PROFILE      = "/admin/profile";
   }

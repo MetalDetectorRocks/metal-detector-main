@@ -11,7 +11,7 @@ $(document).ready(function () {
     // update user
     $("#update-user-button").button().on("click", updateUser);
     $("#cancel-update-user-button").button().on("click", resetUpdateUserForm);
-    $(document).on("click", "#user-table tbody tr", showUpdateForm);
+    $(document).on("click", "#user-table tbody tr", showUpdateUserForm);
     $("#update-user-form-close").button().on("click", resetUpdateUserForm);
 });
 
@@ -177,7 +177,7 @@ function createUpdateUserRequest() {
 /**
  * Shows the update form and fills form with values from the selected user.
  */
-function showUpdateForm() {
+function showUpdateUserForm() {
     let data = userTable.row(this).data();
     $('#update-user-dialog').modal('show');
 
