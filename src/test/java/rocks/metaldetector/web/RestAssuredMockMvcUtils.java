@@ -11,57 +11,57 @@ import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 
 public class RestAssuredMockMvcUtils {
 
+  private final ContentType CONTENT_TYPE = ContentType.JSON;
   private final String requestUri;
 
   public RestAssuredMockMvcUtils(String requestUri) {
     this.requestUri = requestUri;
-//    RestAssured.defaultParser = Parser.JSON;
   }
 
-  public ValidatableMockMvcResponse doGet(ContentType accept) {
-    return doGet("", accept, Collections.emptyMap());
+  public ValidatableMockMvcResponse doGet() {
+    return doGet("", Collections.emptyMap());
   }
 
-  public ValidatableMockMvcResponse doGet(ContentType accept, Map<String,Object> params) {
-    return doGet("", accept, params);
+  public ValidatableMockMvcResponse doGet(Map<String,Object> params) {
+    return doGet("", params);
   }
 
-  public ValidatableMockMvcResponse doGet(String pathSegment, ContentType accept) {
-    return doGet(pathSegment, accept, Collections.emptyMap());
+  public ValidatableMockMvcResponse doGet(String pathSegment) {
+    return doGet(pathSegment, Collections.emptyMap());
   }
 
-  public ValidatableMockMvcResponse doGet(String pathSegment, ContentType accept, Map<String,Object> params) {
+  public ValidatableMockMvcResponse doGet(String pathSegment, Map<String,Object> params) {
     return given()
-             .accept(accept)
+             .accept(CONTENT_TYPE)
              .params(params)
            .when()
              .get(requestUri + pathSegment)
         .then();
   }
 
-  public ValidatableMockMvcResponse doPost(String pathSegment, ContentType accept) {
+  public ValidatableMockMvcResponse doPost(String pathSegment) {
     return given()
-           .contentType(accept)
-           .accept(accept)
+           .contentType(CONTENT_TYPE)
+           .accept(CONTENT_TYPE)
           .when()
            .post(requestUri + pathSegment)
         .then();
   }
 
-  public ValidatableMockMvcResponse doPost(Object request, ContentType accept) {
+  public ValidatableMockMvcResponse doPost(Object request) {
     return given()
-            .accept(accept)
-            .contentType(accept)
+            .accept(CONTENT_TYPE)
+            .contentType(CONTENT_TYPE)
             .body(request)
           .when()
             .post(requestUri)
         .then();
   }
 
-  public ValidatableMockMvcResponse doPut(Object request, ContentType accept) {
+  public ValidatableMockMvcResponse doPut(Object request) {
     return given()
-            .accept(accept)
-            .contentType(accept)
+            .accept(CONTENT_TYPE)
+            .contentType(CONTENT_TYPE)
             .body(request)
           .when()
             .put(requestUri)

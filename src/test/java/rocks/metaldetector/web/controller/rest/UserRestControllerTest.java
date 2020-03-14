@@ -1,10 +1,7 @@
 package rocks.metaldetector.web.controller.rest;
 
-import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import io.restassured.module.mockmvc.response.MockMvcResponse;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
-import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,15 +19,19 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.model.exceptions.AppExceptionsHandler;
 import rocks.metaldetector.model.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.model.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.web.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
-import rocks.metaldetector.web.RestAssuredRequestHandler;
 import rocks.metaldetector.web.dto.UserDto;
 import rocks.metaldetector.web.dto.request.RegisterUserRequest;
 import rocks.metaldetector.web.dto.request.UpdateUserRequest;
@@ -70,7 +71,8 @@ class UserRestControllerTest implements WithAssertions {
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS);
     RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)));
+                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)),
+                                       exceptionResolver());
   }
 
   @AfterEach
@@ -92,7 +94,7 @@ class UserRestControllerTest implements WithAssertions {
       when(userService.getAllUsers()).thenReturn(List.of(dto1, dto2, dto3));
 
       // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doGet(ContentType.JSON);
+      ValidatableMockMvcResponse response = restAssuredUtils.doGet();
 
       // then
       response.statusCode(HttpStatus.OK.value());
@@ -111,7 +113,7 @@ class UserRestControllerTest implements WithAssertions {
       when(userService.getAllUsers()).thenReturn(Collections.emptyList());
 
       // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doGet(ContentType.JSON);
+      ValidatableMockMvcResponse response = restAssuredUtils.doGet();
 
       // then
       response.statusCode(HttpStatus.OK.value());
@@ -127,7 +129,7 @@ class UserRestControllerTest implements WithAssertions {
       when(userService.getAllUsers()).thenReturn(Collections.emptyList());
 
       // when
-      restAssuredUtils.doGet(ContentType.JSON);
+      restAssuredUtils.doGet();
 
       // then
       verify(userService, times((1))).getAllUsers();
@@ -146,7 +148,7 @@ class UserRestControllerTest implements WithAssertions {
       when(userService.getUserByPublicId(anyString())).thenReturn(dto);
 
       // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doGet("/dummy-user-id", ContentType.JSON);
+      ValidatableMockMvcResponse response = restAssuredUtils.doGet("/dummy-user-id");
 
       // then
       response.statusCode(HttpStatus.OK.value());
@@ -162,7 +164,7 @@ class UserRestControllerTest implements WithAssertions {
       when(userService.getUserByPublicId(USER_ID)).thenReturn(new UserDto());
 
       // when
-      restAssuredUtils.doGet("/" + USER_ID, ContentType.JSON);
+      restAssuredUtils.doGet("/" + USER_ID);
 
       // then
       verify(userService, times(1)).getUserByPublicId(USER_ID);
@@ -175,7 +177,7 @@ class UserRestControllerTest implements WithAssertions {
       when(userService.getUserByPublicId(USER_ID)).thenThrow(new ResourceNotFoundException("msg"));
 
       // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doGet("/" + USER_ID, ContentType.JSON);
+      ValidatableMockMvcResponse response = restAssuredUtils.doGet("/" + USER_ID);
 
       // then
       response.statusCode(HttpStatus.NOT_FOUND.value());
@@ -197,7 +199,7 @@ class UserRestControllerTest implements WithAssertions {
       ArgumentCaptor<UserDto> userDtoCaptor = ArgumentCaptor.forClass(UserDto.class);
 
       // when
-      restAssuredUtils.doPost(request, ContentType.JSON);
+      restAssuredUtils.doPost(request);
 
       // then
       verify(userService, times(1)).createAdministrator(userDtoCaptor.capture());
@@ -213,7 +215,7 @@ class UserRestControllerTest implements WithAssertions {
       when(userService.createAdministrator(any())).thenReturn(createdUserDto);
 
       // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doPost(request, ContentType.JSON);
+      ValidatableMockMvcResponse response = restAssuredUtils.doPost(request);
 
       // then
       response.statusCode(HttpStatus.CREATED.value());
@@ -230,7 +232,7 @@ class UserRestControllerTest implements WithAssertions {
       when(userService.createAdministrator(any())).thenThrow(UserAlreadyExistsException.class);
 
       // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doPost(request, ContentType.JSON);
+      ValidatableMockMvcResponse response = restAssuredUtils.doPost(request);
 
       // then
       response.statusCode(HttpStatus.CONFLICT.value())
@@ -242,7 +244,7 @@ class UserRestControllerTest implements WithAssertions {
     @DisplayName("Should return status 400 if creating of administrator does not pass validation")
     void should_return_400(RegisterUserRequest request, int expectedErrorCount) {
       // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doPost(request, ContentType.JSON);
+      ValidatableMockMvcResponse response = restAssuredUtils.doPost(request);
 
       // then
       response.statusCode(HttpStatus.BAD_REQUEST.value());
@@ -295,7 +297,7 @@ class UserRestControllerTest implements WithAssertions {
       when(userService.updateUser(USER_ID, modelMapper.map(updateUserRequest, UserDto.class))).thenReturn(userDto);
 
       // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doPut(updateUserRequest, ContentType.JSON);
+      ValidatableMockMvcResponse response = restAssuredUtils.doPut(updateUserRequest);
 
       // then
       response.statusCode(HttpStatus.OK.value());
@@ -314,7 +316,7 @@ class UserRestControllerTest implements WithAssertions {
       UpdateUserRequest updateUserRequest = new UpdateUserRequest(userId, role, enabled);
 
       // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doPost(updateUserRequest, ContentType.JSON);
+      ValidatableMockMvcResponse response = restAssuredUtils.doPost(updateUserRequest);
 
       // then
       response.statusCode(HttpStatus.BAD_REQUEST.value());
@@ -327,5 +329,15 @@ class UserRestControllerTest implements WithAssertions {
           Arguments.of("", "role", false)
       );
     }
+  }
+
+  private HandlerExceptionResolver exceptionResolver() {
+    StaticApplicationContext applicationContext = new StaticApplicationContext();
+    applicationContext.registerSingleton("exceptionHandler", AppExceptionsHandler.class);
+
+    WebMvcConfigurationSupport webMvcConfigurationSupport = new WebMvcConfigurationSupport();
+    webMvcConfigurationSupport.setApplicationContext(applicationContext);
+
+    return webMvcConfigurationSupport.handlerExceptionResolver(new ContentNegotiationManager());
   }
 }

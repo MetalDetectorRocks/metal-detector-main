@@ -1,18 +1,20 @@
 package rocks.metaldetector.web.controller.rest;
 
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserRestController.class)
 class UserRestControllerIT extends BaseWebMvcTestWithSecurity implements WithAssertions {
@@ -24,19 +26,24 @@ class UserRestControllerIT extends BaseWebMvcTestWithSecurity implements WithAss
   ModelMapper mapper;
 
   @Test
+  @DisplayName("Administrators can call endpoint " + Endpoints.Rest.USERS)
   @WithMockUser(roles = "ADMINISTRATOR")
-  void test() throws Exception {
-    mockMvc.perform(get(Endpoints.Rest.USERS)).andExpect(status().isOk());
+  void admin_can_get_all_users() throws Exception {
+    // when
+    MvcResult result = mockMvc.perform(get(Endpoints.Rest.USERS)).andReturn();
+
+    // then
+    assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
   }
 
   @Test
+  @DisplayName("Users cannot call endpoint " + Endpoints.Rest.USERS)
   @WithMockUser(roles = "USER")
-  void test2() throws Exception {
-    mockMvc.perform(get(Endpoints.Rest.USERS)).andExpect(status().isForbidden());
+  void users_cannot_get_all_users() throws Exception {
+    //when
+    MvcResult result = mockMvc.perform(get(Endpoints.Rest.USERS)).andReturn();
+
+    // then
+    assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
   }
-
-  // Ein bisschen doof ist noch, dass wir ohne @WithMockUser als Status ein 302 erhalten. Das liegt daran, dass eine Weiterleitung zur Login-Seite gemacht wird.
-  // Das ist bei MVC-Controller auch durchaus gewollt, jedoch nicht bei RestControllern.
-  // Das zu fixen, ist aber out of scope der aktuellen Karte. Sollten wir in einer gesonderten Karte betrachten.
-
 }
