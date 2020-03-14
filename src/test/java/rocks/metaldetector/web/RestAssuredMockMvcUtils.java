@@ -1,7 +1,6 @@
 package rocks.metaldetector.web;
 
 import io.restassured.http.ContentType;
-import io.restassured.module.mockmvc.response.MockMvcResponse;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
 
 import java.util.Collections;
