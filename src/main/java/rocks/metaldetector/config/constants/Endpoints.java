@@ -63,6 +63,7 @@ public class Endpoints {
 
   public static class AntPattern {
     public static final String   ADMIN                     = "/admin/**";
+    public static final String   REST_ENDPOINTS            = "/rest/**";
            static final String[] INDEX                     = {"/", "/index", "/index/"};
     public static final String[] LOGIN                     = {"/login", "/login/"};
            static final String[] REGISTER                  = {"/register", "/register/"};
@@ -71,7 +72,6 @@ public class Endpoints {
            static final String[] FORGOT_PASSWORD           = {"/forgot-password", "/forgot-password/"};
            static final String[] RESET_PASSWORD            = {"/reset-password", "/reset-password/"};
     public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**", "/webjars/**"};
-    public static final String[] REST_ENDPOINTS            = {"/rest/**"};
 
     public static final String[] AUTH_PAGES = Stream.of(INDEX, LOGIN, REGISTER, REGISTRATION_VERIFICATION,
             RESEND_VERIFICATION_TOKEN, FORGOT_PASSWORD, RESET_PASSWORD).flatMap(Stream::of).toArray(String[]::new);

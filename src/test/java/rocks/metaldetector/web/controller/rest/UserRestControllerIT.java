@@ -46,4 +46,14 @@ class UserRestControllerIT extends BaseWebMvcTestWithSecurity implements WithAss
     // then
     assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
   }
+
+  @Test
+  @DisplayName("Users cannot call endpoint " + Endpoints.Rest.USERS)
+  void anonymous_cannot_get_all_users() throws Exception {
+    //when
+    MvcResult result = mockMvc.perform(get(Endpoints.Rest.USERS)).andReturn();
+
+    // then
+    assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+  }
 }
