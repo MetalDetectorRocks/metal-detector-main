@@ -26,8 +26,8 @@ import rocks.metaldetector.service.discogs.DiscogsArtistSearchRestClient;
 import rocks.metaldetector.web.DtoFactory.ArtistFactory;
 import rocks.metaldetector.web.DtoFactory.DiscogsArtistSearchResultFactory;
 import rocks.metaldetector.web.dto.ArtistDto;
-import rocks.metaldetector.web.dto.response.Pagination;
-import rocks.metaldetector.web.dto.response.SearchResponse;
+import rocks.metaldetector.web.dto.NameSearchResultDto;
+import rocks.metaldetector.web.dto.NameSearchResultsDto;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,9 +48,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ArtistsServiceTest implements WithAssertions {
 
-  private static final long DISCOGS_ID    = 252211L;
+  private static final long DISCOGS_ID = 252211L;
   private static final String ARTIST_NAME = "Darkthrone";
-  private static final String USER_ID     = "TestId";
+  private static final String USER_ID = "TestId";
 
   @Mock
   private CurrentUserSupplier currentUserSupplier;
@@ -86,7 +86,7 @@ class ArtistsServiceTest implements WithAssertions {
     @BeforeEach
     void setUp() {
       artistEntity = new ArtistEntity(DISCOGS_ID, ARTIST_NAME, null);
-      artistDto    = new ArtistDto(DISCOGS_ID, ARTIST_NAME, null);
+      artistDto = new ArtistDto(DISCOGS_ID, ARTIST_NAME, null);
     }
 
     @Test
@@ -485,9 +485,8 @@ class ArtistsServiceTest implements WithAssertions {
   @DisplayName("Testing name and id search")
   class SearchTest {
 
-    private static final int PAGE         = 1;
-    private static final int SIZE         = 10;
-    private static final int TOTAL_PAGES  = 1;
+    private static final int PAGE = 1;
+    private static final int SIZE = 10;
 
     @BeforeEach
     void setUp() {
@@ -502,20 +501,18 @@ class ArtistsServiceTest implements WithAssertions {
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
       // when
-      Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
+      Optional<NameSearchResultsDto> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
 
       // then
       assertThat(responseOptional).isPresent();
 
-      SearchResponse response = responseOptional.get();
+      NameSearchResultsDto response = responseOptional.get();
 
       assertThat(response.getSearchResults()).isNotNull().hasSize(1);
 
-      SearchResponse.SearchResult searchResult = response.getSearchResults().get(0);
-      assertThat(searchResult).isEqualTo(new SearchResponse.SearchResult(null, DISCOGS_ID, ARTIST_NAME, false));
-
-      Pagination pagination = response.getPagination();
-      assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, PAGE - 1, SIZE));
+      NameSearchResultDto searchResult = response.getSearchResults().get(0);
+      assertThat(searchResult).isEqualTo(new NameSearchResultDto(null, DISCOGS_ID, ARTIST_NAME, false));
+      assertThat(response.getResultCount()).isEqualTo(1L);
 
       verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
     }
@@ -527,7 +524,7 @@ class ArtistsServiceTest implements WithAssertions {
       when(artistSearchClient.searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE))).thenReturn(Optional.empty());
 
       //when
-      Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
+      Optional<NameSearchResultsDto> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
 
       // then
       assertThat(responseOptional).isEmpty();

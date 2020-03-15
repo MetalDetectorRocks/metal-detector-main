@@ -1,6 +1,8 @@
 package rocks.metaldetector.web;
 
 import rocks.metaldetector.model.artist.ArtistEntity;
+import rocks.metaldetector.web.dto.NameSearchResultDto;
+import rocks.metaldetector.web.dto.NameSearchResultsDto;
 import rocks.metaldetector.web.dto.UserDto;
 import rocks.metaldetector.web.dto.discogs.artist.DiscogsArtist;
 import rocks.metaldetector.web.dto.discogs.search.DiscogsArtistSearchResult;
@@ -11,8 +13,6 @@ import rocks.metaldetector.web.dto.releases.ReleaseDto;
 import rocks.metaldetector.web.dto.request.ChangePasswordRequest;
 import rocks.metaldetector.web.dto.request.RegisterUserRequest;
 import rocks.metaldetector.web.dto.response.DetectorReleasesResponse;
-import rocks.metaldetector.web.dto.response.Pagination;
-import rocks.metaldetector.web.dto.response.SearchResponse;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -105,8 +105,8 @@ public class DtoFactory {
 
       pagination.setCurrentPage(1);
       pagination.setItemsPerPage(10);
-      pagination.setItemsTotal(10);
-      pagination.setPagesTotal(2);
+      pagination.setItemsTotal(1);
+      pagination.setPagesTotal(1);
 
       container.setResults(Collections.singletonList(searchResult));
       container.setDiscogsPagination(pagination);
@@ -134,10 +134,10 @@ public class DtoFactory {
 
   public static class ArtistNameSearchResponseFactory {
 
-    public static SearchResponse withOneResult() {
-      return new SearchResponse(Collections.singletonList(
-          new SearchResponse.SearchResult(null, DISCOGS_ID, ARTIST_NAME, false)),
-                                new Pagination(1, 1, 10));
+    public static NameSearchResultsDto withOneResult() {
+      return new NameSearchResultsDto(Collections.singletonList(
+          new NameSearchResultDto(null, DISCOGS_ID, ARTIST_NAME, false)),
+                                      1L);
     }
   }
 

@@ -20,8 +20,9 @@ import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.testutil.WithIntegrationTestProfile;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
+import rocks.metaldetector.web.dto.NameSearchResultDto;
+import rocks.metaldetector.web.dto.response.DiscogsNameSearchResponse;
 import rocks.metaldetector.web.dto.response.Pagination;
-import rocks.metaldetector.web.dto.response.SearchResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -91,13 +92,13 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
           .contentType(ContentType.JSON)
           .statusCode(HttpStatus.OK.value());
 
-      SearchResponse searchResponse = validatableResponse.extract().as(SearchResponse.class);
-      assertThat(searchResponse.getSearchResults()).isNotNull().hasSize(1);
+      DiscogsNameSearchResponse nameSearchResponse = validatableResponse.extract().as(DiscogsNameSearchResponse.class);
+      assertThat(nameSearchResponse.getSearchResults()).isNotNull().hasSize(1);
 
-      SearchResponse.SearchResult searchResult = searchResponse.getSearchResults().get(0);
-      assertThat(searchResult).isEqualTo(new SearchResponse.SearchResult(null, VALID_ARTIST_ID, VALID_SEARCH_REQUEST, false));
+      NameSearchResultDto searchResult = nameSearchResponse.getSearchResults().get(0);
+      assertThat(searchResult).isEqualTo(new NameSearchResultDto(null, VALID_ARTIST_ID, VALID_SEARCH_REQUEST, false));
 
-      Pagination pagination = searchResponse.getPagination();
+      Pagination pagination = nameSearchResponse.getPagination();
       assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE));
 
       verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));

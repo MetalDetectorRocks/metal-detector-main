@@ -1,6 +1,5 @@
 package rocks.metaldetector.service.artist;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,17 +11,14 @@ import rocks.metaldetector.model.artist.FollowedArtistsRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.discogs.DiscogsArtistSearchRestClient;
 import rocks.metaldetector.web.dto.ArtistDto;
+import rocks.metaldetector.web.dto.NameSearchResultDto;
+import rocks.metaldetector.web.dto.NameSearchResultsDto;
 import rocks.metaldetector.web.dto.discogs.artist.DiscogsArtist;
 import rocks.metaldetector.web.dto.discogs.search.DiscogsArtistSearchResultContainer;
-import rocks.metaldetector.web.dto.discogs.search.DiscogsPagination;
-import rocks.metaldetector.web.dto.response.Pagination;
-import rocks.metaldetector.web.dto.response.SearchResponse;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static rocks.metaldetector.web.dto.response.SearchResponse.SearchResult;
 
 @Service
 public class ArtistsServiceImpl implements ArtistsService {
@@ -31,7 +27,6 @@ public class ArtistsServiceImpl implements ArtistsService {
   private final FollowedArtistsRepository followedArtistsRepository;
   private final DiscogsArtistSearchRestClient artistSearchClient;
   private final CurrentUserSupplier currentUserSupplier;
-  private final ModelMapper mapper;
 
   @Autowired
   public ArtistsServiceImpl(ArtistsRepository artistsRepository, FollowedArtistsRepository followedArtistsRepository,
@@ -40,7 +35,6 @@ public class ArtistsServiceImpl implements ArtistsService {
     this.followedArtistsRepository = followedArtistsRepository;
     this.artistSearchClient = artistSearchClient;
     this.currentUserSupplier = currentUserSupplier;
-    this.mapper = new ModelMapper();
   }
 
   @Override
@@ -53,8 +47,8 @@ public class ArtistsServiceImpl implements ArtistsService {
   public List<ArtistDto> findAllArtistsByDiscogsIds(long... discogsIds) {
     List<ArtistEntity> artistEntities = artistsRepository.findAllByArtistDiscogsIdIn(discogsIds);
     return artistEntities.stream()
-            .map(this::createArtistDto)
-            .collect(Collectors.toList());
+        .map(this::createArtistDto)
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -122,9 +116,9 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public Optional<SearchResponse> searchDiscogsByName(String artistQueryString, Pageable pageable) {
+  public Optional<NameSearchResultsDto> searchDiscogsByName(String artistQueryString, Pageable pageable) {
     Optional<DiscogsArtistSearchResultContainer> responseOptional = artistSearchClient.searchByName(artistQueryString, pageable);
-    return responseOptional.map(this::mapNameSearchResult);
+    return responseOptional.map(this::mapNameSearchResponse);
   }
 
   @Override
@@ -145,23 +139,16 @@ public class ArtistsServiceImpl implements ArtistsService {
     return true;
   }
 
-  private SearchResponse mapNameSearchResult(DiscogsArtistSearchResultContainer artistSearchResults) {
-    DiscogsPagination discogsPagination = artistSearchResults.getDiscogsPagination();
-
-    int itemsPerPage = discogsPagination.getItemsPerPage();
-
+  private NameSearchResultsDto mapNameSearchResponse(DiscogsArtistSearchResultContainer artistSearchResults) {
     List<Long> alreadyFollowedArtists = findFollowedArtistsForCurrentUser().stream().map(ArtistDto::getDiscogsId)
         .collect(Collectors.toList());
 
-    List<SearchResult> dtoSearchResults = artistSearchResults.getResults().stream()
-        .map(artistSearchResult -> new SearchResult(artistSearchResult.getThumb(), artistSearchResult.getId(),
-                                                    artistSearchResult.getTitle(), alreadyFollowedArtists.contains(artistSearchResult.getId())))
+    List<NameSearchResultDto> dtoSearchResults = artistSearchResults.getResults().stream()
+        .map(artistSearchResult -> new NameSearchResultDto(artistSearchResult.getThumb(), artistSearchResult.getId(),
+                                                           artistSearchResult.getTitle(), alreadyFollowedArtists.contains(artistSearchResult.getId())))
         .collect(Collectors.toList());
 
-    // Discogs works with page "1" being the first page, see https://trello.com/c/euiR6RPp
-    Pagination pagination = new Pagination(discogsPagination.getItemsTotal(), discogsPagination.getCurrentPage() - 1, itemsPerPage);
-
-    return new SearchResponse(dtoSearchResults, pagination);
+    return new NameSearchResultsDto(dtoSearchResults, artistSearchResults.getDiscogsPagination().getItemsTotal());
   }
 
   private ArtistDto createArtistDto(ArtistEntity artistEntity) {
@@ -181,5 +168,4 @@ public class ArtistsServiceImpl implements ArtistsService {
   private List<ArtistDto> mapArtistDtos(List<FollowedArtistEntity> followedArtistEntities) {
     return findAllArtistsByDiscogsIds(followedArtistEntities.stream().mapToLong(FollowedArtistEntity::getDiscogsId).toArray());
   }
-
 }

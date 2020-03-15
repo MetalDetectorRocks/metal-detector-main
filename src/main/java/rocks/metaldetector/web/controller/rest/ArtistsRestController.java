@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.web.dto.response.SearchResponse;
+import rocks.metaldetector.web.dto.NameSearchResultsDto;
+import rocks.metaldetector.web.dto.response.DiscogsNameSearchResponse;
+import rocks.metaldetector.web.dto.response.Pagination;
 
 import java.util.Optional;
 
@@ -26,10 +28,10 @@ public class ArtistsRestController {
 
   @GetMapping(path = Endpoints.Rest.SEARCH,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<SearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
-                                                         @PageableDefault Pageable pageable) {
-    Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(query, pageable);
-    return ResponseEntity.of(responseOptional);
+  public ResponseEntity<DiscogsNameSearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
+                                                                    @PageableDefault Pageable pageable) {
+    Optional<NameSearchResultsDto> resultOptional = artistsService.searchDiscogsByName(query, pageable);
+    return ResponseEntity.of(resultOptional.map(nameSearchResultsDto -> mapResponse(nameSearchResultsDto, pageable)));
   }
 
   @PostMapping(path = Endpoints.Rest.FOLLOW + "/{discogsId}")
@@ -42,5 +44,12 @@ public class ArtistsRestController {
   public ResponseEntity<Void> handleUnfollow(@PathVariable long discogsId) {
     boolean success = artistsService.unfollowArtist(discogsId);
     return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+  }
+
+  private DiscogsNameSearchResponse mapResponse(NameSearchResultsDto dto, Pageable pageable) {
+    DiscogsNameSearchResponse response = new DiscogsNameSearchResponse();
+    response.setSearchResults(dto.getSearchResults());
+    response.setPagination(new Pagination(dto.getResultCount(), pageable.getPageNumber(), pageable.getPageSize()));
+    return response;
   }
 }
