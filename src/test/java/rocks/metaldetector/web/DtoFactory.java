@@ -12,6 +12,7 @@ import rocks.metaldetector.web.dto.releases.ButlerReleasesResponse;
 import rocks.metaldetector.web.dto.releases.ReleaseDto;
 import rocks.metaldetector.web.dto.request.ChangePasswordRequest;
 import rocks.metaldetector.web.dto.request.RegisterUserRequest;
+import rocks.metaldetector.web.dto.request.UpdateUserRequest;
 import rocks.metaldetector.web.dto.response.DetectorReleasesResponse;
 
 import java.time.LocalDate;
@@ -67,6 +68,21 @@ public class DtoFactory {
           .plainPassword(plainPassword)
           .verifyPlainPassword(verifyPlainPassword)
           .build();
+    }
+  }
+
+  public static class UpdateUserRequestFactory {
+
+    public static UpdateUserRequest createDefault() {
+      return create("abc-123", "USER", true);
+    }
+
+    private static UpdateUserRequest create(String publicUserId, String role, boolean enabled) {
+      return UpdateUserRequest.builder()
+              .publicUserId(publicUserId)
+              .role(role)
+              .enabled(enabled)
+              .build();
     }
   }
 
