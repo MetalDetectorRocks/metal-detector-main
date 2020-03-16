@@ -6,5 +6,5 @@ import rocks.metaldetector.security.SecurityConfig;
 
 @Tag("integration-test")
 @Import({SecurityConfig.class})
-interface WithSecurityConfig {
+public interface WithSecurityConfig {
 }
