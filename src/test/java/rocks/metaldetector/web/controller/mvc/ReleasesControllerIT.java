@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(value = ReleasesController.class)
-public class ReleasesControllerIT extends BaseWebMvcTest {
+class ReleasesControllerIT extends BaseWebMvcTest {
 
   @Test
   @DisplayName("Requesting '" + Endpoints.Frontend.RELEASES + "' should return the releases view")

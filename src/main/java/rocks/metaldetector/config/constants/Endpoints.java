@@ -39,6 +39,7 @@ public class Endpoints {
     public static final String CONTACT               = "/contact";
     public static final String IMPRINT               = "/imprint";
     public static final String STATUS                = "/status";
+    public static final String TEST                  = "/only-for-testing";
   }
 
   public static class Rest {
@@ -50,6 +51,8 @@ public class Endpoints {
     public static final String UNFOLLOW   = "/unfollow";
 
     public static final String USERS      = "/rest/v1/users";
+
+    public static final String TEST       = "/rest/v1/only-for-testing";
   }
 
   public static class AdminArea {
