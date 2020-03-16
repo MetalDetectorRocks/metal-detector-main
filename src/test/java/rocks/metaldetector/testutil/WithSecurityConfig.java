@@ -5,6 +5,6 @@ import org.springframework.context.annotation.Import;
 import rocks.metaldetector.security.SecurityConfig;
 
 @Tag("integration-test")
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class})
 public interface WithSecurityConfig {
 }
