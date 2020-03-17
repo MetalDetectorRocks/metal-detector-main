@@ -1,4 +1,5 @@
-[![Coverage Status](https://coveralls.io/repos/github/DanielW1987/metal-release-radar/badge.svg?branch=master)](https://coveralls.io/github/DanielW1987/metal-release-radar?branch=master)
+![Continous Integration](https://github.com/MetalDetectorRocks/metal-detector-main/workflows/Continous%20Integration/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/MetalDetectorRocks/metal-detector-main/badge.svg?branch=master)](https://coveralls.io/github/MetalDetectorRocks/metal-detector-main?branch=master)
 
 ## Table of contents
 1. [ Introduction ](#introduction)
