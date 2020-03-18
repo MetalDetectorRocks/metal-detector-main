@@ -1,8 +1,7 @@
 package rocks.metaldetector.web.controller.rest;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +26,9 @@ public class ArtistsRestController {
   @GetMapping(path = Endpoints.Rest.SEARCH,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<SearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
-                                                         @PageableDefault Pageable pageable) {
-    Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(query, pageable);
+                                                         @RequestParam(value = "page", defaultValue = "0") int page,
+                                                         @RequestParam(value = "size", defaultValue = "10") int size) {
+    Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(query, PageRequest.of(page, size));
     return ResponseEntity.of(responseOptional);
   }
 
