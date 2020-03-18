@@ -497,7 +497,7 @@ class ArtistsServiceTest implements WithAssertions {
     @DisplayName("searchDiscogsByName() returns retuns a valid result")
     void search_by_name_returns_valid_result() {
       // given
-      when(artistSearchClient.searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE))).thenReturn(Optional.of(DiscogsArtistSearchResultFactory.withOneCertainResult()));
+      when(artistSearchClient.searchByName(ARTIST_NAME, PAGE, SIZE)).thenReturn(Optional.of(DiscogsArtistSearchResultFactory.withOneCertainResult()));
       when(currentUserSupplier.get()).thenReturn(userEntity);
       when(userEntity.getPublicId()).thenReturn(USER_ID);
 
@@ -517,21 +517,21 @@ class ArtistsServiceTest implements WithAssertions {
       Pagination pagination = response.getPagination();
       assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, PAGE - 1, SIZE));
 
-      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
+      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PAGE, SIZE);
     }
 
     @Test
     @DisplayName("searchDiscogsByName() returns returns empty result")
     void search_by_name_returns_empy_result() {
       // given
-      when(artistSearchClient.searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE))).thenReturn(Optional.empty());
+      when(artistSearchClient.searchByName(ARTIST_NAME, PAGE, SIZE)).thenReturn(Optional.empty());
 
       //when
       Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
 
       // then
       assertThat(responseOptional).isEmpty();
-      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PageRequest.of(PAGE, SIZE));
+      verify(artistSearchClient, times(1)).searchByName(ARTIST_NAME, PAGE, SIZE);
     }
   }
 }

@@ -120,7 +120,7 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   @Override
   public Optional<SearchResponse> searchDiscogsByName(String artistQueryString, Pageable pageable) {
-    Optional<DiscogsArtistSearchResultContainer> responseOptional = artistSearchClient.searchByName(artistQueryString, pageable);
+    Optional<DiscogsArtistSearchResultContainer> responseOptional = artistSearchClient.searchByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
     return responseOptional.map(this::mapNameSearchResult);
   }
 
