@@ -14,15 +14,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.accept.ContentNegotiationManager;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.model.exceptions.AppExceptionsHandler;
 import rocks.metaldetector.service.artist.ArtistsService;
+import rocks.metaldetector.testutil.WithExceptionResolver;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.dto.response.Pagination;
 import rocks.metaldetector.web.dto.response.SearchResponse;
@@ -39,7 +35,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static rocks.metaldetector.web.DtoFactory.ArtistNameSearchResponseFactory;
 
 @ExtendWith(MockitoExtension.class)
-class ArtistsRestControllerIT implements WithAssertions {
+class ArtistsRestControllerTest implements WithAssertions, WithExceptionResolver {
 
   private static final long VALID_ARTIST_ID = 252211L;
   private static final long INVALID_ARTIST_ID = 0L;
@@ -206,15 +202,5 @@ class ArtistsRestControllerIT implements WithAssertions {
       validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
       verify(artistsService, times(1)).unfollowArtist(VALID_ARTIST_ID);
     }
-  }
-
-  private HandlerExceptionResolver exceptionResolver() {
-    StaticApplicationContext applicationContext = new StaticApplicationContext();
-    applicationContext.registerSingleton("exceptionHandler", AppExceptionsHandler.class);
-
-    WebMvcConfigurationSupport webMvcConfigurationSupport = new WebMvcConfigurationSupport();
-    webMvcConfigurationSupport.setApplicationContext(applicationContext);
-
-    return webMvcConfigurationSupport.handlerExceptionResolver(new ContentNegotiationManager());
   }
 }
