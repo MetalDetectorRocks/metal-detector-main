@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ArtistsRepository extends JpaRepository<ArtistEntity, Long> {
+public interface ArtistRepository extends JpaRepository<ArtistEntity, Long> {
 
   Optional<ArtistEntity> findByArtistDiscogsId(long artistDiscogsId);
 

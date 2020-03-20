@@ -17,30 +17,30 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-class ArtistsRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
+class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
 
   @Autowired
-  private ArtistsRepository artistsRepository;
+  private ArtistRepository artistRepository;
 
   @BeforeEach
   void setUp() {
-    artistsRepository.save(ArtistEntityFactory.createArtistEntity(1L, "1", null));
-    artistsRepository.save(ArtistEntityFactory.createArtistEntity(2L, "2", null));
-    artistsRepository.save(ArtistEntityFactory.createArtistEntity(3L, "3", null));
-    artistsRepository.save(ArtistEntityFactory.createArtistEntity(4L, "4", null));
-    artistsRepository.save(ArtistEntityFactory.createArtistEntity(5L, "5", null));
+    artistRepository.save(ArtistEntityFactory.createArtistEntity(1L, "1", null));
+    artistRepository.save(ArtistEntityFactory.createArtistEntity(2L, "2", null));
+    artistRepository.save(ArtistEntityFactory.createArtistEntity(3L, "3", null));
+    artistRepository.save(ArtistEntityFactory.createArtistEntity(4L, "4", null));
+    artistRepository.save(ArtistEntityFactory.createArtistEntity(5L, "5", null));
   }
 
   @AfterEach
   void tearDown() {
-    artistsRepository.deleteAll();
+    artistRepository.deleteAll();
   }
 
   @ParameterizedTest(name = "[{index}] => Entity <{0}>")
   @ValueSource(longs = {1, 2, 3})
   @DisplayName("findByArtistDiscogsId() finds the correct entity for a given artist id if it exists")
   void find_by_artist_discogs_id_should_return_correct_entity(long entity) {
-    Optional<ArtistEntity> artistEntityOptional = artistsRepository.findByArtistDiscogsId(entity);
+    Optional<ArtistEntity> artistEntityOptional = artistRepository.findByArtistDiscogsId(entity);
 
     assertThat(artistEntityOptional).isPresent();
     assertThat(artistEntityOptional.get().getArtistDiscogsId()).isEqualTo(entity);
@@ -50,7 +50,7 @@ class ArtistsRepositoryIT extends BaseDataJpaTest implements WithAssertions, Wit
   @Test
   @DisplayName("findByArtistDiscogsId() returns empty optional if given artist does not exist")
   void find_by_artist_discogs_id_should_return_empty_optional() {
-    Optional<ArtistEntity> artistEntityOptional = artistsRepository.findByArtistDiscogsId(0L);
+    Optional<ArtistEntity> artistEntityOptional = artistRepository.findByArtistDiscogsId(0L);
 
     assertThat(artistEntityOptional).isEmpty();
   }
@@ -59,7 +59,7 @@ class ArtistsRepositoryIT extends BaseDataJpaTest implements WithAssertions, Wit
   @ValueSource(longs = {1, 2, 3})
   @DisplayName("existsByArtistDiscogsId() should return true if artist exists")
   void exists_by_artist_discogs_id_should_return_true(long entity) {
-    boolean exists = artistsRepository.existsByArtistDiscogsId(entity);
+    boolean exists = artistRepository.existsByArtistDiscogsId(entity);
 
     assertThat(exists).isTrue();
   }
@@ -67,7 +67,7 @@ class ArtistsRepositoryIT extends BaseDataJpaTest implements WithAssertions, Wit
   @Test
   @DisplayName("existsByArtistDiscogsId() should return false if artist does not exist")
   void exists_by_artist_discogs_id_should_return_false() {
-    boolean exists = artistsRepository.existsByArtistDiscogsId(0L);
+    boolean exists = artistRepository.existsByArtistDiscogsId(0L);
 
     assertThat(exists).isFalse();
   }
@@ -75,7 +75,7 @@ class ArtistsRepositoryIT extends BaseDataJpaTest implements WithAssertions, Wit
   @Test
   @DisplayName("findAllByArtistDiscogsIds() should return correct entities if they exist")
   void find_all_by_artist_discogs_ids_should_return_correct_entities() {
-    List<ArtistEntity> artistEntities = artistsRepository.findAllByArtistDiscogsIdIn(0L, 1L, 2L);
+    List<ArtistEntity> artistEntities = artistRepository.findAllByArtistDiscogsIdIn(0L, 1L, 2L);
 
     assertThat(artistEntities).hasSize(2);
 
@@ -91,7 +91,7 @@ class ArtistsRepositoryIT extends BaseDataJpaTest implements WithAssertions, Wit
   @MethodSource("inputProviderDiscogsIds")
   @DisplayName("findAllByArtistDiscogsIds() should return correct entities if they exist")
   void find_all_by_artist_discogs_ids_should_return_correct_entities_parametrized(long[] discogsIds) {
-    List<ArtistEntity> artistEntities = artistsRepository.findAllByArtistDiscogsIdIn(discogsIds);
+    List<ArtistEntity> artistEntities = artistRepository.findAllByArtistDiscogsIdIn(discogsIds);
 
     assertThat(artistEntities).hasSize(discogsIds.length);
 

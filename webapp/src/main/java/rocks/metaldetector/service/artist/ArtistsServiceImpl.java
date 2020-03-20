@@ -11,9 +11,9 @@ import rocks.metaldetector.discogs.fascade.dto.DiscogsArtistDto;
 import rocks.metaldetector.discogs.fascade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.discogs.fascade.dto.DiscogsSearchResultDto;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
-import rocks.metaldetector.persistence.domain.artist.ArtistsRepository;
+import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowedArtistEntity;
-import rocks.metaldetector.persistence.domain.artist.FollowedArtistsRepository;
+import rocks.metaldetector.persistence.domain.artist.FollowedArtistRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.web.dto.ArtistDto;
 import rocks.metaldetector.web.dto.response.Pagination;
@@ -28,29 +28,29 @@ import static rocks.metaldetector.web.dto.response.SearchResponse.SearchResult;
 @Service
 public class ArtistsServiceImpl implements ArtistsService {
 
-  private final ArtistsRepository artistsRepository;
-  private final FollowedArtistsRepository followedArtistsRepository;
+  private final ArtistRepository artistRepository;
+  private final FollowedArtistRepository followedArtistRepository;
   private final DiscogsArtistSearchRestClient artistSearchClient;
   private final CurrentUserSupplier currentUserSupplier;
 
   @Autowired
-  public ArtistsServiceImpl(ArtistsRepository artistsRepository, FollowedArtistsRepository followedArtistsRepository,
+  public ArtistsServiceImpl(ArtistRepository artistRepository, FollowedArtistRepository followedArtistRepository,
                             DiscogsArtistSearchRestClient artistSearchClient, CurrentUserSupplier currentUserSupplier) {
-    this.artistsRepository = artistsRepository;
-    this.followedArtistsRepository = followedArtistsRepository;
+    this.artistRepository = artistRepository;
+    this.followedArtistRepository = followedArtistRepository;
     this.artistSearchClient = artistSearchClient;
     this.currentUserSupplier = currentUserSupplier;
   }
 
   @Override
   public Optional<ArtistDto> findArtistByDiscogsId(long discogsId) {
-    return artistsRepository.findByArtistDiscogsId(discogsId)
+    return artistRepository.findByArtistDiscogsId(discogsId)
         .map(this::createArtistDto);
   }
 
   @Override
   public List<ArtistDto> findAllArtistsByDiscogsIds(long... discogsIds) {
-    List<ArtistEntity> artistEntities = artistsRepository.findAllByArtistDiscogsIdIn(discogsIds);
+    List<ArtistEntity> artistEntities = artistRepository.findAllByArtistDiscogsIdIn(discogsIds);
     return artistEntities.stream()
             .map(this::createArtistDto)
             .collect(Collectors.toList());
@@ -58,7 +58,7 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   @Override
   public boolean existsArtistByDiscogsId(long discogsId) {
-    return artistsRepository.existsByArtistDiscogsId(discogsId);
+    return artistRepository.existsByArtistDiscogsId(discogsId);
   }
 
   @Override
@@ -67,7 +67,7 @@ public class ArtistsServiceImpl implements ArtistsService {
     boolean artistAlreadyExistsOrSavedSuccessfully = fetchAndSaveArtist(discogsId);
     if (artistAlreadyExistsOrSavedSuccessfully) {
       FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(currentUserSupplier.get().getPublicId(), discogsId);
-      followedArtistsRepository.save(followedArtistEntity);
+      followedArtistRepository.save(followedArtistEntity);
       return true;
     }
     return false;
@@ -76,27 +76,27 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   @Transactional
   public boolean unfollowArtist(long discogsId) {
-    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistsRepository.findByPublicUserIdAndDiscogsId(
+    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistRepository.findByPublicUserIdAndDiscogsId(
         currentUserSupplier.get().getPublicId(), discogsId);
 
-    optionalFollowedArtistEntity.ifPresent(followedArtistsRepository::delete);
+    optionalFollowedArtistEntity.ifPresent(followedArtistRepository::delete);
     return optionalFollowedArtistEntity.isPresent();
   }
 
   @Override
   public boolean isFollowed(long discogsId) {
-    return followedArtistsRepository.existsByPublicUserIdAndDiscogsId(currentUserSupplier.get().getPublicId(), discogsId);
+    return followedArtistRepository.existsByPublicUserIdAndDiscogsId(currentUserSupplier.get().getPublicId(), discogsId);
   }
 
   @Override
   public List<ArtistDto> findFollowedArtistsPerUser(String publicUserId) {
-    List<FollowedArtistEntity> followedArtistEntities = followedArtistsRepository.findByPublicUserId(publicUserId);
+    List<FollowedArtistEntity> followedArtistEntities = followedArtistRepository.findByPublicUserId(publicUserId);
     return mapArtistDtos(followedArtistEntities);
   }
 
   @Override
   public List<ArtistDto> findFollowedArtistsPerUser(String publicUserId, Pageable pageable) {
-    List<FollowedArtistEntity> followedArtistEntities = followedArtistsRepository.findByPublicUserId(publicUserId, pageable);
+    List<FollowedArtistEntity> followedArtistEntities = followedArtistRepository.findByPublicUserId(publicUserId, pageable);
     return mapArtistDtos(followedArtistEntities);
   }
 
@@ -112,7 +112,7 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   @Override
   public long countFollowedArtistsPerUser(String publicUserId) {
-    return followedArtistsRepository.countByPublicUserId(publicUserId);
+    return followedArtistRepository.countByPublicUserId(publicUserId);
   }
 
   @Override
@@ -130,14 +130,14 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   @Transactional
   public boolean fetchAndSaveArtist(long discogsId) {
-    if (artistsRepository.existsByArtistDiscogsId(discogsId)) {
+    if (artistRepository.existsByArtistDiscogsId(discogsId)) {
       return true;
     }
 
     Optional<DiscogsArtistDto> artistOptional = artistSearchClient.searchById(discogsId);
     artistOptional.ifPresent(artist -> {
       ArtistEntity artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl());
-      artistsRepository.save(artistEntity);
+      artistRepository.save(artistEntity);
     });
 
     return artistOptional.isPresent();

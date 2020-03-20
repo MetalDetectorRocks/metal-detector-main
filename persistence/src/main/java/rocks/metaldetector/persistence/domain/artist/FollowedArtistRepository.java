@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface FollowedArtistsRepository extends JpaRepository<FollowedArtistEntity, Long> {
+public interface FollowedArtistRepository extends JpaRepository<FollowedArtistEntity, Long> {
 
   List<FollowedArtistEntity> findByPublicUserId(String publicUserId);
 
