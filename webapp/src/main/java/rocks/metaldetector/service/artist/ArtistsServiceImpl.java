@@ -4,14 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rocks.metaldetector.discogs.DiscogsArtistSearchRestClient;
-import rocks.metaldetector.discogs.api.DiscogsArtist;
+import rocks.metaldetector.discogs.domain.DiscogsArtistSearchRestClient;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
 import rocks.metaldetector.discogs.api.DiscogsPagination;
-import rocks.metaldetector.model.artist.ArtistEntity;
-import rocks.metaldetector.model.artist.ArtistsRepository;
-import rocks.metaldetector.model.artist.FollowedArtistEntity;
-import rocks.metaldetector.model.artist.FollowedArtistsRepository;
+import rocks.metaldetector.discogs.fascade.dto.DiscogsArtistDto;
+import rocks.metaldetector.discogs.fascade.dto.DiscogsArtistSearchResultDto;
+import rocks.metaldetector.discogs.fascade.dto.DiscogsSearchResultDto;
+import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
+import rocks.metaldetector.persistence.domain.artist.ArtistsRepository;
+import rocks.metaldetector.persistence.domain.artist.FollowedArtistEntity;
+import rocks.metaldetector.persistence.domain.artist.FollowedArtistsRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.web.dto.ArtistDto;
 import rocks.metaldetector.web.dto.response.Pagination;
@@ -120,8 +122,9 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   @Override
   public Optional<SearchResponse> searchDiscogsByName(String artistQueryString, Pageable pageable) {
-    Optional<DiscogsArtistSearchResultContainer> responseOptional = artistSearchClient.searchByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
-    return responseOptional.map(this::mapNameSearchResult);
+    Optional<DiscogsSearchResultDto<DiscogsArtistSearchResultDto>> responseOptional = artistSearchClient.searchByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
+
+    return Optional.empty(); // ToDo DanieW: Hier das richtige DiscogsSearchResultDto zurückgeben
   }
 
   @Override
@@ -131,19 +134,18 @@ public class ArtistsServiceImpl implements ArtistsService {
       return true;
     }
 
-    Optional<DiscogsArtist> artistOptional = artistSearchClient.searchById(discogsId);
+    Optional<DiscogsArtistDto> artistOptional = artistSearchClient.searchById(discogsId);
+    artistOptional.ifPresent(artist -> {
+      ArtistEntity artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl());
+      artistsRepository.save(artistEntity);
+    });
 
-    if (artistOptional.isEmpty()) {
-      return false;
-    }
-
-    ArtistEntity artistEntity = mapArtistEntity(artistOptional.get());
-    artistsRepository.save(artistEntity);
-    return true;
+    return artistOptional.isPresent();
   }
 
+  // ToDo DanielW: Das Mapping muss ins discogs Modul
   private SearchResponse mapNameSearchResult(DiscogsArtistSearchResultContainer artistSearchResults) {
-    DiscogsPagination discogsPagination = artistSearchResults.getDiscogsPagination();
+    DiscogsPagination discogsPagination = artistSearchResults.getPagination();
 
     int itemsPerPage = discogsPagination.getItemsPerPage();
 
@@ -167,12 +169,6 @@ public class ArtistsServiceImpl implements ArtistsService {
         .artistName(artistEntity.getArtistName())
         .thumb(artistEntity.getThumb())
         .build();
-  }
-
-  private ArtistEntity mapArtistEntity(DiscogsArtist artist) {
-    String thumb = artist.getDiscogsImages() != null && artist.getDiscogsImages().size() > 0 ? artist.getDiscogsImages().get(0).getResourceUrl()
-                                                                                             : null;
-    return new ArtistEntity(artist.getId(), artist.getName(), thumb);
   }
 
   private List<ArtistDto> mapArtistDtos(List<FollowedArtistEntity> followedArtistEntities) {

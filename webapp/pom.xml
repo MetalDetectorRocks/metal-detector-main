@@ -18,7 +18,6 @@
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
         <hibernate-validator.version>6.1.2.Final</hibernate-validator.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <bootstrap.version>4.4.1-1</bootstrap.version>
@@ -62,39 +61,7 @@
             <artifactId>thymeleaf-extras-springsecurity5</artifactId>
         </dependency>
 
-        <!-- Database -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- Security -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>${jsonwebtoken.version}</version>
-        </dependency>
-
         <!-- For unit test -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
@@ -171,12 +138,17 @@
         <!-- Project Modules -->
         <dependency>
             <groupId>rocks.metal-detector</groupId>
-            <artifactId>metal-detector-core</artifactId>
+            <artifactId>metal-detector-persistence</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>rocks.metal-detector</groupId>
             <artifactId>metal-detector-discogs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>rocks.metal-detector</groupId>
+            <artifactId>metal-detector-support</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

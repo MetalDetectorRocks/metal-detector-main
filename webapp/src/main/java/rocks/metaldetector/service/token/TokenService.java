@@ -1,6 +1,6 @@
 package rocks.metaldetector.service.token;
 
-import rocks.metaldetector.model.token.TokenEntity;
+import rocks.metaldetector.persistence.domain.token.TokenEntity;
 
 import java.util.Optional;
 

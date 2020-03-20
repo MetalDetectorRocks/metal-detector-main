@@ -7,7 +7,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
 
 @WebMvcTest
-public abstract class BaseWebMvcTest implements WithIntegrationTestProfile {
+public abstract class BaseWebMvcTest implements WithIntegrationTestConfig {
 
   @Autowired
   protected MockMvc mockMvc;

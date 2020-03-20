@@ -16,7 +16,7 @@ import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.testutil.WithIntegrationTestProfile;
+import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
-class RedirectionHandlerInterceptorIT implements WithAssertions, WithIntegrationTestProfile {
+class RedirectionHandlerInterceptorIT implements WithAssertions, WithIntegrationTestConfig {
 
   @Autowired
   private ApplicationContext applicationContext;

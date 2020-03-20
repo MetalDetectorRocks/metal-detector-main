@@ -1,10 +1,9 @@
 package rocks.metaldetector.web;
 
-import rocks.metaldetector.discogs.api.DiscogsArtist;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResult;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
 import rocks.metaldetector.discogs.api.DiscogsPagination;
-import rocks.metaldetector.model.artist.ArtistEntity;
+import rocks.metaldetector.discogs.fascade.dto.DiscogsArtistDto;
 import rocks.metaldetector.web.dto.UserDto;
 import rocks.metaldetector.web.dto.releases.ButlerReleasesResponse;
 import rocks.metaldetector.web.dto.releases.ReleaseDto;
@@ -20,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+// ToDo DanielW: Hier am Abschluss einmal aufräumen
 public class DtoFactory {
 
   private static final long DISCOGS_ID = 252211L;
@@ -114,13 +114,6 @@ public class DtoFactory {
     }
   }
 
-  public static class ArtistEntityFactory {
-
-    public static ArtistEntity createArtistEntity(long discogsId, String artistName, String thumb) {
-      return new ArtistEntity(discogsId, artistName, thumb);
-    }
-  }
-
   public static class ButlerReleasesResponseFactory {
 
     public static ButlerReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
@@ -162,7 +155,7 @@ public class DtoFactory {
       pagination.setPagesTotal(2);
 
       container.setResults(Collections.singletonList(searchResult));
-      container.setDiscogsPagination(pagination);
+      container.setPagination(pagination);
       return container;
     }
 
@@ -171,7 +164,7 @@ public class DtoFactory {
       DiscogsArtistSearchResult discogsArtistSearchResult = new DiscogsArtistSearchResult();
 
       DiscogsArtistSearchResultContainer resultContainer = new DiscogsArtistSearchResultContainer();
-      resultContainer.setDiscogsPagination(discogsPagination);
+      resultContainer.setPagination(discogsPagination);
       resultContainer.setResults(List.of(discogsArtistSearchResult));
 
       return resultContainer;
@@ -180,12 +173,11 @@ public class DtoFactory {
 
   public static class DiscogsArtistFactory {
 
-    public static DiscogsArtist createTestArtist() {
-      DiscogsArtist discogsArtist = new DiscogsArtist();
-      discogsArtist.setId(252211L);
-      discogsArtist.setName("Darkthrone");
-      discogsArtist.setProfile("profile");
-      return discogsArtist;
+    public static DiscogsArtistDto createTestArtist() {
+      return DiscogsArtistDto.builder()
+              .id(252211L)
+              .name("Darkthrone")
+              .build();
     }
   }
 }

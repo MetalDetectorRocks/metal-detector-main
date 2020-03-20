@@ -21,7 +21,9 @@
     <modules>
         <module>discogs</module>
         <module>webapp</module>
-        <module>core</module>
+        <module>persistence</module>
+        <module>support</module>
+        <module>butler</module>
     </modules>
 
     <developers>
@@ -47,6 +49,7 @@
     </developers>
 
     <properties>
+        <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
         <modelmapper.version>2.3.6</modelmapper.version>
         <junit-jupiter.version>5.6.0</junit-jupiter.version>
         <mockito.version>3.1.0</mockito.version>
@@ -56,6 +59,17 @@
     </properties>
 
     <dependencies>
+        <!-- Security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+
         <!-- Util -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -105,6 +119,16 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

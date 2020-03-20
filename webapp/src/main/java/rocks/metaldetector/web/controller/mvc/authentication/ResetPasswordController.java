@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.MessageKeys;
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.model.token.TokenEntity;
+import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.dto.request.ChangePasswordRequest;

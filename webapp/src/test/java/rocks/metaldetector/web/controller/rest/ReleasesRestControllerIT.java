@@ -20,7 +20,7 @@ import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.service.releases.ReleasesService;
-import rocks.metaldetector.testutil.WithIntegrationTestProfile;
+import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 import rocks.metaldetector.web.DtoFactory.DetectorReleaseResponseFactory;
 import rocks.metaldetector.web.DtoFactory.ReleaseDtoFactory;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
-class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestProfile {
+class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestConfig {
 
   @MockBean
   private ReleasesService releasesService;

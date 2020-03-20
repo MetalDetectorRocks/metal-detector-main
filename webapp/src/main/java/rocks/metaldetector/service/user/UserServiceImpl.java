@@ -14,12 +14,12 @@ import rocks.metaldetector.model.exceptions.ErrorMessages;
 import rocks.metaldetector.model.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.model.exceptions.TokenExpiredException;
 import rocks.metaldetector.model.exceptions.UserAlreadyExistsException;
-import rocks.metaldetector.model.token.JwtsSupport;
-import rocks.metaldetector.model.token.TokenEntity;
-import rocks.metaldetector.model.token.TokenRepository;
-import rocks.metaldetector.model.user.UserEntity;
-import rocks.metaldetector.model.user.UserRepository;
-import rocks.metaldetector.model.user.UserRole;
+import rocks.metaldetector.support.JwtsSupport;
+import rocks.metaldetector.persistence.domain.token.TokenEntity;
+import rocks.metaldetector.persistence.domain.token.TokenRepository;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.UserRepository;
+import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.mapper.UserMapper;
 import rocks.metaldetector.service.token.TokenService;
@@ -31,7 +31,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static rocks.metaldetector.model.user.UserRole.ROLE_ADMINISTRATOR;
+import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
 
 @Service
 @Slf4j

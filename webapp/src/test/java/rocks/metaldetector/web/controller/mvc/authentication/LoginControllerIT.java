@@ -15,7 +15,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.model.user.UserFactory;
+import rocks.metaldetector.service.user.UserFactory;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import java.util.stream.Stream;

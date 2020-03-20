@@ -6,12 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.model.email.RegistrationVerificationEmail;
 import rocks.metaldetector.model.exceptions.ErrorMessages;
 import rocks.metaldetector.model.exceptions.ResourceNotFoundException;
-import rocks.metaldetector.model.token.JwtsSupport;
-import rocks.metaldetector.model.token.TokenEntity;
-import rocks.metaldetector.model.token.TokenRepository;
-import rocks.metaldetector.model.token.TokenType;
-import rocks.metaldetector.model.user.UserEntity;
-import rocks.metaldetector.model.user.UserRepository;
+import rocks.metaldetector.support.JwtsSupport;
+import rocks.metaldetector.persistence.domain.token.TokenEntity;
+import rocks.metaldetector.persistence.domain.token.TokenRepository;
+import rocks.metaldetector.persistence.domain.token.TokenType;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.EmailService;
 
 import java.time.Duration;

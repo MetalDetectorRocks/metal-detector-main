@@ -6,9 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import rocks.metaldetector.model.user.UserEntity;
-import rocks.metaldetector.model.user.UserFactory;
-import rocks.metaldetector.model.user.UserRole;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.web.dto.UserDto;
 
 import java.util.Date;
@@ -28,7 +27,7 @@ class UserMapperTest implements WithAssertions {
   @DisplayName("Should map a UserEntity to UserDto")
   void map_entity_to_dto() {
     // given
-    UserEntity entity = UserFactory.createUser(USERNAME, EMAIL);
+    UserEntity entity = createUserEntity();
     entity.setPublicId("dummy-public-id");
     entity.setCreatedBy("Creator");
     entity.setCreatedDateTime(new Date());
@@ -60,7 +59,7 @@ class UserMapperTest implements WithAssertions {
   @DisplayName("Should map the role of an UserEntity correctly")
   void map_role_to_dto(Set<UserRole> userRoles, String expectedDtoRole) {
     // given
-    UserEntity entity = UserFactory.createUser(USERNAME, EMAIL);
+    UserEntity entity = createUserEntity();
     entity.setUserRoles(userRoles);
 
     // when
@@ -88,5 +87,16 @@ class UserMapperTest implements WithAssertions {
         Arguments.of(UserRole.createUserRole(), "User"),
         Arguments.of(UserRole.createAdministratorRole(), "Administrator")
     );
+  }
+
+  // ToDo DanielW: Kann man sinnvoll die UserEntityFactor verwenden?
+  private static UserEntity createUserEntity() {
+    return UserEntity.builder()
+            .username(USERNAME)
+            .email(EMAIL)
+            .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
+            .userRoles(UserRole.createUserRole())
+            .enabled(true)
+            .build();
   }
 }

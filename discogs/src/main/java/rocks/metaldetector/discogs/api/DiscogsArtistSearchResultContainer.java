@@ -14,7 +14,7 @@ import java.util.List;
 public class DiscogsArtistSearchResultContainer {
 
   @JsonProperty("pagination")
-  private DiscogsPagination discogsPagination;
+  private DiscogsPagination pagination;
 
   @JsonProperty("results")
   private List<DiscogsArtistSearchResult> results;

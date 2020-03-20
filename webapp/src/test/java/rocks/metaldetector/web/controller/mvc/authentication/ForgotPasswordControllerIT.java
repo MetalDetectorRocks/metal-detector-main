@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.MessageKeys;
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.model.user.events.OnResetPasswordRequestCompleteEvent;
+import rocks.metaldetector.model.user.OnResetPasswordRequestCompleteEvent;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.dto.UserDto;

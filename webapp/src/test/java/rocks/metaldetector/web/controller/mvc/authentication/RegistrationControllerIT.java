@@ -29,10 +29,10 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.model.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.model.exceptions.TokenExpiredException;
 import rocks.metaldetector.model.exceptions.UserAlreadyExistsException;
-import rocks.metaldetector.model.user.events.OnRegistrationCompleteEvent;
+import rocks.metaldetector.model.user.OnRegistrationCompleteEvent;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.testutil.WithIntegrationTestProfile;
+import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 import rocks.metaldetector.web.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.web.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.dto.UserDto;
@@ -56,7 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(MockitoExtension.class)
-class RegistrationControllerIT implements WithAssertions, WithIntegrationTestProfile {
+class RegistrationControllerIT implements WithAssertions, WithIntegrationTestConfig {
 
   private static final String PARAM_USERNAME = "username";
   private static final String PARAM_EMAIL = "email";

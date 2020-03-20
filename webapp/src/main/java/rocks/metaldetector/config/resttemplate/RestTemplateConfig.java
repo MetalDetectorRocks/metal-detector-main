@@ -7,18 +7,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.discogs.DiscogsConfig;
+import rocks.metaldetector.discogs.config.DiscogsCredentialsConfig;
 
 @Configuration
 public class RestTemplateConfig {
 
   private final CloseableHttpClient httpClient;
-  private final DiscogsConfig discogsConfig;
+  private final DiscogsCredentialsConfig discogsCredentialsConfig;
 
   @Autowired
-  public RestTemplateConfig(CloseableHttpClient httpClient, DiscogsConfig discogsConfig) {
+  public RestTemplateConfig(CloseableHttpClient httpClient, DiscogsCredentialsConfig discogsCredentialsConfig) {
     this.httpClient = httpClient;
-    this.discogsConfig = discogsConfig;
+    this.discogsCredentialsConfig = discogsCredentialsConfig;
   }
 
   @Bean
@@ -33,7 +33,7 @@ public class RestTemplateConfig {
     return new RestTemplateBuilder()
             .requestFactory(this::clientHttpRequestFactory)
             .errorHandler(new CustomClientErrorHandler())
-            .interceptors(new CustomClientHttpRequestInterceptor(discogsConfig))
+            .interceptors(new CustomClientHttpRequestInterceptor(discogsCredentialsConfig))
             .build();
   }
 }

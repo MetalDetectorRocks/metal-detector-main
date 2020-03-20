@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import rocks.metaldetector.model.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;

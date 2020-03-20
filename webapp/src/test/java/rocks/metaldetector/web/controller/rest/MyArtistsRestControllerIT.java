@@ -16,7 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.testutil.WithIntegrationTestProfile;
+import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
 import rocks.metaldetector.web.dto.ArtistDto;
 import rocks.metaldetector.web.dto.response.MyArtistsResponse;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
-class MyArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProfile {
+class MyArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConfig {
 
   private static final long DISCOGS_ID = 252211L;
   private static final String ARTIST_NAME = "Darkthrone";

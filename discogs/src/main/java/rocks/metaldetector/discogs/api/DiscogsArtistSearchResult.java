@@ -14,8 +14,6 @@ import lombok.Data;
 })
 public class DiscogsArtistSearchResult {
 
-  private static final String DISCOGS_URI = "http://discogs.com";
-
   @JsonProperty("id")
   private long id;
 
@@ -31,7 +29,4 @@ public class DiscogsArtistSearchResult {
   @JsonProperty("resource_url")
   private String resourceUrl;
 
-  public String getUri() {
-    return DISCOGS_URI + uri;
-  }
 }

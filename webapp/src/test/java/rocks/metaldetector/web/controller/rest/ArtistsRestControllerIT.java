@@ -18,7 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.testutil.WithIntegrationTestProfile;
+import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
 import rocks.metaldetector.web.dto.response.Pagination;
 import rocks.metaldetector.web.dto.response.SearchResponse;
@@ -35,7 +35,7 @@ import static rocks.metaldetector.web.DtoFactory.ArtistNameSearchResponseFactory
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
-class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProfile {
+class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConfig {
 
   private static final long VALID_ARTIST_ID = 252211L;
   private static final long INVALID_ARTIST_ID = 0L;

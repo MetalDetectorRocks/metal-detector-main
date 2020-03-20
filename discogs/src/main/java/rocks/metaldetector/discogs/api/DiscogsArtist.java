@@ -44,9 +44,9 @@ public class DiscogsArtist {
   private List<String> urls;
 
   @JsonProperty("images")
-  private List<DiscogsImage> discogsImages;
+  private List<DiscogsImage> images;
 
   @JsonProperty("members")
-  private List<DiscogsMember> discogsMembers;
+  private List<DiscogsMember> members;
 
 }

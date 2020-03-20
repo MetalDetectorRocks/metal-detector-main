@@ -2,7 +2,7 @@ package rocks.metaldetector.security;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import rocks.metaldetector.model.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
 
 @Component
 public class CurrentUserSupplierImpl implements CurrentUserSupplier {

@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.model.user.UserRole;
+import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.handler.CustomAccessDeniedHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationFailureHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
