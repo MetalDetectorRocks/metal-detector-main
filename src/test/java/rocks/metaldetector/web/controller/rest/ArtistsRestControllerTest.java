@@ -1,7 +1,8 @@
 package rocks.metaldetector.web.controller.rest;
 
 import io.restassured.http.ContentType;
-import io.restassured.response.ValidatableResponse;
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,16 +11,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.testutil.WithIntegrationTestProfile;
-import rocks.metaldetector.web.RestAssuredRequestHandler;
+import rocks.metaldetector.testutil.WithExceptionResolver;
+import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.dto.response.Pagination;
 import rocks.metaldetector.web.dto.response.SearchResponse;
 
@@ -31,23 +31,23 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static rocks.metaldetector.web.DtoFactory.ArtistNameSearchResponseFactory;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
-class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProfile {
+class ArtistsRestControllerTest implements WithAssertions, WithExceptionResolver {
 
   private static final long VALID_ARTIST_ID = 252211L;
   private static final long INVALID_ARTIST_ID = 0L;
   private static final String VALID_SEARCH_REQUEST = "Darkthrone";
 
-  @MockBean
+  @Mock
   private ArtistsService artistsService;
 
-  @LocalServerPort
-  private int port;
+  @InjectMocks
+  private ArtistsRestController underTest;
 
-  private RestAssuredRequestHandler requestHandler;
+  private RestAssuredMockMvcUtils restAssuredUtils;
 
   @Nested
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -59,11 +59,12 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
     private static final int DEFAULT_SIZE = 10;
     private static final int TOTAL_PAGES = 1;
 
-    private final String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH;
-
     @BeforeEach
     void setUp() {
-      requestHandler = new RestAssuredRequestHandler(requestUri);
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH);
+      RestAssuredMockMvc.standaloneSetup(underTest,
+                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)),
+                                         exceptionResolver());
     }
 
     @AfterEach
@@ -84,7 +85,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
           .thenReturn(Optional.of(ArtistNameSearchResponseFactory.withOneResult()));
 
       // when
-      ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
+      ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doGet(requestParams);
 
       // then
       validatableResponse
@@ -116,7 +117,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
           .thenReturn(Optional.empty());
 
       // when
-      ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
+      ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doGet(requestParams);
 
       // then
       validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
@@ -129,16 +130,16 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
   @DisplayName("Test follow/unfollow endpoints")
   class FollowArtistTest {
 
-    private RestAssuredRequestHandler followRequestHandler;
-    private RestAssuredRequestHandler unfollowRequestHandler;
-
-    private final String followRequestUri   = "http://localhost:" + port + Endpoints.Rest.ARTISTS + Endpoints.Rest.FOLLOW;
-    private final String unfollowRequestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS + Endpoints.Rest.UNFOLLOW;
+    private RestAssuredMockMvcUtils followArtistRestAssuredUtils;
+    private RestAssuredMockMvcUtils unfollowArtistRestAssuredUtils;
 
     @BeforeEach
     void setUp() {
-      followRequestHandler    = new RestAssuredRequestHandler(followRequestUri);
-      unfollowRequestHandler  = new RestAssuredRequestHandler(unfollowRequestUri);
+      followArtistRestAssuredUtils  = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.FOLLOW);
+      unfollowArtistRestAssuredUtils  = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.UNFOLLOW);
+      RestAssuredMockMvc.standaloneSetup(underTest,
+                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)),
+                                         exceptionResolver());
     }
 
     @AfterEach
@@ -153,7 +154,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       when(artistsService.followArtist(VALID_ARTIST_ID)).thenReturn(true);
 
       // when
-      ValidatableResponse validatableResponse = followRequestHandler.doPost("/" + VALID_ARTIST_ID, ContentType.JSON);
+      ValidatableMockMvcResponse validatableResponse = followArtistRestAssuredUtils.doPost("/" + VALID_ARTIST_ID);
 
       // then
       validatableResponse.statusCode(HttpStatus.OK.value());
@@ -167,7 +168,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       when(artistsService.followArtist(INVALID_ARTIST_ID)).thenReturn(false);
 
       // when
-      ValidatableResponse validatableResponse = followRequestHandler.doPost("/" + INVALID_ARTIST_ID, ContentType.JSON);
+      ValidatableMockMvcResponse validatableResponse = followArtistRestAssuredUtils.doPost("/" + INVALID_ARTIST_ID);
 
       // then
       validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
@@ -181,7 +182,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       when(artistsService.unfollowArtist(VALID_ARTIST_ID)).thenReturn(true);
 
       // when
-      ValidatableResponse validatableResponse = unfollowRequestHandler.doPost("/" + VALID_ARTIST_ID, ContentType.JSON);
+      ValidatableMockMvcResponse validatableResponse = unfollowArtistRestAssuredUtils.doPost("/" + VALID_ARTIST_ID);
 
       // then
       validatableResponse.statusCode(HttpStatus.OK.value());
@@ -195,7 +196,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestProf
       when(artistsService.unfollowArtist(VALID_ARTIST_ID)).thenReturn(false);
 
       // when
-      ValidatableResponse validatableResponse = unfollowRequestHandler.doPost("/" + VALID_ARTIST_ID, ContentType.JSON);
+      ValidatableMockMvcResponse validatableResponse = unfollowArtistRestAssuredUtils.doPost("/" + VALID_ARTIST_ID);
 
       // then
       validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
