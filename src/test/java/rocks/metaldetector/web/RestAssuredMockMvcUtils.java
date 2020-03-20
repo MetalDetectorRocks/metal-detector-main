@@ -2,6 +2,7 @@ package rocks.metaldetector.web;
 
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
+import org.springframework.http.MediaType;
 
 import java.util.Collections;
 import java.util.Map;
@@ -19,6 +20,14 @@ public class RestAssuredMockMvcUtils {
 
   public ValidatableMockMvcResponse doGet() {
     return doGet("", Collections.emptyMap());
+  }
+
+  public ValidatableMockMvcResponse doGet(MediaType mediaType) {
+    return given()
+        .accept(mediaType)
+        .when()
+        .get(requestUri)
+        .then();
   }
 
   public ValidatableMockMvcResponse doGet(Map<String,Object> params) {

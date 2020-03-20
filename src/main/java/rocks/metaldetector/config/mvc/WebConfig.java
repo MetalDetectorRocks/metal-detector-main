@@ -37,7 +37,6 @@ public class WebConfig implements WebMvcConfigurer {
     registry.addViewController(Endpoints.AdminArea.IMPORT).setViewName(ViewNames.AdminArea.IMPORT);
     registry.addViewController(Endpoints.AdminArea.ANALYTICS).setViewName(ViewNames.AdminArea.ANALYTICS);
     registry.addViewController(Endpoints.AdminArea.SETTINGS).setViewName(ViewNames.AdminArea.SETTINGS);
-    registry.addViewController(Endpoints.AdminArea.RELEASES).setViewName(ViewNames.AdminArea.RELEASES);
     registry.addViewController(Endpoints.AdminArea.USERS).setViewName(ViewNames.AdminArea.USERS);
     registry.addViewController(Endpoints.AdminArea.PROFILE).setViewName(ViewNames.AdminArea.PROFILE);
   }
