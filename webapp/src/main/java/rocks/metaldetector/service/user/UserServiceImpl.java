@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.comparator.BooleanComparator;
 import rocks.metaldetector.service.exceptions.ErrorMessages;
-import rocks.metaldetector.service.exceptions.ResourceNotFoundException;
+import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.support.JwtsSupport;
@@ -21,9 +21,7 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.CurrentUserSupplier;
-import rocks.metaldetector.service.mapper.UserMapper;
 import rocks.metaldetector.service.token.TokenService;
-import rocks.metaldetector.web.dto.UserDto;
 
 import java.util.Comparator;
 import java.util.List;

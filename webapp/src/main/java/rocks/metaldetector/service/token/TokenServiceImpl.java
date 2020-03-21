@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
 import rocks.metaldetector.service.exceptions.ErrorMessages;
-import rocks.metaldetector.service.exceptions.ResourceNotFoundException;
+import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;

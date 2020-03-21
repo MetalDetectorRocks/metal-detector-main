@@ -4,41 +4,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rocks.metaldetector.discogs.domain.DiscogsArtistSearchRestClient;
-import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
-import rocks.metaldetector.discogs.api.DiscogsPagination;
+import rocks.metaldetector.discogs.facade.DiscogsService;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
-import rocks.metaldetector.discogs.facade.dto.DiscogsSearchResultDto;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowedArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowedArtistRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
-import rocks.metaldetector.web.dto.ArtistDto;
-import rocks.metaldetector.web.dto.response.Pagination;
-import rocks.metaldetector.web.dto.response.SearchResponse;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static rocks.metaldetector.web.dto.response.SearchResponse.SearchResult;
 
 @Service
 public class ArtistsServiceImpl implements ArtistsService {
 
   private final ArtistRepository artistRepository;
   private final FollowedArtistRepository followedArtistRepository;
-  private final DiscogsArtistSearchRestClient artistSearchClient;
+  private final DiscogsService discogsService;
   private final CurrentUserSupplier currentUserSupplier;
 
   @Autowired
   public ArtistsServiceImpl(ArtistRepository artistRepository, FollowedArtistRepository followedArtistRepository,
-                            DiscogsArtistSearchRestClient artistSearchClient, CurrentUserSupplier currentUserSupplier) {
+                            DiscogsService discogsService, CurrentUserSupplier currentUserSupplier) {
     this.artistRepository = artistRepository;
     this.followedArtistRepository = followedArtistRepository;
-    this.artistSearchClient = artistSearchClient;
+    this.discogsService = discogsService;
     this.currentUserSupplier = currentUserSupplier;
   }
 
@@ -121,10 +113,15 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public Optional<SearchResponse> searchDiscogsByName(String artistQueryString, Pageable pageable) {
-    Optional<DiscogsSearchResultDto<DiscogsArtistSearchResultDto>> responseOptional = artistSearchClient.searchByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
+  public DiscogsArtistSearchResultDto searchDiscogsByName(String artistQueryString, Pageable pageable) {
+    List<Long> alreadyFollowedArtists = findFollowedArtistsForCurrentUser().stream()
+                                                                           .map(ArtistDto::getDiscogsId)
+                                                                           .collect(Collectors.toList());
 
-    return Optional.empty(); // ToDo DanieW: Hier das richtige DiscogsSearchResultDto zurückgeben
+    DiscogsArtistSearchResultDto result = discogsService.searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
+    result.getSearchResults().forEach(artist -> artist.setFollowed(alreadyFollowedArtists.contains(artist.getId())));
+
+    return result;
   }
 
   @Override
@@ -134,33 +131,11 @@ public class ArtistsServiceImpl implements ArtistsService {
       return true;
     }
 
-    Optional<DiscogsArtistDto> artistOptional = artistSearchClient.searchById(discogsId);
-    artistOptional.ifPresent(artist -> {
-      ArtistEntity artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl());
-      artistRepository.save(artistEntity);
-    });
+    DiscogsArtistDto artist = discogsService.searchArtistById(discogsId);
+    ArtistEntity artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl());
+    artistRepository.save(artistEntity);
 
-    return artistOptional.isPresent();
-  }
-
-  // ToDo DanielW: Das Mapping muss ins discogs Modul
-  private SearchResponse mapNameSearchResult(DiscogsArtistSearchResultContainer artistSearchResults) {
-    DiscogsPagination discogsPagination = artistSearchResults.getPagination();
-
-    int itemsPerPage = discogsPagination.getItemsPerPage();
-
-    List<Long> alreadyFollowedArtists = findFollowedArtistsForCurrentUser().stream().map(ArtistDto::getDiscogsId)
-        .collect(Collectors.toList());
-
-    List<SearchResult> dtoSearchResults = artistSearchResults.getResults().stream()
-        .map(artistSearchResult -> new SearchResult(artistSearchResult.getThumb(), artistSearchResult.getId(),
-                                                    artistSearchResult.getTitle(), alreadyFollowedArtists.contains(artistSearchResult.getId())))
-        .collect(Collectors.toList());
-
-    // Discogs works with page "1" being the first page, see https://trello.com/c/euiR6RPp
-    Pagination pagination = new Pagination(discogsPagination.getItemsTotal(), discogsPagination.getCurrentPage() - 1, itemsPerPage);
-
-    return new SearchResponse(dtoSearchResults, pagination);
+    return true;
   }
 
   private ArtistDto createArtistDto(ArtistEntity artistEntity) {

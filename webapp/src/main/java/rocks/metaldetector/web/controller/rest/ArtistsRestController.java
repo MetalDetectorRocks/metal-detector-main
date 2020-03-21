@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.web.dto.response.SearchResponse;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping(Endpoints.Rest.ARTISTS)
@@ -26,10 +24,10 @@ public class ArtistsRestController {
 
   @GetMapping(path = Endpoints.Rest.SEARCH,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<SearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
-                                                         @PageableDefault Pageable pageable) {
-    Optional<SearchResponse> responseOptional = artistsService.searchDiscogsByName(query, pageable);
-    return ResponseEntity.of(responseOptional);
+  public ResponseEntity<DiscogsArtistSearchResultDto> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
+                                                                       @PageableDefault Pageable pageable) {
+    DiscogsArtistSearchResultDto result = artistsService.searchDiscogsByName(query, pageable);
+    return ResponseEntity.ok(result);
   }
 
   @PostMapping(path = Endpoints.Rest.FOLLOW + "/{discogsId}")

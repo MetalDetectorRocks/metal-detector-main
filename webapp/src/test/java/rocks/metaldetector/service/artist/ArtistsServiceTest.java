@@ -16,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
-import rocks.metaldetector.discogs.domain.DiscogsArtistSearchRestClient;
+import rocks.metaldetector.discogs.client.DiscogsArtistSearchRestClient;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowedArtistEntity;
@@ -24,8 +24,7 @@ import rocks.metaldetector.persistence.domain.artist.FollowedArtistRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.web.DtoFactory.DiscogsArtistFactory;
-import rocks.metaldetector.web.dto.ArtistDto;
-import rocks.metaldetector.web.dto.response.SearchResponse;
+import rocks.metaldetector.web.api.response.SearchResponse;
 
 import java.util.Collections;
 import java.util.List;

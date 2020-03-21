@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.web.dto.ArtistDto;
-import rocks.metaldetector.web.dto.response.MyArtistsResponse;
-import rocks.metaldetector.web.dto.response.Pagination;
+import rocks.metaldetector.service.artist.ArtistDto;
+import rocks.metaldetector.web.api.response.MyArtistsResponse;
+import rocks.metaldetector.support.Pagination;
 
 import java.util.List;
 

@@ -18,8 +18,8 @@ import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
-import rocks.metaldetector.web.dto.ArtistDto;
-import rocks.metaldetector.web.dto.response.MyArtistsResponse;
+import rocks.metaldetector.service.artist.ArtistDto;
+import rocks.metaldetector.web.api.response.MyArtistsResponse;
 
 import java.util.Collections;
 import java.util.HashMap;

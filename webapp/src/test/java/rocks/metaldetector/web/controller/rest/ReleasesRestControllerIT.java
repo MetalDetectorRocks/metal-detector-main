@@ -19,15 +19,12 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.service.releases.ReleasesService;
 import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 import rocks.metaldetector.web.DtoFactory.DetectorReleaseResponseFactory;
 import rocks.metaldetector.web.DtoFactory.ReleaseDtoFactory;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
-import rocks.metaldetector.web.dto.request.ButlerReleasesRequest;
-import rocks.metaldetector.web.dto.releases.ReleaseDto;
-import rocks.metaldetector.web.dto.request.DetectorReleasesRequest;
-import rocks.metaldetector.web.dto.response.DetectorReleasesResponse;
+import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
+import rocks.metaldetector.web.api.response.DetectorReleasesResponse;
 
 import java.time.LocalDate;
 import java.util.Collections;

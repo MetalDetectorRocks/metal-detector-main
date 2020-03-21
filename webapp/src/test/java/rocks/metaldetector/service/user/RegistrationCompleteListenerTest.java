@@ -13,9 +13,6 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.email.AbstractEmail;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.token.TokenService;
-import rocks.metaldetector.service.user.OnRegistrationCompleteEvent;
-import rocks.metaldetector.service.user.RegistrationCompleteListener;
-import rocks.metaldetector.web.dto.UserDto;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

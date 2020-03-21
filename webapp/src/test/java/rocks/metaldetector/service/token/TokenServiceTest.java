@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.service.email.AbstractEmail;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
 import rocks.metaldetector.service.exceptions.ErrorMessages;
-import rocks.metaldetector.service.exceptions.ResourceNotFoundException;
+import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.service.user.UserFactory;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;

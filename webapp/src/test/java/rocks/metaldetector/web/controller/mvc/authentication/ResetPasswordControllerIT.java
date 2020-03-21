@@ -21,7 +21,7 @@ import rocks.metaldetector.persistence.domain.token.TokenType;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 import rocks.metaldetector.web.DtoFactory.ChangePasswordRequestFactory;
-import rocks.metaldetector.web.dto.request.ChangePasswordRequest;
+import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 
 import java.time.Duration;
 import java.util.Locale;

@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import rocks.metaldetector.support.Pagination;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -11,16 +14,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DiscogsArtistSearchResultDto {
 
-  private static final String DISCOGS_URL = "http://discogs.com";
-
-  private long id;
-  private String title;
-  private String thumb;
-  private String uri;
-  private String resourceUrl;
-
-  public String getUri() {
-    return DISCOGS_URL + uri;
-  }
-
+  private Pagination pagination;
+  private List<DiscogsArtistSearchResultEntryDto> searchResults;
 }

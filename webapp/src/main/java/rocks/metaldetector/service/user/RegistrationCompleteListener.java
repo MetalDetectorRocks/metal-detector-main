@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.token.TokenService;
-import rocks.metaldetector.web.dto.UserDto;
 
 @Component
 public class RegistrationCompleteListener implements ApplicationListener<OnRegistrationCompleteEvent> {

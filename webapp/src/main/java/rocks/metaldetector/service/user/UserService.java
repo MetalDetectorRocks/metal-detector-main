@@ -1,7 +1,6 @@
 package rocks.metaldetector.service.user;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
-import rocks.metaldetector.web.dto.UserDto;
 
 import java.util.List;
 import java.util.Optional;

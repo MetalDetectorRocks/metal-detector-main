@@ -20,7 +20,7 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.web.dto.request.ChangePasswordRequest;
+import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 
 import javax.validation.Valid;
 import java.util.Locale;

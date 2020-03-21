@@ -17,14 +17,14 @@ import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.MessageKeys;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.support.ArtifactForFramework;
-import rocks.metaldetector.service.exceptions.ResourceNotFoundException;
+import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.user.OnRegistrationCompleteEvent;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.web.dto.UserDto;
-import rocks.metaldetector.web.dto.request.RegisterUserRequest;
+import rocks.metaldetector.service.user.UserDto;
+import rocks.metaldetector.web.api.request.RegisterUserRequest;
 
 import javax.validation.Valid;
 import java.util.HashMap;

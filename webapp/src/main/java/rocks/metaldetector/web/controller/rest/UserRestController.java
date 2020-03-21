@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.web.dto.UserDto;
-import rocks.metaldetector.web.dto.request.RegisterUserRequest;
-import rocks.metaldetector.web.dto.request.UpdateUserRequest;
-import rocks.metaldetector.web.dto.response.UserResponse;
+import rocks.metaldetector.service.user.UserDto;
+import rocks.metaldetector.web.api.request.RegisterUserRequest;
+import rocks.metaldetector.web.api.request.UpdateUserRequest;
+import rocks.metaldetector.web.api.response.UserResponse;
 
 import javax.validation.Valid;
 import java.util.List;

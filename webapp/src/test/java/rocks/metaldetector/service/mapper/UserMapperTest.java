@@ -8,7 +8,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
-import rocks.metaldetector.web.dto.UserDto;
+import rocks.metaldetector.service.user.UserDto;
+import rocks.metaldetector.service.user.UserMapper;
 
 import java.util.Date;
 import java.util.Set;

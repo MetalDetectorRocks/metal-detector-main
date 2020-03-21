@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,14 +19,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.web.DtoFactory;
-import rocks.metaldetector.web.dto.request.ButlerReleasesRequest;
-import rocks.metaldetector.web.dto.response.ButlerReleasesResponse;
-import rocks.metaldetector.web.dto.releases.ReleaseDto;
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;

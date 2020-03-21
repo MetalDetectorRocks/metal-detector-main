@@ -20,8 +20,8 @@ import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
-import rocks.metaldetector.web.dto.response.Pagination;
-import rocks.metaldetector.web.dto.response.SearchResponse;
+import rocks.metaldetector.support.Pagination;
+import rocks.metaldetector.web.api.response.SearchResponse;
 
 import java.util.HashMap;
 import java.util.Map;

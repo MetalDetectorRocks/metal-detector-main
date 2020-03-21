@@ -11,7 +11,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-import rocks.metaldetector.web.dto.response.ErrorResponse;
+import rocks.metaldetector.support.ResourceNotFoundException;
+import rocks.metaldetector.web.api.response.ErrorResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;

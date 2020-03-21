@@ -20,7 +20,7 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.user.OnResetPasswordRequestCompleteEvent;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.DtoFactory.UserDtoFactory;
-import rocks.metaldetector.web.dto.UserDto;
+import rocks.metaldetector.service.user.UserDto;
 
 import java.util.Locale;
 import java.util.Optional;

@@ -10,12 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.service.releases.ReleasesService;
-import rocks.metaldetector.web.dto.ArtistDto;
-import rocks.metaldetector.web.dto.request.ButlerReleasesRequest;
-import rocks.metaldetector.web.dto.releases.ReleaseDto;
-import rocks.metaldetector.web.dto.request.DetectorReleasesRequest;
-import rocks.metaldetector.web.dto.response.DetectorReleasesResponse;
+import rocks.metaldetector.service.artist.ArtistDto;
+import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
+import rocks.metaldetector.web.api.response.DetectorReleasesResponse;
 
 import javax.validation.Valid;
 import java.util.List;
