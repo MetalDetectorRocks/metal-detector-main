@@ -1,4 +1,4 @@
-package rocks.metaldetector.model.email;
+package rocks.metaldetector.service.email;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

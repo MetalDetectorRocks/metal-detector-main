@@ -12,7 +12,7 @@ import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.service.releases.ReleasesService;
 import rocks.metaldetector.web.dto.ArtistDto;
-import rocks.metaldetector.web.dto.releases.ButlerReleasesRequest;
+import rocks.metaldetector.web.dto.request.ButlerReleasesRequest;
 import rocks.metaldetector.web.dto.releases.ReleaseDto;
 import rocks.metaldetector.web.dto.request.DetectorReleasesRequest;
 import rocks.metaldetector.web.dto.response.DetectorReleasesResponse;

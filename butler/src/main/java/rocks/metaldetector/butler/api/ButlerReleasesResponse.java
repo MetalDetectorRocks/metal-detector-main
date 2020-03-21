@@ -1,4 +1,4 @@
-package rocks.metaldetector.web.dto.releases;
+package rocks.metaldetector.butler.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

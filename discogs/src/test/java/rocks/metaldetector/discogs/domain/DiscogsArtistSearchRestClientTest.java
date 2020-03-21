@@ -24,9 +24,9 @@ import rocks.metaldetector.discogs.domain.DtoFactory.DiscogsArtistSearchResultFa
 import rocks.metaldetector.discogs.api.DiscogsArtist;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
 import rocks.metaldetector.discogs.config.DiscogsCredentialsConfig;
-import rocks.metaldetector.discogs.fascade.dto.DiscogsArtistDto;
-import rocks.metaldetector.discogs.fascade.dto.DiscogsArtistSearchResultDto;
-import rocks.metaldetector.discogs.fascade.dto.DiscogsSearchResultDto;
+import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
+import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
+import rocks.metaldetector.discogs.facade.dto.DiscogsSearchResultDto;
 import rocks.metaldetector.discogs.domain.transformer.DiscogsArtistSearchResultContainerTransformer;
 import rocks.metaldetector.discogs.domain.transformer.DiscogsArtistTransformer;
 

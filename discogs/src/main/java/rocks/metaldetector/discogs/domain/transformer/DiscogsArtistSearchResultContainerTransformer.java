@@ -4,8 +4,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
 import rocks.metaldetector.discogs.api.DiscogsPagination;
-import rocks.metaldetector.discogs.fascade.dto.DiscogsArtistSearchResultDto;
-import rocks.metaldetector.discogs.fascade.dto.DiscogsSearchResultDto;
+import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
+import rocks.metaldetector.discogs.facade.dto.DiscogsSearchResultDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

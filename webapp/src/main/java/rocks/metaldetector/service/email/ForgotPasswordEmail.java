@@ -1,4 +1,4 @@
-package rocks.metaldetector.model.email;
+package rocks.metaldetector.service.email;
 
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;

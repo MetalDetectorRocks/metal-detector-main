@@ -1,9 +1,9 @@
-package rocks.metaldetector.model.user;
+package rocks.metaldetector.service.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
-import rocks.metaldetector.model.email.RegistrationVerificationEmail;
+import rocks.metaldetector.service.email.RegistrationVerificationEmail;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.web.dto.UserDto;

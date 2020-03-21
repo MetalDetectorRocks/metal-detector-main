@@ -3,7 +3,7 @@ package rocks.metaldetector.discogs.domain.transformer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.discogs.api.DiscogsArtist;
-import rocks.metaldetector.discogs.fascade.dto.DiscogsArtistDto;
+import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 
 @Service
 @Slf4j

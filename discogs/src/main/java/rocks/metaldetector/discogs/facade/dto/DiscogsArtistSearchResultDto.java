@@ -1,4 +1,4 @@
-package rocks.metaldetector.discogs.fascade.dto;
+package rocks.metaldetector.discogs.facade.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

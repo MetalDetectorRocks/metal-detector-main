@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.ISpringTemplateEngine;
 import rocks.metaldetector.config.misc.MailConfig;
-import rocks.metaldetector.model.email.AbstractEmail;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;

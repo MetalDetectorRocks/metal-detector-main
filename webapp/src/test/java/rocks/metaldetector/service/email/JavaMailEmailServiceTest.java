@@ -15,8 +15,6 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.ISpringTemplateEngine;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.misc.MailConfig;
-import rocks.metaldetector.model.email.AbstractEmail;
-import rocks.metaldetector.model.email.RegistrationVerificationEmail;
 import rocks.metaldetector.testutil.CurrentThreadExecutor;
 
 import javax.mail.internet.MimeMessage;

@@ -24,7 +24,7 @@ import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 import rocks.metaldetector.web.DtoFactory.DetectorReleaseResponseFactory;
 import rocks.metaldetector.web.DtoFactory.ReleaseDtoFactory;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
-import rocks.metaldetector.web.dto.releases.ButlerReleasesRequest;
+import rocks.metaldetector.web.dto.request.ButlerReleasesRequest;
 import rocks.metaldetector.web.dto.releases.ReleaseDto;
 import rocks.metaldetector.web.dto.request.DetectorReleasesRequest;
 import rocks.metaldetector.web.dto.response.DetectorReleasesResponse;

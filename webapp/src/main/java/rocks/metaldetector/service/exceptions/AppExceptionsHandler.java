@@ -1,4 +1,4 @@
-package rocks.metaldetector.model.exceptions;
+package rocks.metaldetector.service.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

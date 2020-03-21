@@ -1,4 +1,4 @@
-package rocks.metaldetector.model.user;
+package rocks.metaldetector.service.user;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package rocks.metaldetector.model.user;
+package rocks.metaldetector.service.user;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -10,9 +10,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.model.email.AbstractEmail;
+import rocks.metaldetector.service.email.AbstractEmail;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.token.TokenService;
+import rocks.metaldetector.service.user.OnResetPasswordRequestCompleteEvent;
+import rocks.metaldetector.service.user.ResetPasswordRequestCompleteListener;
 import rocks.metaldetector.web.dto.UserDto;
 
 import static org.mockito.Mockito.times;

@@ -1,4 +1,4 @@
-package rocks.metaldetector.model.exceptions;
+package rocks.metaldetector.service.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
 

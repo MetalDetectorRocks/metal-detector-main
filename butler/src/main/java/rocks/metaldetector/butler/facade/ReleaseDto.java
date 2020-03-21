@@ -1,4 +1,4 @@
-package rocks.metaldetector.web.dto.releases;
+package rocks.metaldetector.butler.facade;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

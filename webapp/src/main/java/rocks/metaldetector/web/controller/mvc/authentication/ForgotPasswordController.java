@@ -16,7 +16,7 @@ import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.MessageKeys;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.support.ArtifactForFramework;
-import rocks.metaldetector.model.user.OnResetPasswordRequestCompleteEvent;
+import rocks.metaldetector.service.user.OnResetPasswordRequestCompleteEvent;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.dto.UserDto;
 import rocks.metaldetector.web.dto.request.ForgotPasswordRequest;

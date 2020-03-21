@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class RestRequestLoggingFilter extends CommonsRequestLoggingFilter {
 
-  public RestRequestLoggingFilter() {
+  RestRequestLoggingFilter() {
     super.setIncludeQueryString(true);
     super.setIncludePayload(true);
     super.setIncludeClientInfo(true);

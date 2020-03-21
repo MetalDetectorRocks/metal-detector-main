@@ -1,8 +1,8 @@
 package rocks.metaldetector.discogs.domain;
 
-import rocks.metaldetector.discogs.fascade.dto.DiscogsArtistDto;
-import rocks.metaldetector.discogs.fascade.dto.DiscogsArtistSearchResultDto;
-import rocks.metaldetector.discogs.fascade.dto.DiscogsSearchResultDto;
+import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
+import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
+import rocks.metaldetector.discogs.facade.dto.DiscogsSearchResultDto;
 
 import java.util.Optional;
 

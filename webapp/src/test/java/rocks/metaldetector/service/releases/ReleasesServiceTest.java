@@ -20,8 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.web.DtoFactory;
-import rocks.metaldetector.web.dto.releases.ButlerReleasesRequest;
-import rocks.metaldetector.web.dto.releases.ButlerReleasesResponse;
+import rocks.metaldetector.web.dto.request.ButlerReleasesRequest;
+import rocks.metaldetector.web.dto.response.ButlerReleasesResponse;
 import rocks.metaldetector.web.dto.releases.ReleaseDto;
 
 import java.nio.charset.Charset;
