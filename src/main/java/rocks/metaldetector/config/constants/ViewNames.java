@@ -37,6 +37,7 @@ public class ViewNames {
     public static final String IMPORT                    = "admin/import";
     public static final String ANALYTICS                 = "admin/analytics";
     public static final String SETTINGS                  = "admin/settings";
+    public static final String RELEASES                  = "admin/releases/list";
     public static final String USERS                     = "admin/users/list";
     public static final String PROFILE                   = "admin/profile";
   }
