@@ -167,7 +167,7 @@ class TokenServiceTest implements WithAssertions {
   @Test
   @DisplayName("deleteToken() should delete the token")
   void delete_token_should_delete_token() {
-    TokenEntity tokenEntity = TokenFactory.createToken();
+    TokenEntity tokenEntity = TokenFactory.createDefault();
 
     tokenService.deleteToken(tokenEntity);
 

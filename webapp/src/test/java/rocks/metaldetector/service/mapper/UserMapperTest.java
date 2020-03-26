@@ -90,7 +90,6 @@ class UserMapperTest implements WithAssertions {
     );
   }
 
-  // ToDo DanielW: Kann man sinnvoll die UserEntityFactor verwenden?
   private static UserEntity createUserEntity() {
     return UserEntity.builder()
             .username(USERNAME)

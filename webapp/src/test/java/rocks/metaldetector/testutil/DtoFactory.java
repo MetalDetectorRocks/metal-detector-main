@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-// ToDo DanielW: Hier am Abschluss einmal aufräumen
 public class DtoFactory {
 
   private static final long DISCOGS_ID = 252211L;
@@ -69,14 +68,10 @@ public class DtoFactory {
   public static class UpdateUserRequestFactory {
 
     public static UpdateUserRequest createDefault() {
-      return create("abc-123", "USER", true);
-    }
-
-    private static UpdateUserRequest create(String publicUserId, String role, boolean enabled) {
       return UpdateUserRequest.builder()
-              .publicUserId(publicUserId)
-              .role(role)
-              .enabled(enabled)
+              .publicUserId("abc-123")
+              .role("USER")
+              .enabled(true)
               .build();
     }
   }
