@@ -33,8 +33,8 @@ import rocks.metaldetector.service.user.OnRegistrationCompleteEvent;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.testutil.WithIntegrationTestConfig;
-import rocks.metaldetector.web.DtoFactory.RegisterUserRequestFactory;
-import rocks.metaldetector.web.DtoFactory.UserDtoFactory;
+import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
+import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 

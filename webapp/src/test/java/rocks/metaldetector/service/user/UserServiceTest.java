@@ -34,7 +34,7 @@ import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.token.TokenService;
-import rocks.metaldetector.web.DtoFactory.UserDtoFactory;
+import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
 import java.time.Duration;
 import java.util.Collections;

@@ -20,4 +20,6 @@ public interface FollowedArtistRepository extends JpaRepository<FollowedArtistEn
 
   long countByPublicUserId(String publicUserId);
 
+  void deleteByPublicUserIdAndDiscogsId(String publicUserId, long discogsId);
+
 }

@@ -55,24 +55,20 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   @Override
   @Transactional
-  public boolean followArtist(long discogsId) {
-    boolean artistAlreadyExistsOrSavedSuccessfully = fetchAndSaveArtist(discogsId);
-    if (artistAlreadyExistsOrSavedSuccessfully) {
+  public void followArtist(long discogsId) {
+    if (! isFollowed(discogsId)) {
+      fetchAndSaveArtist(discogsId);
       FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(currentUserSupplier.get().getPublicId(), discogsId);
       followedArtistRepository.save(followedArtistEntity);
-      return true;
     }
-    return false;
   }
 
   @Override
   @Transactional
-  public boolean unfollowArtist(long discogsId) {
-    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistRepository.findByPublicUserIdAndDiscogsId(
-        currentUserSupplier.get().getPublicId(), discogsId);
-
-    optionalFollowedArtistEntity.ifPresent(followedArtistRepository::delete);
-    return optionalFollowedArtistEntity.isPresent();
+  public void unfollowArtist(long discogsId) {
+    if (isFollowed(discogsId)) {
+      followedArtistRepository.deleteByPublicUserIdAndDiscogsId(currentUserSupplier.get().getPublicId(), discogsId);
+    }
   }
 
   @Override
@@ -126,16 +122,13 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   @Override
   @Transactional
-  public boolean fetchAndSaveArtist(long discogsId) {
-    if (artistRepository.existsByArtistDiscogsId(discogsId)) {
-      return true;
+  public void fetchAndSaveArtist(long discogsId) {
+    var artistAlreadySaved = artistRepository.existsByArtistDiscogsId(discogsId);
+    if (! artistAlreadySaved) {
+      DiscogsArtistDto artist = discogsService.searchArtistById(discogsId);
+      ArtistEntity artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl());
+      artistRepository.save(artistEntity);
     }
-
-    DiscogsArtistDto artist = discogsService.searchArtistById(discogsId);
-    ArtistEntity artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl());
-    artistRepository.save(artistEntity);
-
-    return true;
   }
 
   private ArtistDto createArtistDto(ArtistEntity artistEntity) {
@@ -149,5 +142,4 @@ public class ArtistsServiceImpl implements ArtistsService {
   private List<ArtistDto> mapArtistDtos(List<FollowedArtistEntity> followedArtistEntities) {
     return findAllArtistsByDiscogsIds(followedArtistEntities.stream().mapToLong(FollowedArtistEntity::getDiscogsId).toArray());
   }
-
 }

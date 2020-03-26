@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static rocks.metaldetector.web.DtoFactory.UserDtoFactory;
+import static rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
 class UserMapperTest implements WithAssertions {
 

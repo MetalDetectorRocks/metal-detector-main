@@ -27,22 +27,22 @@ class FollowedArtistRepositoryIT extends BaseDataJpaTest implements WithAssertio
   private static final long FALSE_DISCOGS_ID = 0L;
 
   @Autowired
-  private FollowedArtistRepository followedArtistRepository;
+  private FollowedArtistRepository underTest;
 
   @BeforeEach
   void setup() {
-    followedArtistRepository.saveAll(IntStream.range(1, 7).mapToObj(entity -> new FollowedArtistEntity(USER_ID, entity)).collect(Collectors.toList()));
+    underTest.saveAll(IntStream.range(1, 7).mapToObj(entity -> new FollowedArtistEntity(USER_ID, entity)).collect(Collectors.toList()));
   }
 
   @AfterEach
   void tearDown() {
-    followedArtistRepository.deleteAll();
+    underTest.deleteAll();
   }
 
   @Test
   @DisplayName("findAllByPublicUserId() finds the correct entities for a given user id if it exists")
   void find_all_by_user_id_should_return_correct_entities() {
-    List<FollowedArtistEntity> entities = followedArtistRepository.findByPublicUserId(USER_ID);
+    List<FollowedArtistEntity> entities = underTest.findByPublicUserId(USER_ID);
 
     assertThat(entities).hasSize(6);
 
@@ -56,7 +56,7 @@ class FollowedArtistRepositoryIT extends BaseDataJpaTest implements WithAssertio
   @Test
   @DisplayName("findAllByPublicUserId() returns empty list for a given user id if it does not exist")
   void find_all_by_user_id_should_return_empty_list() {
-    List<FollowedArtistEntity> notFollowedArtistEntitiesPerUser = followedArtistRepository.findByPublicUserId("0");
+    List<FollowedArtistEntity> notFollowedArtistEntitiesPerUser = underTest.findByPublicUserId("0");
 
     assertThat(notFollowedArtistEntitiesPerUser).isEmpty();
   }
@@ -64,32 +64,25 @@ class FollowedArtistRepositoryIT extends BaseDataJpaTest implements WithAssertio
   @Test
   @DisplayName("Should return true for existing combination of user id and artist discogs id")
   void exists_by_user_id_and_artist_discogs_id() {
-    boolean result = followedArtistRepository.existsByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID);
+    boolean result = underTest.existsByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID);
 
     assertThat(result).isTrue();
   }
 
 
   @ParameterizedTest(name = "[{index}] => UserId <{0}> | ArtistDiscogsId <{1}>")
-  @MethodSource("inputProviderExistsByFalse")
+  @MethodSource("invalidIdProvider")
   @DisplayName("Should return false for not existing combinations of user id and artist discogs id")
   void exists_by_user_id_and_artist_discogs_id(String userId, long artistDiscogsId) {
-    boolean result = followedArtistRepository.existsByPublicUserIdAndDiscogsId(userId, artistDiscogsId);
+    boolean result = underTest.existsByPublicUserIdAndDiscogsId(userId, artistDiscogsId);
 
     assertThat(result).isFalse();
-  }
-
-  private static Stream<Arguments> inputProviderExistsByFalse() {
-    return Stream.of(
-            Arguments.of(FALSE_USER_ID, DISCOGS_ID),
-            Arguments.of(USER_ID, FALSE_DISCOGS_ID)
-    );
   }
 
   @Test
   @DisplayName("Should return optional containing the correct entity for existing combinations of user id and artist discogs id")
   void find_by_user_id_and_artist_discogs_id_should_return_valid_optional() {
-    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistRepository.findByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID);
+    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = underTest.findByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID);
 
     assertThat(optionalFollowedArtistEntity.isPresent()).isTrue();
     assertThat(optionalFollowedArtistEntity.get().getDiscogsId()).isEqualTo(DISCOGS_ID);
@@ -97,25 +90,18 @@ class FollowedArtistRepositoryIT extends BaseDataJpaTest implements WithAssertio
   }
 
   @ParameterizedTest(name = "[{index}] => UserId <{0}> | ArtistDiscogsId <{1}>")
-  @MethodSource("inputProviderFalseArguments")
+  @MethodSource("invalidIdProvider")
   @DisplayName("Should return an empty optional for not existing or faulty combinations of user id and artist discogs id")
   void find_by_user_id_and_artist_discogs_id_should_return_empty_optional(String userId, long artistDiscogsId) {
-    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = followedArtistRepository.findByPublicUserIdAndDiscogsId(userId, artistDiscogsId);
+    Optional<FollowedArtistEntity> optionalFollowedArtistEntity = underTest.findByPublicUserIdAndDiscogsId(userId, artistDiscogsId);
 
     assertThat(optionalFollowedArtistEntity).isEmpty();
-  }
-
-  private static Stream<Arguments> inputProviderFalseArguments() {
-    return Stream.of(
-            Arguments.of(FALSE_USER_ID, DISCOGS_ID),
-            Arguments.of(null, DISCOGS_ID)
-    );
   }
 
   @Test
   @DisplayName("findAllByPublicUserId(id, pageable) should return correct paginated items")
   void find_all_by_discogs_id_paginated() {
-    List<FollowedArtistEntity> entities = followedArtistRepository.findByPublicUserId(USER_ID, PageRequest.of(1, 2));
+    List<FollowedArtistEntity> entities = underTest.findByPublicUserId(USER_ID, PageRequest.of(1, 2));
 
     assertThat(entities).hasSize(2);
 
@@ -130,7 +116,7 @@ class FollowedArtistRepositoryIT extends BaseDataJpaTest implements WithAssertio
   @MethodSource("userIdProvider")
   @DisplayName("countByPublicUserId() should return correct number of items")
   void count_by_public_user_id(String userId, int expected) {
-    long numberOfEntities = followedArtistRepository.countByPublicUserId(userId);
+    long numberOfEntities = underTest.countByPublicUserId(userId);
 
     assertThat(numberOfEntities).isEqualTo(expected);
   }
@@ -139,6 +125,41 @@ class FollowedArtistRepositoryIT extends BaseDataJpaTest implements WithAssertio
     return Stream.of(
         Arguments.of(FALSE_USER_ID, 0),
         Arguments.of(USER_ID, 6)
+    );
+  }
+
+  @Test
+  @DisplayName("Should remove an entity by a provided user id and discogs id")
+  void shoul_remove_entity() {
+    // given
+    assertThat(underTest.existsByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID)).isTrue();
+
+    // when
+    underTest.deleteByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID);
+
+    // then
+    assertThat(underTest.existsByPublicUserIdAndDiscogsId(USER_ID, DISCOGS_ID)).isFalse();
+  }
+
+  @ParameterizedTest(name = "Should not remove an entity if user id is <{0}> and discogs id is <{1}>")
+  @MethodSource("invalidIdProvider")
+  @DisplayName("Should not remove an entity if an invalid user id and/or discogs id is provided")
+  void shoul_not_remove_entity(String userId, long discogsId) {
+    // given
+    var expected = underTest.count();
+
+    // when
+    underTest.deleteByPublicUserIdAndDiscogsId(userId, discogsId);
+
+    // then
+    assertThat(underTest.count()).isEqualTo(expected);
+  }
+
+  private static Stream<Arguments> invalidIdProvider() {
+    return Stream.of(
+            Arguments.of(FALSE_USER_ID, DISCOGS_ID),
+            Arguments.of(USER_ID, FALSE_DISCOGS_ID),
+            Arguments.of(null, DISCOGS_ID)
     );
   }
 }

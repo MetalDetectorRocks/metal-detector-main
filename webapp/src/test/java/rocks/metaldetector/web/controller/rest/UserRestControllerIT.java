@@ -12,8 +12,8 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
-import rocks.metaldetector.web.DtoFactory.RegisterUserRequestFactory;
-import rocks.metaldetector.web.DtoFactory.UpdateUserRequestFactory;
+import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
+import rocks.metaldetector.testutil.DtoFactory.UpdateUserRequestFactory;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

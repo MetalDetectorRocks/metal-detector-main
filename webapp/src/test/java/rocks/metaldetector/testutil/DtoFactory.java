@@ -1,9 +1,5 @@
-package rocks.metaldetector.web;
+package rocks.metaldetector.testutil;
 
-import rocks.metaldetector.butler.facade.dto.ReleaseDto;
-import rocks.metaldetector.discogs.api.DiscogsArtistSearchResult;
-import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
-import rocks.metaldetector.discogs.api.DiscogsPagination;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
@@ -12,12 +8,9 @@ import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
-import rocks.metaldetector.web.api.response.DetectorReleasesResponse;
 import rocks.metaldetector.support.Pagination;
-import rocks.metaldetector.web.api.response.SearchResponse;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -107,15 +100,6 @@ public class DtoFactory {
     }
   }
 
-  public static class ArtistNameSearchResponseFactory {
-
-    public static SearchResponse withOneResult() {
-      return new SearchResponse(Collections.singletonList(
-          new SearchResponse.SearchResult(null, DISCOGS_ID, ARTIST_NAME, false)),
-                                new Pagination(1, 1, 10));
-    }
-  }
-
   public static class DetectorReleaseRequestFactory {
 
     public static DetectorReleasesRequest createDefault() {
@@ -124,13 +108,6 @@ public class DtoFactory {
               .dateFrom(LocalDate.now())
               .dateTo(LocalDate.now().plusDays(30))
               .build();
-    }
-  }
-
-  public static class DetectorReleaseResponseFactory {
-
-    public static DetectorReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
-      return new DetectorReleasesResponse(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate", false);
     }
   }
 
@@ -152,20 +129,24 @@ public class DtoFactory {
 
   public static class DiscogsArtistSearchResultEntryDtoFactory {
 
-    public static DiscogsArtistSearchResultEntryDto createDefault() {
+    static DiscogsArtistSearchResultEntryDto createDefault() {
+      return withId(DISCOGS_ID);
+    }
+
+    public static DiscogsArtistSearchResultEntryDto withId(long discogsId) {
       return DiscogsArtistSearchResultEntryDto.builder()
-              .id(666)
-              .name("A")
+              .id(discogsId)
+              .name(ARTIST_NAME)
               .build();
     }
   }
 
   public static class DiscogsArtistDtoFactory {
 
-    public static DiscogsArtistDto createTestArtist() {
+    public static DiscogsArtistDto createDefault() {
       return DiscogsArtistDto.builder()
-              .id(252211L)
-              .name("Darkthrone")
+              .id(DISCOGS_ID)
+              .name(ARTIST_NAME)
               .build();
     }
   }

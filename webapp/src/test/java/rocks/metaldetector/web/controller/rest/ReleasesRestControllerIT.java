@@ -20,7 +20,7 @@ import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.testutil.WithIntegrationTestConfig;
-import rocks.metaldetector.web.DtoFactory.DetectorReleaseRequestFactory;
+import rocks.metaldetector.testutil.DtoFactory.DetectorReleaseRequestFactory;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
 import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
 

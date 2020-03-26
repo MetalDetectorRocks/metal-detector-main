@@ -19,7 +19,7 @@ import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.testutil.WithIntegrationTestConfig;
-import rocks.metaldetector.web.DtoFactory.DiscogsArtistSearchResultDtoFactory;
+import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
 import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.response.SearchResponse;
@@ -37,7 +37,6 @@ import static org.mockito.Mockito.when;
 class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConfig {
 
   private static final long VALID_ARTIST_ID = 252211L;
-  private static final long INVALID_ARTIST_ID = 0L;
   private static final String VALID_SEARCH_REQUEST = "Darkthrone";
 
   @MockBean
@@ -149,9 +148,6 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConf
     @Test
     @DisplayName("CREATE with valid request should create an entity")
     void create_with_valid_request_should_return_201() {
-      // given
-      when(artistsService.followArtist(VALID_ARTIST_ID)).thenReturn(true);
-
       // when
       ValidatableResponse validatableResponse = followRequestHandler.doPost("/" + VALID_ARTIST_ID, ContentType.JSON);
 
@@ -161,44 +157,13 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConf
     }
 
     @Test
-    @DisplayName("CREATE should return 404 if the artist is not found")
-    void create_should_return_404_if_artist_not_found() {
-      // given
-      when(artistsService.followArtist(INVALID_ARTIST_ID)).thenReturn(false);
-
-      // when
-      ValidatableResponse validatableResponse = followRequestHandler.doPost("/" + INVALID_ARTIST_ID, ContentType.JSON);
-
-      // then
-      validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-      verify(artistsService, times(1)).followArtist(INVALID_ARTIST_ID);
-    }
-
-    @Test
     @DisplayName("DELETE should should delete the entity if it exists")
     void delete_an_existing_resource_should_return_200() {
-      // given
-      when(artistsService.unfollowArtist(VALID_ARTIST_ID)).thenReturn(true);
-
       // when
       ValidatableResponse validatableResponse = unfollowRequestHandler.doPost("/" + VALID_ARTIST_ID, ContentType.JSON);
 
       // then
       validatableResponse.statusCode(HttpStatus.OK.value());
-      verify(artistsService, times(1)).unfollowArtist(VALID_ARTIST_ID);
-    }
-
-    @Test
-    @DisplayName("DELETE should should return 404 if the entity does not exist")
-    void delete_an_not_existing_resource_should_return_404() {
-      // given
-      when(artistsService.unfollowArtist(VALID_ARTIST_ID)).thenReturn(false);
-
-      // when
-      ValidatableResponse validatableResponse = unfollowRequestHandler.doPost("/" + VALID_ARTIST_ID, ContentType.JSON);
-
-      // then
-      validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
       verify(artistsService, times(1)).unfollowArtist(VALID_ARTIST_ID);
     }
   }

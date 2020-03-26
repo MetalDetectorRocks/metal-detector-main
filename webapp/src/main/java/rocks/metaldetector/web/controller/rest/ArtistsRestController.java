@@ -32,13 +32,13 @@ public class ArtistsRestController {
 
   @PostMapping(path = Endpoints.Rest.FOLLOW + "/{discogsId}")
   public ResponseEntity<Void> handleFollow(@PathVariable long discogsId) {
-    boolean success = artistsService.followArtist(discogsId);
-    return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    artistsService.followArtist(discogsId);
+    return ResponseEntity.ok().build();
   }
 
   @PostMapping(path = Endpoints.Rest.UNFOLLOW + "/{discogsId}")
   public ResponseEntity<Void> handleUnfollow(@PathVariable long discogsId) {
-    boolean success = artistsService.unfollowArtist(discogsId);
-    return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    artistsService.unfollowArtist(discogsId);
+    return ResponseEntity.ok().build();
   }
 }
