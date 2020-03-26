@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class DiscogsArtistSearchResultEntryDto {
@@ -16,9 +15,7 @@ public class DiscogsArtistSearchResultEntryDto {
   private long id;
   private String name;
   private String imageUrl;
-  // ToDo DanielW: Unterschied zwischen uri und resourceUrl?
   private String uri;
-  private String resourceUrl;
   private boolean isFollowed;
 
   public String getUri() {

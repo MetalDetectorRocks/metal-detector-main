@@ -75,22 +75,22 @@ function createResultCards(searchResponse){
         cardBody.className = "card-body";
 
         const headingElement = document.createElement('h3');
-        headingElement.innerText = searchResult.artistName;
+        headingElement.innerText = searchResult.name;
         cardBody.append(headingElement);
         card.append(cardBody);
 
-        if (searchResult.thumb){
+        if (searchResult.imageUrl){
             const thumbElement = document.createElement('img');
             thumbElement.className = "card-image";
-            thumbElement.alt = 'Thumb for ' + searchResult.artistName;
-            thumbElement.src = searchResult.thumb;
+            thumbElement.alt = 'Thumb for ' + searchResult.name;
+            thumbElement.src = searchResult.imageUrl;
             cardBody.append(thumbElement);
         }
 
         const breakElement = document.createElement('br');
         cardBody.append(breakElement);
 
-        const followArtistButtonElement = createFollowArtistButton(searchResult.artistName,
+        const followArtistButtonElement = createFollowArtistButton(searchResult.name,
           searchResult.id, searchResult.isFollowed);
         cardBody.append(followArtistButtonElement);
 

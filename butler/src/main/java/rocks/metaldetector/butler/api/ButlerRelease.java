@@ -1,8 +1,10 @@
-package rocks.metaldetector.butler.facade;
+package rocks.metaldetector.butler.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,10 +13,9 @@ import lombok.ToString;
 import java.time.LocalDate;
 import java.util.List;
 
-@Getter
+@Data
+@Builder
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
 @JsonPropertyOrder({
     "artist",
     "additionalArtists",
@@ -23,7 +24,7 @@ import java.util.List;
     "estimatedReleaseDate"
 })
 @NoArgsConstructor
-public class ReleaseDto {
+public class ButlerRelease {
 
   @JsonProperty("artist")
   private String artist;

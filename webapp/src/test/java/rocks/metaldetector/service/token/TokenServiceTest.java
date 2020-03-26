@@ -13,7 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.service.email.AbstractEmail;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
-import rocks.metaldetector.service.exceptions.ErrorMessages;
+import rocks.metaldetector.service.user.UserErrorMessages;
 import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.service.user.UserFactory;
 import rocks.metaldetector.support.JwtsSupport;
@@ -133,7 +133,7 @@ class TokenServiceTest implements WithAssertions {
 
     // then
     assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-    assertThat(throwable).hasMessageContaining(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString());
+    assertThat(throwable).hasMessageContaining(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString());
     verify(userRepository, times(1)).findByPublicId(anyString());
   }
 

@@ -1,14 +1,14 @@
 package rocks.metaldetector.discogs.client;
 
-import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
-import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
+import rocks.metaldetector.discogs.api.DiscogsArtist;
+import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
 
 import java.util.Optional;
 
 public interface DiscogsArtistSearchRestClient {
 
-  Optional<DiscogsArtistSearchResultDto> searchByName(String artistQueryString, int pageNumber, int pageSize);
+  DiscogsArtistSearchResultContainer searchByName(String artistQueryString, int pageNumber, int pageSize);
 
-  Optional<DiscogsArtistDto> searchById(long artistId);
+  DiscogsArtist searchById(long artistId);
 
 }

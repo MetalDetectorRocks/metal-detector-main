@@ -40,7 +40,6 @@ public class DiscogsArtistSearchResultContainerTransformer {
             .id(result.getId())
             .name(result.getTitle())
             .imageUrl(result.getThumb())
-            .resourceUrl(result.getResourceUrl())
             .uri(result.getUri())
             .build();
   }

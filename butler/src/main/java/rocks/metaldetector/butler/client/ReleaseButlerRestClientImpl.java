@@ -1,50 +1,48 @@
-package rocks.metaldetector.butler.facade;
+package rocks.metaldetector.butler.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
+import rocks.metaldetector.support.ExternalServiceException;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
-import java.util.List;
 
 @Service
 @Slf4j
-public class ReleasesServiceImpl implements ReleasesService {
+@Profile({"default", "preview", "prod"})
+public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
 
   private final RestTemplate restTemplate;
-  private final String allReleasesUrl;
+  private final String releasesEndpoint;
 
   @Autowired
-  public ReleasesServiceImpl(RestTemplate restTemplate, @Value("${metal.release.buter.unpaginated.releases.endpoint}") String allReleasesUrl) {
+  public ReleaseButlerRestClientImpl(RestTemplate restTemplate, String releasesEndpoint) {
     this.restTemplate = restTemplate;
-    this.allReleasesUrl = allReleasesUrl;
+    this.releasesEndpoint = releasesEndpoint;
   }
 
   @Override
-  public List<ReleaseDto> getReleases(ButlerReleasesRequest request) {
+  public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {
     HttpEntity<ButlerReleasesRequest> requestEntity = createHttpEntity(request);
-    ResponseEntity<ButlerReleasesResponse> responseEntity = restTemplate.postForEntity(allReleasesUrl, requestEntity, ButlerReleasesResponse.class);
 
+    ResponseEntity<ButlerReleasesResponse> responseEntity = restTemplate.postForEntity(releasesEndpoint, requestEntity, ButlerReleasesResponse.class);
     ButlerReleasesResponse response = responseEntity.getBody();
-    boolean shouldNotHappen = response == null || responseEntity.getStatusCode() != HttpStatus.OK;
 
-    if (shouldNotHappen || response.getReleases().isEmpty()) {
-      if (shouldNotHappen)
-        log.warn("Could not get releases for request: " + request + ". Response: " + responseEntity.getStatusCode());
-      return Collections.emptyList();
+    var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
+    if (shouldNotHappen) {
+      throw new ExternalServiceException("Could not get releases for request: " + request + "' (Response code: " + responseEntity.getStatusCode() + ")");
     }
 
-    return response.getReleases();
+    return response;
   }
 
   private HttpEntity<ButlerReleasesRequest> createHttpEntity(ButlerReleasesRequest request) {

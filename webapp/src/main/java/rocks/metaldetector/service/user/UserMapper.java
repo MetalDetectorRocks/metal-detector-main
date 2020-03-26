@@ -5,7 +5,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.web.dto.UserDto;
+import rocks.metaldetector.service.Mappable;
 
 @Service
 @Slf4j

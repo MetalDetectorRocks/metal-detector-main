@@ -151,6 +151,11 @@
             <artifactId>metal-detector-support</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>rocks.metal-detector</groupId>
+            <artifactId>metal-detector-butler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

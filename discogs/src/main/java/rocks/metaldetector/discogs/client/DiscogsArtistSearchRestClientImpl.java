@@ -2,45 +2,41 @@ package rocks.metaldetector.discogs.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.discogs.api.DiscogsArtist;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
+import rocks.metaldetector.discogs.api.DiscogsPagination;
 import rocks.metaldetector.discogs.config.DiscogsCredentialsConfig;
-import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
-import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
-import rocks.metaldetector.discogs.client.transformer.DiscogsArtistSearchResultContainerTransformer;
-import rocks.metaldetector.discogs.client.transformer.DiscogsArtistTransformer;
+import rocks.metaldetector.support.ExternalServiceException;
 
-import java.util.Optional;
+import java.util.Collections;
 
 @Slf4j
 @Service
+@Profile({"default", "preview", "prod"})
 public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRestClient {
+
+  private static final DiscogsArtistSearchResultContainer EMPTY_RESPONSE = createEmptyResponse();
 
   static final String ARTIST_NAME_SEARCH_URL_FRAGMENT = "/database/search?type=artist&q={artistQueryString}&page={page}&per_page={size}";
   static final String ARTIST_ID_SEARCH_URL_FRAGMENT = "/artists/{artistId}";
 
   private final RestTemplate restTemplate;
   private final DiscogsCredentialsConfig discogsCredentialsConfig;
-  private final DiscogsArtistTransformer artistTransformer;
-  private final DiscogsArtistSearchResultContainerTransformer searchResultTransformer;
 
   @Autowired
-  public DiscogsArtistSearchRestClientImpl(RestTemplate restTemplate, DiscogsCredentialsConfig discogsCredentialsConfig,
-                                           DiscogsArtistTransformer artistTransformer, DiscogsArtistSearchResultContainerTransformer searchResultTransformer) {
+  public DiscogsArtistSearchRestClientImpl(RestTemplate restTemplate, DiscogsCredentialsConfig discogsCredentialsConfig) {
     this.restTemplate = restTemplate;
     this.discogsCredentialsConfig = discogsCredentialsConfig;
-    this.artistTransformer = artistTransformer;
-    this.searchResultTransformer = searchResultTransformer;
   }
 
   @Override
-  public Optional<DiscogsArtistSearchResultDto> searchByName(String artistQueryString, int pageNumber, int pageSize) {
+  public DiscogsArtistSearchResultContainer searchByName(String artistQueryString, int pageNumber, int pageSize) {
     if (artistQueryString == null || artistQueryString.isEmpty()) {
-      return Optional.empty();
+      return EMPTY_RESPONSE;
     }
 
     ResponseEntity<DiscogsArtistSearchResultContainer> responseEntity = restTemplate.getForEntity(
@@ -52,18 +48,18 @@ public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRes
     );
 
     DiscogsArtistSearchResultContainer resultContainer = responseEntity.getBody();
-    if (resultContainer == null || responseEntity.getStatusCode() != HttpStatus.OK || resultContainer.getResults().isEmpty()) {
-      return Optional.empty();
+    var shouldNotHappen = resultContainer == null || !responseEntity.getStatusCode().is2xxSuccessful();
+    if (shouldNotHappen) {
+      throw new ExternalServiceException("Could not get search results for query '" + artistQueryString + "' (Response code: " + responseEntity.getStatusCode() + ")");
     }
 
-    DiscogsArtistSearchResultDto searchResultDto = searchResultTransformer.transform(resultContainer);
-    return Optional.of(searchResultDto);
+    return resultContainer;
   }
 
   @Override
-  public Optional<DiscogsArtistDto> searchById(long artistId) {
+  public DiscogsArtist searchById(long artistId) {
     if (artistId <= 0) {
-      return Optional.empty();
+      throw new IllegalArgumentException("artistId must not be negative!");
     }
 
     ResponseEntity<DiscogsArtist> responseEntity = restTemplate.getForEntity(
@@ -73,11 +69,18 @@ public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRes
     );
 
     DiscogsArtist discogsArtist = responseEntity.getBody();
-    if (discogsArtist == null || responseEntity.getStatusCode() != HttpStatus.OK) {
-      return Optional.empty();
+    var shouldNotHappen = discogsArtist == null || !responseEntity.getStatusCode().is2xxSuccessful();
+    if (shouldNotHappen) {
+      throw new ExternalServiceException("Could not get artist for artistId '" + artistId + "' (Response code: " + responseEntity.getStatusCode() + ")");
     }
 
-    DiscogsArtistDto artistDto = artistTransformer.transform(discogsArtist);
-    return Optional.of(artistDto);
+    return discogsArtist;
+  }
+
+  private static DiscogsArtistSearchResultContainer createEmptyResponse() {
+    return DiscogsArtistSearchResultContainer.builder()
+            .pagination(new DiscogsPagination())
+            .results(Collections.emptyList())
+            .build();
   }
 }

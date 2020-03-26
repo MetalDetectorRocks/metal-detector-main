@@ -19,19 +19,18 @@ import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.testutil.WithIntegrationTestConfig;
+import rocks.metaldetector.web.DtoFactory.DiscogsArtistSearchResultDtoFactory;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
 import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.response.SearchResponse;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static rocks.metaldetector.web.DtoFactory.ArtistNameSearchResponseFactory;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -54,7 +53,6 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConf
   @DisplayName("Test artist name search endpoint")
   class ArtistNameSearchTest {
 
-    private static final String NO_RESULT_SEARCH_REQUEST = "NoResult";
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_SIZE = 10;
     private static final int TOTAL_PAGES = 1;
@@ -81,7 +79,7 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConf
       requestParams.put("size", DEFAULT_SIZE);
 
       when(artistsService.searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE)))
-          .thenReturn(Optional.of(ArtistNameSearchResponseFactory.withOneResult()));
+          .thenReturn(DiscogsArtistSearchResultDtoFactory.createDefault());
 
       // when
       ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
@@ -103,25 +101,27 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConf
       verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
     }
 
-    @Test
-    @DisplayName("GET with empty result should return 404")
-    void get_with_empty_result_should_return_404() {
-      // given
-      Map<String, Object> requestParams = new HashMap<>();
-      requestParams.put("query", NO_RESULT_SEARCH_REQUEST);
-      requestParams.put("page", DEFAULT_PAGE);
-      requestParams.put("size", DEFAULT_SIZE);
-
-      when(artistsService.searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE)))
-          .thenReturn(Optional.empty());
-
-      // when
-      ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
-
-      // then
-      validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-      verify(artistsService, times(1)).searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
-    }
+    // ToDo DanielW: Der Test ist so eigentlich nicht notwendig, da es normal ist, dass zu einer Suche nichts gefunden wird...ist also 200 OK.
+    //  Zu testen gilt es noch, ob Discogs sich auch korrekt verhält, wenn zu einer Suche nichts gefunden wird
+//    @Test
+//    @DisplayName("GET with empty result should return 404")
+//    void get_with_empty_result_should_return_404() {
+//      // given
+//      Map<String, Object> requestParams = new HashMap<>();
+//      requestParams.put("query", NO_RESULT_SEARCH_REQUEST);
+//      requestParams.put("page", DEFAULT_PAGE);
+//      requestParams.put("size", DEFAULT_SIZE);
+//
+//      when(artistsService.searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE)))
+//          .thenReturn(Optional.empty());
+//
+//      // when
+//      ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
+//
+//      // then
+//      validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
+//      verify(artistsService, times(1)).searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+//    }
   }
 
   @Nested

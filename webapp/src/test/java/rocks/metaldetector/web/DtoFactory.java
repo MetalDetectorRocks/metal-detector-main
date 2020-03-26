@@ -1,11 +1,15 @@
 package rocks.metaldetector.web;
 
+import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResult;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
 import rocks.metaldetector.discogs.api.DiscogsPagination;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
+import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
+import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
+import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.DetectorReleasesResponse;
@@ -112,21 +116,14 @@ public class DtoFactory {
     }
   }
 
-  public static class ButlerReleasesResponseFactory {
+  public static class DetectorReleaseRequestFactory {
 
-    public static ButlerReleasesResponse withOneResult(String artist, LocalDate releaseDate) {
-      return new ButlerReleasesResponse(Collections.singletonList(ReleaseDtoFactory.withOneResult(artist, releaseDate)));
-    }
-
-    public static ButlerReleasesResponse withEmptyResult() {
-      return new ButlerReleasesResponse(Collections.emptyList());
-    }
-  }
-
-  public static class ReleaseDtoFactory {
-
-    public static ReleaseDto withOneResult(String artist, LocalDate releaseDate) {
-      return new ReleaseDto(artist, Collections.singletonList(artist), "T", releaseDate, "releaseDate");
+    public static DetectorReleasesRequest createDefault() {
+      return DetectorReleasesRequest.builder()
+              .artists(List.of("A", "B", "C"))
+              .dateFrom(LocalDate.now())
+              .dateTo(LocalDate.now().plusDays(30))
+              .build();
     }
   }
 
@@ -137,39 +134,33 @@ public class DtoFactory {
     }
   }
 
-  public static class DiscogsArtistSearchResultFactory {
+  public static class DiscogsArtistSearchResultDtoFactory {
 
-    public static DiscogsArtistSearchResultContainer withOneCertainResult() {
-      DiscogsArtistSearchResultContainer container = createDefaultResultContainer();
-      DiscogsArtistSearchResult searchResult = new DiscogsArtistSearchResult();
-      DiscogsPagination pagination = new DiscogsPagination();
+    public static DiscogsArtistSearchResultDto createDefault() {
+      Pagination pagination = Pagination.builder()
+              .totalPages(10)
+              .itemsPerPage(10)
+              .currentPage(1)
+              .build();
 
-      searchResult.setId(252211);
-      searchResult.setTitle("Darkthrone");
-
-      pagination.setCurrentPage(1);
-      pagination.setItemsPerPage(10);
-      pagination.setItemsTotal(10);
-      pagination.setPagesTotal(2);
-
-      container.setResults(Collections.singletonList(searchResult));
-      container.setPagination(pagination);
-      return container;
-    }
-
-    private static DiscogsArtistSearchResultContainer createDefaultResultContainer() {
-      DiscogsPagination discogsPagination = new DiscogsPagination();
-      DiscogsArtistSearchResult discogsArtistSearchResult = new DiscogsArtistSearchResult();
-
-      DiscogsArtistSearchResultContainer resultContainer = new DiscogsArtistSearchResultContainer();
-      resultContainer.setPagination(discogsPagination);
-      resultContainer.setResults(List.of(discogsArtistSearchResult));
-
-      return resultContainer;
+      return DiscogsArtistSearchResultDto.builder()
+              .searchResults(List.of(DiscogsArtistSearchResultEntryDtoFactory.createDefault()))
+              .pagination(pagination)
+              .build();
     }
   }
 
-  public static class DiscogsArtistFactory {
+  public static class DiscogsArtistSearchResultEntryDtoFactory {
+
+    public static DiscogsArtistSearchResultEntryDto createDefault() {
+      return DiscogsArtistSearchResultEntryDto.builder()
+              .id(666)
+              .name("A")
+              .build();
+    }
+  }
+
+  public static class DiscogsArtistDtoFactory {
 
     public static DiscogsArtistDto createTestArtist() {
       return DiscogsArtistDto.builder()

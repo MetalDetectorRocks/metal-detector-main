@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import rocks.metaldetector.support.ExternalServiceException;
 import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.web.api.response.ErrorResponse;
 
@@ -46,6 +47,12 @@ public class AppExceptionsHandler {
   public ResponseEntity<ErrorResponse> handleAccessDeniedException(RuntimeException exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.FORBIDDEN);
+  }
+
+  @ExceptionHandler(value = {ExternalServiceException.class})
+  public ResponseEntity<ErrorResponse> handleExternalServiceException(RuntimeException exception, WebRequest webRequest) {
+    log.error(webRequest.getContextPath() + ": " + exception.getMessage());
+    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.SERVICE_UNAVAILABLE);
   }
 
   @ExceptionHandler(value = {Exception.class})

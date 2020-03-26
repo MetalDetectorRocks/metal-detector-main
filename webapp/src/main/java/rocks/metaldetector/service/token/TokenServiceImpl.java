@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
-import rocks.metaldetector.service.exceptions.ErrorMessages;
+import rocks.metaldetector.service.user.UserErrorMessages;
 import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
@@ -57,7 +57,7 @@ public class TokenServiceImpl implements TokenService {
   private String createToken(String publicUserId, TokenType tokenType, Duration expirationTime) {
     String      tokenString = jwtsSupport.generateToken(publicUserId, expirationTime);
     UserEntity  userEntity  = userRepository.findByPublicId(publicUserId).orElseThrow(
-            () -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString())
+            () -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString())
     );
 
     TokenEntity tokenEntity = TokenEntity.builder()
@@ -76,7 +76,7 @@ public class TokenServiceImpl implements TokenService {
   @Transactional
   public void resendExpiredEmailVerificationToken(String tokenString) {
     TokenEntity tokenEntity = tokenRepository.findEmailVerificationToken(tokenString)
-                                             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
+                                             .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
     UserEntity userEntity = tokenEntity.getUser();
 
     tokenRepository.delete(tokenEntity);

@@ -2,9 +2,13 @@ package rocks.metaldetector.discogs.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
+@Builder
 @JsonPropertyOrder({
         "per_page",
         "items",

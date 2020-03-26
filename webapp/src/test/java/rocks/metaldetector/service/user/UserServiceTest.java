@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import rocks.metaldetector.service.exceptions.ErrorMessages;
 import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
@@ -276,7 +275,7 @@ class UserServiceTest implements WithAssertions {
     // then
     verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
     assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-    assertThat(throwable).hasMessageContaining(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString());
+    assertThat(throwable).hasMessageContaining(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString());
   }
 
   @Test
@@ -400,7 +399,7 @@ class UserServiceTest implements WithAssertions {
     // then
     verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
     assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-    assertThat(throwable).hasMessageContaining(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString());
+    assertThat(throwable).hasMessageContaining(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString());
   }
 
   @Test
@@ -421,7 +420,7 @@ class UserServiceTest implements WithAssertions {
 
     // then
     assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
-    assertThat(throwable).hasMessage(ErrorMessages.ADMINISTRATOR_DISCARD_ROLE.toDisplayString());
+    assertThat(throwable).hasMessage(UserErrorMessages.ADMINISTRATOR_DISCARD_ROLE.toDisplayString());
   }
 
   @Test
@@ -442,7 +441,7 @@ class UserServiceTest implements WithAssertions {
 
     // then
     assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
-    assertThat(throwable).hasMessage(ErrorMessages.ADMINISTRATOR_CANNOT_DISABLE_HIMSELF.toDisplayString());
+    assertThat(throwable).hasMessage(UserErrorMessages.ADMINISTRATOR_CANNOT_DISABLE_HIMSELF.toDisplayString());
   }
 
   @Test
@@ -472,7 +471,7 @@ class UserServiceTest implements WithAssertions {
     // then
     verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
     assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-    assertThat(throwable).hasMessageContaining(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString());
+    assertThat(throwable).hasMessageContaining(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString());
   }
 
   @Test
@@ -586,7 +585,7 @@ class UserServiceTest implements WithAssertions {
     verify(userRepository, times(1)).findByEmail(USERNAME);
     verify(userRepository, times(1)).findByUsername(USERNAME);
     assertThat(throwable).isInstanceOf(UsernameNotFoundException.class);
-    assertThat(throwable).hasMessageContaining(ErrorMessages.USER_NOT_FOUND.toDisplayString());
+    assertThat(throwable).hasMessageContaining(UserErrorMessages.USER_NOT_FOUND.toDisplayString());
   }
 
   @Test
@@ -620,7 +619,7 @@ class UserServiceTest implements WithAssertions {
 
     // then
     assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-    assertThat(throwable).hasMessageContaining(ErrorMessages.TOKEN_NOT_FOUND.toDisplayString());
+    assertThat(throwable).hasMessageContaining(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString());
   }
 
   @Test
@@ -636,7 +635,7 @@ class UserServiceTest implements WithAssertions {
 
     // then
     assertThat(throwable).isInstanceOf(TokenExpiredException.class);
-    assertThat(throwable).hasMessageContaining(ErrorMessages.TOKEN_EXPIRED.toDisplayString());
+    assertThat(throwable).hasMessageContaining(UserErrorMessages.TOKEN_EXPIRED.toDisplayString());
   }
 
   @Test
@@ -671,7 +670,7 @@ class UserServiceTest implements WithAssertions {
 
     // then
     assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-    assertThat(throwable).hasMessageContaining(ErrorMessages.TOKEN_NOT_FOUND.toDisplayString());
+    assertThat(throwable).hasMessageContaining(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString());
   }
 
   @Test
@@ -687,6 +686,6 @@ class UserServiceTest implements WithAssertions {
 
     // then
     assertThat(throwable).isInstanceOf(TokenExpiredException.class);
-    assertThat(throwable).hasMessageContaining(ErrorMessages.TOKEN_EXPIRED.toDisplayString());
+    assertThat(throwable).hasMessageContaining(UserErrorMessages.TOKEN_EXPIRED.toDisplayString());
   }
 }

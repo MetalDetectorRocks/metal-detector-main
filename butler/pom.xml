@@ -23,6 +23,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>rocks.metal-detector</groupId>
+            <artifactId>metal-detector-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

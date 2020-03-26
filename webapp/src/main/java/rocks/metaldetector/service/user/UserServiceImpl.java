@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.comparator.BooleanComparator;
-import rocks.metaldetector.service.exceptions.ErrorMessages;
 import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
@@ -89,7 +88,7 @@ public class UserServiceImpl implements UserService {
   @Transactional(readOnly = true)
   public UserDto getUserByPublicId(String publicId) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
-                                          .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+                                          .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
     return userMapper.mapToDto(userEntity);
   }
@@ -105,13 +104,13 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public UserDto updateUser(String publicId, UserDto userDto) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
-                                          .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+                                          .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
     if (publicId.equals(currentUserSupplier.get().getPublicId())) {
       if (!userDto.isEnabled())
-        throw new IllegalArgumentException(ErrorMessages.ADMINISTRATOR_CANNOT_DISABLE_HIMSELF.toDisplayString());
+        throw new IllegalArgumentException(UserErrorMessages.ADMINISTRATOR_CANNOT_DISABLE_HIMSELF.toDisplayString());
       if (userEntity.isAdministrator() && !UserRole.getRoleFromString(userDto.getRole()).contains(ROLE_ADMINISTRATOR))
-        throw new IllegalArgumentException(ErrorMessages.ADMINISTRATOR_DISCARD_ROLE.toDisplayString());
+        throw new IllegalArgumentException(UserErrorMessages.ADMINISTRATOR_DISCARD_ROLE.toDisplayString());
     }
 
     userEntity.setUserRoles(UserRole.getRoleFromString(userDto.getRole()));
@@ -126,7 +125,7 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public void deleteUser(String publicId) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
-                                          .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+                                          .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
     userRepository.delete(userEntity);
   }
 
@@ -154,7 +153,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(readOnly = true)
   public UserDetails loadUserByUsername(String emailOrUsername) throws UsernameNotFoundException {
-    return findByEmailOrUsername(emailOrUsername).orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND.toDisplayString()));
+    return findByEmailOrUsername(emailOrUsername).orElseThrow(() -> new UsernameNotFoundException(UserErrorMessages.USER_NOT_FOUND.toDisplayString()));
   }
 
   @Override
@@ -162,7 +161,7 @@ public class UserServiceImpl implements UserService {
   public void verifyEmailToken(String tokenString) {
     // check if token exists
     TokenEntity tokenEntity = tokenRepository.findEmailVerificationToken(tokenString)
-                                             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
+                                             .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
 
     // check if token is expired
     if (tokenEntity.isExpired()) {
@@ -188,7 +187,7 @@ public class UserServiceImpl implements UserService {
 
     // 2. get user from token if it exists
     TokenEntity tokenEntity = tokenService.getResetPasswordTokenByTokenString(tokenString)
-                                          .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
+                                          .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
 
     // 3. check if token is expired
     if (tokenEntity.isExpired()) {

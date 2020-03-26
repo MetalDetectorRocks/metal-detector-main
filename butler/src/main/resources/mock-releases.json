@@ -1,0 +1,12 @@
+{
+  "releases": [
+    {
+      "artist": "Metallica",
+      "albumTitle": "Master of Puppets"
+    },
+    {
+      "artist": "Slayer",
+      "albumTitle": "Reign in Blood"
+    }
+  ]
+}

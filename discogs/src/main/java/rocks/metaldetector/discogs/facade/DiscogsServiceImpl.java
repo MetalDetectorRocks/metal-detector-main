@@ -2,31 +2,38 @@ package rocks.metaldetector.discogs.facade;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rocks.metaldetector.discogs.api.DiscogsArtist;
+import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
 import rocks.metaldetector.discogs.client.DiscogsArtistSearchRestClient;
+import rocks.metaldetector.discogs.client.transformer.DiscogsArtistSearchResultContainerTransformer;
+import rocks.metaldetector.discogs.client.transformer.DiscogsArtistTransformer;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
-
-import java.util.Optional;
 
 @Service
 public class DiscogsServiceImpl implements DiscogsService {
 
   private final DiscogsArtistSearchRestClient searchClient;
+  private final DiscogsArtistTransformer artistTransformer;
+  private final DiscogsArtistSearchResultContainerTransformer searchResultTransformer;
 
   @Autowired
-  public DiscogsServiceImpl(DiscogsArtistSearchRestClient searchClient) {
+  public DiscogsServiceImpl(DiscogsArtistSearchRestClient searchClient, DiscogsArtistTransformer artistTransformer,
+                            DiscogsArtistSearchResultContainerTransformer searchResultTransformer) {
     this.searchClient = searchClient;
+    this.artistTransformer = artistTransformer;
+    this.searchResultTransformer = searchResultTransformer;
   }
 
   @Override
   public DiscogsArtistSearchResultDto searchArtistByName(String artistQueryString, int pageNumber, int pageSize) {
-    Optional<DiscogsArtistSearchResultDto> result = searchClient.searchByName(artistQueryString, pageNumber, pageSize);
-    return result.orElseThrow(DiscogsArtistNotFoundException::new);
+    DiscogsArtistSearchResultContainer result = searchClient.searchByName(artistQueryString, pageNumber, pageSize);
+    return searchResultTransformer.transform(result);
   }
 
   @Override
   public DiscogsArtistDto searchArtistById(long artistId) {
-    Optional<DiscogsArtistDto> result = searchClient.searchById(artistId);
-    return result.orElseThrow(DiscogsArtistNotFoundException::new);
+    DiscogsArtist result = searchClient.searchById(artistId);
+    return artistTransformer.transform(result);
   }
 }
