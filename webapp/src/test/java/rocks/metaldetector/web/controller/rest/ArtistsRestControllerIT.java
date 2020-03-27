@@ -17,6 +17,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
@@ -25,10 +26,10 @@ import rocks.metaldetector.web.RestAssuredRequestHandler;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -52,7 +53,6 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConf
 
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_SIZE = 10;
-    private static final int TOTAL_PAGES = 1;
 
     private final String requestUri = "http://localhost:" + port + Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH;
 
@@ -67,16 +67,32 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConf
     }
 
     @Test
-    @DisplayName("GET with valid request should return 200")
-    void get_with_valid_request_should_return_200() {
+    @DisplayName("Should pass request parameter to artist service")
+    void handleNameSearch_pass_arguments() {
       // given
       Map<String, Object> requestParams = new HashMap<>();
       requestParams.put("query", VALID_SEARCH_REQUEST);
       requestParams.put("page", DEFAULT_PAGE);
       requestParams.put("size", DEFAULT_SIZE);
 
-      when(artistsService.searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE)))
-          .thenReturn(DiscogsArtistSearchResultDtoFactory.createDefault());
+      // when
+      requestHandler.doGet(ContentType.JSON, requestParams);
+
+      // then
+      verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+    }
+
+    @Test
+    @DisplayName("Should return results from artist service with status code 200")
+    void handleNameSearch_return_result() {
+      // given
+      var expectedSearchResult = DiscogsArtistSearchResultDtoFactory.createDefault();
+      Map<String, Object> requestParams = Map.of(
+              "query", VALID_SEARCH_REQUEST,
+              "page", DEFAULT_PAGE,
+              "size", DEFAULT_SIZE
+      );
+      doReturn(expectedSearchResult).when(artistsService).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
 
       // when
       ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
@@ -86,39 +102,9 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConf
           .contentType(ContentType.JSON)
           .statusCode(HttpStatus.OK.value());
 
-//      SearchResponse searchResponse = validatableResponse.extract().as(SearchResponse.class);
-//      assertThat(searchResponse.getSearchResults()).isNotNull().hasSize(1);
-//
-//      SearchResponse.SearchResult searchResult = searchResponse.getSearchResults().get(0);
-//      assertThat(searchResult).isEqualTo(new SearchResponse.SearchResult(null, VALID_ARTIST_ID, VALID_SEARCH_REQUEST, false));
-//
-//      Pagination pagination = searchResponse.getPagination();
-//      assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE));
-//
-//      verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+      DiscogsArtistSearchResultDto searchResponse = validatableResponse.extract().as(DiscogsArtistSearchResultDto.class);
+      assertThat(searchResponse).isEqualTo(expectedSearchResult);
     }
-
-    // ToDo DanielW: Der Test ist so eigentlich nicht notwendig, da es normal ist, dass zu einer Suche nichts gefunden wird...ist also 200 OK.
-    //  Zu testen gilt es noch, ob Discogs sich auch korrekt verhält, wenn zu einer Suche nichts gefunden wird
-//    @Test
-//    @DisplayName("GET with empty result should return 404")
-//    void get_with_empty_result_should_return_404() {
-//      // given
-//      Map<String, Object> requestParams = new HashMap<>();
-//      requestParams.put("query", NO_RESULT_SEARCH_REQUEST);
-//      requestParams.put("page", DEFAULT_PAGE);
-//      requestParams.put("size", DEFAULT_SIZE);
-//
-//      when(artistsService.searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE)))
-//          .thenReturn(Optional.empty());
-//
-//      // when
-//      ValidatableResponse validatableResponse = requestHandler.doGet(ContentType.JSON, requestParams);
-//
-//      // then
-//      validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-//      verify(artistsService, times(1)).searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
-//    }
   }
 
   @Nested
@@ -144,8 +130,8 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConf
     }
 
     @Test
-    @DisplayName("CREATE with valid request should create an entity")
-    void create_with_valid_request_should_return_201() {
+    @DisplayName("Should call artist service when following an artist and return 200")
+    void handleFollow() {
       // when
       ValidatableResponse validatableResponse = followRequestHandler.doPost("/" + VALID_ARTIST_ID, ContentType.JSON);
 
@@ -155,8 +141,8 @@ class ArtistsRestControllerIT implements WithAssertions, WithIntegrationTestConf
     }
 
     @Test
-    @DisplayName("DELETE should should delete the entity if it exists")
-    void delete_an_existing_resource_should_return_200() {
+    @DisplayName("Should call artist service when unfollowing an artist and return 200")
+    void handleUnfollow() {
       // when
       ValidatableResponse validatableResponse = unfollowRequestHandler.doPost("/" + VALID_ARTIST_ID, ContentType.JSON);
 

@@ -19,7 +19,6 @@ public class DiscogsArtistSearchResultEntryDto {
   private boolean isFollowed;
 
   public String getUri() {
-    return DISCOGS_URL + uri;
+    return uri != null ? DISCOGS_URL + uri : null;
   }
-
 }
