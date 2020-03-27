@@ -1,5 +1,6 @@
 package rocks.metaldetector.testutil;
 
+import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
@@ -142,6 +143,21 @@ public class DtoFactory {
       return DiscogsArtistDto.builder()
               .id(DISCOGS_ID)
               .name(ARTIST_NAME)
+              .build();
+    }
+  }
+
+  public static class ReleaseDtoFactory {
+
+    public static ReleaseDto createDefault() {
+      return withArtistName("Evil Artist");
+    }
+
+    public static ReleaseDto withArtistName(String artistName) {
+      return ReleaseDto.builder()
+              .artist(artistName)
+              .albumTitle("Heavy Release")
+              .releaseDate(LocalDate.now().plusDays(10))
               .build();
     }
   }

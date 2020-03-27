@@ -9,28 +9,30 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.butler.facade.ReleaseService;
-import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.service.artist.ArtistsService;
+import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 import rocks.metaldetector.testutil.DtoFactory.DetectorReleaseRequestFactory;
 import rocks.metaldetector.web.RestAssuredRequestHandler;
 import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
+import rocks.metaldetector.web.api.response.DetectorReleasesResponse;
+import rocks.metaldetector.web.transformer.DetectorReleasesResponseTransformer;
 
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -40,10 +42,7 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestCon
   private ReleaseService releasesService;
 
   @MockBean
-  private ArtistsService artistsService;
-
-  @SpyBean
-  ModelMapper modelMapper;
+  private DetectorReleasesResponseTransformer releasesResponseTransformer;
 
   @LocalServerPort
   private int port;
@@ -56,29 +55,10 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestCon
 
   @AfterEach
   void tearDown() {
-    reset(releasesService, artistsService);
+    reset(releasesService, releasesResponseTransformer);
   }
 
   private RestAssuredRequestHandler requestHandler;
-
-  @Test
-  @DisplayName("Should return a list of releases")
-  void should_return_releases() {
-    // ToDo DanielW: Complete this
-    // given
-    List<ReleaseDto> releases = List.of(
-
-    );
-    when(releasesService.findReleases(any(), any(), any())).thenReturn(releases);
-
-    // when
-    ValidatableResponse validatableResponse = requestHandler.doPost(new DetectorReleasesRequest(), ContentType.JSON);
-
-    // then
-    validatableResponse
-            .contentType(ContentType.JSON)
-            .statusCode(HttpStatus.OK.value());
-  }
 
   @Test
   @DisplayName("Should pass request parameter to release service")
@@ -94,50 +74,46 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestCon
   }
 
   @Test
-  @DisplayName("Should set all followed artists in response")
-  void test() {
+  @DisplayName("Should use transformer to transform releases to a list of DetectorReleasesResponse")
+  void should_use_transformer() {
     // given
-
+    var request = DetectorReleaseRequestFactory.createDefault();
+    var releases = List.of(ReleaseDtoFactory.createDefault());
+    doReturn(releases).when(releasesService).findReleases(any(), any(), any());
 
     // when
-    // ToDo DanielW: Implement
+    requestHandler.doPost(request, ContentType.JSON);
 
     // then
-
+    verify(releasesResponseTransformer, times(1)).transformListOf(releases);
   }
 
-  // ToDo DanielW: Remove this
-//  @ParameterizedTest(name = "[{index}] => ButlerRequest <{0}> | RestControllerRequest <{1}> | MockedDtos <{2}> | ExpectedResponses <{3}>")
-//  @MethodSource("inputProvider")
-//  @DisplayName("POST should return valid results")
-//  void post_valid_result(ButlerReleasesRequest requestButler, DetectorReleasesRequest request, List<ReleaseDto> mockedDtos, List<DetectorReleasesResponse> expectedResponses) {
-//    // given
-//    when(releasesService.findReleases(requestButler)).thenReturn(mockedDtos);
-//    when(artistsService.findFollowedArtistsForCurrentUser()).thenReturn(Collections.emptyList());
-//
-//    for (int i = 0; i < mockedDtos.size(); i++) {
-//      when(modelMapper.map(mockedDtos.get(i), DetectorReleasesResponse.class)).thenReturn(expectedResponses.get(i));
-//    }
-//
-//    // when
-//    ValidatableResponse validatableResponse = requestHandler.doPost(request, ContentType.JSON);
-//
-//    // then
-//    validatableResponse
-//        .contentType(ContentType.JSON)
-//        .statusCode(HttpStatus.OK.value());
-//
-//    List<DetectorReleasesResponse> response = validatableResponse.extract().body().jsonPath().getList(".", DetectorReleasesResponse.class);
-//
-//    assertThat(response).isEqualTo(expectedResponses);
-//    verify(modelMapper, times(mockedDtos.size())).map(any(), eq(DetectorReleasesResponse.class));
-//  }
+  @Test
+  @DisplayName("Should return the transformed response")
+  void should_return_releases() {
+    // given
+    var request = DetectorReleaseRequestFactory.createDefault();
+    var transformedResponse = List.of(new DetectorReleasesResponse());
+    doReturn(Collections.emptyList()).when(releasesService).findReleases(any(), any(), any());
+    doReturn(transformedResponse).when(releasesResponseTransformer).transformListOf(any());
+
+    // when
+    ValidatableResponse validatableResponse = requestHandler.doPost(request, ContentType.JSON);
+
+    // then
+    validatableResponse
+            .contentType(ContentType.JSON)
+            .statusCode(HttpStatus.OK.value());
+
+    var result = validatableResponse.extract().as(DetectorReleasesResponse[].class);
+    assertThat(Arrays.asList(result)).isEqualTo(transformedResponse);
+  }
 
   @Test
-  @DisplayName("POST with bad requests should return 400")
-  void bad_requests() {
+  @DisplayName("Should return 400 on invalid request")
+  void test_invalid_requests() {
     // given
-    DetectorReleasesRequest request = new DetectorReleasesRequest(null, null, null);
+    DetectorReleasesRequest request = new DetectorReleasesRequest(LocalDate.now(), LocalDate.now().plusDays(1), null);
 
     // when
     ValidatableResponse validatableResponse = requestHandler.doPost(request, ContentType.JSON);
@@ -147,30 +123,4 @@ class ReleasesRestControllerIT implements WithAssertions, WithIntegrationTestCon
         .contentType(ContentType.JSON)
         .statusCode(HttpStatus.BAD_REQUEST.value());
   }
-
-  // ToDo DanielW: Remove this
-//  private static Stream<Arguments> inputProvider() {
-//    LocalDate date = LocalDate.now();
-//    ReleaseDto releaseDto1 = ReleaseDtoFactory.withOneResult("A1", date);
-//    ReleaseDto releaseDto2 = ReleaseDtoFactory.withOneResult("A2", date);
-//    ReleaseDto releaseDto3 = ReleaseDtoFactory.withOneResult("A3", date);
-//
-//    DetectorReleasesResponse releaseResponse1 = DetectorReleaseResponseFactory.withOneResult("A1", date);
-//    DetectorReleasesResponse releaseResponse2 = DetectorReleaseResponseFactory.withOneResult("A2", date);
-//    DetectorReleasesResponse releaseResponse3 = DetectorReleaseResponseFactory.withOneResult("A3", date);
-//
-//    ButlerReleasesRequest requestAllButler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
-//    DetectorReleasesRequest requestAll = new DetectorReleasesRequest(null, null, Collections.emptyList());
-//
-//    ButlerReleasesRequest requestA1Butler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
-//    DetectorReleasesRequest requestA1 = new DetectorReleasesRequest(null, null, Collections.emptyList());
-//
-//    ButlerReleasesRequest requestA4Butler = new ButlerReleasesRequest(null, null, Collections.singletonList("A1"));
-//    DetectorReleasesRequest requestA4 = new DetectorReleasesRequest(null, null, Collections.emptyList());
-//
-//    return Stream.of(
-//        Arguments.of(requestAllButler, requestAll, List.of(releaseDto1, releaseDto2, releaseDto3), List.of(releaseResponse1, releaseResponse2, releaseResponse3)),
-//        Arguments.of(requestA1Butler, requestA1, List.of(releaseDto1), List.of(releaseResponse1)),
-//        Arguments.of(requestA4Butler, requestA4, Collections.emptyList(), Collections.emptyList()));
-//  }
 }

@@ -1,6 +1,6 @@
 package rocks.metaldetector.service.token;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
@@ -20,21 +20,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
   private final TokenRepository tokenRepository;
   private final UserRepository userRepository;
   private final EmailService emailService;
   private final JwtsSupport jwtsSupport;
-
-  @Autowired
-  public TokenServiceImpl(TokenRepository tokenRepository, UserRepository  userRepository,
-                          EmailService emailService, JwtsSupport jwtsSupport) {
-    this.tokenRepository = tokenRepository;
-    this.userRepository  = userRepository;
-    this.emailService    = emailService;
-    this.jwtsSupport     = jwtsSupport;
-  }
 
   @Override
   @Transactional(readOnly = true)

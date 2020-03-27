@@ -1,7 +1,7 @@
 package rocks.metaldetector.service.email;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,6 +12,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.ISpringTemplateEngine;
 import rocks.metaldetector.config.misc.MailConfig;
 
+import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
@@ -21,6 +22,7 @@ import java.util.concurrent.Executors;
 @Service
 @Slf4j
 @Profile("prod")
+@AllArgsConstructor
 public class JavaMailEmailService implements EmailService {
 
   private final JavaMailSender        emailSender;
@@ -28,12 +30,9 @@ public class JavaMailEmailService implements EmailService {
   private final MailConfig            mailConfig;
   private       Executor              executor;
 
-  @Autowired
-  public JavaMailEmailService(JavaMailSender emailSender, ISpringTemplateEngine templateEngine, MailConfig mailConfig) {
-    this.emailSender    = emailSender;
-    this.templateEngine = templateEngine;
-    this.executor       = Executors.newSingleThreadExecutor();
-    this.mailConfig     = mailConfig;
+  @PostConstruct
+  private void init() {
+    this.executor = Executors.newSingleThreadExecutor();
   }
 
   @Async

@@ -1,7 +1,7 @@
 package rocks.metaldetector.butler.client;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,16 +19,11 @@ import java.util.Collections;
 @Service
 @Slf4j
 @Profile({"default", "preview", "prod"})
+@AllArgsConstructor
 public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
 
   private final RestTemplate restTemplate;
   private final String releasesEndpoint;
-
-  @Autowired
-  public ReleaseButlerRestClientImpl(RestTemplate restTemplate, String releasesEndpoint) {
-    this.restTemplate = restTemplate;
-    this.releasesEndpoint = releasesEndpoint;
-  }
 
   @Override
   public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {

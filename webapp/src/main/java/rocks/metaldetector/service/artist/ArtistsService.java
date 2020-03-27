@@ -15,7 +15,7 @@ public interface ArtistsService {
 
   void followArtist(long discogsId);
   void unfollowArtist(long discogsId);
-  boolean isFollowed(long discogsId);
+  boolean isFollowedByCurrentUser(long discogsId);
   List<ArtistDto> findFollowedArtistsPerUser(String publicUserId);
   List<ArtistDto> findFollowedArtistsPerUser(String publicUserId, Pageable pageable);
   List<ArtistDto> findFollowedArtistsForCurrentUser();

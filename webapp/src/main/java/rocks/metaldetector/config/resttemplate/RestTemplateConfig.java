@@ -1,7 +1,7 @@
 package rocks.metaldetector.config.resttemplate;
 
+import lombok.AllArgsConstructor;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,16 +10,11 @@ import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.discogs.config.DiscogsCredentialsConfig;
 
 @Configuration
+@AllArgsConstructor
 public class RestTemplateConfig {
 
   private final CloseableHttpClient httpClient;
   private final DiscogsCredentialsConfig discogsCredentialsConfig;
-
-  @Autowired
-  public RestTemplateConfig(CloseableHttpClient httpClient, DiscogsCredentialsConfig discogsCredentialsConfig) {
-    this.httpClient = httpClient;
-    this.discogsCredentialsConfig = discogsCredentialsConfig;
-  }
 
   @Bean
   public HttpComponentsClientHttpRequestFactory clientHttpRequestFactory() {

@@ -1,6 +1,6 @@
 package rocks.metaldetector.butler.facade;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
@@ -13,19 +13,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ReleaseServiceImpl implements ReleaseService {
 
   private final ReleaseButlerRestClient butlerClient;
   private final ButlerReleaseRequestTransformer requestTransformer;
   private final ButlerReleaseResponseTransformer responseTransformer;
-
-  @Autowired
-  public ReleaseServiceImpl(ReleaseButlerRestClient butlerClient, ButlerReleaseRequestTransformer requestTransformer,
-                            ButlerReleaseResponseTransformer responseTransformer) {
-    this.butlerClient = butlerClient;
-    this.requestTransformer = requestTransformer;
-    this.responseTransformer = responseTransformer;
-  }
 
   @Override
   public List<ReleaseDto> findReleases(Iterable<String> artists, LocalDate dateFrom, LocalDate dateTo) {

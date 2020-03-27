@@ -1,6 +1,6 @@
 package rocks.metaldetector.service.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.service.email.ForgotPasswordEmail;
@@ -8,16 +8,11 @@ import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.token.TokenService;
 
 @Component
+@AllArgsConstructor
 public class ResetPasswordRequestCompleteListener implements ApplicationListener<OnResetPasswordRequestCompleteEvent> {
 
-  private EmailService emailService;
+  private final EmailService emailService;
   private final TokenService tokenService;
-
-  @Autowired
-  public ResetPasswordRequestCompleteListener(EmailService emailService, TokenService tokenService) {
-    this.tokenService = tokenService;
-    this.emailService = emailService;
-  }
 
   @Override
   public void onApplicationEvent(OnResetPasswordRequestCompleteEvent event) {

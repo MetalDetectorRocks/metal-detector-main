@@ -1,7 +1,7 @@
 package rocks.metaldetector.service.user;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,6 +32,7 @@ import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINIST
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
@@ -41,19 +42,6 @@ public class UserServiceImpl implements UserService {
   private final UserMapper userMapper;
   private final TokenService tokenService;
   private final CurrentUserSupplier currentUserSupplier;
-
-  @Autowired
-  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                         TokenRepository tokenRepository, JwtsSupport jwtsSupport, UserMapper userMapper,
-                         TokenService tokenService, CurrentUserSupplier currentUserSupplier) {
-    this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.tokenRepository = tokenRepository;
-    this.jwtsSupport = jwtsSupport;
-    this.userMapper = userMapper;
-    this.tokenService = tokenService;
-    this.currentUserSupplier = currentUserSupplier;
-  }
 
   @Override
   @Transactional

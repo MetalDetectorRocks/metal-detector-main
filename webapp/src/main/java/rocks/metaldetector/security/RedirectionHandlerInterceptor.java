@@ -1,6 +1,6 @@
 package rocks.metaldetector.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -11,14 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
+@AllArgsConstructor
 public class RedirectionHandlerInterceptor implements HandlerInterceptor {
 
   private final CurrentUserSupplier currentUserSupplier;
-
-  @Autowired
-  public RedirectionHandlerInterceptor(CurrentUserSupplier currentUserSupplier) {
-    this.currentUserSupplier = currentUserSupplier;
-  }
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {

@@ -1,7 +1,7 @@
 package rocks.metaldetector.butler.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -18,16 +18,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
 @Profile("mockmode")
+@AllArgsConstructor
 public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
 
   private final ResourceLoader resourceLoader;
   private final ObjectMapper objectMapper;
-
-  @Autowired
-  public ReleaseButlerRestClientMock(ResourceLoader resourceLoader, ObjectMapper objectMapper) {
-    this.resourceLoader = resourceLoader;
-    this.objectMapper = objectMapper;
-  }
 
   @Override
   public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {

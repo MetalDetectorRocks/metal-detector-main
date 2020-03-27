@@ -1,6 +1,6 @@
 package rocks.metaldetector.persistence.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
@@ -17,6 +17,7 @@ import java.util.List;
 
 @Component
 @Profile({"dev"})
+@AllArgsConstructor
 public class DevelopmentDbInitializer implements ApplicationRunner {
 
   @PersistenceContext
@@ -25,11 +26,6 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
   private final long OPETH_DISCOGS_ID = 245797L;
   private final long DARKTHRONE_DISCOGS_ID = 252211L;
   private final long MAYHEM_DISCOGS_ID = 252211L;
-
-  @Autowired
-  public DevelopmentDbInitializer(EntityManager entityManager) {
-    this.entityManager = entityManager;
-  }
 
   @Override
   @Transactional

@@ -1,19 +1,17 @@
 package rocks.metaldetector.web.api.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
-@EqualsAndHashCode
-@ToString
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class DetectorReleasesResponse {
 
   private String artist;

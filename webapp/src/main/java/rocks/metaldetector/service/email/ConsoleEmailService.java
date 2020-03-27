@@ -1,7 +1,7 @@
 package rocks.metaldetector.service.email;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -11,16 +11,11 @@ import rocks.metaldetector.config.misc.MailConfig;
 @Service
 @Slf4j
 @Profile("!prod")
+@AllArgsConstructor
 public class ConsoleEmailService implements EmailService {
 
   private final SpringTemplateEngine templateEngine;
   private final MailConfig mailConfig;
-
-  @Autowired
-  public ConsoleEmailService(SpringTemplateEngine templateEngine, MailConfig mailConfig) {
-    this.templateEngine = templateEngine;
-    this.mailConfig = mailConfig;
-  }
 
   @Override
   public void sendEmail(AbstractEmail email) {
@@ -33,5 +28,4 @@ public class ConsoleEmailService implements EmailService {
     log.debug("Subject: {}", email.getSubject());
     log.debug("Message as Html: {}", messageAsHtml);
   }
-
 }

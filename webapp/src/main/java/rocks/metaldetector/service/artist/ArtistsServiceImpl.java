@@ -1,6 +1,6 @@
 package rocks.metaldetector.service.artist;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,21 +18,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ArtistsServiceImpl implements ArtistsService {
 
   private final ArtistRepository artistRepository;
   private final FollowedArtistRepository followedArtistRepository;
   private final DiscogsService discogsService;
   private final CurrentUserSupplier currentUserSupplier;
-
-  @Autowired
-  public ArtistsServiceImpl(ArtistRepository artistRepository, FollowedArtistRepository followedArtistRepository,
-                            DiscogsService discogsService, CurrentUserSupplier currentUserSupplier) {
-    this.artistRepository = artistRepository;
-    this.followedArtistRepository = followedArtistRepository;
-    this.discogsService = discogsService;
-    this.currentUserSupplier = currentUserSupplier;
-  }
 
   @Override
   public Optional<ArtistDto> findArtistByDiscogsId(long discogsId) {
@@ -56,7 +48,7 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   @Transactional
   public void followArtist(long discogsId) {
-    if (! isFollowed(discogsId)) {
+    if (! isFollowedByCurrentUser(discogsId)) {
       fetchAndSaveArtist(discogsId);
       FollowedArtistEntity followedArtistEntity = new FollowedArtistEntity(currentUserSupplier.get().getPublicId(), discogsId);
       followedArtistRepository.save(followedArtistEntity);
@@ -66,13 +58,13 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   @Transactional
   public void unfollowArtist(long discogsId) {
-    if (isFollowed(discogsId)) {
+    if (isFollowedByCurrentUser(discogsId)) {
       followedArtistRepository.deleteByPublicUserIdAndDiscogsId(currentUserSupplier.get().getPublicId(), discogsId);
     }
   }
 
   @Override
-  public boolean isFollowed(long discogsId) {
+  public boolean isFollowedByCurrentUser(long discogsId) {
     return followedArtistRepository.existsByPublicUserIdAndDiscogsId(currentUserSupplier.get().getPublicId(), discogsId);
   }
 

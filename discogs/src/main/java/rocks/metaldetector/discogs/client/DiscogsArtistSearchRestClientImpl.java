@@ -1,7 +1,7 @@
 package rocks.metaldetector.discogs.client;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +17,7 @@ import java.util.Collections;
 @Slf4j
 @Service
 @Profile({"default", "preview", "prod"})
+@AllArgsConstructor
 public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRestClient {
 
   private static final DiscogsArtistSearchResultContainer EMPTY_RESPONSE = createEmptyResponse();
@@ -26,12 +27,6 @@ public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRes
 
   private final RestTemplate restTemplate;
   private final DiscogsCredentialsConfig discogsCredentialsConfig;
-
-  @Autowired
-  public DiscogsArtistSearchRestClientImpl(RestTemplate restTemplate, DiscogsCredentialsConfig discogsCredentialsConfig) {
-    this.restTemplate = restTemplate;
-    this.discogsCredentialsConfig = discogsCredentialsConfig;
-  }
 
   @Override
   public DiscogsArtistSearchResultContainer searchByName(String artistQueryString, int pageNumber, int pageSize) {

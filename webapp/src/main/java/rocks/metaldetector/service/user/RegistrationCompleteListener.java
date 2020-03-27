@@ -1,6 +1,6 @@
 package rocks.metaldetector.service.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
@@ -8,16 +8,11 @@ import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.token.TokenService;
 
 @Component
+@AllArgsConstructor
 public class RegistrationCompleteListener implements ApplicationListener<OnRegistrationCompleteEvent> {
 
   private EmailService emailService;
   private TokenService tokenService;
-
-  @Autowired
-  public RegistrationCompleteListener(EmailService emailService, TokenService tokenService) {
-    this.tokenService = tokenService;
-    this.emailService = emailService;
-  }
 
   @Override
   public void onApplicationEvent(OnRegistrationCompleteEvent event) {

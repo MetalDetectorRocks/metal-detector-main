@@ -277,7 +277,7 @@ class ArtistsServiceTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("isFollowed() should return true if the given combination from user id and artist discogs id exists")
+  @DisplayName("isFollowedByCurrentUser() should return true if the given combination from user id and artist discogs id exists")
   void is_followed_should_return_true_for_existing_entity() {
     // given
     when(followedArtistRepository.existsByPublicUserIdAndDiscogsId(anyString(), anyLong())).thenReturn(true);
@@ -285,7 +285,7 @@ class ArtistsServiceTest implements WithAssertions {
     doReturn(userEntityMock).when(currentUserSupplier).get();
 
     // when
-    boolean result = underTest.isFollowed(DISCOGS_ID);
+    boolean result = underTest.isFollowedByCurrentUser(DISCOGS_ID);
 
     // then
     assertThat(result).isTrue();
@@ -293,7 +293,7 @@ class ArtistsServiceTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("isFollowed() should return false if the given combination from user id and artist discogs id does not exist")
+  @DisplayName("isFollowedByCurrentUser() should return false if the given combination from user id and artist discogs id does not exist")
   void is_followed_should_return_false_for_not_existing_entity() {
     // given
     when(followedArtistRepository.existsByPublicUserIdAndDiscogsId(anyString(), anyLong())).thenReturn(false);
@@ -301,7 +301,7 @@ class ArtistsServiceTest implements WithAssertions {
     doReturn(userEntityMock).when(currentUserSupplier).get();
 
     // when
-    boolean result = underTest.isFollowed(DISCOGS_ID);
+    boolean result = underTest.isFollowedByCurrentUser(DISCOGS_ID);
 
     // then
     assertThat(result).isFalse();
