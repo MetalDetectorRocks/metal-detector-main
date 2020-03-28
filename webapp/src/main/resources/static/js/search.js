@@ -174,9 +174,9 @@ function createPageLink(query, searchResponse, index, element) {
 
     const link = document.createElement("a");
     link.className = "page-link";
-    link.href = "/artists/search?query=" + query + "&page=" + (index+1)
+    link.href = "/artists/search?query=" + query + "&page=" + index
                 + "&size=" + searchResponse.pagination.itemsPerPage;
-    link.text = String((index+1));
+    link.text = String(index);
 
     listItem.append(link);
     element.append(listItem);
