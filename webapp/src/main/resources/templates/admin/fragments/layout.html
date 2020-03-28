@@ -26,6 +26,7 @@
     <script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}" src="#"></script>
     <script th:src="@{/webjars/datatables/js/dataTables.bootstrap4.min.js}" src="#"></script>
     <link th:href="@{/webjars/datatables/css/dataTables.bootstrap4.min.css}" href="#" rel="stylesheet" type="text/css" />
+    <script th:src="@{/js/admin/releases.js}" src="#"></script>
 </head>
 <body>
     <!-- Top Navbar-->
@@ -66,6 +67,11 @@
             <li class="nav-item h5">
                 <a href="#" th:href="@{/admin/import}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/import'}? 'active' : ''" class="text-dark px-4 py-3 ">
                     <i class="material-icons pr-2">import_export</i>Import
+                </a>
+            </li>
+            <li class="nav-item h5">
+                <a href="#" th:href="@{/admin/releases}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/releases'}? 'active' : ''" class="text-dark px-4 py-3 ">
+                    <i class="material-icons pr-2">horizontal_split</i>Releases
                 </a>
             </li>
             <li class="nav-item h5">

@@ -19,20 +19,16 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.accept.ContentNegotiationManager;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.service.exceptions.AppExceptionsHandler;
-import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
+import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
+import rocks.metaldetector.testutil.WithExceptionResolver;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
-import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.ErrorResponse;
@@ -52,7 +48,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ExtendWith(MockitoExtension.class)
-class UserRestControllerTest implements WithAssertions {
+class UserRestControllerTest implements WithAssertions, WithExceptionResolver {
 
   private static final String USER_ID = "public-user-id";
 
@@ -329,15 +325,5 @@ class UserRestControllerTest implements WithAssertions {
           Arguments.of("", "role", false)
       );
     }
-  }
-
-  private HandlerExceptionResolver exceptionResolver() {
-    StaticApplicationContext applicationContext = new StaticApplicationContext();
-    applicationContext.registerSingleton("exceptionHandler", AppExceptionsHandler.class);
-
-    WebMvcConfigurationSupport webMvcConfigurationSupport = new WebMvcConfigurationSupport();
-    webMvcConfigurationSupport.setApplicationContext(applicationContext);
-
-    return webMvcConfigurationSupport.handlerExceptionResolver(new ContentNegotiationManager());
   }
 }

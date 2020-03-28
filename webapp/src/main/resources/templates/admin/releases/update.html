@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Update Release</title>
+</head>
+<body>
+<div th:fragment="dialog" class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Update Release</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="update-release-form-close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="releases-validation-area" class="small" role="alert">
+            </div>
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-master-data-tab" data-toggle="tab" href="#nav-master-data" role="tab" aria-controls="nav-home" aria-selected="true">Master data</a>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <!-- Master data -->
+                <div class="tab-pane fade show active mt-3 ml-2" id="nav-master-data" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <form method="post" action="#" id="update-release-form">
+                        <fieldset>
+                            <!-- Artist -->
+                            <div class="form-group row">
+                                <label for="artist" class="col-sm-4 col-form-label">Artist</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="artist" readonly class="form-control-plaintext"/>
+                                </div>
+                            </div>
+
+                            <!-- Additional Artist -->
+                            <div class="form-group row">
+                                <label for="additionalArtist" class="col-sm-4 col-form-label">Additional Artist</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="additionalArtist" readonly class="form-control-plaintext"/>
+                                </div>
+                            </div>
+
+                            <!-- Album Title -->
+                            <div class="form-group row">
+                                <label for="albumTitle" class="col-sm-4 col-form-label">Album Title</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="albumTitle" readonly class="form-control-plaintext"/>
+                                </div>
+                            </div>
+
+                            <!-- Release Date -->
+                            <div class="form-group row">
+                                <label for="releaseDate" class="col-sm-4 col-form-label">Release Date</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="releaseDate" readonly class="form-control-plaintext"/>
+                                </div>
+                            </div>
+
+                            <!-- Estimated Release Date -->
+                            <div class="form-group row">
+                                <label for="estimatedReleaseDate" class="col-sm-4 col-form-label">Estimated Release Date</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="estimatedReleaseDate" readonly class="form-control-plaintext"/>
+                                </div>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-group row">
+                                <label for="updateStatus" class="col-sm-4 col-form-label">Status</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="updateStatus">
+                                        <option>Not set</option>
+                                        <option>Ok</option>
+                                        <option>Duplicate</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" id="update-release-button" data-dismiss="modal">Update</button>
+                <button type="button" class="btn btn-danger btn-sm" id="cancel-update-release-button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

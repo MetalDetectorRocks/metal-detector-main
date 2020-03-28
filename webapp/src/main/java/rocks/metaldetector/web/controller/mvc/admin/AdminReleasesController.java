@@ -1,4 +1,4 @@
-package rocks.metaldetector.web.controller.mvc;
+package rocks.metaldetector.web.controller.mvc.admin;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,11 +8,11 @@ import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;
 
 @Controller
-@RequestMapping(Endpoints.Frontend.RELEASES)
-public class ReleasesController {
+@RequestMapping(Endpoints.AdminArea.RELEASES)
+public class AdminReleasesController {
 
   @GetMapping
   public ModelAndView showReleases() {
-    return new ModelAndView(ViewNames.Frontend.RELEASES);
+    return new ModelAndView(ViewNames.AdminArea.RELEASES);
   }
 }
