@@ -15,25 +15,27 @@ import java.util.Optional;
 
 @Configuration
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackages ={"rocks.metaldetector.persistence"})
+@EnableJpaRepositories(basePackages = {"rocks.metaldetector.persistence"})
 @EntityScan(basePackages = {"rocks.metaldetector.persistence"})
 @ComponentScan(basePackages = {"rocks.metaldetector.persistence"})
 public class PersistenceModuleConfiguration {
 
   @Bean
   public AuditorAware<String> auditorAware() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication != null) {
-      Object principal = authentication.getPrincipal();
-      if (principal instanceof UserDetails) {
-        return () -> Optional.of(((UserDetails) principal).getUsername());
+    return () -> {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      if (authentication != null) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+          return Optional.of(((UserDetails) principal).getUsername());
+        }
+        else {
+          return Optional.of(principal.toString());
+        }
       }
       else {
-        return () -> Optional.of(principal.toString());
+        return Optional.of("ANONYMOUS");
       }
-    }
-    else {
-      return () -> Optional.of("ANONYMOUS");
-    }
+    };
   }
 }
