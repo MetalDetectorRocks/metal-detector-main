@@ -23,7 +23,7 @@ public class DiscogsArtistSearchResultContainerTransformer {
 
   private Pagination transformPagination(DiscogsPagination discogsPagination) {
     return Pagination.builder()
-            .currentPage(discogsPagination.getCurrentPage())
+            .currentPage(discogsPagination.getCurrentPage() - 1)
             .itemsPerPage(discogsPagination.getItemsPerPage())
             .totalPages(discogsPagination.getPagesTotal())
             .build();
