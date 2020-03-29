@@ -37,6 +37,12 @@ public class AppExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.CONFLICT);
   }
 
+  @ExceptionHandler(value = IllegalArgumentException.class)
+  public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException exception, WebRequest webRequest) {
+    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
+    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.CONFLICT);
+  }
+
   @ExceptionHandler(value = {ResourceNotFoundException.class})
   public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());

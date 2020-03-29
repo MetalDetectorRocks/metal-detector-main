@@ -133,6 +133,9 @@ function onCreateError(errorResponse, validationAreaId) {
  */
 function onUpdateError(errorResponse, validationAreaId) {
     onError(errorResponse, validationAreaId);
+
+    $('#updateRole').val('Administrator');
+    $('#updateStatus').val('Enabled');
 }
 
 /**
@@ -197,18 +200,9 @@ function showUpdateUserForm() {
 }
 
 /**
- * Updates a certain user.
- */
-function updateUser () {
-    sendUpdateUserRequest();
-    resetUpdateUserForm();
-    $('#update-user-dialog').modal('hide');
-}
-
-/**
  * Sends the update request to the server.
  */
-function sendUpdateUserRequest() {
+function updateUser() {
     $.post({
         url: '/rest/v1/users',
         data: createUpdateUserRequest(),
