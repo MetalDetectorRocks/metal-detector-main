@@ -3,10 +3,10 @@
     <!-- scan="true": reloads the config file while application is running if there is any change -->
     <!-- scanPeriod="15 seconds": We can specify values in milliseconds, seconds, minutes, or hours for scan -->
     <!-- debug="true": prints debug messages regarding this configuration file -->
-    <property name="LOGS" value="../.logs" />
+    <property name="LOGS" value=".logs" />
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <Pattern>%white(%d{ISO8601}) [%blue(%thread)] %highlight(%-5level) %logger{40} - %msg %n%throwable</Pattern>
+            <Pattern>%blue(%d{ISO8601}) [%red(%thread)] %yellow(%-5level) %green(%logger{40}) - %msg %n%throwable</Pattern>
         </encoder>
     </appender>
 
