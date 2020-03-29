@@ -1,5 +1,5 @@
 ![Continous Integration](https://github.com/MetalDetectorRocks/metal-detector-main/workflows/Continous%20Integration/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/MetalDetectorRocks/metal-detector-main/badge.svg?branch=master)](https://coveralls.io/github/MetalDetectorRocks/metal-detector-main?branch=master)
+[![codecov](https://codecov.io/gh/MetalDetectorRocks/metal-detector-main/branch/master/graph/badge.svg)](https://codecov.io/gh/MetalDetectorRocks/metal-detector-main)
 
 ## Table of contents
 1. [ Introduction ](#introduction)
