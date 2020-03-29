@@ -1,8 +1,7 @@
 package rocks.metaldetector.web.controller.mvc.authentication;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.config.constants.MessageKeys;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.service.token.TokenService;
@@ -23,26 +21,17 @@ import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 
 import javax.validation.Valid;
-import java.util.Locale;
 import java.util.Optional;
 
 @Controller
 @RequestMapping(Endpoints.Guest.RESET_PASSWORD)
+@AllArgsConstructor
 public class ResetPasswordController {
 
   static final String FORM_DTO = "changePasswordRequest";
 
   private final UserService userService;
   private final TokenService tokenService;
-  private final MessageSource messages;
-
-  @Autowired
-  public ResetPasswordController(UserService userService, TokenService tokenService,
-                                 @Qualifier("messageSource") MessageSource messages) {
-    this.userService = userService;
-    this.tokenService = tokenService;
-    this.messages = messages;
-  }
 
   @GetMapping
   public ModelAndView showResetPasswordForm(@RequestParam(value = "token") String tokenString, Model model, RedirectAttributes redirectAttributes) {
@@ -50,12 +39,12 @@ public class ResetPasswordController {
 
     // check whether token exists
     if (tokenEntity.isEmpty()) {
-      redirectAttributes.addFlashAttribute("resetPasswordError", messages.getMessage(MessageKeys.ForgotPassword.TOKEN_DOES_NOT_EXIST, null, Locale.US));
+      redirectAttributes.addFlashAttribute("tokenNotExistingError", "");
       return new ModelAndView("redirect:" + Endpoints.Guest.FORGOT_PASSWORD);
     }
     // check whether token is expired
     else if (tokenEntity.get().isExpired()) {
-      redirectAttributes.addFlashAttribute("resetPasswordError", messages.getMessage(MessageKeys.ForgotPassword.TOKEN_IS_EXPIRED, null, Locale.US));
+      redirectAttributes.addFlashAttribute("tokenExpiredError", "");
       return new ModelAndView("redirect:" + Endpoints.Guest.FORGOT_PASSWORD);
     }
     // everything is OK here, set token as hidden input field
