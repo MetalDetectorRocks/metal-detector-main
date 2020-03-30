@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import rocks.metaldetector.service.exceptions.IllegalUserException;
 import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
@@ -419,7 +420,7 @@ class UserServiceTest implements WithAssertions {
     Throwable throwable = catchThrowable(() -> userService.updateUser(PUBLIC_ID, userDtoForUpdate));
 
     // then
-    assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+    assertThat(throwable).isInstanceOf(IllegalUserException.class);
     assertThat(throwable).hasMessage(UserErrorMessages.ADMINISTRATOR_DISCARD_ROLE.toDisplayString());
   }
 
@@ -440,7 +441,7 @@ class UserServiceTest implements WithAssertions {
     Throwable throwable = catchThrowable(() -> userService.updateUser(PUBLIC_ID, userDtoForUpdate));
 
     // then
-    assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+    assertThat(throwable).isInstanceOf(IllegalUserException.class);
     assertThat(throwable).hasMessage(UserErrorMessages.ADMINISTRATOR_CANNOT_DISABLE_HIMSELF.toDisplayString());
   }
 

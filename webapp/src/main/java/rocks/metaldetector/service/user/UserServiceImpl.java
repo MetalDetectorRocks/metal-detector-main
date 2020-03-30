@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.comparator.BooleanComparator;
+import rocks.metaldetector.service.exceptions.IllegalUserException;
 import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
@@ -96,9 +97,9 @@ public class UserServiceImpl implements UserService {
 
     if (publicId.equals(currentUserSupplier.get().getPublicId())) {
       if (!userDto.isEnabled())
-        throw new IllegalArgumentException(UserErrorMessages.ADMINISTRATOR_CANNOT_DISABLE_HIMSELF.toDisplayString());
+        throw IllegalUserException.createAdminCannotDisableHimselfException();
       if (userEntity.isAdministrator() && !UserRole.getRoleFromString(userDto.getRole()).contains(ROLE_ADMINISTRATOR))
-        throw new IllegalArgumentException(UserErrorMessages.ADMINISTRATOR_DISCARD_ROLE.toDisplayString());
+        throw IllegalUserException.createAdminCannotDiscardHisRoleException();
     }
 
     userEntity.setUserRoles(UserRole.getRoleFromString(userDto.getRole()));

@@ -31,8 +31,8 @@ public class AppExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(value = UserAlreadyExistsException.class)
-  public ResponseEntity<ErrorResponse> handleAlreadyExistsException(UserAlreadyExistsException exception, WebRequest webRequest) {
+  @ExceptionHandler({UserAlreadyExistsException.class, IllegalUserException.class})
+  public ResponseEntity<ErrorResponse> handleUserException(RuntimeException exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.CONFLICT);
   }

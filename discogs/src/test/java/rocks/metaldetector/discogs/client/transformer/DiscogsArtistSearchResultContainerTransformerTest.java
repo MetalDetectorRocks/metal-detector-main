@@ -29,7 +29,7 @@ class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertion
 
     assertThat(result.getPagination()).isEqualTo(
             Pagination.builder()
-                      .currentPage(discogsPagination.getCurrentPage())
+                      .currentPage(discogsPagination.getCurrentPage() - 1)
                       .itemsPerPage(discogsPagination.getItemsPerPage())
                       .totalPages(discogsPagination.getPagesTotal())
                       .build()
