@@ -1,6 +1,9 @@
 package rocks.metaldetector.butler;
 
 import rocks.metaldetector.butler.api.ButlerRelease;
+import rocks.metaldetector.butler.api.ButlerReleaseEntityRecordState;
+import rocks.metaldetector.butler.api.ButlerReleaseSource;
+import rocks.metaldetector.butler.api.ButlerReleaseType;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
@@ -37,11 +40,17 @@ public class ButlerDtoFactory {
 
   public static class ButlerReleaseFactory {
 
-    static ButlerRelease createDefault() {
+    public static ButlerRelease createDefault() {
       return ButlerRelease.builder()
               .artist("A")
               .albumTitle("Heavy Release")
               .releaseDate(LocalDate.now().plusDays(10))
+              .genre("G")
+              .type(ButlerReleaseType.DEMO)
+              .metalArchivesArtistUrl("url")
+              .metalArchivesAlbumUrl("url")
+              .source(ButlerReleaseSource.METAL_ARCHIVES)
+              .state(ButlerReleaseEntityRecordState.OK)
               .build();
     }
   }
@@ -53,6 +62,12 @@ public class ButlerDtoFactory {
               .artist("A")
               .albumTitle("Heavy Release")
               .releaseDate(LocalDate.now().plusDays(10))
+              .genre("G")
+              .type(ButlerReleaseType.DEMO.toString())
+              .metalArchivesArtistUrl("url")
+              .metalArchivesAlbumUrl("url")
+              .source(ButlerReleaseSource.METAL_ARCHIVES.toString())
+              .state(ButlerReleaseEntityRecordState.OK.toString())
               .build();
     }
   }

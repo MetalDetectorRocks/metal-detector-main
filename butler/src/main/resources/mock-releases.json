@@ -2,11 +2,27 @@
   "releases": [
     {
       "artist": "Metallica",
-      "albumTitle": "Master of Puppets"
+      "albumTitle": "Master of Puppets",
+      "releaseDate": "2020-05-02",
+      "estimatedReleaseDate": "Spring",
+      "genre": "Thrash",
+      "type": "FULL_LENGTH",
+      "metalArchivesArtistUrl": "http://metal-archives.de/metallica",
+      "metalArchivesAlbumUrl": "http://metal-archives.de/master-of-puppets",
+      "source": "METAL_ARCHIVES",
+      "state": "OK"
     },
     {
       "artist": "Slayer",
-      "albumTitle": "Reign in Blood"
+      "albumTitle": "Reign in Blood",
+      "releaseDate": "2020-09-02",
+      "estimatedReleaseDate": "Fall",
+      "genre": "Thrash",
+      "type": "FULL_LENGTH",
+      "metalArchivesArtistUrl": "http://metal-archives.de/slayer",
+      "metalArchivesAlbumUrl": "http://metal-archives.de/reign-in-blood",
+      "source": "METAL_ARCHIVES",
+      "state": "OK"
     }
   ]
 }

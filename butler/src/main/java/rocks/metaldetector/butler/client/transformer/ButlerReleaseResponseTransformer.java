@@ -22,6 +22,12 @@ public class ButlerReleaseResponseTransformer {
             .additionalArtists(release.getAdditionalArtists())
             .releaseDate(release.getReleaseDate())
             .estimatedReleaseDate(release.getEstimatedReleaseDate())
+            .genre(release.getGenre())
+            .type(release.getType().toString())
+            .metalArchivesArtistUrl(release.getMetalArchivesArtistUrl())
+            .metalArchivesAlbumUrl(release.getMetalArchivesAlbumUrl())
+            .source(release.getSource().toString())
+            .state(release.getState().toString())
             .build();
   }
 }

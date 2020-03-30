@@ -9,11 +9,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.testutil.DtoFactory;
 
 import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
+import static rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
 class DetectorReleasesResponseTransformerTest implements WithAssertions {
@@ -29,8 +29,8 @@ class DetectorReleasesResponseTransformerTest implements WithAssertions {
   void should_transform() {
     // given
     var releases = List.of(
-            DtoFactory.ReleaseDtoFactory.withArtistName("Metallica"),
-            DtoFactory.ReleaseDtoFactory.withArtistName("Slayer")
+            ReleaseDtoFactory.withArtistName("Metallica"),
+            ReleaseDtoFactory.withArtistName("Slayer")
     );
 
     // when
@@ -45,7 +45,12 @@ class DetectorReleasesResponseTransformerTest implements WithAssertions {
       assertThat(resultItem.getAlbumTitle()).isEqualTo(release.getAlbumTitle());
       assertThat(resultItem.getReleaseDate()).isEqualTo(release.getReleaseDate());
       assertThat(resultItem.getAdditionalArtists()).isEqualTo(release.getAdditionalArtists());
-      assertThat(resultItem.getEstimatedReleaseDate()).isEqualTo(release.getEstimatedReleaseDate());
+      assertThat(resultItem.getGenre()).isEqualTo(release.getGenre());
+      assertThat(resultItem.getType()).isEqualTo(release.getType());
+      assertThat(resultItem.getMetalArchivesArtistUrl()).isEqualTo(release.getMetalArchivesArtistUrl());
+      assertThat(resultItem.getMetalArchivesAlbumUrl()).isEqualTo(release.getMetalArchivesAlbumUrl());
+      assertThat(resultItem.getSource()).isEqualTo(release.getSource());
+      assertThat(resultItem.getState()).isEqualTo(release.getState());
       assertThat(resultItem.isFollowed()).isFalse();
     }
   }
@@ -56,8 +61,8 @@ class DetectorReleasesResponseTransformerTest implements WithAssertions {
     // given
     var followedArtist = ArtistDto.builder().artistName("Metallica").build();
     var releases = List.of(
-            DtoFactory.ReleaseDtoFactory.withArtistName("Metallica"),
-            DtoFactory.ReleaseDtoFactory.withArtistName("Slayer")
+            ReleaseDtoFactory.withArtistName("Metallica"),
+            ReleaseDtoFactory.withArtistName("Slayer")
     );
     doReturn(List.of(followedArtist)).when(artistsService).findFollowedArtistsForCurrentUser();
 
