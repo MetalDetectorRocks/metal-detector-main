@@ -62,6 +62,14 @@ function showUpdateReleaseForm() {
   $('#releaseDate').val(data.releaseDate);
   $('#estimatedReleaseDate').val(data.estimatedReleaseDate);
   $('#status').val(data.status);
+
+  // details
+  $('#genre').val(data.genre);
+  $('#type').val(data.type);
+  $('#metalArchivesArtistUrl').val(data.metalArchivesArtistUrl);
+  $('#metalArchivesAlbumUrl').val(data.metalArchivesAlbumUrl);
+  $('#source').val(data.source);
+  $('#state').val(data.state);
 }
 
 /**

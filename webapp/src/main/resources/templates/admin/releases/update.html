@@ -18,6 +18,7 @@
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link active" id="nav-master-data-tab" data-toggle="tab" href="#nav-master-data" role="tab" aria-controls="nav-home" aria-selected="true">Master data</a>
+                    <a class="nav-item nav-link" id="nav-details-tab" data-toggle="tab" href="#nav-details" role="tab" aria-controls="nav-home">Details</a>
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
@@ -78,6 +79,57 @@
                             </div>
                         </fieldset>
                     </form>
+                </div>
+
+                <!-- Details -->
+                <div class="tab-pane fade mt-3 ml-2" id="nav-details" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <!-- Genre -->
+                    <div class="form-group row">
+                        <label for="genre" class="col-sm-4 col-form-label">Genre</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="genre" readonly class="form-control-plaintext" />
+                        </div>
+                    </div>
+
+                    <!-- Type -->
+                    <div class="form-group row">
+                        <label for="type" class="col-sm-4 col-form-label">Type</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="type" readonly class="form-control-plaintext" />
+                        </div>
+                    </div>
+
+                    <!-- MetalArchives Artist Url -->
+                    <div class="form-group row">
+                        <label for="metalArchivesArtistUrl" class="col-sm-4 col-form-label">MetalArchives Artist Url</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="metalArchivesArtistUrl" readonly class="form-control-plaintext" />
+                        </div>
+                    </div>
+
+                    <!-- MetalArchives Album Url -->
+                    <div class="form-group row">
+                        <label for="metalArchivesAlbumUrl" class="col-sm-4 col-form-label">MetalArchives Album Url</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="metalArchivesAlbumUrl" readonly class="form-control-plaintext" />
+                        </div>
+                    </div>
+
+                    <!-- Source -->
+                    <div class="form-group row">
+                        <label for="source" class="col-sm-4 col-form-label">Source</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="source" readonly class="form-control-plaintext" />
+                        </div>
+                    </div>
+
+                    <!-- State -->
+                    <div class="form-group row">
+                        <label for="state" class="col-sm-4 col-form-label">State</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="state" readonly class="form-control-plaintext" />
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
