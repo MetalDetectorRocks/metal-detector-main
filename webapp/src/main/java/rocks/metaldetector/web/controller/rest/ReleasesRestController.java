@@ -38,7 +38,8 @@ public class ReleasesRestController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  @GetMapping(path = "/import",
+              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<DetectorImportResponse> importReleases() {
     ImportResultDto importResult = releaseService.importReleases();
     DetectorImportResponse response = importResponseTransformer.transform(importResult);

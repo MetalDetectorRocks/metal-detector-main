@@ -155,7 +155,7 @@ class ReleasesRestControllerTest implements WithAssertions, WithExceptionResolve
   @DisplayName("Should call release service on import")
   void should_call_release_service() {
     // when
-    restAssuredUtils.doGet();
+    restAssuredUtils.doGet("/import");
 
     // then
     verify(releasesService, times(1)).importReleases();
@@ -169,7 +169,7 @@ class ReleasesRestControllerTest implements WithAssertions, WithExceptionResolve
     doReturn(importResult).when(releasesService).importReleases();
 
     // when
-    restAssuredUtils.doGet();
+    restAssuredUtils.doGet("/import");
 
     // then
     verify(importResponseTransformer, times(1)).transform(importResult);
@@ -183,7 +183,7 @@ class ReleasesRestControllerTest implements WithAssertions, WithExceptionResolve
     doReturn(transformedResponse).when(importResponseTransformer).transform(any());
 
     // when
-    var validatableResponse = restAssuredUtils.doGet();
+    var validatableResponse = restAssuredUtils.doGet("/import");
 
     // then
     validatableResponse
@@ -201,7 +201,7 @@ class ReleasesRestControllerTest implements WithAssertions, WithExceptionResolve
     when(releasesService.importReleases()).thenThrow(new ExternalServiceException());
 
     // when
-    var validatableResponse = restAssuredUtils.doGet();
+    var validatableResponse = restAssuredUtils.doGet("/import");
 
     // then
     validatableResponse

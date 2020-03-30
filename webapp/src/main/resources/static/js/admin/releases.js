@@ -71,3 +71,59 @@ function resetUpdateReleaseForm() {
   $("#update-release-form")[0].reset();
   resetValidationArea('#update-release-validation-area');
 }
+
+/**
+ * Butler-Import of the newest releases started per ajax
+ * @returns {boolean}
+ */
+function importReleases() {
+  toggleLoader("import-validation-area");
+
+  $.ajax({
+    method: "GET",
+    url: "/rest/v1/releases/import",
+    dataType: "json",
+    success: function(importResponse){
+      importSuccessful(importResponse);
+    },
+    error: function(err){
+      importFailed(err);
+    }
+  });
+
+  return false;
+}
+
+/**
+ * Shows successful import response
+ * @param importResponse
+ */
+function importSuccessful(importResponse) {
+  resetValidationArea("#import-validation-area");
+
+  const validationArea = $('#import-validation-area');
+  validationArea.addClass("alert alert-success");
+  validationArea.append("Import successful with " + importResponse.totalCountRequested
+                        + " releases requested and " + importResponse.totalCountImported
+                        + " releases imported!");
+
+  const reloadLink = document.createElement("a");
+  reloadLink.href = "#";
+  reloadLink.innerHTML = '<span class="material-icons md-24 md-success">refresh</span>';
+  reloadLink.onclick = function() {location.reload()};
+  validationArea.append(reloadLink);
+
+  toggleLoader("import-validation-area");
+}
+
+/**
+ * Shows error response
+ * @param err
+ */
+function importFailed(err) {
+  resetValidationArea("#import-validation-area");
+  const validationArea = $('#import-validation-area');
+  validationArea.addClass("alert alert-danger");
+  validationArea.append(err.responseJSON.messages[0]);
+  toggleLoader("import-validation-area");
+}
