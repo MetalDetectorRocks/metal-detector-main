@@ -4,6 +4,7 @@ import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerRelease;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
+import rocks.metaldetector.butler.facade.dto.ImportResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 
 import java.time.LocalDate;
@@ -40,9 +41,19 @@ public class ButlerDtoFactory {
 
     public static ButlerImportResponse createDefault() {
       return ButlerImportResponse.builder()
-          .totalCountImported(2)
-          .totalCountRequested(2)
-          .build();
+              .totalCountImported(666)
+              .totalCountRequested(666)
+              .build();
+    }
+  }
+
+  public static class ImportResultDtoFactory {
+
+    public static ImportResultDto createDefault() {
+      return ImportResultDto.builder()
+              .totalCountRequested(666)
+              .totalCountImported(666)
+              .build();
     }
   }
 
