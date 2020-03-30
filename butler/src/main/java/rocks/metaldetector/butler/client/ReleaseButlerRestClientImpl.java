@@ -52,7 +52,7 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
 
     var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
-      throw new ExternalServiceException("Could not import releases (Response code : " + responseEntity.getStatusCode() + ")");
+      throw new ExternalServiceException("Could not import releases (Response code: " + responseEntity.getStatusCode() + ")");
     }
 
     return response;

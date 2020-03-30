@@ -256,6 +256,6 @@ function resetUpdateUserForm() {
  */
 function resetValidationArea(validationAreaId) {
     const validationMessageArea = $(validationAreaId);
-    validationMessageArea.removeClass('alert alert-danger');
+    validationMessageArea.removeClass('alert alert-danger alert-success');
     validationMessageArea.empty();
 }
