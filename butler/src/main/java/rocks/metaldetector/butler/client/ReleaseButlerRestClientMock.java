@@ -38,6 +38,6 @@ public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
 
   @Override
   public ButlerImportResponse importReleases() {
-    return new ButlerImportResponse(2, 2);
+    return new ButlerImportResponse(666, 666);
   }
 }
