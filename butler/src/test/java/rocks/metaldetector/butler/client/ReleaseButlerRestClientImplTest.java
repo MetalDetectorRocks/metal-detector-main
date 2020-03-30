@@ -151,27 +151,29 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   void test_get() {
     // given
     ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class));
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
 
     // when
     underTest.importReleases();
 
     // then
-    verify(restTemplate, times(1)).exchange(anyString(), eq(HttpMethod.GET), any(), any(Class.class));
+    verify(restTemplate, times(1)).exchange(anyString(), eq(HttpMethod.GET), any(), any(Class.class), anyString());
   }
 
   @Test
-  @DisplayName("A GET call is made on the injected import URL")
+  @DisplayName("A GET call is made on the injected import URL with correct path parameter")
   void test_get_on_import_url() {
     // given
     ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class));
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
+    String actionPathParam = "?action={action}";
+    String importAction = "import";
 
     // when
     underTest.importReleases();
 
     // then
-    verify(restTemplate, times(1)).exchange(eq(IMPORT_URL), any(), any(), eq(ButlerImportResponse.class));
+    verify(restTemplate, times(1)).exchange(eq(IMPORT_URL + actionPathParam), any(), any(), eq(ButlerImportResponse.class), eq(importAction));
   }
 
   @Test
@@ -179,13 +181,13 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   void test_import_http_entity() {
     // given
     ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class));
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
 
     // when
     underTest.importReleases();
 
     // then
-    verify(restTemplate, times(1)).exchange(anyString(), any(), argumentCaptorImport.capture(), any(Class.class));
+    verify(restTemplate, times(1)).exchange(anyString(), any(), argumentCaptorImport.capture(), any(Class.class), anyString());
 
     HttpEntity<ButlerReleasesRequest> httpEntity = argumentCaptorImport.getValue();
     assertThat(httpEntity.getHeaders().getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -197,7 +199,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   void get_import_valid_result() {
     // given
     ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class));
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
 
     // when
     ButlerImportResponse response = underTest.importReleases();
@@ -210,7 +212,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @DisplayName("If the import response is null, an ExternalServiceException is thrown")
   void test_exception_if_import_response_is_null() {
     // given
-    doReturn(ResponseEntity.ok(null)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class));
+    doReturn(ResponseEntity.ok(null)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
 
     // when
     Throwable throwable = catchThrowable(() -> underTest.importReleases());
@@ -224,12 +226,11 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @DisplayName("If the status code is not OK on import, an ExternalServiceException is thrown")
   void test_import_exception_if_status_is_not_ok(HttpStatus httpStatus) {
     // given
-    ButlerReleasesRequest request = new ButlerReleasesRequest();
-    ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
-    doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
+    ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+    doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
 
     // when
-    Throwable throwable = catchThrowable(() -> underTest.queryReleases(request));
+    Throwable throwable = catchThrowable(() -> underTest.importReleases());
 
     // then
     assertThat(throwable).isInstanceOf(ExternalServiceException.class);
