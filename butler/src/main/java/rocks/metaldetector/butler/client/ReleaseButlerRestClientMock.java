@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 
@@ -33,5 +34,10 @@ public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
     catch (IOException ioe) {
       throw new UncheckedIOException(ioe);
     }
+  }
+
+  @Override
+  public ButlerImportResponse importReleases() {
+    return new ButlerImportResponse(2, 2);
   }
 }

@@ -1,5 +1,6 @@
 package rocks.metaldetector.butler;
 
+import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerRelease;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
@@ -32,6 +33,16 @@ public class ButlerDtoFactory {
 
     public static ButlerReleasesResponse withEmptyResult() {
       return ButlerReleasesResponse.builder().releases(Collections.emptyList()).build();
+    }
+  }
+
+  public static class ButlerImportResponseFactory {
+
+    public static ButlerImportResponse createDefault() {
+      return ButlerImportResponse.builder()
+          .totalCountImported(2)
+          .totalCountRequested(2)
+          .build();
     }
   }
 
