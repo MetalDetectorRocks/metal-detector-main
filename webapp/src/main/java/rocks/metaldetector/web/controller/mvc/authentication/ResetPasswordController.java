@@ -1,7 +1,6 @@
 package rocks.metaldetector.web.controller.mvc.authentication;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,12 +38,12 @@ public class ResetPasswordController {
 
     // check whether token exists
     if (tokenEntity.isEmpty()) {
-      redirectAttributes.addFlashAttribute("tokenNotExistingError", "");
+      redirectAttributes.addFlashAttribute("tokenNotExistingError", true);
       return new ModelAndView("redirect:" + Endpoints.Guest.FORGOT_PASSWORD);
     }
     // check whether token is expired
     else if (tokenEntity.get().isExpired()) {
-      redirectAttributes.addFlashAttribute("tokenExpiredError", "");
+      redirectAttributes.addFlashAttribute("tokenExpiredError", true);
       return new ModelAndView("redirect:" + Endpoints.Guest.FORGOT_PASSWORD);
     }
     // everything is OK here, set token as hidden input field
