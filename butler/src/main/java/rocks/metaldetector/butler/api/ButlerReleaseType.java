@@ -12,9 +12,13 @@ public enum ButlerReleaseType {
   LIVE_ALBUM("Live Album"),
   VIDEO("Video");
 
-  String typeName;
+  String name;
 
-  ButlerReleaseType(String typeName) {
-    this.typeName = typeName;
+  ButlerReleaseType(String name) {
+    this.name = name;
+  }
+
+  public String toDisplayString() {
+    return this.name;
   }
 }

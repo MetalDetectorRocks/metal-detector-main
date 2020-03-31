@@ -10,4 +10,8 @@ public enum ButlerReleaseSource {
   ButlerReleaseSource(String name) {
     this.name = name;
   }
+
+  public String toDisplayString() {
+    return this.name;
+  }
 }
