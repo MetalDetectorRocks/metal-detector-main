@@ -23,10 +23,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
@@ -153,13 +150,12 @@ class RegistrationControllerTest implements WithAssertions, WithExceptionResolve
       // given
       UserDto userDto = UserDtoFactory.withUsernameAndEmail("JohnD", "john.d@example.com");
       when(userService.createUser(any(UserDto.class))).thenReturn(userDto);
-      ArgumentCaptor<UserDto> userDtoCaptor = ArgumentCaptor.forClass(UserDto.class);
 
       // when
       restAssuredUtils.doPost(paramValues, ContentType.HTML);
 
       // then
-      verify(userService, times(1)).createUser(userDtoCaptor.capture());
+      verify(userService, times(1)).createUser(any());
     }
 
     @Test
@@ -168,13 +164,12 @@ class RegistrationControllerTest implements WithAssertions, WithExceptionResolve
       // given
       UserDto userDto = UserDtoFactory.withUsernameAndEmail("JohnD", "john.d@example.com");
       when(userService.createUser(any(UserDto.class))).thenReturn(userDto);
-      ArgumentCaptor<OnRegistrationCompleteEvent> eventCaptor = ArgumentCaptor.forClass(OnRegistrationCompleteEvent.class);
 
       // when
       restAssuredUtils.doPost(paramValues, ContentType.HTML);
 
       // when
-      verify(eventPublisher, times(1)).publishEvent(eventCaptor.capture());
+      verify(eventPublisher, times(1)).publishEvent(any());
     }
 
     @Test
@@ -211,8 +206,8 @@ class RegistrationControllerTest implements WithAssertions, WithExceptionResolve
     }
 
     @Test
-    @DisplayName("Register a new user account with a valid request should return created user")
-    void created_user_should_be_returned() {
+    @DisplayName("Register a new user account with a valid request should pass returned dto to EventPublisher")
+    void user_dto_should_be_passed() {
       // given
       UserDto userDto = UserDtoFactory.withUsernameAndEmail("JohnD", "john.d@example.com");
       when(userService.createUser(any(UserDto.class))).thenReturn(userDto);
@@ -230,12 +225,6 @@ class RegistrationControllerTest implements WithAssertions, WithExceptionResolve
     @MethodSource("registerUserRequestProvider")
     @DisplayName("Register a new user account with an invalid request dto should fail")
     void register_new_user_account_with_invalid_request_dto_should_fail(RegisterUserRequest request, int expectedErrorCount, String[] incorrectFieldNames) {
-      // given
-      paramValues.put(PARAM_USERNAME, request.getUsername());
-      paramValues.put(PARAM_EMAIL, request.getEmail());
-      paramValues.put(PARAM_PASSWORD, request.getPlainPassword());
-      paramValues.put(PARAM_VERIFY_PASSWORD, request.getVerifyPlainPassword());
-
       // when
       var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);
 
@@ -252,20 +241,20 @@ class RegistrationControllerTest implements WithAssertions, WithExceptionResolve
           // invalid username
           Arguments.of(RegisterUserRequestFactory.withUsername(""), 1, new String[] {PARAM_USERNAME}),
           Arguments.of(RegisterUserRequestFactory.withUsername("    "), 1, new String[] {PARAM_USERNAME}),
-//          Arguments.of(RegisterUserRequestFactory.withUsername(null), 1, new String[] {PARAM_USERNAME}),
+          Arguments.of(RegisterUserRequestFactory.withUsername(null), 1, new String[] {PARAM_USERNAME}),
 
           // invalid email
           Arguments.of(RegisterUserRequestFactory.withEmail("john.doe.example.de"), 1, new String[] {PARAM_EMAIL}),
           Arguments.of(RegisterUserRequestFactory.withEmail(""), 1, new String[] {PARAM_EMAIL}),
           Arguments.of(RegisterUserRequestFactory.withEmail("    "), 2, new String[] {PARAM_EMAIL}),
           Arguments.of(RegisterUserRequestFactory.withEmail("@com"), 1, new String[] {PARAM_EMAIL}),
-//          Arguments.of(RegisterUserRequestFactory.withEmail(null), 1, new String[] {PARAM_EMAIL}),
+          Arguments.of(RegisterUserRequestFactory.withEmail(null), 1, new String[] {PARAM_EMAIL}),
 
           // invalid passwords
           Arguments.of(RegisterUserRequestFactory.withPassword("secret-password", "other-secret-password"), 1, new String[] {}),
           Arguments.of(RegisterUserRequestFactory.withPassword("secret", "secret"), 2, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD}),
-          Arguments.of(RegisterUserRequestFactory.withPassword("", ""), 4, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD})
-//          Arguments.of(RegisterUserRequestFactory.withPassword(null, null), 2, new String[] {PARAM_VERIFY_PASSWORD})
+          Arguments.of(RegisterUserRequestFactory.withPassword("", ""), 4, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD}),
+          Arguments.of(RegisterUserRequestFactory.withPassword(null, null), 2, new String[] {PARAM_VERIFY_PASSWORD})
       );
     }
 
@@ -355,7 +344,7 @@ class RegistrationControllerTest implements WithAssertions, WithExceptionResolve
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with not existing token should return call UserService")
+    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with not existing token should call UserService")
     void given_not_existing_token_on_registration_verification_uri_should_call_user_service() {
       // given
       doThrow(ResourceNotFoundException.class).when(userService).verifyEmailToken(NOT_EXISTING_TOKEN);
@@ -380,8 +369,6 @@ class RegistrationControllerTest implements WithAssertions, WithExceptionResolve
       validatableResponse
           .assertThat(status().is3xxRedirection())
           .assertThat(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenExpired&token=" + EXPIRED_TOKEN));
-
-      verify(userService, times(1)).verifyEmailToken(EXPIRED_TOKEN);
     }
 
     @Test
@@ -433,7 +420,7 @@ class RegistrationControllerTest implements WithAssertions, WithExceptionResolve
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "' with valid expired should return the login view with token not found message")
+    @DisplayName("Requesting '" + Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "' with not existing token should return the login view with token not found message")
     void given_not_existing_token_on_resend_verification_token_uri_should_redirect_to_login_view() {
       // given
       doThrow(ResourceNotFoundException.class).when(tokenService).resendExpiredEmailVerificationToken(NOT_EXISTING_TOKEN);
@@ -448,7 +435,7 @@ class RegistrationControllerTest implements WithAssertions, WithExceptionResolve
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "' with valid expired should call TokenService")
+    @DisplayName("Requesting '" + Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "' with not existing should call TokenService")
     void given_not_existing_token_on_resend_verification_token_uri_should_call_token_service() {
       // given
       doThrow(ResourceNotFoundException.class).when(tokenService).resendExpiredEmailVerificationToken(NOT_EXISTING_TOKEN);

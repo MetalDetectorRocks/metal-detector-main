@@ -101,7 +101,7 @@ class ResetPasswordControllerTest implements WithAssertions, WithExceptionResolv
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Guest.RESET_PASSWORD + "' with not existing token should return call TokenService")
+  @DisplayName("Requesting '" + Endpoints.Guest.RESET_PASSWORD + "' with not existing token should call TokenService")
   void reset_password_with_not_existing_token_should_call_token_service() {
     // given
     String token = "not-existing-token";

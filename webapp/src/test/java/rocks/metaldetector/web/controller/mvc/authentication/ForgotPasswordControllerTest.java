@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.user.OnResetPasswordRequestCompleteEvent;
@@ -26,6 +25,7 @@ import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -116,7 +116,6 @@ class ForgotPasswordControllerTest implements WithAssertions, WithExceptionResol
   @DisplayName("POST on '" + Endpoints.Guest.FORGOT_PASSWORD + "' should call EventPublisher")
   void post_should_call_event_publisher() {
     // given
-    ArgumentCaptor<OnResetPasswordRequestCompleteEvent> eventCaptor = ArgumentCaptor.forClass(OnResetPasswordRequestCompleteEvent.class);
     UserDto userDto = UserDtoFactory.withUsernameAndEmail("JohnD", EXISTING_EMAIL);
     when(userService.getUserByEmailOrUsername(EXISTING_EMAIL)).thenReturn(Optional.of(userDto));
 
@@ -124,7 +123,7 @@ class ForgotPasswordControllerTest implements WithAssertions, WithExceptionResol
     restAssuredUtils.doPost(Map.of("emailOrUsername", EXISTING_EMAIL), ContentType.HTML);
 
     // then
-    verify(eventPublisher, times(1)).publishEvent(eventCaptor.capture());
+    verify(eventPublisher, times(1)).publishEvent(any());
   }
 
   @Test
@@ -196,19 +195,6 @@ class ForgotPasswordControllerTest implements WithAssertions, WithExceptionResol
 
   @Test
   @DisplayName("Request a password reset for a not existing user should call UserService")
-  void not_existing_user_should_return_call_user_service() {
-    // given
-    when(userService.getUserByEmailOrUsername(NOT_EXISTING_EMAIL)).thenReturn(Optional.empty());
-
-    // when
-    restAssuredUtils.doPost(Map.of("emailOrUsername", NOT_EXISTING_EMAIL), ContentType.HTML);
-
-    // then
-    verify(userService, times(1)).getUserByEmailOrUsername(NOT_EXISTING_EMAIL);
-  }
-
-  @Test
-  @DisplayName("Request a password reset for a not existing user should call UserService")
   void not_existing_user_should_call_user_service() {
     // given
     when(userService.getUserByEmailOrUsername(NOT_EXISTING_EMAIL)).thenReturn(Optional.empty());
@@ -221,7 +207,7 @@ class ForgotPasswordControllerTest implements WithAssertions, WithExceptionResol
   }
 
   @Test
-  @DisplayName("Request a password reset for a not existing user should call UserService")
+  @DisplayName("Request a password reset for a not existing user should not call EventPublisher")
   void not_existing_user_should_not_call_event_publisher() {
     // given
     when(userService.getUserByEmailOrUsername(NOT_EXISTING_EMAIL)).thenReturn(Optional.empty());
