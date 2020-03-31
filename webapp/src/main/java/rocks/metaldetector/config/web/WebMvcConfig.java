@@ -1,4 +1,4 @@
-package rocks.metaldetector.config.mvc;
+package rocks.metaldetector.config.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -11,12 +11,12 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+public class WebMvcConfig implements WebMvcConfigurer {
 
   private final RedirectionHandlerInterceptor redirectionHandlerInterceptor;
 
   @Autowired
-  public WebConfig(RedirectionHandlerInterceptor redirectionHandlerInterceptor) {
+  public WebMvcConfig(RedirectionHandlerInterceptor redirectionHandlerInterceptor) {
     this.redirectionHandlerInterceptor = redirectionHandlerInterceptor;
   }
 

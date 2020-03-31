@@ -1,4 +1,4 @@
-package rocks.metaldetector.config.resttemplate;
+package rocks.metaldetector.config.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HeaderElement;
@@ -13,6 +13,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.protocol.HTTP;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
@@ -33,6 +34,12 @@ public class ApacheHttpClientConfig {
   private static final int MAX_TOTAL_CONNECTIONS     = 40;
   private static final int MAX_LOCALHOST_CONNECTIONS = 80;
 
+  private final int port;
+
+  public ApacheHttpClientConfig(@Value("${server.port}") int port) {
+    this.port = port;
+  }
+
   @Bean
   public PoolingHttpClientConnectionManager poolingConnectionManager() {
     PoolingHttpClientConnectionManager poolingConnectionManager = new PoolingHttpClientConnectionManager();
@@ -44,7 +51,7 @@ public class ApacheHttpClientConfig {
     poolingConnectionManager.setDefaultMaxPerRoute(MAX_ROUTE_CONNECTIONS);
 
     // increase the amounts of connections if host is localhost
-    HttpHost localhost = new HttpHost("http://localhost", 8090);
+    HttpHost localhost = new HttpHost("http://localhost", port);
     poolingConnectionManager.setMaxPerRoute(new HttpRoute(localhost), MAX_LOCALHOST_CONNECTIONS);
 
     return poolingConnectionManager;
@@ -73,14 +80,12 @@ public class ApacheHttpClientConfig {
   public Runnable idleConnectionMonitor(PoolingHttpClientConnectionManager pool) {
     return new Runnable() {
       @Override
-      @Scheduled(fixedDelay = 20000)
+      @Scheduled(fixedDelay = 60000L)
       public void run() {
         // only if connection pool is initialised
         if (pool != null) {
           pool.closeExpiredConnections();
           pool.closeIdleConnections(10, MINUTES);
-
-          log.info("Idle connection monitor: Closing expired and idle connections");
         }
       }
     };
@@ -108,5 +113,4 @@ public class ApacheHttpClientConfig {
             .setKeepAliveStrategy(connectionKeepAliveStrategy())
             .build();
   }
-
 }

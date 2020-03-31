@@ -4,10 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -15,15 +19,46 @@ import rocks.metaldetector.support.ExternalServiceException;
 import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.web.api.response.ErrorResponse;
 
+import javax.validation.ValidationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * This class handles all Exception that can occur while using the REST API of this application.
- */
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
+
 @ControllerAdvice
 @Slf4j
-public class AppExceptionsHandler {
+public class RestExceptionsHandler {
+
+  @ExceptionHandler({MissingServletRequestParameterException.class, IllegalArgumentException.class})
+  ResponseEntity<ErrorResponse> handleIllegalArgumentException(Exception exception) {
+    log.warn("", exception);
+    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), BAD_REQUEST);
+  }
+
+  @ExceptionHandler({HttpMessageNotReadableException.class})
+  ResponseEntity<ErrorResponse> handleMissingRequestBody(Exception exception, WebRequest webRequest) {
+    var message = "Request body is missing";
+    log.warn(webRequest.getContextPath() + ": " + message);
+    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), BAD_REQUEST);
+  }
+
+  @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+  ResponseEntity<ErrorResponse> handleHttpMethodNotSupported(Exception exception, WebRequest webRequest) {
+    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
+    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), METHOD_NOT_ALLOWED);
+  }
+
+  @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
+  ResponseEntity<ErrorResponse>  handleMediaTypeNotSupported(Exception exception, WebRequest webRequest) {
+    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
+    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), UNSUPPORTED_MEDIA_TYPE);
+  }
 
   @ExceptionHandler(value = MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException exception, WebRequest webRequest) {
@@ -31,22 +66,28 @@ public class AppExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler({UserAlreadyExistsException.class, IllegalUserException.class})
+  @ExceptionHandler({UserAlreadyExistsException.class, IllegalUserActionException.class})
   public ResponseEntity<ErrorResponse> handleUserException(RuntimeException exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.CONFLICT);
   }
 
-  @ExceptionHandler(value = {ResourceNotFoundException.class})
+  @ExceptionHandler({ResourceNotFoundException.class})
   public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
-    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.NOT_FOUND);
+    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), NOT_FOUND);
   }
 
-  @ExceptionHandler(value = {AccessDeniedException.class})
+  @ExceptionHandler({AccessDeniedException.class})
   public ResponseEntity<ErrorResponse> handleAccessDeniedException(RuntimeException exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
-    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.FORBIDDEN);
+    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), FORBIDDEN);
+  }
+
+  @ExceptionHandler({ValidationException.class})
+  ResponseEntity<ErrorResponse> handleValidationException(Exception exception, WebRequest webRequest) {
+    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
+    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), UNPROCESSABLE_ENTITY);
   }
 
   @ExceptionHandler(value = {ExternalServiceException.class})
@@ -55,10 +96,10 @@ public class AppExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.SERVICE_UNAVAILABLE);
   }
 
-  @ExceptionHandler(value = {Exception.class})
+  @ExceptionHandler({Exception.class})
   public ResponseEntity<ErrorResponse> handleAllOtherExceptions(Exception exception, WebRequest webRequest) {
     log.error(webRequest.getContextPath() + ": " + exception.getMessage(), exception);
-    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), INTERNAL_SERVER_ERROR);
   }
 
   private ErrorResponse createErrorResponse(Throwable exception) {

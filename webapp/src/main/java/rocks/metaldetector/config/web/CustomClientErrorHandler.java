@@ -1,4 +1,4 @@
-package rocks.metaldetector.config.resttemplate;
+package rocks.metaldetector.config.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -22,7 +22,16 @@ public class CustomClientErrorHandler implements ResponseErrorHandler {
 
   @Override
   public void handleError(URI url, HttpMethod method, ClientHttpResponse response) throws IOException {
-    log.warn("CustomClientErrorHandler" + " | URL: " + url.toString() + " | Method: " + method.name()
-             + " | Status Code: " + response.getStatusCode().value() + " | Status Text: " + response.getStatusText());
+    var logMessage = "URL: " + url.toString() + " | " +
+            "Method: " + method.name() + " | " +
+            "Status code: " + response.getStatusCode().value() + " | " +
+            "Status text: " + response.getStatusText();
+
+    if (response.getStatusCode().is5xxServerError()) {
+      log.error(logMessage);
+    }
+    else {
+      log.warn(logMessage);
+    }
   }
 }

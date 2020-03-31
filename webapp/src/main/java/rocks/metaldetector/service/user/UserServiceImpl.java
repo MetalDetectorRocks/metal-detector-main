@@ -10,18 +10,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.comparator.BooleanComparator;
-import rocks.metaldetector.service.exceptions.IllegalUserException;
-import rocks.metaldetector.support.ResourceNotFoundException;
-import rocks.metaldetector.service.exceptions.TokenExpiredException;
-import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
-import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.service.exceptions.IllegalUserActionException;
+import rocks.metaldetector.service.exceptions.TokenExpiredException;
+import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenService;
+import rocks.metaldetector.support.JwtsSupport;
+import rocks.metaldetector.support.ResourceNotFoundException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -97,9 +97,9 @@ public class UserServiceImpl implements UserService {
 
     if (publicId.equals(currentUserSupplier.get().getPublicId())) {
       if (!userDto.isEnabled())
-        throw IllegalUserException.createAdminCannotDisableHimselfException();
+        throw IllegalUserActionException.createAdminCannotDisableHimselfException();
       if (userEntity.isAdministrator() && !UserRole.getRoleFromString(userDto.getRole()).contains(ROLE_ADMINISTRATOR))
-        throw IllegalUserException.createAdminCannotDiscardHisRoleException();
+        throw IllegalUserActionException.createAdminCannotDiscardHisRoleException();
     }
 
     userEntity.setUserRoles(UserRole.getRoleFromString(userDto.getRole()));

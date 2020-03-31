@@ -1,4 +1,4 @@
-package rocks.metaldetector.config.resttemplate;
+package rocks.metaldetector.config.web;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;

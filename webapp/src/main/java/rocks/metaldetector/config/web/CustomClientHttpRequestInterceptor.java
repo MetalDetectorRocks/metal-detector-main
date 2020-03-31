@@ -1,4 +1,4 @@
-package rocks.metaldetector.config.resttemplate;
+package rocks.metaldetector.config.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;
