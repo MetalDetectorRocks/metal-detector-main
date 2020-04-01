@@ -30,7 +30,7 @@
                             <div class="form-group row">
                                 <label for="artist" class="col-sm-4 col-form-label">Artist</label>
                                 <div class="col-sm-8">
-                                    <input type="text" id="artist" readonly class="form-control-plaintext"/>
+                                    <p id="artist" class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
@@ -38,7 +38,7 @@
                             <div class="form-group row">
                                 <label for="additionalArtist" class="col-sm-4 col-form-label">Additional Artist</label>
                                 <div class="col-sm-8">
-                                    <input type="text" id="additionalArtist" readonly class="form-control-plaintext"/>
+                                    <p id="additionalArtist" class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
@@ -46,7 +46,7 @@
                             <div class="form-group row">
                                 <label for="albumTitle" class="col-sm-4 col-form-label">Album Title</label>
                                 <div class="col-sm-8">
-                                    <input type="text" id="albumTitle" readonly class="form-control-plaintext"/>
+                                    <p id="albumTitle" class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
@@ -54,7 +54,7 @@
                             <div class="form-group row">
                                 <label for="releaseDate" class="col-sm-4 col-form-label">Release Date</label>
                                 <div class="col-sm-8">
-                                    <input type="text" id="releaseDate" readonly class="form-control-plaintext"/>
+                                    <p id="releaseDate" readonly class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
@@ -62,7 +62,7 @@
                             <div class="form-group row">
                                 <label for="estimatedReleaseDate" class="col-sm-4 col-form-label">Estimated Release Date</label>
                                 <div class="col-sm-8">
-                                    <input type="text" id="estimatedReleaseDate" readonly class="form-control-plaintext"/>
+                                    <p id="estimatedReleaseDate" readonly class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
@@ -71,9 +71,11 @@
                                 <label for="updateStatus" class="col-sm-4 col-form-label">Status</label>
                                 <div class="col-sm-8">
                                     <select class="form-control" id="updateStatus">
-                                        <option>Not set</option>
                                         <option>Ok</option>
-                                        <option>Duplicate</option>
+                                        <option>Not set</option>
+                                        <option>Demo</option>
+                                        <option>Needs improvement</option>
+                                        <option>Archived</option>
                                     </select>
                                 </div>
                             </div>
@@ -87,7 +89,7 @@
                     <div class="form-group row">
                         <label for="genre" class="col-sm-4 col-form-label">Genre</label>
                         <div class="col-sm-8">
-                            <input type="text" id="genre" readonly class="form-control-plaintext" />
+                            <p id="genre" class="form-control-plaintext"></p>
                         </div>
                     </div>
 
@@ -95,7 +97,7 @@
                     <div class="form-group row">
                         <label for="type" class="col-sm-4 col-form-label">Type</label>
                         <div class="col-sm-8">
-                            <input type="text" id="type" readonly class="form-control-plaintext" />
+                            <p id="type" readonly class="form-control-plaintext"></p>
                         </div>
                     </div>
 
@@ -103,7 +105,7 @@
                     <div class="form-group row">
                         <label for="metalArchivesArtistUrl" class="col-sm-4 col-form-label">MetalArchives Artist Url</label>
                         <div class="col-sm-8">
-                            <input type="text" id="metalArchivesArtistUrl" readonly class="form-control-plaintext" />
+                            <a id="metalArchivesArtistUrl" target="_blank"></a>
                         </div>
                     </div>
 
@@ -111,7 +113,7 @@
                     <div class="form-group row">
                         <label for="metalArchivesAlbumUrl" class="col-sm-4 col-form-label">MetalArchives Album Url</label>
                         <div class="col-sm-8">
-                            <input type="text" id="metalArchivesAlbumUrl" readonly class="form-control-plaintext" />
+                            <a id="metalArchivesAlbumUrl" target="_blank"></a>
                         </div>
                     </div>
 
@@ -119,15 +121,7 @@
                     <div class="form-group row">
                         <label for="source" class="col-sm-4 col-form-label">Source</label>
                         <div class="col-sm-8">
-                            <input type="text" id="source" readonly class="form-control-plaintext" />
-                        </div>
-                    </div>
-
-                    <!-- State -->
-                    <div class="form-group row">
-                        <label for="state" class="col-sm-4 col-form-label">State</label>
-                        <div class="col-sm-8">
-                            <input type="text" id="state" readonly class="form-control-plaintext" />
+                            <p id="source" class="form-control-plaintext"></p>
                         </div>
                     </div>
                 </div>

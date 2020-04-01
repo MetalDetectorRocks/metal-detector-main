@@ -12,7 +12,7 @@ public enum ButlerReleaseType {
   LIVE_ALBUM("Live Album"),
   VIDEO("Video");
 
-  String name;
+  private final String name;
 
   ButlerReleaseType(String name) {
     this.name = name;
