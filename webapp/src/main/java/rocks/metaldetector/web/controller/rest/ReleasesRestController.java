@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportResultDto;
@@ -22,7 +21,6 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(Endpoints.Rest.RELEASES)
 @AllArgsConstructor
 public class ReleasesRestController {
 
@@ -30,7 +28,8 @@ public class ReleasesRestController {
   private final DetectorReleasesResponseTransformer releasesResponseTransformer;
   private final DetectorImportResponseTransformer importResponseTransformer;
 
-  @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+  @PostMapping(path = Endpoints.Rest.QUERY_RELEASES,
+               consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<List<DetectorReleasesResponse>> getReleases(@Valid @RequestBody DetectorReleasesRequest request) {
     List<ReleaseDto> releaseDtos = releaseService.findReleases(request.getArtists(), request.getDateFrom(), request.getDateTo());
@@ -38,7 +37,7 @@ public class ReleasesRestController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping(path = "/import",
+  @GetMapping(path = Endpoints.Rest.IMPORT_RELEASES,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<DetectorImportResponse> importReleases() {
     ImportResultDto importResult = releaseService.importReleases();
