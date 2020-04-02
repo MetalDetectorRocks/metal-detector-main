@@ -21,7 +21,7 @@ import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.support.JwtsSupport;
-import rocks.metaldetector.support.ResourceNotFoundException;
+import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.util.Comparator;
 import java.util.List;

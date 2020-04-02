@@ -9,7 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:application.properties")
 @ConfigurationProperties(prefix = "discogs")
 @Data
-public class DiscogsCredentialsConfig {
+public class DiscogsConfig {
 
   private String userAgent;
   private String accessToken;

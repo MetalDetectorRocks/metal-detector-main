@@ -15,10 +15,10 @@ import org.springframework.web.servlet.ModelAndView;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.MessageKeys;
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.support.ArtifactForFramework;
 import rocks.metaldetector.service.user.OnResetPasswordRequestCompleteEvent;
-import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.service.user.UserDto;
+import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 import rocks.metaldetector.web.api.request.ForgotPasswordRequest;
 
 import javax.validation.Valid;

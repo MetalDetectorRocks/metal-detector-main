@@ -15,8 +15,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-import rocks.metaldetector.support.ExternalServiceException;
-import rocks.metaldetector.support.ResourceNotFoundException;
+import rocks.metaldetector.support.exceptions.ExternalServiceException;
+import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.web.api.response.ErrorResponse;
 
 import javax.validation.ValidationException;

@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
-import rocks.metaldetector.support.ExternalServiceException;
+import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.nio.charset.Charset;
 import java.util.Collections;

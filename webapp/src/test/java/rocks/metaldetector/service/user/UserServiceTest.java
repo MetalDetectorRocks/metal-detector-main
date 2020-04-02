@@ -34,7 +34,7 @@ import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenFactory;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.support.JwtsSupport;
-import rocks.metaldetector.support.ResourceNotFoundException;
+import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
 import java.time.Duration;

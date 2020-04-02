@@ -1,4 +1,4 @@
-package rocks.metaldetector.support;
+package rocks.metaldetector.support.infrastructure;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

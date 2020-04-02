@@ -1,4 +1,4 @@
-package rocks.metaldetector.config.web;
+package rocks.metaldetector.support.infrastructure;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;

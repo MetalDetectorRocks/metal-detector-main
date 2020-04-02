@@ -1,6 +1,5 @@
-package rocks.metaldetector.config.web;
+package rocks.metaldetector.support.infrastructure;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -23,10 +22,9 @@ import static org.springframework.http.MediaType.TEXT_PLAIN;
 
 @Configuration
 @AllArgsConstructor
-public class RestTemplateConfig {
+public class WebConfig {
 
   private final CloseableHttpClient httpClient;
-  private final DiscogsConfig discogsConfig; // ToDo DanielW: überall die DiscogsConfig mitzusenden ist nicht die beste Idee, eigentlich bräuchten alle Module ihr eigenes RestTemplate
 
   @Bean
   MappingJackson2HttpMessageConverter jackson2HttpMessageConverter() {
@@ -36,7 +34,6 @@ public class RestTemplateConfig {
   @Bean
   ObjectMapper objectMapper() {
     ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
     objectMapper.registerModule(new JavaTimeModule());
     objectMapper.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL);
     objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -66,7 +63,6 @@ public class RestTemplateConfig {
     return new RestTemplateBuilder()
             .requestFactory(this::clientHttpRequestFactory)
             .errorHandler(new CustomClientErrorHandler())
-            .interceptors(new CustomClientHttpRequestInterceptor(discogsConfig))
             .messageConverters(List.of(jackson2HttpMessageConverter(), stringHttpMessageConverter()))
             .build();
   }
