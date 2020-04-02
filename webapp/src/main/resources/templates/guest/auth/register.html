@@ -13,8 +13,8 @@
         <div th:if="${emailError}" class="alert alert-danger" role="alert">
           <span th:text="${emailError}">Email configuration error</span>
         </div>
-        <div th:if="${successMessage}" class="alert alert-success" role="alert">
-          <span th:text="${successMessage}">Registration successful</span>
+        <div th:if="${isSuccessful}" class="alert alert-success" role="alert">
+          <span>Thank you for your registration. You will shortly receive an email with a verification link. After confirmation of your registration you can login.</span>
         </div>
 
         <!-- Username-->
@@ -69,7 +69,7 @@
         <button class="btn btn-lg btn-dark btn-block mt-4" type="submit">Join Metal Detector</button>
       </form>
       <p class="my-2">
-        Already registered? <a href="#" th:href="@{/login}" th:text="#{index.login}">Login</a>
+        Already registered? <a href="#" th:href="@{/login}">Login</a>
       </p>
     </div>
   </body>

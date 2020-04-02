@@ -1,5 +1,7 @@
 package rocks.metaldetector.web;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
 import org.springframework.http.MediaType;
@@ -11,7 +13,6 @@ import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 
 public class RestAssuredMockMvcUtils {
 
-  private final ContentType CONTENT_TYPE = ContentType.JSON;
   private final String requestUri;
 
   public RestAssuredMockMvcUtils(String requestUri) {
@@ -24,10 +25,10 @@ public class RestAssuredMockMvcUtils {
 
   public ValidatableMockMvcResponse doGet(MediaType mediaType) {
     return given()
-        .accept(mediaType)
-        .when()
-        .get(requestUri)
-        .then();
+            .accept(mediaType)
+          .when()
+            .get(requestUri)
+          .then();
   }
 
   public ValidatableMockMvcResponse doGet(Map<String,Object> params) {
@@ -40,7 +41,7 @@ public class RestAssuredMockMvcUtils {
 
   public ValidatableMockMvcResponse doGet(String pathSegment, Map<String,Object> params) {
     return given()
-             .accept(CONTENT_TYPE)
+             .accept(ContentType.JSON)
              .params(params)
            .when()
              .get(requestUri + pathSegment)
@@ -49,8 +50,8 @@ public class RestAssuredMockMvcUtils {
 
   public ValidatableMockMvcResponse doPost(String pathSegment) {
     return given()
-           .contentType(CONTENT_TYPE)
-           .accept(CONTENT_TYPE)
+           .contentType(ContentType.JSON)
+           .accept(ContentType.JSON)
           .when()
            .post(requestUri + pathSegment)
         .then();
@@ -58,18 +59,27 @@ public class RestAssuredMockMvcUtils {
 
   public ValidatableMockMvcResponse doPost(Object request) {
     return given()
-            .accept(CONTENT_TYPE)
-            .contentType(CONTENT_TYPE)
+            .accept(ContentType.JSON)
+            .contentType(ContentType.JSON)
             .body(request)
           .when()
             .post(requestUri)
         .then();
   }
 
+  public ValidatableMockMvcResponse doPost(Map<String, String> params, ContentType contentType) {
+    return given()
+            .accept(contentType)
+            .formParams(params)
+          .when()
+            .post(requestUri)
+          .then();
+  }
+
   public ValidatableMockMvcResponse doPut(Object request) {
     return given()
-            .accept(CONTENT_TYPE)
-            .contentType(CONTENT_TYPE)
+            .accept(ContentType.JSON)
+            .contentType(ContentType.JSON)
             .body(request)
           .when()
             .put(requestUri)
