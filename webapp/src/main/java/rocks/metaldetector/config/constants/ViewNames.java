@@ -45,6 +45,7 @@ public class ViewNames {
   public static class EmailTemplates {
     public static final String REGISTRATION_VERIFICATION = "email/registration-verification-email";
     public static final String FORGOT_PASSWORD           = "email/forgot-password-email";
+    public static final String NEW_RELEASES              = "email/new-releases-email";
   }
 
 }

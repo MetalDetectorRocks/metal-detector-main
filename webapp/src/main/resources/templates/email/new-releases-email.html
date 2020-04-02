@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Your new metal album releases</title>
+</head>
+<body>
+    <h1>Your new metal album releases</h1>
+    <p>Hi <span th:text="${username}">username</span></p>
+    <p>Here are your favorite band's new releases for the next three months:</p>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Artist</th>
+            <th scope="col">Album Title</th>
+            <th scope="col">Release Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="release: ${newReleases}">
+            <td th:text="${release.artist}"></td>
+            <td th:text="${release.albumTitle}"></td>
+            <td th:text="${release.releaseDate}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Cheers!</p>
+</body>
+</html>

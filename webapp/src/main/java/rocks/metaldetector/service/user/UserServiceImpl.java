@@ -10,18 +10,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.comparator.BooleanComparator;
-import rocks.metaldetector.service.exceptions.IllegalUserException;
-import rocks.metaldetector.support.ResourceNotFoundException;
-import rocks.metaldetector.service.exceptions.TokenExpiredException;
-import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
-import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.service.exceptions.IllegalUserException;
+import rocks.metaldetector.service.exceptions.TokenExpiredException;
+import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenService;
+import rocks.metaldetector.support.JwtsSupport;
+import rocks.metaldetector.support.ResourceNotFoundException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -126,6 +126,17 @@ public class UserServiceImpl implements UserService {
             .map(userMapper::mapToDto)
             .sorted(Comparator.comparing(UserDto::isEnabled, BooleanComparator.TRUE_LOW).thenComparing(UserDto::getRole).thenComparing(UserDto::getUsername))
             .collect(Collectors.toList());
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<UserDto> getAllActiveUsers() {
+    return userRepository.findAll()
+        .stream()
+        .map(userMapper::mapToDto)
+        .filter(UserDto::isEnabled)
+        .sorted(Comparator.comparing(UserDto::isEnabled, BooleanComparator.TRUE_LOW).thenComparing(UserDto::getRole).thenComparing(UserDto::getUsername))
+        .collect(Collectors.toList());
   }
 
   @Override

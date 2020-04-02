@@ -52,7 +52,7 @@ public abstract class AbstractEmail {
 class ViewModelEntry {
 
   private final String name;
-  private final String value;
+  private final Object value;
   private final boolean relativeUrl;
 
 }
