@@ -2,7 +2,6 @@ package rocks.metaldetector.service.email;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@EqualsAndHashCode
 public abstract class AbstractEmail {
 
   private final List<ViewModelEntry> viewModelEntries;

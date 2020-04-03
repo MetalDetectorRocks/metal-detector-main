@@ -12,9 +12,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.facade.ReleaseService;
+import rocks.metaldetector.butler.facade.dto.ReleaseDto;
+import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.artist.ArtistsService;
+import rocks.metaldetector.service.email.AbstractEmail;
 import rocks.metaldetector.service.email.EmailService;
-import rocks.metaldetector.service.email.NewReleasesEmail;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
 
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static rocks.metaldetector.service.email.NewReleasesEmail.SUBJECT;
 import static rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import static rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 import static rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
@@ -57,6 +60,8 @@ class NotificationServiceTest implements WithAssertions {
 
   @Captor
   private ArgumentCaptor<LocalDate> dateToCaptor;
+
+  @Captor ArgumentCaptor<AbstractEmail> emailCaptor;
 
   private UserDto user = UserDtoFactory.createDefault();
 
@@ -130,7 +135,31 @@ class NotificationServiceTest implements WithAssertions {
     underTest.notifyUser(user.getPublicId());
 
     // then
-    verify(emailService, times(1)).sendEmail(new NewReleasesEmail(user.getEmail(), user.getUsername(), releaseDtos));
+    verify(emailService, times(1)).sendEmail(any());
+  }
+
+  @Test
+  @DisplayName("Correct email is sent on notification")
+  void notify_sends_correct_email() {
+    // given
+    var releaseDtos = List.of(ReleaseDtoFactory.createDefault());
+    when(userService.getUserByPublicId(any())).thenReturn(user);
+    when(artistsService.findFollowedArtistsPerUser(any())).thenReturn(List.of(ArtistDtoFactory.createDefault()));
+    when(releaseService.findReleases(any(), any(), any())).thenReturn(releaseDtos);
+
+    // when
+    underTest.notifyUser(user.getPublicId());
+
+    // then
+    verify(emailService, times(1)).sendEmail(emailCaptor.capture());
+
+    AbstractEmail email = emailCaptor.getValue();
+    assertThat(email.getRecipient()).isEqualTo(user.getEmail());
+    assertThat(email.getSubject()).isEqualTo(SUBJECT);
+    assertThat(email.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.NEW_RELEASES);
+
+    List<ReleaseDto> releases = (List<ReleaseDto>) email.getEnhancedViewModel("dummy-base-url").get("newReleases");
+    assertThat(releases).isEqualTo(releaseDtos);
   }
 
   @Test
@@ -150,7 +179,7 @@ class NotificationServiceTest implements WithAssertions {
 
   @Test
   @DisplayName("UserService is called on notification for all to get active users")
-  void notifify_all_calls_user_service() {
+  void notify_all_calls_user_service() {
     // when
     underTest.notifyAllUsers();
 
@@ -160,7 +189,7 @@ class NotificationServiceTest implements WithAssertions {
 
   @Test
   @DisplayName("All services are called times the number of active users on notification for all users")
-  void notifify_all_calls_all_services_for_each_user() {
+  void notify_all_calls_all_services_for_each_user() {
     // given
     var userList = List.of(user, user);
     when(userService.getAllActiveUsers()).thenReturn(userList);
