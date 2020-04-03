@@ -135,7 +135,6 @@ public class UserServiceImpl implements UserService {
         .stream()
         .map(userMapper::mapToDto)
         .filter(UserDto::isEnabled)
-        .sorted(Comparator.comparing(UserDto::getRole).thenComparing(UserDto::getUsername))
         .collect(Collectors.toList());
   }
 

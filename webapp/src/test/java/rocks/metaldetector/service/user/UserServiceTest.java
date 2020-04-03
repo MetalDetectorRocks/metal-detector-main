@@ -21,12 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import rocks.metaldetector.service.exceptions.IllegalUserException;
-import rocks.metaldetector.support.ResourceNotFoundException;
-import rocks.metaldetector.service.exceptions.TokenExpiredException;
-import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
-import rocks.metaldetector.service.token.TokenFactory;
-import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.token.TokenType;
@@ -34,7 +28,13 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.service.exceptions.IllegalUserException;
+import rocks.metaldetector.service.exceptions.TokenExpiredException;
+import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
+import rocks.metaldetector.service.token.TokenFactory;
 import rocks.metaldetector.service.token.TokenService;
+import rocks.metaldetector.support.JwtsSupport;
+import rocks.metaldetector.support.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
 import java.time.Duration;
@@ -500,6 +500,36 @@ class UserServiceTest implements WithAssertions {
 
     // when
     userService.getAllUsers();
+
+    // then
+    verify(userRepository, times(1)).findAll();
+  }
+
+  @Test
+  @DisplayName("Should return all active users")
+  void get_all_active_users() {
+    // given
+    UserEntity user1 = UserFactory.createUser("a", "a@example.com");
+    UserEntity user2 = UserFactory.createUser("b", "b@example.com");
+    user2.setEnabled(false);
+    when(userRepository.findAll()).thenReturn(List.of(user1, user2));
+
+    // when
+    List<UserDto> userDtoList = userService.getAllActiveUsers();
+
+    // then
+    assertThat(userDtoList).hasSize(1);
+    assertThat(userDtoList.get(0)).isEqualTo(userMapper.mapToDto(user1));
+  }
+
+  @Test
+  @DisplayName("Should use UserRepository to return a list of all active users")
+  void get_all_active_users_uses_user_repository() {
+    // given
+    when(userRepository.findAll()).thenReturn(Collections.emptyList());
+
+    // when
+    userService.getAllActiveUsers();
 
     // then
     verify(userRepository, times(1)).findAll();
