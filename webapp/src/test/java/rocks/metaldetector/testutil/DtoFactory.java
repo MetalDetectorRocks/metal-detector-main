@@ -4,12 +4,13 @@ import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
+import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.user.UserDto;
+import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
-import rocks.metaldetector.support.Pagination;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -159,6 +160,16 @@ public class DtoFactory {
               .albumTitle("Heavy Release")
               .releaseDate(LocalDate.now().plusDays(10))
               .build();
+    }
+  }
+
+  public static class ArtistDtoFactory {
+
+    public static ArtistDto createDefault() {
+      return ArtistDto.builder()
+          .artistName("A")
+          .discogsId(1L)
+          .build();
     }
   }
 }

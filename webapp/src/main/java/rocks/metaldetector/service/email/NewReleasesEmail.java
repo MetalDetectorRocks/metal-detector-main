@@ -1,10 +1,12 @@
 package rocks.metaldetector.service.email;
 
+import lombok.EqualsAndHashCode;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.config.constants.ViewNames;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = false)
 public final class NewReleasesEmail extends AbstractEmail {
 
   private static final String SUBJECT = "Your new releases";
