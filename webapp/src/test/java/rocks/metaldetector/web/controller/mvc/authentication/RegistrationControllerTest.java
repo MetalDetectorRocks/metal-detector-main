@@ -32,7 +32,7 @@ import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.OnRegistrationCompleteEvent;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.support.ResourceNotFoundException;
+import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.testutil.WithExceptionResolver;
