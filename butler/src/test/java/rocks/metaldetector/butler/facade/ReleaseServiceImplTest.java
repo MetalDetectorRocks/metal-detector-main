@@ -11,11 +11,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleaseRequestFactory;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory;
 import rocks.metaldetector.butler.ButlerDtoFactory.ReleaseDtoFactory;
+import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.client.ReleaseButlerRestClient;
+import rocks.metaldetector.butler.client.transformer.ButlerImportResponseTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseRequestTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer;
+import rocks.metaldetector.butler.facade.dto.ImportResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 
 import java.time.LocalDate;
@@ -27,6 +30,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportResponseFactory;
+import static rocks.metaldetector.butler.ButlerDtoFactory.ImportResultDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
 class ReleaseServiceImplTest implements WithAssertions {
@@ -35,22 +40,25 @@ class ReleaseServiceImplTest implements WithAssertions {
   private ReleaseButlerRestClient butlerClient;
 
   @Mock
-  private ButlerReleaseRequestTransformer requestTransformer;
+  private ButlerReleaseRequestTransformer releaseRequestTransformer;
 
   @Mock
-  private ButlerReleaseResponseTransformer responseTransformer;
+  private ButlerReleaseResponseTransformer releaseResponseTransformer;
+
+  @Mock
+  private ButlerImportResponseTransformer importResponseTransformer;
 
   @InjectMocks
   private ReleaseServiceImpl underTest;
 
   @AfterEach
   void tearDown() {
-    reset(butlerClient, requestTransformer, responseTransformer);
+    reset(butlerClient, releaseRequestTransformer, releaseResponseTransformer, importResponseTransformer);
   }
 
   @Test
-  @DisplayName("Should use request transformer to transform arguments")
-  void should_transform_arguments() {
+  @DisplayName("Querying should use request transformer to transform arguments")
+  void query_should_transform_request_arguments() {
     // given
     Iterable<String> artists = List.of("A", "B", "C");
     LocalDate from = LocalDate.of(2020, 1, 1);
@@ -60,15 +68,15 @@ class ReleaseServiceImplTest implements WithAssertions {
     underTest.findReleases(artists, from, to);
 
     // then
-    verify(requestTransformer, times(1)).transform(artists, from, to);
+    verify(releaseRequestTransformer, times(1)).transform(artists, from, to);
   }
 
   @Test
-  @DisplayName("Should pass transformed arguments to butler client")
-  void should_call_butler_client() {
+  @DisplayName("Querying should pass transformed arguments to butler client")
+  void query_should_call_butler_client() {
     // given
     ButlerReleasesRequest request = ButlerReleaseRequestFactory.createDefault();
-    when(requestTransformer.transform(any(), any(), any())).thenReturn(request);
+    when(releaseRequestTransformer.transform(any(), any(), any())).thenReturn(request);
 
     // when
     underTest.findReleases(null, null, null);
@@ -78,19 +86,46 @@ class ReleaseServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Should transform and return response from butler client")
-  void should_return_transformed_response() {
+  @DisplayName("Querying should transform and return response from butler client")
+  void query_should_return_transformed_response() {
     // given
     ButlerReleasesResponse response = ButlerReleasesResponseFactory.createDefault();
     List<ReleaseDto> expectedResult = List.of(ReleaseDtoFactory.createDefault());
     when(butlerClient.queryReleases(any())).thenReturn(response);
-    when(responseTransformer.transform(response)).thenReturn(expectedResult);
+    when(releaseResponseTransformer.transform(response)).thenReturn(expectedResult);
 
     // when
     List<ReleaseDto> releases = underTest.findReleases(null, null, null);
 
     // then
-    verify(responseTransformer, times(1)).transform(response);
+    verify(releaseResponseTransformer, times(1)).transform(response);
     assertThat(releases).isEqualTo(expectedResult);
+  }
+
+  @Test
+  @DisplayName("Import should call butler client")
+  void import_should_call_butler_client() {
+    // when
+    underTest.importReleases();
+
+    // then
+    verify(butlerClient, times(1)).importReleases();
+  }
+
+  @Test
+  @DisplayName("Import should transform and return response from butler client")
+  void import_should_return_transformed_response() {
+    // given
+    ButlerImportResponse response = ButlerImportResponseFactory.createDefault();
+    ImportResultDto expectedResult = ImportResultDtoFactory.createDefault();
+    when(butlerClient.importReleases()).thenReturn(response);
+    when(importResponseTransformer.transform(response)).thenReturn(expectedResult);
+
+    // when
+    ImportResultDto importResult = underTest.importReleases();
+
+    // then
+    verify(importResponseTransformer, times(1)).transform(response);
+    assertThat(importResult).isEqualTo(expectedResult);
   }
 }

@@ -19,8 +19,8 @@ import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.OnRegistrationCompleteEvent;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.support.ArtifactForFramework;
-import rocks.metaldetector.support.ResourceNotFoundException;
+import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
+import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 
 import javax.validation.Valid;

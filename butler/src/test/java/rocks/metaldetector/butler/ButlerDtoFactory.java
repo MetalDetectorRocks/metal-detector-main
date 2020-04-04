@@ -1,11 +1,13 @@
 package rocks.metaldetector.butler;
 
+import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerRelease;
 import rocks.metaldetector.butler.api.ButlerReleaseEntityRecordState;
 import rocks.metaldetector.butler.api.ButlerReleaseSource;
 import rocks.metaldetector.butler.api.ButlerReleaseType;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
+import rocks.metaldetector.butler.facade.dto.ImportResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 
 import java.time.LocalDate;
@@ -35,6 +37,26 @@ public class ButlerDtoFactory {
 
     public static ButlerReleasesResponse withEmptyResult() {
       return ButlerReleasesResponse.builder().releases(Collections.emptyList()).build();
+    }
+  }
+
+  public static class ButlerImportResponseFactory {
+
+    public static ButlerImportResponse createDefault() {
+      return ButlerImportResponse.builder()
+              .totalCountImported(666)
+              .totalCountRequested(666)
+              .build();
+    }
+  }
+
+  public static class ImportResultDtoFactory {
+
+    public static ImportResultDto createDefault() {
+      return ImportResultDto.builder()
+              .totalCountRequested(666)
+              .totalCountImported(666)
+              .build();
     }
   }
 

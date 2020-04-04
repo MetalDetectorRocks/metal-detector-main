@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory;
+import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 
 import java.io.Reader;
@@ -50,7 +51,7 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
 
   @Test
   @DisplayName("Should use object mapper to map classpath resource that should be returned")
-  void should_return_mock_response() throws Exception {
+  void should_return_mock_query_response() throws Exception {
     // given
     ButlerReleasesResponse expectedResult = ButlerReleasesResponseFactory.createDefault();
     when(resourceLoader.getResource(anyString())).thenReturn(new ClassPathResource(""));
@@ -62,5 +63,17 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
     // then
     verify(objectMapper, times(1)).readValue(any(Reader.class), any(Class.class));
     assertThat(response).isEqualTo(expectedResult);
+  }
+
+  @Test
+  @DisplayName("Should return mock import response")
+  void should_return_mock_import_response() {
+    // when
+    ButlerImportResponse response = underTest.importReleases();
+
+    // then
+    assertThat(response).isNotNull();
+    assertThat(response.getTotalCountImported()).isEqualTo(666);
+    assertThat(response.getTotalCountRequested()).isEqualTo(666);
   }
 }

@@ -6,9 +6,8 @@
 <body>
     <h1 class="h2 text-dark">Upcoming Releases</h1>
 
-    <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="import-button">
-        Import
-    </button>
+    <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="import-button" onclick="importReleases()">Import</button>
+    <div id="import-validation-area" class="alert" role="alert"></div>
 
     <table id="releases-table" class="table table-striped table-hover mt-3 clickable-table">
         <thead>

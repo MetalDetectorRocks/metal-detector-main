@@ -14,14 +14,17 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportResponseFactory;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory;
+import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
-import rocks.metaldetector.support.ExternalServiceException;
+import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
@@ -38,7 +41,8 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class ReleaseButlerRestClientImplTest implements WithAssertions {
 
-  private static  final String RELEASES_URL = "http://releases.com";
+  private static final String RELEASES_URL = "http://releases.com";
+  private static final String IMPORT_URL = "http://import.com";
 
   @Mock
   private RestTemplate restTemplate;
@@ -46,11 +50,14 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   private ReleaseButlerRestClientImpl underTest;
 
   @Captor
-  private ArgumentCaptor<HttpEntity<ButlerReleasesRequest>> argumentCaptor;
+  private ArgumentCaptor<HttpEntity<ButlerReleasesRequest>> argumentCaptorReleases;
+
+  @Captor
+  private ArgumentCaptor<HttpEntity<ButlerReleasesRequest>> argumentCaptorImport;
 
   @BeforeEach
   void setUp() {
-    underTest = new ReleaseButlerRestClientImpl(restTemplate, RELEASES_URL);
+    underTest = new ReleaseButlerRestClientImpl(restTemplate, RELEASES_URL, IMPORT_URL);
   }
 
   @AfterEach
@@ -59,23 +66,23 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("A POST call is made on the injected URL")
-  void test_post_on_url() {
+  @DisplayName("A POST call is made on the injected releases URL")
+  void test_post_on_releases_url() {
     // given
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), eq(ButlerReleasesResponse.class));
 
     // when
     underTest.queryReleases(request);
 
     // then
-    verify(restTemplate, times(1)).postForEntity(eq(RELEASES_URL), any(), any());
+    verify(restTemplate, times(1)).postForEntity(eq(RELEASES_URL), any(), eq(ButlerReleasesResponse.class));
   }
 
   @Test
   @DisplayName("The provided ButlerReleasesRequest is packed into a HttpEntity and sent as POST body")
-  void test_request_as_http_entity() {
+  void test_releases_http_entity() {
     // given
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
@@ -85,9 +92,9 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     underTest.queryReleases(request);
 
     // then
-    verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+    verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptorReleases.capture(), any());
 
-    HttpEntity<ButlerReleasesRequest> httpEntity = argumentCaptor.getValue();
+    HttpEntity<ButlerReleasesRequest> httpEntity = argumentCaptorReleases.getValue();
     assertThat(httpEntity.getBody()).isEqualTo(request);
     assertThat(httpEntity.getHeaders().getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
     assertThat(httpEntity.getHeaders().getContentType()).isEqualByComparingTo(MediaType.APPLICATION_JSON);
@@ -95,7 +102,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("The body of the result is returned")
+  @DisplayName("The body of the query result is returned")
   void get_releases_valid_result() {
     // given
     ButlerReleasesRequest request = new ButlerReleasesRequest();
@@ -110,8 +117,8 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("If the response is null, a ExternalServiceException is thrown")
-  void test_exception_if_response_is_null() {
+  @DisplayName("If the releases response is null, an ExternalServiceException is thrown")
+  void test_exception_if_releases_response_is_null() {
     // given
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     doReturn(ResponseEntity.ok(null)).when(restTemplate).postForEntity(anyString(), any(), any());
@@ -123,10 +130,10 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     assertThat(throwable).isInstanceOf(ExternalServiceException.class);
   }
 
-  @ParameterizedTest(name = "If the status is {0}, a ExternalServiceException is thrown")
+  @ParameterizedTest(name = "If the status is {0}, an ExternalServiceException is thrown")
   @MethodSource("httpStatusCodeProvider")
-  @DisplayName("If the status code is not OK, a ExternalServiceException is thrown")
-  void test_exception_if_status_is_not_ok(HttpStatus httpStatus) {
+  @DisplayName("If the status code is not OK on query, an ExternalServiceException is thrown")
+  void test_releases_exception_if_status_is_not_ok(HttpStatus httpStatus) {
     // given
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
@@ -134,6 +141,96 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
 
     // when
     Throwable throwable = catchThrowable(() -> underTest.queryReleases(request));
+
+    // then
+    assertThat(throwable).isInstanceOf(ExternalServiceException.class);
+  }
+
+  @Test
+  @DisplayName("A GET call is made")
+  void test_get() {
+    // given
+    ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
+
+    // when
+    underTest.importReleases();
+
+    // then
+    verify(restTemplate, times(1)).exchange(anyString(), eq(HttpMethod.GET), any(), any(Class.class), anyString());
+  }
+
+  @Test
+  @DisplayName("A GET call is made on the injected import URL with correct path parameter")
+  void test_get_on_import_url() {
+    // given
+    ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
+    String actionPathParam = "?action={action}";
+    String importAction = "import";
+
+    // when
+    underTest.importReleases();
+
+    // then
+    verify(restTemplate, times(1)).exchange(eq(IMPORT_URL + actionPathParam), any(), any(), eq(ButlerImportResponse.class), eq(importAction));
+  }
+
+  @Test
+  @DisplayName("The HttpEntity should contain the correct headers")
+  void test_import_http_entity() {
+    // given
+    ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
+
+    // when
+    underTest.importReleases();
+
+    // then
+    verify(restTemplate, times(1)).exchange(anyString(), any(), argumentCaptorImport.capture(), any(Class.class), anyString());
+
+    HttpEntity<ButlerReleasesRequest> httpEntity = argumentCaptorImport.getValue();
+    assertThat(httpEntity.getHeaders().getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
+    assertThat(httpEntity.getHeaders().getAcceptCharset()).isEqualTo(Collections.singletonList(Charset.defaultCharset()));
+  }
+
+  @Test
+  @DisplayName("The body of the import result is returned")
+  void get_import_valid_result() {
+    // given
+    ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
+
+    // when
+    ButlerImportResponse response = underTest.importReleases();
+
+    // then
+    assertThat(response).isEqualTo(responseMock);
+  }
+
+  @Test
+  @DisplayName("If the import response is null, an ExternalServiceException is thrown")
+  void test_exception_if_import_response_is_null() {
+    // given
+    doReturn(ResponseEntity.ok(null)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
+
+    // when
+    Throwable throwable = catchThrowable(() -> underTest.importReleases());
+
+    // then
+    assertThat(throwable).isInstanceOf(ExternalServiceException.class);
+  }
+
+  @ParameterizedTest(name = "If the status is {0}, an ExternalServiceException is thrown")
+  @MethodSource("httpStatusCodeProvider")
+  @DisplayName("If the status code is not OK on import, an ExternalServiceException is thrown")
+  void test_import_exception_if_status_is_not_ok(HttpStatus httpStatus) {
+    // given
+    ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+    doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
+
+    // when
+    Throwable throwable = catchThrowable(() -> underTest.importReleases());
 
     // then
     assertThat(throwable).isInstanceOf(ExternalServiceException.class);
