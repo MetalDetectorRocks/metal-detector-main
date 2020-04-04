@@ -26,6 +26,6 @@ public class RestRequestLoggingFilter extends CommonsRequestLoggingFilter {
 
   @Override
   protected void afterRequest(HttpServletRequest request, String message) {
-    logger.info(request.getMethod() + ": " + message);
+    logger.info(message);
   }
 }

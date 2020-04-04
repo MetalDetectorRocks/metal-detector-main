@@ -17,11 +17,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.discogs.client.DiscogsDtoFactory.DiscogsArtistFactory;
 import rocks.metaldetector.discogs.api.DiscogsArtist;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
-import rocks.metaldetector.discogs.config.DiscogsCredentialsConfig;
-import rocks.metaldetector.support.ExternalServiceException;
+import rocks.metaldetector.discogs.client.DiscogsDtoFactory.DiscogsArtistFactory;
+import rocks.metaldetector.discogs.config.DiscogsConfig;
+import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.util.stream.Stream;
 
@@ -40,7 +40,7 @@ import static rocks.metaldetector.discogs.client.DiscogsDtoFactory.DiscogsArtist
 class DiscogsArtistSearchRestClientTest implements WithAssertions {
 
   @Mock
-  private DiscogsCredentialsConfig discogsCredentialsConfig;
+  private DiscogsConfig discogsConfig;
 
   @Mock
   private RestTemplate restTemplate;
@@ -50,7 +50,7 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(restTemplate, discogsCredentialsConfig);
+    reset(restTemplate, discogsConfig);
   }
 
   @Nested
@@ -81,7 +81,7 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
     void test_get_on_search_url() {
       // given
       var discogsBaseUrl = "discogs-url";
-      doReturn(discogsBaseUrl).when(discogsCredentialsConfig).getRestBaseUrl();
+      doReturn(discogsBaseUrl).when(discogsConfig).getRestBaseUrl();
       var expectedSearchUrl = discogsBaseUrl + ARTIST_NAME_SEARCH_URL_FRAGMENT;
       DiscogsArtistSearchResultContainer responseMock = DiscogsArtistSearchResultContainerFactory.createDefault();
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(any(), any(), any(), any(), any());
@@ -200,7 +200,7 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
     void test_get_on_artist_search_url() {
       // given
       var discogsBaseUrl = "discogs-url";
-      doReturn(discogsBaseUrl).when(discogsCredentialsConfig).getRestBaseUrl();
+      doReturn(discogsBaseUrl).when(discogsConfig).getRestBaseUrl();
       var expectedSearchUrl = discogsBaseUrl + ARTIST_ID_SEARCH_URL_FRAGMENT;
       DiscogsArtist responseMock = DiscogsArtistFactory.createDefault();
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(any(), any(), anyLong());

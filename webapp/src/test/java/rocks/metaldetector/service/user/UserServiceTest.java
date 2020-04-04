@@ -28,13 +28,14 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.CurrentUserSupplier;
-import rocks.metaldetector.service.exceptions.IllegalUserException;
+import rocks.metaldetector.service.token.TokenFactory;
+import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenFactory;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.support.JwtsSupport;
-import rocks.metaldetector.support.ResourceNotFoundException;
+import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
 import java.time.Duration;
@@ -420,7 +421,7 @@ class UserServiceTest implements WithAssertions {
     Throwable throwable = catchThrowable(() -> userService.updateUser(PUBLIC_ID, userDtoForUpdate));
 
     // then
-    assertThat(throwable).isInstanceOf(IllegalUserException.class);
+    assertThat(throwable).isInstanceOf(IllegalUserActionException.class);
     assertThat(throwable).hasMessage(UserErrorMessages.ADMINISTRATOR_DISCARD_ROLE.toDisplayString());
   }
 
@@ -441,7 +442,7 @@ class UserServiceTest implements WithAssertions {
     Throwable throwable = catchThrowable(() -> userService.updateUser(PUBLIC_ID, userDtoForUpdate));
 
     // then
-    assertThat(throwable).isInstanceOf(IllegalUserException.class);
+    assertThat(throwable).isInstanceOf(IllegalUserActionException.class);
     assertThat(throwable).hasMessage(UserErrorMessages.ADMINISTRATOR_CANNOT_DISABLE_HIMSELF.toDisplayString());
   }
 

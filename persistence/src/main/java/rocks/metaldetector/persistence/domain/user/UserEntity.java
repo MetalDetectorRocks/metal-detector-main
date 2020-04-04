@@ -10,7 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import rocks.metaldetector.persistence.domain.BaseEntity;
-import rocks.metaldetector.support.ArtifactForFramework;
+import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;

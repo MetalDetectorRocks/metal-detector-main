@@ -1,4 +1,6 @@
-package rocks.metaldetector.support;
+package rocks.metaldetector.support.exceptions;
+
+import rocks.metaldetector.support.ErrorMessages;
 
 public class ExternalServiceException extends RuntimeException {
 

@@ -16,7 +16,7 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.CurrentUserSupplier;
-import rocks.metaldetector.service.exceptions.IllegalUserException;
+import rocks.metaldetector.service.exceptions.IllegalActionUserException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenService;
@@ -97,9 +97,9 @@ public class UserServiceImpl implements UserService {
 
     if (publicId.equals(currentUserSupplier.get().getPublicId())) {
       if (!userDto.isEnabled())
-        throw IllegalUserException.createAdminCannotDisableHimselfException();
+        throw IllegalUserActionException.createAdminCannotDisableHimselfException();
       if (userEntity.isAdministrator() && !UserRole.getRoleFromString(userDto.getRole()).contains(ROLE_ADMINISTRATOR))
-        throw IllegalUserException.createAdminCannotDiscardHisRoleException();
+        throw IllegalUserActionException.createAdminCannotDiscardHisRoleException();
     }
 
     userEntity.setUserRoles(UserRole.getRoleFromString(userDto.getRole()));

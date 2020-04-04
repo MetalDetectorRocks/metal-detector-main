@@ -249,13 +249,3 @@ function resetUpdateUserForm() {
     $("#update-user-form")[0].reset();
     resetValidationArea('#update-user-validation-area');
 }
-
-/**
- * Resets the validation area in create admin or update user form.
- * @param validationAreaId  ID of the area to reset (create/update)
- */
-function resetValidationArea(validationAreaId) {
-    const validationMessageArea = $(validationAreaId);
-    validationMessageArea.removeClass('alert alert-danger');
-    validationMessageArea.empty();
-}

@@ -79,3 +79,13 @@ function createPlaceholder(element) {
   listItem.append(text);
   element.append(listItem);
 }
+
+/**
+ * Resets the validation area for the given form.
+ * @param validationAreaId  ID of the area to reset
+ */
+function resetValidationArea(validationAreaId) {
+  const validationMessageArea = $(validationAreaId);
+  validationMessageArea.removeClass('alert alert-danger alert-success');
+  validationMessageArea.empty();
+}
