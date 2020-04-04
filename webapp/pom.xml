@@ -45,12 +45,6 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
-        <!-- HttpClient API -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-
         <!-- Thymeleaf -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

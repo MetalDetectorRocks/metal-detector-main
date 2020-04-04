@@ -9,8 +9,8 @@ import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.discogs.api.DiscogsArtist;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
 import rocks.metaldetector.discogs.api.DiscogsPagination;
-import rocks.metaldetector.discogs.config.DiscogsCredentialsConfig;
-import rocks.metaldetector.support.ExternalServiceException;
+import rocks.metaldetector.discogs.config.DiscogsConfig;
+import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.util.Collections;
 
@@ -25,8 +25,8 @@ public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRes
   static final String ARTIST_NAME_SEARCH_URL_FRAGMENT = "/database/search?type=artist&q={artistQueryString}&page={page}&per_page={size}";
   static final String ARTIST_ID_SEARCH_URL_FRAGMENT = "/artists/{artistId}";
 
-  private final RestTemplate restTemplate;
-  private final DiscogsCredentialsConfig discogsCredentialsConfig;
+  private final RestTemplate discogsRestTemplate;
+  private final DiscogsConfig discogsConfig;
 
   @Override
   public DiscogsArtistSearchResultContainer searchByName(String artistQueryString, int pageNumber, int pageSize) {
@@ -34,8 +34,8 @@ public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRes
       return EMPTY_RESPONSE;
     }
 
-    ResponseEntity<DiscogsArtistSearchResultContainer> responseEntity = restTemplate.getForEntity(
-            discogsCredentialsConfig.getRestBaseUrl() + ARTIST_NAME_SEARCH_URL_FRAGMENT,
+    ResponseEntity<DiscogsArtistSearchResultContainer> responseEntity = discogsRestTemplate.getForEntity(
+            discogsConfig.getRestBaseUrl() + ARTIST_NAME_SEARCH_URL_FRAGMENT,
             DiscogsArtistSearchResultContainer.class,
             artistQueryString,
             pageNumber,
@@ -57,8 +57,8 @@ public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRes
       throw new IllegalArgumentException("artistId must not be negative!");
     }
 
-    ResponseEntity<DiscogsArtist> responseEntity = restTemplate.getForEntity(
-            discogsCredentialsConfig.getRestBaseUrl() + ARTIST_ID_SEARCH_URL_FRAGMENT,
+    ResponseEntity<DiscogsArtist> responseEntity = discogsRestTemplate.getForEntity(
+            discogsConfig.getRestBaseUrl() + ARTIST_ID_SEARCH_URL_FRAGMENT,
             DiscogsArtist.class,
             artistId
     );
