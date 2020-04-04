@@ -1,10 +1,8 @@
 package rocks.metaldetector.web.controller.mvc.authentication;
 
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.config.constants.MessageKeys;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
@@ -28,10 +25,10 @@ import rocks.metaldetector.web.api.request.RegisterUserRequest;
 
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 @Controller
+@AllArgsConstructor
 public class RegistrationController {
 
   static final String FORM_DTO = "registerUserRequest";
@@ -39,18 +36,7 @@ public class RegistrationController {
   private final ApplicationEventPublisher eventPublisher;
   private final UserService userService;
   private final TokenService tokenService;
-  private final MessageSource messages;
-  private final ModelMapper mapper;
-
-  @Autowired
-  public RegistrationController(UserService userService, TokenService tokenService, ApplicationEventPublisher eventPublisher,
-                                @Qualifier("messageSource") MessageSource messages) {
-    this.userService = userService;
-    this.tokenService = tokenService;
-    this.eventPublisher = eventPublisher;
-    this.messages = messages;
-    this.mapper = new ModelMapper();
-  }
+  private final ModelMapper modelMapper;
 
   @ModelAttribute(FORM_DTO)
   @ArtifactForFramework
@@ -72,7 +58,7 @@ public class RegistrationController {
 
     // create user
     UserDto createdUserDto;
-    UserDto userDto = mapper.map(registerUserRequest, UserDto.class);
+    UserDto userDto = modelMapper.map(registerUserRequest, UserDto.class);
 
     try {
       createdUserDto = userService.createUser(userDto);
@@ -91,7 +77,7 @@ public class RegistrationController {
     eventPublisher.publishEvent(new OnRegistrationCompleteEvent(this, createdUserDto));
 
     Map<String, Object> viewModel = new HashMap<>();
-    viewModel.put("successMessage", messages.getMessage(MessageKeys.Registration.SUCCESS, null, Locale.US));
+    viewModel.put("isSuccessful", true);
     viewModel.put("registerUserRequest", new RegisterUserRequest()); // to clear the register form
 
     return new ModelAndView(ViewNames.Guest.REGISTER, viewModel, HttpStatus.OK);
