@@ -43,12 +43,13 @@ public class Endpoints {
   }
 
   public static class Rest {
-    public static final String ARTISTS    = "/rest/v1/artists";
-    public static final String MY_ARTISTS = "/rest/v1/my-artists";
-    public static final String RELEASES   = "/rest/v1/releases";
-    public static final String SEARCH     = "/search";
-    public static final String FOLLOW     = "/follow";
-    public static final String UNFOLLOW   = "/unfollow";
+    public static final String ARTISTS          = "/rest/v1/artists";
+    public static final String MY_ARTISTS       = "/rest/v1/my-artists";
+    public static final String QUERY_RELEASES   = "/rest/v1/releases";
+    public static final String IMPORT_RELEASES  = "/rest/v1/releases/import";
+    public static final String SEARCH           = "/search";
+    public static final String FOLLOW           = "/follow";
+    public static final String UNFOLLOW         = "/unfollow";
 
     public static final String USERS      = "/rest/v1/users";
 

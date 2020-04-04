@@ -7,11 +7,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ButlerModuleConfig {
 
-  @Value("${metal.release.buter.unpaginated.releases.endpoint}")
+  @Value("${metal.release.butler.unpaginated.releases.endpoint}")
   private String releasesEndpoint;
+
+  @Value("${metal.release.butler.import.endpoint}")
+  private String importEndpoint;
 
   @Bean
   public String releasesEndpoint() {
     return releasesEndpoint;
+  }
+
+  @Bean
+  public String importEndpoint() {
+    return importEndpoint;
   }
 }
