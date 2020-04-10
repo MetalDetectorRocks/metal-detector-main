@@ -78,6 +78,6 @@ class ConsoleEmailServiceTest implements WithAssertions {
     emailService.sendEmail(email);
 
     // then
-    String result = verify(mailConfig, times(1)).getFromEmail();
+    verify(mailConfig, times(1)).getFromEmail();
   }
 }

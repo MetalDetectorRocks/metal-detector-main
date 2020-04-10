@@ -24,12 +24,12 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 class NotificationRestControllerTest implements WithAssertions {
 
   @Mock
-  NotificationService notificationService;
+  private NotificationService notificationService;
 
   @InjectMocks
-  NotificationRestController underTest;
+  private NotificationRestController underTest;
 
-  RestAssuredMockMvcUtils restAssuredUtils;
+  private RestAssuredMockMvcUtils restAssuredUtils;
 
   @BeforeEach
   void setup() {
@@ -47,7 +47,7 @@ class NotificationRestControllerTest implements WithAssertions {
   @DisplayName("Notify all responds with OK")
   void notify_all_responds_ok() {
     // when
-    var response = restAssuredUtils.doGet();
+    var response = restAssuredUtils.doPost();
 
     // then
     response.statusCode(HttpStatus.OK.value());
@@ -57,7 +57,7 @@ class NotificationRestControllerTest implements WithAssertions {
   @DisplayName("Notify all calls notification service")
   void notify_all_calls_notification_service() {
     // when
-    restAssuredUtils.doGet();
+    restAssuredUtils.doPost();
 
     // then
     verify(notificationService, times(1)).notifyAllUsers();
@@ -70,7 +70,7 @@ class NotificationRestControllerTest implements WithAssertions {
     var userId = "123456";
 
     // when
-    var response = restAssuredUtils.doGet("/" + userId);
+    var response = restAssuredUtils.doPost("/" + userId);
 
     // then
     response.statusCode(HttpStatus.OK.value());
@@ -83,7 +83,7 @@ class NotificationRestControllerTest implements WithAssertions {
     var userId = "123456";
 
     // when
-    restAssuredUtils.doGet("/" + userId);
+    restAssuredUtils.doPost("/" + userId);
 
     // then
     verify(notificationService, times(1)).notifyUser(userId);

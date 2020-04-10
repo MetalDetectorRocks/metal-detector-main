@@ -1,1 +1,2 @@
 mock-maker-inline
+// enables mocking of final classes (beta)
