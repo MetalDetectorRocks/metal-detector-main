@@ -5,10 +5,8 @@ services:
     container_name: detector-db
     image: mysql:5
     environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/detector_db_root_password
+      MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: metal-detector
-    secrets:
-      - detector_db_root_password
     networks:
       - detector-network
     volumes:
@@ -18,64 +16,31 @@ services:
     ports:
       - 3306:3306
     restart: always
-     
-  detector-phpmyadmin:
-    container_name: detector-db-phpmyadmin
-    image: phpmyadmin/phpmyadmin
-    environment:
-     PMA_ARBITRARY: 1
-     PMA_HOST: detector-db
-    networks:
-      - detector-network
-    volumes:
-      - type: volume
-        source: detector-phpmyadmin-volume
-        target: /sessions
-    ports:
-     - 9000:80
-    restart: always
 
   butler-db:
     container_name: butler-db
-    image: mysql:5
+    image: postgres:alpine
     environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/butler_db_root_password
-      MYSQL_DATABASE: metal-release-butler
-    secrets:
-      - butler_db_root_password
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: metal-release-butler
+      PGDATA: /var/lib/postgresql/data/db-files/
     networks:
       - butler-network
     volumes:
       - type: volume
         source: butler-db-volume
-        target: /var/lib/mysql
+        target: /var/lib/postgresql/data
     ports:
-      - 3307:3306
-    restart: always
-
-  butler-phpmyadmin:
-    container_name: butler-phpmyadmin
-    image: phpmyadmin/phpmyadmin
-    environment:
-     PMA_ARBITRARY: 1
-     PMA_HOST: butler-db
-    networks:
-      - butler-network
-    volumes:
-      - type: volume
-        source: butler-phpmyadmin-volume
-        target: /sessions
-    ports:
-     - 9001:80
+      - 5432:5432
     restart: always
 
   butler-app:
     container_name: butler-app
     image: metaldetector/metal-release-butler
     environment:
-      DATASOURCE_URL: jdbc:mysql://butler-db:3306/metal-release-butler?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&useSSL=false
-      DATASOURCE_USERNAME: root
-      DATASOURCE_PASSWORD: ${BUTLER_DB_ROOT_PASSWORD}
+      DATASOURCE_URL: jdbc:postgresql://butler-db:5432/metal-release-butler
+      DATASOURCE_USERNAME: postgres
+      DATASOURCE_PASSWORD: secret
     networks:
       - butler-network
     ports:
@@ -84,15 +49,7 @@ services:
 
 volumes:
   detector-db-volume:
-  detector-phpmyadmin-volume:
   butler-db-volume:
-  butler-phpmyadmin-volume:
-
-secrets:
-  detector_db_root_password:
-    file: .secrets/detector_db_root_password.txt
-  butler_db_root_password:
-    file: .secrets/butler_db_root_password.txt
 
 networks:
   detector-network:
