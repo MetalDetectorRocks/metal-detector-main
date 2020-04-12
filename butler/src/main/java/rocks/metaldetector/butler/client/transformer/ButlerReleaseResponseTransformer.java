@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 @Service
 public class ButlerReleaseResponseTransformer {
 
+  private static final String STATE_NOT_SET = "NOT_SET";
+
   public List<ReleaseDto> transform(ButlerReleasesResponse response) {
     return response.getReleases().stream().map(this::transformRelease).collect(Collectors.toList());
   }
@@ -24,11 +26,15 @@ public class ButlerReleaseResponseTransformer {
             .releaseDate(release.getReleaseDate())
             .estimatedReleaseDate(release.getEstimatedReleaseDate())
             .genre(release.getGenre())
-            .type(WordUtils.capitalizeFully(release.getType()))
+            .type(prettyPrintValue(release.getType()))
             .metalArchivesArtistUrl(release.getMetalArchivesArtistUrl())
             .metalArchivesAlbumUrl(release.getMetalArchivesAlbumUrl())
-            .source(WordUtils.capitalizeFully(release.getSource()))
-            .state(WordUtils.capitalizeFully(release.getState()))
+            .source(prettyPrintValue(release.getSource()))
+            .state(prettyPrintValue(STATE_NOT_SET))
             .build();
+  }
+
+  private String prettyPrintValue(String value) {
+    return WordUtils.capitalizeFully(value.replace("_", " "));
   }
 }
