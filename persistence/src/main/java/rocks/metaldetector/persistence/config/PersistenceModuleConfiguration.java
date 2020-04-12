@@ -29,13 +29,9 @@ public class PersistenceModuleConfiguration {
         if (principal instanceof UserDetails) {
           return Optional.of(((UserDetails) principal).getUsername());
         }
-        else {
-          return Optional.of(principal.toString());
-        }
       }
-      else {
-        return Optional.of("ANONYMOUS");
-      }
+
+      return Optional.of("ANONYMOUS");
     };
   }
 }

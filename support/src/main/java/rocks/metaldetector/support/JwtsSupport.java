@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Component
-@PropertySource(value = "classpath:application.properties")
+@PropertySource(value = "classpath:application.yml")
 public class JwtsSupport {
 
   private final String TOKEN_SECRET;

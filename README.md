@@ -6,9 +6,9 @@
 
 2. [ Download source code ](#download-source-code)
 
-3. [ Run application locally (DEV profile) ](#run-application-locally-dev)
+3. [ Run application locally (Default profile) ](#run-application-locally-default)
 
-4. [ Run application locally (PROD profile) ](#run-application-locally-prod)
+4. [ Run application locally (Preview profile) ](#run-application-locally-preview)
 
 5. [ Start the application ](#start-application)
 
@@ -31,10 +31,10 @@ Clone the source code via:
 git clone https://github.com/MetalDetectorRocks/metal-detector-main.git
 ```
 
-<a name="run-application-locally-dev"></a>
-## 3 Run application locally (DEV profile)
+<a name="run-application-locally-default"></a>
+## 3 Run application locally (Default profile)
 
-To start the application locally in DEV profile, the following preparatory actions are necessary:
+To start the application locally in default profile, the following preparatory actions are necessary:
 
 1. Install Java 11
 
@@ -55,10 +55,10 @@ To start the application locally in DEV profile, the following preparatory actio
     - `butler-phpmyadmin`: phpmyadmin for Metal Release Butlers database
     - `butler-app`: Metal Release Butler Spring Boot application
 
-7. Define the data source connection details in file `application.properties`:
-    - `spring.datasource.username` (you have to use user `root`)
-    - `spring.datasource.password` (password from `detector_db_root_password.txt`)
-    - `spring.datasource.url` (`jdbc:mysql://localhost:3306/metal-detector?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&useSSL=false`, database name must match `MYSQL_DATABASE` of service `detector-db` from `docker-compose.yml` file)
+4. Define the data source connection details in file `application.yml`:
+    - `spring.datasource.username` (you have to use user `postgres`)
+    - `spring.datasource.password` (password must match `POSTGRES_PASSWORD` of service `detector-db` from `docker-compose.yml` file)
+    - `spring.datasource.url` (`jdbc:postgresql://localhost:5432/metal-detector`, database name must match `POSTGRES_DB` of service `detector-db` from `docker-compose.yml` file)
 
 8. Deposit your Discogs Access Token for the property `discogs.access-token` in file `application.properties` (see [Discogs API Documentation](https://www.discogs.com/developers/) for further information).
 
@@ -69,26 +69,26 @@ To start the application locally in DEV profile, the following preparatory actio
     
 10. Configure the profile `dev` for example via your IntelliJ Run Configuration or via `spring.profiles.active=dev` in the file `application.properties`     
 
-It is also possible to define all mentioned connection details and secrets as environment variables. In this case no .properties variables need to be changed. The names of the environment variables are already in the .properties files. You can define the environment variables for example within a Run Configuration in IntelliJ.
+It is also possible to define all mentioned connection details and secrets as environment variables. In this case no variables in `application.yml` need to be changed. The names of the environment variables are already in the `application.yml` file. You can define the environment variables for example within a Run Configuration in IntelliJ.
 
-If you start the application with the default Spring profile or with the profile 'dev', all emails sent by the application will be displayed on the console. No emails are sent via an SMTP server. If you want the application to send emails via an SMTP server, you must start the application with the Spring profile 'prod'. 
+If you start the application with the default Spring profile, all emails sent by the application will be displayed on the console. No emails are sent via an SMTP server. If you want the application to send emails via an SMTP server, you must start the application with the Spring profile 'preview'.
 
-<a name="run-application-locally-prod"></a>
-## 4 Run application locally (PROD profile)
+<a name="run-application-locally-preview"></a>
+## 4 Run application locally (Preview profile)
 
 To start the application locally in PROD profile, the following preparatory actions are necessary:
 
-1. Complete steps 1 to 9 from [Run application locally (DEV profile)](#run-application-locally-dev).
+1. Complete steps 1 to 6 from [Run application locally (Default profile)](#run-application-locally-default).
 
-2. Define the email server connection details in file `application-prod.properties`. Define at least the following properties for the connection:
+2. Define the email server connection details in file `application-preview.yml`. Define at least the following properties for the connection:
     - `spring.mail.host`
     - `spring.mail.username`
     - `spring.mail.password`
     - `spring.mail.properties.from`
     
-3. Configure the profile `prod` for example via your IntelliJ Run Configuration or via `spring.profiles.active=prod` in the file `application.properties`
+3. Configure the profile `preview` for example via your IntelliJ Run Configuration or via `spring.profiles.active=preview` in the file `application.yml`
 
-It is also possible to define all mentioned connection details and secrets as environment variables. In this case no .properties variables need to be changed. The names of the environment variables are already in the .properties files. You can define the environment variables for example within a Run Configuration in IntelliJ.
+It is also possible to define all mentioned connection details and secrets as environment variables. In this case no variables in `application-preview.yml` file need to be changed. The names of the environment variables are already in the `application-preview.yml`. You can define the environment variables for example within a Run Configuration in IntelliJ.
 
 <a name="start-application"></a>
 ## 5 Start the application
@@ -99,8 +99,8 @@ via Maven
 via your IDE
 - Execute main class `rocks.metaldetector.MetalDetectorApplication`
 
-Go to your web browser and visit `http://localhost:8090`.
-You can log in via the URL `http://localhost:8090/login`. 
+Go to your web browser and visit `http://localhost:8080`.
+You can log in via the URL `http://localhost:8080/login`.
 
 There are three example users with the following credentials:
 

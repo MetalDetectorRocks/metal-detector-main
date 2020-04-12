@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.hibernate.annotations.Type;
 import rocks.metaldetector.persistence.domain.BaseEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 
@@ -27,6 +28,7 @@ public class TokenEntity extends BaseEntity {
 
   @Column(name = "token_string", nullable = false)
   @Lob
+  @Type(type = "org.hibernate.type.TextType")
   @NonNull
   private String tokenString;
 

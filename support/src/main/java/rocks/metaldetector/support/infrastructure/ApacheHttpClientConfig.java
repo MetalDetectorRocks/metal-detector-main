@@ -104,7 +104,7 @@ public class ApacheHttpClientConfig {
     RequestConfig requestConfig = RequestConfig.custom()
             .setConnectTimeout((int) Duration.ofSeconds(20).toMillis()) // the time for waiting until a connection is established
             .setConnectionRequestTimeout((int) Duration.ofSeconds(20).toMillis()) // the time for waiting for a connection from connection pool
-            .setSocketTimeout((int) Duration.ofSeconds(30).toMillis()) // the time for waiting for data
+            .setSocketTimeout((int) Duration.ofSeconds(90).toMillis()) // the time for waiting for data
             .build();
 
     return HttpClients.custom()
