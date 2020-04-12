@@ -2,9 +2,6 @@ package rocks.metaldetector.butler;
 
 import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerRelease;
-import rocks.metaldetector.butler.api.ButlerReleaseEntityRecordState;
-import rocks.metaldetector.butler.api.ButlerReleaseSource;
-import rocks.metaldetector.butler.api.ButlerReleaseType;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.facade.dto.ImportResultDto;
@@ -68,11 +65,11 @@ public class ButlerDtoFactory {
               .albumTitle("Heavy Release")
               .releaseDate(LocalDate.now().plusDays(10))
               .genre("G")
-              .type(ButlerReleaseType.DEMO)
+              .type("demo")
               .metalArchivesArtistUrl("url")
               .metalArchivesAlbumUrl("url")
-              .source(ButlerReleaseSource.METAL_ARCHIVES)
-              .state(ButlerReleaseEntityRecordState.OK)
+              .source("encyclopaedia MetallUm: THE Metal archives")
+              .state("ok")
               .build();
     }
   }
@@ -85,11 +82,11 @@ public class ButlerDtoFactory {
               .albumTitle("Heavy Release")
               .releaseDate(LocalDate.now().plusDays(10))
               .genre("G")
-              .type(ButlerReleaseType.DEMO.toString())
+              .type("Demo")
               .metalArchivesArtistUrl("url")
               .metalArchivesAlbumUrl("url")
-              .source(ButlerReleaseSource.METAL_ARCHIVES.toString())
-              .state(ButlerReleaseEntityRecordState.OK.toString())
+              .source("Encyclopaedia Metallum: The Metal Archives")
+              .state("Ok")
               .build();
     }
   }

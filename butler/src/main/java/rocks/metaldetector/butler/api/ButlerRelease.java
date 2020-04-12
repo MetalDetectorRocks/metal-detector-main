@@ -48,7 +48,7 @@ public class ButlerRelease {
   private String genre;
 
   @JsonProperty("type")
-  private ButlerReleaseType type;
+  private String type;
 
   @JsonProperty("metalArchivesArtistUrl")
   private String metalArchivesArtistUrl;
@@ -57,9 +57,9 @@ public class ButlerRelease {
   private String metalArchivesAlbumUrl;
 
   @JsonProperty("source")
-  private ButlerReleaseSource source;
+  private String source;
 
   @JsonProperty("state")
-  private ButlerReleaseEntityRecordState state;
+  private String state;
 
 }

@@ -1,10 +1,8 @@
 package rocks.metaldetector.butler.client.transformer;
 
+import org.apache.commons.text.WordUtils;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.api.ButlerRelease;
-import rocks.metaldetector.butler.api.ButlerReleaseEntityRecordState;
-import rocks.metaldetector.butler.api.ButlerReleaseSource;
-import rocks.metaldetector.butler.api.ButlerReleaseType;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 
@@ -26,23 +24,11 @@ public class ButlerReleaseResponseTransformer {
             .releaseDate(release.getReleaseDate())
             .estimatedReleaseDate(release.getEstimatedReleaseDate())
             .genre(release.getGenre())
-            .type(transformReleaseType(release.getType()))
+            .type(WordUtils.capitalizeFully(release.getType()))
             .metalArchivesArtistUrl(release.getMetalArchivesArtistUrl())
             .metalArchivesAlbumUrl(release.getMetalArchivesAlbumUrl())
-            .source(transformReleaseSource(release.getSource()))
-            .state(transformReleaseState(release.getState()))
+            .source(WordUtils.capitalizeFully(release.getSource()))
+            .state(WordUtils.capitalizeFully(release.getState()))
             .build();
-  }
-
-  private String transformReleaseType(ButlerReleaseType type) {
-    return type != null ? type.toDisplayString() : null;
-  }
-
-  private String transformReleaseSource(ButlerReleaseSource source) {
-    return source != null ? source.toDisplayString() : null;
-  }
-
-  private String transformReleaseState(ButlerReleaseEntityRecordState state) {
-    return state != null ? state.toDisplayString() : null;
   }
 }

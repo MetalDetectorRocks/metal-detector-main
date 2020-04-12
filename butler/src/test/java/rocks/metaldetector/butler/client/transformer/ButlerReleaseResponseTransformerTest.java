@@ -1,5 +1,6 @@
 package rocks.metaldetector.butler.client.transformer;
 
+import org.apache.commons.text.WordUtils;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,10 +36,10 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
     assertThat(releaseDto.getReleaseDate()).isEqualTo(release.getReleaseDate());
     assertThat(releaseDto.getEstimatedReleaseDate()).isEqualTo(release.getEstimatedReleaseDate());
     assertThat(releaseDto.getGenre()).isEqualTo(release.getGenre());
-    assertThat(releaseDto.getType()).isEqualTo(release.getType().toDisplayString());
+    assertThat(releaseDto.getType()).isEqualTo(WordUtils.capitalizeFully(release.getType()));
     assertThat(releaseDto.getMetalArchivesArtistUrl()).isEqualTo(release.getMetalArchivesArtistUrl());
     assertThat(releaseDto.getMetalArchivesAlbumUrl()).isEqualTo(release.getMetalArchivesAlbumUrl());
-    assertThat(releaseDto.getSource()).isEqualTo(release.getSource().toDisplayString());
-    assertThat(releaseDto.getState()).isEqualTo(release.getState().toDisplayString());
+    assertThat(releaseDto.getSource()).isEqualTo(WordUtils.capitalizeFully(release.getSource()));
+    assertThat(releaseDto.getState()).isEqualTo(WordUtils.capitalizeFully(release.getState()));
   }
 }
