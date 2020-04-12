@@ -2,7 +2,6 @@ package rocks.metaldetector.butler.client;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +10,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
@@ -24,6 +24,7 @@ import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory
 import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
+import rocks.metaldetector.butler.config.ButlerConfig;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.nio.charset.Charset;
@@ -41,12 +42,13 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class ReleaseButlerRestClientImplTest implements WithAssertions {
 
-  private static final String RELEASES_URL = "http://releases.com";
-  private static final String IMPORT_URL = "http://import.com";
-
   @Mock
   private RestTemplate restTemplate;
 
+  @Mock
+  private ButlerConfig butlerConfig;
+
+  @InjectMocks
   private ReleaseButlerRestClientImpl underTest;
 
   @Captor
@@ -55,20 +57,17 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @Captor
   private ArgumentCaptor<HttpEntity<ButlerReleasesRequest>> argumentCaptorImport;
 
-  @BeforeEach
-  void setUp() {
-    underTest = new ReleaseButlerRestClientImpl(restTemplate, RELEASES_URL, IMPORT_URL);
-  }
-
   @AfterEach
   void tearDown() {
-    reset(restTemplate);
+    reset(restTemplate, butlerConfig);
   }
 
   @Test
   @DisplayName("A POST call is made on the injected releases URL")
   void test_post_on_releases_url() {
     // given
+    var butlerUrl = "releases-url";
+    doReturn(butlerUrl).when(butlerConfig).getUnpaginatedReleasesEndpoint();
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), eq(ButlerReleasesResponse.class));
@@ -77,13 +76,14 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     underTest.queryReleases(request);
 
     // then
-    verify(restTemplate, times(1)).postForEntity(eq(RELEASES_URL), any(), eq(ButlerReleasesResponse.class));
+    verify(restTemplate, times(1)).postForEntity(eq(butlerUrl), any(), eq(ButlerReleasesResponse.class));
   }
 
   @Test
   @DisplayName("The provided ButlerReleasesRequest is packed into a HttpEntity and sent as POST body")
   void test_releases_http_entity() {
     // given
+    doReturn("releases-url").when(butlerConfig).getUnpaginatedReleasesEndpoint();
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
@@ -105,6 +105,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @DisplayName("The body of the query result is returned")
   void get_releases_valid_result() {
     // given
+    doReturn("releases-url").when(butlerConfig).getUnpaginatedReleasesEndpoint();
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
@@ -120,6 +121,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @DisplayName("If the releases response is null, an ExternalServiceException is thrown")
   void test_exception_if_releases_response_is_null() {
     // given
+    doReturn("releases-url").when(butlerConfig).getUnpaginatedReleasesEndpoint();
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     doReturn(ResponseEntity.ok(null)).when(restTemplate).postForEntity(anyString(), any(), any());
 
@@ -135,6 +137,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @DisplayName("If the status code is not OK on query, an ExternalServiceException is thrown")
   void test_releases_exception_if_status_is_not_ok(HttpStatus httpStatus) {
     // given
+    doReturn("releases-url").when(butlerConfig).getUnpaginatedReleasesEndpoint();
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
     doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
@@ -164,6 +167,8 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @DisplayName("A GET call is made on the injected import URL with correct path parameter")
   void test_get_on_import_url() {
     // given
+    var butlerUrl = "import-url";
+    doReturn(butlerUrl).when(butlerConfig).getImportEndpoint();
     ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
     String actionPathParam = "?action={action}";
@@ -173,7 +178,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     underTest.importReleases();
 
     // then
-    verify(restTemplate, times(1)).exchange(eq(IMPORT_URL + actionPathParam), any(), any(), eq(ButlerImportResponse.class), eq(importAction));
+    verify(restTemplate, times(1)).exchange(eq(butlerUrl + actionPathParam), any(), any(), eq(ButlerImportResponse.class), eq(importAction));
   }
 
   @Test
