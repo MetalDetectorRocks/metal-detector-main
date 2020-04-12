@@ -24,7 +24,7 @@ function getReleases() {
         "type": "POST",
         "dataType": "json",
         "contentType": "application/json",
-        "data": function (d) {
+        "data": function () {
           return JSON.stringify({"artists": []});
         },
         "dataSrc": ""
@@ -56,12 +56,24 @@ function showUpdateReleaseForm() {
   $('#update-release-dialog').modal('show');
 
   // master data
-  $('#artist').val(data.artist);
-  $('#additionalArtist').val(data.additionalArtist);
-  $('#albumTitle').val(data.albumTitle);
-  $('#releaseDate').val(data.releaseDate);
-  $('#estimatedReleaseDate').val(data.estimatedReleaseDate);
-  $('#status').val(data.status);
+  $('#artist').text(data.artist);
+  $('#additionalArtist').text(data.additionalArtist);
+  $('#albumTitle').text(data.albumTitle);
+  $('#releaseDate').text(data.releaseDate);
+  $('#estimatedReleaseDate').text(data.estimatedReleaseDate);
+  $('#updateStatus').val(data.state);
+
+  // details
+  $('#genre').text(data.genre);
+  $('#type').text(data.type);
+  $('#source').text(data.source);
+
+  const artistUrl = $('#metalArchivesArtistUrl');
+  artistUrl.text(data.metalArchivesArtistUrl);
+  artistUrl.attr("href", data.metalArchivesArtistUrl);
+  const albumUrl = $('#metalArchivesAlbumUrl');
+  albumUrl.text(data.metalArchivesAlbumUrl);
+  albumUrl.attr("href", data.metalArchivesAlbumUrl);
 }
 
 /**

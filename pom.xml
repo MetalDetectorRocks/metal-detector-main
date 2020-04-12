@@ -56,6 +56,7 @@
         <coveralls-plugin.version>4.3.0</coveralls-plugin.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <jacoco.version>0.8.5</jacoco.version>
+        <apache-commons.version>1.8</apache-commons.version>
     </properties>
 
     <dependencies>
@@ -94,6 +95,12 @@
             <artifactId>modelmapper</artifactId>
             <version>${modelmapper.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${apache-commons.version}</version>
+        </dependency>
+
 
         <!-- Test -->
         <dependency>
