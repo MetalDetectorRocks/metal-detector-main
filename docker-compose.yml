@@ -3,18 +3,19 @@ version: '3.7'
 services: 
   detector-db:
     container_name: detector-db
-    image: mysql:5
+    image: postgres:alpine
     environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: metal-detector
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: metal-detector
+      PGDATA: /var/lib/postgresql/data/db-files/
     networks:
       - detector-network
     volumes:
       - type: volume
         source: detector-db-volume
-        target: /var/lib/mysql
+        target: /var/lib/postgresql/data
     ports:
-      - 3306:3306
+      - 5432:5432
     restart: always
 
   butler-db:
@@ -31,7 +32,7 @@ services:
         source: butler-db-volume
         target: /var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - 5433:5432
     restart: always
 
   butler-app:

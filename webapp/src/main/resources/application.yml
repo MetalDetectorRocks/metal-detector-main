@@ -1,0 +1,67 @@
+application:
+  host: http://localhost
+
+spring:
+  application:
+    name: Metal Detector
+  datasource:
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    url: ${DATASOURCE_URL}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      max-lifetime: 1200000
+    platform: postgres
+    data: classpath:config/sql/schema-mysql.sql
+    initialization-mode: always
+  jpa:
+    properties:
+      hibernate:
+        # The SQL dialect makes Hibernate generate better SQL for the chosen database
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create # (create, create-drop, validate, update)
+    open-in-view: false
+  cache:
+    jcache:
+      config: classpath:config/cache/ehcache.xml
+  mail:
+    properties:
+      from: no-reply@metal-detector.rocks
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    cache: false
+
+security:
+  token-issuer: ${JWT_ISSUER}
+  token-secret: ${JWT_SECRET}
+  remember-me-secret: ${REMEMBER_ME_SECRET}
+
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: true
+  tomcat:
+    accesslog:
+      enabled: true
+
+logging:
+  config: classpath:config/logging/logback-spring.xml
+
+discogs:
+  access-token: ${DISCOGS_ACCESS_TOKEN}
+  rest-base-url: https://api.discogs.com
+  user-agent: MetalDetector/0.1 +https://metal-detector.rocks
+
+metal-release-butler:
+  host: http://localhost:8095
+  unpaginated-releases-url: ${metal-release-butler.host}/rest/v1/releases/unpaginated
+  import-url: ${metal-release-butler.host}/rest/v1/releases

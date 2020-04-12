@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
@@ -13,15 +14,17 @@ import rocks.metaldetector.persistence.domain.user.UserRole;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
 import java.util.List;
 
 @Component
-@Profile({"dev"})
+@Profile({"default"})
 @AllArgsConstructor
 public class DevelopmentDbInitializer implements ApplicationRunner {
 
   @PersistenceContext
   private final EntityManager entityManager;
+  private final DataSource dataSource;
 
   private final long OPETH_DISCOGS_ID = 245797L;
   private final long DARKTHRONE_DISCOGS_ID = 252211L;
@@ -30,15 +33,21 @@ public class DevelopmentDbInitializer implements ApplicationRunner {
   @Override
   @Transactional
   public void run(ApplicationArguments args) {
-    List<UserEntity> currentExistingUser = entityManager.createQuery("select u from users u", UserEntity.class).getResultList();
+    if (!(dataSource instanceof EmbeddedDatabase)) {
+      List<UserEntity> currentExistingUser = entityManager.createQuery("select u from users u", UserEntity.class).getResultList();
 
-    // It is assumed that the database has no demo data if there are no users
-    if (currentExistingUser.isEmpty()) {
-      createUser();
-      String publicId = createAdministrator();
-      createArtists();
-      createFollowedArtists(publicId);
+      // It is assumed that the database has no demo data if there are no users
+      if (currentExistingUser.isEmpty()) {
+        createDemoData();
+      }
     }
+  }
+
+  private void createDemoData() {
+    createUser();
+    String publicId = createAdministrator();
+    createArtists();
+    createFollowedArtists(publicId);
   }
 
   private void createUser() {
