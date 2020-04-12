@@ -1,13 +1,14 @@
 package rocks.metaldetector.butler.client.transformer;
 
+import org.apache.commons.text.WordUtils;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import rocks.metaldetector.butler.ButlerDtoFactory;
 import rocks.metaldetector.butler.api.ButlerRelease;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 
-import java.time.LocalDate;
 import java.util.List;
 
 class ButlerReleaseResponseTransformerTest implements WithAssertions {
@@ -18,13 +19,7 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
   @DisplayName("Should transform ButlerReleaseResponse to list of ReleaseDto")
   void should_transform() {
     // given
-    ButlerRelease release = ButlerRelease.builder()
-            .artist("A")
-            .albumTitle("B")
-            .releaseDate(LocalDate.now())
-            .additionalArtists(List.of("C"))
-            .estimatedReleaseDate("Summer 2020")
-            .build();
+    ButlerRelease release = ButlerDtoFactory.ButlerReleaseFactory.createDefault();
     ButlerReleasesResponse response = ButlerReleasesResponse.builder().releases(List.of(release)).build();
 
     // when
@@ -32,14 +27,19 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
 
     // then
     assertThat(releaseDtos).hasSize(1);
-    assertThat(releaseDtos.get(0)).isEqualTo(
-            ReleaseDto.builder()
-                    .artist(release.getArtist())
-                    .albumTitle(release.getAlbumTitle())
-                    .releaseDate(release.getReleaseDate())
-                    .additionalArtists(release.getAdditionalArtists())
-                    .estimatedReleaseDate(release.getEstimatedReleaseDate())
-                    .build()
-    );
+
+    ReleaseDto releaseDto = releaseDtos.get(0);
+
+    assertThat(releaseDto.getArtist()).isEqualTo(release.getArtist());
+    assertThat(releaseDto.getAdditionalArtists()).isEqualTo(release.getAdditionalArtists());
+    assertThat(releaseDto.getAlbumTitle()).isEqualTo(release.getAlbumTitle());
+    assertThat(releaseDto.getReleaseDate()).isEqualTo(release.getReleaseDate());
+    assertThat(releaseDto.getEstimatedReleaseDate()).isEqualTo(release.getEstimatedReleaseDate());
+    assertThat(releaseDto.getGenre()).isEqualTo(release.getGenre());
+    assertThat(releaseDto.getType()).isEqualTo(WordUtils.capitalizeFully(release.getType()));
+    assertThat(releaseDto.getMetalArchivesArtistUrl()).isEqualTo(release.getMetalArchivesArtistUrl());
+    assertThat(releaseDto.getMetalArchivesAlbumUrl()).isEqualTo(release.getMetalArchivesAlbumUrl());
+    assertThat(releaseDto.getSource()).isEqualTo(WordUtils.capitalizeFully(release.getSource()));
+    assertThat(releaseDto.getState()).isEqualTo(WordUtils.capitalizeFully(release.getState()));
   }
 }
