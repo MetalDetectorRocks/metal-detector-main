@@ -1,5 +1,6 @@
 package rocks.metaldetector.butler.client.transformer;
 
+import org.apache.commons.text.WordUtils;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.api.ButlerRelease;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
@@ -10,6 +11,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ButlerReleaseResponseTransformer {
+
+  private static final String STATE_NOT_SET = "NOT_SET";
 
   public List<ReleaseDto> transform(ButlerReleasesResponse response) {
     return response.getReleases().stream().map(this::transformRelease).collect(Collectors.toList());
@@ -22,6 +25,16 @@ public class ButlerReleaseResponseTransformer {
             .additionalArtists(release.getAdditionalArtists())
             .releaseDate(release.getReleaseDate())
             .estimatedReleaseDate(release.getEstimatedReleaseDate())
+            .genre(release.getGenre())
+            .type(prettyPrintValue(release.getType()))
+            .metalArchivesArtistUrl(release.getMetalArchivesArtistUrl())
+            .metalArchivesAlbumUrl(release.getMetalArchivesAlbumUrl())
+            .source(prettyPrintValue(release.getSource()))
+            .state(prettyPrintValue(STATE_NOT_SET))
             .build();
+  }
+
+  private String prettyPrintValue(String value) {
+    return WordUtils.capitalizeFully(value.replace("_", " "));
   }
 }

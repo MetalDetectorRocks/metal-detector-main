@@ -19,6 +19,12 @@ public class DetectorReleasesResponse {
   private String albumTitle;
   private LocalDate releaseDate;
   private String estimatedReleaseDate;
+  private String genre;
+  private String type;
+  private String metalArchivesArtistUrl;
+  private String metalArchivesAlbumUrl;
+  private String source;
+  private String state;
   private boolean isFollowed;
 
 }

@@ -59,11 +59,17 @@ public class ButlerDtoFactory {
 
   public static class ButlerReleaseFactory {
 
-    static ButlerRelease createDefault() {
+    public static ButlerRelease createDefault() {
       return ButlerRelease.builder()
               .artist("A")
               .albumTitle("Heavy Release")
               .releaseDate(LocalDate.now().plusDays(10))
+              .genre("G")
+              .type("demo")
+              .metalArchivesArtistUrl("url")
+              .metalArchivesAlbumUrl("url")
+              .source("encyclopaedia MetallUm: THE Metal archives")
+              .state("not set")
               .build();
     }
   }
@@ -75,6 +81,12 @@ public class ButlerDtoFactory {
               .artist("A")
               .albumTitle("Heavy Release")
               .releaseDate(LocalDate.now().plusDays(10))
+              .genre("G")
+              .type("Demo")
+              .metalArchivesArtistUrl("url")
+              .metalArchivesAlbumUrl("url")
+              .source("Encyclopaedia Metallum: The Metal Archives")
+              .state("Ok")
               .build();
     }
   }

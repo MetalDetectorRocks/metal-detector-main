@@ -30,6 +30,12 @@ public class DetectorReleasesResponseTransformer {
             .releaseDate(release.getReleaseDate())
             .additionalArtists(release.getAdditionalArtists())
             .estimatedReleaseDate(release.getEstimatedReleaseDate())
+            .genre(release.getGenre())
+            .type(release.getType())
+            .metalArchivesArtistUrl(release.getMetalArchivesArtistUrl())
+            .metalArchivesAlbumUrl(release.getMetalArchivesAlbumUrl())
+            .source(release.getSource())
+            .state(release.getState())
             .isFollowed(followedArtistsNames.contains(release.getArtist()))
             .build();
   }

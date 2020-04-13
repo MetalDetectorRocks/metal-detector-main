@@ -5,7 +5,7 @@
 </head>
 <body>
 <div th:fragment="dialog" class="modal-dialog" role="document">
-    <div class="modal-content">
+    <div class="modal-content modal-content-releases">
         <div class="modal-header">
             <h5 class="modal-title">Update Release</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="update-release-form-close">
@@ -18,6 +18,7 @@
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link active" id="nav-master-data-tab" data-toggle="tab" href="#nav-master-data" role="tab" aria-controls="nav-home" aria-selected="true">Master data</a>
+                    <a class="nav-item nav-link" id="nav-details-tab" data-toggle="tab" href="#nav-details" role="tab" aria-controls="nav-home">Details</a>
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
@@ -29,7 +30,7 @@
                             <div class="form-group row">
                                 <label for="artist" class="col-sm-4 col-form-label">Artist</label>
                                 <div class="col-sm-8">
-                                    <input type="text" id="artist" readonly class="form-control-plaintext"/>
+                                    <p id="artist" class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
@@ -37,7 +38,7 @@
                             <div class="form-group row">
                                 <label for="additionalArtist" class="col-sm-4 col-form-label">Additional Artist</label>
                                 <div class="col-sm-8">
-                                    <input type="text" id="additionalArtist" readonly class="form-control-plaintext"/>
+                                    <p id="additionalArtist" class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
@@ -45,7 +46,7 @@
                             <div class="form-group row">
                                 <label for="albumTitle" class="col-sm-4 col-form-label">Album Title</label>
                                 <div class="col-sm-8">
-                                    <input type="text" id="albumTitle" readonly class="form-control-plaintext"/>
+                                    <p id="albumTitle" class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
@@ -53,7 +54,7 @@
                             <div class="form-group row">
                                 <label for="releaseDate" class="col-sm-4 col-form-label">Release Date</label>
                                 <div class="col-sm-8">
-                                    <input type="text" id="releaseDate" readonly class="form-control-plaintext"/>
+                                    <p id="releaseDate" readonly class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
@@ -61,7 +62,7 @@
                             <div class="form-group row">
                                 <label for="estimatedReleaseDate" class="col-sm-4 col-form-label">Estimated Release Date</label>
                                 <div class="col-sm-8">
-                                    <input type="text" id="estimatedReleaseDate" readonly class="form-control-plaintext"/>
+                                    <p id="estimatedReleaseDate" readonly class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
@@ -70,14 +71,59 @@
                                 <label for="updateStatus" class="col-sm-4 col-form-label">Status</label>
                                 <div class="col-sm-8">
                                     <select class="form-control" id="updateStatus">
-                                        <option>Not set</option>
                                         <option>Ok</option>
-                                        <option>Duplicate</option>
+                                        <option>Not set</option>
+                                        <option>Demo</option>
+                                        <option>Needs improvement</option>
+                                        <option>Archived</option>
                                     </select>
                                 </div>
                             </div>
                         </fieldset>
                     </form>
+                </div>
+
+                <!-- Details -->
+                <div class="tab-pane fade mt-3 ml-2" id="nav-details" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <!-- Genre -->
+                    <div class="form-group row">
+                        <label for="genre" class="col-sm-4 col-form-label">Genre</label>
+                        <div class="col-sm-8">
+                            <p id="genre" class="form-control-plaintext"></p>
+                        </div>
+                    </div>
+
+                    <!-- Type -->
+                    <div class="form-group row">
+                        <label for="type" class="col-sm-4 col-form-label">Type</label>
+                        <div class="col-sm-8">
+                            <p id="type" readonly class="form-control-plaintext"></p>
+                        </div>
+                    </div>
+
+                    <!-- MetalArchives Artist Url -->
+                    <div class="form-group row">
+                        <label for="metalArchivesArtistUrl" class="col-sm-4 col-form-label">MetalArchives Artist Url</label>
+                        <div class="col-sm-8">
+                            <a id="metalArchivesArtistUrl" target="_blank"></a>
+                        </div>
+                    </div>
+
+                    <!-- MetalArchives Album Url -->
+                    <div class="form-group row">
+                        <label for="metalArchivesAlbumUrl" class="col-sm-4 col-form-label">MetalArchives Album Url</label>
+                        <div class="col-sm-8">
+                            <a id="metalArchivesAlbumUrl" target="_blank"></a>
+                        </div>
+                    </div>
+
+                    <!-- Source -->
+                    <div class="form-group row">
+                        <label for="source" class="col-sm-4 col-form-label">Source</label>
+                        <div class="col-sm-8">
+                            <p id="source" class="form-control-plaintext"></p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
