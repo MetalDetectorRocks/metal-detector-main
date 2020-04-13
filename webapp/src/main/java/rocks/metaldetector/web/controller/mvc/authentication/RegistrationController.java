@@ -3,6 +3,7 @@ package rocks.metaldetector.web.controller.mvc.authentication;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -29,6 +30,7 @@ import java.util.Map;
 
 @Controller
 @AllArgsConstructor
+@Profile("default")
 public class RegistrationController {
 
   static final String FORM_DTO = "registerUserRequest";
