@@ -12,7 +12,7 @@ import org.springframework.context.annotation.PropertySource;
 public class ButlerConfig {
 
   private String accessToken;
-  private String unpaginatedReleasesEndpoint;
-  private String importEndpoint;
+  private String unpaginatedReleasesUrl;
+  private String importUrl;
 
 }

@@ -65,4 +65,4 @@ metal-release-butler:
   host: http://localhost:8095
   unpaginated-releases-url: ${metal-release-butler.host}/rest/v1/releases/unpaginated
   import-url: ${metal-release-butler.host}/rest/v1/releases
-  access-token: ${BUTLER_TOKEN}
+  access-token: ${BUTLER_ACCESS_TOKEN}

@@ -67,7 +67,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   void test_post_on_releases_url() {
     // given
     var butlerUrl = "releases-url";
-    doReturn(butlerUrl).when(butlerConfig).getUnpaginatedReleasesEndpoint();
+    doReturn(butlerUrl).when(butlerConfig).getUnpaginatedReleasesUrl();
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), eq(ButlerReleasesResponse.class));
@@ -83,7 +83,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @DisplayName("The provided ButlerReleasesRequest is packed into a HttpEntity and sent as POST body")
   void test_releases_http_entity() {
     // given
-    doReturn("releases-url").when(butlerConfig).getUnpaginatedReleasesEndpoint();
+    doReturn("releases-url").when(butlerConfig).getUnpaginatedReleasesUrl();
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
@@ -105,7 +105,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @DisplayName("The body of the query result is returned")
   void get_releases_valid_result() {
     // given
-    doReturn("releases-url").when(butlerConfig).getUnpaginatedReleasesEndpoint();
+    doReturn("releases-url").when(butlerConfig).getUnpaginatedReleasesUrl();
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
@@ -121,7 +121,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @DisplayName("If the releases response is null, an ExternalServiceException is thrown")
   void test_exception_if_releases_response_is_null() {
     // given
-    doReturn("releases-url").when(butlerConfig).getUnpaginatedReleasesEndpoint();
+    doReturn("releases-url").when(butlerConfig).getUnpaginatedReleasesUrl();
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     doReturn(ResponseEntity.ok(null)).when(restTemplate).postForEntity(anyString(), any(), any());
 
@@ -137,7 +137,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @DisplayName("If the status code is not OK on query, an ExternalServiceException is thrown")
   void test_releases_exception_if_status_is_not_ok(HttpStatus httpStatus) {
     // given
-    doReturn("releases-url").when(butlerConfig).getUnpaginatedReleasesEndpoint();
+    doReturn("releases-url").when(butlerConfig).getUnpaginatedReleasesUrl();
     ButlerReleasesRequest request = new ButlerReleasesRequest();
     ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
     doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
@@ -168,7 +168,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   void test_get_on_import_url() {
     // given
     var butlerUrl = "import-url";
-    doReturn(butlerUrl).when(butlerConfig).getImportEndpoint();
+    doReturn(butlerUrl).when(butlerConfig).getImportUrl();
     ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
     String actionPathParam = "?action={action}";

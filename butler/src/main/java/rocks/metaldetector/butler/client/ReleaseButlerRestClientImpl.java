@@ -35,7 +35,7 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {
     HttpEntity<ButlerReleasesRequest> requestEntity = createQueryHttpEntity(request);
 
-    ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(butlerConfig.getUnpaginatedReleasesEndpoint(),
+    ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(butlerConfig.getUnpaginatedReleasesUrl(),
                                                                                                     requestEntity, ButlerReleasesResponse.class);
     ButlerReleasesResponse response = responseEntity.getBody();
 
@@ -51,7 +51,7 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   public ButlerImportResponse importReleases() {
     HttpEntity<Object> requestEntity = createImportHttpEntity();
 
-    ResponseEntity<ButlerImportResponse> responseEntity = releaseButlerRestTemplate.exchange(butlerConfig.getImportEndpoint() + ACTION_PATH_PARAMETER,
+    ResponseEntity<ButlerImportResponse> responseEntity = releaseButlerRestTemplate.exchange(butlerConfig.getImportUrl() + ACTION_PATH_PARAMETER,
                                                                                              HttpMethod.GET, requestEntity,
                                                                                              ButlerImportResponse.class, IMPORT_ACTION);
     ButlerImportResponse response = responseEntity.getBody();
