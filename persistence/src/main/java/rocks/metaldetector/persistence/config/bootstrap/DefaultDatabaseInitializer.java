@@ -1,4 +1,4 @@
-package rocks.metaldetector.persistence.config;
+package rocks.metaldetector.persistence.config.bootstrap;
 
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
@@ -18,9 +18,9 @@ import javax.sql.DataSource;
 import java.util.List;
 
 @Component
-@Profile({"default"})
+@Profile("default")
 @AllArgsConstructor
-public class DevelopmentDbInitializer implements ApplicationRunner {
+public class DefaultDatabaseInitializer implements ApplicationRunner {
 
   @PersistenceContext
   private final EntityManager entityManager;
