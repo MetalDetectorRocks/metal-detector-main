@@ -13,7 +13,6 @@ import rocks.metaldetector.testutil.WithExceptionResolver;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -41,7 +40,6 @@ class PreviewRegistrationControllerTest implements WithAssertions, WithException
 
     // then
     validatableResponse
-            .assertThat(model().hasNoErrors())
             .assertThat(status().isOk())
             .assertThat(view().name(ViewNames.Guest.DISABLED_REGISTER));
   }
