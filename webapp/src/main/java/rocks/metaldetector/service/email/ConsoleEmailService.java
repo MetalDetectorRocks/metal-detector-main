@@ -10,7 +10,7 @@ import rocks.metaldetector.config.misc.MailConfig;
 
 @Service
 @Slf4j
-@Profile("!prod")
+@Profile("default")
 @AllArgsConstructor
 public class ConsoleEmailService implements EmailService {
 
