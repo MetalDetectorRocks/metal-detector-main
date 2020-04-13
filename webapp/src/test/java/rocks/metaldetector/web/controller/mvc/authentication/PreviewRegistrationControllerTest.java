@@ -27,8 +27,7 @@ class PreviewRegistrationControllerTest implements WithAssertions, WithException
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.REGISTER);
     RestAssuredMockMvc.standaloneSetup(
             underTest,
-            springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-            exceptionResolver()
+            springSecurity((request, response, chain) -> chain.doFilter(request, response))
     );
   }
 
