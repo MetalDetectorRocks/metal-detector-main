@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 
 @Service
 @Slf4j
-@Profile("prod")
+@Profile({"preview", "prod"})
 @AllArgsConstructor
 public class JavaMailEmailService implements EmailService {
 

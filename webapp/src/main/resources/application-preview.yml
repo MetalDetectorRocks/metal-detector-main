@@ -1,0 +1,35 @@
+application:
+  host: https://metal-detector-preview.herokuapp.com
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  thymeleaf:
+    cache: true
+  mail:
+    host: ${MAIL_HOST}
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    default-encoding: UTF-8
+    protocol: smtp
+    test-connection: false
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+  tomcat:
+    accesslog:
+      enabled: false
+
+metal-release-butler:
+  host: https://metal-release-butler-preview.herokuapp.com
