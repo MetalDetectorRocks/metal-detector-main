@@ -25,10 +25,10 @@ import java.util.concurrent.Executors;
 @AllArgsConstructor
 public class JavaMailEmailService implements EmailService {
 
-  private final JavaMailSender        emailSender;
+  private final JavaMailSender emailSender;
   private final ISpringTemplateEngine templateEngine;
-  private final MailConfig            mailConfig;
-  private       Executor              executor;
+  private final MailConfig mailConfig;
+  private Executor executor;
 
   @PostConstruct
   private void init() {
@@ -49,17 +49,17 @@ public class JavaMailEmailService implements EmailService {
       emailSender.send(mimeMessage);
     }
     catch (MailException me) {
-      log.error("unable to send email", me);
+      log.error("Unable to send email", me);
     }
   }
 
   private MimeMessage createMimeMessage(AbstractEmail email) {
     MimeMessage mimeMessage = emailSender.createMimeMessage();
-    try {
-      Context context = new Context();
-      context.setVariables(email.getEnhancedViewModel(mailConfig.getHost()));
-      String html = templateEngine.process(email.getTemplateName(), context);
+    Context context = new Context();
+    context.setVariables(email.getEnhancedViewModel(mailConfig.getHost()));
+    String html = templateEngine.process(email.getTemplateName(), context);
 
+    try {
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
       helper.setTo(email.getRecipient());
       helper.setText(html, true);
@@ -67,7 +67,7 @@ public class JavaMailEmailService implements EmailService {
       helper.setReplyTo(mailConfig.getFromEmail());
     }
     catch (MessagingException me) {
-      log.error("unable to create email", me);
+      log.error("Unable to create email", me);
     }
 
     return mimeMessage;
@@ -76,5 +76,4 @@ public class JavaMailEmailService implements EmailService {
   void setExecutor(Executor executor) {
     this.executor = executor;
   }
-
 }
