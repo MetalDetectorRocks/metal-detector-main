@@ -46,6 +46,15 @@ public class RestAssuredMockMvcUtils {
         .then();
   }
 
+  public ValidatableMockMvcResponse doGetWithAttributes(Map<String,Object> attributes) {
+    return given()
+            .accept(ContentType.JSON)
+            .attributes(attributes)
+          .when()
+            .get(requestUri)
+          .then();
+  }
+
   public ValidatableMockMvcResponse doPost() {
     return given()
            .contentType(ContentType.JSON)
