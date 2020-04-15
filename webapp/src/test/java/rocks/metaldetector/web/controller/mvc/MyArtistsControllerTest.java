@@ -17,22 +17,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(MockitoExtension.class)
-class ArtistsControllerTest {
+class MyArtistsControllerTest {
 
   @InjectMocks
-  private ArtistsController underTest;
+  private MyArtistsController underTest;
 
   private RestAssuredMockMvcUtils restAssuredUtils;
 
   @BeforeEach
   void setup() {
-    restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Frontend.ARTISTS);
+    restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Frontend.MY_ARTISTS);
     RestAssuredMockMvc.standaloneSetup(underTest,
                                        springSecurity((request, response, chain) -> chain.doFilter(request, response)));
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Frontend.ARTISTS + "' should be ok")
+  @DisplayName("Requesting '" + Endpoints.Frontend.MY_ARTISTS + "' should be ok")
   void get_search_should_return_200() {
     // when
     var validatableResponse = restAssuredUtils.doGet();
@@ -42,13 +42,13 @@ class ArtistsControllerTest {
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Frontend.ARTISTS + "' should return the view to search artists")
-  void get_search_should_return_search_artists_view() {
+  @DisplayName("Requesting '" + Endpoints.Frontend.MY_ARTISTS + "' should return the my-artists view")
+  void get_search_should_return_my_artists_view() {
     // when
     var validatableResponse = restAssuredUtils.doGet();
 
     // then
-    validatableResponse.assertThat(view().name(ViewNames.Frontend.SEARCH))
+    validatableResponse.assertThat(view().name(ViewNames.Frontend.MY_ARTISTS))
         .assertThat(model().size(0))
         .assertThat(model().hasNoErrors());
   }
