@@ -1,4 +1,4 @@
-package rocks.metaldetector.config;
+package rocks.metaldetector.config.misc;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;

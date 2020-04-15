@@ -130,6 +130,16 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(readOnly = true)
+  public List<UserDto> getAllActiveUsers() {
+    return userRepository.findAll()
+        .stream()
+        .map(userMapper::mapToDto)
+        .filter(UserDto::isEnabled)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  @Transactional(readOnly = true)
   public List<UserDto> getAllUsers(int page, int limit) {
     Pageable pageable = PageRequest.of(page, limit);
 
