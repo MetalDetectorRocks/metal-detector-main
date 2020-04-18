@@ -104,8 +104,8 @@ class LoginControllerIT extends BaseWebMvcTestWithSecurity {
 
   @ParameterizedTest(name = "[{index}]: Username <{0}> and Password <{1}>")
   @MethodSource("credentialProvider")
-  @DisplayName("Login with bad credentials should return redirect to login page")
-  void login_with_bad_credentials_should_return_redirect_to_login_page(String username, String plainPassword) throws Exception {
+  @DisplayName("Login with bad credentials should redirect to login page")
+  void login_with_bad_credentials_should_redirect_to_login_page(String username, String plainPassword) throws Exception {
     // given
     var request = post(Endpoints.Guest.LOGIN)
         .with(SecurityMockMvcRequestPostProcessors.csrf())
@@ -118,15 +118,12 @@ class LoginControllerIT extends BaseWebMvcTestWithSecurity {
     // then
     resultActions.andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?badCredentials"));
-
-    String expectedUsernameArgument = (username == null || username.isBlank()) ? "" : username;
-    verify(userService, times(1)).loadUserByUsername(expectedUsernameArgument);
   }
 
   @ParameterizedTest(name = "[{index}]: Username <{0}> and Password <{1}>")
   @MethodSource("credentialProvider")
-  @DisplayName("Login with bad credentials should return call user service")
-  void login_with_bad_credentials_should_return_call_user_service(String username, String plainPassword) throws Exception {
+  @DisplayName("Login with bad credentials should call user service")
+  void login_with_bad_credentials_should_call_user_service(String username, String plainPassword) throws Exception {
     // given
     var request = post(Endpoints.Guest.LOGIN)
         .with(SecurityMockMvcRequestPostProcessors.csrf())
