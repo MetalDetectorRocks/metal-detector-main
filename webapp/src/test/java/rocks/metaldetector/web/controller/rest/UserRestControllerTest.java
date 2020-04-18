@@ -21,13 +21,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
-import rocks.metaldetector.testutil.WithExceptionResolver;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
@@ -48,7 +48,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ExtendWith(MockitoExtension.class)
-class UserRestControllerTest implements WithAssertions, WithExceptionResolver {
+class UserRestControllerTest implements WithAssertions {
 
   private static final String USER_ID = "public-user-id";
 
@@ -68,7 +68,7 @@ class UserRestControllerTest implements WithAssertions, WithExceptionResolver {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS);
     RestAssuredMockMvc.standaloneSetup(underTest,
                                        springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                       exceptionResolver());
+                                       RestExceptionsHandler.class);
   }
 
   @AfterEach

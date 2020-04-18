@@ -18,8 +18,8 @@ import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.service.artist.ArtistsService;
+import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
-import rocks.metaldetector.testutil.WithExceptionResolver;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ExtendWith(MockitoExtension.class)
-class ArtistsRestControllerTest implements WithAssertions, WithExceptionResolver {
+class ArtistsRestControllerTest implements WithAssertions {
 
   private static final long VALID_ARTIST_ID = 252211L;
   private static final String VALID_SEARCH_REQUEST = "Darkthrone";
@@ -58,7 +58,7 @@ class ArtistsRestControllerTest implements WithAssertions, WithExceptionResolver
       restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH);
       RestAssuredMockMvc.standaloneSetup(underTest,
                                          springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                         exceptionResolver());
+                                         RestExceptionsHandler.class);
     }
 
     @AfterEach
@@ -172,7 +172,7 @@ class ArtistsRestControllerTest implements WithAssertions, WithExceptionResolver
       unfollowArtistRestAssuredUtils  = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.UNFOLLOW);
       RestAssuredMockMvc.standaloneSetup(underTest,
                                          springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                         exceptionResolver());
+                                         RestExceptionsHandler.class);
     }
 
     @AfterEach

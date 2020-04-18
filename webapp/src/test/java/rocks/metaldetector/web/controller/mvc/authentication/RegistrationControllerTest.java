@@ -26,6 +26,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;
+import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenService;
@@ -35,7 +36,6 @@ import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
-import rocks.metaldetector.testutil.WithExceptionResolver;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 
@@ -56,7 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(MockitoExtension.class)
-class RegistrationControllerTest implements WithAssertions, WithExceptionResolver {
+class RegistrationControllerTest implements WithAssertions {
 
   private static final String PARAM_USERNAME = "username";
   private static final String PARAM_EMAIL = "email";
@@ -90,7 +90,7 @@ class RegistrationControllerTest implements WithAssertions, WithExceptionResolve
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.REGISTER);
     RestAssuredMockMvc.standaloneSetup(underTest,
                                        springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                       exceptionResolver());
+                                       RestExceptionsHandler.class);
 
     objectMapper = new ObjectMapper();
     objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);

@@ -15,11 +15,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;
+import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.user.OnResetPasswordRequestCompleteEvent;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
-import rocks.metaldetector.testutil.WithExceptionResolver;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import java.util.Map;
@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(MockitoExtension.class)
-class ForgotPasswordControllerTest implements WithAssertions, WithExceptionResolver {
+class ForgotPasswordControllerTest implements WithAssertions {
 
   private static final String EXISTING_EMAIL = "john.doe@example.com";
   private static final String NOT_EXISTING_EMAIL = "not.existing@example.com";
@@ -58,7 +58,7 @@ class ForgotPasswordControllerTest implements WithAssertions, WithExceptionResol
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.FORGOT_PASSWORD);
     RestAssuredMockMvc.standaloneSetup(underTest,
                                        springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                       exceptionResolver());
+                                       RestExceptionsHandler.class);
   }
 
   @AfterEach
