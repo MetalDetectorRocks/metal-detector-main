@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
@@ -57,8 +56,7 @@ class ArtistsRestControllerTest implements WithAssertions {
     void setUp() {
       restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH);
       RestAssuredMockMvc.standaloneSetup(underTest,
-                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                         RestExceptionsHandler.class);
+                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)));
     }
 
     @AfterEach
@@ -83,14 +81,14 @@ class ArtistsRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should return results from artist service with status code 200")
-    void handleNameSearch_return_result() {
+    @DisplayName("Should return status code 200")
+    void handleNameSearch_return_200() {
       // given
       var expectedSearchResult = DiscogsArtistSearchResultDtoFactory.createDefault();
       Map<String, Object> requestParams = Map.of(
-              "query", VALID_SEARCH_REQUEST,
-              "page", DEFAULT_PAGE,
-              "size", DEFAULT_SIZE
+          "query", VALID_SEARCH_REQUEST,
+          "page", DEFAULT_PAGE,
+          "size", DEFAULT_SIZE
       );
       doReturn(expectedSearchResult).when(artistsService).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
 
@@ -99,63 +97,29 @@ class ArtistsRestControllerTest implements WithAssertions {
 
       // then
       validatableResponse
-              .contentType(ContentType.JSON)
-              .statusCode(HttpStatus.OK.value());
+          .contentType(ContentType.JSON)
+          .statusCode(HttpStatus.OK.value());
+    }
 
+    @Test
+    @DisplayName("Should return results from artist service")
+    void handleNameSearch_return_result() {
+      // given
+      var expectedSearchResult = DiscogsArtistSearchResultDtoFactory.createDefault();
+      Map<String, Object> requestParams = Map.of(
+          "query", VALID_SEARCH_REQUEST,
+          "page", DEFAULT_PAGE,
+          "size", DEFAULT_SIZE
+      );
+      doReturn(expectedSearchResult).when(artistsService).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+
+      // when
+      var validatableResponse = restAssuredUtils.doGet(requestParams);
+
+      // then
       DiscogsArtistSearchResultDto searchResponse = validatableResponse.extract().as(DiscogsArtistSearchResultDto.class);
       assertThat(searchResponse).isEqualTo(expectedSearchResult);
     }
-//    @Test
-//    @DisplayName("GET with valid request should return 200")
-//    void get_with_valid_request_should_return_200() {
-//      // given
-//      Map<String, Object> requestParams = new HashMap<>();
-//      requestParams.put("query", VALID_SEARCH_REQUEST);
-//      requestParams.put("page", DEFAULT_PAGE);
-//      requestParams.put("size", DEFAULT_SIZE);
-//
-//      when(artistsService.searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE)))
-//          .thenReturn(Optional.of(ArtistNameSearchResponseFactory.withOneResult()));
-//
-//      // when
-//      ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doGet(requestParams);
-//
-//      // then
-//      validatableResponse
-//          .contentType(ContentType.JSON)
-//          .statusCode(HttpStatus.OK.value());
-//
-//      SearchResponse searchResponse = validatableResponse.extract().as(SearchResponse.class);
-//      assertThat(searchResponse.getSearchResults()).isNotNull().hasSize(1);
-//
-//      SearchResponse.SearchResult searchResult = searchResponse.getSearchResults().get(0);
-//      assertThat(searchResult).isEqualTo(new SearchResponse.SearchResult(null, VALID_ARTIST_ID, VALID_SEARCH_REQUEST, false));
-//
-//      Pagination pagination = searchResponse.getPagination();
-//      assertThat(pagination).isEqualTo(new Pagination(TOTAL_PAGES, DEFAULT_PAGE, DEFAULT_SIZE));
-//
-//      verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
-//    }
-//
-//    @Test
-//    @DisplayName("GET with empty result should return 404")
-//    void get_with_empty_result_should_return_404() {
-//      // given
-//      Map<String, Object> requestParams = new HashMap<>();
-//      requestParams.put("query", NO_RESULT_SEARCH_REQUEST);
-//      requestParams.put("page", DEFAULT_PAGE);
-//      requestParams.put("size", DEFAULT_SIZE);
-//
-//      when(artistsService.searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE)))
-//          .thenReturn(Optional.empty());
-//
-//      // when
-//      ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doGet(requestParams);
-//
-//      // then
-//      validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-//      verify(artistsService, times(1)).searchDiscogsByName(NO_RESULT_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
-//    }
   }
 
   @Nested
@@ -168,11 +132,10 @@ class ArtistsRestControllerTest implements WithAssertions {
 
     @BeforeEach
     void setUp() {
-      followArtistRestAssuredUtils  = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.FOLLOW);
-      unfollowArtistRestAssuredUtils  = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.UNFOLLOW);
+      followArtistRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.FOLLOW);
+      unfollowArtistRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.UNFOLLOW);
       RestAssuredMockMvc.standaloneSetup(underTest,
-                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                         RestExceptionsHandler.class);
+                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)));
     }
 
     @AfterEach
@@ -181,81 +144,43 @@ class ArtistsRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should call artist service when following an artist and return 200")
-    void handleFollow() {
+    @DisplayName("Should return 200 when following an artist")
+    void handle_follow_return_200() {
       // when
       var validatableResponse = followArtistRestAssuredUtils.doPost("/" + VALID_ARTIST_ID);
 
       // then
       validatableResponse.statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("Should call artist service when following an artist")
+    void handle_follow_call_artist_service() {
+      // when
+      followArtistRestAssuredUtils.doPost("/" + VALID_ARTIST_ID);
+
+      // then
       verify(artistsService, times(1)).followArtist(VALID_ARTIST_ID);
     }
 
     @Test
-    @DisplayName("Should call artist service when unfollowing an artist and return 200")
-    void handleUnfollow() {
+    @DisplayName("Should return 200 when unfollowing an artist")
+    void handle_unfollow_return_200() {
       // when
       var validatableResponse = unfollowArtistRestAssuredUtils.doPost("/" + VALID_ARTIST_ID);
 
       // then
       validatableResponse.statusCode(HttpStatus.OK.value());
-      verify(artistsService, times(1)).unfollowArtist(VALID_ARTIST_ID);
     }
 
-//    @Test
-//    @DisplayName("CREATE with valid request should create an entity")
-//    void create_with_valid_request_should_return_201() {
-//      // given
-//      when(artistsService.followArtist(VALID_ARTIST_ID)).thenReturn(true);
-//
-//      // when
-//      ValidatableMockMvcResponse validatableResponse = followArtistRestAssuredUtils.doPost("/" + VALID_ARTIST_ID);
-//
-//      // then
-//      validatableResponse.statusCode(HttpStatus.OK.value());
-//      verify(artistsService, times(1)).followArtist(VALID_ARTIST_ID);
-//    }
-//
-//    @Test
-//    @DisplayName("CREATE should return 404 if the artist is not found")
-//    void create_should_return_404_if_artist_not_found() {
-//      // given
-//      when(artistsService.followArtist(INVALID_ARTIST_ID)).thenReturn(false);
-//
-//      // when
-//      ValidatableMockMvcResponse validatableResponse = followArtistRestAssuredUtils.doPost("/" + INVALID_ARTIST_ID);
-//
-//      // then
-//      validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-//      verify(artistsService, times(1)).followArtist(INVALID_ARTIST_ID);
-//    }
-//
-//    @Test
-//    @DisplayName("DELETE should should delete the entity if it exists")
-//    void delete_an_existing_resource_should_return_200() {
-//      // given
-//      when(artistsService.unfollowArtist(VALID_ARTIST_ID)).thenReturn(true);
-//
-//      // when
-//      ValidatableMockMvcResponse validatableResponse = unfollowArtistRestAssuredUtils.doPost("/" + VALID_ARTIST_ID);
-//
-//      // then
-//      validatableResponse.statusCode(HttpStatus.OK.value());
-//      verify(artistsService, times(1)).unfollowArtist(VALID_ARTIST_ID);
-//    }
-//
-//    @Test
-//    @DisplayName("DELETE should should return 404 if the entity does not exist")
-//    void delete_an_not_existing_resource_should_return_404() {
-//      // given
-//      when(artistsService.unfollowArtist(VALID_ARTIST_ID)).thenReturn(false);
-//
-//      // when
-//      ValidatableMockMvcResponse validatableResponse = unfollowArtistRestAssuredUtils.doPost("/" + VALID_ARTIST_ID);
-//
-//      // then
-//      validatableResponse.statusCode(HttpStatus.NOT_FOUND.value());
-//      verify(artistsService, times(1)).unfollowArtist(VALID_ARTIST_ID);
-//    }
+    @Test
+    @DisplayName("Should call artist service when unfollowing an artist")
+    void handle_unfollow_call_artist_service() {
+      // when
+      unfollowArtistRestAssuredUtils.doPost("/" + VALID_ARTIST_ID);
+
+      // then
+      verify(artistsService, times(1)).unfollowArtist(VALID_ARTIST_ID);
+    }
   }
 }
