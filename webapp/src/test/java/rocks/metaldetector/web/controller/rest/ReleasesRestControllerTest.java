@@ -15,9 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.testutil.DtoFactory.DetectorReleaseRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
-import rocks.metaldetector.testutil.WithExceptionResolver;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
 import rocks.metaldetector.web.api.response.DetectorImportResponse;
@@ -40,7 +40,7 @@ import static rocks.metaldetector.testutil.DtoFactory.DetectorImportResponseFact
 import static rocks.metaldetector.testutil.DtoFactory.ImportResultDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
-class ReleasesRestControllerTest implements WithAssertions, WithExceptionResolver {
+class ReleasesRestControllerTest implements WithAssertions {
 
   @Mock
   private ReleaseService releasesService;
@@ -58,7 +58,7 @@ class ReleasesRestControllerTest implements WithAssertions, WithExceptionResolve
   void setUp() {
     RestAssuredMockMvc.standaloneSetup(underTest,
                                        springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                       exceptionResolver());
+                                       RestExceptionsHandler.class);
   }
 
   @AfterEach
