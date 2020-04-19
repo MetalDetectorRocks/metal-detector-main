@@ -42,6 +42,8 @@ services:
       DATASOURCE_URL: jdbc:postgresql://butler-db:5432/metal-release-butler
       DATASOURCE_USERNAME: postgres
       DATASOURCE_PASSWORD: secret
+      JWT_SECRET: secret
+      ROCKS_METALDETECTOR_AUTHENTICATION_ENABLED: 'false'
     networks:
       - butler-network
     ports:

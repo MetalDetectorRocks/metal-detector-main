@@ -1,4 +1,4 @@
-package rocks.metaldetector.discogs.config;
+package rocks.metaldetector.butler.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;
@@ -12,19 +12,20 @@ import java.io.IOException;
 import java.util.List;
 
 @Slf4j
-public class DiscogsRequestInterceptor implements ClientHttpRequestInterceptor, WithTokenRemover {
+public class ButlerRequestInterceptor implements ClientHttpRequestInterceptor, WithTokenRemover {
 
-  private final DiscogsConfig discogsConfig;
+  private static final String TOKEN_PREFIX = "Bearer ";
 
-  DiscogsRequestInterceptor(DiscogsConfig discogsConfig) {
-    this.discogsConfig = discogsConfig;
+  private final ButlerConfig butlerConfig;
+
+  ButlerRequestInterceptor(ButlerConfig butlerConfig) {
+    this.butlerConfig = butlerConfig;
   }
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
     request.getHeaders().setAccept(List.of(MediaType.APPLICATION_JSON));
-    request.getHeaders().set("User-Agent", discogsConfig.getUserAgent());
-    request.getHeaders().set(HEADER_NAME, "Discogs token=" + discogsConfig.getAccessToken());
+    request.getHeaders().set(HEADER_NAME, TOKEN_PREFIX + butlerConfig.getAccessToken());
 
     log.info("URI: {}", request.getURI());
     log.info("Headers: {}", removeTokenForLogging(request.getHeaders().toString()));

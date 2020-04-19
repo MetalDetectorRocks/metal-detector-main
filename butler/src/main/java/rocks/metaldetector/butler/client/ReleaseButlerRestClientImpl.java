@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
+import rocks.metaldetector.butler.config.ButlerConfig;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.nio.charset.Charset;
@@ -27,15 +28,15 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   private static final String ACTION_PATH_PARAMETER = "?action={action}";
   private static final String IMPORT_ACTION = "import";
 
-  private final RestTemplate restTemplate;
-  private final String releasesEndpoint;
-  private final String importEndpoint;
+  private final RestTemplate releaseButlerRestTemplate;
+  private final ButlerConfig butlerConfig;
 
   @Override
   public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {
     HttpEntity<ButlerReleasesRequest> requestEntity = createQueryHttpEntity(request);
 
-    ResponseEntity<ButlerReleasesResponse> responseEntity = restTemplate.postForEntity(releasesEndpoint, requestEntity, ButlerReleasesResponse.class);
+    ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(butlerConfig.getUnpaginatedReleasesUrl(),
+                                                                                                    requestEntity, ButlerReleasesResponse.class);
     ButlerReleasesResponse response = responseEntity.getBody();
 
     var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
@@ -50,8 +51,9 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   public ButlerImportResponse importReleases() {
     HttpEntity<Object> requestEntity = createImportHttpEntity();
 
-    ResponseEntity<ButlerImportResponse> responseEntity = restTemplate.exchange(importEndpoint + ACTION_PATH_PARAMETER, HttpMethod.GET,
-                                                                                requestEntity, ButlerImportResponse.class, IMPORT_ACTION);
+    ResponseEntity<ButlerImportResponse> responseEntity = releaseButlerRestTemplate.exchange(butlerConfig.getImportUrl() + ACTION_PATH_PARAMETER,
+                                                                                             HttpMethod.GET, requestEntity,
+                                                                                             ButlerImportResponse.class, IMPORT_ACTION);
     ButlerImportResponse response = responseEntity.getBody();
 
     var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
