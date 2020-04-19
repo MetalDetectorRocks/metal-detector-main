@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atMost;
@@ -54,6 +53,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
@@ -790,17 +790,20 @@ class UserServiceTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Setting last login should throw exception when user not found")
-    void set_last_login_should_throw_exception() {
+    @DisplayName("Setting last login should do nothing when user not found")
+    void set_last_login_should_do_nothing() {
       // given
-      when(userRepository.findByPublicId(anyString())).thenThrow(new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
+      String notExistingId = "id";
+      when(userRepository.findByPublicId(anyString())).thenReturn(Optional.empty());
 
       // when
-      Exception exception = assertThrows(ResourceNotFoundException.class, () -> userService.persistSuccessfulLogin(anyString()));
+      userService.persistSuccessfulLogin(notExistingId);
 
       // then
-      assertThat(exception).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(exception).hasMessage(USER_WITH_ID_NOT_FOUND.toDisplayString());
+      verify(userRepository, times(1)).findByPublicId(notExistingId);
+
+      // and
+      verifyNoMoreInteractions(userRepository);
     }
 
     @Test
@@ -837,17 +840,23 @@ class UserServiceTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Handling failed login should throw exception when user not found")
-    void handle_failed_login_should_throw_exception() {
+    @DisplayName("Handling failed login should do nothing when user not found")
+    void handle_failed_login_should_do_nothing() {
       // given
-      when(userRepository.findByUsername(any())).thenThrow(new ResourceNotFoundException(USER_NOT_FOUND.toDisplayString()));
+      String notExistingId = "id";
+      when(userRepository.findByUsername(any())).thenReturn(Optional.empty());
 
       // when
-      Exception exception = assertThrows(ResourceNotFoundException.class, () -> userService.handleFailedLogin(anyString()));
+      userService.handleFailedLogin(notExistingId);
 
       // then
-      assertThat(exception).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(exception).hasMessage(USER_NOT_FOUND.toDisplayString());
+      verify(userRepository, times(1)).findByUsername(notExistingId);
+
+      // and
+      verify(userRepository, times(1)).findByEmail(notExistingId);
+
+      // and
+      verifyNoMoreInteractions(userRepository);
     }
 
     @Test

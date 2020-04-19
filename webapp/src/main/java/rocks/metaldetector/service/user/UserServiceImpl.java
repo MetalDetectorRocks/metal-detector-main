@@ -205,27 +205,33 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void persistSuccessfulLogin(String publicUserId) {
-    UserEntity userEntity = userRepository.findByPublicId(publicUserId)
-        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+    Optional<UserEntity> userEntityOptional = userRepository.findByPublicId(publicUserId);
 
-    userEntity.setLastLogin(LocalDateTime.now());
-    userEntity.clearFailedLogins();
+    if (userEntityOptional.isPresent()) {
+      UserEntity userEntity = userEntityOptional.get();
 
-    userRepository.save(userEntity);
+      userEntity.setLastLogin(LocalDateTime.now());
+      userEntity.clearFailedLogins();
+
+      userRepository.save(userEntity);
+    }
   }
 
   @Override
   public void handleFailedLogin(String username) {
-    UserEntity userEntity = userRepository.findByUsername(username)
-        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+    Optional<UserEntity> userEntityOptional = findByEmailOrUsername(username);
 
-    userEntity.addFailedLogin(LocalDateTime.now());
+    if (userEntityOptional.isPresent()) {
+      UserEntity userEntity = userEntityOptional.get();
 
-    if (userEntity.getFailedLogins().size() == MAX_FAILED_LOGINS) {
-      userEntity.setEnabled(false);
+      userEntity.addFailedLogin(LocalDateTime.now());
+
+      if (userEntity.getFailedLogins().size() == MAX_FAILED_LOGINS) {
+        userEntity.setEnabled(false);
+      }
+
+      userRepository.save(userEntity);
     }
-
-    userRepository.save(userEntity);
   }
 
   private Optional<UserEntity> findByEmailOrUsername(String emailOrUsername) {
