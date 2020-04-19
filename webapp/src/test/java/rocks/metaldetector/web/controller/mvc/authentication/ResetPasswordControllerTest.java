@@ -22,11 +22,11 @@ import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenType;
+import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.token.TokenFactory;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.testutil.DtoFactory.ChangePasswordRequestFactory;
-import rocks.metaldetector.testutil.WithExceptionResolver;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 
@@ -49,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(MockitoExtension.class)
-class ResetPasswordControllerTest implements WithAssertions, WithExceptionResolver {
+class ResetPasswordControllerTest implements WithAssertions {
 
   private static final String PARAM_TOKEN_STRING = "tokenString";
   private static final String PARAM_PASSWORD = "newPlainPassword";
@@ -72,7 +72,7 @@ class ResetPasswordControllerTest implements WithAssertions, WithExceptionResolv
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.RESET_PASSWORD);
     RestAssuredMockMvc.standaloneSetup(underTest,
                                        springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                       exceptionResolver());
+                                       RestExceptionsHandler.class);
     objectMapper = new ObjectMapper();
     objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
   }
