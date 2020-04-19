@@ -7,6 +7,7 @@ public class ViewNames {
     public static final String INDEX                     = "guest/index";
     public static final String LOGIN                     = "guest/auth/login";
     public static final String REGISTER                  = "guest/auth/register";
+    public static final String DISABLED_REGISTER         = "guest/auth/disabled-register";
     public static final String FORGOT_PASSWORD           = "guest/auth/forgot-password";
     public static final String RESET_PASSWORD            = "guest/auth/reset-password";
 
@@ -45,6 +46,7 @@ public class ViewNames {
   public static class EmailTemplates {
     public static final String REGISTRATION_VERIFICATION = "email/registration-verification-email";
     public static final String FORGOT_PASSWORD           = "email/forgot-password-email";
+    public static final String NEW_RELEASES              = "email/new-releases-email";
   }
 
 }

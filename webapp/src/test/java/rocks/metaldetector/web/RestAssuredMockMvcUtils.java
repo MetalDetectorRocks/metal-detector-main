@@ -1,7 +1,5 @@
 package rocks.metaldetector.web;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
 import org.springframework.http.MediaType;
@@ -48,12 +46,30 @@ public class RestAssuredMockMvcUtils {
         .then();
   }
 
-  public ValidatableMockMvcResponse doPost(String pathSegment) {
+  public ValidatableMockMvcResponse doGetWithAttributes(Map<String,Object> attributes) {
+    return given()
+            .accept(ContentType.JSON)
+            .attributes(attributes)
+          .when()
+            .get(requestUri)
+          .then();
+  }
+
+  public ValidatableMockMvcResponse doPost() {
     return given()
            .contentType(ContentType.JSON)
            .accept(ContentType.JSON)
           .when()
-           .post(requestUri + pathSegment)
+           .post(requestUri)
+        .then();
+  }
+
+  public ValidatableMockMvcResponse doPost(String pathSegment) {
+    return given()
+        .contentType(ContentType.JSON)
+        .accept(ContentType.JSON)
+        .when()
+        .post(requestUri + pathSegment)
         .then();
   }
 

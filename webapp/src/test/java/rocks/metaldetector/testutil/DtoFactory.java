@@ -5,6 +5,7 @@ import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
+import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
@@ -180,6 +181,16 @@ public class DtoFactory {
       return DetectorImportResponse.builder()
           .totalCountRequested(666)
           .totalCountImported(666)
+          .build();
+    }
+  }
+
+  public static class ArtistDtoFactory {
+
+    public static ArtistDto createDefault() {
+      return ArtistDto.builder()
+          .artistName("A")
+          .discogsId(1L)
           .build();
     }
   }

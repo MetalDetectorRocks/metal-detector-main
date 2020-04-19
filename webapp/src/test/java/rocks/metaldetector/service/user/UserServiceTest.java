@@ -506,6 +506,36 @@ class UserServiceTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("Should return all active users")
+  void get_all_active_users() {
+    // given
+    UserEntity user1 = UserFactory.createUser("a", "a@example.com");
+    UserEntity user2 = UserFactory.createUser("b", "b@example.com");
+    user2.setEnabled(false);
+    when(userRepository.findAll()).thenReturn(List.of(user1, user2));
+
+    // when
+    List<UserDto> userDtoList = userService.getAllActiveUsers();
+
+    // then
+    assertThat(userDtoList).hasSize(1);
+    assertThat(userDtoList.get(0)).isEqualTo(userMapper.mapToDto(user1));
+  }
+
+  @Test
+  @DisplayName("Should use UserRepository to return a list of all active users")
+  void get_all_active_users_uses_user_repository() {
+    // given
+    when(userRepository.findAll()).thenReturn(Collections.emptyList());
+
+    // when
+    userService.getAllActiveUsers();
+
+    // then
+    verify(userRepository, times(1)).findAll();
+  }
+
+  @Test
   @DisplayName("Should return all users in a certain order")
   void get_all_users_ordered() {
     // given
