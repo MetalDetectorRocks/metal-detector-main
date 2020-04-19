@@ -752,7 +752,7 @@ class UserServiceTest implements WithAssertions {
     }
   }
 
-  @DisplayName("Loginv date tests")
+  @DisplayName("Login date tests")
   @Nested
   class LoginDateTest {
 
