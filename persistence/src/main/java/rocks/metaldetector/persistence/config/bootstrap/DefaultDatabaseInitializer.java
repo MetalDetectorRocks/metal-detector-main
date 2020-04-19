@@ -45,9 +45,9 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
 
   private void createDemoData() {
     createUser();
-    String publicId = createAdministrator();
+    createAdministrator();
     createArtists();
-    createFollowedArtists(publicId);
+    createFollowedArtists();
   }
 
   private void createUser() {
@@ -80,7 +80,7 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
     entityManager.persist(mikeMiller);
   }
 
-  private String createAdministrator() {
+  private void createAdministrator() {
     UserEntity administrator = UserEntity.builder()
         .username("Administrator")
         .email("administrator@example.com")
@@ -90,8 +90,6 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
         .build();
 
     entityManager.persist(administrator);
-
-    return administrator.getPublicId();
   }
 
   private void createArtists() {
@@ -104,10 +102,11 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
     entityManager.persist(mayhem);
   }
 
-  private void createFollowedArtists(String userId) {
-    FollowedArtistEntity opeth = new FollowedArtistEntity(userId, OPETH_DISCOGS_ID);
-    FollowedArtistEntity darkthrone = new FollowedArtistEntity(userId, DARKTHRONE_DISCOGS_ID);
-    FollowedArtistEntity mayhem = new FollowedArtistEntity(userId, MAYHEM_DISCOGS_ID);
+  private void createFollowedArtists() {
+    UserEntity administrator = entityManager.createQuery("select u from users u where u.username = :username", UserEntity.class).setParameter("username", "Administrator").getSingleResult();
+    FollowedArtistEntity opeth = new FollowedArtistEntity(administrator.getPublicId(), OPETH_DISCOGS_ID);
+    FollowedArtistEntity darkthrone = new FollowedArtistEntity(administrator.getPublicId(), DARKTHRONE_DISCOGS_ID);
+    FollowedArtistEntity mayhem = new FollowedArtistEntity(administrator.getPublicId(), MAYHEM_DISCOGS_ID);
 
     entityManager.persist(opeth);
     entityManager.persist(darkthrone);
