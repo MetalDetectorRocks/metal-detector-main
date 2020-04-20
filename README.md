@@ -52,7 +52,7 @@ To start the application locally in default profile, the following preparatory a
 
 5. Deposit your Discogs Access Token for the property `discogs.access-token` in file `application.yml` (see [Discogs API Documentation](https://www.discogs.com/developers/) for further information).
 
-6. Define JWT Issue and secrets (you can choose any value you want) in file `application.yml`:
+6. Define JWT Issuer and secrets (you can choose any value you want) in file `application.yml`:
     - `security.token-issuer` for JWT
     - `security.token-secret` for JWT
     - `security.remember-me-secret` for remember me functionality
