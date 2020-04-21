@@ -23,6 +23,7 @@ import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
+import static rocks.metaldetector.security.AuthenticationListener.MAX_FAILED_LOGINS;
 
 @Service
 @Slf4j
@@ -77,7 +79,7 @@ public class UserServiceImpl implements UserService {
   @Transactional(readOnly = true)
   public UserDto getUserByPublicId(String publicId) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
-                                          .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
     return userMapper.mapToDto(userEntity);
   }
@@ -93,13 +95,11 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public UserDto updateUser(String publicId, UserDto userDto) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
-                                          .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
     if (publicId.equals(currentUserSupplier.get().getPublicId())) {
-      if (!userDto.isEnabled())
-        throw IllegalUserActionException.createAdminCannotDisableHimselfException();
-      if (userEntity.isAdministrator() && !UserRole.getRoleFromString(userDto.getRole()).contains(ROLE_ADMINISTRATOR))
-        throw IllegalUserActionException.createAdminCannotDiscardHisRoleException();
+      if (!userDto.isEnabled()) { throw IllegalUserActionException.createAdminCannotDisableHimselfException(); }
+      if (userEntity.isAdministrator() && !UserRole.getRoleFromString(userDto.getRole()).contains(ROLE_ADMINISTRATOR)) { throw IllegalUserActionException.createAdminCannotDiscardHisRoleException(); }
     }
 
     userEntity.setUserRoles(UserRole.getRoleFromString(userDto.getRole()));
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public void deleteUser(String publicId) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
-                                          .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
     userRepository.delete(userEntity);
   }
 
@@ -122,10 +122,10 @@ public class UserServiceImpl implements UserService {
   @Transactional(readOnly = true)
   public List<UserDto> getAllUsers() {
     return userRepository.findAll()
-            .stream()
-            .map(userMapper::mapToDto)
-            .sorted(Comparator.comparing(UserDto::isEnabled, BooleanComparator.TRUE_LOW).thenComparing(UserDto::getRole).thenComparing(UserDto::getUsername))
-            .collect(Collectors.toList());
+        .stream()
+        .map(userMapper::mapToDto)
+        .sorted(Comparator.comparing(UserDto::isEnabled, BooleanComparator.TRUE_LOW).thenComparing(UserDto::getRole).thenComparing(UserDto::getUsername))
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -144,9 +144,9 @@ public class UserServiceImpl implements UserService {
     Pageable pageable = PageRequest.of(page, limit);
 
     return userRepository.findAll(pageable)
-            .stream()
-            .map(userMapper::mapToDto)
-            .collect(Collectors.toList());
+        .stream()
+        .map(userMapper::mapToDto)
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
   public void verifyEmailToken(String tokenString) {
     // check if token exists
     TokenEntity tokenEntity = tokenRepository.findEmailVerificationToken(tokenString)
-                                             .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
+        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
 
     // check if token is expired
     if (tokenEntity.isExpired()) {
@@ -186,7 +186,7 @@ public class UserServiceImpl implements UserService {
 
     // 2. get user from token if it exists
     TokenEntity tokenEntity = tokenService.getResetPasswordTokenByTokenString(tokenString)
-                                          .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
+        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
 
     // 3. check if token is expired
     if (tokenEntity.isExpired()) {
@@ -201,6 +201,37 @@ public class UserServiceImpl implements UserService {
 
     // 5. remove token from database
     tokenService.deleteToken(tokenEntity);
+  }
+
+  @Override
+  public void persistSuccessfulLogin(String publicUserId) {
+    Optional<UserEntity> userEntityOptional = userRepository.findByPublicId(publicUserId);
+
+    if (userEntityOptional.isPresent()) {
+      UserEntity userEntity = userEntityOptional.get();
+
+      userEntity.setLastLogin(LocalDateTime.now());
+      userEntity.clearFailedLogins();
+
+      userRepository.save(userEntity);
+    }
+  }
+
+  @Override
+  public void handleFailedLogin(String username) {
+    Optional<UserEntity> userEntityOptional = findByEmailOrUsername(username);
+
+    if (userEntityOptional.isPresent()) {
+      UserEntity userEntity = userEntityOptional.get();
+
+      userEntity.addFailedLogin(LocalDateTime.now());
+
+      if (userEntity.getFailedLogins().size() == MAX_FAILED_LOGINS) {
+        userEntity.setEnabled(false);
+      }
+
+      userRepository.save(userEntity);
+    }
   }
 
   private Optional<UserEntity> findByEmailOrUsername(String emailOrUsername) {
