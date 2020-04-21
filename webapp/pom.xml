@@ -152,4 +152,14 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <!-- Builds an executable JAR with all dependencies -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
