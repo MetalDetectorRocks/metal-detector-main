@@ -4,7 +4,7 @@ application:
 spring:
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
   thymeleaf:
     cache: true
   mail:
