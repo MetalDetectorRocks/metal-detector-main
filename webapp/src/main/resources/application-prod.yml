@@ -1,10 +1,10 @@
 application:
-  host: http://metal-detector.rocks
+  host: https://metal-detector.rocks
 
 spring:
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
   thymeleaf:
     cache: true
   mail:
