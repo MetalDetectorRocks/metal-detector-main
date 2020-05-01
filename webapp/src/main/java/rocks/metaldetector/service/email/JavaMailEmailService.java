@@ -64,6 +64,7 @@ public class JavaMailEmailService implements EmailService {
       helper.setTo(email.getRecipient());
       helper.setText(html, true);
       helper.setSubject(email.getSubject());
+      helper.setFrom(mailConfig.getFromEmail());
       helper.setReplyTo(mailConfig.getFromEmail());
     }
     catch (MessagingException me) {
