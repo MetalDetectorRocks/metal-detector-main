@@ -16,6 +16,7 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
@@ -23,6 +24,7 @@ import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -31,7 +33,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
-import static rocks.metaldetector.security.AuthenticationListener.MAX_FAILED_LOGINS;
 
 @Service
 @Slf4j
@@ -45,6 +46,8 @@ public class UserServiceImpl implements UserService {
   private final UserMapper userMapper;
   private final TokenService tokenService;
   private final CurrentUserSupplier currentUserSupplier;
+  private final LoginAttemptService loginAttemptService;
+  private final HttpServletRequest request;
 
   @Override
   @Transactional
@@ -211,30 +214,16 @@ public class UserServiceImpl implements UserService {
       UserEntity userEntity = userEntityOptional.get();
 
       userEntity.setLastLogin(LocalDateTime.now());
-      userEntity.clearFailedLogins();
-
-      userRepository.save(userEntity);
-    }
-  }
-
-  @Override
-  public void handleFailedLogin(String username) {
-    Optional<UserEntity> userEntityOptional = findByEmailOrUsername(username);
-
-    if (userEntityOptional.isPresent()) {
-      UserEntity userEntity = userEntityOptional.get();
-
-      userEntity.addFailedLogin(LocalDateTime.now());
-
-      if (userEntity.getFailedLogins().size() == MAX_FAILED_LOGINS) {
-        userEntity.setEnabled(false);
-      }
 
       userRepository.save(userEntity);
     }
   }
 
   private Optional<UserEntity> findByEmailOrUsername(String emailOrUsername) {
+    if (loginAttemptService.isBlocked(getClientIPHash())) {
+      throw new RuntimeException("User is blocked!");
+    }
+
     // try to find user by email
     Optional<UserEntity> userEntity = userRepository.findByEmail(emailOrUsername);
 
@@ -257,5 +246,13 @@ public class UserServiceImpl implements UserService {
     else if (userRepository.existsByEmail(email) || userRepository.existsByUsername(email)) {
       throw UserAlreadyExistsException.createUserWithEmailAlreadyExistsException();
     }
+  }
+
+  private int getClientIPHash() {
+    String xfHeader = request.getHeader("X-Forwarded-For");
+    if (xfHeader == null){
+      return request.getRemoteAddr().hashCode();
+    }
+    return xfHeader.split(",")[0].hashCode();
   }
 }
