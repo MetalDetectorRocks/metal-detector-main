@@ -57,7 +57,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
-import static rocks.metaldetector.security.AuthenticationListener.MAX_FAILED_LOGINS;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_NOT_FOUND;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
@@ -804,79 +803,6 @@ class UserServiceTest implements WithAssertions {
 
       // and
       verifyNoMoreInteractions(userRepository);
-    }
-
-    @Test
-    @DisplayName("Handling failed login should add value on user")
-    void handle_failed_login_should_add_value() {
-      // given
-      ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
-      UserEntity userEntity = UserFactory.createUser(USERNAME, EMAIL);
-      when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(userEntity));
-
-      // when
-      userService.handleFailedLogin(userEntity.getUsername());
-
-      // then
-      verify(userRepository, times(1)).save(userEntityCaptor.capture());
-
-      UserEntity entity = userEntityCaptor.getValue();
-      assertThat(entity.getFailedLogins()).hasSize(1);
-      assertThat(entity.getFailedLogins().get(0)).isCloseTo(LocalDateTime.now(), new TemporalUnitLessThanOffset(1, ChronoUnit.SECONDS));
-    }
-
-    @Test
-    @DisplayName("Handling failed login should call user repository")
-    void handle_failed_login_should_call_user_repository() {
-      // given
-      UserEntity userEntity = UserFactory.createUser(USERNAME, EMAIL);
-      when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(userEntity));
-
-      // when
-      userService.handleFailedLogin(userEntity.getUsername());
-
-      // then
-      verify(userRepository, times(1)).findByUsername(userEntity.getUsername());
-    }
-
-    @Test
-    @DisplayName("Handling failed login should do nothing when user not found")
-    void handle_failed_login_should_do_nothing() {
-      // given
-      String notExistingId = "id";
-      when(userRepository.findByUsername(any())).thenReturn(Optional.empty());
-
-      // when
-      userService.handleFailedLogin(notExistingId);
-
-      // then
-      verify(userRepository, times(1)).findByUsername(notExistingId);
-
-      // and
-      verify(userRepository, times(1)).findByEmail(notExistingId);
-
-      // and
-      verifyNoMoreInteractions(userRepository);
-    }
-
-    @Test
-    @DisplayName("Too many failed login should disable user")
-    void too_many_failed_logins() {
-      // given
-      ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
-      UserEntity userEntity = UserFactory.createUser(USERNAME, EMAIL);
-      Stream.generate(LocalDateTime::now).limit(MAX_FAILED_LOGINS - 1).forEach(userEntity::addFailedLogin);
-      when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(userEntity));
-
-      // when
-      userService.handleFailedLogin(userEntity.getUsername());
-
-      // then
-      verify(userRepository, times(1)).save(userEntityCaptor.capture());
-
-      UserEntity entity = userEntityCaptor.getValue();
-      assertThat(entity.getFailedLogins()).hasSize(5);
-      assertThat(entity.isEnabled()).isFalse();
     }
   }
 }

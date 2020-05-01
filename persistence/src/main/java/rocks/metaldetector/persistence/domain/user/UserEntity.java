@@ -20,9 +20,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.PrePersist;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -70,10 +68,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
   @Column(name = "last_login")
   private LocalDateTime lastLogin;
 
-  @Column(name = "failed_logins")
-  @ElementCollection(fetch = FetchType.EAGER)
-  private List<LocalDateTime> failedLogins;
-
   @Builder
   public UserEntity(@NonNull String username, @NonNull String email, @NonNull String password,
                     @NonNull Set<UserRole> userRoles, boolean enabled) {
@@ -82,7 +76,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
     this.password = password;
     this.userRoles = userRoles;
     this.enabled = enabled;
-    this.failedLogins = new ArrayList<>();
   }
 
   public void setPublicId(String newPublicId) {
@@ -167,15 +160,4 @@ public class UserEntity extends BaseEntity implements UserDetails {
     this.lastLogin = lastLogin;
   }
 
-  public List<LocalDateTime> getFailedLogins() {
-    return List.copyOf(this.failedLogins);
-  }
-
-  public void addFailedLogin(LocalDateTime lastLogin) {
-    this.failedLogins.add(lastLogin);
-  }
-
-  public void clearFailedLogins() {
-    this.failedLogins.clear();
-  }
 }
