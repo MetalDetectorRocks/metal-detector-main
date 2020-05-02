@@ -17,5 +17,4 @@ public class CacheConfig {
   public RequestContextListener requestContextListener() {
     return new RequestContextListener();
   }
-
 }

@@ -24,7 +24,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws ServletException, IOException {
-    persistSuccessfulLogin();
     handleRedirect(httpServletRequest, httpServletResponse, authentication);
   }
 
@@ -45,9 +44,5 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
       // redirect to requested page
       savedRequestRedirectionHandler.onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
     }
-  }
-
-  private void persistSuccessfulLogin() {
-    // ToDo: persist date and time of login (https://trello.com/c/VxTNVHQ6)
   }
 }

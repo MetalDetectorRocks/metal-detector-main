@@ -1,5 +1,6 @@
 package rocks.metaldetector.security;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,9 @@ import org.springframework.security.authentication.event.AuthenticationFailureBa
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.service.user.UserFactory;
+import rocks.metaldetector.service.user.UserService;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -22,6 +26,12 @@ class AuthenticationListenerTest {
 
   @Mock
   private LoginAttemptService loginAttemptService;
+
+  @Mock
+  private UserService userService;
+
+  @Mock
+  private CurrentUserSupplier currentUserSupplier;
 
   @InjectMocks
   private AuthenticationListener underTest;
@@ -38,32 +48,55 @@ class AuthenticationListenerTest {
   @Mock
   private WebAuthenticationDetails webAuthenticationDetails;
 
+  UserEntity userEntity = UserFactory.createUser("user", "mail");
+
   @AfterEach
   void tearDown() {
-    reset(webAuthenticationDetails, successEvent, failureEvent, authentication, webAuthenticationDetails, loginAttemptService);
+    reset(webAuthenticationDetails, successEvent, failureEvent, authentication, webAuthenticationDetails,
+          loginAttemptService, userService, currentUserSupplier);
   }
 
   @Test
-  @DisplayName("UserService is called on authentication success")
-  void authentication_success_calls_user_service() {
+  @DisplayName("LoginAttemptService is called with hashed IP on authentication success")
+  void authentication_success_calls_login_attempt_service() {
     // given
     String ip = "i'm an ip";
+    String ipHash = DigestUtils.md5Hex(ip);
     when(successEvent.getAuthentication()).thenReturn(authentication);
     when(authentication.getDetails()).thenReturn(webAuthenticationDetails);
     when(webAuthenticationDetails.getRemoteAddress()).thenReturn(ip);
+    when(currentUserSupplier.get()).thenReturn(userEntity);
 
     // when
     underTest.onAuthenticationSuccess(successEvent);
 
     // then
-    verify(loginAttemptService, times(1)).loginSucceeded(ip.hashCode());
+    verify(loginAttemptService, times(1)).loginSucceeded(ipHash);
   }
 
   @Test
-  @DisplayName("UserService is called on authentication failure")
+  @DisplayName("UserService is called to persist login on authentication success")
+  void authentication_success_calls_user_service() {
+    // given
+    when(successEvent.getAuthentication()).thenReturn(authentication);
+    when(authentication.getDetails()).thenReturn(webAuthenticationDetails);
+    when(webAuthenticationDetails.getRemoteAddress()).thenReturn("i'm an ip");
+    when(currentUserSupplier.get()).thenReturn(userEntity);
+
+    // when
+    underTest.onAuthenticationSuccess(successEvent);
+
+    // then
+    verify(userService, times(1)).persistSuccessfulLogin(userEntity.getPublicId());
+    verify(currentUserSupplier, times(1)).get();
+  }
+
+  @Test
+  @DisplayName("LoginAttemptService is called with hashed IP on authentication failure")
   void authentication_failure_calls_user_service() {
     // given
     String ip = "i'm an ip";
+    String ipHash = DigestUtils.md5Hex(ip);
     when(failureEvent.getAuthentication()).thenReturn(authentication);
     when(authentication.getDetails()).thenReturn(webAuthenticationDetails);
     when(webAuthenticationDetails.getRemoteAddress()).thenReturn(ip);
@@ -72,6 +105,6 @@ class AuthenticationListenerTest {
     underTest.onAuthenticationFailure(failureEvent);
 
     // then
-    verify(loginAttemptService, times(1)).loginFailed(ip.hashCode());
+    verify(loginAttemptService, times(1)).loginFailed(ipHash);
   }
 }
