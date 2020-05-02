@@ -1,0 +1,30 @@
+name: Docker Image
+
+on:
+  push:
+    branches: 
+      - master
+
+jobs:
+  docker-image-build:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Create version string
+        id: version
+        run: echo "::set-output name=version::$(date -u +'%Y%m%dT%H%M%S')"
+      - name: Checkout master
+        uses: actions/checkout@v2
+      - name: Set up JDK 1.11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+      - name: Build with Maven
+        run: mvn -B clean verify --file pom.xml
+      - name: Publish to DockerHub
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password:  ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: metaldetector/metal-detector
+          tags: ${{ steps.version.outputs.version }},latest
+          build_args: BUILD_DATE=${{ steps.version.outputs.version }},VCS_REF=${{ github.ref }}
