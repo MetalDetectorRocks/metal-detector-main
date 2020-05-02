@@ -25,6 +25,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password:  ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: metaldetector/metal-release-butler
+          repository: metaldetector/metal-detector
           tags: ${{ steps.version.outputs.version }},latest
           build_args: BUILD_DATE=${{ steps.version.outputs.version }},VCS_REF=${{ github.ref }}
