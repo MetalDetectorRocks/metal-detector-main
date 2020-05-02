@@ -19,6 +19,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,6 +30,7 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
@@ -38,6 +40,7 @@ import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -53,6 +56,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
@@ -90,6 +94,12 @@ class UserServiceTest implements WithAssertions {
   @Mock
   private CurrentUserSupplier currentUserSupplier;
 
+  @Mock
+  private LoginAttemptService loginAttemptService;
+
+  @Mock
+  private HttpServletRequest request;
+
   @Spy
   private UserMapper userMapper;
 
@@ -102,7 +112,8 @@ class UserServiceTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, userMapper, tokenService, currentUserSupplier);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, userMapper,
+          tokenService, currentUserSupplier, loginAttemptService, request);
   }
 
   @DisplayName("Create user tests")
@@ -294,6 +305,7 @@ class UserServiceTest implements WithAssertions {
     void get_user_by_email_or_username_with_email() {
       // given
       UserEntity user = UserFactory.createUser(USERNAME, EMAIL);
+      when(request.getHeader(anyString())).thenReturn("666");
       when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
       when(userRepository.findByUsername(EMAIL)).thenReturn(Optional.empty());
 
@@ -313,6 +325,7 @@ class UserServiceTest implements WithAssertions {
     void get_user_by_email_or_username_with_username() {
       // given
       UserEntity user = UserFactory.createUser(USERNAME, EMAIL);
+      when(request.getHeader(anyString())).thenReturn("666");
       when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
       when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
 
@@ -332,6 +345,7 @@ class UserServiceTest implements WithAssertions {
     void get_user_by_email_or_username_for_not_existing_user() {
       // given
       String NOT_EXISTING = "not-existing";
+      when(request.getHeader(anyString())).thenReturn("666");
       when(userRepository.findByEmail(NOT_EXISTING)).thenReturn(Optional.empty());
       when(userRepository.findByUsername(NOT_EXISTING)).thenReturn(Optional.empty());
 
@@ -342,6 +356,21 @@ class UserServiceTest implements WithAssertions {
       verify(userRepository, times(1)).findByEmail(NOT_EXISTING);
       verify(userRepository, times(1)).findByUsername(NOT_EXISTING);
       assertThat(userDto).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Requesting a blocked user by email or username should throw an exception")
+    void get_user_by_email_or_username_for_blocked_user() {
+      // given
+      when(request.getHeader(anyString())).thenReturn("666");
+      when(loginAttemptService.isBlocked(anyString())).thenReturn(true);
+
+      // when
+      Throwable throwable = catchThrowable(() -> userService.getUserByEmailOrUsername(USERNAME));
+
+      // then
+      assertThat(throwable).isInstanceOf(LockedException.class);
+      verifyNoInteractions(userRepository);
     }
 
     @Test
@@ -664,6 +693,7 @@ class UserServiceTest implements WithAssertions {
     void load_user_by_username_for_existing_user() {
       // given
       UserEntity user = UserFactory.createUser(USERNAME, EMAIL);
+      when(request.getHeader(anyString())).thenReturn("666");
       when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
       when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
 
@@ -682,6 +712,7 @@ class UserServiceTest implements WithAssertions {
     @DisplayName("Requesting a not existing user by username should throw an exception")
     void load_user_by_username_for_not_existing_user() {
       // given
+      when(request.getHeader(anyString())).thenReturn("666");
       when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
       when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.empty());
 

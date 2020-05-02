@@ -2,8 +2,10 @@ package rocks.metaldetector.service.user;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -221,7 +223,7 @@ public class UserServiceImpl implements UserService {
 
   private Optional<UserEntity> findByEmailOrUsername(String emailOrUsername) {
     if (loginAttemptService.isBlocked(getClientIPHash())) {
-      throw new RuntimeException("User is blocked!");
+      throw new LockedException("User " + emailOrUsername + " is blocked");
     }
 
     // try to find user by email
@@ -248,11 +250,16 @@ public class UserServiceImpl implements UserService {
     }
   }
 
-  private int getClientIPHash() {
+  private String getClientIPHash() {
     String xfHeader = request.getHeader("X-Forwarded-For");
+    String clientIp;
+
     if (xfHeader == null){
-      return request.getRemoteAddr().hashCode();
+      clientIp = request.getRemoteAddr();
+    } else {
+      clientIp = xfHeader.split(",")[0];
     }
-    return xfHeader.split(",")[0].hashCode();
+
+    return DigestUtils.md5Hex(clientIp);
   }
 }
