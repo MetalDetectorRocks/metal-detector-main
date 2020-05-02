@@ -9,6 +9,9 @@ jobs:
   docker-image-build:
     runs-on: [ubuntu-latest]
     steps:
+      - name: Create version string
+        id: version
+        run: echo "::set-output name=version::$(date -u +'%Y%m%dT%H%M%S')"
       - name: Checkout master
         uses: actions/checkout@v2
       - name: Set up JDK 1.11
@@ -17,19 +20,11 @@ jobs:
           java-version: 1.11
       - name: Build with Maven
         run: mvn -B clean verify --file pom.xml
-      - name: Build the Docker image
-        run: docker build --no-cache=true --build-arg BUILD_DATE=$(date -u +'%Y%m%dT%H%M%S'),VCS_REF=${{ github.ref }} -t metaldetector/metal-detector:$(date -u +'%Y%m%dT%H%M%S') .
       - name: Publish to DockerHub with version tag
         uses: docker/build-push-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password:  ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: metaldetector/metal-release-butler
-          tags: $(date -u +'%Y%m%dT%H%M%S')
-      - name: Publish to DockerHub with latest tag
-        uses: docker/build-push-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password:  ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: metaldetector/metal-release-butler
-          tags: latest
+          tags: ${{ steps.version.outputs.version }},latest
+          build_args: BUILD_DATE=${{ steps.version.outputs.version }},VCS_REF=${{ github.ref }}
