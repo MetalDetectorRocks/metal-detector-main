@@ -1,12 +1,32 @@
 FROM openjdk:11-stretch
 
+ENV TZ=Europe/Berlin
+ENV SERVER_PORT 8080
+
+EXPOSE $SERVER_PORT
+
+RUN mkdir /app
+WORKDIR /app
+
+RUN useradd --no-log-init --no-create-home --shell /bin/false service_user
+
+# Arguments
+ARG SOURCE_JAR_FILE="webapp/target/*.jar"
 ARG BUILD_DATE
+ARG VCS_REF
+
+# Labels
+LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.build-date=$BUILD_DATE
+LABEL org.label-schema.name="metaldetector/metal-detector"
+LABEL org.label-schema.description="Mark your favorite metal bands and receive regular email alerts about upcoming and recently released albums from your favorite bands."
+LABEL org.label-schema.maintainer="https://github.com/MetalDetectorRocks"
+LABEL org.label-schema.url="https://metal-detector.rocks"
+LABEL org.label-schema.vcs-url="https://github.com/MetalDetectorRocks/metal-detector-main"
+LABEL org.label-schema.vcs-ref=$VCS_REF
 
-COPY target/metal-detector-0.0.1.jar metal-detector.jar
+COPY $SOURCE_JAR_FILE app.jar
 
-RUN sh -c 'touch /metal-detector.jar'
+RUN sh -c "touch app.jar"
 
-EXPOSE 8090
-
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/metal-detector.jar"]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]

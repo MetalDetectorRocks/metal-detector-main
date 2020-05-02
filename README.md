@@ -1,5 +1,6 @@
 ![Continous Integration](https://github.com/MetalDetectorRocks/metal-detector-main/workflows/Continous%20Integration/badge.svg)
 [![codecov](https://codecov.io/gh/MetalDetectorRocks/metal-detector-main/branch/master/graph/badge.svg)](https://codecov.io/gh/MetalDetectorRocks/metal-detector-main)
+![Docker Image](https://github.com/MetalDetectorRocks/metal-detector-main/workflows/Docker%20Image/badge.svg)
 
 ## Table of contents
 1. [ Introduction ](#introduction)
