@@ -5,15 +5,18 @@
   </head>
   <body>
     <div class="auth-container rounded">
-      <h3 class="mb-3">Registration</h3>
+      <h1 class="mb-3 h4">Registration</h1>
       <form id="registrationForm" name="registrationForm" action="#" th:action="@{/register}" th:object="${registerUserRequest}" method="POST">
-        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger" role="alert">
+        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
           <span th:each="err : ${#fields.globalErrors()}" th:text="${err}">global error</span>
         </div>
-        <div th:if="${emailError}" class="alert alert-danger" role="alert">
+        <div th:if="${emailError}" class="alert alert-danger alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
           <span th:text="${emailError}">Email configuration error</span>
         </div>
-        <div th:if="${isSuccessful}" class="alert alert-success" role="alert">
+        <div th:if="${isSuccessful}" class="alert alert-success alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
           <span>Thank you for your registration. You will shortly receive an email with a verification link. After confirmation of your registration you can login.</span>
         </div>
 
@@ -66,7 +69,7 @@
         </div>
 
         <!-- Register -->
-        <button class="btn btn-lg btn-dark btn-block mt-4" type="submit">Join Metal Detector</button>
+        <button class="btn btn-lg btn-secondary btn-block mt-4" type="submit">Join Metal Detector</button>
       </form>
       <p class="my-2">
         Already registered? <a href="#" th:href="@{/login}">Login</a>

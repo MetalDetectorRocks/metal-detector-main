@@ -5,31 +5,48 @@
   </head>
   <body>
     <div class="auth-container rounded">
-      <h3 class="mb-3">Login</h3>
+      <h1 class="mb-3 h4">Login</h1>
 
       <!-- Login Messages -->
-      <div th:if="${param.badCredentials}" class="alert alert-danger" role="alert"><span>Invalid username, email or password!</span></div>
-      <div th:if="${param.disabled}" class="alert alert-danger" role="alert"><span>Your account is disabled. Maybe your email address is not verified. Please check your email inbox.</span></div>
-      <div th:if="${param.error}" class="alert alert-danger" role="alert"><span>Unknown error!</span></div>
-      <div th:if="${param.logout}" class="alert alert-success" role="alert"><span>You have been successfully logged out.</span></div>
+      <div th:if="${param.badCredentials}" class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <span>Invalid username, email or password!</span>
+      </div>
+      <div th:if="${param.disabled}" class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <span>Your account is disabled. Maybe your email address is not verified. Please check your email inbox.</span>
+      </div>
+      <div th:if="${param.error}" class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <span>Unknown error!</span>
+      </div>
+      <div th:if="${param.logout}" class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <span>You have been successfully logged out.</span>
+      </div>
 
       <!-- Registration Messages -->
-      <div th:if="${param.verificationSuccess}" class="alert alert-success" role="alert">
+      <div th:if="${param.verificationSuccess}" class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
         <span>Registration successfully verified. You are now able to login.</span>
       </div>
-      <div th:if="${param.resendVerificationTokenSuccess}" class="alert alert-success" role="alert">
+      <div th:if="${param.resendVerificationTokenSuccess}" class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
         <span>You will shortly receive another email with a verification link. After confirming your registration you can login.</span>
       </div>
-      <div th:if="${param.tokenNotFound}" class="alert alert-danger" role="alert">
+      <div th:if="${param.tokenNotFound}" class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
         <span>Your account may already be activated or another error has occurred. Please try to login.</span>
       </div>
-      <div th:if="${param.tokenExpired}" class="alert alert-danger" role="alert">
+      <div th:if="${param.tokenExpired}" class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
         <span>The email verification link has expired. Click on the following link if we should send you a new verification link:</span>
         <a href="#" th:href="@{/resend-verification-token?(token=${param.token})}">Resend verification e-mail</a>
       </div>
 
       <!-- Reset password messages-->
-      <div th:if="${param.resetSuccess}" class="alert alert-success" role="alert">
+      <div th:if="${param.resetSuccess}" class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
         <span>You can now log in with your new password.</span>
       </div>
 
@@ -51,10 +68,9 @@
           <div class="row">
             <div class="col">
               <!-- Remember me -->
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" id="remember-me" name="remember-me"> Remember me
-                </label>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="remember-me" name="remember-me" checked="">
+                <label class="custom-control-label" for="remember-me">Remember me</label>
               </div>
             </div>
             <div class="col text-right">
@@ -67,7 +83,7 @@
         </div>
 
         <!-- Login -->
-        <button class="btn btn-lg btn-dark btn-block" type="submit">Login</button>
+        <button class="btn btn-lg btn-secondary btn-block" type="submit">Login</button>
       </form>
 
       <p class="my-2">
