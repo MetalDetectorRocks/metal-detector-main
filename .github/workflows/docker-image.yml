@@ -20,7 +20,7 @@ jobs:
           java-version: 1.11
       - name: Build with Maven
         run: mvn -B clean verify --file pom.xml
-      - name: Publish to DockerHub with version tag
+      - name: Publish to DockerHub
         uses: docker/build-push-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
