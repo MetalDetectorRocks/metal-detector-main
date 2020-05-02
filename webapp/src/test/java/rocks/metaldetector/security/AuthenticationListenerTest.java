@@ -13,7 +13,6 @@ import org.springframework.security.authentication.event.AuthenticationSuccessEv
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.service.user.UserFactory;
 import rocks.metaldetector.service.user.UserService;
 
 import static org.mockito.Mockito.reset;
@@ -45,10 +44,13 @@ class AuthenticationListenerTest {
   @Mock
   private WebAuthenticationDetails webAuthenticationDetails;
 
+  @Mock
+  private UserEntity userEntity;
+
   @AfterEach
   void tearDown() {
     reset(webAuthenticationDetails, successEvent, failureEvent, authentication, webAuthenticationDetails,
-          loginAttemptService, userService);
+          loginAttemptService, userService, userEntity);
   }
 
   @Test
@@ -60,6 +62,8 @@ class AuthenticationListenerTest {
     when(successEvent.getAuthentication()).thenReturn(authentication);
     when(authentication.getDetails()).thenReturn(webAuthenticationDetails);
     when(webAuthenticationDetails.getRemoteAddress()).thenReturn(ip);
+    when(authentication.getPrincipal()).thenReturn(userEntity);
+    when(userEntity.getPublicId()).thenReturn("publicId");
 
     // when
     underTest.onAuthenticationSuccess(successEvent);
@@ -72,18 +76,18 @@ class AuthenticationListenerTest {
   @DisplayName("UserService is called to persist login on authentication success")
   void authentication_success_calls_user_service() {
     // given
-    UserEntity userEntity = UserFactory.createUser("user", "email");
-    userEntity.setPublicId("publicId");
+    String publicId = "publicId";
     when(successEvent.getAuthentication()).thenReturn(authentication);
     when(authentication.getDetails()).thenReturn(webAuthenticationDetails);
     when(authentication.getPrincipal()).thenReturn(userEntity);
+    when(userEntity.getPublicId()).thenReturn(publicId);
     when(webAuthenticationDetails.getRemoteAddress()).thenReturn("i'm an ip");
 
     // when
     underTest.onAuthenticationSuccess(successEvent);
 
     // then
-    verify(userService, times(1)).persistSuccessfulLogin(userEntity.getPublicId());
+    verify(userService, times(1)).persistSuccessfulLogin(publicId);
   }
 
   @Test
