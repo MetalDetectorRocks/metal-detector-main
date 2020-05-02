@@ -7,6 +7,7 @@ import org.springframework.security.authentication.event.AuthenticationFailureBa
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.service.user.UserService;
 
 @Component
@@ -15,14 +16,13 @@ public class AuthenticationListener {
 
   private final LoginAttemptService loginAttemptService;
   private final UserService userService;
-  private final CurrentUserSupplier currentUserSupplier;
 
   @EventListener
   public void onAuthenticationSuccess(AuthenticationSuccessEvent event) {
     WebAuthenticationDetails authenticationDetails = (WebAuthenticationDetails) event.getAuthentication().getDetails();
     loginAttemptService.loginSucceeded(DigestUtils.md5Hex(authenticationDetails.getRemoteAddress()));
 
-    userService.persistSuccessfulLogin(currentUserSupplier.get().getPublicId());
+    userService.persistSuccessfulLogin(((UserEntity) event.getAuthentication().getPrincipal()).getPublicId());
   }
 
   @EventListener

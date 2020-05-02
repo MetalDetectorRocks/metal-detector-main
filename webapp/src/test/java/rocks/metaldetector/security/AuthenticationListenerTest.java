@@ -30,9 +30,6 @@ class AuthenticationListenerTest {
   @Mock
   private UserService userService;
 
-  @Mock
-  private CurrentUserSupplier currentUserSupplier;
-
   @InjectMocks
   private AuthenticationListener underTest;
 
@@ -48,12 +45,10 @@ class AuthenticationListenerTest {
   @Mock
   private WebAuthenticationDetails webAuthenticationDetails;
 
-  UserEntity userEntity = UserFactory.createUser("user", "mail");
-
   @AfterEach
   void tearDown() {
     reset(webAuthenticationDetails, successEvent, failureEvent, authentication, webAuthenticationDetails,
-          loginAttemptService, userService, currentUserSupplier);
+          loginAttemptService, userService);
   }
 
   @Test
@@ -65,7 +60,6 @@ class AuthenticationListenerTest {
     when(successEvent.getAuthentication()).thenReturn(authentication);
     when(authentication.getDetails()).thenReturn(webAuthenticationDetails);
     when(webAuthenticationDetails.getRemoteAddress()).thenReturn(ip);
-    when(currentUserSupplier.get()).thenReturn(userEntity);
 
     // when
     underTest.onAuthenticationSuccess(successEvent);
@@ -78,17 +72,18 @@ class AuthenticationListenerTest {
   @DisplayName("UserService is called to persist login on authentication success")
   void authentication_success_calls_user_service() {
     // given
+    UserEntity userEntity = UserFactory.createUser("user", "email");
+    userEntity.setPublicId("publicId");
     when(successEvent.getAuthentication()).thenReturn(authentication);
     when(authentication.getDetails()).thenReturn(webAuthenticationDetails);
+    when(authentication.getPrincipal()).thenReturn(userEntity);
     when(webAuthenticationDetails.getRemoteAddress()).thenReturn("i'm an ip");
-    when(currentUserSupplier.get()).thenReturn(userEntity);
 
     // when
     underTest.onAuthenticationSuccess(successEvent);
 
     // then
     verify(userService, times(1)).persistSuccessfulLogin(userEntity.getPublicId());
-    verify(currentUserSupplier, times(1)).get();
   }
 
   @Test
