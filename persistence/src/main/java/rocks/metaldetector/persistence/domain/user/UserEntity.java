@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import rocks.metaldetector.persistence.domain.BaseEntity;
+import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 
 import javax.persistence.Column;
@@ -18,10 +19,14 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -32,7 +37,7 @@ import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "followedArtists")
 @Entity(name = "users")
 public class UserEntity extends BaseEntity implements UserDetails {
 
@@ -74,6 +79,13 @@ public class UserEntity extends BaseEntity implements UserDetails {
   @ElementCollection(fetch = FetchType.EAGER)
   private List<LocalDateTime> failedLogins;
 
+  @Column(name = "followed_artists")
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name = "followed_artists",
+             joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"),
+             inverseJoinColumns = @JoinColumn(name = "artists_id", referencedColumnName = "id"))
+  private Set<ArtistEntity> followedArtists;
+
   @Builder
   public UserEntity(@NonNull String username, @NonNull String email, @NonNull String password,
                     @NonNull Set<UserRole> userRoles, boolean enabled) {
@@ -83,6 +95,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     this.userRoles = userRoles;
     this.enabled = enabled;
     this.failedLogins = new ArrayList<>();
+    this.followedArtists = new HashSet<>();
   }
 
   public void setPublicId(String newPublicId) {
@@ -177,5 +190,19 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
   public void clearFailedLogins() {
     this.failedLogins.clear();
+  }
+
+  public Set<ArtistEntity> getFollowedArtists() {
+    return Set.copyOf(this.followedArtists);
+  }
+
+  public void addFollowedArtist(ArtistEntity artistEntity) {
+    this.followedArtists.add(artistEntity);
+    artistEntity.addFollowing(this);
+  }
+
+  public void removeFollowedArtist(ArtistEntity artistEntity) {
+    this.followedArtists.remove(artistEntity);
+    artistEntity.removeFollowing(this);
   }
 }

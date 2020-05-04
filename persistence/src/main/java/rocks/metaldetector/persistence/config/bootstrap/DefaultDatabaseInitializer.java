@@ -8,7 +8,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
-import rocks.metaldetector.persistence.domain.artist.FollowedArtistEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 
@@ -93,6 +92,8 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
   }
 
   private void createArtists() {
+    UserEntity administrator = entityManager.createQuery("select u from users u where u.username = :username", UserEntity.class).setParameter("username", "Administrator").getSingleResult();
+
     ArtistEntity opeth = new ArtistEntity(OPETH_DISCOGS_ID, "Opeth", null);
     ArtistEntity darkthrone = new ArtistEntity(DARKTHRONE_DISCOGS_ID, "Darkthrone", null);
     ArtistEntity mayhem = new ArtistEntity(MAYHEM_DISCOGS_ID, "Mayhem", null);
@@ -100,16 +101,22 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
     entityManager.persist(opeth);
     entityManager.persist(darkthrone);
     entityManager.persist(mayhem);
+
+//    administrator.addFollowedArtist(opeth);
+//    administrator.addFollowedArtist(darkthrone);
+//    administrator.addFollowedArtist(mayhem);
+//
+//    entityManager.persist(administrator);
   }
 
   private void createFollowedArtists() {
-    UserEntity administrator = entityManager.createQuery("select u from users u where u.username = :username", UserEntity.class).setParameter("username", "Administrator").getSingleResult();
-    FollowedArtistEntity opeth = new FollowedArtistEntity(administrator.getPublicId(), OPETH_DISCOGS_ID);
-    FollowedArtistEntity darkthrone = new FollowedArtistEntity(administrator.getPublicId(), DARKTHRONE_DISCOGS_ID);
-    FollowedArtistEntity mayhem = new FollowedArtistEntity(administrator.getPublicId(), MAYHEM_DISCOGS_ID);
-
-    entityManager.persist(opeth);
-    entityManager.persist(darkthrone);
-    entityManager.persist(mayhem);
+//    UserEntity administrator = entityManager.createQuery("select u from users u where u.username = :username", UserEntity.class).setParameter("username", "Administrator").getSingleResult();
+//    FollowedArtistEntity opeth = new FollowedArtistEntity(administrator.getPublicId(), OPETH_DISCOGS_ID);
+//    FollowedArtistEntity darkthrone = new FollowedArtistEntity(administrator.getPublicId(), DARKTHRONE_DISCOGS_ID);
+//    FollowedArtistEntity mayhem = new FollowedArtistEntity(administrator.getPublicId(), MAYHEM_DISCOGS_ID);
+//
+//    entityManager.persist(opeth);
+//    entityManager.persist(darkthrone);
+//    entityManager.persist(mayhem);
   }
 }

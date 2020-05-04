@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
-import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.NewReleasesEmail;
+import rocks.metaldetector.service.follow.FollowArtistService;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
 
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class NotificationServiceImpl implements NotificationService {
 
   private final ReleaseService releaseService;
-  private final ArtistsService artistsService;
+  private final FollowArtistService followArtistService;
   private final UserService userService;
   private final EmailService emailService;
 
@@ -34,7 +34,7 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
   public void notifyUser(String publicUserId) {
     UserDto user = userService.getUserByPublicId(publicUserId);
-    List<String> followedArtistsNames = artistsService.findFollowedArtistsPerUser(publicUserId)
+    List<String> followedArtistsNames = followArtistService.findFollowedArtistsForUser(publicUserId)
         .stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
 
     if (!followedArtistsNames.isEmpty()) {
