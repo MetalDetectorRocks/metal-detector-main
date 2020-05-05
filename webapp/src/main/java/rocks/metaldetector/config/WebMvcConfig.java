@@ -24,12 +24,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
   public void addViewControllers(ViewControllerRegistry registry) {
     // Frontend pages
     registry.addViewController(Endpoints.Frontend.SETTINGS).setViewName(ViewNames.Frontend.SETTINGS);
+    registry.addViewController(Endpoints.Frontend.BLOG).setViewName(ViewNames.Frontend.BLOG);
     registry.addViewController(Endpoints.Frontend.PROFILE).setViewName(ViewNames.Frontend.PROFILE);
     registry.addViewController(Endpoints.Frontend.RELEASES).setViewName(ViewNames.Frontend.RELEASES);
-    registry.addViewController(Endpoints.Frontend.REPORT_ARTIST_RELEASE).setViewName(ViewNames.Frontend.REPORT_ARTIST_RELEASE);
-    registry.addViewController(Endpoints.Frontend.ABOUT).setViewName(ViewNames.Frontend.ABOUT);
-    registry.addViewController(Endpoints.Frontend.TEAM).setViewName(ViewNames.Frontend.TEAM);
-    registry.addViewController(Endpoints.Frontend.CONTACT).setViewName(ViewNames.Frontend.CONTACT);
     registry.addViewController(Endpoints.Frontend.IMPRINT).setViewName(ViewNames.Frontend.IMPRINT);
     registry.addViewController(Endpoints.Frontend.STATUS).setViewName(ViewNames.Frontend.STATUS);
 

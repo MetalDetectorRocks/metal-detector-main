@@ -25,7 +25,6 @@
         <popperJS.version>2.0.2</popperJS.version>
         <material-icons.version>0.3.1</material-icons.version>
         <rest-assured.version>4.2.0</rest-assured.version>
-        <lightbox.version>2.10.0</lightbox.version>
         <datatables.version>1.10.20</datatables.version>
     </properties>
 
@@ -117,11 +116,6 @@
             <groupId>org.webjars.npm</groupId>
             <artifactId>material-icons</artifactId>
             <version>${material-icons.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars.bower</groupId>
-            <artifactId>lightbox</artifactId>
-            <version>${lightbox.version}</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
