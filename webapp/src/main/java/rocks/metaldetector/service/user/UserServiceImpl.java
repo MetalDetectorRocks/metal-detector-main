@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final TokenRepository tokenRepository;
   private final JwtsSupport jwtsSupport;
-  private final UserMapper userMapper;
+  private final UserDtoTransformer userDtoTransformer;
   private final TokenService tokenService;
   private final CurrentUserSupplier currentUserSupplier;
 
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
     UserEntity savedUserEntity = userRepository.save(userEntity);
 
-    return userMapper.mapToDto(savedUserEntity);
+    return userDtoTransformer.transform(savedUserEntity);
   }
 
   @Override
@@ -81,14 +81,14 @@ public class UserServiceImpl implements UserService {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
-    return userMapper.mapToDto(userEntity);
+    return userDtoTransformer.transform(userEntity);
   }
 
   @Override
   @Transactional(readOnly = true)
   public Optional<UserDto> getUserByEmailOrUsername(String emailOrUsername) {
     Optional<UserEntity> userEntity = findByEmailOrUsername(emailOrUsername);
-    return userEntity.map(userMapper::mapToDto);
+    return userEntity.map(userDtoTransformer::transform);
   }
 
   @Override
@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
 
     UserEntity updatedUserEntity = userRepository.save(userEntity);
 
-    return userMapper.mapToDto(updatedUserEntity);
+    return userDtoTransformer.transform(updatedUserEntity);
   }
 
   @Override
@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
   public List<UserDto> getAllUsers() {
     return userRepository.findAll()
         .stream()
-        .map(userMapper::mapToDto)
+        .map(userDtoTransformer::transform)
         .sorted(Comparator.comparing(UserDto::isEnabled, BooleanComparator.TRUE_LOW).thenComparing(UserDto::getRole).thenComparing(UserDto::getUsername))
         .collect(Collectors.toList());
   }
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
   public List<UserDto> getAllActiveUsers() {
     return userRepository.findAll()
         .stream()
-        .map(userMapper::mapToDto)
+        .map(userDtoTransformer::transform)
         .filter(UserDto::isEnabled)
         .collect(Collectors.toList());
   }
@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserService {
 
     return userRepository.findAll(pageable)
         .stream()
-        .map(userMapper::mapToDto)
+        .map(userDtoTransformer::transform)
         .collect(Collectors.toList());
   }
 

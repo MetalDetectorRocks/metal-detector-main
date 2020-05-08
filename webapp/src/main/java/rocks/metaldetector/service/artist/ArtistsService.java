@@ -11,7 +11,6 @@ public interface ArtistsService {
   Optional<ArtistDto> findArtistByDiscogsId(long discogsId);
   List<ArtistDto> findAllArtistsByDiscogsIds(long... discogsIds);
   boolean existsArtistByDiscogsId(long discogsId);
-  void fetchAndSaveArtist(long discogsId);
 
   DiscogsArtistSearchResultDto searchDiscogsByName(String artistQueryString, Pageable pageable);
 

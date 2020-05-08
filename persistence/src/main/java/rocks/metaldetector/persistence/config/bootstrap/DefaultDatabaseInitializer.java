@@ -45,8 +45,7 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
   private void createDemoData() {
     createUser();
     createAdministrator();
-    createArtists();
-    createFollowedArtists();
+    createAndFollowArtists();
   }
 
   private void createUser() {
@@ -91,7 +90,7 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
     entityManager.persist(administrator);
   }
 
-  private void createArtists() {
+  private void createAndFollowArtists() {
     UserEntity administrator = entityManager.createQuery("select u from users u where u.username = :username", UserEntity.class).setParameter("username", "Administrator").getSingleResult();
 
     ArtistEntity opeth = new ArtistEntity(OPETH_DISCOGS_ID, "Opeth", null);
@@ -106,17 +105,7 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
 //    administrator.addFollowedArtist(darkthrone);
 //    administrator.addFollowedArtist(mayhem);
 //
-//    entityManager.persist(administrator);
-  }
-
-  private void createFollowedArtists() {
-//    UserEntity administrator = entityManager.createQuery("select u from users u where u.username = :username", UserEntity.class).setParameter("username", "Administrator").getSingleResult();
-//    FollowedArtistEntity opeth = new FollowedArtistEntity(administrator.getPublicId(), OPETH_DISCOGS_ID);
-//    FollowedArtistEntity darkthrone = new FollowedArtistEntity(administrator.getPublicId(), DARKTHRONE_DISCOGS_ID);
-//    FollowedArtistEntity mayhem = new FollowedArtistEntity(administrator.getPublicId(), MAYHEM_DISCOGS_ID);
-//
-//    entityManager.persist(opeth);
-//    entityManager.persist(darkthrone);
-//    entityManager.persist(mayhem);
+//    entityManager.merge(administrator);
+//    entityManager.merge(opeth);
   }
 }

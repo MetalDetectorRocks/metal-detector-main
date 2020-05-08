@@ -5,6 +5,7 @@ import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
+import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.support.Pagination;
@@ -37,6 +38,14 @@ public class DtoFactory {
           .plainPassword("xxx")
           .role("User")
           .enabled(true)
+          .followedArtists(List.of(ArtistDtoFactory.createDefault()))
+          .build();
+    }
+    public static UserDto createUser(String username, UserRole role, boolean enabled) {
+      return UserDto.builder()
+          .username(username)
+          .enabled(enabled)
+          .role(role.getDisplayName())
           .build();
     }
   }
