@@ -14,10 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
-import rocks.metaldetector.service.artist.ArtistDtoTransformer;
 import rocks.metaldetector.service.artist.ArtistEntityFactory;
+import rocks.metaldetector.service.artist.ArtistTransformer;
 import rocks.metaldetector.service.user.UserDto;
-import rocks.metaldetector.service.user.UserDtoTransformer;
+import rocks.metaldetector.service.user.UserTransformer;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
 import java.util.Collections;
@@ -32,20 +32,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UserDtoTransformerTest implements WithAssertions {
+class UserTransformerTest implements WithAssertions {
 
   private static final String USERNAME = "JohnD";
   private static final String EMAIL = "john.doe@example.com";
 
   @Mock
-  private ArtistDtoTransformer artistDtoTransformer;
+  private ArtistTransformer artistTransformer;
 
   @InjectMocks
-  private UserDtoTransformer underTest;
+  private UserTransformer underTest;
 
   @AfterEach
   void tearDown() {
-    reset(artistDtoTransformer);
+    reset(artistTransformer);
   }
 
   @Test
@@ -89,14 +89,14 @@ class UserDtoTransformerTest implements WithAssertions {
     ArtistEntity artistEntity2 = ArtistEntityFactory.withDiscogsId(2L);
     userEntity.addFollowedArtist(artistEntity1);
     userEntity.addFollowedArtist(artistEntity2);
-    when(artistDtoTransformer.transform(any())).thenReturn(ArtistDtoFactory.createDefault());
+    when(artistTransformer.transform(any())).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     underTest.transform(userEntity);
 
     // then
-    verify(artistDtoTransformer, times(1)).transform(artistEntity1);
-    verify(artistDtoTransformer, times(1)).transform(artistEntity2);
+    verify(artistTransformer, times(1)).transform(artistEntity1);
+    verify(artistTransformer, times(1)).transform(artistEntity2);
   }
 
   @ParameterizedTest(name = "[{index}]: {0} => {1}")

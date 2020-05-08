@@ -28,7 +28,7 @@ import rocks.metaldetector.persistence.domain.token.TokenType;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
@@ -44,6 +44,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.any;
@@ -89,10 +90,10 @@ class UserServiceTest implements WithAssertions {
   private JwtsSupport jwtsSupport;
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
 
   @Mock
-  private UserDtoTransformer userDtoTransformer;
+  private UserTransformer userTransformer;
 
   @InjectMocks
   private UserServiceImpl userService;
@@ -103,7 +104,7 @@ class UserServiceTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, userDtoTransformer, tokenService, currentUserSupplier);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, userTransformer, tokenService, currentPublicUserIdSupplier);
   }
 
   @DisplayName("Create user tests")
@@ -123,7 +124,7 @@ class UserServiceTest implements WithAssertions {
       UserDto createdUserDto = userService.createUser(givenUserDto);
 
       // then
-      assertThat(createdUserDto).isEqualTo(userDtoTransformer.transform(expectedUserEntity));
+      assertThat(createdUserDto).isEqualTo(userTransformer.transform(expectedUserEntity));
     }
 
     @DisplayName("Should pass disabled UserEntity with Role USER to UserRepository")
@@ -215,7 +216,7 @@ class UserServiceTest implements WithAssertions {
       UserDto createdUserDto = userService.createAdministrator(givenUserDto);
 
       // then
-      assertThat(createdUserDto).isEqualTo(userDtoTransformer.transform(expectedUserEntity));
+      assertThat(createdUserDto).isEqualTo(userTransformer.transform(expectedUserEntity));
     }
 
     @Test
@@ -265,7 +266,7 @@ class UserServiceTest implements WithAssertions {
       // given
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
       when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(user));
-      when(userDtoTransformer.transform(any())).thenReturn(UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL));
+      when(userTransformer.transform(any())).thenReturn(UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL));
 
       // when
       UserDto userDto = userService.getUserByPublicId(PUBLIC_ID);
@@ -298,7 +299,7 @@ class UserServiceTest implements WithAssertions {
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
       when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
       when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
-      when(userDtoTransformer.transform(any())).thenReturn(UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL));
+      when(userTransformer.transform(any())).thenReturn(UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL));
 
       // when
       Optional<UserDto> userDto = userService.getUserByEmailOrUsername(EMAIL);
@@ -318,7 +319,7 @@ class UserServiceTest implements WithAssertions {
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
       when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
       when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
-      when(userDtoTransformer.transform(any())).thenReturn(UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL));
+      when(userTransformer.transform(any())).thenReturn(UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL));
 
 
       // when
@@ -359,8 +360,8 @@ class UserServiceTest implements WithAssertions {
 
       UserDto userDto1 = UserDtoFactory.withUsernameAndEmail("a", "a@example.com");
       UserDto userDto2 = UserDtoFactory.withUsernameAndEmail("b", "b@example.com");
-      when(userDtoTransformer.transform(user1)).thenReturn(userDto1);
-      when(userDtoTransformer.transform(user2)).thenReturn(userDto2);
+      when(userTransformer.transform(user1)).thenReturn(userDto1);
+      when(userTransformer.transform(user2)).thenReturn(userDto2);
 
       // when
       List<UserDto> userDtoList = userService.getAllUsers();
@@ -396,15 +397,15 @@ class UserServiceTest implements WithAssertions {
       UserDto userDto1 = UserDtoFactory.withUsernameAndEmail("a", "a@example.com");
       UserDto userDto2 = UserDtoFactory.withUsernameAndEmail("b", "b@example.com");
       userDto2.setEnabled(false);
-      when(userDtoTransformer.transform(user1)).thenReturn(userDto1);
-      when(userDtoTransformer.transform(user2)).thenReturn(userDto2);
+      when(userTransformer.transform(user1)).thenReturn(userDto1);
+      when(userTransformer.transform(user2)).thenReturn(userDto2);
 
       // when
       List<UserDto> userDtoList = userService.getAllActiveUsers();
 
       // then
       assertThat(userDtoList).hasSize(1);
-      assertThat(userDtoList.get(0)).isEqualTo(userDtoTransformer.transform(user1));
+      assertThat(userDtoList.get(0)).isEqualTo(userTransformer.transform(user1));
     }
 
     @Test
@@ -438,12 +439,12 @@ class UserServiceTest implements WithAssertions {
       UserDto userDto4 = UserDtoFactory.createUser("c1", ROLE_ADMINISTRATOR, false);
       UserDto userDto5 = UserDtoFactory.createUser("c2", ROLE_ADMINISTRATOR, true);
       UserDto userDto6 = UserDtoFactory.createUser("a3", ROLE_ADMINISTRATOR, true);
-      when(userDtoTransformer.transform(user1)).thenReturn(userDto1);
-      when(userDtoTransformer.transform(user2)).thenReturn(userDto2);
-      when(userDtoTransformer.transform(user3)).thenReturn(userDto3);
-      when(userDtoTransformer.transform(user4)).thenReturn(userDto4);
-      when(userDtoTransformer.transform(user5)).thenReturn(userDto5);
-      when(userDtoTransformer.transform(user6)).thenReturn(userDto6);
+      when(userTransformer.transform(user1)).thenReturn(userDto1);
+      when(userTransformer.transform(user2)).thenReturn(userDto2);
+      when(userTransformer.transform(user3)).thenReturn(userDto3);
+      when(userTransformer.transform(user4)).thenReturn(userDto4);
+      when(userTransformer.transform(user5)).thenReturn(userDto5);
+      when(userTransformer.transform(user6)).thenReturn(userDto6);
 
       // when
       List<UserDto> userDtoList = userService.getAllUsers();
@@ -470,8 +471,8 @@ class UserServiceTest implements WithAssertions {
       UserDto userDto2 = UserDtoFactory.withUsernameAndEmail("b", "b@example.com");
       PageImpl<UserEntity> page = new PageImpl<>(List.of(user1, user2), PageRequest.of(PAGE, LIMIT), 4);
       when(userRepository.findAll(PageRequest.of(PAGE, LIMIT))).thenReturn(page);
-      when(userDtoTransformer.transform(user1)).thenReturn(userDto1);
-      when(userDtoTransformer.transform(user2)).thenReturn(userDto2);
+      when(userTransformer.transform(user1)).thenReturn(userDto1);
+      when(userTransformer.transform(user2)).thenReturn(userDto2);
 
       // when
       List<UserDto> userDtoList = userService.getAllUsers(PAGE, LIMIT);
@@ -499,11 +500,11 @@ class UserServiceTest implements WithAssertions {
       userDtoForUpdate.setRole("Administrator");
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
 
-      when(currentUserSupplier.get()).thenReturn(user);
+      when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
       // return the same user without changing the mail is ok here, we don't want to concentrate on the DTO conversion in this test
       when(userRepository.save(any())).thenReturn(user);
-      when(userDtoTransformer.transform(any())).thenReturn(UserDtoFactory.createDefault());
+      when(userTransformer.transform(any())).thenReturn(UserDtoFactory.createDefault());
 
       // when
       UserDto userDto = userService.updateUser(PUBLIC_ID, userDtoForUpdate);
@@ -511,7 +512,7 @@ class UserServiceTest implements WithAssertions {
       // then
       verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
       verify(userRepository, times(1)).save(userEntityCaptor.capture());
-      verify(currentUserSupplier, times(1)).get();
+      verify(currentPublicUserIdSupplier, times(1)).get();
       assertThat(userDto).isNotNull();
       assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
       assertThat(userEntityCaptor.getValue().getUserRoles()).containsExactly(ROLE_ADMINISTRATOR);
@@ -526,11 +527,11 @@ class UserServiceTest implements WithAssertions {
       userDtoForUpdate.setEnabled(false);
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
 
-      when(currentUserSupplier.get()).thenReturn(user);
+      when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
       // return the same user without changing the mail is ok here, we don't want to concentrate on the DTO conversion in this test
       when(userRepository.save(any())).thenReturn(user);
-      when(userDtoTransformer.transform(any())).thenReturn(UserDtoFactory.createDefault());
+      when(userTransformer.transform(any())).thenReturn(UserDtoFactory.createDefault());
 
 
       // when
@@ -539,7 +540,7 @@ class UserServiceTest implements WithAssertions {
       // then
       verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
       verify(userRepository, times(1)).save(userEntityCaptor.capture());
-      verify(currentUserSupplier, times(1)).get();
+      verify(currentPublicUserIdSupplier, times(1)).get();
       assertThat(userDto).isNotNull();
       assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
       assertThat(userEntityCaptor.getValue().isEnabled()).isFalse();
@@ -572,7 +573,7 @@ class UserServiceTest implements WithAssertions {
       user.setPublicId(PUBLIC_ID);
       user.setUserRoles(UserRole.createAdministratorRole());
 
-      when(currentUserSupplier.get()).thenReturn(user);
+      when(currentPublicUserIdSupplier.get()).thenReturn(PUBLIC_ID);
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
 
       // when
@@ -593,7 +594,7 @@ class UserServiceTest implements WithAssertions {
       user.setPublicId(PUBLIC_ID);
       user.setUserRoles(UserRole.createAdministratorRole());
 
-      when(currentUserSupplier.get()).thenReturn(user);
+      when(currentPublicUserIdSupplier.get()).thenReturn(PUBLIC_ID);
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
 
       // when

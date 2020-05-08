@@ -8,15 +8,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.security.CurrentUserSupplier;
-import rocks.metaldetector.service.artist.ArtistEntityFactory;
+import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.testutil.DtoFactory;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
@@ -25,17 +24,14 @@ import static rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 class DetectorReleasesResponseTransformerTest implements WithAssertions {
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private FollowArtistService followArtistService;
 
   @InjectMocks
   private DetectorReleasesResponseTransformer underTest;
 
-  @Mock
-  private UserEntity userEntity;
-
   @AfterEach
   void tearDown() {
-    reset(currentUserSupplier, userEntity);
+    reset(followArtistService);
   }
 
   @Test
@@ -48,8 +44,7 @@ class DetectorReleasesResponseTransformerTest implements WithAssertions {
             ReleaseDtoFactory.withArtistName(artistName1),
             ReleaseDtoFactory.withArtistName(artistName2)
     );
-    when(currentUserSupplier.get()).thenReturn(userEntity);
-    when(userEntity.getFollowedArtists()).thenReturn(Collections.emptySet());
+    when(followArtistService.getFollowedArtistsOfCurrentUser()).thenReturn(Collections.emptyList());
 
     // when
     var results = underTest.transformListOf(releases);
@@ -82,8 +77,7 @@ class DetectorReleasesResponseTransformerTest implements WithAssertions {
             ReleaseDtoFactory.withArtistName("1"),
             ReleaseDtoFactory.withArtistName("2")
     );
-    when(currentUserSupplier.get()).thenReturn(userEntity);
-    when(userEntity.getFollowedArtists()).thenReturn(Set.of(ArtistEntityFactory.withDiscogsId(1)));
+    when(followArtistService.getFollowedArtistsOfCurrentUser()).thenReturn(List.of(DtoFactory.ArtistDtoFactory.withName("1")));
 
     // when
     var results = underTest.transformListOf(releases);
@@ -94,15 +88,15 @@ class DetectorReleasesResponseTransformerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Should call current user supplier to get followed artists")
-  void should_call_user_supplier() {
+  @DisplayName("Should call followArtistService to get followed artists")
+  void should_call_service() {
     // given
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(followArtistService.getFollowedArtistsOfCurrentUser()).thenReturn(Collections.emptyList());
 
     // when
     underTest.transformListOf(Collections.emptyList());
 
     // then
-    verify(currentUserSupplier).get();
+    verify(followArtistService, times(1)).getFollowedArtistsOfCurrentUser();
   }
 }

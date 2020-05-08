@@ -79,11 +79,11 @@ public class UserEntity extends BaseEntity implements UserDetails {
   @ElementCollection(fetch = FetchType.EAGER)
   private List<LocalDateTime> failedLogins;
 
-  @Column(name = "followed_artists")
-  @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(name = "followed_artists",
-             joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"),
-             inverseJoinColumns = @JoinColumn(name = "artists_id", referencedColumnName = "id"))
+  @ManyToMany
+  @JoinTable(
+          joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+          inverseJoinColumns = @JoinColumn(name = "artist_id", referencedColumnName = "id")
+  )
   private Set<ArtistEntity> followedArtists;
 
   @Builder
@@ -181,28 +181,32 @@ public class UserEntity extends BaseEntity implements UserDetails {
   }
 
   public List<LocalDateTime> getFailedLogins() {
-    return List.copyOf(this.failedLogins);
+    return List.copyOf(failedLogins);
   }
 
   public void addFailedLogin(LocalDateTime lastLogin) {
-    this.failedLogins.add(lastLogin);
+    failedLogins.add(lastLogin);
   }
 
   public void clearFailedLogins() {
-    this.failedLogins.clear();
+    failedLogins.clear();
   }
 
   public Set<ArtistEntity> getFollowedArtists() {
-    return Set.copyOf(this.followedArtists);
+    return Set.copyOf(followedArtists);
   }
 
   public void addFollowedArtist(ArtistEntity artistEntity) {
-    this.followedArtists.add(artistEntity);
+    followedArtists.add(artistEntity);
     artistEntity.addFollowing(this);
   }
 
   public void removeFollowedArtist(ArtistEntity artistEntity) {
-    this.followedArtists.remove(artistEntity);
+    followedArtists.remove(artistEntity);
     artistEntity.removeFollowing(this);
+  }
+
+  public boolean isFollowing(long artistId) { // ToDo NilsD: Unit test :)
+    return followedArtists.stream().map(ArtistEntity::getArtistDiscogsId).collect(Collectors.toList()).contains(artistId);
   }
 }

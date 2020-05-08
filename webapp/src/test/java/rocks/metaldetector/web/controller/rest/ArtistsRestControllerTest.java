@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.service.follow.FollowArtistService;
+import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 

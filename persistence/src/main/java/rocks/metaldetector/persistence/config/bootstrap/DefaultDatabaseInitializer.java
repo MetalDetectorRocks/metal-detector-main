@@ -25,9 +25,9 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
   private final EntityManager entityManager;
   private final DataSource dataSource;
 
-  private final long OPETH_DISCOGS_ID = 245797L;
-  private final long DARKTHRONE_DISCOGS_ID = 252211L;
-  private final long MAYHEM_DISCOGS_ID = 252211L;
+  private static final long OPETH_DISCOGS_ID = 245797L;
+  private static final long DARKTHRONE_DISCOGS_ID = 252211L;
+  private static final long MAYHEM_DISCOGS_ID = 252211L;
 
   @Override
   @Transactional
@@ -93,19 +93,19 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
   private void createAndFollowArtists() {
     UserEntity administrator = entityManager.createQuery("select u from users u where u.username = :username", UserEntity.class).setParameter("username", "Administrator").getSingleResult();
 
-    ArtistEntity opeth = new ArtistEntity(OPETH_DISCOGS_ID, "Opeth", null);
-    ArtistEntity darkthrone = new ArtistEntity(DARKTHRONE_DISCOGS_ID, "Darkthrone", null);
-    ArtistEntity mayhem = new ArtistEntity(MAYHEM_DISCOGS_ID, "Mayhem", null);
+    ArtistEntity opeth = new ArtistEntity(OPETH_DISCOGS_ID, "Opeth", "https://img.discogs.com/_ejoULEnb6ub_-_6fUoLW0ZS6C8=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-245797-1584786531-2513.jpeg.jpg");
+    ArtistEntity darkthrone = new ArtistEntity(DARKTHRONE_DISCOGS_ID, "Darkthrone", "https://img.discogs.com/z6M8OMNo7GXZR9PzQF8WvaqMvXw=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-252211-1579868454-4269.jpeg.jpg");
+    ArtistEntity mayhem = new ArtistEntity(MAYHEM_DISCOGS_ID, "Mayhem", "https://img.discogs.com/ZtM5dcXMOugk9djxyVN7T6BJm7M=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-14092-1551425950-6112.jpeg.jpg");
 
     entityManager.persist(opeth);
     entityManager.persist(darkthrone);
     entityManager.persist(mayhem);
 
-//    administrator.addFollowedArtist(opeth);
-//    administrator.addFollowedArtist(darkthrone);
-//    administrator.addFollowedArtist(mayhem);
-//
-//    entityManager.merge(administrator);
-//    entityManager.merge(opeth);
+    administrator.addFollowedArtist(opeth);
+    administrator.addFollowedArtist(darkthrone);
+    administrator.addFollowedArtist(mayhem);
+
+    entityManager.merge(administrator);
+    entityManager.merge(opeth);
   }
 }

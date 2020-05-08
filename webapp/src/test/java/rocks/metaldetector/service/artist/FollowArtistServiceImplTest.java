@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.follow;
+package rocks.metaldetector.service.artist;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
@@ -17,14 +17,15 @@ import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.security.CurrentUserSupplier;
-import rocks.metaldetector.service.artist.ArtistEntityFactory;
+import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
 import rocks.metaldetector.service.user.UserEntityFactory;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -48,7 +49,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
   private DiscogsService discogsService;
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
 
   @InjectMocks
   private FollowArtistServiceImpl underTest;
@@ -62,7 +63,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(userRepository, artistRepository, currentUserSupplier, discogsService);
+    reset(userRepository, artistRepository, currentPublicUserIdSupplier, discogsService);
   }
 
   @Test
@@ -71,7 +72,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
     // given
     when(artistRepository.existsByArtistDiscogsId(anyLong())).thenReturn(true);
     when(artistRepository.findByArtistDiscogsId(anyLong())).thenReturn(Optional.of(ArtistEntityFactory.withDiscogsId(ARTIST_ID)));
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
     underTest.follow(ARTIST_ID);
@@ -86,15 +88,17 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @DisplayName("Current user is fetched on follow")
   void follow_should_get_current_user() {
     // given
+    String publicUserId = UUID.randomUUID().toString();
     when(artistRepository.existsByArtistDiscogsId(anyLong())).thenReturn(true);
     when(artistRepository.findByArtistDiscogsId(anyLong())).thenReturn(Optional.of(ArtistEntityFactory.withDiscogsId(ARTIST_ID)));
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(currentPublicUserIdSupplier.get()).thenReturn(publicUserId);
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
     underTest.follow(ARTIST_ID);
 
     // then
-    verify(currentUserSupplier, times(1)).get();
+    verify(userRepository, times(1)).findByPublicId(publicUserId);
   }
 
   @Test
@@ -102,8 +106,9 @@ class FollowArtistServiceImplTest implements WithAssertions {
   void follow_should_search_discogs() {
     // given
     when(discogsService.searchArtistById(anyLong())).thenReturn(DiscogsArtistDtoFactory.createDefault());
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
     when(artistRepository.save(any())).thenReturn(ArtistEntityFactory.withDiscogsId(ARTIST_ID));
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
     underTest.follow(ARTIST_ID);
@@ -118,7 +123,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
     // given
     when(artistRepository.existsByArtistDiscogsId(anyLong())).thenReturn(true);
     when(artistRepository.findByArtistDiscogsId(anyLong())).thenReturn(Optional.of(ArtistEntityFactory.withDiscogsId(ARTIST_ID)));
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
     underTest.follow(ARTIST_ID);
@@ -134,7 +140,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
     ArgumentCaptor<ArtistEntity> argumentCaptor = ArgumentCaptor.forClass(ArtistEntity.class);
     DiscogsArtistDto discogsArtist = DiscogsArtistDtoFactory.createDefault();
     when(discogsService.searchArtistById(anyLong())).thenReturn(discogsArtist);
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
     when(artistRepository.save(any())).thenReturn(ArtistEntityFactory.withDiscogsId(ARTIST_ID));
 
     // when
@@ -157,7 +164,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
     ArtistEntity artist = ArtistEntityFactory.withDiscogsId(ARTIST_ID);
     when(artistRepository.existsByArtistDiscogsId(anyLong())).thenReturn(true);
     when(artistRepository.findByArtistDiscogsId(anyLong())).thenReturn(Optional.of(artist));
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
     underTest.follow(ARTIST_ID);
@@ -170,11 +178,12 @@ class FollowArtistServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Artist is fetched from repository on follow")
+  @DisplayName("Artist is fetched from repository on unfollow")
   void unfollow_should_fetch_artist_from_repository() {
     // given
     when(artistRepository.findByArtistDiscogsId(anyLong())).thenReturn(Optional.of(ArtistEntityFactory.withDiscogsId(ARTIST_ID)));
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
     underTest.unfollow(ARTIST_ID);
@@ -187,14 +196,16 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @DisplayName("Current user is fetched on unfollow")
   void unfollow_should_fetch_current_user() {
     // given
+    String publicUserId = UUID.randomUUID().toString();
     when(artistRepository.findByArtistDiscogsId(anyLong())).thenReturn(Optional.of(ArtistEntityFactory.withDiscogsId(ARTIST_ID)));
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(currentPublicUserIdSupplier.get()).thenReturn(publicUserId);
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
     underTest.unfollow(ARTIST_ID);
 
     // then
-    verify(currentUserSupplier, times(1)).get();
+    verify(userRepository, times(1)).findByPublicId(publicUserId);
   }
 
   @Test
@@ -205,7 +216,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
     ArtistEntity artist = ArtistEntityFactory.withDiscogsId(ARTIST_ID);
     userEntity.addFollowedArtist(artist);
     when(artistRepository.findByArtistDiscogsId(anyLong())).thenReturn(Optional.of(artist));
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
     underTest.unfollow(ARTIST_ID);

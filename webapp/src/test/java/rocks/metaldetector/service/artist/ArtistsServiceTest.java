@@ -15,18 +15,19 @@ import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.persistence.domain.user.UserRepository;
+import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultEntryDtoFactory;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
@@ -41,19 +42,22 @@ class ArtistsServiceTest implements WithAssertions {
   private static final String ARTIST_NAME = "A";
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
-
-  @Mock
-  private UserEntity userEntityMock;
+  private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
 
   @Mock
   private ArtistRepository artistRepository;
 
   @Mock
+  private UserRepository userRepository;
+
+  @Mock
   private DiscogsService discogsService;
 
   @Mock
-  private ArtistDtoTransformer artistDtoTransformer;
+  private ArtistTransformer artistTransformer;
+
+  @Mock
+  private UserEntity userEntityMock;
 
   @InjectMocks
   private ArtistsServiceImpl underTest;
@@ -63,7 +67,7 @@ class ArtistsServiceTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(discogsService, artistRepository, currentUserSupplier, artistDtoTransformer);
+    reset(currentPublicUserIdSupplier, artistRepository, userRepository, discogsService, artistTransformer);
   }
 
   @BeforeEach
@@ -77,7 +81,7 @@ class ArtistsServiceTest implements WithAssertions {
   void find_by_discogs_id_should_return_correct_artist() {
     // given
     when(artistRepository.findByArtistDiscogsId(anyLong())).thenReturn(Optional.of(artistEntity));
-    when(artistDtoTransformer.transform(any())).thenReturn(ArtistDtoFactory.createDefault());
+    when(artistTransformer.transform(any())).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     Optional<ArtistDto> artistOptional = underTest.findArtistByDiscogsId(DISCOGS_ID);
@@ -110,7 +114,7 @@ class ArtistsServiceTest implements WithAssertions {
     underTest.findArtistByDiscogsId(DISCOGS_ID);
 
     // then
-    verify(artistDtoTransformer, times(1)).transform(artistEntity);
+    verify(artistTransformer, times(1)).transform(artistEntity);
   }
 
   @Test
@@ -128,7 +132,7 @@ class ArtistsServiceTest implements WithAssertions {
   void find_all_by_discogs_ids_should_return_all_entities_that_exist() {
     // given
     when(artistRepository.findAllByArtistDiscogsIdIn(anyLong(), anyLong())).thenReturn(List.of(artistEntity));
-    when(artistDtoTransformer.transform(any())).thenReturn(ArtistDtoFactory.createDefault());
+    when(artistTransformer.transform(any())).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     List<ArtistDto> artists = underTest.findAllArtistsByDiscogsIds(DISCOGS_ID, 0L);
@@ -158,7 +162,7 @@ class ArtistsServiceTest implements WithAssertions {
     underTest.findAllArtistsByDiscogsIds(anyLong(), anyLong());
 
     // then
-    verify(artistDtoTransformer, times(1)).transform(artistEntity);
+    verify(artistTransformer, times(1)).transform(artistEntity);
   }
 
   @Test
@@ -203,8 +207,8 @@ class ArtistsServiceTest implements WithAssertions {
     // given
     var artistQueryString = "the query";
     var pageable = PageRequest.of(1, 10);
-    doReturn(Collections.emptySet()).when(userEntityMock).getFollowedArtists();
-    doReturn(userEntityMock).when(currentUserSupplier).get();
+    doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
+    doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
     doReturn(DiscogsArtistSearchResultDtoFactory.createDefault()).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
 
     // when
@@ -219,8 +223,8 @@ class ArtistsServiceTest implements WithAssertions {
   void searchDiscogsByName_should_return_search_results() {
     // given
     var expectedSearchResults = DiscogsArtistSearchResultDtoFactory.createDefault();
-    doReturn(Collections.emptySet()).when(userEntityMock).getFollowedArtists();
-    doReturn(userEntityMock).when(currentUserSupplier).get();
+    doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
+    doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
     doReturn(expectedSearchResults).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
 
     // when
@@ -236,8 +240,12 @@ class ArtistsServiceTest implements WithAssertions {
     // given
     var discogsSearchResults = DiscogsArtistSearchResultDtoFactory.createDefault();
     discogsSearchResults.setSearchResults(createListOfSearchResultEntries(1, 2, 3));
-    doReturn(createSetOfArtistEntities(1, 3)).when(userEntityMock).getFollowedArtists();
-    doReturn(userEntityMock).when(currentUserSupplier).get();
+    doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
+    doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
+    when(userEntityMock.isFollowing(anyLong())).then(invocationOnMock -> {
+      long artistId = invocationOnMock.getArgument(0);
+      return artistId == 1 || artistId == 3;
+    });
     doReturn(discogsSearchResults).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
 
     // when
@@ -254,13 +262,6 @@ class ArtistsServiceTest implements WithAssertions {
         DiscogsArtistSearchResultEntryDtoFactory.withId(artistIds[0]),
         DiscogsArtistSearchResultEntryDtoFactory.withId(artistIds[1]),
         DiscogsArtistSearchResultEntryDtoFactory.withId(artistIds[2])
-    );
-  }
-
-  private Set<ArtistEntity> createSetOfArtistEntities(long... artistIds) {
-    return Set.of(
-        ArtistEntityFactory.withDiscogsId(artistIds[0]),
-        ArtistEntityFactory.withDiscogsId(artistIds[1])
     );
   }
 }

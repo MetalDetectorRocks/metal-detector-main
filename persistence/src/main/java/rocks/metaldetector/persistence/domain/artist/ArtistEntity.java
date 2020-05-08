@@ -11,7 +11,6 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +19,7 @@ import java.util.Set;
 @Entity(name = "artists")
 @NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
 @ToString
-@EqualsAndHashCode(callSuper = true, exclude = "following")
+@EqualsAndHashCode(callSuper = true, exclude = "followedByUsers")
 public class ArtistEntity extends BaseEntity {
 
   @Column(name = "artist_discogs_id", nullable = false, updatable = false)
@@ -33,26 +32,25 @@ public class ArtistEntity extends BaseEntity {
   @Column(name = "thumb", updatable = false)
   private String thumb;
 
-  @Column(name = "following")
-  @ManyToMany(fetch = FetchType.EAGER, mappedBy = "followedArtists")
-  private Set<UserEntity> following;
+  @ManyToMany(mappedBy = "followedArtists")
+  private Set<UserEntity> followedByUsers;
 
   public ArtistEntity(long artistDiscogsId, String artistName, String thumb) {
     this.artistDiscogsId = artistDiscogsId;
     this.artistName = artistName;
     this.thumb = thumb;
-    this.following = new HashSet<>();
+    this.followedByUsers = new HashSet<>();
   }
 
-  public Set<UserEntity> getFollowing() {
-    return Set.copyOf(this.following);
+  public Set<UserEntity> getFollowedByUsers() {
+    return Set.copyOf(followedByUsers);
   }
 
   public void addFollowing(UserEntity userEntity) {
-    this.following.add(userEntity);
+    followedByUsers.add(userEntity);
   }
 
   public void removeFollowing(UserEntity userEntity) {
-    this.following.remove(userEntity);
+    followedByUsers.remove(userEntity);
   }
 }

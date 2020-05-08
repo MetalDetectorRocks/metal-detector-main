@@ -56,7 +56,7 @@ class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertion
                       .name(givenEntry.getTitle())
                       .imageUrl(givenEntry.getThumb())
                       .uri(givenEntry.getUri())
-                      .isFollowed(false)
+                      .followed(false)
                       .build()
       );
     }

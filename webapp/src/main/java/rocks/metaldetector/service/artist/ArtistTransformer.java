@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 
 @Component
-public class ArtistDtoTransformer {
+public class ArtistTransformer {
 
   public ArtistDto transform(ArtistEntity artistEntity) {
     return ArtistDto.builder()

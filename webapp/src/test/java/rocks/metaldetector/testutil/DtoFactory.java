@@ -197,10 +197,14 @@ public class DtoFactory {
   public static class ArtistDtoFactory {
 
     public static ArtistDto createDefault() {
+      return withName("A");
+    }
+
+    public static ArtistDto withName(String name) {
       return ArtistDto.builder()
-          .artistName("A")
-          .discogsId(1L)
-          .build();
+              .artistName(name)
+              .discogsId(1L)
+              .build();
     }
   }
 }

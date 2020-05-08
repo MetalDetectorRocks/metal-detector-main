@@ -15,7 +15,7 @@ import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
@@ -42,9 +42,9 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final TokenRepository tokenRepository;
   private final JwtsSupport jwtsSupport;
-  private final UserDtoTransformer userDtoTransformer;
+  private final UserTransformer userTransformer;
   private final TokenService tokenService;
-  private final CurrentUserSupplier currentUserSupplier;
+  private final CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
 
   @Override
   @Transactional
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
     UserEntity savedUserEntity = userRepository.save(userEntity);
 
-    return userDtoTransformer.transform(savedUserEntity);
+    return userTransformer.transform(savedUserEntity);
   }
 
   @Override
@@ -81,14 +81,14 @@ public class UserServiceImpl implements UserService {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
-    return userDtoTransformer.transform(userEntity);
+    return userTransformer.transform(userEntity);
   }
 
   @Override
   @Transactional(readOnly = true)
   public Optional<UserDto> getUserByEmailOrUsername(String emailOrUsername) {
     Optional<UserEntity> userEntity = findByEmailOrUsername(emailOrUsername);
-    return userEntity.map(userDtoTransformer::transform);
+    return userEntity.map(userTransformer::transform);
   }
 
   @Override
@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
-    if (publicId.equals(currentUserSupplier.get().getPublicId())) {
+    if (publicId.equals(currentPublicUserIdSupplier.get())) {
       if (!userDto.isEnabled()) { throw IllegalUserActionException.createAdminCannotDisableHimselfException(); }
       if (userEntity.isAdministrator() && !UserRole.getRoleFromString(userDto.getRole()).contains(ROLE_ADMINISTRATOR)) { throw IllegalUserActionException.createAdminCannotDiscardHisRoleException(); }
     }
@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
 
     UserEntity updatedUserEntity = userRepository.save(userEntity);
 
-    return userDtoTransformer.transform(updatedUserEntity);
+    return userTransformer.transform(updatedUserEntity);
   }
 
   @Override
@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
   public List<UserDto> getAllUsers() {
     return userRepository.findAll()
         .stream()
-        .map(userDtoTransformer::transform)
+        .map(userTransformer::transform)
         .sorted(Comparator.comparing(UserDto::isEnabled, BooleanComparator.TRUE_LOW).thenComparing(UserDto::getRole).thenComparing(UserDto::getUsername))
         .collect(Collectors.toList());
   }
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
   public List<UserDto> getAllActiveUsers() {
     return userRepository.findAll()
         .stream()
-        .map(userDtoTransformer::transform)
+        .map(userTransformer::transform)
         .filter(UserDto::isEnabled)
         .collect(Collectors.toList());
   }
@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserService {
 
     return userRepository.findAll(pageable)
         .stream()
-        .map(userDtoTransformer::transform)
+        .map(userTransformer::transform)
         .collect(Collectors.toList());
   }
 

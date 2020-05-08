@@ -5,9 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 
-class ArtistDtoTransformerTest implements WithAssertions {
+class ArtistTransformerTest implements WithAssertions {
 
-  private ArtistDtoTransformer underTest = new ArtistDtoTransformer();
+  private ArtistTransformer underTest = new ArtistTransformer();
 
   @Test
   @DisplayName("Should transform ArtistEntity to ArtistDto")

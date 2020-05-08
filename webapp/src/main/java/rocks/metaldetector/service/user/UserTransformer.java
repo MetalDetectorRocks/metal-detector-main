@@ -6,21 +6,21 @@ import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.service.artist.ArtistDto;
-import rocks.metaldetector.service.artist.ArtistDtoTransformer;
+import rocks.metaldetector.service.artist.ArtistTransformer;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class UserDtoTransformer {
+public class UserTransformer {
 
   private final ModelMapper mapper;
-  private final ArtistDtoTransformer artistDtoTransformer;
+  private final ArtistTransformer artistTransformer;
 
   @Autowired
-  public UserDtoTransformer(ArtistDtoTransformer artistDtoTransformer) {
-    this.artistDtoTransformer = artistDtoTransformer;
+  public UserTransformer(ArtistTransformer artistTransformer) {
+    this.artistTransformer = artistTransformer;
     this.mapper = new ModelMapper();
   }
 
@@ -32,6 +32,6 @@ public class UserDtoTransformer {
   }
 
   private List<ArtistDto> transformFollowedArtists(Set<ArtistEntity> followedArtistEntities) {
-    return followedArtistEntities.stream().map(artistDtoTransformer::transform).collect(Collectors.toUnmodifiableList());
+    return followedArtistEntities.stream().map(artistTransformer::transform).collect(Collectors.toUnmodifiableList());
   }
 }

@@ -3,11 +3,15 @@ package rocks.metaldetector.service.artist;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.discogs.facade.DiscogsService;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.UserRepository;
+import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,21 +22,22 @@ import java.util.stream.Collectors;
 public class ArtistsServiceImpl implements ArtistsService {
 
   private final ArtistRepository artistRepository;
+  private final UserRepository userRepository;
   private final DiscogsService discogsService;
-  private final CurrentUserSupplier currentUserSupplier;
-  private final ArtistDtoTransformer artistDtoTransformer;
+  private final CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
+  private final ArtistTransformer artistTransformer;
 
   @Override
   public Optional<ArtistDto> findArtistByDiscogsId(long discogsId) {
     return artistRepository.findByArtistDiscogsId(discogsId)
-        .map(artistDtoTransformer::transform);
+        .map(artistTransformer::transform);
   }
 
   @Override
   public List<ArtistDto> findAllArtistsByDiscogsIds(long... discogsIds) {
     List<ArtistEntity> artistEntities = artistRepository.findAllByArtistDiscogsIdIn(discogsIds);
     return artistEntities.stream()
-        .map(artistDtoTransformer::transform)
+        .map(artistTransformer::transform)
         .collect(Collectors.toList());
   }
 
@@ -42,13 +47,14 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
+  @Transactional
   public DiscogsArtistSearchResultDto searchDiscogsByName(String artistQueryString, Pageable pageable) {
-    List<Long> alreadyFollowedArtists = currentUserSupplier.get().getFollowedArtists().stream()
-                                                                                      .map(ArtistEntity::getArtistDiscogsId)
-                                                                                      .collect(Collectors.toList());
-
+    String publicUserId = currentPublicUserIdSupplier.get();
+    UserEntity userEntity = userRepository.findByPublicId(publicUserId).orElseThrow(() ->
+            new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
+    );
     DiscogsArtistSearchResultDto result = discogsService.searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
-    result.getSearchResults().forEach(artist -> artist.setFollowed(alreadyFollowedArtists.contains(artist.getId())));
+    result.getSearchResults().forEach(artist -> artist.setFollowed(userEntity.isFollowing(artist.getId())));
 
     return result;
   }

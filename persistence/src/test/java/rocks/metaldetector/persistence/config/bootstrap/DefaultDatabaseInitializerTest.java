@@ -16,7 +16,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -67,7 +66,6 @@ class DefaultDatabaseInitializerTest implements WithAssertions {
     UserEntity userMock = Mockito.mock(UserEntity.class);
     doReturn(typedQuery).when(typedQuery).setParameter(anyString(), anyString());
     doReturn(userMock).when(typedQuery).getSingleResult();
-    doReturn(UUID.randomUUID().toString()).when(userMock).getPublicId();
 
     // when
     underTest.run(null);

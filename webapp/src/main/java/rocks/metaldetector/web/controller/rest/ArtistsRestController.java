@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.service.artist.ArtistsService;
-import rocks.metaldetector.service.follow.FollowArtistService;
+import rocks.metaldetector.service.artist.FollowArtistService;
 
 @RestController
 @RequestMapping(Endpoints.Rest.ARTISTS)
