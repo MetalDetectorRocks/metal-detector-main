@@ -206,7 +206,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     artistEntity.removeFollowing(this);
   }
 
-  public boolean isFollowing(long artistId) { // ToDo NilsD: Unit test :)
+  public boolean isFollowing(long artistId) {
     return followedArtists.stream().map(ArtistEntity::getArtistDiscogsId).collect(Collectors.toList()).contains(artistId);
   }
 }

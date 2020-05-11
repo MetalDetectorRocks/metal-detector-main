@@ -106,6 +106,5 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
     administrator.addFollowedArtist(mayhem);
 
     entityManager.merge(administrator);
-    entityManager.merge(opeth);
   }
 }

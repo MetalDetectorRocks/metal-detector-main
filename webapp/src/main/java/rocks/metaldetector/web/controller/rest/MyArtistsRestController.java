@@ -29,7 +29,6 @@ public class MyArtistsRestController {
   @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<MyArtistsResponse> getMyArtists(@RequestParam(value = "page", defaultValue = "0") int page,
                                                         @RequestParam(value = "size", defaultValue = "10") int size) {
-
     List<ArtistDto> followedArtists = followArtistService.getFollowedArtistsOfCurrentUser();
 
     Pageable pageable = PageRequest.of(page, size);
@@ -37,7 +36,8 @@ public class MyArtistsRestController {
     int end = Math.min((start + pageable.getPageSize()), followedArtists.size());
     Page<ArtistDto> pages = new PageImpl<>(followedArtists.subList(start, end), pageable, followedArtists.size());
 
-    Pagination pagination = new Pagination(followedArtists.size(), page, size);
+    int totalPages = followedArtists.size() % size == 0 ? followedArtists.size() / size : followedArtists.size() / size + 1;
+    Pagination pagination = new Pagination(totalPages, page, size);
     MyArtistsResponse response = new MyArtistsResponse(pages.toList(), pagination);
     return ResponseEntity.ok(response);
   }

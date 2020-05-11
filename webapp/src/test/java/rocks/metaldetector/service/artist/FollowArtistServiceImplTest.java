@@ -2,7 +2,6 @@ package rocks.metaldetector.service.artist;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,9 +17,12 @@ import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
-import rocks.metaldetector.service.user.UserEntityFactory;
+import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
+import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -49,21 +51,20 @@ class FollowArtistServiceImplTest implements WithAssertions {
   private DiscogsService discogsService;
 
   @Mock
+  private ArtistTransformer artistTransformer;
+
+  @Mock
   private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
 
   @InjectMocks
   private FollowArtistServiceImpl underTest;
 
+  @Mock
   private UserEntity userEntity;
-
-  @BeforeEach
-  void setup() {
-    userEntity = UserEntityFactory.createUser("user", "email");
-  }
 
   @AfterEach
   void tearDown() {
-    reset(userRepository, artistRepository, currentPublicUserIdSupplier, discogsService);
+    reset(userRepository, artistRepository, currentPublicUserIdSupplier, discogsService, artistTransformer, userEntity);
   }
 
   @Test
@@ -98,7 +99,26 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.follow(ARTIST_ID);
 
     // then
+    verify(currentPublicUserIdSupplier, times(1)).get();
     verify(userRepository, times(1)).findByPublicId(publicUserId);
+  }
+
+  @Test
+  @DisplayName("Exception is thrown on follow when user not found")
+  void follow_should_throw_exception() {
+    // given
+    String userId = "publicUserId";
+    when(artistRepository.existsByArtistDiscogsId(anyLong())).thenReturn(true);
+    when(artistRepository.findByArtistDiscogsId(anyLong())).thenReturn(Optional.of(ArtistEntityFactory.withDiscogsId(ARTIST_ID)));
+    when(currentPublicUserIdSupplier.get()).thenReturn(userId);
+    when(userRepository.findByPublicId(anyString())).thenThrow(new ResourceNotFoundException(userId));
+
+    // when
+    Throwable throwable = catchThrowable(() -> underTest.follow(1L));
+
+    // then
+    assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
+    assertThat(throwable).hasMessageContaining(userId);
   }
 
   @Test
@@ -160,7 +180,6 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @DisplayName("User is updated with artist on follow")
   void follow_should_add_artist_to_user() {
     // given
-    ArgumentCaptor<UserEntity> argumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
     ArtistEntity artist = ArtistEntityFactory.withDiscogsId(ARTIST_ID);
     when(artistRepository.existsByArtistDiscogsId(anyLong())).thenReturn(true);
     when(artistRepository.findByArtistDiscogsId(anyLong())).thenReturn(Optional.of(artist));
@@ -171,10 +190,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.follow(ARTIST_ID);
 
     // then
-    verify(userRepository, times(1)).save(argumentCaptor.capture());
-
-    UserEntity updatedUser = argumentCaptor.getValue();
-    assertThat(updatedUser.getFollowedArtists()).containsOnly(artist);
+    verify(userEntity, times(1)).addFollowedArtist(artist);
+    verify(userRepository, times(1)).save(userEntity);
   }
 
   @Test
@@ -205,7 +222,25 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.unfollow(ARTIST_ID);
 
     // then
+    verify(currentPublicUserIdSupplier, times(1)).get();
     verify(userRepository, times(1)).findByPublicId(publicUserId);
+  }
+
+  @Test
+  @DisplayName("Exception is thrown on unfollow when user not found")
+  void unfollow_should_throw_exception() {
+    // given
+    String userId = "publicUserId";
+    when(artistRepository.findByArtistDiscogsId(anyLong())).thenReturn(Optional.of(ArtistEntityFactory.withDiscogsId(ARTIST_ID)));
+    when(currentPublicUserIdSupplier.get()).thenReturn(userId);
+    when(userRepository.findByPublicId(anyString())).thenThrow(new ResourceNotFoundException(userId));
+
+    // when
+    Throwable throwable = catchThrowable(() -> underTest.unfollow(1L));
+
+    // then
+    assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
+    assertThat(throwable).hasMessageContaining(userId);
   }
 
   @Test
@@ -227,5 +262,75 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
     UserEntity updatedUser = argumentCaptor.getValue();
     assertThat(updatedUser.getFollowedArtists()).doesNotContain(artist);
+  }
+
+  @Test
+  @DisplayName("Getting followed artists should get current user")
+  void get_followed_should_call_user_supplier() {
+    // given
+    String userId = "publicUserId";
+    when(currentPublicUserIdSupplier.get()).thenReturn(userId);
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
+
+    // when
+    underTest.getFollowedArtistsOfCurrentUser();
+
+    // then
+    verify(currentPublicUserIdSupplier, times(1)).get();
+    verify(userRepository, times(1)).findByPublicId(userId);
+  }
+
+  @Test
+  @DisplayName("Getting followed artists throws Exception when user not found")
+  void get_followed_should_throw_exception() {
+    // given
+    String userId = "publicUserId";
+    when(currentPublicUserIdSupplier.get()).thenReturn(userId);
+    when(userRepository.findByPublicId(anyString())).thenThrow(new ResourceNotFoundException(userId));
+
+    // when
+    Throwable throwable = catchThrowable(() -> underTest.getFollowedArtistsOfCurrentUser());
+
+    // then
+    assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
+    assertThat(throwable).hasMessageContaining(userId);
+  }
+
+  @Test
+  @DisplayName("Getting followed artists calls artist transformer for every artist")
+  void get_followed_should_call_artist_transformer() {
+    // given
+    ArtistEntity artist1 = ArtistEntityFactory.withDiscogsId(1L);
+    ArtistEntity artist2 = ArtistEntityFactory.withDiscogsId(2L);
+    when(currentPublicUserIdSupplier.get()).thenReturn("userId");
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
+    when(userEntity.getFollowedArtists()).thenReturn(Set.of(artist1, artist2));
+    when(artistTransformer.transform(any())).thenReturn(ArtistDtoFactory.createDefault());
+
+    // when
+    underTest.getFollowedArtistsOfCurrentUser();
+
+    // then
+    verify(artistTransformer, times(1)).transform(artist1);
+    verify(artistTransformer, times(1)).transform(artist2);
+  }
+
+  @Test
+  @DisplayName("Getting followed artists returns list of artist dtos")
+  void get_followed_should_return_artist_dtos() {
+    // given
+    ArtistEntity artistEntity = ArtistEntityFactory.withDiscogsId(1L);
+    ArtistDto artistDto = ArtistDtoFactory.withName("Darkthrone");
+    when(currentPublicUserIdSupplier.get()).thenReturn("userId");
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
+    when(userEntity.getFollowedArtists()).thenReturn(Set.of(artistEntity));
+    when(artistTransformer.transform(any())).thenReturn(artistDto);
+
+    // when
+    List<ArtistDto> followedArtists = underTest.getFollowedArtistsOfCurrentUser();
+
+    // then
+    assertThat(followedArtists).hasSize(1);
+    assertThat(followedArtists.get(0)).isEqualTo(artistDto);
   }
 }

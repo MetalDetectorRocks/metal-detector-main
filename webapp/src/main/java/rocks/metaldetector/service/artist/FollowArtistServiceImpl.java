@@ -49,7 +49,6 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   }
 
   @Transactional
-  // ToDo NilsD: Unit test :)
   public List<ArtistDto> getFollowedArtistsOfCurrentUser() {
     UserEntity user = currentUser();
     return user.getFollowedArtists().stream().map(artistTransformer::transform).collect(Collectors.toUnmodifiableList());
