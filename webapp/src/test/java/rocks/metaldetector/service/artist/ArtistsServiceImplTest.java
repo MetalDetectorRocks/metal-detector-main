@@ -17,6 +17,7 @@ import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultEntryDtoFactory;
@@ -30,13 +31,14 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ArtistsServiceTest implements WithAssertions {
+class ArtistsServiceImplTest implements WithAssertions {
 
   private static final long DISCOGS_ID = 1L;
   private static final String ARTIST_NAME = "A";
@@ -255,6 +257,43 @@ class ArtistsServiceTest implements WithAssertions {
     assertThat(searchResults.getSearchResults().get(0).isFollowed()).isTrue();
     assertThat(searchResults.getSearchResults().get(1).isFollowed()).isFalse();
     assertThat(searchResults.getSearchResults().get(2).isFollowed()).isTrue();
+  }
+
+  @Test
+  @DisplayName("Should get current user")
+  void searchDiscogsByName_should_get_user() {
+    // given
+    var artistQueryString = "the query";
+    var pageable = PageRequest.of(1, 10);
+    var userId = "userId";
+    doReturn(userId).when(currentPublicUserIdSupplier).get();
+    doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
+    doReturn(DiscogsArtistSearchResultDtoFactory.createDefault()).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
+
+    // when
+    underTest.searchDiscogsByName(artistQueryString, pageable);
+
+    // then
+    verify(currentPublicUserIdSupplier, times(1)).get();
+    verify(userRepository, times(1)).findByPublicId(userId);
+  }
+
+  @Test
+  @DisplayName("Should throw exception when user not found")
+  void searchDiscogsByName_should_throw_exception() {
+    // given
+    var artistQueryString = "the query";
+    var pageable = PageRequest.of(1, 10);
+    var userId = "userId";
+    doReturn(userId).when(currentPublicUserIdSupplier).get();
+    doThrow(new ResourceNotFoundException(userId)).when(userRepository).findByPublicId(anyString());
+
+    // when
+    var throwable = catchThrowable(() -> underTest.searchDiscogsByName(artistQueryString, pageable));
+
+    // then
+    assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
+    assertThat(throwable).hasMessageContaining(userId);
   }
 
   private List<DiscogsArtistSearchResultEntryDto> createListOfSearchResultEntries(long... artistIds) {
