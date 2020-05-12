@@ -1,4 +1,4 @@
-FROM openjdk:11-stretch
+FROM openjdk:14-buster
 
 ENV TZ=Europe/Berlin
 ENV SERVER_PORT 8080

@@ -57,6 +57,8 @@
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <jacoco.version>0.8.5</jacoco.version>
         <apache-commons.version>1.8</apache-commons.version>
+<!--    https://trello.com/c/bJI3GDuL groovy-3 is needed because of trouble with rest-assured (pulls older groovy) and java 14-->
+        <groovy-version>3.0.3</groovy-version>
     </properties>
 
     <dependencies>
@@ -149,6 +151,27 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-json</artifactId>
+            <version>3.0.3</version>
+<!--            <version>${groovy.version}</version>-->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-xml</artifactId>
+            <version>3.0.3</version>
+<!--            <version>${groovy.version}</version>-->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>3.0.3</version>
+<!--            <version>${groovy.version}</version>-->
             <scope>test</scope>
         </dependency>
     </dependencies>
