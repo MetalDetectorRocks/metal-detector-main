@@ -37,7 +37,7 @@ git clone https://github.com/MetalDetectorRocks/metal-detector-main.git
 
 To start the application locally in default profile, the following preparatory actions are necessary:
 
-1. Install Java 11
+1. Install Java 14
 
 2. Install Docker CE
 
