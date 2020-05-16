@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
-import rocks.metaldetector.service.notification.NotificationService;
 import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.response.MyArtistsResponse;
 
@@ -26,14 +25,11 @@ import java.util.List;
 public class MyArtistsRestController {
 
   private final FollowArtistService followArtistService;
-  private final NotificationService notificationService;
 
   @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<MyArtistsResponse> getMyArtists(@RequestParam(value = "page", defaultValue = "0") int page,
                                                         @RequestParam(value = "size", defaultValue = "10") int size) {
     List<ArtistDto> followedArtists = followArtistService.getFollowedArtistsOfCurrentUser();
-
-    notificationService.notifyAllUsers();
 
     Pageable pageable = PageRequest.of(page, size);
     int start = (int) pageable.getOffset();
