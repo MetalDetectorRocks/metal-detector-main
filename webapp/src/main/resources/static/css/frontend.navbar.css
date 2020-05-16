@@ -38,14 +38,6 @@ nav .container {
     background: transparent;
 }
 
-.material-icons.md-18 {
-    font-size: 18px;
-}
-
-.material-icons.md-dark {
-    color: rgba(0, 0, 0, 0.54);
-}
-
 .search-form {
     width: 100%;
     margin-left: 1rem;

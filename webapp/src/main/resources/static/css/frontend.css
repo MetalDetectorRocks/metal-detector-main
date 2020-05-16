@@ -23,6 +23,14 @@ h1, h2 {
     font-family: 'Metal Mania', cursive;
 }
 
+.h5 {
+    font-size: 1.3rem !important;
+}
+
+p {
+    color: #ADAFAE !important;
+}
+
 .container {
     max-width: 1280px;
 }
@@ -41,21 +49,35 @@ footer .list-inline-item {
     margin-left: 1.5rem;
 }
 
-footer a:hover {
-    color: #777777 !important;
-    text-decoration: none;
-}
-
 /* Homepage Cards */
 .card {
     border: 1px solid #404040;
 }
 
-.card img {
+.homepage-card-img {
     height: 18rem;
     width: 18rem;
     object-fit: cover;
     border-bottom: 1px solid #404040;
+}
+
+.top-search-card-img {
+    height: 8rem;
+    width: 8rem;
+    object-fit: cover;
+    border-right: 1px solid #404040;
+}
+
+.search-card-img {
+    height: 6rem;
+    width: 6rem;
+    object-fit: cover;
+    border-bottom: 1px solid #404040;
+}
+
+/* Sarch Results */
+.custom-border-top {
+    border-top: 1px solid #404040;
 }
 
 /*.page-item.active .page-link {*/
@@ -109,6 +131,18 @@ footer a:hover {
 /*    width: 10rem;*/
 /*    border-radius: 0.25rem;*/
 /*}*/
+
+
+.hyperlink {
+    color: #555;
+    text-decoration: none;
+    background-color: transparent
+}
+
+.hyperlink:hover {
+    color: #777777;
+    text-decoration: none;
+}
 
 .scroll-to-top {
     display: none;
