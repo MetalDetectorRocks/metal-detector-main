@@ -15,7 +15,7 @@ public class LoginAttemptService {
 
   private final CacheManager cacheManager;
 
-  @CacheEvict(value = "failedLogins")
+  @CacheEvict(value = FAILED_LOGINS_CACHE)
   public void loginSucceeded(String ipHash) {
   }
 

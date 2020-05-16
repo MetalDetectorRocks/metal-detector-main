@@ -54,7 +54,7 @@ class LoginAttemptServiceTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Cache is fetched from manager to check for blocked user")
+  @DisplayName("Cache is fetched from manager to check for blocked ip")
   void checking_blocked_users_gets_cache_from_manager() {
     // when
     underTest.isBlocked("666");
@@ -64,7 +64,7 @@ class LoginAttemptServiceTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("User is blocked if the cached value is bigger than 4")
+  @DisplayName("Ip is blocked if the cached value is bigger than 4")
   void user_counts_as_blocked() {
     // given
     String ipHash = "666";
@@ -79,7 +79,7 @@ class LoginAttemptServiceTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("User is blocked if the cache could not be fetched")
+  @DisplayName("Ip is blocked if the cache could not be fetched")
   void user_counts_as_blocked_if_cache_not_present() {
     // given
     when(cacheManager.getCache(FAILED_LOGINS_CACHE)).thenReturn(null);
@@ -92,7 +92,7 @@ class LoginAttemptServiceTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("User is not blocked if the cached value is smaller than 5")
+  @DisplayName("Ip is not blocked if the cached value is smaller than 5")
   void user_does_not_count_as_blocked() {
     // given
     String ipHash = "666";

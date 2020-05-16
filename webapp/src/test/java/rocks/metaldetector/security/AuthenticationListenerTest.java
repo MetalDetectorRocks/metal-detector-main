@@ -49,7 +49,7 @@ class AuthenticationListenerTest {
 
   @AfterEach
   void tearDown() {
-    reset(webAuthenticationDetails, successEvent, failureEvent, authentication, webAuthenticationDetails,
+    reset(successEvent, failureEvent, authentication, webAuthenticationDetails,
           loginAttemptService, userService, userEntity);
   }
 
