@@ -359,8 +359,8 @@ class UserServiceTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Requesting a blocked user by email or username should throw an exception")
-    void get_user_by_email_or_username_for_blocked_user() {
+    @DisplayName("Requesting a user by email or username via blocked ip should throw an exception")
+    void get_user_by_email_or_username_from_blocked_ip() {
       // given
       when(request.getHeader(anyString())).thenReturn("666");
       when(loginAttemptService.isBlocked(anyString())).thenReturn(true);
