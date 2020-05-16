@@ -39,18 +39,25 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   @Override
   @Transactional
   public void unfollow(long artistId) {
-    ArtistEntity artistEntity = artistRepository.findByArtistDiscogsId(artistId).orElseThrow(() ->
-      new ResourceNotFoundException("Artist with id '" + artistId + "' not found!")
-    );
+    ArtistEntity artistEntity = artistRepository.findByArtistDiscogsId(artistId)
+        .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + artistId + "' not found!"));
 
     UserEntity user = currentUser();
     user.removeFollowedArtist(artistEntity);
     userRepository.save(user);
   }
 
+  @Override
   @Transactional
   public List<ArtistDto> getFollowedArtistsOfCurrentUser() {
     UserEntity user = currentUser();
+    return user.getFollowedArtists().stream().map(artistTransformer::transform).collect(Collectors.toUnmodifiableList());
+  }
+
+  @Override
+  @Transactional
+  public List<ArtistDto> getFollowedArtistsOfUser(String publicUserId) {
+    UserEntity user = fetchUserEntity(publicUserId);
     return user.getFollowedArtists().stream().map(artistTransformer::transform).collect(Collectors.toUnmodifiableList());
   }
 
@@ -66,9 +73,11 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   }
 
   private UserEntity currentUser() {
-    String publicUserId = currentPublicUserIdSupplier.get();
-    return userRepository.findByPublicId(publicUserId).orElseThrow(() ->
-            new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
-    );
+    return fetchUserEntity(currentPublicUserIdSupplier.get());
+  }
+
+  private UserEntity fetchUserEntity(String publicUserId) {
+    return userRepository.findByPublicId(publicUserId)
+        .orElseThrow(() -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!"));
   }
 }

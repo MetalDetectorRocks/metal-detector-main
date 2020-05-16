@@ -3,6 +3,7 @@ package rocks.metaldetector.service.notification;
 import org.assertj.core.api.WithAssertions;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.config.constants.ViewNames;
+import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.email.AbstractEmail;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.user.UserDto;
@@ -35,7 +37,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.service.email.NewReleasesEmail.SUBJECT;
-import static rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceTest implements WithAssertions {
@@ -49,6 +50,9 @@ class NotificationServiceTest implements WithAssertions {
   @Mock
   private EmailService emailService;
 
+  @Mock
+  private FollowArtistService followArtistService;
+
   @InjectMocks
   private NotificationServiceImpl underTest;
 
@@ -58,13 +62,33 @@ class NotificationServiceTest implements WithAssertions {
   @Captor
   private ArgumentCaptor<LocalDate> dateToCaptor;
 
-  @Captor ArgumentCaptor<AbstractEmail> emailCaptor;
+  @Captor
+  private ArgumentCaptor<AbstractEmail> emailCaptor;
 
-  private UserDto user = UserDtoFactory.createDefault();
+  @Mock
+  private UserDto user;
+
+  @BeforeEach
+  void setup() {
+    when(user.getPublicId()).thenReturn("userId");
+  }
 
   @AfterEach
   void tearDown() {
-    reset(releaseService, userService, emailService);
+    reset(releaseService, userService, emailService, followArtistService, user);
+  }
+
+  @Test
+  @DisplayName("FollowArtistService is called on notification")
+  void follow_artist_service_is_called() {
+    // given
+    when(userService.getUserByPublicId(anyString())).thenReturn(user);
+
+    // when
+    underTest.notifyUser(user.getPublicId());
+
+    // then
+    verify(followArtistService, times(1)).getFollowedArtistsOfUser(user.getPublicId());
   }
 
   @Test
@@ -89,6 +113,7 @@ class NotificationServiceTest implements WithAssertions {
     TemporalUnitLessThanOffset offset = new TemporalUnitLessThanOffset(1, ChronoUnit.DAYS);
     when(releaseService.findReleases(any(), any(), any())).thenReturn(Collections.emptyList());
     when(userService.getUserByPublicId(anyString())).thenReturn(user);
+    when(followArtistService.getFollowedArtistsOfUser(any())).thenReturn(List.of(artistDto));
 
     // when
     underTest.notifyUser(user.getPublicId());
@@ -103,7 +128,6 @@ class NotificationServiceTest implements WithAssertions {
   @DisplayName("ReleasesService is not called if no artists exist")
   void notify_does_not_call_releases_service() {
     // given
-    user.setFollowedArtists(Collections.emptyList());
     when(userService.getUserByPublicId(anyString())).thenReturn(user);
 
     // when
@@ -120,6 +144,7 @@ class NotificationServiceTest implements WithAssertions {
     var releaseDtos = List.of(ReleaseDtoFactory.createDefault());
     when(userService.getUserByPublicId(any())).thenReturn(user);
     when(releaseService.findReleases(any(), any(), any())).thenReturn(releaseDtos);
+    when(followArtistService.getFollowedArtistsOfUser(any())).thenReturn(List.of(ArtistDtoFactory.createDefault()));
 
     // when
     underTest.notifyUser(user.getPublicId());
@@ -135,6 +160,7 @@ class NotificationServiceTest implements WithAssertions {
     var releaseDtos = List.of(ReleaseDtoFactory.createDefault());
     when(userService.getUserByPublicId(any())).thenReturn(user);
     when(releaseService.findReleases(any(), any(), any())).thenReturn(releaseDtos);
+    when(followArtistService.getFollowedArtistsOfUser(any())).thenReturn(List.of(ArtistDtoFactory.createDefault()));
 
     // when
     underTest.notifyUser(user.getPublicId());
@@ -183,6 +209,7 @@ class NotificationServiceTest implements WithAssertions {
     when(userService.getAllActiveUsers()).thenReturn(userList);
     when(userService.getUserByPublicId(any())).thenReturn(user);
     when(releaseService.findReleases(any(), any(), any())).thenReturn(List.of(ReleaseDtoFactory.createDefault()));
+    when(followArtistService.getFollowedArtistsOfUser(any())).thenReturn(List.of(ArtistDtoFactory.createDefault()));
 
     // when
     underTest.notifyAllUsers();
@@ -191,5 +218,6 @@ class NotificationServiceTest implements WithAssertions {
     verify(userService, times(userList.size())).getUserByPublicId(any());
     verify(releaseService, times(userList.size())).findReleases(any(), any(), any());
     verify(emailService, times(userList.size())).sendEmail(any());
+    verify(followArtistService, times(userList.size())).getFollowedArtistsOfUser(any());
   }
 }

@@ -213,7 +213,6 @@ class UserEntityTest implements WithAssertions {
       // given
       UserEntity user = UserFactory.createUser("user", "email");
       ArtistEntity artist = ArtistFactory.withDiscogsId(1L);
-      user.addFollowedArtist(artist);
 
       // when
       user.addFollowedArtist(artist);

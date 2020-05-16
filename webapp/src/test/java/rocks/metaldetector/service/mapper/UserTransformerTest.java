@@ -1,51 +1,31 @@
 package rocks.metaldetector.service.mapper;
 
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
-import rocks.metaldetector.service.artist.ArtistEntityFactory;
-import rocks.metaldetector.service.artist.ArtistTransformer;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserTransformer;
-import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-@ExtendWith(MockitoExtension.class)
 class UserTransformerTest implements WithAssertions {
 
   private static final String USERNAME = "JohnD";
   private static final String EMAIL = "john.doe@example.com";
 
-  @Mock
-  private ArtistTransformer artistTransformer;
-
-  @InjectMocks
   private UserTransformer underTest;
 
-  @AfterEach
-  void tearDown() {
-    reset(artistTransformer);
+  @BeforeEach
+  void setup() {
+    underTest = new UserTransformer();
   }
 
   @Test
@@ -70,7 +50,6 @@ class UserTransformerTest implements WithAssertions {
         .createdDateTime(entity.getCreatedDateTime())
         .lastModifiedBy(entity.getLastModifiedBy())
         .lastModifiedDateTime(entity.getLastModifiedDateTime())
-        .followedArtists(Collections.emptyList())
         .build();
 
     // when
@@ -78,25 +57,6 @@ class UserTransformerTest implements WithAssertions {
 
     // then
     assertThat(result).isEqualTo(expected);
-  }
-
-  @Test
-  @DisplayName("ArtistDtoTransformer is called for every followed artist")
-  void artist_dto_transformer_is_called() {
-    // given
-    UserEntity userEntity = createUserEntity();
-    ArtistEntity artistEntity1 = ArtistEntityFactory.withDiscogsId(1L);
-    ArtistEntity artistEntity2 = ArtistEntityFactory.withDiscogsId(2L);
-    userEntity.addFollowedArtist(artistEntity1);
-    userEntity.addFollowedArtist(artistEntity2);
-    when(artistTransformer.transform(any())).thenReturn(ArtistDtoFactory.createDefault());
-
-    // when
-    underTest.transform(userEntity);
-
-    // then
-    verify(artistTransformer, times(1)).transform(artistEntity1);
-    verify(artistTransformer, times(1)).transform(artistEntity2);
   }
 
   @ParameterizedTest(name = "[{index}]: {0} => {1}")

@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import rocks.metaldetector.service.artist.ArtistDto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -26,6 +24,5 @@ public class UserDto {
   private LocalDateTime createdDateTime;
   private LocalDateTime lastModifiedDateTime;
   private String lastModifiedBy;
-  private List<ArtistDto> followedArtists;
 
 }

@@ -38,7 +38,6 @@ public class DtoFactory {
           .plainPassword("xxx")
           .role("User")
           .enabled(true)
-          .followedArtists(List.of(ArtistDtoFactory.createDefault()))
           .build();
     }
     public static UserDto createUser(String username, UserRole role, boolean enabled) {
