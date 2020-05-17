@@ -27,7 +27,7 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
 
   private static final long OPETH_DISCOGS_ID = 245797L;
   private static final long DARKTHRONE_DISCOGS_ID = 252211L;
-  private static final long MAYHEM_DISCOGS_ID = 252211L;
+  private static final long MAYHEM_DISCOGS_ID = 14092L;
 
   @Override
   @Transactional
