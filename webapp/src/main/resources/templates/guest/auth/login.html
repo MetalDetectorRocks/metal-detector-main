@@ -10,6 +10,7 @@
       <!-- Login Messages -->
       <div th:if="${param.badCredentials}" class="alert alert-danger" role="alert"><span>Invalid username, email or password!</span></div>
       <div th:if="${param.disabled}" class="alert alert-danger" role="alert"><span>Your account is disabled. Maybe your email address is not verified. Please check your email inbox.</span></div>
+      <div th:if="${param.blocked}" class="alert alert-danger" role="alert"><span>Your ip is blocked for one day due to too many failed login requests.</span></div>
       <div th:if="${param.error}" class="alert alert-danger" role="alert"><span>Unknown error!</span></div>
       <div th:if="${param.logout}" class="alert alert-success" role="alert"><span>You have been successfully logged out.</span></div>
 

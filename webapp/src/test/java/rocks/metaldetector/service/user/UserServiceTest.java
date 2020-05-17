@@ -18,6 +18,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,6 +29,7 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
@@ -37,6 +39,7 @@ import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -53,11 +56,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
-import static rocks.metaldetector.security.AuthenticationListener.MAX_FAILED_LOGINS;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_NOT_FOUND;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
@@ -91,6 +94,12 @@ class UserServiceTest implements WithAssertions {
   @Mock
   private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
 
+  @Mock
+  private LoginAttemptService loginAttemptService;
+
+  @Mock
+  private HttpServletRequest request;
+
   @Spy
   private UserTransformer userTransformer;
 
@@ -99,7 +108,7 @@ class UserServiceTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentPublicUserIdSupplier, userTransformer);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentPublicUserIdSupplier, userTransformer, loginAttemptService, request);
   }
 
   @DisplayName("Create user tests")
@@ -295,6 +304,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
       when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
       when(userTransformer.transform(user)).thenReturn(UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL));
+      when(request.getHeader(anyString())).thenReturn("666");
 
       // when
       Optional<UserDto> userDto = userService.getUserByEmailOrUsername(EMAIL);
@@ -315,6 +325,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
       when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
       when(userTransformer.transform(user)).thenReturn(UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL));
+      when(request.getHeader(anyString())).thenReturn("666");
 
       // when
       Optional<UserDto> userDto = userService.getUserByEmailOrUsername(USERNAME);
@@ -332,6 +343,7 @@ class UserServiceTest implements WithAssertions {
     void get_user_by_email_or_username_for_not_existing_user() {
       // given
       String NOT_EXISTING = "not-existing";
+      when(request.getHeader(anyString())).thenReturn("666");
       when(userRepository.findByEmail(NOT_EXISTING)).thenReturn(Optional.empty());
       when(userRepository.findByUsername(NOT_EXISTING)).thenReturn(Optional.empty());
 
@@ -342,6 +354,21 @@ class UserServiceTest implements WithAssertions {
       verify(userRepository, times(1)).findByEmail(NOT_EXISTING);
       verify(userRepository, times(1)).findByUsername(NOT_EXISTING);
       assertThat(userDto).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Requesting a user by email or username via blocked ip should throw an exception")
+    void get_user_by_email_or_username_from_blocked_ip() {
+      // given
+      when(request.getHeader(anyString())).thenReturn("666");
+      when(loginAttemptService.isBlocked(anyString())).thenReturn(true);
+
+      // when
+      Throwable throwable = catchThrowable(() -> userService.getUserByEmailOrUsername(USERNAME));
+
+      // then
+      assertThat(throwable).isInstanceOf(LockedException.class);
+      verifyNoInteractions(userRepository);
     }
 
     @Test
@@ -690,6 +717,7 @@ class UserServiceTest implements WithAssertions {
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
       when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
       when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(user));
+      when(request.getHeader(anyString())).thenReturn("666");
 
       // when
       UserDetails userDetails = userService.loadUserByUsername(USERNAME);
@@ -706,6 +734,7 @@ class UserServiceTest implements WithAssertions {
     @DisplayName("Requesting a not existing user by username should throw an exception")
     void load_user_by_username_for_not_existing_user() {
       // given
+      when(request.getHeader(anyString())).thenReturn("666");
       when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
       when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.empty());
 

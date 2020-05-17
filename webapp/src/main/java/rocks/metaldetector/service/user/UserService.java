@@ -31,6 +31,4 @@ public interface UserService extends UserDetailsService {
 
   void persistSuccessfulLogin(String publicUserId);
 
-  void handleFailedLogin(String username);
-	
 }
