@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.service.artist.ArtistsService;
+import rocks.metaldetector.service.artist.FollowArtistService;
 
 @RestController
 @RequestMapping(Endpoints.Rest.ARTISTS)
@@ -20,6 +21,7 @@ import rocks.metaldetector.service.artist.ArtistsService;
 public class ArtistsRestController {
 
   private final ArtistsService artistsService;
+  private final FollowArtistService followArtistService;
 
   @GetMapping(path = Endpoints.Rest.SEARCH,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
@@ -32,13 +34,13 @@ public class ArtistsRestController {
 
   @PostMapping(path = Endpoints.Rest.FOLLOW + "/{discogsId}")
   public ResponseEntity<Void> handleFollow(@PathVariable long discogsId) {
-    artistsService.followArtist(discogsId);
+    followArtistService.follow(discogsId);
     return ResponseEntity.ok().build();
   }
 
   @PostMapping(path = Endpoints.Rest.UNFOLLOW + "/{discogsId}")
   public ResponseEntity<Void> handleUnfollow(@PathVariable long discogsId) {
-    artistsService.unfollowArtist(discogsId);
+    followArtistService.unfollow(discogsId);
     return ResponseEntity.ok().build();
   }
 }

@@ -13,6 +13,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 
+import java.util.UUID;
+
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
@@ -20,7 +22,7 @@ import static org.mockito.Mockito.when;
 class RedirectionHandlerInterceptorTest implements WithAssertions {
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
 
   @Mock
   private UserEntity userEntity;
@@ -39,14 +41,14 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(currentUserSupplier, userEntity);
+    reset(currentPublicUserIdSupplier, userEntity);
   }
 
   @Test
   @DisplayName("preHandle() should give false for logged in user")
   void pre_handle_should_return_false() {
     // given
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
 
     // when
     boolean result = redirectionHandlerInterceptor.preHandle(request, response, null);
@@ -59,7 +61,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
   @DisplayName("preHandle() should give true for anonymous user")
   void pre_handle_should_return_true() {
     // given
-    when(currentUserSupplier.get()).thenReturn(null);
+    when(currentPublicUserIdSupplier.get()).thenReturn(null);
 
     // when
     boolean result = redirectionHandlerInterceptor.preHandle(request, response, null);

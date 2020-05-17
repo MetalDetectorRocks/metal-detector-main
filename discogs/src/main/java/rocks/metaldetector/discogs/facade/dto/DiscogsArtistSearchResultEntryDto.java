@@ -3,7 +3,6 @@ package rocks.metaldetector.discogs.facade.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
@@ -16,7 +15,7 @@ public class DiscogsArtistSearchResultEntryDto {
   private String name;
   private String imageUrl;
   private String uri;
-  private boolean isFollowed;
+  private boolean followed;
 
   public String getUri() {
     return uri != null ? DISCOGS_URL + uri : null;

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
-import rocks.metaldetector.service.artist.ArtistsService;
+import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.web.api.response.DetectorReleasesResponse;
 
 import java.util.List;
@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DetectorReleasesResponseTransformer {
 
-  private final ArtistsService artistsService;
+  private final FollowArtistService followArtistService;
 
   public List<DetectorReleasesResponse> transformListOf(List<ReleaseDto> releases) {
-    var followedArtistsNames = artistsService.findFollowedArtistsForCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
+    var followedArtistsNames = followArtistService.getFollowedArtistsOfCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
     return releases.stream()
                    .map(release -> transform(release, followedArtistsNames))
                    .collect(Collectors.toList());

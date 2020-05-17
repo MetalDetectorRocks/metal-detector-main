@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.service.user.UserFactory;
+import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import java.util.stream.Stream;
@@ -43,7 +43,7 @@ class LoginControllerIT extends BaseWebMvcTestWithSecurity {
     when(userService.loadUserByUsername(any())).thenAnswer(invocationOnMock -> {
       String usernameArg = invocationOnMock.getArgument(0);
       if (usernameArg.equalsIgnoreCase(USERNAME)) {
-        return UserFactory.createUser(USERNAME, "user@example.com", passwordEncoder.encode(PASSWORD));
+        return UserEntityFactory.createUser(USERNAME, "user@example.com", passwordEncoder.encode(PASSWORD));
       }
       else {
         throw new UsernameNotFoundException("username not found");

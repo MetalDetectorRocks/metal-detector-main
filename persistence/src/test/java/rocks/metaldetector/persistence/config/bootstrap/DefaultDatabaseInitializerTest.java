@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
-import rocks.metaldetector.persistence.domain.artist.FollowedArtistEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserFactory;
 
@@ -17,7 +16,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -68,7 +66,6 @@ class DefaultDatabaseInitializerTest implements WithAssertions {
     UserEntity userMock = Mockito.mock(UserEntity.class);
     doReturn(typedQuery).when(typedQuery).setParameter(anyString(), anyString());
     doReturn(userMock).when(typedQuery).getSingleResult();
-    doReturn(UUID.randomUUID().toString()).when(userMock).getPublicId();
 
     // when
     underTest.run(null);
@@ -78,8 +75,5 @@ class DefaultDatabaseInitializerTest implements WithAssertions {
 
     // and
     verify(entityManager, times(3)).persist(any(ArtistEntity.class));
-
-    // and
-    verify(entityManager, times(3)).persist(any(FollowedArtistEntity.class));
   }
 }

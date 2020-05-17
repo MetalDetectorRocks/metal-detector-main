@@ -14,11 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 @AllArgsConstructor
 public class RedirectionHandlerInterceptor implements HandlerInterceptor {
 
-  private final CurrentUserSupplier currentUserSupplier;
+  private final CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-    if (currentUserSupplier.get() != null) {
+    if (currentPublicUserIdSupplier.get() != null) {
       response.setContentType("text/plain");
       sendRedirect(request, response);
       return false;

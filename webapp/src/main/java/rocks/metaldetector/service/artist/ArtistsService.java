@@ -11,17 +11,6 @@ public interface ArtistsService {
   Optional<ArtistDto> findArtistByDiscogsId(long discogsId);
   List<ArtistDto> findAllArtistsByDiscogsIds(long... discogsIds);
   boolean existsArtistByDiscogsId(long discogsId);
-  void fetchAndSaveArtist(long discogsId);
-
-  void followArtist(long discogsId);
-  void unfollowArtist(long discogsId);
-  boolean isFollowedByCurrentUser(long discogsId);
-  List<ArtistDto> findFollowedArtistsPerUser(String publicUserId);
-  List<ArtistDto> findFollowedArtistsPerUser(String publicUserId, Pageable pageable);
-  List<ArtistDto> findFollowedArtistsForCurrentUser();
-  List<ArtistDto> findFollowedArtistsForCurrentUser(Pageable pageable);
-  long countFollowedArtistsPerUser(String publicUserId);
-  long countFollowedArtistsForCurrentUser();
 
   DiscogsArtistSearchResultDto searchDiscogsByName(String artistQueryString, Pageable pageable);
 

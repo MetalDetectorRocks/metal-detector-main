@@ -29,10 +29,7 @@ function createNoResultsMessage(text) {
  */
 function createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, button) {
   return function () {
-    if (isFollowed)
-      unfollowArtist(artistName,artistId,button);
-    else
-      followArtist(artistName,artistId,button);
+    isFollowed ? unfollowArtist(artistName, artistId, button) : followArtist(artistName, artistId, button);
   };
 }
 
@@ -43,14 +40,13 @@ function createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, but
  * @param isFollowed    The information if the artist is already followed
  * @returns {HTMLButtonElement}
  */
-function createFollowArtistButton(artistName,artistId,isFollowed) {
+function createFollowArtistButton(artistName, artistId, isFollowed) {
   const followArtistButtonElement = document.createElement('button');
-  followArtistButtonElement.id = "followArtistButton"+artistId;
+  followArtistButtonElement.id = "followArtistButton" + artistId;
   followArtistButtonElement.type = "button";
   followArtistButtonElement.className = "btn btn-primary btn-dark font-weight-bold mt-2";
   followArtistButtonElement.textContent = isFollowed ? "Unfollow" : "Follow";
-  followArtistButtonElement.onclick =createOnClickFunctionFollowArtist(artistName,
-    artistId,isFollowed,followArtistButtonElement);
+  followArtistButtonElement.onclick = createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, followArtistButtonElement);
   return followArtistButtonElement;
 }
 

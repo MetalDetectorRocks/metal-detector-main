@@ -66,7 +66,7 @@ function buildResults(query, searchResponse) {
  * Builds HTML for the result cards
  * @param searchResponse
  */
-function createResultCards(searchResponse){
+function createResultCards(searchResponse) {
     jQuery.each(searchResponse.searchResults, function (i, searchResult) {
         const card = document.createElement('div');
         card.className = "card";
@@ -90,8 +90,7 @@ function createResultCards(searchResponse){
         const breakElement = document.createElement('br');
         cardBody.append(breakElement);
 
-        const followArtistButtonElement = createFollowArtistButton(searchResult.name,
-          searchResult.id, searchResult.isFollowed);
+        const followArtistButtonElement = createFollowArtistButton(searchResult.name, searchResult.id, searchResult.followed);
         cardBody.append(followArtistButtonElement);
 
         document.getElementById('searchResultsContainer').append(card);

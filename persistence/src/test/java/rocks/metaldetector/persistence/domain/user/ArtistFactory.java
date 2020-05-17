@@ -1,10 +1,10 @@
-package rocks.metaldetector.service.artist;
+package rocks.metaldetector.persistence.domain.user;
 
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 
-class ArtistFactory {
+public class ArtistFactory {
 
-  static ArtistEntity withDiscogsId(long discogsId) {
+  public static ArtistEntity withDiscogsId(long discogsId) {
     return new ArtistEntity(discogsId, Long.toString(discogsId), "image url");
   }
 }
