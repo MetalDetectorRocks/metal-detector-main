@@ -16,7 +16,6 @@
   <link th:href="@{/css/frontend.css}" href="#" rel="stylesheet" />
   <link th:href="@{/css/frontend.navbar.css}" href="#" rel="stylesheet" />
   <link th:href="@{/css/common.css}" href="#" rel="stylesheet" />
-  <link th:href="@{/css/datatables.custom.css}" href="#" rel="stylesheet" />
 
   <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap" rel="stylesheet">
@@ -33,6 +32,7 @@
   <script th:src="@{/js/search.js}" src="#"></script>
   <script th:src="@{/js/follow-artists.js}" src="#"></script>
   <script th:src="@{/js/my-artists.js}" src="#"></script>
+  <script th:src="@{/js/pagination.js}" src="#"></script>
 
   <!-- Material Icons -->
   <link th:href="@{/webjars/material-icons/iconfont/material-icons.css}" href="/webjars/material-icons/0.3.1/iconfont/material-icons.css" rel="stylesheet">
@@ -48,7 +48,7 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <form class="search-form form-group" action="#" th:action="@{/artists/search}" method="GET">
               <label for="query"></label>
-              <input id="query" type="text" class="form-control" th:name="query" placeholder="Search">
+              <input id="query" type="text" class="form-control" th:name="query" placeholder="Search" required>
             </form>
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item">
@@ -106,6 +106,9 @@
         </div>
       </div>
     </footer>
+
+    <div id="toast-wrapper"></div>
+
     <script>
         $(document).ready( function() {
             registerLogoutListener();

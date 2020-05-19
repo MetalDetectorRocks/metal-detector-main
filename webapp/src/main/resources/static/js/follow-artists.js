@@ -1,45 +1,45 @@
 /**
  * Send ajax request to follow an artist
- * @param artistName    Artist to follow
- * @param artistId      Artist's discogs id
- * @param el            Button that was clicked
+ * @param artistId    Artist's discogs id
+ * @param artistName  The name of the artist
  * @returns {boolean}
  */
-function followArtist(artistName,artistId,el){
+function followArtist(artistId, artistName) {
     $.ajax({
         method: "POST",
         url: "/rest/v1/artists/follow/" + artistId,
-        success: function(){
-            el.childNodes[0].nodeValue = 'Unfollow';
-            el.onclick = createOnClickFunctionFollowArtist(artistName,artistId,true,el);
+        success: function() {
+            const icon = $(`#${artistId}`);
+            icon.text("favorite");
+            icon.attr("onClick", `unfollowArtist('${artistId}', '${artistName}')`);
+            const toastText = `You are now following "${artistName}"`;
+            createToast(toastText);
         },
         error: function(e){
             console.log(e.message);
         }
     });
-
-    return false;
 }
 
 /**
  * Send ajax request to unfollow an artist
- * @param artistName    Artist to unfollow
- * @param artistId      Artist's discogs id
- * @param el            Button that was clicked
+ * @param artistId    Artist's discogs id
+ * @param artistName  The name of the artist
  * @returns {boolean}
  */
-function unfollowArtist(artistName,artistId,el){
+function unfollowArtist(artistId, artistName) {
     $.ajax({
         method: "POST",
         url: "/rest/v1/artists/unfollow/" + artistId,
-        success: function(){
-            el.childNodes[0].nodeValue = 'Follow';
-            el.onclick = createOnClickFunctionFollowArtist(artistName,artistId,false,el);
+        success: function() {
+            const icon = $(`#${artistId}`);
+            icon.text("favorite_border");
+            icon.attr("onClick", `followArtist('${artistId}', '${artistName}')`);
+            const toastText = `You no longer follow "${artistName}"`;
+            createToast(toastText);
         },
         error: function(e){
             console.log(e.message);
         }
     });
-
-    return false;
 }

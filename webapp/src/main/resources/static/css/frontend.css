@@ -28,7 +28,7 @@ h1, h2 {
 }
 
 p {
-    color: #ADAFAE !important;
+    color: #adafae !important;
 }
 
 .container {
@@ -61,6 +61,7 @@ footer .list-inline-item {
     border-bottom: 1px solid #404040;
 }
 
+/* Search Results */
 .top-search-card-img {
     height: 8rem;
     width: 8rem;
@@ -75,64 +76,11 @@ footer .list-inline-item {
     border-bottom: 1px solid #404040;
 }
 
-/* Sarch Results */
-.custom-border-top {
-    border-top: 1px solid #404040;
+.custom-border-bottom {
+    border-bottom: 1px solid #404040;
 }
 
-/*.page-item.active .page-link {*/
-/*    z-index: 1;*/
-/*    color: #fff;*/
-/*    font-weight: bold;*/
-/*    background-color: #343a40;*/
-/*    border: 1px solid rgba(0,0,0,.125);*/
-/*}*/
-
-/*.page-item .page-link {*/
-/*    z-index: 1;*/
-/*    color: #000;*/
-/*    background-color: #ececec;*/
-/*    border: 1px solid rgba(0,0,0,.125);*/
-/*}*/
-
-/*.page-item.disabled .page-link {*/
-/*    z-index: 1;*/
-/*    color: #000;*/
-/*    background-color: #ececec;*/
-/*    border: 1px solid rgba(0,0,0,.125);*/
-/*}*/
-
-/*.page-link:hover {*/
-/*    color: #fff;*/
-/*    background-color: #5c6670;*/
-/*}*/
-
-/*.image-row {*/
-/*    text-align: left;*/
-/*}*/
-
-/*.image-set {*/
-/*    box-sizing: border-box;*/
-/*}*/
-
-/*.image-link {*/
-/*    display: inline-block;*/
-/*    padding: 4px;*/
-/*    margin: 0 0.5rem 1rem 0.5rem;*/
-/*    line-height: 0;*/
-/*    border-radius: 0.25rem;*/
-/*}*/
-
-/*.image-link:hover {*/
-/*    background-color: #5c6670;*/
-/*}*/
-
-/*.image {*/
-/*    width: 10rem;*/
-/*    border-radius: 0.25rem;*/
-/*}*/
-
-
+/* Other */
 .hyperlink {
     color: #555;
     text-decoration: none;
@@ -142,6 +90,15 @@ footer .list-inline-item {
 .hyperlink:hover {
     color: #777777;
     text-decoration: none;
+}
+
+.follow-icon {
+    color: #adafae;
+    cursor: pointer;
+}
+
+.follow-icon:hover {
+    color: #FCFCFC;
 }
 
 .scroll-to-top {
@@ -157,4 +114,13 @@ footer .list-inline-item {
     cursor: pointer;
     border-radius: 10px;
     padding-top: 5px;
+}
+
+/* Overrides */
+.alert-light {
+    border: 1px solid #404040;
+}
+
+.page-link {
+    color: #adafae;
 }
