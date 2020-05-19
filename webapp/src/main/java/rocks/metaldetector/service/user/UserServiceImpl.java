@@ -2,8 +2,10 @@ package rocks.metaldetector.service.user;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,7 +17,8 @@ import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
@@ -23,6 +26,7 @@ import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -31,7 +35,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
-import static rocks.metaldetector.security.AuthenticationListener.MAX_FAILED_LOGINS;
 
 @Service
 @Slf4j
@@ -42,9 +45,11 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final TokenRepository tokenRepository;
   private final JwtsSupport jwtsSupport;
-  private final UserMapper userMapper;
+  private final UserTransformer userTransformer;
   private final TokenService tokenService;
-  private final CurrentUserSupplier currentUserSupplier;
+  private final CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
+  private final LoginAttemptService loginAttemptService;
+  private final HttpServletRequest request;
 
   @Override
   @Transactional
@@ -72,7 +77,7 @@ public class UserServiceImpl implements UserService {
 
     UserEntity savedUserEntity = userRepository.save(userEntity);
 
-    return userMapper.mapToDto(savedUserEntity);
+    return userTransformer.transform(savedUserEntity);
   }
 
   @Override
@@ -81,14 +86,14 @@ public class UserServiceImpl implements UserService {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
-    return userMapper.mapToDto(userEntity);
+    return userTransformer.transform(userEntity);
   }
 
   @Override
   @Transactional(readOnly = true)
   public Optional<UserDto> getUserByEmailOrUsername(String emailOrUsername) {
     Optional<UserEntity> userEntity = findByEmailOrUsername(emailOrUsername);
-    return userEntity.map(userMapper::mapToDto);
+    return userEntity.map(userTransformer::transform);
   }
 
   @Override
@@ -97,7 +102,7 @@ public class UserServiceImpl implements UserService {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
-    if (publicId.equals(currentUserSupplier.get().getPublicId())) {
+    if (publicId.equals(currentPublicUserIdSupplier.get())) {
       if (!userDto.isEnabled()) { throw IllegalUserActionException.createAdminCannotDisableHimselfException(); }
       if (userEntity.isAdministrator() && !UserRole.getRoleFromString(userDto.getRole()).contains(ROLE_ADMINISTRATOR)) { throw IllegalUserActionException.createAdminCannotDiscardHisRoleException(); }
     }
@@ -107,7 +112,7 @@ public class UserServiceImpl implements UserService {
 
     UserEntity updatedUserEntity = userRepository.save(userEntity);
 
-    return userMapper.mapToDto(updatedUserEntity);
+    return userTransformer.transform(updatedUserEntity);
   }
 
   @Override
@@ -123,7 +128,7 @@ public class UserServiceImpl implements UserService {
   public List<UserDto> getAllUsers() {
     return userRepository.findAll()
         .stream()
-        .map(userMapper::mapToDto)
+        .map(userTransformer::transform)
         .sorted(Comparator.comparing(UserDto::isEnabled, BooleanComparator.TRUE_LOW).thenComparing(UserDto::getRole).thenComparing(UserDto::getUsername))
         .collect(Collectors.toList());
   }
@@ -133,7 +138,7 @@ public class UserServiceImpl implements UserService {
   public List<UserDto> getAllActiveUsers() {
     return userRepository.findAll()
         .stream()
-        .map(userMapper::mapToDto)
+        .map(userTransformer::transform)
         .filter(UserDto::isEnabled)
         .collect(Collectors.toList());
   }
@@ -145,7 +150,7 @@ public class UserServiceImpl implements UserService {
 
     return userRepository.findAll(pageable)
         .stream()
-        .map(userMapper::mapToDto)
+        .map(userTransformer::transform)
         .collect(Collectors.toList());
   }
 
@@ -211,30 +216,16 @@ public class UserServiceImpl implements UserService {
       UserEntity userEntity = userEntityOptional.get();
 
       userEntity.setLastLogin(LocalDateTime.now());
-      userEntity.clearFailedLogins();
-
-      userRepository.save(userEntity);
-    }
-  }
-
-  @Override
-  public void handleFailedLogin(String username) {
-    Optional<UserEntity> userEntityOptional = findByEmailOrUsername(username);
-
-    if (userEntityOptional.isPresent()) {
-      UserEntity userEntity = userEntityOptional.get();
-
-      userEntity.addFailedLogin(LocalDateTime.now());
-
-      if (userEntity.getFailedLogins().size() == MAX_FAILED_LOGINS) {
-        userEntity.setEnabled(false);
-      }
 
       userRepository.save(userEntity);
     }
   }
 
   private Optional<UserEntity> findByEmailOrUsername(String emailOrUsername) {
+    if (loginAttemptService.isBlocked(getClientIPHash())) {
+      throw new LockedException("User " + emailOrUsername + " is blocked");
+    }
+
     // try to find user by email
     Optional<UserEntity> userEntity = userRepository.findByEmail(emailOrUsername);
 
@@ -257,5 +248,18 @@ public class UserServiceImpl implements UserService {
     else if (userRepository.existsByEmail(email) || userRepository.existsByUsername(email)) {
       throw UserAlreadyExistsException.createUserWithEmailAlreadyExistsException();
     }
+  }
+
+  private String getClientIPHash() {
+    String xfHeader = request.getHeader("X-Forwarded-For");
+    String clientIp;
+
+    if (xfHeader == null){
+      clientIp = request.getRemoteAddr();
+    } else {
+      clientIp = xfHeader.split(",")[0];
+    }
+
+    return DigestUtils.md5Hex(clientIp);
   }
 }

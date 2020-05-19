@@ -5,7 +5,7 @@ import rocks.metaldetector.persistence.domain.user.UserRole;
 
 import java.util.Set;
 
-public class UserFactory {
+public class UserEntityFactory {
 
   public static UserEntity createUser(String username, String email) {
     return UserEntity.builder()

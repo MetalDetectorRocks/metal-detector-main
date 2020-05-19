@@ -12,33 +12,32 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.artist.ArtistDto;
-import rocks.metaldetector.service.artist.ArtistsService;
+import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.response.MyArtistsResponse;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ExtendWith(MockitoExtension.class)
 class MyArtistsRestControllerTest implements WithAssertions {
 
-  private static final long DISCOGS_ID = 252211L;
-  private static final String ARTIST_NAME = "Darkthrone";
   private static final int PAGE = 0;
   private static final int SIZE = 10;
 
   @Mock
-  private ArtistsService artistsService;
+  private FollowArtistService followArtistService;
 
   @InjectMocks
   private MyArtistsRestController underTest;
@@ -54,12 +53,15 @@ class MyArtistsRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(artistsService);
+    reset(followArtistService);
   }
 
   @Test
   @DisplayName("GET should return 200")
   void get_should_return_200() {
+    // given
+    doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfCurrentUser();
+
     // when
     ValidatableMockMvcResponse validatableResponse = restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
 
@@ -72,9 +74,8 @@ class MyArtistsRestControllerTest implements WithAssertions {
   @Test
   @DisplayName("GET should return results if present")
   void get_should_return_results() {
-    // given
-    when(artistsService.findFollowedArtistsForCurrentUser(PageRequest.of(PAGE, SIZE))).thenReturn(Collections.singletonList(
-        new ArtistDto(DISCOGS_ID, ARTIST_NAME, null)));
+    ArtistDto artistDto = ArtistDtoFactory.createDefault();
+    doReturn(List.of(artistDto)).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
     // when
     ValidatableMockMvcResponse validatableResponse = restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
@@ -84,15 +85,14 @@ class MyArtistsRestControllerTest implements WithAssertions {
 
     assertThat(response).isNotNull();
     assertThat(response.getMyArtists()).hasSize(1);
-    assertThat(response.getMyArtists().get(0).getDiscogsId()).isEqualTo(DISCOGS_ID);
-    assertThat(response.getMyArtists().get(0).getArtistName()).isEqualTo(ARTIST_NAME);
+    assertThat(response.getMyArtists().get(0)).isEqualTo(artistDto);
   }
 
   @Test
   @DisplayName("GET should return pagination")
   void get_should_return_pagination() {
     // given
-    when(artistsService.countFollowedArtistsForCurrentUser()).thenReturn(1L);
+    doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
     // when
     ValidatableMockMvcResponse validatableResponse = restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
@@ -107,19 +107,24 @@ class MyArtistsRestControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("GET should call artists service")
-  void get_should_call_artists_service() {
+  @DisplayName("GET should call followArtistService")
+  void get_should_call_service() {
+    // given
+    doReturn(Collections.emptyList()).when(followArtistService).getFollowedArtistsOfCurrentUser();
+
     // when
-    ValidatableMockMvcResponse validatableResponse = restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
+    restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
 
     // then
-    verify(artistsService, times(1)).findFollowedArtistsForCurrentUser(PageRequest.of(PAGE, SIZE));
-    verify(artistsService, times(1)).countFollowedArtistsForCurrentUser();
+    verify(followArtistService, times(1)).getFollowedArtistsOfCurrentUser();
   }
 
   @Test
   @DisplayName("GET should return empty list if nothing is present")
   void get_should_return_empty_list() {
+    // given
+    doReturn(Collections.emptyList()).when(followArtistService).getFollowedArtistsOfCurrentUser();
+
     // when
     ValidatableMockMvcResponse validatableResponse = restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
 
@@ -133,6 +138,9 @@ class MyArtistsRestControllerTest implements WithAssertions {
   @Test
   @DisplayName("GET should return empty pagination if nothing is present")
   void get_should_return_empty_pagination() {
+    // given
+    doReturn(Collections.emptyList()).when(followArtistService).getFollowedArtistsOfCurrentUser();
+
     // when
     ValidatableMockMvcResponse validatableResponse = restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
 

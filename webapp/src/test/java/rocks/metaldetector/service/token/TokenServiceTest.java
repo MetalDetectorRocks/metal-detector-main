@@ -19,8 +19,8 @@ import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.AbstractEmail;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
+import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.service.user.UserErrorMessages;
-import rocks.metaldetector.service.user.UserFactory;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
@@ -92,7 +92,7 @@ class TokenServiceTest implements WithAssertions {
   @DisplayName("createEmailVerificationToken() should create a new email verification token")
   void create_email_verification_token_should_create_token_for_email_verification() {
     ArgumentCaptor<TokenEntity> tokenEntityArgumentCaptor = ArgumentCaptor.forClass(TokenEntity.class);
-    UserEntity userEntity = UserFactory.createUser("JohnD", "johnd@example.com");
+    UserEntity userEntity = UserEntityFactory.createUser("JohnD", "johnd@example.com");
     when(userRepository.findByPublicId(PUBLIC_USER_ID)).thenReturn(Optional.of(userEntity));
     when(jwtsSupport.generateToken(PUBLIC_USER_ID, Duration.ofDays(10))).thenReturn(TOKEN);
 
@@ -109,7 +109,7 @@ class TokenServiceTest implements WithAssertions {
   @DisplayName("createResetPasswordToken() should create a new reset password token")
   void create_reset_password_token_should_create_token_for_password_change() {
     ArgumentCaptor<TokenEntity> tokenEntityArgumentCaptor = ArgumentCaptor.forClass(TokenEntity.class);
-    UserEntity userEntity = UserFactory.createUser("JohnD", "johnd@example.com");
+    UserEntity userEntity = UserEntityFactory.createUser("JohnD", "johnd@example.com");
     when(userRepository.findByPublicId(PUBLIC_USER_ID)).thenReturn(Optional.of(userEntity));
     when(jwtsSupport.generateToken(PUBLIC_USER_ID, Duration.ofHours(1))).thenReturn(TOKEN);
 
@@ -141,7 +141,7 @@ class TokenServiceTest implements WithAssertions {
   @DisplayName("resendExpiredEmailVerificationToken() should send...")
   void resend_expired_email_verification_token_should_send_new_email() {
     // create token entity for mocking with spied user
-    UserEntity userOfToken = UserFactory.createUser("JohnD", "johnd@example.com");
+    UserEntity userOfToken = UserEntityFactory.createUser("JohnD", "johnd@example.com");
     userOfToken = Mockito.spy(userOfToken);
     TokenEntity tokenEntity = TokenFactory.createToken(TokenType.EMAIL_VERIFICATION, userOfToken);
 

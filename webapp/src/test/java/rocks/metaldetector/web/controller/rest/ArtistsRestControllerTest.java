@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.service.artist.ArtistsService;
+import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
@@ -38,6 +39,9 @@ class ArtistsRestControllerTest implements WithAssertions {
 
   @Mock
   private ArtistsService artistsService;
+
+  @Mock
+  private FollowArtistService followArtistService;
 
   @InjectMocks
   private ArtistsRestController underTest;
@@ -140,7 +144,7 @@ class ArtistsRestControllerTest implements WithAssertions {
 
     @AfterEach
     void tearDown() {
-      reset(artistsService);
+      reset(artistsService, followArtistService);
     }
 
     @Test
@@ -154,13 +158,13 @@ class ArtistsRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should call artist service when following an artist")
-    void handle_follow_call_artist_service() {
+    @DisplayName("Should call follow artist service when following an artist")
+    void handle_follow_call_follow_artist_service() {
       // when
       followArtistRestAssuredUtils.doPost("/" + VALID_ARTIST_ID);
 
       // then
-      verify(artistsService, times(1)).followArtist(VALID_ARTIST_ID);
+      verify(followArtistService, times(1)).follow(VALID_ARTIST_ID);
     }
 
     @Test
@@ -174,13 +178,13 @@ class ArtistsRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should call artist service when unfollowing an artist")
-    void handle_unfollow_call_artist_service() {
+    @DisplayName("Should call follow artist service when unfollowing an artist")
+    void handle_unfollow_call_follow_artist_service() {
       // when
       unfollowArtistRestAssuredUtils.doPost("/" + VALID_ARTIST_ID);
 
       // then
-      verify(artistsService, times(1)).unfollowArtist(VALID_ARTIST_ID);
+      verify(followArtistService, times(1)).unfollow(VALID_ARTIST_ID);
     }
   }
 }

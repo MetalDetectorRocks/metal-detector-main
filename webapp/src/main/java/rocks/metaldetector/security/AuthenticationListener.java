@@ -1,9 +1,11 @@
 package rocks.metaldetector.security;
 
 import lombok.AllArgsConstructor;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.context.event.EventListener;
-import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent;
+import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.service.user.UserService;
@@ -12,17 +14,20 @@ import rocks.metaldetector.service.user.UserService;
 @AllArgsConstructor
 public class AuthenticationListener {
 
-  public static final int MAX_FAILED_LOGINS = 5;
-
+  private final LoginAttemptService loginAttemptService;
   private final UserService userService;
 
   @EventListener
   public void onAuthenticationSuccess(AuthenticationSuccessEvent event) {
+    WebAuthenticationDetails authenticationDetails = (WebAuthenticationDetails) event.getAuthentication().getDetails();
+    loginAttemptService.loginSucceeded(DigestUtils.md5Hex(authenticationDetails.getRemoteAddress()));
+
     userService.persistSuccessfulLogin(((UserEntity) event.getAuthentication().getPrincipal()).getPublicId());
   }
 
   @EventListener
-  public void onAuthenticationFailure(AbstractAuthenticationFailureEvent event) {
-    userService.handleFailedLogin((String) event.getAuthentication().getPrincipal());
+  public void onAuthenticationFailure(AuthenticationFailureBadCredentialsEvent event) {
+    WebAuthenticationDetails authenticationDetails = (WebAuthenticationDetails) event.getAuthentication().getDetails();
+    loginAttemptService.loginFailed(DigestUtils.md5Hex(authenticationDetails.getRemoteAddress()));
   }
 }

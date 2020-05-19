@@ -61,7 +61,7 @@ public class RestExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), UNSUPPORTED_MEDIA_TYPE);
   }
 
-  @ExceptionHandler(value = MethodArgumentNotValidException.class)
+  @ExceptionHandler({MethodArgumentNotValidException.class})
   public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), BAD_REQUEST);
@@ -91,7 +91,7 @@ public class RestExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), UNPROCESSABLE_ENTITY);
   }
 
-  @ExceptionHandler(value = {ExternalServiceException.class})
+  @ExceptionHandler({ExternalServiceException.class})
   public ResponseEntity<ErrorResponse> handleExternalServiceException(RuntimeException exception, WebRequest webRequest) {
     log.error(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.SERVICE_UNAVAILABLE);
