@@ -13,7 +13,7 @@ import rocks.metaldetector.support.Pagination;
 
 class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertions {
 
-  private DiscogsArtistSearchResultContainerTransformer underTest = new DiscogsArtistSearchResultContainerTransformer();
+  private final DiscogsArtistSearchResultContainerTransformer underTest = new DiscogsArtistSearchResultContainerTransformer();
 
   @Test
   @DisplayName("Should transform DiscogsPagination to Pagination")
@@ -29,7 +29,7 @@ class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertion
 
     assertThat(result.getPagination()).isEqualTo(
             Pagination.builder()
-                      .currentPage(discogsPagination.getCurrentPage() - 1)
+                      .currentPage(discogsPagination.getCurrentPage())
                       .itemsPerPage(discogsPagination.getItemsPerPage())
                       .totalPages(discogsPagination.getPagesTotal())
                       .build()
