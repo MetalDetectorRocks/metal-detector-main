@@ -56,7 +56,7 @@ public class JavaMailEmailService implements EmailService {
   private MimeMessage createMimeMessage(AbstractEmail email) {
     MimeMessage mimeMessage = emailSender.createMimeMessage();
     Context context = new Context();
-    context.setVariables(email.getEnhancedViewModel(mailConfig.getHost()));
+    context.setVariables(email.getEnhancedViewModel(mailConfig.getApplicationHostUrl()));
     String html = templateEngine.process(email.getTemplateName(), context);
 
     try {

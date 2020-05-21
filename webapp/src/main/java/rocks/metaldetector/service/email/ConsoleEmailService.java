@@ -20,7 +20,8 @@ public class ConsoleEmailService implements EmailService {
   @Override
   public void sendEmail(AbstractEmail email) {
     Context context = new Context();
-    context.setVariables(email.getEnhancedViewModel(mailConfig.getHost()));
+    String baseUrl = mailConfig.getApplicationHostUrl() + ":" + mailConfig.getApplicationPort();
+    context.setVariables(email.getEnhancedViewModel(baseUrl));
     String messageAsHtml = templateEngine.process(email.getTemplateName(), context);
 
     log.debug("From: {}", mailConfig.getFromEmail());

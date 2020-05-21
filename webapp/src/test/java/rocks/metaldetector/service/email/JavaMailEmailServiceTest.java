@@ -49,7 +49,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
 
     // mock mail config
     when(mailConfig.getFromEmail()).thenReturn("from@example.de");
-    when(mailConfig.getHost()).thenReturn("localhost:1234");
+    when(mailConfig.getApplicationHostUrl()).thenReturn("localhost");
 
     // mock emailSender
     MimeMessage mimeMessage = mock(MimeMessage.class);
@@ -83,7 +83,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
   void send_email_calls_template_engine() {
     // given
     final String TOKEN = "token";
-    final String EXPECTED_VERIFICATION_URL = mailConfig.getHost() + Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + TOKEN;
+    final String EXPECTED_VERIFICATION_URL = mailConfig.getApplicationHostUrl() + Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + TOKEN;
     ArgumentCaptor<Context> contextCaptor = ArgumentCaptor.forClass(Context.class);
     ArgumentCaptor<String> templateNameCaptor = ArgumentCaptor.forClass(String.class);
     AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", TOKEN);
