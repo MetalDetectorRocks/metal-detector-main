@@ -3,7 +3,7 @@
  * @param id    ID to show loader at
  */
 function toggleLoader(id) {
-  document.getElementById(id).classList.toggle("loader");
+    $(`#${id}`).toggleClass("loader");
 }
 
 /**
@@ -29,7 +29,7 @@ function createNoResultsMessage(text) {
  */
 function createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, button) {
   return function () {
-    isFollowed ? unfollowArtist(artistName, artistId, button) : followArtist(artistName, artistId, button);
+    isFollowed ? unfollowArtist(artistId, artistName) : followArtist(artistId, artistName);
   };
 }
 
@@ -52,12 +52,10 @@ function createFollowArtistButton(artistName, artistId, isFollowed) {
 
 /**
  * Tasks when validation or ajax fails
- * @param message       The message to be displayed
- * @param containerId   The container to toggle the loader at
+ * @param message  The message to be displayed
  */
-function validationOrAjaxFailed(message, containerId) {
+function validationOrAjaxFailed(message) {
   createNoResultsMessage(message);
-  toggleLoader(containerId);
 }
 
 /**

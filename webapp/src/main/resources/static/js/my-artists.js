@@ -29,6 +29,7 @@ function showMyArtists() {
     error: function(){
       const message = "No artists could be found!";
       validationOrAjaxFailed(message, 'myArtistsContainer');
+      toggleLoader("myArtistsContainer");
     }
   });
 

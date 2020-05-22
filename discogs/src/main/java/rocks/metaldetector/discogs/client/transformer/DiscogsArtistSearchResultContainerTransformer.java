@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResult;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
 import rocks.metaldetector.discogs.api.DiscogsPagination;
-import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
+import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
 import rocks.metaldetector.support.Pagination;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class DiscogsArtistSearchResultContainerTransformer {
 
   private Pagination transformPagination(DiscogsPagination discogsPagination) {
     return Pagination.builder()
-            .currentPage(discogsPagination.getCurrentPage() - 1)
+            .currentPage(discogsPagination.getCurrentPage())
             .itemsPerPage(discogsPagination.getItemsPerPage())
             .totalPages(discogsPagination.getPagesTotal())
             .build();

@@ -35,3 +35,20 @@ function scrollToTop() {
         return false;
     });
 }
+
+/**
+ * Creates a toast that is displayed for a short time.
+ * @param text  The toast text
+ */
+function createToast(text) {
+    const toast = $("<div>");
+    toast.attr("id", "toast");
+    toast.addClass("show");
+    toast.text(text);
+    setTimeout(function() {
+            toast.removeClass("show");
+        },
+        2900
+    );
+    $("#toast-wrapper").append(toast);
+}

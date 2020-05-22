@@ -11,20 +11,20 @@
   <sec:csrfMetaTags></sec:csrfMetaTags>
 
   <!-- CSS -->
-  <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" href="#" rel="stylesheet" type="text/css" />
-  <link th:href="@{/webjars/lightbox/src/css/lightbox.css}" href="#" rel="stylesheet" type="text/css" />
+  <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/cyborg/bootstrap.min.css" rel="stylesheet" integrity="sha384-l7xaoY0cJM4h9xh1RfazbgJVUZvdtyLWPueWNtLAphf/UbBgOVzqbOTogxPwYLHM" crossorigin="anonymous">
   <link th:href="@{/webjars/datatables/css/dataTables.bootstrap4.min.css}" href="#" rel="stylesheet" type="text/css" />
   <link th:href="@{/css/frontend.css}" href="#" rel="stylesheet" />
+  <link th:href="@{/css/frontend.navbar.css}" href="#" rel="stylesheet" />
   <link th:href="@{/css/common.css}" href="#" rel="stylesheet" />
-  <link th:href="@{/css/datatables.custom.css}" href="#" rel="stylesheet" />
 
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap" rel="stylesheet">
 
   <!-- JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script th:src="@{/webjars/jquery/jquery.min.js}" src="#"></script>
   <script th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
   <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
-  <script th:src="@{/webjars/lightbox//src/js/lightbox.js}" src="#"></script>
   <script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}" src="#"></script>
   <script th:src="@{/webjars/datatables/js/dataTables.bootstrap4.min.js}" src="#"></script>
   <script th:src="@{/js/common.js}" src="#"></script>
@@ -32,36 +32,40 @@
   <script th:src="@{/js/search.js}" src="#"></script>
   <script th:src="@{/js/follow-artists.js}" src="#"></script>
   <script th:src="@{/js/my-artists.js}" src="#"></script>
+  <script th:src="@{/js/pagination.js}" src="#"></script>
 
   <!-- Material Icons -->
   <link th:href="@{/webjars/material-icons/iconfont/material-icons.css}" href="/webjars/material-icons/0.3.1/iconfont/material-icons.css" rel="stylesheet">
 </head>
   <body>
     <header>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-custom">
+      <nav class="navbar navbar-expand-lg">
         <div class="container">
           <a href="#" th:href="@{/home}"><img class="navbar-brand mb-0 h1" th:src="@{/images/logo.png}" alt="Logo" src="#" width="300" /></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <form id="searchForm" class="form-group has-search" action="#" th:action="@{/artists/search}" method="GET">
-              <span class="material-icons form-control-feedback">search</span>
-              <label for="query"></label><input id="query" type="text" class="form-control" th:name="query" placeholder="Search">
+            <form class="search-form form-group" action="#" th:action="@{/artists/search}" method="GET">
+              <label for="query"></label>
+              <input id="query" type="text" class="form-control" th:name="query" placeholder="Search" required>
             </form>
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/my-artists}" >My Artists</a>
+                <a class="nav-link" href="#" th:href="@{/blog}">Blog</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/releases}" >Releases</a>
+                <a class="nav-link" href="#" th:href="@{/my-artists}">My Artists</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" th:href="@{/releases}">Releases</a>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <img src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Profile photo" height="30" width="30" class="avatar border border-white" />
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
-                  <p class="pl-4">Signed in as <span sec:authentication="name" class="font-weight-bold">Username</span></p>
+                  <p class="pl-4 pr-2">Signed in as <span sec:authentication="name" class="font-weight-bold">Username</span></p>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#" th:href="@{/profile}">Profile</a>
                   <a class="dropdown-item" href="#" th:href="@{/settings}">Settings</a>
@@ -79,48 +83,32 @@
     </header>
 
     <main role="main">
-      <div class="container bg-white">
+      <div class="container mt-3 mb-3">
         <div class="content">
           <th:block th:include="${template}" />
-          <button onclick="scrollToTop()" id="backToTopButton" title="Go to top">&#x2191;</button>
+          <button onclick="scrollToTop()" class="scroll-to-top" id="backToTopButton">
+            <span class="material-icons">keyboard_arrow_up</span>
+          </button>
         </div>
       </div>
     </main>
 
-    <footer class="bg-dark" id="footer">
+    <footer>
       <div class="container p-3">
-        <div class="row">
-          <div class="col-6 col-md">
-            <h5 class="text-white">Contribute</h5>
-            <ul class="list-unstyled text-small">
-              <li><a class="text-muted footer-link" href="#" th:href="@{https://github.com/MetalDetectorRocks?tab=repositories}" target="_blank">Find us on GitHub</a></li>
-              <li><a class="text-muted footer-link" href="#" th:href="@{https://github.com/MetalDetectorRocks/metal-detector-main/issues/new?assignees=&labels=&template=feature_request.md&title=}" target="_blank">Request a feature</a></li>
-              <li><a class="text-muted footer-link" href="#" th:href="@{https://github.com/MetalDetectorRocks/metal-detector-main/issues/new?assignees=&labels=&template=bug_report.md&title=}" target="_blank">Report an issue</a></li>
-              <li><a class="text-muted footer-link" href="#" th:href="@{/report-artist-release}">Report an artist release</a></li>
-              <li><a class="text-muted footer-link" href="#" target="_blank">Spend a beer</a></li>
-            </ul>
-          </div>
-          <div class="col-6 col-md">
-            <h5 class="text-white">Lorem ipsum</h5>
-            <ul class="list-unstyled text-small">
-              <li><a class="text-muted footer-link" href="#">Foo Bar</a></li>
-              <li><a class="text-muted footer-link" href="#">Foo Bar</a></li>
-              <li><a class="text-muted footer-link" href="#">Foo Bar</a></li>
-              <li><a class="text-muted footer-link" href="#">Foo Bar</a></li>
-            </ul>
-          </div>
-          <div class="col-6 col-md">
-            <h5 class="text-white">About</h5>
-            <ul class="list-unstyled text-small">
-              <li><a class="text-muted footer-link" href="#" th:href="@{/about}">About Metal Detector</a></li>
-              <li><a class="text-muted footer-link" href="#" th:href="@{/team}">Our Team</a></li>
-              <li><a class="text-muted footer-link" href="#" th:href="@{/contact}">Contact us</a></li>
-              <li><a class="text-muted footer-link" href="#" th:href="@{/imprint}">Imprint</a></li>
-            </ul>
-          </div>
+        <div class="row float-right">
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="hyperlink" href="#" th:href="@{https://github.com/MetalDetectorRocks?tab=repositories}" target="_blank">Find us on GitHub</a></li>
+            <li class="list-inline-item"><a class="hyperlink" href="#" th:href="@{https://github.com/MetalDetectorRocks/metal-detector-main/issues/new?assignees=&labels=&template=feature_request.md&title=}" target="_blank">Request a feature</a></li>
+            <li class="list-inline-item"><a class="hyperlink" href="#" th:href="@{https://github.com/MetalDetectorRocks/metal-detector-main/issues/new?assignees=&labels=&template=bug_report.md&title=}" target="_blank">Report an issue</a></li>
+            <li class="list-inline-item"><a class="hyperlink" href="#" target="_blank">Spend a beer</a></li>
+            <li class="list-inline-item"><a class="hyperlink" href="#" th:href="@{/imprint}">Imprint</a></li>
+          </ul>
         </div>
       </div>
     </footer>
+
+    <div id="toast-wrapper"></div>
+
     <script>
         $(document).ready( function() {
             registerLogoutListener();
