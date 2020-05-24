@@ -1,18 +1,22 @@
 package rocks.metaldetector.butler.client.transformer;
 
-import org.apache.commons.text.WordUtils;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.api.ButlerRelease;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
+import rocks.metaldetector.support.EnumPrettyPrinter;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ButlerReleaseResponseTransformer {
 
-  private static final String STATE_NOT_SET = "NOT_SET";
+  private final EnumPrettyPrinter enumPrettyPrinter;
+
+  static final String STATE_NOT_SET = "NOT_SET";
 
   public List<ReleaseDto> transform(ButlerReleasesResponse response) {
     return response.getReleases().stream().map(this::transformRelease).collect(Collectors.toList());
@@ -26,15 +30,11 @@ public class ButlerReleaseResponseTransformer {
             .releaseDate(release.getReleaseDate())
             .estimatedReleaseDate(release.getEstimatedReleaseDate())
             .genre(release.getGenre())
-            .type(prettyPrintValue(release.getType()))
+            .type(enumPrettyPrinter.prettyPrintEnumValue(release.getType()))
             .metalArchivesArtistUrl(release.getMetalArchivesArtistUrl())
             .metalArchivesAlbumUrl(release.getMetalArchivesAlbumUrl())
-            .source(prettyPrintValue(release.getSource()))
-            .state(prettyPrintValue(STATE_NOT_SET))
+            .source(enumPrettyPrinter.prettyPrintEnumValue(release.getSource()))
+            .state(enumPrettyPrinter.prettyPrintEnumValue(STATE_NOT_SET))
             .build();
-  }
-
-  private String prettyPrintValue(String value) {
-    return WordUtils.capitalizeFully(value.replace("_", " "));
   }
 }
