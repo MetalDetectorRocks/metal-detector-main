@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.butler.api.ButlerImportResponse;
+import rocks.metaldetector.butler.api.ButlerImportJobResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.config.ButlerConfig;
@@ -48,13 +48,17 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   }
 
   @Override
-  public ButlerImportResponse importReleases() {
+  public ButlerImportJobResponse createImportJob() {
     HttpEntity<Object> requestEntity = createImportHttpEntity();
 
-    ResponseEntity<ButlerImportResponse> responseEntity = releaseButlerRestTemplate.exchange(butlerConfig.getImportUrl() + ACTION_PATH_PARAMETER,
-                                                                                             HttpMethod.GET, requestEntity,
-                                                                                             ButlerImportResponse.class, IMPORT_ACTION);
-    ButlerImportResponse response = responseEntity.getBody();
+    ResponseEntity<ButlerImportJobResponse> responseEntity = releaseButlerRestTemplate.exchange(
+            butlerConfig.getImportUrl() + ACTION_PATH_PARAMETER,
+            HttpMethod.GET, requestEntity,
+            ButlerImportJobResponse.class,
+            IMPORT_ACTION
+    );
+
+    ButlerImportJobResponse response = responseEntity.getBody();
 
     var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {

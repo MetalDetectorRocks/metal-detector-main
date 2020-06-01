@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
     "totalCountImported"
 })
 @NoArgsConstructor
-public class ButlerImportResponse {
+public class ButlerImportJobResponse {
 
   @JsonProperty("totalCountRequested")
   private int totalCountRequested;

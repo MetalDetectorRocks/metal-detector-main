@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @Builder
-public class ImportResultDto {
+public class ImportJobResultDto {
 
   private int totalCountRequested;
   private int totalCountImported;

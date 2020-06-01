@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory;
-import rocks.metaldetector.butler.api.ButlerImportResponse;
+import rocks.metaldetector.butler.api.ButlerImportJobResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 
 import java.io.Reader;
@@ -66,10 +66,10 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Should return mock import response")
+  @DisplayName("Should return mock import job response")
   void should_return_mock_import_response() {
     // when
-    ButlerImportResponse response = underTest.importReleases();
+    ButlerImportJobResponse response = underTest.createImportJob();
 
     // then
     assertThat(response).isNotNull();
