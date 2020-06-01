@@ -1,6 +1,6 @@
 package rocks.metaldetector.testutil;
 
-import rocks.metaldetector.butler.facade.dto.ImportResultDto;
+import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
@@ -13,7 +13,7 @@ import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
-import rocks.metaldetector.web.api.response.DetectorImportResponse;
+import rocks.metaldetector.web.api.response.DetectorImportJobResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,6 +40,7 @@ public class DtoFactory {
           .enabled(true)
           .build();
     }
+
     public static UserDto createUser(String username, UserRole role, boolean enabled) {
       return UserDto.builder()
           .username(username)
@@ -173,20 +174,20 @@ public class DtoFactory {
     }
   }
 
-  public static class ImportResultDtoFactory {
+  public static class ImportJobResultDtoFactory {
 
-    public static ImportResultDto createDefault() {
-      return ImportResultDto.builder()
+    public static ImportJobResultDto createDefault() {
+      return ImportJobResultDto.builder()
           .totalCountImported(666)
           .totalCountRequested(666)
           .build();
     }
   }
 
-  public static class DetectorImportResponseFactory {
+  public static class DetectorImportJobResponseFactory {
 
-    public static DetectorImportResponse createDefault() {
-      return DetectorImportResponse.builder()
+    public static DetectorImportJobResponse createDefault() {
+      return DetectorImportJobResponse.builder()
           .totalCountRequested(666)
           .totalCountImported(666)
           .build();

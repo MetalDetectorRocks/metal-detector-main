@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DetectorImportResponse {
+public class DetectorImportJobResponse {
 
   private int totalCountRequested;
   private int totalCountImported;
