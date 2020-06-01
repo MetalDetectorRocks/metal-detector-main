@@ -8,6 +8,7 @@ import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ButlerDtoFactory {
@@ -38,6 +39,8 @@ public class ButlerDtoFactory {
       return ButlerImportJobResponse.builder()
               .totalCountImported(666)
               .totalCountRequested(666)
+              .startTime(LocalDateTime.of(2020, 7, 1, 13, 37, 5))
+              .endTime(LocalDateTime.of(2020, 7, 1, 13, 39, 19))
               .build();
     }
   }

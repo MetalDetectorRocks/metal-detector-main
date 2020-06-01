@@ -64,5 +64,5 @@ discogs:
 metal-release-butler:
   host: http://localhost:8095
   unpaginated-releases-url: ${metal-release-butler.host}/rest/v1/releases/unpaginated
-  import-url: ${metal-release-butler.host}/rest/v1/releases
+  import-url: ${metal-release-butler.host}/rest/v1/releases/import
   access-token: ${BUTLER_ACCESS_TOKEN}

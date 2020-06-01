@@ -13,7 +13,6 @@ import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
-import rocks.metaldetector.web.api.response.DetectorImportJobResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -180,16 +179,6 @@ public class DtoFactory {
       return ImportJobResultDto.builder()
           .totalCountImported(666)
           .totalCountRequested(666)
-          .build();
-    }
-  }
-
-  public static class DetectorImportJobResponseFactory {
-
-    public static DetectorImportJobResponse createDefault() {
-      return DetectorImportJobResponse.builder()
-          .totalCountRequested(666)
-          .totalCountImported(666)
           .build();
     }
   }

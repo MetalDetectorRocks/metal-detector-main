@@ -1,5 +1,7 @@
 package rocks.metaldetector.testutil;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,5 +30,11 @@ public abstract class BaseWebMvcTestWithSecurity implements WithSecurityConfig {
 
   @MockBean
   protected UserService userService;
+
+  @SpyBean
+  protected ObjectMapper objectMapper;
+
+  @MockBean
+  protected ModelMapper mapper;
 
 }

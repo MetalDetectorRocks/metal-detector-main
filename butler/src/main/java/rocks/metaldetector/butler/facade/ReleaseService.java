@@ -10,5 +10,7 @@ public interface ReleaseService {
 
   List<ReleaseDto> findReleases(Iterable<String> artists, LocalDate dateFrom, LocalDate dateTo);
 
-  ImportJobResultDto createImportJob();
+  void createImportJob();
+
+  List<ImportJobResultDto> queryImportJobResults();
 }
