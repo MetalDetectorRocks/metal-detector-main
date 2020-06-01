@@ -1,16 +1,10 @@
 package rocks.metaldetector.web.controller.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UpdateUserRequestFactory;
@@ -24,15 +18,6 @@ import static rocks.metaldetector.config.constants.Endpoints.Rest.USERS;
 
 @WebMvcTest(controllers = UserRestController.class)
 class UserRestControllerIT extends BaseWebMvcTestWithSecurity {
-
-  @Autowired
-  MockMvc mockMvc;
-
-  @SpyBean
-  ObjectMapper objectMapper;
-
-  @MockBean
-  ModelMapper mapper;
 
   @Nested
   @DisplayName("Administrators should have access to all endpoints")

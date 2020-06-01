@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -37,7 +39,17 @@ public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
   }
 
   @Override
-  public ButlerImportJobResponse createImportJob() {
-    return new ButlerImportJobResponse(666, 666);
+  public void createImportJob() {
+    // do nothing
+  }
+
+  @Override
+  public List<ButlerImportJobResponse> queryImportJobResults() {
+    return List.of(
+            new ButlerImportJobResponse(650, 630, LocalDateTime.of(2020, 7, 28, 13, 37, 16), LocalDateTime.of(2020, 7, 28, 13, 39, 51)),
+            new ButlerImportJobResponse(640, 110, LocalDateTime.of(2020, 7, 21, 15, 1, 13), LocalDateTime.of(2020, 7, 21, 15, 4, 45)),
+            new ButlerImportJobResponse(645, 90, LocalDateTime.of(2020, 7, 14, 9, 16, 24), LocalDateTime.of(2020, 7, 14, 9, 19, 27)),
+            new ButlerImportJobResponse(684, 105, LocalDateTime.of(2020, 7, 7, 21, 14, 6), LocalDateTime.of(2020, 7, 7, 21, 19, 46))
+    );
   }
 }

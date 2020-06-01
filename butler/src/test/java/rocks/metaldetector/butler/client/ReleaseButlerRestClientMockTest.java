@@ -15,6 +15,7 @@ import rocks.metaldetector.butler.api.ButlerImportJobResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 
 import java.io.Reader;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -66,14 +67,19 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Should return mock import job response")
-  void should_return_mock_import_response() {
+  @DisplayName("Should do nothing on create import job")
+  void should_do_nothing_on_create_import_job() {
     // when
-    ButlerImportJobResponse response = underTest.createImportJob();
+    underTest.createImportJob();
+  }
+
+  @Test
+  @DisplayName("Should return mocked import job responses")
+  void should_return_mocked_import_job_responses() {
+    // when
+    List<ButlerImportJobResponse> responses = underTest.queryImportJobResults();
 
     // then
-    assertThat(response).isNotNull();
-    assertThat(response.getTotalCountImported()).isEqualTo(666);
-    assertThat(response.getTotalCountRequested()).isEqualTo(666);
+    assertThat(responses).hasSize(4);
   }
 }

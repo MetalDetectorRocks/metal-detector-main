@@ -7,12 +7,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @AllArgsConstructor
 @JsonPropertyOrder({
     "totalCountRequested",
-    "totalCountImported"
+    "totalCountImported",
+    "startTime",
+    "endTime"
 })
 @NoArgsConstructor
 public class ButlerImportJobResponse {
@@ -22,5 +26,11 @@ public class ButlerImportJobResponse {
 
   @JsonProperty("totalCountImported")
   private int totalCountImported;
+
+  @JsonProperty("startTime")
+  private LocalDateTime startTime;
+
+  @JsonProperty("endTime")
+  private LocalDateTime endTime;
 
 }

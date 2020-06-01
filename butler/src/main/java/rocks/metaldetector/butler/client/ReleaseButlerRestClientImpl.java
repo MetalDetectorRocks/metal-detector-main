@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,15 +17,13 @@ import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @Slf4j
 @Profile({"default", "preview", "prod"})
 @AllArgsConstructor
 public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
-
-  private static final String ACTION_PATH_PARAMETER = "?action={action}";
-  private static final String IMPORT_ACTION = "import";
 
   private final RestTemplate releaseButlerRestTemplate;
   private final ButlerConfig butlerConfig;
@@ -48,24 +45,34 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   }
 
   @Override
-  public ButlerImportJobResponse createImportJob() {
-    HttpEntity<Object> requestEntity = createImportHttpEntity();
-
-    ResponseEntity<ButlerImportJobResponse> responseEntity = releaseButlerRestTemplate.exchange(
-            butlerConfig.getImportUrl() + ACTION_PATH_PARAMETER,
-            HttpMethod.GET, requestEntity,
-            ButlerImportJobResponse.class,
-            IMPORT_ACTION
-    );
-
-    ButlerImportJobResponse response = responseEntity.getBody();
-
-    var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
-    if (shouldNotHappen) {
-      throw new ExternalServiceException("Could not import releases (Response code: " + responseEntity.getStatusCode() + ")");
+  public void createImportJob() {
+    ResponseEntity<Void> responseEntity = releaseButlerRestTemplate.postForEntity(butlerConfig.getImportUrl(), null, Void.class);
+    if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+      throw new ExternalServiceException("Could not create import job (Response code: " + responseEntity.getStatusCode() + ")");
     }
+  }
 
-    return response;
+  @Override
+  public List<ButlerImportJobResponse> queryImportJobResults() {
+//    HttpEntity<Object> requestEntity = createImportHttpEntity();
+//
+//    ResponseEntity<ButlerImportJobResponse> responseEntity = releaseButlerRestTemplate.exchange(
+//            butlerConfig.getImportUrl() + ACTION_PATH_PARAMETER,
+//            HttpMethod.GET, requestEntity,
+//            ButlerImportJobResponse.class,
+//            IMPORT_ACTION
+//    );
+//
+//    ButlerImportJobResponse response = responseEntity.getBody();
+//
+//    var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
+//    if (shouldNotHappen) {
+//      throw new ExternalServiceException("Could not import releases (Response code: " + responseEntity.getStatusCode() + ")");
+//    }
+//
+//    return response;
+
+    return Collections.emptyList();
   }
 
   private HttpEntity<ButlerReleasesRequest> createQueryHttpEntity(ButlerReleasesRequest request) {

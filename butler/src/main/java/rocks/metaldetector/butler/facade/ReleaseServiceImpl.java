@@ -14,6 +14,7 @@ import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -22,7 +23,7 @@ public class ReleaseServiceImpl implements ReleaseService {
   private final ReleaseButlerRestClient butlerClient;
   private final ButlerReleaseRequestTransformer queryRequestTransformer;
   private final ButlerReleaseResponseTransformer queryResponseTransformer;
-  private final ButlerImportJobResponseTransformer importResponseTransformer;
+  private final ButlerImportJobResponseTransformer importJobResponseTransformer;
 
   @Override
   public List<ReleaseDto> findReleases(Iterable<String> artists, LocalDate dateFrom, LocalDate dateTo) {
@@ -32,8 +33,13 @@ public class ReleaseServiceImpl implements ReleaseService {
   }
 
   @Override
-  public ImportJobResultDto createImportJob() {
-    ButlerImportJobResponse response = butlerClient.createImportJob();
-    return importResponseTransformer.transform(response);
+  public void createImportJob() {
+    butlerClient.createImportJob();
+  }
+
+  @Override
+  public List<ImportJobResultDto> queryImportJobResults() {
+    List<ButlerImportJobResponse> importJobResponses = butlerClient.queryImportJobResults();
+    return importJobResponses.stream().map(importJobResponseTransformer::transform).collect(Collectors.toList());
   }
 }

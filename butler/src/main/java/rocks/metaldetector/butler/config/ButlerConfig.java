@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:application.yml")
+@PropertySource(value = "classpath:application.yml")
 @ConfigurationProperties(prefix = "metal-release-butler")
 @Data
 public class ButlerConfig {
