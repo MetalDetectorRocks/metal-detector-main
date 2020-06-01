@@ -20,9 +20,9 @@ import rocks.metaldetector.testutil.DtoFactory.DetectorReleaseRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
-import rocks.metaldetector.web.api.response.DetectorImportResponse;
+import rocks.metaldetector.web.api.response.DetectorImportJobResponse;
 import rocks.metaldetector.web.api.response.DetectorReleasesResponse;
-import rocks.metaldetector.web.transformer.DetectorImportResponseTransformer;
+import rocks.metaldetector.web.transformer.DetectorImportJobResponseTransformer;
 import rocks.metaldetector.web.transformer.DetectorReleasesResponseTransformer;
 
 import java.time.LocalDate;
@@ -36,8 +36,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static rocks.metaldetector.testutil.DtoFactory.DetectorImportResponseFactory;
-import static rocks.metaldetector.testutil.DtoFactory.ImportResultDtoFactory;
+import static rocks.metaldetector.testutil.DtoFactory.DetectorImportJobResponseFactory;
+import static rocks.metaldetector.testutil.DtoFactory.ImportJobResultDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
 class ReleasesRestControllerTest implements WithAssertions {
@@ -49,7 +49,7 @@ class ReleasesRestControllerTest implements WithAssertions {
   private DetectorReleasesResponseTransformer releasesResponseTransformer;
 
   @Mock
-  private DetectorImportResponseTransformer importResponseTransformer;
+  private DetectorImportJobResponseTransformer importJobResponseTransformer;
 
   @InjectMocks
   private ReleasesRestController underTest;
@@ -63,7 +63,7 @@ class ReleasesRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(releasesService, releasesResponseTransformer, importResponseTransformer);
+    reset(releasesService, releasesResponseTransformer, importJobResponseTransformer);
   }
 
   @Nested
@@ -143,46 +143,46 @@ class ReleasesRestControllerTest implements WithAssertions {
   }
 
   @Nested
-  @DisplayName("Tests for endpoint '" + Endpoints.Rest.IMPORT_RELEASES + "'")
+  @DisplayName("Tests for endpoint '" + Endpoints.Rest.CREATE_IMPORT_JOB + "'")
   class GetTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.IMPORT_RELEASES);
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.CREATE_IMPORT_JOB);
     }
 
     @Test
-    @DisplayName("Should call release service on import")
+    @DisplayName("Should call release service on create import job")
     void should_call_release_service() {
       // when
       restAssuredUtils.doGet();
 
       // then
-      verify(releasesService, times(1)).importReleases();
+      verify(releasesService, times(1)).createImportJob();
     }
 
     @Test
-    @DisplayName("Should use transformer to transform import to a DetectorImportResponse")
+    @DisplayName("Should use transformer to transform ImportJobResultDto to a DetectorImportJobResponse")
     void should_use_import_transformer() {
       // given
-      var importResult = ImportResultDtoFactory.createDefault();
-      doReturn(importResult).when(releasesService).importReleases();
+      var importJobResult = ImportJobResultDtoFactory.createDefault();
+      doReturn(importJobResult).when(releasesService).createImportJob();
 
       // when
       restAssuredUtils.doGet();
 
       // then
-      verify(importResponseTransformer, times(1)).transform(importResult);
+      verify(importJobResponseTransformer, times(1)).transform(importJobResult);
     }
 
     @Test
-    @DisplayName("Should return the transformed import response")
+    @DisplayName("Should return the transformed import job response")
     void should_return_import_response() {
       // given
-      var transformedResponse = DetectorImportResponseFactory.createDefault();
-      doReturn(transformedResponse).when(importResponseTransformer).transform(any());
+      var transformedResponse = DetectorImportJobResponseFactory.createDefault();
+      doReturn(transformedResponse).when(importJobResponseTransformer).transform(any());
 
       // when
       var validatableResponse = restAssuredUtils.doGet();
@@ -192,7 +192,7 @@ class ReleasesRestControllerTest implements WithAssertions {
           .contentType(ContentType.JSON)
           .statusCode(HttpStatus.OK.value());
 
-      var result = validatableResponse.extract().as(DetectorImportResponse.class);
+      var result = validatableResponse.extract().as(DetectorImportJobResponse.class);
       assertThat(result).isEqualTo(transformedResponse);
     }
   }

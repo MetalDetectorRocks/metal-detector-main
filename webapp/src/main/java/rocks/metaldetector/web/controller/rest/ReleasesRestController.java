@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.butler.facade.ReleaseService;
-import rocks.metaldetector.butler.facade.dto.ImportResultDto;
+import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
-import rocks.metaldetector.web.api.response.DetectorImportResponse;
+import rocks.metaldetector.web.api.response.DetectorImportJobResponse;
 import rocks.metaldetector.web.api.response.DetectorReleasesResponse;
-import rocks.metaldetector.web.transformer.DetectorImportResponseTransformer;
+import rocks.metaldetector.web.transformer.DetectorImportJobResponseTransformer;
 import rocks.metaldetector.web.transformer.DetectorReleasesResponseTransformer;
 
 import javax.validation.Valid;
@@ -26,7 +26,7 @@ public class ReleasesRestController {
 
   private final ReleaseService releaseService;
   private final DetectorReleasesResponseTransformer releasesResponseTransformer;
-  private final DetectorImportResponseTransformer importResponseTransformer;
+  private final DetectorImportJobResponseTransformer importJobResponseTransformer;
 
   @PostMapping(path = Endpoints.Rest.QUERY_RELEASES,
                consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
@@ -37,11 +37,11 @@ public class ReleasesRestController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping(path = Endpoints.Rest.IMPORT_RELEASES,
+  @GetMapping(path = Endpoints.Rest.CREATE_IMPORT_JOB,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<DetectorImportResponse> importReleases() {
-    ImportResultDto importResult = releaseService.importReleases();
-    DetectorImportResponse response = importResponseTransformer.transform(importResult);
+  public ResponseEntity<DetectorImportJobResponse> createImportJob() {
+    ImportJobResultDto importResult = releaseService.createImportJob();
+    DetectorImportJobResponse response = importJobResponseTransformer.transform(importResult);
     return ResponseEntity.ok(response);
   }
 }
