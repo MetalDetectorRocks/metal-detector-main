@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
-import rocks.metaldetector.butler.api.ButlerImportResponse;
+import rocks.metaldetector.butler.api.ButlerImportJobResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 
@@ -37,7 +37,7 @@ public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
   }
 
   @Override
-  public ButlerImportResponse importReleases() {
-    return new ButlerImportResponse(666, 666);
+  public ButlerImportJobResponse createImportJob() {
+    return new ButlerImportJobResponse(666, 666);
   }
 }

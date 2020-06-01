@@ -11,14 +11,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleaseRequestFactory;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory;
 import rocks.metaldetector.butler.ButlerDtoFactory.ReleaseDtoFactory;
-import rocks.metaldetector.butler.api.ButlerImportResponse;
+import rocks.metaldetector.butler.api.ButlerImportJobResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.client.ReleaseButlerRestClient;
-import rocks.metaldetector.butler.client.transformer.ButlerImportResponseTransformer;
+import rocks.metaldetector.butler.client.transformer.ButlerImportJobResponseTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseRequestTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer;
-import rocks.metaldetector.butler.facade.dto.ImportResultDto;
+import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 
 import java.time.LocalDate;
@@ -30,8 +30,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportResponseFactory;
-import static rocks.metaldetector.butler.ButlerDtoFactory.ImportResultDtoFactory;
+import static rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportJobResponseFactory;
+import static rocks.metaldetector.butler.ButlerDtoFactory.ImportJobResultDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
 class ReleaseServiceImplTest implements WithAssertions {
@@ -46,7 +46,7 @@ class ReleaseServiceImplTest implements WithAssertions {
   private ButlerReleaseResponseTransformer releaseResponseTransformer;
 
   @Mock
-  private ButlerImportResponseTransformer importResponseTransformer;
+  private ButlerImportJobResponseTransformer importResponseTransformer;
 
   @InjectMocks
   private ReleaseServiceImpl underTest;
@@ -103,26 +103,26 @@ class ReleaseServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Import should call butler client")
+  @DisplayName("Creating an import job should call butler client")
   void import_should_call_butler_client() {
     // when
-    underTest.importReleases();
+    underTest.createImportJob();
 
     // then
-    verify(butlerClient, times(1)).importReleases();
+    verify(butlerClient, times(1)).createImportJob();
   }
 
   @Test
-  @DisplayName("Import should transform and return response from butler client")
+  @DisplayName("Creating an import job should transform and return response from butler client")
   void import_should_return_transformed_response() {
     // given
-    ButlerImportResponse response = ButlerImportResponseFactory.createDefault();
-    ImportResultDto expectedResult = ImportResultDtoFactory.createDefault();
-    when(butlerClient.importReleases()).thenReturn(response);
+    ButlerImportJobResponse response = ButlerImportJobResponseFactory.createDefault();
+    ImportJobResultDto expectedResult = ImportJobResultDtoFactory.createDefault();
+    when(butlerClient.createImportJob()).thenReturn(response);
     when(importResponseTransformer.transform(response)).thenReturn(expectedResult);
 
     // when
-    ImportResultDto importResult = underTest.importReleases();
+    ImportJobResultDto importResult = underTest.createImportJob();
 
     // then
     verify(importResponseTransformer, times(1)).transform(response);

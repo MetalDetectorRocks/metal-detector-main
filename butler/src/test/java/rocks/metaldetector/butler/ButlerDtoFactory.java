@@ -1,14 +1,13 @@
 package rocks.metaldetector.butler;
 
-import rocks.metaldetector.butler.api.ButlerImportResponse;
+import rocks.metaldetector.butler.api.ButlerImportJobResponse;
 import rocks.metaldetector.butler.api.ButlerRelease;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
-import rocks.metaldetector.butler.facade.dto.ImportResultDto;
+import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 
 public class ButlerDtoFactory {
@@ -31,26 +30,22 @@ public class ButlerDtoFactory {
               .releases(List.of(ButlerReleaseFactory.createDefault()))
               .build();
     }
-
-    public static ButlerReleasesResponse withEmptyResult() {
-      return ButlerReleasesResponse.builder().releases(Collections.emptyList()).build();
-    }
   }
 
-  public static class ButlerImportResponseFactory {
+  public static class ButlerImportJobResponseFactory {
 
-    public static ButlerImportResponse createDefault() {
-      return ButlerImportResponse.builder()
+    public static ButlerImportJobResponse createDefault() {
+      return ButlerImportJobResponse.builder()
               .totalCountImported(666)
               .totalCountRequested(666)
               .build();
     }
   }
 
-  public static class ImportResultDtoFactory {
+  public static class ImportJobResultDtoFactory {
 
-    public static ImportResultDto createDefault() {
-      return ImportResultDto.builder()
+    public static ImportJobResultDto createDefault() {
+      return ImportJobResultDto.builder()
               .totalCountRequested(666)
               .totalCountImported(666)
               .build();

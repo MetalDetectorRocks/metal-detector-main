@@ -19,9 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportResponseFactory;
+import rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportJobResponseFactory;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory;
-import rocks.metaldetector.butler.api.ButlerImportResponse;
+import rocks.metaldetector.butler.api.ButlerImportJobResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.config.ButlerConfig;
@@ -153,11 +153,11 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @DisplayName("A GET call is made")
   void test_get() {
     // given
-    ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+    ButlerImportJobResponse responseMock = ButlerImportJobResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
 
     // when
-    underTest.importReleases();
+    underTest.createImportJob();
 
     // then
     verify(restTemplate, times(1)).exchange(anyString(), eq(HttpMethod.GET), any(), any(Class.class), anyString());
@@ -169,27 +169,27 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     // given
     var butlerUrl = "import-url";
     doReturn(butlerUrl).when(butlerConfig).getImportUrl();
-    ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+    ButlerImportJobResponse responseMock = ButlerImportJobResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
     String actionPathParam = "?action={action}";
     String importAction = "import";
 
     // when
-    underTest.importReleases();
+    underTest.createImportJob();
 
     // then
-    verify(restTemplate, times(1)).exchange(eq(butlerUrl + actionPathParam), any(), any(), eq(ButlerImportResponse.class), eq(importAction));
+    verify(restTemplate, times(1)).exchange(eq(butlerUrl + actionPathParam), any(), any(), eq(ButlerImportJobResponse.class), eq(importAction));
   }
 
   @Test
   @DisplayName("The HttpEntity should contain the correct headers")
   void test_import_http_entity() {
     // given
-    ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+    ButlerImportJobResponse responseMock = ButlerImportJobResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
 
     // when
-    underTest.importReleases();
+    underTest.createImportJob();
 
     // then
     verify(restTemplate, times(1)).exchange(anyString(), any(), argumentCaptorImport.capture(), any(Class.class), anyString());
@@ -200,27 +200,27 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("The body of the import result is returned")
+  @DisplayName("The body of the import job result is returned")
   void get_import_valid_result() {
     // given
-    ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+    ButlerImportJobResponse responseMock = ButlerImportJobResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
 
     // when
-    ButlerImportResponse response = underTest.importReleases();
+    ButlerImportJobResponse response = underTest.createImportJob();
 
     // then
     assertThat(response).isEqualTo(responseMock);
   }
 
   @Test
-  @DisplayName("If the import response is null, an ExternalServiceException is thrown")
+  @DisplayName("If the import job response is null, an ExternalServiceException is thrown")
   void test_exception_if_import_response_is_null() {
     // given
     doReturn(ResponseEntity.ok(null)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
 
     // when
-    Throwable throwable = catchThrowable(() -> underTest.importReleases());
+    Throwable throwable = catchThrowable(() -> underTest.createImportJob());
 
     // then
     assertThat(throwable).isInstanceOf(ExternalServiceException.class);
@@ -228,14 +228,14 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
 
   @ParameterizedTest(name = "If the status is {0}, an ExternalServiceException is thrown")
   @MethodSource("httpStatusCodeProvider")
-  @DisplayName("If the status code is not OK on import, an ExternalServiceException is thrown")
+  @DisplayName("If the status code is not OK on import job, an ExternalServiceException is thrown")
   void test_import_exception_if_status_is_not_ok(HttpStatus httpStatus) {
     // given
-    ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+    ButlerImportJobResponse responseMock = ButlerImportJobResponseFactory.createDefault();
     doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
 
     // when
-    Throwable throwable = catchThrowable(() -> underTest.importReleases());
+    Throwable throwable = catchThrowable(() -> underTest.createImportJob());
 
     // then
     assertThat(throwable).isInstanceOf(ExternalServiceException.class);

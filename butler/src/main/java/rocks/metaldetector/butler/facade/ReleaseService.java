@@ -1,6 +1,6 @@
 package rocks.metaldetector.butler.facade;
 
-import rocks.metaldetector.butler.facade.dto.ImportResultDto;
+import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 
 import java.time.LocalDate;
@@ -10,5 +10,5 @@ public interface ReleaseService {
 
   List<ReleaseDto> findReleases(Iterable<String> artists, LocalDate dateFrom, LocalDate dateTo);
 
-  ImportResultDto importReleases();
+  ImportJobResultDto createImportJob();
 }
