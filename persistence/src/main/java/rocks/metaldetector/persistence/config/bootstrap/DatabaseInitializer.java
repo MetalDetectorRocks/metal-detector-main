@@ -14,7 +14,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Component
-@Profile("!default")
+@Profile({"preview", "prod"})
 @AllArgsConstructor
 public class DatabaseInitializer implements ApplicationRunner {
 

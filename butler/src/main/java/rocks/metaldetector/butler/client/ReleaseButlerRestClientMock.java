@@ -2,6 +2,7 @@ package rocks.metaldetector.butler.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -22,6 +23,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Service
 @Profile("mockmode")
 @AllArgsConstructor
+@Slf4j
 public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
 
   private final ResourceLoader resourceLoader;
@@ -40,7 +42,7 @@ public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
 
   @Override
   public void createImportJob() {
-    // do nothing
+    log.info("Import job successfully created!");
   }
 
   @Override

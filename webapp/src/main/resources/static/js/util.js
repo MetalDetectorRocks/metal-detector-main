@@ -7,6 +7,15 @@ function toggleLoader(id) {
 }
 
 /**
+ * Checks if the provided value is empty.
+ * @param value The value to check
+ * @returns {boolean} true if the value is empty, false otherwise
+ */
+function isEmpty(value) {
+  return typeof value === "undefined" || value.length === 0;
+}
+
+/**
  * Builds HTML for the message for an empty result
  */
 function createNoResultsMessage(text) {
