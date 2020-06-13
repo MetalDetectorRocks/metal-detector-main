@@ -53,9 +53,6 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @Captor
   private ArgumentCaptor<HttpEntity<ButlerReleasesRequest>> argumentCaptorReleases;
 
-  @Captor
-  private ArgumentCaptor<HttpEntity<ButlerReleasesRequest>> argumentCaptorImport;
-
   @AfterEach
   void tearDown() {
     reset(restTemplate, butlerConfig);
@@ -215,7 +212,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @DisplayName("Test of query import job results")
   @Nested
   class QueryImportJobResultsTest {
-    // ToDo DanielW: Tests
+    // ToDo: https://trello.com/c/sYz7KBZn
 //    @Test
 //    @DisplayName("A GET call is made")
 //    void test_get() {
