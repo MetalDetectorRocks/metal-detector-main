@@ -3,7 +3,6 @@ package rocks.metaldetector.persistence.config.bootstrap;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +16,6 @@ import javax.sql.DataSource;
 import java.util.List;
 
 @Component
-@Profile("default")
 @AllArgsConstructor
 public class DefaultDatabaseInitializer implements ApplicationRunner {
 
