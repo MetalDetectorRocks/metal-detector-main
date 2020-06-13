@@ -27,6 +27,7 @@
     <script th:src="@{/webjars/datatables/js/dataTables.bootstrap4.min.js}" src="#"></script>
     <link th:href="@{/webjars/datatables/css/dataTables.bootstrap4.min.css}" href="#" rel="stylesheet" type="text/css" />
     <script th:src="@{/js/admin/releases.js}" src="#"></script>
+    <script th:src="@{/js/admin/import.js}" src="#"></script>
     <script th:src="@{/js/util.js}" src="#"></script>
 </head>
 <body>
@@ -62,7 +63,7 @@
         <ul class="nav flex-column pt-2">
             <li class="nav-item h5">
                 <a href="#" th:href="@{/admin}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin'}? 'active' : ''" class="text-dark px-4 py-3">
-                    <i class="material-icons pr-2">house</i>Dashboard
+                    <i class="material-icons pr-2">dashboard</i>Dashboard
                 </a>
             </li>
             <li class="nav-item h5">
@@ -72,7 +73,7 @@
             </li>
             <li class="nav-item h5">
                 <a href="#" th:href="@{/admin/releases}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/releases'}? 'active' : ''" class="text-dark px-4 py-3 ">
-                    <i class="material-icons pr-2">horizontal_split</i>Releases
+                    <i class="material-icons pr-2">queue_music</i>Releases
                 </a>
             </li>
             <li class="nav-item h5">
@@ -102,6 +103,8 @@
 
     <!-- Footer -->
     <footer></footer>
+
+    <div id="toast-wrapper"></div>
 
     <script>
         $(document).ready( function() {

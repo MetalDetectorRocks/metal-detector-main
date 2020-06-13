@@ -47,7 +47,7 @@ services:
     networks:
       - butler-network
     ports:
-      - 8095:8095
+      - 8095:8080
     restart: always
 
 volumes:
