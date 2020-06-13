@@ -54,25 +54,18 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
 
   @Override
   public List<ButlerImportJobResponse> queryImportJobResults() {
-//    HttpEntity<Object> requestEntity = createImportHttpEntity();
-//
-//    ResponseEntity<ButlerImportJobResponse> responseEntity = releaseButlerRestTemplate.exchange(
-//            butlerConfig.getImportUrl() + ACTION_PATH_PARAMETER,
-//            HttpMethod.GET, requestEntity,
-//            ButlerImportJobResponse.class,
-//            IMPORT_ACTION
-//    );
-//
-//    ButlerImportJobResponse response = responseEntity.getBody();
-//
-//    var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
-//    if (shouldNotHappen) {
-//      throw new ExternalServiceException("Could not import releases (Response code: " + responseEntity.getStatusCode() + ")");
-//    }
-//
-//    return response;
+    ResponseEntity<ButlerImportJobResponse> responseEntity = releaseButlerRestTemplate.getForEntity(
+            butlerConfig.getImportUrl(),
+            ButlerImportJobResponse.class
+    );
 
-    return Collections.emptyList();
+    ButlerImportJobResponse response = responseEntity.getBody();
+    var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
+    if (shouldNotHappen) {
+      throw new ExternalServiceException("Could not fetch import job results (Response code: " + responseEntity.getStatusCode() + ")");
+    }
+
+    return Collections.emptyList(); // ToDo: https://trello.com/c/sYz7KBZn
   }
 
   private HttpEntity<ButlerReleasesRequest> createQueryHttpEntity(ButlerReleasesRequest request) {
@@ -81,12 +74,5 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
     return new HttpEntity<>(request, headers);
-  }
-
-  private HttpEntity<Object> createImportHttpEntity() {
-    HttpHeaders headers = new HttpHeaders();
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
-    return new HttpEntity<>(headers);
   }
 }

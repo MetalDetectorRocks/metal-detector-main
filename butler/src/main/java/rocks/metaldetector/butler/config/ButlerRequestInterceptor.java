@@ -11,10 +11,12 @@ import rocks.metaldetector.support.infrastructure.WithTokenRemover;
 import java.io.IOException;
 import java.util.List;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @Slf4j
 public class ButlerRequestInterceptor implements ClientHttpRequestInterceptor, WithTokenRemover {
 
-  private static final String TOKEN_PREFIX = "Bearer ";
+  static final String TOKEN_PREFIX = "Bearer ";
 
   private final ButlerConfig butlerConfig;
 
@@ -25,7 +27,7 @@ public class ButlerRequestInterceptor implements ClientHttpRequestInterceptor, W
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
     request.getHeaders().setAccept(List.of(MediaType.APPLICATION_JSON));
-    request.getHeaders().set(HEADER_NAME, TOKEN_PREFIX + butlerConfig.getAccessToken());
+    request.getHeaders().set(AUTHORIZATION, TOKEN_PREFIX + butlerConfig.getAccessToken());
 
     log.info("URI: {}", request.getURI());
     log.info("Headers: {}", removeTokenForLogging(request.getHeaders().toString()));
