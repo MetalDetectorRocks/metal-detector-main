@@ -10,7 +10,7 @@ import rocks.metaldetector.config.misc.MailConfig;
 
 @Service
 @Slf4j
-@Profile({"!preview", "!prod"})
+@Profile({"default", "mockmode"})
 @AllArgsConstructor
 public class ConsoleEmailService implements EmailService {
 
