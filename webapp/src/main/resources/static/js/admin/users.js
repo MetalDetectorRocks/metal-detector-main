@@ -39,6 +39,11 @@ function requestUsersFromServer() {
         "autoWidth": false, // fixes window resizing issue
         "columnDefs": [
             {
+                "targets": [0],
+                "visible": false
+            },
+            {
+                "targets": 3,
                 "render": function (data) {
                     if (data === 'Administrator') {
                         return '<span class="badge badge-danger">' + data + '</span>';
@@ -46,10 +51,10 @@ function requestUsersFromServer() {
                     else {
                         return '<span class="badge badge-info">' + data + '</span>';
                     }
-                },
-                "targets": 3
+                }
             },
             {
+                "targets": 4,
                 "render": function (data) {
                     if (data) {
                         return '<span class="badge badge-success">Enabled</span>';
@@ -57,12 +62,11 @@ function requestUsersFromServer() {
                     else {
                         return '<span class="badge badge-secondary">Disabled</span>';
                     }
-                },
-                "targets": 4
+                }
             },
             {
-                "targets": [0],
-                "visible": false
+                "targets": [5, 6],
+                "render": utcDateTimeToLocalDateTime
             }
         ]
     });
@@ -192,11 +196,11 @@ function showUpdateUserForm() {
     $('#updateStatus').val(data.enabled ? 'Enabled' : 'Disabled');
 
     // meta data
-    $('#updateLastLogin').val(data.lastLogin);
+    $('#updateLastLogin').val(utcDateTimeToLocalDateTime(data.lastLogin));
     $('#updateCreatedBy').val(data.createdBy);
-    $('#updateCreatedDateTime').val(data.createdDateTime);
+    $('#updateCreatedDateTime').val(utcDateTimeToLocalDateTime(data.createdDateTime));
     $('#updateLastModifiedBy').val(data.lastModifiedBy);
-    $('#updateLastModifiedDateTime').val(data.lastModifiedDateTime);
+    $('#updateLastModifiedDateTime').val(utcDateTimeToLocalDateTime(data.lastModifiedDateTime));
 }
 
 /**

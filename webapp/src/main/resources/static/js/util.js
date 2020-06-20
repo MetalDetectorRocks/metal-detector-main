@@ -16,6 +16,34 @@ function isEmpty(value) {
 }
 
 /**
+ * Formats a UTC DateTime according to the browser locale
+ * @param dateTimeInput the UTC DateTime to format
+ * @return {string} the formatted DateTime
+ */
+function utcDateTimeToLocalDateTime(dateTimeInput) {
+  if (dateTimeInput) {
+    const date = new Date(Date.parse(dateTimeInput));
+    return date.toLocaleString();
+  }
+
+  return "";
+}
+
+/**
+ * Formats a UTC Date according to the browser locale
+ * @param dateInput the UTC DateTime to format
+ * @return {string} the formatted Date
+ */
+function utcDateToLocalDate(dateInput) {
+  if (dateInput) {
+    const date = new Date(Date.parse(dateInput));
+    return date.toLocaleDateString();
+  }
+
+  return "";
+}
+
+/**
  * Builds HTML for the message for an empty result
  */
 function createNoResultsMessage(text) {
