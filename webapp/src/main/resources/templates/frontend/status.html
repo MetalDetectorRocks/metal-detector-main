@@ -1,23 +1,30 @@
 <!DOCTYPE html>
-<html th:replace="~{guest/fragments/layout :: layout (~{::body})}" lang="en"
+<html layout:decorate="~{frontend/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.w3.org/1999/xhtml"
-      xmlns:sec="http://www.w3.org/1999/xhtml">
-  <head th:include="guest/fragments/layout :: headerFragment">
-      <title id="pageTitle">Status | Metal Detector</title>
-  </head>
-  <body>
-    <p class="text-center text-white font-weight-bold">You are already logged in as <span sec:authentication="name">Username</span>.</p>
-    <div class="container text-center mt-5">
-      <a class="btn btn-dark auth-button font-weight-bold" id="logout-link" href="#" th:href="@{/logout}" style="width: 10rem;">Logout</a>
-      <span class="mx-3 font-weight-bold text-white">Or</span>
-      <a href="#" th:href="@{/profile}" class="btn btn-dark auth-button font-weight-bold" style="width: 10rem;">Account settings</a>
-    </div>
-    <form id="logout-form" method="POST" action="#" th:action="@{/logout}">
-    </form>
-    <script>
-        $(document).ready( function() {
-            registerLogoutListener();
-        });
-    </script>
-  </body>
+      xmlns:sec="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Status</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <p class="text-center text-white font-weight-bold">You are already logged in as <span sec:authentication="name">Username</span>.</p>
+        <div class="container text-center mt-5">
+            <a class="btn btn-dark auth-button font-weight-bold" id="logout-link" href="#" th:href="@{/logout}" style="width: 10rem;">Logout</a>
+            <span class="mx-3 font-weight-bold text-white">Or</span>
+            <a href="#" th:href="@{/profile}" class="btn btn-dark auth-button font-weight-bold" style="width: 10rem;">Account settings</a>
+        </div>
+        <form id="logout-form" method="POST" action="#" th:action="@{/logout}">
+        </form>
+
+        <script>
+            $(document).ready( function() {
+                registerLogoutListener();
+            });
+        </script>
+    </section>
+</body>
 </html>
+
+<!--ToDo DanielW: Other Layout -->
