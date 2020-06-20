@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html th:replace="~{guest/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-    <head th:include="admin/fragments/layout :: headerFragment">
-        <title id="pageTitle">Internal server error | Metal Detector</title>
-    </head>
-    <body>
+<html layout:decorate="~{guest/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Internal server error</title>
+</head>
+<body>
+    <section layout:fragment="content">
         <div class="container">
             <h1 class="display-4 text-white">Sorry</h1>
             <h2 class="text-white">This really should not happen. Our developers are on it. We swear it!</h2>
             <a href="#" th:href="@{/}">Home</a>
         </div>
-    </body>
+    </section>
+</body>
 </html>
