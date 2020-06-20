@@ -1,0 +1,13 @@
+{
+  "name": "metal-detector-frondend",
+  "version": "1.0.0",
+  "description": "Metal Detector Frontend",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "tsc"
+  },
+  "keywords": [
+  ],
+  "author": "Daniel Wagner",
+  "license": "ISC"
+}
