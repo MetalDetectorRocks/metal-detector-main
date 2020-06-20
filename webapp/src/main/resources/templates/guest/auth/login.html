@@ -17,7 +17,8 @@
         <span>Your account is disabled. Maybe your email address is not verified. Please check your email inbox.</span>
       </div>
       <div th:if="${param.blocked}" class="alert alert-danger" role="alert">
-          <span>Your ip is blocked for one day due to too many failed login requests.</span>
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <span>Your ip is blocked for one day due to too many failed login requests.</span>
       </div>
       <div th:if="${param.error}" class="alert alert-danger alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert">&times;</button>

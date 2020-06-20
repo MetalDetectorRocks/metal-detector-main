@@ -4,8 +4,8 @@
     <title>Update Release</title>
 </head>
 <body>
-<div th:fragment="dialog" class="modal-dialog" role="document">
-    <div class="modal-content modal-content-releases">
+<div th:fragment="dialog" class="modal-dialog large-modal-dialog-with" role="document">
+    <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">Update Release</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="update-release-form-close">
@@ -69,7 +69,7 @@
                             <!-- Status -->
                             <div class="form-group row">
                                 <label for="update-status" class="col-sm-4 col-form-label">Status</label>
-                                <div class="col-sm-8">
+                                <div class="col-sm-6">
                                     <select class="form-control" id="update-status">
                                         <option>Ok</option>
                                         <option>Not set</option>
@@ -126,10 +126,10 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-sm" id="update-release-button" data-dismiss="modal">Update</button>
-                <button type="button" class="btn btn-danger btn-sm" id="cancel-update-release-button" data-dismiss="modal">Cancel</button>
-            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn" id="update-release-button" data-dismiss="modal">Update</button>
+            <button type="button" class="btn btn-danger btn" id="cancel-update-release-button" data-dismiss="modal">Cancel</button>
         </div>
     </div>
 </div>
