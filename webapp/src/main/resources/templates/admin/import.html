@@ -1,13 +1,22 @@
 <!DOCTYPE html>
-<html th:replace="~{admin/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<head th:include="admin/fragments/layout :: headerFragment">
-    <title id="pageTitle">Import | Metal Detector</title>
+<html layout:decorate="~{admin/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Import</title>
+    <link th:href="@{/css/datatables.custom.css}" href="#" rel="stylesheet" />
+    <link th:href="@{/webjars/datatables/css/dataTables.bootstrap4.min.css}" href="#" rel="stylesheet" type="text/css" />
+    <script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}" src="#"></script>
+    <script th:src="@{/webjars/datatables/js/dataTables.bootstrap4.min.js}" src="#"></script>
+    <script th:src="@{/js/admin/import.js}" src="#"></script>
 </head>
 <body>
-    <h1 class="h2 text-dark">Import</h1>
-    <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="import-button" onclick="createImportReleasesJob()">Create Import Job</button>
-    <table id="import-job-table" class="table table-striped table-hover mt-3 clickable-table">
-        <thead>
+    <section layout:fragment="content">
+        <h1 class="h2 text-dark">Import</h1>
+        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="import-button" onclick="createImportReleasesJob()">Create Import Job</button>
+        <table id="import-job-table" class="table table-striped table-hover mt-3 clickable-table">
+            <thead>
             <tr>
                 <th scope="col">Start time</th>
                 <th scope="col">End time</th>
@@ -15,9 +24,10 @@
                 <th scope="col">Total count requested</th>
                 <th scope="col">Total count imported</th>
             </tr>
-        </thead>
-        <tbody id="import-job-data">
-        </tbody>
-    </table>
+            </thead>
+            <tbody id="import-job-data">
+            </tbody>
+        </table>
+    </section>
 </body>
 </html>

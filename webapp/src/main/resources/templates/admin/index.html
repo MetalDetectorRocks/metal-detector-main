@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html th:replace="~{admin/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<head th:include="admin/fragments/layout :: headerFragment">
-    <title id="pageTitle">Dashboard | Metal Detector</title>
+<html layout:decorate="~{admin/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en">
+<head>
+    <title>Dashboard</title>
 </head>
 <body>
-    <h1 class="h2 text-dark">Dashboard</h1>
+    <section layout:fragment="content">
+        <h1 class="h2 text-dark">Dashboard</h1>
+    </section>
 </body>
 </html>
