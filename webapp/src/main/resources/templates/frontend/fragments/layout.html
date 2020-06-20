@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html th:fragment="layout (template)" lang="en"
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.w3.org/1999/xhtml"
-      xmlns:sec="http://www.w3.org/1999/xhtml">
-<head th:fragment="headerFragment">
-  <title th:include=":: #pageTitle">Dynamic page title</title>
+      xmlns:sec="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+  <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">Metal Detector</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
@@ -25,14 +26,9 @@
   <script th:src="@{/webjars/jquery/jquery.min.js}" src="#"></script>
   <script th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
   <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
-  <script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}" src="#"></script>
-  <script th:src="@{/webjars/datatables/js/dataTables.bootstrap4.min.js}" src="#"></script>
   <script th:src="@{/js/common.js}" src="#"></script>
+  <!-- ToDo DanielW: Merge util.js with common.js -->
   <script th:src="@{/js/util.js}" src="#"></script>
-  <script th:src="@{/js/search.js}" src="#"></script>
-  <script th:src="@{/js/follow-artists.js}" src="#"></script>
-  <script th:src="@{/js/my-artists.js}" src="#"></script>
-  <script th:src="@{/js/pagination.js}" src="#"></script>
 
   <!-- Material Icons -->
   <link th:href="@{/webjars/material-icons/iconfont/material-icons.css}" href="/webjars/material-icons/0.3.1/iconfont/material-icons.css" rel="stylesheet">
@@ -85,10 +81,7 @@
     <main role="main">
       <div class="container mt-3 mb-3">
         <div class="content">
-          <th:block th:include="${template}" />
-          <button onclick="scrollToTop()" class="scroll-to-top" id="backToTopButton">
-            <span class="material-icons">keyboard_arrow_up</span>
-          </button>
+          <section layout:fragment="content"></section>
         </div>
       </div>
     </main>
@@ -107,6 +100,9 @@
       </div>
     </footer>
 
+    <button onclick="scrollToTop()" class="scroll-to-top" id="backToTopButton">
+      <span class="material-icons">keyboard_arrow_up</span>
+    </button>
     <div id="toast-wrapper"></div>
 
     <script>

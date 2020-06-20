@@ -24,6 +24,7 @@
         <rest-assured.version>4.3.0</rest-assured.version>
         <bootstrap.version>4.5.0</bootstrap.version>
         <datatables.version>1.10.20</datatables.version>
+        <thymeleaf-dialect.version>2.4.1</thymeleaf-dialect.version>
     </properties>
 
     <dependencies>
@@ -50,6 +51,11 @@
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+            <version>${thymeleaf-dialect.version}</version>
         </dependency>
 
         <!-- For unit test -->
