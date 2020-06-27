@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.ISpringTemplateEngine;
-import rocks.metaldetector.config.misc.MailConfig;
+import rocks.metaldetector.config.misc.MailProperties;
 
 import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
@@ -27,7 +27,7 @@ public class JavaMailEmailService implements EmailService {
 
   private final JavaMailSender emailSender;
   private final ISpringTemplateEngine templateEngine;
-  private final MailConfig mailConfig;
+  private final MailProperties mailProperties;
   private Executor executor;
 
   @PostConstruct
@@ -56,7 +56,7 @@ public class JavaMailEmailService implements EmailService {
   private MimeMessage createMimeMessage(AbstractEmail email) {
     MimeMessage mimeMessage = emailSender.createMimeMessage();
     Context context = new Context();
-    context.setVariables(email.getEnhancedViewModel(mailConfig.getApplicationHostUrl()));
+    context.setVariables(email.getEnhancedViewModel(mailProperties.getApplicationHostUrl()));
     String html = templateEngine.process(email.getTemplateName(), context);
 
     try {
@@ -64,8 +64,8 @@ public class JavaMailEmailService implements EmailService {
       helper.setTo(email.getRecipient());
       helper.setText(html, true);
       helper.setSubject(email.getSubject());
-      helper.setFrom(mailConfig.getFromEmail());
-      helper.setReplyTo(mailConfig.getFromEmail());
+      helper.setFrom(mailProperties.getFromEmail());
+      helper.setReplyTo(mailProperties.getFromEmail());
     }
     catch (MessagingException me) {
       log.error("Unable to create email", me);

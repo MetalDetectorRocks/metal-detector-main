@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
-import rocks.metaldetector.config.misc.MailConfig;
+import rocks.metaldetector.config.misc.MailProperties;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,20 +33,20 @@ class ConsoleEmailServiceTest implements WithAssertions {
   private SpringTemplateEngine templateEngine;
 
   @Mock
-  private MailConfig mailConfig;
+  private MailProperties mailProperties;
 
   @InjectMocks
   private ConsoleEmailService emailService;
 
   @BeforeEach
   void setUp() {
-    when(mailConfig.getFromEmail()).thenReturn("from@example.de");
+    when(mailProperties.getFromEmail()).thenReturn("from@example.de");
     when(templateEngine.process(anyString(), any(Context.class))).thenReturn("<h1>Test</h1>");
   }
 
   @AfterEach
   void tearDown() {
-    reset(templateEngine, mailConfig);
+    reset(templateEngine, mailProperties);
   }
 
   @Test
@@ -78,6 +78,6 @@ class ConsoleEmailServiceTest implements WithAssertions {
     emailService.sendEmail(email);
 
     // then
-    verify(mailConfig, times(1)).getFromEmail();
+    verify(mailProperties, times(1)).getFromEmail();
   }
 }
