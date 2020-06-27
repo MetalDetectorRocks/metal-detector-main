@@ -1,4 +1,4 @@
-package rocks.metaldetector.butler.config;
+package rocks.metaldetector.config.misc;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -7,13 +7,10 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource(value = "classpath:application.yml")
-@ConfigurationProperties(prefix = "metal-release-butler")
+@ConfigurationProperties(prefix = "application")
 @Data
-public class ButlerConfig {
+public class ApplicationProperties {
 
   private String host;
-  private String accessToken;
-  private String unpaginatedReleasesUrl;
-  private String importUrl;
 
 }

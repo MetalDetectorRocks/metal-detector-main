@@ -1,7 +1,6 @@
 package rocks.metaldetector.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +24,7 @@ import rocks.metaldetector.security.handler.CustomAuthenticationFailureHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
 import rocks.metaldetector.security.handler.CustomLogoutSuccessHandler;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.support.SecurityProperties;
 
 import javax.sql.DataSource;
 import java.time.Duration;
@@ -37,21 +37,13 @@ import java.time.Duration;
         matchIfMissing = true
 )
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-  @Value("${security.remember-me-secret}")
-  private String REMEMBER_ME_SECRET;
 
   private final UserService userService;
   private final DataSource dataSource;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-  @Autowired
-  public SecurityConfig(UserService userService, DataSource dataSource, BCryptPasswordEncoder bCryptPasswordEncoder) {
-    this.userService = userService;
-    this.dataSource = dataSource;
-    this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-  }
+  private final SecurityProperties securityProperties;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -76,7 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .tokenValiditySeconds((int) Duration.ofDays(14).toSeconds())
         .tokenRepository(jdbcTokenRepository())
         .userDetailsService(userService)
-        .key(REMEMBER_ME_SECRET)
+        .key(securityProperties.getRememberMeSecret())
       .and()
       .logout()
         .logoutUrl(Endpoints.Guest.LOGOUT).permitAll()
@@ -103,5 +95,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     jdbcTokenRepository.setDataSource(dataSource);
     return jdbcTokenRepository;
   }
-
 }
