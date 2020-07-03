@@ -1,19 +1,27 @@
 <!DOCTYPE html>
-<html th:replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<head th:include="frontend/fragments/layout :: headerFragment">
-    <title id="pageTitle">Search | Metal Detector</title>
+<html layout:decorate="~{frontend/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Search</title>
+    <script th:src="@{/js/search.js}" src="#"></script>
+    <script th:src="@{/js/follow-artists.js}" src="#"></script>
+    <script th:src="@{/js/pagination.js}" src="#"></script>
 </head>
 <body>
-    <div id="loading-indicator"></div>
-    <div id="search-result-headline"></div>
-    <div id="top-result-container"></div>
-    <div id="other-results-container"></div>
-    <div id="no-results-container"></div>
+    <section layout:fragment="content">
+        <div id="loading-indicator"></div>
+        <div id="search-result-headline"></div>
+        <div id="top-result-container"></div>
+        <div id="other-results-container"></div>
+        <div id="no-results-container"></div>
 
-    <script th:inline="javascript">
-        $(document).ready(function () {
-            search();
-        })
-    </script>
+        <script th:inline="javascript">
+            $(document).ready(function () {
+                search();
+            })
+        </script>
+    </section>
 </body>
 </html>

@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html th:fragment="layout (template)" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-  <head th:fragment="headerFragment">
-    <title th:include=":: #pageTitle">Dynamic page title</title>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">Metal Detector</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
@@ -15,19 +17,17 @@
     <script th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
     <script th:src="@{/js/common.js}" src="#"></script>
-  </head>
-  <body>
-
+</head>
+<body>
     <main role="main">
-      <div class="container">
-        <div class="container text-center mt-5">
-          <a href="#" th:href="@{/}"><img alt="Logo" th:src="@{/images/logo.png}" src="#" class="img-fluid mb-5" /></a>
+        <div class="container">
+            <div class="container text-center mt-5">
+                <a href="#" th:href="@{/}"><img alt="Logo" th:src="@{/images/logo.png}" src="#" class="img-fluid mb-5" /></a>
+            </div>
+            <section layout:fragment="content"></section>
         </div>
-        <th:block th:include="${template}" />
-      </div>
     </main>
-
     <footer id="footer">
     </footer>
-  </body>
+</body>
 </html>

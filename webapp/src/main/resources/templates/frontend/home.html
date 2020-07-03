@@ -1,262 +1,267 @@
 <!DOCTYPE html>
-<html th:replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
-      xmlns:sec="http://www.w3.org/1999/xhtml">
-<head th:include="frontend/fragments/layout :: headerFragment">
-    <title id="pageTitle">Home | Metal Detector</title>
+<html layout:decorate="~{frontend/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Home</title>
 </head>
 <body>
-    <h1 class="h4">Hell Yeah, <span sec:authentication="name">Username</span>!</h1>
+    <section layout:fragment="content">
+        <h1 class="h4">Hell Yeah, <span sec:authentication="name">Username</span>!</h1>
 
-    <h2 class="h5 mt-4 mb-2">Upcoming albums</h2>
-    <div class="row">
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/drowning-the-light_from-the-abyss.jpg}" src="#" alt="Drowning The Light - From The Abyss">
-                <div class="card-body">
-                    <p class="h5 card-title">Drowning The Light</p>
-                    <p class="h6 card-subtitle">From The Abyss</p>
+        <h2 class="h5 mt-4 mb-2">Upcoming albums</h2>
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/drowning-the-light_from-the-abyss.jpg}" src="#" alt="Drowning The Light - From The Abyss">
+                    <div class="card-body">
+                        <p class="h5 card-title">Drowning The Light</p>
+                        <p class="h6 card-subtitle">From The Abyss</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        in 6 days
+                    </div>
                 </div>
-                <div class="card-footer text-muted">
-                    in 6 days
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/xiv-dark-centuries_waldvolk.jpg}" src="#" alt="XIV Dark Centuries - Waldvolk">
+                    <div class="card-body">
+                        <p class="h5 card-title">XIV Dark Centuries</p>
+                        <p class="h6 card-subtitle">Waldvolk</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        in 11 days
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/darkthrone_transilvanian-hunger.jpg}" src="#" alt="Darkthrone - Transilvanian Hunger">
+                    <div class="card-body">
+                        <p class="h5 card-title">Darkthrone</p>
+                        <p class="h6 card-subtitle">Transilvanian Hunger</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        in 21 days
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/karg_traktat.jpg}" src="#" alt="Karg - Traktat">
+                    <div class="card-body">
+                        <p class="h5 card-title">Karg</p>
+                        <p class="h6 card-subtitle">Traktat</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        in 57 days
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/xiv-dark-centuries_waldvolk.jpg}" src="#" alt="XIV Dark Centuries - Waldvolk">
-                <div class="card-body">
-                    <p class="h5 card-title">XIV Dark Centuries</p>
-                    <p class="h6 card-subtitle">Waldvolk</p>
-                </div>
-                <div class="card-footer text-muted">
-                    in 11 days
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/darkthrone_transilvanian-hunger.jpg}" src="#" alt="Darkthrone - Transilvanian Hunger">
-                <div class="card-body">
-                    <p class="h5 card-title">Darkthrone</p>
-                    <p class="h6 card-subtitle">Transilvanian Hunger</p>
-                </div>
-                <div class="card-footer text-muted">
-                    in 21 days
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/karg_traktat.jpg}" src="#" alt="Karg - Traktat">
-                <div class="card-body">
-                    <p class="h5 card-title">Karg</p>
-                    <p class="h6 card-subtitle">Traktat</p>
-                </div>
-                <div class="card-footer text-muted">
-                    in 57 days
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <h2 class="h5 mt-4 mb-2">Recently released albums</h2>
-    <div class="row">
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/thormesis_freier-wille-freier-geist.jpg}" src="#" alt="Thormesis - Freier Wille, Freier Geist">
-                <div class="card-body">
-                    <p class="h5 card-title">Thormesis</p>
-                    <p class="h6 card-subtitle">Freier Wille, Freier Geist</p>
+        <h2 class="h5 mt-4 mb-2">Recently released albums</h2>
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/thormesis_freier-wille-freier-geist.jpg}" src="#" alt="Thormesis - Freier Wille, Freier Geist">
+                    <div class="card-body">
+                        <p class="h5 card-title">Thormesis</p>
+                        <p class="h6 card-subtitle">Freier Wille, Freier Geist</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        2 days ago
+                    </div>
                 </div>
-                <div class="card-footer text-muted">
-                    2 days ago
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/immortal_sons-of_northern_darkness.jpg}" src="#" alt="Immortal - Sons of Northern Darkness">
+                    <div class="card-body">
+                        <p class="h5 card-title">Immortal</p>
+                        <p class="h6 card-subtitle">Sons of Northern Darkness</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        13 days ago
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/behexen_rituale-satanum.jpg}" src="#" alt="Behexen - Freier Wille, Freier Geist">
+                    <div class="card-body">
+                        <p class="h5 card-title">Behexen</p>
+                        <p class="h6 card-subtitle">Rituale Satanum</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        25 days ago
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/mgla_age-of-excuse.jpg}" src="#" alt="Mgła - Age of Excuse">
+                    <div class="card-body">
+                        <p class="h5 card-title">Mgła</p>
+                        <p class="h6 card-subtitle">Age of Excuse</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        31 days ago
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/immortal_sons-of_northern_darkness.jpg}" src="#" alt="Immortal - Sons of Northern Darkness">
-                <div class="card-body">
-                    <p class="h5 card-title">Immortal</p>
-                    <p class="h6 card-subtitle">Sons of Northern Darkness</p>
-                </div>
-                <div class="card-footer text-muted">
-                    13 days ago
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/behexen_rituale-satanum.jpg}" src="#" alt="Behexen - Freier Wille, Freier Geist">
-                <div class="card-body">
-                    <p class="h5 card-title">Behexen</p>
-                    <p class="h6 card-subtitle">Rituale Satanum</p>
-                </div>
-                <div class="card-footer text-muted">
-                    25 days ago
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/mgla_age-of-excuse.jpg}" src="#" alt="Mgła - Age of Excuse">
-                <div class="card-body">
-                    <p class="h5 card-title">Mgła</p>
-                    <p class="h6 card-subtitle">Age of Excuse</p>
-                </div>
-                <div class="card-footer text-muted">
-                    31 days ago
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <h2 class="h5 mt-4 mb-2">Recently followed artists</h2>
-    <div class="row">
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/harakiri-for-the-sky.jpg}" src="#" alt="Harakiri For The Sky">
-                <div class="card-body">
-                    <p class="h5 card-title">Harakiri For The Sky</p>
+        <h2 class="h5 mt-4 mb-2">Recently followed artists</h2>
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/harakiri-for-the-sky.jpg}" src="#" alt="Harakiri For The Sky">
+                    <div class="card-body">
+                        <p class="h5 card-title">Harakiri For The Sky</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        4 days ago
+                    </div>
                 </div>
-                <div class="card-footer text-muted">
-                    4 days ago
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/marduk.jpg}" src="#" alt="Marduk">
+                    <div class="card-body">
+                        <p class="h5 card-title">Marduk</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        14 days ago
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/abbath.jpg}" src="#" alt="Abbath">
+                    <div class="card-body">
+                        <p class="h5 card-title">Abbath</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        29 days ago
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/alcest.jpg}" src="#" alt="Alcest">
+                    <div class="card-body">
+                        <p class="h5 card-title">Alcest</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        41 days ago
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/marduk.jpg}" src="#" alt="Marduk">
-                <div class="card-body">
-                    <p class="h5 card-title">Marduk</p>
-                </div>
-                <div class="card-footer text-muted">
-                    14 days ago
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/abbath.jpg}" src="#" alt="Abbath">
-                <div class="card-body">
-                    <p class="h5 card-title">Abbath</p>
-                </div>
-                <div class="card-footer text-muted">
-                    29 days ago
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/alcest.jpg}" src="#" alt="Alcest">
-                <div class="card-body">
-                    <p class="h5 card-title">Alcest</p>
-                </div>
-                <div class="card-footer text-muted">
-                    41 days ago
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <h2 class="h5 mt-4 mb-2">Most expected albums of the community</h2>
-    <div class="row">
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/drowning-the-light_from-the-abyss.jpg}" src="#" alt="Drowning The Light - From The Abyss">
-                <div class="card-body">
-                    <p class="h5 card-title">Drowning The Light</p>
-                    <p class="h6 card-subtitle">From The Abyss</p>
+        <h2 class="h5 mt-4 mb-2">Most expected albums of the community</h2>
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/drowning-the-light_from-the-abyss.jpg}" src="#" alt="Drowning The Light - From The Abyss">
+                    <div class="card-body">
+                        <p class="h5 card-title">Drowning The Light</p>
+                        <p class="h6 card-subtitle">From The Abyss</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        in 6 days
+                    </div>
                 </div>
-                <div class="card-footer text-muted">
-                    in 6 days
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/xiv-dark-centuries_waldvolk.jpg}" src="#" alt="XIV Dark Centuries - Waldvolk">
+                    <div class="card-body">
+                        <p class="h5 card-title">XIV Dark Centuries</p>
+                        <p class="h6 card-subtitle">Waldvolk</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        in 11 days
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/darkthrone_transilvanian-hunger.jpg}" src="#" alt="Darkthrone - Transilvanian Hunger">
+                    <div class="card-body">
+                        <p class="h5 card-title">Darkthrone</p>
+                        <p class="h6 card-subtitle">Transilvanian Hunger</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        in 21 days
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/karg_traktat.jpg}" src="#" alt="Karg - Traktat">
+                    <div class="card-body">
+                        <p class="h5 card-title">Karg</p>
+                        <p class="h6 card-subtitle">Traktat</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        in 57 days
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/xiv-dark-centuries_waldvolk.jpg}" src="#" alt="XIV Dark Centuries - Waldvolk">
-                <div class="card-body">
-                    <p class="h5 card-title">XIV Dark Centuries</p>
-                    <p class="h6 card-subtitle">Waldvolk</p>
-                </div>
-                <div class="card-footer text-muted">
-                    in 11 days
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/darkthrone_transilvanian-hunger.jpg}" src="#" alt="Darkthrone - Transilvanian Hunger">
-                <div class="card-body">
-                    <p class="h5 card-title">Darkthrone</p>
-                    <p class="h6 card-subtitle">Transilvanian Hunger</p>
-                </div>
-                <div class="card-footer text-muted">
-                    in 21 days
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/karg_traktat.jpg}" src="#" alt="Karg - Traktat">
-                <div class="card-body">
-                    <p class="h5 card-title">Karg</p>
-                    <p class="h6 card-subtitle">Traktat</p>
-                </div>
-                <div class="card-footer text-muted">
-                    in 57 days
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <h2 class="h5 mt-4 mb-2">Favourite artists of the community</h2>
-    <div class="row">
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/harakiri-for-the-sky.jpg}" src="#" alt="Harakiri For The Sky">
-                <div class="card-body">
-                    <p class="h5 card-title">Harakiri For The Sky</p>
+        <h2 class="h5 mt-4 mb-2">Favourite artists of the community</h2>
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/harakiri-for-the-sky.jpg}" src="#" alt="Harakiri For The Sky">
+                    <div class="card-body">
+                        <p class="h5 card-title">Harakiri For The Sky</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        4 days ago
+                    </div>
                 </div>
-                <div class="card-footer text-muted">
-                    4 days ago
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/marduk.jpg}" src="#" alt="Marduk">
+                    <div class="card-body">
+                        <p class="h5 card-title">Marduk</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        14 days ago
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/abbath.jpg}" src="#" alt="Abbath">
+                    <div class="card-body">
+                        <p class="h5 card-title">Abbath</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        29 days ago
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="homepage-card-img" th:src="@{/images/dummy/alcest.jpg}" src="#" alt="Alcest">
+                    <div class="card-body">
+                        <p class="h5 card-title">Alcest</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        41 days ago
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/marduk.jpg}" src="#" alt="Marduk">
-                <div class="card-body">
-                    <p class="h5 card-title">Marduk</p>
-                </div>
-                <div class="card-footer text-muted">
-                    14 days ago
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/abbath.jpg}" src="#" alt="Abbath">
-                <div class="card-body">
-                    <p class="h5 card-title">Abbath</p>
-                </div>
-                <div class="card-footer text-muted">
-                    29 days ago
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card mb-3">
-                <img class="homepage-card-img" th:src="@{/images/dummy/alcest.jpg}" src="#" alt="Alcest">
-                <div class="card-body">
-                    <p class="h5 card-title">Alcest</p>
-                </div>
-                <div class="card-footer text-muted">
-                    41 days ago
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 </body>
 </html>

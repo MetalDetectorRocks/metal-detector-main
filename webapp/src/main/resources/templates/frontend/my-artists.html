@@ -1,16 +1,22 @@
 <!DOCTYPE html>
-<html th:replace="~{frontend/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-  <head th:include="frontend/fragments/layout :: headerFragment">
-      <title id="pageTitle">My artists | Metal Detector</title>
-  </head>
-  <body>
-  <h1 class="h4">My Artists</h1>
-  <div id="myArtistsContainer" class="mb-3"></div>
-  <div id="noResultsMessageContainer"></div>
-  <script th:inline="javascript">
-    $(document).ready(function () {
-      showMyArtists()
-    })
-  </script>
-  </body>
+<html layout:decorate="~{frontend/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>My Artists</title>
+    <script th:src="@{/js/my-artists.js}" src="#"></script>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1 class="h4">My Artists</h1>
+        <div id="myArtistsContainer" class="mb-3"></div>
+        <div id="noResultsMessageContainer"></div>
+        <script th:inline="javascript">
+            $(document).ready(function () {
+                showMyArtists()
+            })
+        </script>
+    </section>
+</body>
 </html>

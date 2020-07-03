@@ -1,62 +1,62 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>Create User</title>
-    </head>
-    <body>
-        <div th:fragment="dialog" class="modal-dialog default-modal-dialog-width" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Create new Administrator</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="create-admin-user-form-close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+<head>
+    <title>Create User</title>
+</head>
+<body>
+    <div th:fragment="dialog" class="modal-dialog default-modal-dialog-width" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create new Administrator</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="create-admin-user-form-close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="create-admin-user-validation-area" class="small" role="alert">
                 </div>
-                <div class="modal-body">
-                    <div id="create-admin-user-validation-area" class="small" role="alert">
-                    </div>
-                    <form method="post" action="#" id="create-admin-user-form">
-                        <fieldset>
-                            <!-- Username-->
-                            <div class="form-group row">
-                                <label for="username" class="col-sm-4 col-form-label">Username</label>
-                                <div class="col-sm-8">
-                                    <input type="text" id="username" class="form-control" autocomplete="username" required autofocus />
-                                </div>
+                <form method="post" action="#" id="create-admin-user-form">
+                    <fieldset>
+                        <!-- Username-->
+                        <div class="form-group row">
+                            <label for="username" class="col-sm-4 col-form-label">Username</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="username" class="form-control" autocomplete="username" required autofocus />
                             </div>
+                        </div>
 
-                            <!-- Email -->
-                            <div class="form-group row">
-                                <label for="email" class="col-sm-4 col-form-label">Email</label>
-                                <div class="col-sm-8">
-                                    <input type="email" id="email" class="form-control" required />
-                                </div>
+                        <!-- Email -->
+                        <div class="form-group row">
+                            <label for="email" class="col-sm-4 col-form-label">Email</label>
+                            <div class="col-sm-8">
+                                <input type="email" id="email" class="form-control" required />
                             </div>
+                        </div>
 
-                            <!-- Password -->
-                            <div class="form-group row">
-                                <label for="plainPassword" class="col-sm-4 col-form-label">Password</label>
-                                <div class="col-sm-8">
-                                    <input type="password" id="plainPassword" class="form-control" autocomplete="new-password" required />
-                                    <small id="emailHelp" class="form-text text-muted">Make sure the password has at least 8 characters.</small>
-                                </div>
+                        <!-- Password -->
+                        <div class="form-group row">
+                            <label for="plainPassword" class="col-sm-4 col-form-label">Password</label>
+                            <div class="col-sm-8">
+                                <input type="password" id="plainPassword" class="form-control" autocomplete="new-password" required />
+                                <small id="emailHelp" class="form-text text-muted">Make sure the password has at least 8 characters.</small>
                             </div>
+                        </div>
 
-                            <!-- Verify Password -->
-                            <div class="form-group row">
-                                <label for="verifyPlainPassword" class="col-sm-4 col-form-label">Verify Password</label>
-                                <div class="col-sm-8">
-                                    <input type="password" id="verifyPlainPassword" class="form-control" autocomplete="new-password" required />
-                                </div>
+                        <!-- Verify Password -->
+                        <div class="form-group row">
+                            <label for="verifyPlainPassword" class="col-sm-4 col-form-label">Verify Password</label>
+                            <div class="col-sm-8">
+                                <input type="password" id="verifyPlainPassword" class="form-control" autocomplete="new-password" required />
                             </div>
-                        </fieldset>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary btn" id="create-user-button">Create</button>
-                    <button type="button" class="btn btn-danger btn" id="cancel-create-user-button" data-dismiss="modal">Cancel</button>
-                </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn" id="create-user-button">Create</button>
+                <button type="button" class="btn btn-danger btn" id="cancel-create-user-button" data-dismiss="modal">Cancel</button>
             </div>
         </div>
-    </body>
+    </div>
+</body>
 </html>

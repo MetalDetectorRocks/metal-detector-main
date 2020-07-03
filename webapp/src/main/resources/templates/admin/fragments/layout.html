@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html th:fragment="layout (template)" lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
-<head th:fragment="headerFragment">
-    <title th:include=":: #pageTitle">Dynamic page title</title>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">Metal Detector</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
@@ -16,19 +19,10 @@
     <script th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
     <script th:src="@{/js/common.js}" src="#"></script>
+    <script th:src="@{/js/util.js}" src="#"></script>
 
     <!-- Material Icons -->
     <link th:href="@{/webjars/material-icons/iconfont/material-icons.css}" href="/webjars/material-icons/0.3.1/iconfont/material-icons.css" rel="stylesheet">
-
-    <!-- ToDo: Include JavaScript and CSS files only on the pages where they are actually needed (https://trello.com/c/OS3QBFFS) -->
-    <script th:src="@{/js/admin/users.js}" src="#"></script>
-    <link th:href="@{/css/datatables.custom.css}" href="#" rel="stylesheet" />
-    <script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}" src="#"></script>
-    <script th:src="@{/webjars/datatables/js/dataTables.bootstrap4.min.js}" src="#"></script>
-    <link th:href="@{/webjars/datatables/css/dataTables.bootstrap4.min.css}" href="#" rel="stylesheet" type="text/css" />
-    <script th:src="@{/js/admin/releases.js}" src="#"></script>
-    <script th:src="@{/js/admin/import.js}" src="#"></script>
-    <script th:src="@{/js/util.js}" src="#"></script>
 </head>
 <body>
     <!-- Top Navbar-->
@@ -97,7 +91,7 @@
     <!-- Main content -->
     <main role="main" class="px-3 py-3">
         <div class="content">
-            <th:block th:include="${template}" />
+            <section layout:fragment="content"></section>
         </div>
     </main>
 
