@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.support.SecurityProperties;
 
 import javax.sql.DataSource;
 
@@ -36,5 +37,8 @@ public abstract class BaseWebMvcTestWithSecurity implements WithSecurityConfig {
 
   @MockBean
   protected ModelMapper mapper;
+
+  @MockBean
+  SecurityProperties securityProperties;
 
 }

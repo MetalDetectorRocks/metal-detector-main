@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html th:replace="~{guest/fragments/layout :: layout (~{::body})}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-  <head th:include="guest/fragments/layout :: headerFragment">
-      <title id="pageTitle">Metal Detector</title>
-  </head>
-  <body>
-    <div class="container text-center mt-5">
-      <a href="#" th:href="@{/register}" class="btn btn-secondary btn-lg font-weight-bold home-button">Join now</a>
-      <span class="mx-4 font-weight-bold text-white">Or</span>
-      <a href="#" th:href="@{/login}" class="btn btn-secondary btn-lg font-weight-bold home-button">Login</a>
-    </div>
-  </body>
+<html layout:decorate="~{guest/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Welcome</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <div class="container text-center mt-5">
+            <a href="#" th:href="@{/register}" class="btn btn-secondary btn-lg font-weight-bold home-button">Join now</a>
+            <span class="mx-4 font-weight-bold text-white">Or</span>
+            <a href="#" th:href="@{/login}" class="btn btn-secondary btn-lg font-weight-bold home-button">Login</a>
+        </div>
+    </section>
+</body>
 </html>
