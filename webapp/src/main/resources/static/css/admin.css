@@ -57,11 +57,11 @@ div.content {
   }
 }
 
-.default-modal-dialog-with {
+.default-modal-dialog-width {
   max-width: 35rem;
 }
 
-.large-modal-dialog-with {
+.large-modal-dialog-width {
   max-width: 40rem;
 }
 
