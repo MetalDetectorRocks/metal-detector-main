@@ -14,7 +14,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.ISpringTemplateEngine;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.config.misc.MailConfig;
+import rocks.metaldetector.config.misc.MailProperties;
 import rocks.metaldetector.testutil.CurrentThreadExecutor;
 
 import javax.mail.internet.MimeMessage;
@@ -37,7 +37,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
   private ISpringTemplateEngine templateEngine;
 
   @Mock
-  private MailConfig mailConfig;
+  private MailProperties mailProperties;
 
   @InjectMocks
   private JavaMailEmailService emailService;
@@ -48,8 +48,8 @@ class JavaMailEmailServiceTest implements WithAssertions {
     emailService.setExecutor(new CurrentThreadExecutor());
 
     // mock mail config
-    when(mailConfig.getFromEmail()).thenReturn("from@example.de");
-    when(mailConfig.getApplicationHostUrl()).thenReturn("localhost");
+    when(mailProperties.getFromEmail()).thenReturn("from@example.de");
+    when(mailProperties.getApplicationHostUrl()).thenReturn("localhost");
 
     // mock emailSender
     MimeMessage mimeMessage = mock(MimeMessage.class);
@@ -61,7 +61,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(emailSender, templateEngine, mailConfig);
+    reset(emailSender, templateEngine, mailProperties);
   }
 
   @Test
@@ -83,7 +83,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
   void send_email_calls_template_engine() {
     // given
     final String TOKEN = "token";
-    final String EXPECTED_VERIFICATION_URL = mailConfig.getApplicationHostUrl() + Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + TOKEN;
+    final String EXPECTED_VERIFICATION_URL = mailProperties.getApplicationHostUrl() + Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + TOKEN;
     ArgumentCaptor<Context> contextCaptor = ArgumentCaptor.forClass(Context.class);
     ArgumentCaptor<String> templateNameCaptor = ArgumentCaptor.forClass(String.class);
     AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", TOKEN);
