@@ -1,9 +1,43 @@
+let importJobTable;
+
 /**
  * Called when the page is loaded
  */
 $(document).ready(function () {
-  // ToDo DanielW: Load past import job results
+  importJobTable = getImportJobs();
 });
+
+/**
+ * Request import jobs from REST endpoint via AJAX using DataTable jQuery Plugin.
+ */
+function getImportJobs() {
+  $("#import-job-data tr").remove();
+
+  return $("#import-job-table").DataTable({
+    "ajax": {
+      "url": "/rest/v1/releases/import",
+      "type": "GET",
+      "dataType": "json",
+      "dataSrc": ""
+    },
+    "pagingType": "simple_numbers",
+    "columns": [
+      {"data": "source"},
+      {"data": "startTime"},
+      {"data": "endTime"},
+      {"data": "durationInSeconds"},
+      {"data": "totalCountRequested"},
+      {"data": "totalCountImported"}
+    ],
+    "autoWidth": false, // fixes window resizing issue
+    "columnDefs": [
+      {
+        "targets": [1, 2],
+        "render": utcDateTimeToLocalDateTime
+      }
+    ]
+  });
+}
 
 /**
  * Creates an import job.

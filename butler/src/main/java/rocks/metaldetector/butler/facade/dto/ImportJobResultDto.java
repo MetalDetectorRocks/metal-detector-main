@@ -17,5 +17,6 @@ public class ImportJobResultDto {
   private LocalDateTime endTime;
   private long durationInSeconds;
   private boolean finished;
+  private String source;
 
 }
