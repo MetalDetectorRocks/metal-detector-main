@@ -38,7 +38,13 @@ function getReleases() {
         {"data": "type"},
         {"data": "source"}
       ],
-      "autoWidth": false // fixes window resizing issue
+      "autoWidth": false, // fixes window resizing issue
+      "columnDefs": [
+        {
+          "targets": [2],
+          "render": utcDateToLocalDate
+        }
+      ]
   });
 }
 
@@ -68,7 +74,7 @@ function showUpdateReleaseForm() {
   }
 
   $('#album-title').text(data.albumTitle);
-  $('#release-date').text(data.releaseDate);
+  $('#release-date').text(utcDateToLocalDate(data.releaseDate));
   $('#estimated-release-date').text(data.estimatedReleaseDate);
   $('#update-status').val(data.state);
 
