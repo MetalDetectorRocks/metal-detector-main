@@ -27,13 +27,33 @@ function getImportJobs() {
       {"data": "endTime"},
       {"data": "durationInSeconds"},
       {"data": "totalCountRequested"},
-      {"data": "totalCountImported"}
+      {"data": "totalCountImported"},
+      {"data": "finished"}
     ],
     "autoWidth": false, // fixes window resizing issue
     "columnDefs": [
       {
         "targets": [1, 2],
         "render": utcDateTimeToLocalDateTime
+      },
+      {
+        "targets": [3],
+        "render": function (durationInSeconds) {
+          const minutes = Math.floor(durationInSeconds / 60);
+          const seconds = durationInSeconds % 60;
+          return `${minutes}:${('0' + seconds).slice(-2)}`;
+        }
+      },
+      {
+        "targets": [6],
+        "render": function (isFinished) {
+          if (isFinished) {
+            return '<span class="badge badge-success">Done</span>';
+          }
+          else {
+            return '<span class="badge badge-primary">Importing</span>';
+          }
+        }
       }
     ]
   });
