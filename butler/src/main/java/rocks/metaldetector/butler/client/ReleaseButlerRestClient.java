@@ -1,6 +1,6 @@
 package rocks.metaldetector.butler.client;
 
-import rocks.metaldetector.butler.api.ButlerImportJobResponse;
+import rocks.metaldetector.butler.api.ButlerImportJob;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 
@@ -12,6 +12,6 @@ public interface ReleaseButlerRestClient {
 
   void createImportJob();
 
-  List<ButlerImportJobResponse> queryImportJobResults();
+  List<ButlerImportJob> queryImportJobResults();
 
 }

@@ -16,10 +16,11 @@ import java.time.LocalDateTime;
     "totalCountRequested",
     "totalCountImported",
     "startTime",
-    "endTime"
+    "endTime",
+    "source"
 })
 @NoArgsConstructor
-public class ButlerImportJobResponse {
+public class ButlerImportJob {
 
   @JsonProperty("totalCountRequested")
   private int totalCountRequested;
@@ -32,5 +33,8 @@ public class ButlerImportJobResponse {
 
   @JsonProperty("endTime")
   private LocalDateTime endTime;
+
+  @JsonProperty("source")
+  private String source;
 
 }

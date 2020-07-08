@@ -21,6 +21,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory;
+import rocks.metaldetector.butler.api.ButlerImportJob;
+import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.config.ButlerConfig;
@@ -28,6 +30,7 @@ import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -37,6 +40,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportResponseFactory;
 
 @ExtendWith(MockitoExtension.class)
 class ReleaseButlerRestClientImplTest implements WithAssertions {
@@ -210,103 +214,73 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   }
 
   @DisplayName("Test of query import job results")
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
   class QueryImportJobResultsTest {
-    // ToDo: https://trello.com/c/sYz7KBZn
-//    @Test
-//    @DisplayName("A GET call is made")
-//    void test_get() {
-//      // given
-//      ButlerImportJobResponse responseMock = ButlerImportJobResponseFactory.createDefault();
-//      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
-//
-//      // when
-//      underTest.createImportJob();
-//
-//      // then
-//      verify(restTemplate, times(1)).exchange(anyString(), eq(HttpMethod.GET), any(), any(Class.class), anyString());
-//    }
-//
-//    @Test
-//    @DisplayName("A GET call is made on the injected import URL with correct path parameter")
-//    void test_get_on_import_url() {
-//      // given
-//      var butlerUrl = "import-url";
-//      doReturn(butlerUrl).when(butlerConfig).getImportUrl();
-//      ButlerImportJobResponse responseMock = ButlerImportJobResponseFactory.createDefault();
-//      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
-//      String actionPathParam = "?action={action}";
-//      String importAction = "import";
-//
-//      // when
-//      underTest.createImportJob();
-//
-//      // then
-//      verify(restTemplate, times(1)).exchange(eq(butlerUrl + actionPathParam), any(), any(), eq(ButlerImportJobResponse.class), eq(importAction));
-//    }
-//
-//    @Test
-//    @DisplayName("The HttpEntity should contain the correct headers")
-//    void test_import_http_entity() {
-//      // given
-//      ButlerImportJobResponse responseMock = ButlerImportJobResponseFactory.createDefault();
-//      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
-//
-//      // when
-//      underTest.createImportJob();
-//
-//      // then
-//      verify(restTemplate, times(1)).exchange(anyString(), any(), argumentCaptorImport.capture(), any(Class.class), anyString());
-//
-//      HttpEntity<ButlerReleasesRequest> httpEntity = argumentCaptorImport.getValue();
-//      assertThat(httpEntity.getHeaders().getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
-//      assertThat(httpEntity.getHeaders().getAcceptCharset()).isEqualTo(Collections.singletonList(Charset.defaultCharset()));
-//    }
-//
-//    @Test
-//    @DisplayName("The body of the import job result is returned")
-//    void get_import_valid_result() {
-//      // given
-//      ButlerImportJobResponse responseMock = ButlerImportJobResponseFactory.createDefault();
-//      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
-//
-//      // when
-//      ButlerImportJobResponse response = underTest.createImportJob();
-//
-//      // then
-//      assertThat(response).isEqualTo(responseMock);
-//    }
-//
-//    @Test
-//    @DisplayName("If the import job response is null, an ExternalServiceException is thrown")
-//    void test_exception_if_import_response_is_null() {
-//      // given
-//      doReturn(ResponseEntity.ok(null)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
-//
-//      // when
-//      Throwable throwable = catchThrowable(() -> underTest.createImportJob());
-//
-//      // then
-//      assertThat(throwable).isInstanceOf(ExternalServiceException.class);
-//    }
-//
-//    @ParameterizedTest(name = "If the status is {0}, an ExternalServiceException is thrown")
-//    @MethodSource("httpStatusCodeProvider")
-//    @DisplayName("If the status code is not OK on import job, an ExternalServiceException is thrown")
-//    void test_import_exception_if_status_is_not_ok(HttpStatus httpStatus) {
-//      // given
-//      ButlerImportJobResponse responseMock = ButlerImportJobResponseFactory.createDefault();
-//      doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).exchange(anyString(), any(), any(), any(Class.class), anyString());
-//
-//      // when
-//      Throwable throwable = catchThrowable(() -> underTest.createImportJob());
-//
-//      // then
-//      assertThat(throwable).isInstanceOf(ExternalServiceException.class);
-//    }
-//
-//    private static Stream<Arguments> httpStatusCodeProvider() {
-//      return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
-//    }
+
+    @Test
+    @DisplayName("A GET call is made on the injected import URL")
+    void test_get_on_import_url() {
+      // given
+      var butlerUrl = "import-url";
+      doReturn(butlerUrl).when(butlerConfig).getImportUrl();
+      ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(anyString(), any(Class.class));
+
+      // when
+      underTest.queryImportJobResults();
+
+      // then
+      verify(restTemplate, times(1)).getForEntity(eq(butlerUrl), eq(ButlerImportResponse.class));
+    }
+
+    @Test
+    @DisplayName("The body of the import job result is returned")
+    void get_import_valid_result() {
+      // given
+      ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+      doReturn("import-url").when(butlerConfig).getImportUrl();
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(anyString(), any(Class.class));
+
+      // when
+      List<ButlerImportJob> response = underTest.queryImportJobResults();
+
+      // then
+      assertThat(response).isEqualTo(responseMock.getImportJobs());
+    }
+
+    @Test
+    @DisplayName("If the import job response is null, an ExternalServiceException is thrown")
+    void test_exception_if_import_response_is_null() {
+      // given
+      doReturn("import-url").when(butlerConfig).getImportUrl();
+      doReturn(ResponseEntity.ok(null)).when(restTemplate).getForEntity(anyString(), any(Class.class));
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.queryImportJobResults());
+
+      // then
+      assertThat(throwable).isInstanceOf(ExternalServiceException.class);
+    }
+
+    @ParameterizedTest(name = "If the status is {0}, an ExternalServiceException is thrown")
+    @MethodSource("httpStatusCodeProvider")
+    @DisplayName("If the status code is not OK on import job, an ExternalServiceException is thrown")
+    void test_import_exception_if_status_is_not_ok(HttpStatus httpStatus) {
+      // given
+      ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
+      doReturn("import-url").when(butlerConfig).getImportUrl();
+      doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).getForEntity(anyString(), any(Class.class));
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.queryImportJobResults());
+
+      // then
+      assertThat(throwable).isInstanceOf(ExternalServiceException.class);
+    }
+
+    private Stream<Arguments> httpStatusCodeProvider() {
+      return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
+    }
   }
 }

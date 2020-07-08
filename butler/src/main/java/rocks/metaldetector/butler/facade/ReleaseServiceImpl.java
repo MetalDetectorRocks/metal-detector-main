@@ -2,11 +2,11 @@ package rocks.metaldetector.butler.facade;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import rocks.metaldetector.butler.api.ButlerImportJobResponse;
+import rocks.metaldetector.butler.api.ButlerImportJob;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.client.ReleaseButlerRestClient;
-import rocks.metaldetector.butler.client.transformer.ButlerImportJobResponseTransformer;
+import rocks.metaldetector.butler.client.transformer.ButlerImportJobTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseRequestTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
@@ -23,7 +23,7 @@ public class ReleaseServiceImpl implements ReleaseService {
   private final ReleaseButlerRestClient butlerClient;
   private final ButlerReleaseRequestTransformer queryRequestTransformer;
   private final ButlerReleaseResponseTransformer queryResponseTransformer;
-  private final ButlerImportJobResponseTransformer importJobResponseTransformer;
+  private final ButlerImportJobTransformer importJobResponseTransformer;
 
   @Override
   public List<ReleaseDto> findReleases(Iterable<String> artists, LocalDate dateFrom, LocalDate dateTo) {
@@ -39,7 +39,7 @@ public class ReleaseServiceImpl implements ReleaseService {
 
   @Override
   public List<ImportJobResultDto> queryImportJobResults() {
-    List<ButlerImportJobResponse> importJobResponses = butlerClient.queryImportJobResults();
+    List<ButlerImportJob> importJobResponses = butlerClient.queryImportJobResults();
     return importJobResponses.stream().map(importJobResponseTransformer::transform).collect(Collectors.toList());
   }
 }
