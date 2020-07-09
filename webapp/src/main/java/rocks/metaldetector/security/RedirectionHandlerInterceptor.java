@@ -37,7 +37,7 @@ public class RedirectionHandlerInterceptor implements HandlerInterceptor {
   }
 
   private void sendRedirect(HttpServletRequest request, HttpServletResponse response) {
-    String encodedRedirectURL = response.encodeRedirectURL(request.getContextPath() + Endpoints.Frontend.STATUS);
+    String encodedRedirectURL = response.encodeRedirectURL(request.getContextPath() + Endpoints.Frontend.HOME);
     response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
     response.setHeader("Location", encodedRedirectURL);
   }

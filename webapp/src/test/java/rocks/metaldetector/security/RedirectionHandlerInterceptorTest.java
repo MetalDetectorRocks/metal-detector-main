@@ -9,8 +9,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 
 import java.util.UUID;
@@ -55,6 +57,32 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
 
     // then
     assertThat(result).isFalse();
+  }
+
+  @Test
+  @DisplayName("preHandle() should set home page as redirection target")
+  void pre_handle_should_set_endpoint() {
+    // given
+    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+
+    // when
+    redirectionHandlerInterceptor.preHandle(request, response, null);
+
+    // then
+    assertThat(response.getHeader("Location")).isEqualTo(Endpoints.Frontend.HOME);
+  }
+
+  @Test
+  @DisplayName("preHandle() should set http status 307")
+  void pre_handle_should_set_http_status() {
+    // given
+    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+
+    // when
+    redirectionHandlerInterceptor.preHandle(request, response, null);
+
+    // then
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.TEMPORARY_REDIRECT.value());
   }
 
   @Test
