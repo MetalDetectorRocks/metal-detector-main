@@ -17,4 +17,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm --prefix webapp/src/main/resources/static/ts/ run compile
+      - run: |
+          npm --prefix src/main/resources/static/ts/ install
+          npm --prefix src/main/resources/static/ts/ run compile
