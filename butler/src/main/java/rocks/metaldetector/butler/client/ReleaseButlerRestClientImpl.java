@@ -9,7 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.butler.api.ButlerImportJobResponse;
+import rocks.metaldetector.butler.api.ButlerImportJob;
+import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.config.ButlerConfig;
@@ -53,19 +54,19 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   }
 
   @Override
-  public List<ButlerImportJobResponse> queryImportJobResults() {
-    ResponseEntity<ButlerImportJobResponse> responseEntity = releaseButlerRestTemplate.getForEntity(
+  public List<ButlerImportJob> queryImportJobResults() {
+    ResponseEntity<ButlerImportResponse> responseEntity = releaseButlerRestTemplate.getForEntity(
             butlerConfig.getImportUrl(),
-            ButlerImportJobResponse.class
+            ButlerImportResponse.class
     );
 
-    ButlerImportJobResponse response = responseEntity.getBody();
+    ButlerImportResponse response = responseEntity.getBody();
     var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
       throw new ExternalServiceException("Could not fetch import job results (Response code: " + responseEntity.getStatusCode() + ")");
     }
 
-    return Collections.emptyList(); // ToDo: https://trello.com/c/sYz7KBZn
+    return response.getImportJobs();
   }
 
   private HttpEntity<ButlerReleasesRequest> createQueryHttpEntity(ButlerReleasesRequest request) {

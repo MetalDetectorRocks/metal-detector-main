@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory;
-import rocks.metaldetector.butler.api.ButlerImportJobResponse;
+import rocks.metaldetector.butler.api.ButlerImportJob;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 
 import java.io.Reader;
@@ -77,7 +77,7 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
   @DisplayName("Should return mocked import job responses")
   void should_return_mocked_import_job_responses() {
     // when
-    List<ButlerImportJobResponse> responses = underTest.queryImportJobResults();
+    List<ButlerImportJob> responses = underTest.queryImportJobResults();
 
     // then
     assertThat(responses).hasSize(4);

@@ -1,6 +1,7 @@
 package rocks.metaldetector.butler;
 
-import rocks.metaldetector.butler.api.ButlerImportJobResponse;
+import rocks.metaldetector.butler.api.ButlerImportJob;
+import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerRelease;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
@@ -33,15 +34,25 @@ public class ButlerDtoFactory {
     }
   }
 
-  public static class ButlerImportJobResponseFactory {
+  public static class ButlerImportJobFactory {
 
-    public static ButlerImportJobResponse createDefault() {
-      return ButlerImportJobResponse.builder()
+    public static ButlerImportJob createDefault() {
+      return ButlerImportJob.builder()
               .totalCountImported(666)
               .totalCountRequested(666)
               .startTime(LocalDateTime.of(2020, 7, 1, 13, 37, 5))
               .endTime(LocalDateTime.of(2020, 7, 1, 13, 39, 19))
+              .source("Metal Archives")
               .build();
+    }
+  }
+
+  public static class ButlerImportResponseFactory {
+
+    public static ButlerImportResponse createDefault() {
+      return ButlerImportResponse.builder()
+          .importJobs(List.of(ButlerImportJobFactory.createDefault()))
+          .build();
     }
   }
 
