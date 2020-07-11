@@ -21,7 +21,7 @@
         <hibernate-validator.version>6.1.2.Final</hibernate-validator.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <material-icons.version>0.3.1</material-icons.version>
-        <rest-assured.version>4.3.0</rest-assured.version>
+        <rest-assured.version>4.3.1</rest-assured.version>
         <bootstrap.version>4.5.0</bootstrap.version>
         <datatables.version>1.10.20</datatables.version>
         <thymeleaf-dialect.version>2.4.1</thymeleaf-dialect.version>
