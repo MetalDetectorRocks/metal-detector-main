@@ -1,4 +1,4 @@
-package rocks.metaldetector.spotify.facade.dto;
+package rocks.metaldetector.web.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Builder
-public class SpotifyArtistSearchResultEntryDto {
+public class ArtistSearchResponseEntryDto {
 
   private String id;
   private String name;
