@@ -11,6 +11,8 @@ import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.spotify.facade.SpotifyService;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class ArtistsServiceImpl implements ArtistsService {
   private final ArtistRepository artistRepository;
   private final UserRepository userRepository;
   private final DiscogsService discogsService;
+  private final SpotifyService spotifyService;
   private final CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
   private final ArtistTransformer artistTransformer;
 
@@ -55,6 +58,19 @@ public class ArtistsServiceImpl implements ArtistsService {
     );
     DiscogsArtistSearchResultDto result = discogsService.searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
     result.getSearchResults().forEach(artist -> artist.setFollowed(userEntity.isFollowing(artist.getId())));
+
+    return result;
+  }
+
+  @Override
+  @Transactional
+  public SpotifyArtistSearchResultDto searchSpotifyByName(String artistQueryString, Pageable pageable) {
+    String publicUserId = currentPublicUserIdSupplier.get();
+    UserEntity userEntity = userRepository.findByPublicId(publicUserId).orElseThrow(() ->
+                                                                                        new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
+    );
+    SpotifyArtistSearchResultDto result = spotifyService.searchArtists(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
+//    result.getSearchResults().forEach(artist -> artist.setFollowed(userEntity.isFollowing(artist.getId()))); // ToDo NilsD: current artist id concept has to be reworked
 
     return result;
   }

@@ -14,6 +14,7 @@ import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 
 @RestController
 @RequestMapping(Endpoints.Rest.ARTISTS)
@@ -28,8 +29,9 @@ public class ArtistsRestController {
   public ResponseEntity<DiscogsArtistSearchResultDto> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
                                                                        @RequestParam(value = "page", defaultValue = "1") int page,
                                                                        @RequestParam(value = "size", defaultValue = "40") int size) {
-    DiscogsArtistSearchResultDto result = artistsService.searchDiscogsByName(query, PageRequest.of(page, size));
-    return ResponseEntity.ok(result);
+    DiscogsArtistSearchResultDto discogsResult = artistsService.searchDiscogsByName(query, PageRequest.of(page, size));
+    SpotifyArtistSearchResultDto spotifyResult = artistsService.searchSpotifyByName(query, PageRequest.of(page, size)); // ToDo NilsD: for testing only
+    return ResponseEntity.ok(discogsResult);
   }
 
   @PostMapping(path = Endpoints.Rest.FOLLOW + "/{discogsId}")

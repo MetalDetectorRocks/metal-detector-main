@@ -22,6 +22,7 @@
         <module>discogs</module>
         <module>webapp</module>
         <module>persistence</module>
+        <module>spotify</module>
         <module>support</module>
         <module>butler</module>
     </modules>
