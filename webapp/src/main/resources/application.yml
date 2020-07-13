@@ -61,6 +61,12 @@ discogs:
   rest-base-url: https://api.discogs.com
   user-agent: MetalDetector/0.1 +https://metal-detector.rocks
 
+spotify:
+  client-id: ${SPOTIFY_CLIENT_ID}
+  client-secret: ${SPOTIFY_CLIENT_SECRET}
+  rest-base-url: https://api.spotify.com
+  authentication-base-url: https://accounts.spotify.com
+
 metal-release-butler:
   host: http://localhost:8095
   unpaginated-releases-url: ${metal-release-butler.host}/rest/v1/releases/unpaginated
