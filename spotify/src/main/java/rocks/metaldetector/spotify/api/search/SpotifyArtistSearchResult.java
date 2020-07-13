@@ -42,7 +42,7 @@ public class SpotifyArtistSearchResult {
   @JsonProperty("previous")
   private String previous;
 
-  @JsonProperty("int")
+  @JsonProperty("total")
   private int total;
 
 
