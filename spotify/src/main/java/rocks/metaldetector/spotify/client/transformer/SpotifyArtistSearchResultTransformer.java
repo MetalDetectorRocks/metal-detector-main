@@ -2,6 +2,7 @@ package rocks.metaldetector.spotify.client.transformer;
 
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.spotify.api.search.SpotifyArtist;
+import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
@@ -22,10 +23,15 @@ public class SpotifyArtistSearchResultTransformer {
 
   private Pagination transformPagination(SpotifyArtistSearchResultContainer searchResult) {
     return Pagination.builder()
-        .currentPage((searchResult.getArtists().getTotal() - 1) / (searchResult.getArtists().getOffset() + 1)) // ToDo NilsD: why is total 2 when there is only one result?
+        .currentPage(searchResult.getArtists().getOffset() / searchResult.getArtists().getLimit() + 1)
         .itemsPerPage(searchResult.getArtists().getLimit())
-        .totalPages(searchResult.getArtists().getTotal() / searchResult.getArtists().getLimit() + 1)
+        .totalPages(calculateTotalPages(searchResult.getArtists()))
         .build();
+  }
+
+  private int calculateTotalPages(SpotifyArtistSearchResult searchResult) {
+    return searchResult.getTotal() % searchResult.getLimit() == 0 ? searchResult.getTotal() / searchResult.getLimit()
+                                                                  : searchResult.getTotal() / searchResult.getLimit() + 1;
   }
 
   private List<SpotifyArtistSearchResultEntryDto> transformArtistSearchResults(List<SpotifyArtist> results) {
