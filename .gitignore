@@ -7,8 +7,9 @@
 # ignore docker .secrets folder
 .secrets/
 
-# ignore all stuff in target folder
+# ignore all stuff in target and build folder
 target/
+build/
 
 # ignore IntelliJ IDEA files
 .idea/
@@ -23,3 +24,5 @@ target/
 
 # docker env file
 src/main/docker/env.txt
+
+node_modules
