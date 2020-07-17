@@ -28,9 +28,13 @@ public class ArtistsRestController {
   public ResponseEntity<ArtistSearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
                                                                        @RequestParam(value = "page", defaultValue = "1") int page,
                                                                        @RequestParam(value = "size", defaultValue = "40") int size) {
-    ArtistSearchResponse discogsResult = artistsService.searchDiscogsByName(query, PageRequest.of(page, size));
-    ArtistSearchResponse spotifyResult = artistsService.searchSpotifyByName(query, PageRequest.of(page, size)); // ToDo NilsD: for testing only
-    return ResponseEntity.ok(spotifyResult);
+    ArtistSearchResponse searchResponse = artistsService.searchSpotifyByName(query, PageRequest.of(page, size));
+
+    if (searchResponse.getSearchResults().isEmpty()) {
+      searchResponse = artistsService.searchDiscogsByName(query, PageRequest.of(page, size));
+    }
+
+    return ResponseEntity.ok(searchResponse);
   }
 
   @PostMapping(path = Endpoints.Rest.FOLLOW + "/{externalId}")
