@@ -13,6 +13,7 @@ import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,22 +29,22 @@ public class ArtistsServiceImpl implements ArtistsService {
   private final ArtistTransformer artistTransformer;
 
   @Override
-  public Optional<ArtistDto> findArtistByDiscogsId(long discogsId) {
-    return artistRepository.findByArtistDiscogsId(discogsId)
+  public Optional<ArtistDto> findArtistByExternalId(String externalId) {
+    return artistRepository.findByExternalId(externalId)
         .map(artistTransformer::transform);
   }
 
   @Override
-  public List<ArtistDto> findAllArtistsByDiscogsIds(long... discogsIds) {
-    List<ArtistEntity> artistEntities = artistRepository.findAllByArtistDiscogsIdIn(discogsIds);
+  public List<ArtistDto> findAllArtistsByExternalIds(Collection<String> externalIds) {
+    List<ArtistEntity> artistEntities = artistRepository.findAllByExternalIdIn(externalIds);
     return artistEntities.stream()
         .map(artistTransformer::transform)
         .collect(Collectors.toList());
   }
 
   @Override
-  public boolean existsArtistByDiscogsId(long discogsId) {
-    return artistRepository.existsByArtistDiscogsId(discogsId);
+  public boolean existsArtistByExternalId(String externalId) {
+    return artistRepository.existsByExternalId(externalId);
   }
 
   @Override

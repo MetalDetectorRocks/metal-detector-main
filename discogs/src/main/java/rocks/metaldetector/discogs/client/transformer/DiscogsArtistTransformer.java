@@ -12,7 +12,7 @@ public class DiscogsArtistTransformer {
   public DiscogsArtistDto transform(DiscogsArtist artist) {
     String imageUrl = artist.getImages() != null && artist.getImages().size() > 0 ? artist.getImages().get(0).getResourceUrl() : null;
     return DiscogsArtistDto.builder()
-            .id(artist.getId())
+            .id(String.valueOf(artist.getId()))
             .name(artist.getName())
             .imageUrl(imageUrl)
             .build();

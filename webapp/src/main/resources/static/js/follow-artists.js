@@ -1,6 +1,6 @@
 /**
  * Send ajax request to follow an artist
- * @param artistId    Artist's discogs id
+ * @param artistId    Artist's external id
  * @param artistName  The name of the artist
  * @returns {boolean}
  */
@@ -23,7 +23,7 @@ function followArtist(artistId, artistName) {
 
 /**
  * Send ajax request to unfollow an artist
- * @param artistId    Artist's discogs id
+ * @param artistId    Artist's external id
  * @param artistName  The name of the artist
  * @returns {boolean}
  */

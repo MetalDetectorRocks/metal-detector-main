@@ -25,8 +25,8 @@ public class DiscogsServiceImpl implements DiscogsService {
   }
 
   @Override
-  public DiscogsArtistDto searchArtistById(long artistId) {
-    DiscogsArtist result = searchClient.searchById(artistId);
+  public DiscogsArtistDto searchArtistById(String externalId) {
+    DiscogsArtist result = searchClient.searchById(externalId);
     return artistTransformer.transform(result);
   }
 }

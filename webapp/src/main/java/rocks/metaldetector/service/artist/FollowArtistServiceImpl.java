@@ -16,6 +16,8 @@ import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
+
 @AllArgsConstructor
 @Service
 @Slf4j
@@ -29,8 +31,8 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   @Override
   @Transactional
-  public void follow(long discogsId) {
-    ArtistEntity artist = saveAndFetchArtist(discogsId);
+  public void follow(String externalId) {
+    ArtistEntity artist = saveAndFetchArtist(externalId);
     UserEntity user = currentUser();
     user.addFollowedArtist(artist);
     userRepository.save(user);
@@ -38,9 +40,9 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   @Override
   @Transactional
-  public void unfollow(long artistId) {
-    ArtistEntity artistEntity = artistRepository.findByArtistDiscogsId(artistId)
-        .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + artistId + "' not found!"));
+  public void unfollow(String externalId) {
+    ArtistEntity artistEntity = artistRepository.findByExternalId(externalId)
+        .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + externalId + "' not found!"));
 
     UserEntity user = currentUser();
     user.removeFollowedArtist(artistEntity);
@@ -61,14 +63,14 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     return user.getFollowedArtists().stream().map(artistTransformer::transform).collect(Collectors.toUnmodifiableList());
   }
 
-  private ArtistEntity saveAndFetchArtist(long discogsId) {
-    if (artistRepository.existsByArtistDiscogsId(discogsId)) {
+  private ArtistEntity saveAndFetchArtist(String externalId) {
+    if (artistRepository.existsByExternalId(externalId)) {
       //noinspection OptionalGetWithoutIsPresent: call is safe due to prior existsBy check
-      return artistRepository.findByArtistDiscogsId(discogsId).get();
+      return artistRepository.findByExternalId(externalId).get();
     }
 
-    DiscogsArtistDto artist = discogsService.searchArtistById(discogsId);
-    ArtistEntity artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl());
+    DiscogsArtistDto artist = discogsService.searchArtistById(externalId);
+    ArtistEntity artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl(), DISCOGS); // ToDo NilsD: how can I get source here? -> send from frontend
     return artistRepository.save(artistEntity);
   }
 
