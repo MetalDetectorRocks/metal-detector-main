@@ -12,6 +12,14 @@ jobs:
       - name: Checkout master
       - uses: actions/checkout@v2
 
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - run: |
+          npm --prefix webapp/src/main/resources/static/ts/ install
+          npm --prefix webapp/src/main/resources/static/ts/ run prod-build
+
       - name: Login to heroku container registry
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
