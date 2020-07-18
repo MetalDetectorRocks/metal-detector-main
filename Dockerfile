@@ -29,4 +29,4 @@ COPY $SOURCE_JAR_FILE app.jar
 
 RUN sh -c "touch app.jar"
 
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Xmx512m", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Xmx256m", "-jar", "app.jar"]
