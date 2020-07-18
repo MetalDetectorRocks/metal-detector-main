@@ -41,8 +41,18 @@ jobs:
           tags: ${{ steps.version.outputs.version }},latest
           build_args: BUILD_DATE=${{ steps.version.outputs.version }},VCS_REF=${{ github.ref }}
 
-      - name: Deploy on heroku
+      - name: Push image to Heroku Registry
         run: |
           docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
           docker tag metaldetector/metal-detector registry.heroku.com/${{ secrets.HEROKU_PREVIEW_APP_NAME }}/web
           docker push registry.heroku.com/${{ secrets.HEROKU_PREVIEW_APP_NAME }}/web
+
+      - name: Login to Heroku Container Registry
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
+
+      -name: Deploy docker image on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release -a ${{ secrets.HEROKU_PREVIEW_APP_NAME }} web
