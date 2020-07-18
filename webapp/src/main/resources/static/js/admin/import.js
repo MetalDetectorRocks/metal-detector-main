@@ -34,7 +34,7 @@ function getImportJobs() {
     "columnDefs": [
       {
         "targets": [1, 2],
-        "render": utcDateTimeToLocalDateTime
+        "render": formatUtcDateTime
       },
       {
         "targets": [3],
