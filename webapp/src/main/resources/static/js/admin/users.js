@@ -66,7 +66,7 @@ function requestUsersFromServer() {
             },
             {
                 "targets": [5, 6],
-                "render": utcDateTimeToLocalDateTime
+                "render": formatUtcDateTime
             }
         ]
     });
@@ -196,11 +196,11 @@ function showUpdateUserForm() {
     $('#updateStatus').val(data.enabled ? 'Enabled' : 'Disabled');
 
     // meta data
-    $('#updateLastLogin').val(utcDateTimeToLocalDateTime(data.lastLogin));
+    $('#updateLastLogin').val(formatUtcDateTime(data.lastLogin));
     $('#updateCreatedBy').val(data.createdBy);
-    $('#updateCreatedDateTime').val(utcDateTimeToLocalDateTime(data.createdDateTime));
+    $('#updateCreatedDateTime').val(formatUtcDateTime(data.createdDateTime));
     $('#updateLastModifiedBy').val(data.lastModifiedBy);
-    $('#updateLastModifiedDateTime').val(utcDateTimeToLocalDateTime(data.lastModifiedDateTime));
+    $('#updateLastModifiedDateTime').val(formatUtcDateTime(data.lastModifiedDateTime));
 }
 
 /**
