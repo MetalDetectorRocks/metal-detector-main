@@ -59,7 +59,7 @@ function createNoResultsMessage(text) {
 /**
  * Builds the onclick function
  * @param artistName    Artist to follow
- * @param artistId      Artist's discogs id
+ * @param artistId      Artist's external id
  * @param isFollowed    true if user follows given artist
  * @param button        Button that was clicked
  * @returns {Function}
@@ -72,8 +72,8 @@ function createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, but
 
 /**
  * Builds an HTML button to follow an artist
- * @param artistName    The artists name
- * @param artistId      The artists discogs id
+ * @param artistName    The artist's name
+ * @param artistId      The artist's external id
  * @param isFollowed    The information if the artist is already followed
  * @returns {HTMLButtonElement}
  */

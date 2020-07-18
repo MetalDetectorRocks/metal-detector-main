@@ -37,7 +37,7 @@ public class DiscogsArtistSearchResultContainerTransformer {
 
   private DiscogsArtistSearchResultEntryDto transformArtistSearchResult(DiscogsArtistSearchResult result) {
     return DiscogsArtistSearchResultEntryDto.builder()
-            .id(result.getId())
+            .id(String.valueOf(result.getId()))
             .name(result.getTitle())
             .imageUrl(result.getThumb())
             .uri(result.getUri())

@@ -26,7 +26,7 @@ import rocks.metaldetector.support.exceptions.ExternalServiceException;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
@@ -177,21 +177,20 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
   class SearchByIdTest {
 
     @ParameterizedTest(name = "An IllegalArgumentException is thrown when artistId is [{0}].")
-    @MethodSource("illegalArtistIdProvider")
-    @DisplayName("An IllegalArgumentException is thrown when artistId is less than 1.")
-    void test_invalid_artist_id(long artistId) {
+    @MethodSource("illegalExternalIdProvider")
+    @DisplayName("An IllegalArgumentException is thrown when artistId is blank.")
+    void test_invalid_artist_id(String externalId) {
       // when
-      var throwable = catchThrowable(() -> underTest.searchById(artistId));
+      var throwable = catchThrowable(() -> underTest.searchById(externalId));
 
       // then
       assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Stream<Arguments> illegalArtistIdProvider() {
+    private Stream<Arguments> illegalExternalIdProvider() {
       return Stream.of(
-              Arguments.of(0),
-              Arguments.of(-1),
-              Arguments.of(Long.MIN_VALUE)
+              Arguments.of(""),
+              Arguments.of("   ")
       );
     }
 
@@ -203,22 +202,22 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
       doReturn(discogsBaseUrl).when(discogsConfig).getRestBaseUrl();
       var expectedSearchUrl = discogsBaseUrl + ARTIST_ID_SEARCH_URL_FRAGMENT;
       DiscogsArtist responseMock = DiscogsArtistFactory.createDefault();
-      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(any(), any(), anyLong());
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(any(), any(), anyString());
 
       // when
-      underTest.searchById(123);
+      underTest.searchById("123");
 
       // then
-      verify(restTemplate, times(1)).getForEntity(eq(expectedSearchUrl), any(), anyLong());
+      verify(restTemplate, times(1)).getForEntity(eq(expectedSearchUrl), any(), anyString());
     }
 
     @Test
     @DisplayName("The provided artistId is sent as url parameter.")
     void test_artist_id_as_url_parameter() {
       // given
-      var artistId = 123L;
+      var artistId = "123";
       DiscogsArtist responseMock = DiscogsArtistFactory.createDefault();
-      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(any(), any(), anyLong());
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(any(), any(), anyString());
 
       // when
       underTest.searchById(artistId);
@@ -232,10 +231,10 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
     void test_response_is_returned() {
       // given
       DiscogsArtist responseMock = DiscogsArtistFactory.createDefault();
-      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(any(), any(), anyLong());
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(any(), any(), anyString());
 
       // when
-      var response = underTest.searchById(123);
+      var response = underTest.searchById("123");
 
       // then
       assertThat(response).isEqualTo(responseMock);
@@ -245,10 +244,10 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
     @DisplayName("If the response is null, a ExternalServiceException is thrown")
     void test_exception_if_response_is_null() {
       // given
-      doReturn(ResponseEntity.ok(null)).when(restTemplate).getForEntity(any(), any(), anyLong());
+      doReturn(ResponseEntity.ok(null)).when(restTemplate).getForEntity(any(), any(), anyString());
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.searchById(123));
+      Throwable throwable = catchThrowable(() -> underTest.searchById("123"));
 
       // then
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
@@ -260,10 +259,10 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
     void test_exception_if_status_is_not_ok(HttpStatus httpStatus) {
       // given
       DiscogsArtist responseMock = DiscogsArtistFactory.createDefault();
-      doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).getForEntity(any(), any(), anyLong());
+      doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).getForEntity(any(), any(), anyString());
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.searchById(123));
+      Throwable throwable = catchThrowable(() -> underTest.searchById("123"));
 
       // then
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);

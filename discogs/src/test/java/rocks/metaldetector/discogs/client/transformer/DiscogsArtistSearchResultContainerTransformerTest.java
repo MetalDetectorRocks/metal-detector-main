@@ -52,7 +52,7 @@ class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertion
       DiscogsArtistSearchResultEntryDto resultEntry = result.getSearchResults().get(index);
       assertThat(resultEntry).isEqualTo(
               DiscogsArtistSearchResultEntryDto.builder()
-                      .id(givenEntry.getId())
+                      .id(String.valueOf(givenEntry.getId()))
                       .name(givenEntry.getTitle())
                       .imageUrl(givenEntry.getThumb())
                       .uri(givenEntry.getUri())

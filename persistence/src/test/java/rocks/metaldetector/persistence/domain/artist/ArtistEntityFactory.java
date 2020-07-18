@@ -1,8 +1,10 @@
 package rocks.metaldetector.persistence.domain.artist;
 
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
+
 class ArtistEntityFactory {
 
-  static ArtistEntity createArtistEntity(long discogsId, String artistName, String thumb) {
-    return new ArtistEntity(discogsId, artistName, thumb);
+  static ArtistEntity createArtistEntity(String externalId, String artistName) {
+    return new ArtistEntity(externalId, artistName, null, DISCOGS);
   }
 }

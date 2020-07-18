@@ -24,10 +24,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -206,7 +206,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     artistEntity.removeFollowing(this);
   }
 
-  public boolean isFollowing(long artistId) {
-    return followedArtists.stream().map(ArtistEntity::getArtistDiscogsId).collect(Collectors.toList()).contains(artistId);
+  public boolean isFollowing(String externalId) {
+    return followedArtists.stream().map(ArtistEntity::getExternalId).collect(Collectors.toList()).contains(externalId);
   }
 }

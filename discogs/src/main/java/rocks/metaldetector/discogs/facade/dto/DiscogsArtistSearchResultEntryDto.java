@@ -11,7 +11,7 @@ public class DiscogsArtistSearchResultEntryDto {
 
   private static final String DISCOGS_URL = "http://discogs.com";
 
-  private long id;
+  private String id;
   private String name;
   private String imageUrl;
   private String uri;

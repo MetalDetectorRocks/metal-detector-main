@@ -7,5 +7,5 @@ public interface DiscogsService {
 
   DiscogsArtistSearchResultDto searchArtistByName(String artistQueryString, int pageNumber, int pageSize);
 
-  DiscogsArtistDto searchArtistById(long artistId);
+  DiscogsArtistDto searchArtistById(String externalId);
 }
