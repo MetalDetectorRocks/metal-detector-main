@@ -1,9 +1,6 @@
 FROM openjdk:14.0.2-slim-buster
 
 ENV TZ=Europe/Berlin
-ENV SERVER_PORT 8080
-
-EXPOSE $SERVER_PORT
 
 RUN mkdir /app
 WORKDIR /app
