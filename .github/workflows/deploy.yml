@@ -16,7 +16,7 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@v2
 
-      - name: Use Node.js 14.x
+      - name: Use node.js 14.x to compile frontend
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
@@ -28,6 +28,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.14
+
       - name: Build with Maven
         run: mvn -B clean verify --file pom.xml
 
