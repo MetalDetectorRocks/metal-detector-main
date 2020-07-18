@@ -1,4 +1,4 @@
-name: Docker Image
+name: Buidl and deploy docker container image
 
 on:
   push:
@@ -40,9 +40,6 @@ jobs:
           tags: ${{ steps.version.outputs.version }},latest
           build_args: BUILD_DATE=${{ steps.version.outputs.version }},VCS_REF=${{ github.ref }}
 
-  deploy:
-    runs-on: [ubuntu-latest]
-    steps:
       - name: Deploy on heroku
         run: |
           docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
