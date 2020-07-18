@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  docker-image-build:
+  build-image:
     runs-on: [ubuntu-latest]
     steps:
       - name: Create version string
@@ -39,3 +39,12 @@ jobs:
           repository: metaldetector/metal-detector
           tags: ${{ steps.version.outputs.version }},latest
           build_args: BUILD_DATE=${{ steps.version.outputs.version }},VCS_REF=${{ github.ref }}
+
+  deploy:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Deploy on heroku
+        run: |
+          docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
+          docker tag metaldetector/metal-detector registry.heroku.com/${{ secrets.HEROKU_PREVIEW_APP_NAME }}/web
+          docker push registry.heroku.com/${{ secrets.HEROKU_PREVIEW_APP_NAME }}/web
