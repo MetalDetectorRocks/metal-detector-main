@@ -174,7 +174,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     assertThat(artistEntity.getArtistName()).isEqualTo(discogsArtist.getName());
     assertThat(artistEntity.getExternalId()).isEqualTo(discogsArtist.getId());
     assertThat(artistEntity.getThumb()).isEqualTo(discogsArtist.getImageUrl());
-    assertThat(artistEntity.getSource()).isEqualTo(ARTIST_SOURCE);
+    assertThat(artistEntity.getSource().getDisplayName()).isEqualTo(ARTIST_SOURCE);
   }
 
   @Test
