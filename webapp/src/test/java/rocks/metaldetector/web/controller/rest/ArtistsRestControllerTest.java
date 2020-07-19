@@ -153,8 +153,12 @@ class ArtistsRestControllerTest implements WithAssertions {
     @Test
     @DisplayName("Should return 200 when following an artist")
     void handle_follow_return_200() {
+      // given
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("source", VALID_SOURCE);
+
       // when
-      var validatableResponse = followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNLA_ID);
+      var validatableResponse = followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNLA_ID, requestParams);
 
       // then
       validatableResponse.statusCode(HttpStatus.OK.value());

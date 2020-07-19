@@ -75,7 +75,7 @@ class ArtistsServiceImplTest implements WithAssertions {
   @BeforeEach
   void setUp() {
     artistEntity = new ArtistEntity(EXTERNAL_ID, ARTIST_NAME, null, DISCOGS);
-    artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, "DISCOGS");
+    artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, "Discogs");
   }
 
   @Test
@@ -245,8 +245,8 @@ class ArtistsServiceImplTest implements WithAssertions {
     doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
     doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
     when(userEntityMock.isFollowing(anyString())).then(invocationOnMock -> {
-      long artistId = invocationOnMock.getArgument(0);
-      return artistId == 1 || artistId == 3;
+      String artistId = invocationOnMock.getArgument(0);
+      return artistId.equals("1") || artistId.equals("3");
     });
     doReturn(discogsSearchResults).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
 

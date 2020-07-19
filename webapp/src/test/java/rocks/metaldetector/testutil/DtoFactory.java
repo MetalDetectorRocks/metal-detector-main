@@ -193,6 +193,7 @@ public class DtoFactory {
       return ArtistDto.builder()
               .artistName(name)
               .externalId("1")
+              .source("Discogs")
               .build();
     }
   }
