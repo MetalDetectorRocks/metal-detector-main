@@ -33,8 +33,11 @@ public class ArtistsRestController {
   }
 
   @PostMapping(path = Endpoints.Rest.FOLLOW + "/{externalId}")
-  public ResponseEntity<Void> handleFollow(@PathVariable String externalId) {
-    followArtistService.follow(externalId);
+  public ResponseEntity<Void> handleFollow(@PathVariable String externalId, @RequestParam(value = "source") String source) {
+    if (source.isEmpty()) {
+      throw new IllegalArgumentException("Artist source must be set");
+    }
+    followArtistService.follow(externalId, source);
     return ResponseEntity.ok().build();
   }
 

@@ -7,7 +7,7 @@
 function followArtist(artistId, artistName) {
     $.ajax({
         method: "POST",
-        url: "/rest/v1/artists/follow/" + artistId,
+        url: "/rest/v1/artists/follow/" + artistId + "?source=Discogs",
         success: function() {
             const icon = $(`#${artistId}`);
             icon.text("favorite");

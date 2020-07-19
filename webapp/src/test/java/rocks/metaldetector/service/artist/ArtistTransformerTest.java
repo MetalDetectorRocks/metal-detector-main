@@ -22,6 +22,6 @@ class ArtistTransformerTest implements WithAssertions {
     assertThat(result.getExternalId()).isEqualTo(artistEntity.getExternalId());
     assertThat(result.getArtistName()).isEqualTo(artistEntity.getArtistName());
     assertThat(result.getThumb()).isEqualTo(artistEntity.getThumb());
-    assertThat(result.getSource()).isEqualTo(artistEntity.getSource().toDisplayString());
+    assertThat(result.getSource()).isEqualTo(artistEntity.getSource().getDisplayName());
   }
 }
