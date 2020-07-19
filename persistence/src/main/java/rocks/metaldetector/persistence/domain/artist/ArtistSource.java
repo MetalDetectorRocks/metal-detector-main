@@ -11,7 +11,17 @@ public enum ArtistSource {
     this.value = value;
   }
 
-  public String toDisplayString() {
+  public String getDisplayName() {
     return value;
+  }
+
+  public static ArtistSource getArtistSourceFromString(String source) {
+    if (source.equalsIgnoreCase(DISCOGS.getDisplayName())) {
+      return DISCOGS;
+    }
+    else if (source.equalsIgnoreCase(SPOTIFY.getDisplayName())) {
+      return SPOTIFY;
+    }
+    throw new IllegalArgumentException("Source '" + source + "' not found!");
   }
 }

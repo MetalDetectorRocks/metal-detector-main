@@ -19,6 +19,7 @@ import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
@@ -35,6 +36,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 class ArtistsRestControllerTest implements WithAssertions {
 
   private static final String VALID_EXTERNLA_ID = "252211";
+  private static final String VALID_SOURCE = "Discogs";
   private static final String VALID_SEARCH_REQUEST = "Darkthrone";
 
   @Mock
@@ -139,7 +141,8 @@ class ArtistsRestControllerTest implements WithAssertions {
       followArtistRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.FOLLOW);
       unfollowArtistRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.UNFOLLOW);
       RestAssuredMockMvc.standaloneSetup(underTest,
-                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)));
+                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)),
+                                         RestExceptionsHandler.class);
     }
 
     @AfterEach
@@ -160,11 +163,29 @@ class ArtistsRestControllerTest implements WithAssertions {
     @Test
     @DisplayName("Should call follow artist service when following an artist")
     void handle_follow_call_follow_artist_service() {
+      // given
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("source", VALID_SOURCE);
+
       // when
-      followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNLA_ID);
+      followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNLA_ID, requestParams);
 
       // then
-      verify(followArtistService, times(1)).follow(VALID_EXTERNLA_ID);
+      verify(followArtistService, times(1)).follow(VALID_EXTERNLA_ID, VALID_SOURCE);
+    }
+
+    @Test
+    @DisplayName("Should return bad request on invalid source")
+    void handle_follow_bad_request() {
+      // given
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("source", "");
+
+      // when
+      var result = followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNLA_ID, requestParams);
+
+      // then
+      result.status(HttpStatus.BAD_REQUEST);
     }
 
     @Test

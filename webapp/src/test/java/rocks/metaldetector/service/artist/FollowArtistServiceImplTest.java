@@ -39,6 +39,7 @@ import static rocks.metaldetector.testutil.DtoFactory.DiscogsArtistDtoFactory;
 class FollowArtistServiceImplTest implements WithAssertions {
 
   private static final String EXTERNAL_ID = "252211";
+  private static final String ARTIST_SOURCE = "Discogs";
 
   @Mock
   private UserRepository userRepository;
@@ -76,7 +77,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
-    underTest.follow(EXTERNAL_ID);
+    underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     InOrder inOrderVerifier = inOrder(artistRepository);
@@ -95,7 +96,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
-    underTest.follow(EXTERNAL_ID);
+    underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     verify(currentPublicUserIdSupplier, times(1)).get();
@@ -113,7 +114,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     when(userRepository.findByPublicId(anyString())).thenThrow(new ResourceNotFoundException(userId));
 
     // when
-    Throwable throwable = catchThrowable(() -> underTest.follow("1"));
+    Throwable throwable = catchThrowable(() -> underTest.follow("1", ARTIST_SOURCE));
 
     // then
     assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
@@ -130,7 +131,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
-    underTest.follow(EXTERNAL_ID);
+    underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     verify(discogsService, times(1)).searchArtistById(EXTERNAL_ID);
@@ -146,7 +147,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
-    underTest.follow(EXTERNAL_ID);
+    underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     verifyNoInteractions(discogsService);
@@ -164,7 +165,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     when(artistRepository.save(any())).thenReturn(ArtistEntityFactory.withExternalId(EXTERNAL_ID));
 
     // when
-    underTest.follow(EXTERNAL_ID);
+    underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     verify(artistRepository, times(1)).save(argumentCaptor.capture());
@@ -173,6 +174,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     assertThat(artistEntity.getArtistName()).isEqualTo(discogsArtist.getName());
     assertThat(artistEntity.getExternalId()).isEqualTo(discogsArtist.getId());
     assertThat(artistEntity.getThumb()).isEqualTo(discogsArtist.getImageUrl());
+    assertThat(artistEntity.getSource()).isEqualTo(ARTIST_SOURCE);
   }
 
   @Test
@@ -186,7 +188,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
-    underTest.follow(EXTERNAL_ID);
+    underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     verify(userEntity, times(1)).addFollowedArtist(artist);

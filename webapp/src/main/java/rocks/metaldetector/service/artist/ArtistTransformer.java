@@ -11,7 +11,7 @@ public class ArtistTransformer {
         .externalId(artistEntity.getExternalId())
         .artistName(artistEntity.getArtistName())
         .thumb(artistEntity.getThumb())
-        .source(artistEntity.getSource().toDisplayString())
+        .source(artistEntity.getSource().getDisplayName())
         .build();
   }
 }

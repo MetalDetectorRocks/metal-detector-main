@@ -53,8 +53,8 @@ public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRes
 
   @Override
   public DiscogsArtist searchById(String externalId) {
-    if (externalId.isBlank()) {
-      throw new IllegalArgumentException("externalId must not be blank!");
+    if (externalId.isEmpty()) {
+      throw new IllegalArgumentException("externalId must not be empty");
     }
 
     ResponseEntity<DiscogsArtist> responseEntity = discogsRestTemplate.getForEntity(

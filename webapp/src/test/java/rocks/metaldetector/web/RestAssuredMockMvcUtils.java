@@ -66,11 +66,21 @@ public class RestAssuredMockMvcUtils {
 
   public ValidatableMockMvcResponse doPost(String pathSegment) {
     return given()
-        .contentType(ContentType.JSON)
-        .accept(ContentType.JSON)
-        .when()
-        .post(requestUri + pathSegment)
-        .then();
+            .contentType(ContentType.JSON)
+            .accept(ContentType.JSON)
+          .when()
+            .post(requestUri + pathSegment)
+          .then();
+  }
+
+  public ValidatableMockMvcResponse doPost(String pathSegment, Map<String, Object> requestParams) {
+    return given()
+            .contentType(ContentType.JSON)
+            .accept(ContentType.JSON)
+            .params(requestParams)
+          .when()
+            .post(requestUri + pathSegment)
+          .then();
   }
 
   public ValidatableMockMvcResponse doPost(Object request) {
@@ -80,7 +90,7 @@ public class RestAssuredMockMvcUtils {
             .body(request)
           .when()
             .post(requestUri)
-        .then();
+          .then();
   }
 
   public ValidatableMockMvcResponse doPost(Map<String, String> params, ContentType contentType) {
