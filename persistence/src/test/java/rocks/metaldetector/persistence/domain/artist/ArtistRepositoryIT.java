@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import rocks.metaldetector.persistence.BaseDataJpaTest;
 import rocks.metaldetector.persistence.WithIntegrationTestConfig;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -38,7 +38,7 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
   }
 
   @ParameterizedTest(name = "[{index}] => Entity <{0}>")
-  @ValueSource(longs = {1, 2, 3})
+  @MethodSource("artistIdProvider")
   @DisplayName("findByArtistExternalId() finds the correct entity for a given artist id if it exists")
   void find_by_artist_external_id_should_return_correct_entity(String entity) {
     Optional<ArtistEntity> artistEntityOptional = artistRepository.findByExternalId(entity);
@@ -46,6 +46,14 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
     assertThat(artistEntityOptional).isPresent();
     assertThat(artistEntityOptional.get().getExternalId()).isEqualTo(entity);
     assertThat(artistEntityOptional.get().getArtistName()).isEqualTo(String.valueOf(entity));
+  }
+
+  private static Stream<Arguments> artistIdProvider() {
+    return Stream.of(
+        Arguments.of("1"),
+        Arguments.of("2"),
+        Arguments.of("3")
+    );
   }
 
   @Test
@@ -57,12 +65,20 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
   }
 
   @ParameterizedTest(name = "[{index}] => Entity <{0}>")
-  @ValueSource(longs = {1, 2, 3})
+  @MethodSource("artistIdSource")
   @DisplayName("existsByArtistExternalId() should return true if artist exists")
   void exists_by_artist_external_id_should_return_true(String entity) {
     boolean exists = artistRepository.existsByExternalId(entity);
 
     assertThat(exists).isTrue();
+  }
+
+  private static Stream<Arguments> artistIdSource() {
+    return Stream.of(
+        Arguments.of("1"),
+        Arguments.of("2"),
+        Arguments.of("3")
+    );
   }
 
   @Test
@@ -83,7 +99,7 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
     for (int i = 0; i < artistEntities.size(); i++) {
       ArtistEntity entity = artistEntities.get(i);
       assertThat(entity.getArtistName()).isEqualTo(String.valueOf(i + 1));
-      assertThat(entity.getExternalId()).isEqualTo(i + 1);
+      assertThat(entity.getExternalId()).isEqualTo(String.valueOf(i + 1));
       assertThat(entity.getThumb()).isNull();
     }
   }
@@ -106,9 +122,9 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
 
   private static Stream<Arguments> inputProviderExternalIds() {
     return Stream.of(
-        Arguments.of((Object) new long[] {2L, 1L}),
-        Arguments.of((Object) new long[] {1L}),
-        Arguments.of((Object) new long[] {})
+        Arguments.of(List.of("2", "1")),
+        Arguments.of(List.of("1")),
+        Arguments.of(Collections.emptyList())
     );
   }
 }

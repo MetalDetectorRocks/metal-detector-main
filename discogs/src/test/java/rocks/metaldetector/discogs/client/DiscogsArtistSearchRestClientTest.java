@@ -176,22 +176,14 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
   @DisplayName("Tests for method searchById()")
   class SearchByIdTest {
 
-    @ParameterizedTest(name = "An IllegalArgumentException is thrown when artistId is [{0}].")
-    @MethodSource("illegalExternalIdProvider")
-    @DisplayName("An IllegalArgumentException is thrown when artistId is blank.")
-    void test_invalid_artist_id(String externalId) {
+    @Test
+    @DisplayName("An IllegalArgumentException is thrown when artistId is empty.")
+    void test_invalid_artist_id() {
       // when
-      var throwable = catchThrowable(() -> underTest.searchById(externalId));
+      var throwable = catchThrowable(() -> underTest.searchById(""));
 
       // then
       assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private Stream<Arguments> illegalExternalIdProvider() {
-      return Stream.of(
-              Arguments.of(""),
-              Arguments.of("   ")
-      );
     }
 
     @Test
