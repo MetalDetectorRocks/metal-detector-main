@@ -35,7 +35,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @ExtendWith(MockitoExtension.class)
 class ArtistsRestControllerTest implements WithAssertions {
 
-  private static final String VALID_EXTERNLA_ID = "252211";
+  private static final String VALID_EXTERNAL_ID = "252211";
   private static final String VALID_SOURCE = "Discogs";
   private static final String VALID_SEARCH_REQUEST = "Darkthrone";
 
@@ -158,7 +158,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       requestParams.put("source", VALID_SOURCE);
 
       // when
-      var validatableResponse = followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNLA_ID, requestParams);
+      var validatableResponse = followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNAL_ID, requestParams);
 
       // then
       validatableResponse.statusCode(HttpStatus.OK.value());
@@ -172,10 +172,10 @@ class ArtistsRestControllerTest implements WithAssertions {
       requestParams.put("source", VALID_SOURCE);
 
       // when
-      followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNLA_ID, requestParams);
+      followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNAL_ID, requestParams);
 
       // then
-      verify(followArtistService, times(1)).follow(VALID_EXTERNLA_ID, VALID_SOURCE);
+      verify(followArtistService, times(1)).follow(VALID_EXTERNAL_ID, VALID_SOURCE);
     }
 
     @Test
@@ -186,7 +186,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       requestParams.put("source", "");
 
       // when
-      var result = followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNLA_ID, requestParams);
+      var result = followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNAL_ID, requestParams);
 
       // then
       result.status(HttpStatus.BAD_REQUEST);
@@ -196,7 +196,7 @@ class ArtistsRestControllerTest implements WithAssertions {
     @DisplayName("Should return 200 when unfollowing an artist")
     void handle_unfollow_return_200() {
       // when
-      var validatableResponse = unfollowArtistRestAssuredUtils.doPost("/" + VALID_EXTERNLA_ID);
+      var validatableResponse = unfollowArtistRestAssuredUtils.doPost("/" + VALID_EXTERNAL_ID);
 
       // then
       validatableResponse.statusCode(HttpStatus.OK.value());
@@ -206,10 +206,10 @@ class ArtistsRestControllerTest implements WithAssertions {
     @DisplayName("Should call follow artist service when unfollowing an artist")
     void handle_unfollow_call_follow_artist_service() {
       // when
-      unfollowArtistRestAssuredUtils.doPost("/" + VALID_EXTERNLA_ID);
+      unfollowArtistRestAssuredUtils.doPost("/" + VALID_EXTERNAL_ID);
 
       // then
-      verify(followArtistService, times(1)).unfollow(VALID_EXTERNLA_ID);
+      verify(followArtistService, times(1)).unfollow(VALID_EXTERNAL_ID);
     }
   }
 }

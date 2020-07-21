@@ -12,7 +12,7 @@ public interface ArtistRepository extends JpaRepository<ArtistEntity, Long> {
 
   Optional<ArtistEntity> findByExternalId(String externalId);
 
-  List<ArtistEntity> findAllByExternalIdIn(Collection<String> externalId);
+  List<ArtistEntity> findAllByExternalIdIn(Collection<String> externalIds);
 
   boolean existsByExternalId(String externalId);
 
