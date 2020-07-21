@@ -53,7 +53,7 @@ public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRes
 
   @Override
   public DiscogsArtist searchById(String externalId) {
-    if (externalId.isEmpty()) {
+    if (externalId == null || externalId.isEmpty()) {
       throw new IllegalArgumentException("externalId must not be empty");
     }
 
