@@ -18,6 +18,8 @@ $(document).ready(function () {
 function getReleases() {
   clearReleasesTable();
 
+  let dateFrom = new Date();
+  dateFrom.setDate(dateFrom.getDate() - 90);
   return $("#releases-table").DataTable({
       "ajax": {
         "url": "/rest/v1/releases",
@@ -25,7 +27,7 @@ function getReleases() {
         "dataType": "json",
         "contentType": "application/json",
         "data": function () {
-          return JSON.stringify({"artists": []});
+          return JSON.stringify({"artists": [], "dateFrom": dateFrom});
         },
         "dataSrc": ""
       },
@@ -42,7 +44,7 @@ function getReleases() {
       "columnDefs": [
         {
           "targets": [2],
-          "render": utcDateToLocalDate
+          "render": formatUtcDate
         }
       ]
   });
@@ -74,7 +76,7 @@ function showUpdateReleaseForm() {
   }
 
   $('#album-title').text(data.albumTitle);
-  $('#release-date').text(utcDateToLocalDate(data.releaseDate));
+  $('#release-date').text(formatUtcDate(data.releaseDate));
   $('#estimated-release-date').text(data.estimatedReleaseDate);
   $('#update-status').val(data.state);
 
