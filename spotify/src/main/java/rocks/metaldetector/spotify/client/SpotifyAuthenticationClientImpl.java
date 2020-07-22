@@ -19,13 +19,18 @@ import rocks.metaldetector.support.exceptions.ExternalServiceException;
 import java.nio.charset.Charset;
 import java.util.Collections;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @Slf4j
 @Service
 @Profile({"default", "preview", "prod"})
 @AllArgsConstructor
 public class SpotifyAuthenticationClientImpl implements SpotifyAuthenticationClient {
 
-  private static final String AUTHORIZATION_ENDPOINT = "/api/token";
+  static final String AUTHORIZATION_ENDPOINT = "/api/token";
+  static final String REQUEST_KEY = "grant_type";
+  static final String REQUEST_VALUE = "client_credentials";
+  static final String AUTHORIZATION_HEADER_PREFIX = "Basic ";
 
   private final RestTemplate spotifyRestTemplate;
   private final SpotifyConfig spotifyConfig;
@@ -47,18 +52,18 @@ public class SpotifyAuthenticationClientImpl implements SpotifyAuthenticationCli
 
   private HttpEntity<MultiValueMap<String, String>> createHttpEntity() {
     MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
-    request.add("grant_type", "client_credentials");
+    request.add(REQUEST_KEY, REQUEST_VALUE);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
-    headers.set("Authorization", createAuthorizationHeader());
+    headers.set(AUTHORIZATION, createAuthorizationHeader());
 
     return new HttpEntity<>(request, headers);
   }
 
   private String createAuthorizationHeader() {
-    return "Basic " + Base64.encodeBase64String((spotifyConfig.getClientId() + ":" + spotifyConfig.getClientSecret()).getBytes());
+    return AUTHORIZATION_HEADER_PREFIX + Base64.encodeBase64String((spotifyConfig.getClientId() + ":" + spotifyConfig.getClientSecret()).getBytes());
   }
 }
