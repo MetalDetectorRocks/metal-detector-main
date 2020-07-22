@@ -11,6 +11,8 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ManyToMany;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,8 +24,8 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true, exclude = "followedByUsers")
 public class ArtistEntity extends BaseEntity {
 
-  @Column(name = "artist_discogs_id", nullable = false, updatable = false)
-  private long artistDiscogsId;
+  @Column(name = "external_id", nullable = false, updatable = false)
+  private String externalId;
 
   @Column(name = "artist_name", nullable = false, updatable = false)
   @NonNull
@@ -32,13 +34,18 @@ public class ArtistEntity extends BaseEntity {
   @Column(name = "thumb", updatable = false)
   private String thumb;
 
+  @Column(name = "source", nullable = false, updatable = false)
+  @Enumerated(EnumType.STRING)
+  private ArtistSource source;
+
   @ManyToMany(mappedBy = "followedArtists")
   private Set<UserEntity> followedByUsers;
 
-  public ArtistEntity(long artistDiscogsId, String artistName, String thumb) {
-    this.artistDiscogsId = artistDiscogsId;
+  public ArtistEntity(String externalId, String artistName, String thumb, ArtistSource source) {
+    this.externalId = externalId;
     this.artistName = artistName;
     this.thumb = thumb;
+    this.source = source;
     this.followedByUsers = new HashSet<>();
   }
 

@@ -1,9 +1,6 @@
-FROM openjdk:14-buster
+FROM openjdk:14.0.2-slim-buster
 
 ENV TZ=Europe/Berlin
-ENV SERVER_PORT 8080
-
-EXPOSE $SERVER_PORT
 
 RUN mkdir /app
 WORKDIR /app
@@ -29,4 +26,4 @@ COPY $SOURCE_JAR_FILE app.jar
 
 RUN sh -c "touch app.jar"
 
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Xmx256m", "-jar", "app.jar"]

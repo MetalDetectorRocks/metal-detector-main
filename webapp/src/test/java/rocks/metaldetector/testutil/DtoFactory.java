@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public class DtoFactory {
 
-  private static final long DISCOGS_ID = 252211L;
+  private static final String EXTERNAL_ID = "252211";
   private static final String ARTIST_NAME = "Darkthrone";
 
   public static class UserDtoFactory {
@@ -137,12 +137,12 @@ public class DtoFactory {
   public static class DiscogsArtistSearchResultEntryDtoFactory {
 
     static DiscogsArtistSearchResultEntryDto createDefault() {
-      return withId(DISCOGS_ID);
+      return withId(EXTERNAL_ID);
     }
 
-    public static DiscogsArtistSearchResultEntryDto withId(long discogsId) {
+    public static DiscogsArtistSearchResultEntryDto withId(String externalId) {
       return DiscogsArtistSearchResultEntryDto.builder()
-              .id(discogsId)
+              .id(externalId)
               .name(ARTIST_NAME)
               .build();
     }
@@ -152,7 +152,7 @@ public class DtoFactory {
 
     public static DiscogsArtistDto createDefault() {
       return DiscogsArtistDto.builder()
-              .id(DISCOGS_ID)
+              .id(EXTERNAL_ID)
               .name(ARTIST_NAME)
               .build();
     }
@@ -192,7 +192,8 @@ public class DtoFactory {
     public static ArtistDto withName(String name) {
       return ArtistDto.builder()
               .artistName(name)
-              .discogsId(1L)
+              .externalId("1")
+              .source("Discogs")
               .build();
     }
   }

@@ -8,9 +8,10 @@ public class ArtistTransformer {
 
   public ArtistDto transform(ArtistEntity artistEntity) {
     return ArtistDto.builder()
-        .discogsId(artistEntity.getArtistDiscogsId())
+        .externalId(artistEntity.getExternalId())
         .artistName(artistEntity.getArtistName())
         .thumb(artistEntity.getThumb())
+        .source(artistEntity.getSource().getDisplayName())
         .build();
   }
 }

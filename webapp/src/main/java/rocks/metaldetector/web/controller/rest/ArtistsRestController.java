@@ -37,15 +37,18 @@ public class ArtistsRestController {
     return ResponseEntity.ok(searchResponse);
   }
 
-  @PostMapping(path = Endpoints.Rest.FOLLOW + "/{discogsId}")
-  public ResponseEntity<Void> handleFollow(@PathVariable long discogsId) {
-    followArtistService.follow(discogsId);
+  @PostMapping(path = Endpoints.Rest.FOLLOW + "/{externalId}")
+  public ResponseEntity<Void> handleFollow(@PathVariable String externalId, @RequestParam(value = "source") String source) {
+    if (source.isEmpty()) {
+      throw new IllegalArgumentException("Artist source must be set");
+    }
+    followArtistService.follow(externalId, source);
     return ResponseEntity.ok().build();
   }
 
-  @PostMapping(path = Endpoints.Rest.UNFOLLOW + "/{discogsId}")
-  public ResponseEntity<Void> handleUnfollow(@PathVariable long discogsId) {
-    followArtistService.unfollow(discogsId);
+  @PostMapping(path = Endpoints.Rest.UNFOLLOW + "/{externalId}")
+  public ResponseEntity<Void> handleUnfollow(@PathVariable String externalId) {
+    followArtistService.unfollow(externalId);
     return ResponseEntity.ok().build();
   }
 }

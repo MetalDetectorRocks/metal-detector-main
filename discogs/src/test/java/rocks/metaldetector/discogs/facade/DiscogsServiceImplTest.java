@@ -16,13 +16,14 @@ import rocks.metaldetector.discogs.client.transformer.DiscogsArtistTransformer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static rocks.metaldetector.discogs.client.DiscogsDtoFactory.*;
+import static rocks.metaldetector.discogs.client.DiscogsDtoFactory.DiscogsArtistDtoFactory;
+import static rocks.metaldetector.discogs.client.DiscogsDtoFactory.DiscogsArtistFactory;
 import static rocks.metaldetector.discogs.client.DiscogsDtoFactory.DiscogsArtistSearchResultDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -103,7 +104,7 @@ class DiscogsServiceImplTest implements WithAssertions {
     @DisplayName("Should pass provided artist id to search client")
     void should_pass_arguments() {
       // given
-      var artistId = 123;
+      var artistId = "123";
 
       // when
       underTest.searchArtistById(artistId);
@@ -117,10 +118,10 @@ class DiscogsServiceImplTest implements WithAssertions {
     void should_transform_search_results() {
       // given
       var searchResult = DiscogsArtistFactory.createDefault();
-      doReturn(searchResult).when(searchClient).searchById(anyLong());
+      doReturn(searchResult).when(searchClient).searchById(anyString());
 
       // when
-      underTest.searchArtistById(123);
+      underTest.searchArtistById("123");
 
       // then
       verify(artistTransformer, times(1)).transform(eq(searchResult));
@@ -132,11 +133,11 @@ class DiscogsServiceImplTest implements WithAssertions {
       // given
       var searchResult = DiscogsArtistFactory.createDefault();
       var transformedSearchResult = DiscogsArtistDtoFactory.createDefault();
-      doReturn(searchResult).when(searchClient).searchById(anyLong());
+      doReturn(searchResult).when(searchClient).searchById(anyString());
       doReturn(transformedSearchResult).when(artistTransformer).transform(any());
 
       // when
-      var response = underTest.searchArtistById(123);
+      var response = underTest.searchArtistById("123");
 
       // then
       assertThat(response).isEqualTo(transformedSearchResult);

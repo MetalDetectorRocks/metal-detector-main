@@ -99,7 +99,7 @@ public class DiscogsDtoFactory {
 
     public static DiscogsArtistDto createDefault() {
       return DiscogsArtistDto.builder()
-              .id(666)
+              .id("666")
               .name("Dummy artist")
               .imageUrl("http://image.url")
               .build();

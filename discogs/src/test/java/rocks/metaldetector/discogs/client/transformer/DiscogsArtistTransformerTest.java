@@ -32,7 +32,7 @@ class DiscogsArtistTransformerTest implements WithAssertions {
     // then
     assertThat(result).isEqualTo(
             DiscogsArtistDto.builder()
-                            .id(discogsArtist.getId())
+                            .id(String.valueOf(discogsArtist.getId()))
                             .name(discogsArtist.getName())
                             .build()
     );

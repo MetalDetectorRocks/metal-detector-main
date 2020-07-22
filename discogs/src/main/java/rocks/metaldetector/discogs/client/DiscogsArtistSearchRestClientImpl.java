@@ -52,21 +52,21 @@ public class DiscogsArtistSearchRestClientImpl implements DiscogsArtistSearchRes
   }
 
   @Override
-  public DiscogsArtist searchById(long artistId) {
-    if (artistId <= 0) {
-      throw new IllegalArgumentException("artistId must not be negative!");
+  public DiscogsArtist searchById(String externalId) {
+    if (externalId == null || externalId.isEmpty()) {
+      throw new IllegalArgumentException("externalId must not be empty");
     }
 
     ResponseEntity<DiscogsArtist> responseEntity = discogsRestTemplate.getForEntity(
             discogsConfig.getRestBaseUrl() + ARTIST_ID_SEARCH_URL_FRAGMENT,
             DiscogsArtist.class,
-            artistId
+            externalId
     );
 
     DiscogsArtist discogsArtist = responseEntity.getBody();
     var shouldNotHappen = discogsArtist == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
-      throw new ExternalServiceException("Could not get artist for artistId '" + artistId + "' (Response code: " + responseEntity.getStatusCode() + ")");
+      throw new ExternalServiceException("Could not get artist for externalId '" + externalId + "' (Response code: " + responseEntity.getStatusCode() + ")");
     }
 
     return discogsArtist;

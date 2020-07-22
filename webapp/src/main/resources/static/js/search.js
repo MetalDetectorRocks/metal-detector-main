@@ -136,14 +136,14 @@ function createHeadlineText(query, searchResponse) {
 /**
  * Appends the top search result to the DOM.
  * @param topSearchResult           The top search result
- * @param topSearchResult.id        The discogs id of the artist
+ * @param topSearchResult.id        The external id of the artist
  * @param topSearchResult.name      The name of the artist
  * @param topSearchResult.imageUrl  The url of the artist thumbnail
  * @param topSearchResult.followed  True if the current user already follow this artist, false otherwise
  */
 function appendTopSearchResult(topSearchResult) {
     const topResultHtml = renderTopResultHtml({
-        discogsId: topSearchResult.id,
+        externalId: topSearchResult.id,
         name: topSearchResult.name,
         imageUrl: topSearchResult.imageUrl,
         followedByUser: topSearchResult.followed,
@@ -178,7 +178,7 @@ function appendOtherSearchResults(searchResults, currentPage) {
         }
 
         rowWrapper.append(renderOtherSearchResultsHtml({
-            discogsId: result.id,
+            externalId: result.id,
             name: result.name,
             imageUrl: result.imageUrl,
             followedByUser: result.followed
@@ -233,7 +233,7 @@ function renderUnknownErrorOccurred() {
 
 /**
  * Renders the HTML for the top search result.
- * @param artistInfo.discogsId          The discogs id of the artist
+ * @param artistInfo.externalId         The external id of the artist
  * @param artistInfo.name               The name of the artist
  * @param artistInfo.imageUrl           The url of the artist thumbnail
  * @param artistInfo.followedByUser     True if the current user already follow this artist, false otherwise
@@ -256,7 +256,7 @@ function renderTopResultHtml(artistInfo) {
                                     <p class="h4 card-title mt-3">${artistInfo.name}</p>
                                 </div>
                                 <div class="col-md-auto">
-                                    ${renderFollowOrUnfollowIcon(artistInfo.discogsId, artistInfo.name, artistInfo.followedByUser)}
+                                    ${renderFollowOrUnfollowIcon(artistInfo.externalId, artistInfo.name, artistInfo.followedByUser)}
                                 </div>
                             </div>
                             <div class="row">
@@ -275,7 +275,7 @@ function renderTopResultHtml(artistInfo) {
 
 /**
  * Renders the HTML for the other search results.
- * @param artistInfo.discogsId          The discogs id of the artist
+ * @param artistInfo.externalId         The external id of the artist
  * @param artistInfo.name               The name of the artist
  * @param artistInfo.imageUrl           The url of the artist thumbnail
  * @param artistInfo.followedByUser     True if the current user already follow this artist, false otherwise
@@ -295,7 +295,7 @@ function renderOtherSearchResultsHtml(artistInfo) {
                                 <p class="h5 card-title mt-2">${artistInfo.name}</p>
                             </div>
                             <div class="col-md-auto">
-                                ${renderFollowOrUnfollowIcon(artistInfo.discogsId, artistInfo.name, artistInfo.followedByUser)}
+                                ${renderFollowOrUnfollowIcon(artistInfo.externalId, artistInfo.name, artistInfo.followedByUser)}
                             </div>
                         </div>
                     </div>
@@ -306,10 +306,10 @@ function renderOtherSearchResultsHtml(artistInfo) {
 
 /**
  * Renders the HTML for the follow or unfollow icon.
- * @param artistId        The discogs id of the artist
- * @param artistName      The name of the artist
+ * @param artistId        The artist's external id
+ * @param artistName      The artist's name
  * @param followedByUser  True if the current user already follow this artist, false otherwise
- * @returns {string}  The whole HTML for follow or unfollow icon
+ * @returns {string}      The whole HTML for follow or unfollow icon
  */
 function renderFollowOrUnfollowIcon(artistId, artistName, followedByUser) {
     artistName = artistName.replace(new RegExp("'", "g"), "");

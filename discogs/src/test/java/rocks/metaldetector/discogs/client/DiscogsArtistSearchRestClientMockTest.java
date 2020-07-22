@@ -31,12 +31,12 @@ class DiscogsArtistSearchRestClientMockTest implements WithAssertions {
   @ParameterizedTest(name = "Should return an artist when searching by id {0}")
   @MethodSource("idProvider")
   @DisplayName("Should return an artist when searching by an known id")
-  void should_return_artist(long artistId) {
+  void should_return_artist(String externalId) {
     // when
-    DiscogsArtist result = underTest.searchById(artistId);
+    DiscogsArtist result = underTest.searchById(externalId);
 
     // then
-    assertThat(result.getId()).isEqualTo(artistId);
+    assertThat(result.getId()).isEqualTo(Long.parseLong(externalId));
   }
 
   private static Stream<Arguments> idProvider() {

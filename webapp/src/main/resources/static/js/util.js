@@ -20,10 +20,14 @@ function isEmpty(value) {
  * @param dateTimeInput the UTC DateTime to format
  * @return {string} the formatted DateTime
  */
-function utcDateTimeToLocalDateTime(dateTimeInput) {
+function formatUtcDateTime(dateTimeInput) {
   if (dateTimeInput) {
+    const formattedDate = formatUtcDate(dateTimeInput);
     const date = new Date(Date.parse(dateTimeInput));
-    return date.toLocaleString();
+    const timeFormat = new Intl.DateTimeFormat('de', { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    const [{ value: hour },,{ value: minute },,{ value: second }] = timeFormat.formatToParts(date);
+
+    return `${formattedDate} ${hour}:${minute}:${second}`;
   }
 
   return "";
@@ -34,10 +38,13 @@ function utcDateTimeToLocalDateTime(dateTimeInput) {
  * @param dateInput the UTC DateTime to format
  * @return {string} the formatted Date
  */
-function utcDateToLocalDate(dateInput) {
+function formatUtcDate(dateInput) {
   if (dateInput) {
     const date = new Date(Date.parse(dateInput));
-    return date.toLocaleDateString();
+    const dateFormat = new Intl.DateTimeFormat('de', { year: "numeric", month: "2-digit", day: "2-digit" });
+    const [{ value: month },,{ value: day },,{ value: year }] = dateFormat.formatToParts(date);
+
+    return `${year}-${month}-${day}`;
   }
 
   return "";
@@ -59,7 +66,7 @@ function createNoResultsMessage(text) {
 /**
  * Builds the onclick function
  * @param artistName    Artist to follow
- * @param artistId      Artist's discogs id
+ * @param artistId      Artist's external id
  * @param isFollowed    true if user follows given artist
  * @param button        Button that was clicked
  * @returns {Function}
@@ -72,8 +79,8 @@ function createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, but
 
 /**
  * Builds an HTML button to follow an artist
- * @param artistName    The artists name
- * @param artistId      The artists discogs id
+ * @param artistName    The artist's name
+ * @param artistId      The artist's external id
  * @param isFollowed    The information if the artist is already followed
  * @returns {HTMLButtonElement}
  */

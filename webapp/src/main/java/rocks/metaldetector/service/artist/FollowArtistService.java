@@ -4,8 +4,8 @@ import java.util.List;
 
 public interface FollowArtistService {
 
-  void follow(long artistId);
-  void unfollow(long artistId);
+  void follow(String externalId, String source);
+  void unfollow(String externalId);
   List<ArtistDto> getFollowedArtistsOfCurrentUser();
   List<ArtistDto> getFollowedArtistsOfUser(String publicUserId);
 }

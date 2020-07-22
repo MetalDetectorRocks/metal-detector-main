@@ -212,7 +212,7 @@ class UserEntityTest implements WithAssertions {
     void adding_artist_adds_artist_and_user() {
       // given
       UserEntity user = UserFactory.createUser("user", "email");
-      ArtistEntity artist = ArtistFactory.withDiscogsId(1L);
+      ArtistEntity artist = ArtistFactory.withExternalId("1");
 
       // when
       user.addFollowedArtist(artist);
@@ -227,7 +227,7 @@ class UserEntityTest implements WithAssertions {
     void removing_artist_removes_artist_and_user() {
       // given
       UserEntity user = UserFactory.createUser("user", "email");
-      ArtistEntity artist = ArtistFactory.withDiscogsId(1L);
+      ArtistEntity artist = ArtistFactory.withExternalId("1");
       user.addFollowedArtist(artist);
 
       // when
@@ -243,11 +243,11 @@ class UserEntityTest implements WithAssertions {
     void should_return_true_for_following() {
       // given
       UserEntity user = UserFactory.createUser("user", "email");
-      ArtistEntity artist = ArtistFactory.withDiscogsId(1L);
+      ArtistEntity artist = ArtistFactory.withExternalId("1");
       user.addFollowedArtist(artist);
 
       // when
-      boolean result = user.isFollowing(artist.getArtistDiscogsId());
+      boolean result = user.isFollowing(artist.getExternalId());
 
       // then
       assertThat(result).isTrue();
@@ -258,10 +258,10 @@ class UserEntityTest implements WithAssertions {
     void should_return_false_for_following() {
       // given
       UserEntity user = UserFactory.createUser("user", "email");
-      ArtistEntity artist = ArtistFactory.withDiscogsId(1L);
+      ArtistEntity artist = ArtistFactory.withExternalId("1");
 
       // when
-      boolean result = user.isFollowing(artist.getArtistDiscogsId());
+      boolean result = user.isFollowing(artist.getExternalId());
 
       // then
       assertThat(result).isFalse();
