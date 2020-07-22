@@ -11,6 +11,9 @@ import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
+
 @Component
 public class ArtistSearchResponseTransformer {
 
@@ -32,6 +35,7 @@ public class ArtistSearchResponseTransformer {
         .followed(spotifySearchResult.isFollowed())
         .uri(spotifySearchResult.getUri())
         .imageUrl(spotifySearchResult.getImageUrl())
+        .source(SPOTIFY.getDisplayName())
         .build();
   }
 
@@ -53,6 +57,7 @@ public class ArtistSearchResponseTransformer {
         .followed(discogsSearchResult.isFollowed())
         .uri(discogsSearchResult.getUri())
         .imageUrl(discogsSearchResult.getImageUrl())
+        .source(DISCOGS.getDisplayName())
         .build();
   }
 }

@@ -26,8 +26,8 @@ public class ArtistsRestController {
   @GetMapping(path = Endpoints.Rest.SEARCH,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<ArtistSearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
-                                                                       @RequestParam(value = "page", defaultValue = "1") int page,
-                                                                       @RequestParam(value = "size", defaultValue = "40") int size) {
+                                                               @RequestParam(value = "page", defaultValue = "1") int page,
+                                                               @RequestParam(value = "size", defaultValue = "40") int size) {
     ArtistSearchResponse searchResponse = artistsService.searchSpotifyByName(query, PageRequest.of(page, size));
 
     if (searchResponse.getSearchResults().isEmpty()) {

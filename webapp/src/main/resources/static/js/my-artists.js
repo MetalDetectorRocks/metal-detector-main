@@ -74,7 +74,7 @@ function createMyArtistsCards(myArtists){
     cardBody.append(breakElement);
 
     const followArtistButtonElement = createFollowArtistButton(artist.artistName,
-      artist.externalId, true);
+      artist.externalId, true, artist.source);
     cardBody.append(followArtistButtonElement);
 
     document.getElementById('myArtistsContainer').append(card);

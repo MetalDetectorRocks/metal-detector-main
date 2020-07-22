@@ -69,11 +69,12 @@ function createNoResultsMessage(text) {
  * @param artistId      Artist's external id
  * @param isFollowed    true if user follows given artist
  * @param button        Button that was clicked
+ * @param source        The source the artist was fetched from
  * @returns {Function}
  */
-function createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, button) {
+function createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, button, source) {
   return function () {
-    isFollowed ? unfollowArtist(artistId, artistName) : followArtist(artistId, artistName);
+    isFollowed ? unfollowArtist(artistId, artistName) : followArtist(artistId, artistName, source);
   };
 }
 
@@ -82,15 +83,16 @@ function createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, but
  * @param artistName    The artist's name
  * @param artistId      The artist's external id
  * @param isFollowed    The information if the artist is already followed
+ * @param source        The source the artist is fetched from
  * @returns {HTMLButtonElement}
  */
-function createFollowArtistButton(artistName, artistId, isFollowed) {
+function createFollowArtistButton(artistName, artistId, isFollowed, source) {
   const followArtistButtonElement = document.createElement('button');
   followArtistButtonElement.id = "followArtistButton" + artistId;
   followArtistButtonElement.type = "button";
   followArtistButtonElement.className = "btn btn-primary btn-dark font-weight-bold mt-2";
   followArtistButtonElement.textContent = isFollowed ? "Unfollow" : "Follow";
-  followArtistButtonElement.onclick = createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, followArtistButtonElement);
+  followArtistButtonElement.onclick = createOnClickFunctionFollowArtist(artistName, artistId, isFollowed, followArtistButtonElement, source);
   return followArtistButtonElement;
 }
 

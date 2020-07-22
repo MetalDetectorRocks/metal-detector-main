@@ -44,7 +44,7 @@ public class SpotifyArtistSearchResultTransformer {
     return SpotifyArtistSearchResultEntryDto.builder()
         .id(result.getId())
         .name(result.getName())
-        .imageUrl(result.getImages().get(0).getUrl())
+        .imageUrl(result.getImages().isEmpty() ? "" : result.getImages().get(0).getUrl())
         .uri(result.getUri())
         .genres(result.getGenres())
         .popularity(result.getPopularity())
