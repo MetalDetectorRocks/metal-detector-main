@@ -74,7 +74,7 @@ public class ArtistsServiceImpl implements ArtistsService {
                                                                                         new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
     );
     SpotifyArtistSearchResultDto result = spotifyService.searchArtists(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
-//    result.getSearchResults().forEach(artist -> artist.setFollowed(userEntity.isFollowing(artist.getId()))); // ToDo NilsD: current artist id concept has to be reworked
+    result.getSearchResults().forEach(artist -> artist.setFollowed(userEntity.isFollowing(artist.getId())));
 
     return artistSearchResponseTransformer.transformSpotify(result);
   }
