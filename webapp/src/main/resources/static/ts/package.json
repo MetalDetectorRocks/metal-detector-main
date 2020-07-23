@@ -23,6 +23,7 @@
     "@types/source-map": "^0.5.7"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "faker": "^4.1.0"
   }
 }
