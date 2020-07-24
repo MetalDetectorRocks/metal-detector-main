@@ -14,6 +14,7 @@ import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,7 +53,10 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   @Transactional
   public List<ArtistDto> getFollowedArtistsOfCurrentUser() {
     UserEntity user = currentUser();
-    return user.getFollowedArtists().stream().map(artistTransformer::transform).collect(Collectors.toUnmodifiableList());
+    return user.getFollowedArtists().stream()
+            .map(artistTransformer::transform)
+            .sorted(Comparator.comparing(ArtistDto::getArtistName))
+            .collect(Collectors.toUnmodifiableList());
   }
 
   @Override
