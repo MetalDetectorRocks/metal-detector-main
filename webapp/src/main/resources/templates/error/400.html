@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html layout:decorate="~{guest/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Bad request</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <div class="container text-center">
+            <img alt="Bad request" th:src="@{/images/400-bad-request.jpg}" src="#" class="img-fluid mb-5 rounded mx-auto d-block" />
+            <br />
+            <a href="#" th:href="@{/}">Home</a>
+        </div>
+    </section>
+</body>
+</html>
