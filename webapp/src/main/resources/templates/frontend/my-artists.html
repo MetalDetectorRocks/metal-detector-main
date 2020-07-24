@@ -5,19 +5,26 @@
       lang="en">
 <head>
     <title>My Artists</title>
-    <script th:src="@{/js/my-artists.js}" src="#"></script>
-    <script th:src="@{/ts/dist/myartists.bundle.js}" src="#"></script>
+    <script type="module" th:src="@{/ts/dist/myartists.bundle.js}" src="#"></script>
 </head>
 <body>
     <section layout:fragment="content">
+        <template id="artist-card">
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="vertical-card-img" src="#" alt="" id="thumb">
+                    <div class="top-right pointer" id="follow-icon"><i class="material-icons md-30 md-red">favorite</i></div>
+                    <div class="card-body">
+                        <p class="h5 card-title" id="artist-name"></p>
+                    </div>
+                    <div class="card-footer text-muted" id="followed-since">
+                    </div>
+                </div>
+            </div>
+        </template>
+
         <h1 class="h4">My Artists</h1>
-        <div id="myArtistsContainer" class="mb-3"></div>
-        <div id="noResultsMessageContainer"></div>
-        <script th:inline="javascript">
-            $(document).ready(function () {
-                showMyArtists()
-            })
-        </script>
+        <div id="artists-container" class="mb-3"></div>
     </section>
 </body>
 </html>

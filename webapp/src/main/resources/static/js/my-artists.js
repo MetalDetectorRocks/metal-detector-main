@@ -3,7 +3,7 @@
  * @returns {boolean}
  */
 function showMyArtists() {
-  toggleLoader("myArtistsContainer");
+  toggleLoader("artists-container");
 
   const url = new URL(window.location.href);
   const size = url.searchParams.get("size");
@@ -24,12 +24,12 @@ function showMyArtists() {
     dataType: "json",
     success: function(myArtists){
       buildResultsMyArtists(myArtists);
-      toggleLoader("myArtistsContainer");
+      toggleLoader("artists-container");
     },
     error: function(){
       const message = "No artists could be found!";
-      validationOrAjaxFailed(message, 'myArtistsContainer');
-      toggleLoader("myArtistsContainer");
+      validationOrAjaxFailed(message, 'artists-container');
+      toggleLoader("artists-container");
     }
   });
 
@@ -77,7 +77,7 @@ function createMyArtistsCards(myArtists){
       artist.externalId, true);
     cardBody.append(followArtistButtonElement);
 
-    document.getElementById('myArtistsContainer').append(card);
+    document.getElementById('artists-container').append(card);
   });
 }
 
@@ -137,7 +137,7 @@ function createNavigationElementMyArtists(myArtists) {
   if (myArtists.pagination.currentPage + 1 < myArtists.pagination.totalPages)
     createPreviousOrNextItemMyArtists(myArtists, listElement, false);
 
-  document.getElementById('myArtistsContainer').append(navElement);
+  document.getElementById('artists-container').append(navElement);
 }
 
 /**

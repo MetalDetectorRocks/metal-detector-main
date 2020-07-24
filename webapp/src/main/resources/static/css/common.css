@@ -30,6 +30,10 @@
   to {transform: rotate(360deg);}
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 /* Toast */
 #toast {
   visibility: hidden;
@@ -54,6 +58,61 @@
   animation: fadein 0.5s, fadeout 0.5s 2.5s;
 }
 
+/* Fading Overlay */
+.overlay {
+  opacity: 0;
+}
+
+.overlay-wrapper:hover .overlay {
+  opacity: 1;
+  -webkit-animation: fadein 0.5s;
+  animation: fadein 0.5s;
+}
+
+/*
+ * Material icons
+ */
+.material-icons {
+  font-family: 'Material Icons', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-flex;
+  vertical-align: top;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+/* Rules for sizing the icon. */
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-30 { font-size: 30px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
+.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+.material-icons.md-success { color: #155724; }
+.material-icons.md-red { color:darkred; }
+.material-icons.md-light { color: rgba(255, 255, 255, 1); }
+.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
+
+/* Fade-in / Fade-out */
 @-webkit-keyframes fadein {
   from {bottom: 0; opacity: 0;}
   to {bottom: 30px; opacity: 1;}
