@@ -39,8 +39,6 @@
   visibility: hidden;
   min-width: 250px;
   margin-left: -125px;
-  background-color: #1d1d1d;
-  border: 1px solid #77B300;
   color: #adafae;
   text-align: center;
   padding: 0.8rem;
@@ -48,6 +46,8 @@
   z-index: 1;
   right: 2rem;
   bottom: 2rem;
+  background-color: #182030;
+  border: 1px solid #246;
 }
 
 #toast.show {
