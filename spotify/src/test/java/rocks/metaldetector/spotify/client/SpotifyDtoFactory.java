@@ -6,6 +6,9 @@ import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.api.search.SpotifyFollowers;
 import rocks.metaldetector.spotify.api.search.SpotifyImage;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
+import rocks.metaldetector.support.Pagination;
 
 import java.util.Collections;
 import java.util.List;
@@ -102,6 +105,34 @@ public class SpotifyDtoFactory {
           .accessToken("accessToken")
           .expiresIn(3600)
           .tokenType("tokenType")
+          .build();
+    }
+  }
+
+  public static class SpotifyArtistSearchResultDtoFactory {
+
+    public static SpotifyArtistSearchResultDto createDefault() {
+      return SpotifyArtistSearchResultDto.builder()
+          .pagination(new Pagination(1,1,10))
+          .searchResults(List.of(
+              SpotifyArtistSearchResultEntryDtoFactory.withArtistName("A"),
+              SpotifyArtistSearchResultEntryDtoFactory.withArtistName("B")
+          ))
+          .build();
+    }
+  }
+
+  static class SpotifyArtistSearchResultEntryDtoFactory {
+
+    static SpotifyArtistSearchResultEntryDto withArtistName(String artistName) {
+      return SpotifyArtistSearchResultEntryDto.builder()
+          .popularity(100)
+          .genres(List.of("Black Metal"))
+          .id("abcdef12345")
+          .imageUrl("imageUrl")
+          .name(artistName)
+          .uri("uri")
+          .followed(false)
           .build();
     }
   }
