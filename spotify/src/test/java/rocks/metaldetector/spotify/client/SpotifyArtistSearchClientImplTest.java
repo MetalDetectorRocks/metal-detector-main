@@ -61,6 +61,20 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
     reset(restTemplate, spotifyConfig);
   }
 
+  @ParameterizedTest(name = "empty result is returned for input '{0}'")
+  @MethodSource("invalidQueryInputProvider")
+  @DisplayName("empty result is returned for invalid query input")
+  void test_invalid_input(String invalidQuery) {
+    // given
+    SpotifyArtistSearchResultContainer emptyResult = SpotifyArtistSearchResultContainer.builder().build();
+
+    // when
+    SpotifyArtistSearchResultContainer result = underTest.searchByName("token", invalidQuery, 1, 10);
+
+    // then
+    assertThat(result).isEqualTo(emptyResult);
+  }
+
   @Test
   @DisplayName("correct url is called")
   void test_correct_url_is_called() {
@@ -215,6 +229,13 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
     assertThat(throwable).isInstanceOf(ExternalServiceException.class);
   }
 
+  private static Stream<Arguments> invalidQueryInputProvider() {
+    return Stream.of(
+        Arguments.of((Object) null),
+        Arguments.of("")
+    );
+  }
+
   private static Stream<Arguments> offsetProvider() {
     return Stream.of(
         Arguments.of(1, 10, 0),
@@ -227,5 +248,4 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
   private static Stream<Arguments> httpStatusCodeProvider() {
     return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
   }
-
 }
