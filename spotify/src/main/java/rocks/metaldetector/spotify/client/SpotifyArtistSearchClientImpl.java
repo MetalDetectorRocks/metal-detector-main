@@ -17,6 +17,7 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Collections;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
 
 @Slf4j
@@ -25,7 +26,8 @@ import static org.springframework.http.HttpMethod.GET;
 @AllArgsConstructor
 public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient {
 
-  private static final String SEARCH_ENDPOINT = "/v1/search?q={artistQueryString}&type=artist&offset={offset}";
+  static final String SEARCH_ENDPOINT = "/v1/search?q={artistQueryString}&type=artist&offset={offset}";
+  static final String AUTHORIZATION_HEADER_PREFIX = "Basic ";
 
   private final RestTemplate spotifyRestTemplate;
   private final SpotifyConfig spotifyConfig;
@@ -37,14 +39,16 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
     }
 
     HttpEntity<Object> httpEntity = createQueryHttpEntity(authenticationToken);
+    String urlEncodedQuery = URLEncoder.encode(artistQueryString, Charset.defaultCharset());
+    int offset = pageSize * (pageNumber - 1);
 
     ResponseEntity<SpotifyArtistSearchResultContainer> responseEntity = spotifyRestTemplate.exchange(
         spotifyConfig.getRestBaseUrl() + SEARCH_ENDPOINT,
         GET,
         httpEntity,
         SpotifyArtistSearchResultContainer.class,
-        URLEncoder.encode(artistQueryString, Charset.defaultCharset()),
-        pageSize * (pageNumber - 1)
+        urlEncodedQuery,
+        offset
     );
 
     SpotifyArtistSearchResultContainer resultContainer = responseEntity.getBody();
@@ -60,7 +64,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
     HttpHeaders headers = new HttpHeaders();
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
-    headers.set("Authorization", "Bearer " + authenticationToken);
+    headers.set(AUTHORIZATION, AUTHORIZATION_HEADER_PREFIX + authenticationToken);
     return new HttpEntity<>(headers);
   }
 }
