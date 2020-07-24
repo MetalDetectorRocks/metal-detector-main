@@ -42,7 +42,7 @@ function formatUtcDate(dateInput) {
   if (dateInput) {
     const date = new Date(Date.parse(dateInput));
     const dateFormat = new Intl.DateTimeFormat('de', { year: "numeric", month: "2-digit", day: "2-digit" });
-    const [{ value: month },,{ value: day },,{ value: year }] = dateFormat.formatToParts(date);
+    const [{ value: day },,{ value: month },,{ value: year }] = dateFormat.formatToParts(date);
 
     return `${year}-${month}-${day}`;
   }
