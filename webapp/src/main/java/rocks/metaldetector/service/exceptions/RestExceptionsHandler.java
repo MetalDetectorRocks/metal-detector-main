@@ -14,7 +14,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ModelAndView;
+import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.web.api.response.ErrorResponse;
@@ -36,10 +39,16 @@ import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 @Slf4j
 public class RestExceptionsHandler {
 
-  @ExceptionHandler({MissingServletRequestParameterException.class, IllegalArgumentException.class})
-  ResponseEntity<ErrorResponse> handleIllegalArgumentException(Exception exception) {
-    log.warn("", exception);
-    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), BAD_REQUEST);
+  @ExceptionHandler({IllegalArgumentException.class, MissingServletRequestParameterException.class})
+  Object handleIllegalOrMissingArgumentErrors(Exception exception, WebRequest webRequest) {
+    log.error(webRequest.getContextPath() + ": " + exception.getMessage());
+    String requestUri = ((ServletWebRequest) webRequest).getRequest().getRequestURI();
+    if (requestUri.startsWith("/rest/")) {
+      return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), BAD_REQUEST);
+    }
+    else {
+      return new ModelAndView(ViewNames.Guest.ERROR_400);
+    }
   }
 
   @ExceptionHandler({HttpMessageNotReadableException.class})
