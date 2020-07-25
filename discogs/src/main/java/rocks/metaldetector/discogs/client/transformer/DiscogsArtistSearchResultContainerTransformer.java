@@ -9,38 +9,50 @@ import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
 import rocks.metaldetector.support.Pagination;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
 public class DiscogsArtistSearchResultContainerTransformer {
 
-  public DiscogsArtistSearchResultDto transform(DiscogsArtistSearchResultContainer container) {
+  private static final String DISCOGS_NAME_REGEX = " \\([\\d]\\)$";
+
+  public DiscogsArtistSearchResultDto transform(DiscogsArtistSearchResultContainer container, String query) {
     return DiscogsArtistSearchResultDto.builder()
-            .pagination(transformPagination(container.getPagination()))
-            .searchResults(transformArtistSearchResults(container.getResults()))
-            .build();
+        .pagination(transformPagination(container.getPagination()))
+        .searchResults(transformArtistSearchResults(container.getResults(), query))
+        .build();
   }
 
   private Pagination transformPagination(DiscogsPagination discogsPagination) {
     return Pagination.builder()
-            .currentPage(discogsPagination.getCurrentPage())
-            .itemsPerPage(discogsPagination.getItemsPerPage())
-            .totalPages(discogsPagination.getPagesTotal())
-            .build();
+        .currentPage(discogsPagination.getCurrentPage())
+        .itemsPerPage(discogsPagination.getItemsPerPage())
+        .totalPages(discogsPagination.getPagesTotal())
+        .build();
   }
 
-  private List<DiscogsArtistSearchResultEntryDto> transformArtistSearchResults(List<DiscogsArtistSearchResult> results) {
+  private List<DiscogsArtistSearchResultEntryDto> transformArtistSearchResults(List<DiscogsArtistSearchResult> results, String query) {
     return results.stream()
-            .map(this::transformArtistSearchResult)
-            .collect(Collectors.toList());
+        .filter(result -> result.getTitle().toLowerCase().contains(query.toLowerCase()))
+        .map(this::transformArtistSearchResult)
+        .collect(Collectors.toList());
   }
 
   private DiscogsArtistSearchResultEntryDto transformArtistSearchResult(DiscogsArtistSearchResult result) {
     return DiscogsArtistSearchResultEntryDto.builder()
-            .id(String.valueOf(result.getId()))
-            .name(result.getTitle())
-            .imageUrl(result.getThumb())
-            .uri(result.getUri())
-            .build();
+        .id(String.valueOf(result.getId()))
+        .name(transformName(result.getTitle()))
+        .imageUrl(result.getThumb())
+        .uri(result.getUri())
+        .build();
+  }
+
+  private String transformName(String artistName) {
+    Pattern pattern = Pattern.compile(DISCOGS_NAME_REGEX);
+    Matcher matcher = pattern.matcher(artistName);
+    return matcher.find() ? artistName.replace(matcher.group(0), "")
+                          : artistName;
   }
 }

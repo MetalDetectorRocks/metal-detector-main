@@ -21,7 +21,7 @@ public class DiscogsServiceImpl implements DiscogsService {
   @Override
   public DiscogsArtistSearchResultDto searchArtistByName(String artistQueryString, int pageNumber, int pageSize) {
     DiscogsArtistSearchResultContainer result = searchClient.searchByName(artistQueryString, pageNumber, pageSize);
-    return searchResultTransformer.transform(result);
+    return searchResultTransformer.transform(result, artistQueryString);
   }
 
   @Override

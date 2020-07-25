@@ -11,6 +11,7 @@ import rocks.metaldetector.support.Pagination;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DiscogsDtoFactory {
 
@@ -24,6 +25,15 @@ public class DiscogsDtoFactory {
                               DiscogsArtistSearchResultFactory.withArtistName("AA"))
               )
               .build();
+    }
+
+    public static DiscogsArtistSearchResultContainer withArtistNames(List<String> artistNames) {
+      return DiscogsArtistSearchResultContainer.builder()
+          .pagination(DiscogsPaginationFactory.createDefault())
+          .results(
+              artistNames.stream().map(DiscogsArtistSearchResultFactory::withArtistName).collect(Collectors.toList())
+          )
+          .build();
     }
 
     static DiscogsArtistSearchResultContainer withEmptyResult() {

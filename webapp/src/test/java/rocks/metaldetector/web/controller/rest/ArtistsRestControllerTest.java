@@ -34,6 +34,8 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseFactory;
 import static rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
 import static rocks.metaldetector.testutil.DtoFactory.SpotifyArtistSearchResultDtoFactory;
+import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFAULT_DISCOGS_PAGE;
+import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFAULT_DISCOGS_SIZE;
 
 @ExtendWith(MockitoExtension.class)
 class ArtistsRestControllerTest implements WithAssertions {
@@ -112,7 +114,7 @@ class ArtistsRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should pass request parameter to discogs search if spotify does not return results")
+    @DisplayName("Should pass default parameter to discogs search if spotify does not return results")
     void handleNameSearch_fallback_discogs() {
       // given
       Map<String, Object> requestParams = new HashMap<>();
@@ -125,7 +127,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet(requestParams);
 
       // then
-      verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+      verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
     }
 
     @Test
