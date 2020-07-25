@@ -11,12 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.service.artist.FollowArtistService;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
-import rocks.metaldetector.web.transformer.ArtistSearchResponseTransformer;
 
 @RestController
 @RequestMapping(Endpoints.Rest.ARTISTS)
@@ -28,21 +25,19 @@ public class ArtistsRestController {
 
   private final ArtistsService artistsService;
   private final FollowArtistService followArtistService;
-  private final ArtistSearchResponseTransformer responseTransformer;
 
   @GetMapping(path = Endpoints.Rest.SEARCH,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<ArtistSearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
                                                                @RequestParam(value = "page", defaultValue = "1") int page,
                                                                @RequestParam(value = "size", defaultValue = "40") int size) {
-    SpotifyArtistSearchResultDto spotifySearchResult = artistsService.searchSpotifyByName(query, PageRequest.of(page, size));
+    ArtistSearchResponse searchResponse = artistsService.searchSpotifyByName(query, PageRequest.of(page, size));
 
-    if (spotifySearchResult.getSearchResults().isEmpty()) {
-      DiscogsArtistSearchResultDto discogsSearchResult = artistsService.searchDiscogsByName(query, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
-      return ResponseEntity.ok(responseTransformer.transformDiscogs(discogsSearchResult));
+    if (searchResponse.getSearchResults().isEmpty()) {
+      searchResponse = artistsService.searchDiscogsByName(query, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
     }
 
-    return ResponseEntity.ok(responseTransformer.transformSpotify(spotifySearchResult));
+    return ResponseEntity.ok(searchResponse);
   }
 
   @PostMapping(path = Endpoints.Rest.FOLLOW + "/{externalId}")

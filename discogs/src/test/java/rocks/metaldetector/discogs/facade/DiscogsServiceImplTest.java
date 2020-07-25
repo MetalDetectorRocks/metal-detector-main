@@ -70,14 +70,13 @@ class DiscogsServiceImplTest implements WithAssertions {
     void should_transform_search_results() {
       // given
       var searchResult = DiscogsArtistSearchResultContainerFactory.createDefault();
-      var query = "query";
       doReturn(searchResult).when(searchClient).searchByName(any(), anyInt(), anyInt());
 
       // when
-      underTest.searchArtistByName(query, 1, 1);
+      underTest.searchArtistByName("query", 1, 1);
 
       // then
-      verify(searchResultTransformer, times(1)).transform(eq(searchResult), eq(query));
+      verify(searchResultTransformer, times(1)).transform(eq(searchResult));
     }
 
     @Test
@@ -87,7 +86,7 @@ class DiscogsServiceImplTest implements WithAssertions {
       var searchResult = DiscogsArtistSearchResultContainerFactory.createDefault();
       var transformedSearchResult = DiscogsArtistSearchResultDtoFactory.createDefault();
       doReturn(searchResult).when(searchClient).searchByName(any(), anyInt(), anyInt());
-      doReturn(transformedSearchResult).when(searchResultTransformer).transform(any(), any());
+      doReturn(transformedSearchResult).when(searchResultTransformer).transform(any());
 
       // when
       var response = underTest.searchArtistByName("query", 1, 1);

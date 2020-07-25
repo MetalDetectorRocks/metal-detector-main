@@ -15,7 +15,6 @@ public class SpotifyArtistSearchResultEntryDto {
   private String name;
   private String imageUrl;
   private String uri;
-  private boolean followed;
   private List<String> genres;
   private int popularity;
 

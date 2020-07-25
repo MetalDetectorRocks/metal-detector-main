@@ -52,7 +52,6 @@ class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
               .name(givenEntry.getName())
               .imageUrl(givenEntry.getImages().get(0).getUrl())
               .uri(givenEntry.getUri())
-              .followed(false)
               .genres(givenEntry.getGenres())
               .popularity(givenEntry.getPopularity())
               .build()

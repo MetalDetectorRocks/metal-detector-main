@@ -175,7 +175,6 @@ public class DtoFactory {
           .imageUrl("imageUrl")
           .name(artistName)
           .uri("/uri")
-          .followed(false)
           .build();
     }
   }
@@ -241,12 +240,6 @@ public class DtoFactory {
           ))
           .build();
     }
-
-    public static SpotifyArtistSearchResultDto empty() {
-      return SpotifyArtistSearchResultDto.builder()
-          .searchResults(Collections.emptyList())
-          .build();
-    }
   }
 
   public static class SpotifyArtistSearchResultEntryDtoFactory {
@@ -259,14 +252,6 @@ public class DtoFactory {
           .imageUrl("imageUrl")
           .name(artistName)
           .uri("uri")
-          .followed(false)
-          .build();
-    }
-
-    public static SpotifyArtistSearchResultEntryDto withId(String externalId) {
-      return SpotifyArtistSearchResultEntryDto.builder()
-          .id(externalId)
-          .name(ARTIST_NAME)
           .build();
     }
   }
@@ -294,6 +279,12 @@ public class DtoFactory {
           .uri("http://discogs.com/uri")
           .followed(false)
           .source(DISCOGS.getDisplayName())
+          .build();
+    }
+
+    public static ArtistSearchResponseEntryDto withId(String id) {
+      return ArtistSearchResponseEntryDto.builder()
+          .id(id)
           .build();
     }
   }
