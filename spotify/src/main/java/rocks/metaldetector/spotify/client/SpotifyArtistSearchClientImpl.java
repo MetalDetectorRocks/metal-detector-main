@@ -27,7 +27,7 @@ import static org.springframework.http.HttpMethod.GET;
 public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient {
 
   static final String SEARCH_ENDPOINT = "/v1/search?q={artistQueryString}&type=artist&offset={offset}";
-  static final String AUTHORIZATION_HEADER_PREFIX = "Basic ";
+  static final String AUTHORIZATION_HEADER_PREFIX = "Bearer ";
 
   private final RestTemplate spotifyRestTemplate;
   private final SpotifyConfig spotifyConfig;

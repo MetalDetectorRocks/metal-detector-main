@@ -23,6 +23,9 @@ import rocks.metaldetector.web.transformer.ArtistSearchResponseTransformer;
 @AllArgsConstructor
 public class ArtistsRestController {
 
+  static final int DEFAULT_DISCOGS_PAGE = 1;
+  static final int DEFAULT_DISCOGS_SIZE = 50;
+
   private final ArtistsService artistsService;
   private final FollowArtistService followArtistService;
   private final ArtistSearchResponseTransformer responseTransformer;
@@ -35,7 +38,7 @@ public class ArtistsRestController {
     SpotifyArtistSearchResultDto spotifySearchResult = artistsService.searchSpotifyByName(query, PageRequest.of(page, size));
 
     if (spotifySearchResult.getSearchResults().isEmpty()) {
-      DiscogsArtistSearchResultDto discogsSearchResult = artistsService.searchDiscogsByName(query, PageRequest.of(page, size));
+      DiscogsArtistSearchResultDto discogsSearchResult = artistsService.searchDiscogsByName(query, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
       return ResponseEntity.ok(responseTransformer.transformDiscogs(discogsSearchResult));
     }
 
