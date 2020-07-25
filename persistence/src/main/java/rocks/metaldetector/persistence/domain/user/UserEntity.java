@@ -24,10 +24,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -75,10 +73,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
   @Column(name = "last_login")
   private LocalDateTime lastLogin;
 
-  @Column(name = "failed_logins")
-  @ElementCollection(fetch = FetchType.EAGER)
-  private List<LocalDateTime> failedLogins;
-
   @ManyToMany
   @JoinTable(
           joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -94,7 +88,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
     this.password = password;
     this.userRoles = userRoles;
     this.enabled = enabled;
-    this.failedLogins = new ArrayList<>();
     this.followedArtists = new HashSet<>();
   }
 
@@ -178,18 +171,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
   public void setLastLogin(LocalDateTime lastLogin) {
     this.lastLogin = lastLogin;
-  }
-
-  public List<LocalDateTime> getFailedLogins() {
-    return List.copyOf(failedLogins);
-  }
-
-  public void addFailedLogin(LocalDateTime lastLogin) {
-    failedLogins.add(lastLogin);
-  }
-
-  public void clearFailedLogins() {
-    failedLogins.clear();
   }
 
   public Set<ArtistEntity> getFollowedArtists() {
