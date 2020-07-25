@@ -34,6 +34,7 @@ class DiscogsArtistTransformerTest implements WithAssertions {
             DiscogsArtistDto.builder()
                             .id(String.valueOf(discogsArtist.getId()))
                             .name(discogsArtist.getName())
+                            .imageUrl("")
                             .build()
     );
   }
@@ -68,7 +69,7 @@ class DiscogsArtistTransformerTest implements WithAssertions {
     DiscogsArtistDto result = underTest.transform(discogsArtist);
 
     // then
-    assertThat(result.getImageUrl()).isNull();
+    assertThat(result.getImageUrl()).isEmpty();
   }
 
   private static Stream<Arguments> discogsImageProvider() {
