@@ -140,6 +140,7 @@ function createHeadlineText(query, searchResponse) {
  * @param topSearchResult.name      The name of the artist
  * @param topSearchResult.imageUrl  The url of the artist thumbnail
  * @param topSearchResult.followed  True if the current user already follow this artist, false otherwise
+ * @param topSearchResult.source    The source the result is fetched from
  */
 function appendTopSearchResult(topSearchResult) {
     const topResultHtml = renderTopResultHtml({
@@ -147,6 +148,7 @@ function appendTopSearchResult(topSearchResult) {
         name: topSearchResult.name,
         imageUrl: topSearchResult.imageUrl,
         followedByUser: topSearchResult.followed,
+        source: topSearchResult.source,
         followedByAmount: 666
     });
     $("#top-result-container").append(topResultHtml);
@@ -181,7 +183,8 @@ function appendOtherSearchResults(searchResults, currentPage) {
             externalId: result.id,
             name: result.name,
             imageUrl: result.imageUrl,
-            followedByUser: result.followed
+            followedByUser: result.followed,
+            source: result.source
         }));
         counter++;
     });
