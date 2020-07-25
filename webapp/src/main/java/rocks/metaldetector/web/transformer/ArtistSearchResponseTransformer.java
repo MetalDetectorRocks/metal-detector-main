@@ -36,6 +36,8 @@ public class ArtistSearchResponseTransformer {
         .uri(spotifySearchResult.getUri())
         .imageUrl(spotifySearchResult.getImageUrl())
         .source(SPOTIFY.getDisplayName())
+        .genres(spotifySearchResult.getGenres())
+        .popularity(spotifySearchResult.getPopularity())
         .build();
   }
 
