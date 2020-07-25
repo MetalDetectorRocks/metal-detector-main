@@ -122,7 +122,7 @@ class SpotifyServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("responseTrafo is called and result returned")
+  @DisplayName("Result from responseTrafo is returned")
   void test_response_transformer() {
     // given
     SpotifyArtistSearchResultDto resultMock = SpotifyArtistSearchResultDtoFactory.createDefault();

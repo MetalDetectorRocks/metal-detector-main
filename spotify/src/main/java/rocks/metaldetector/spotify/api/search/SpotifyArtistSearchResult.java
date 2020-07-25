@@ -45,5 +45,4 @@ public class SpotifyArtistSearchResult {
   @JsonProperty("total")
   private int total;
 
-
 }

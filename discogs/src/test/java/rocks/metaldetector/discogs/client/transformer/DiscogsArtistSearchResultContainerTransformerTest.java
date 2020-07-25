@@ -24,7 +24,7 @@ class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertion
     DiscogsArtistSearchResultContainer container = DiscogsArtistSearchResultContainerFactory.createDefault();
 
     // when
-    DiscogsArtistSearchResultDto result = underTest.transform(container, "query");
+    DiscogsArtistSearchResultDto result = underTest.transform(container);
 
     // then
     DiscogsPagination discogsPagination = container.getPagination();
@@ -45,7 +45,7 @@ class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertion
     DiscogsArtistSearchResultContainer container = DiscogsArtistSearchResultContainerFactory.createDefault();
 
     // when
-    DiscogsArtistSearchResultDto result = underTest.transform(container, "a");
+    DiscogsArtistSearchResultDto result = underTest.transform(container);
 
     // then
     assertThat(result.getSearchResults().size()).isEqualTo(container.getResults().size());
@@ -58,37 +58,23 @@ class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertion
                       .name(givenEntry.getTitle())
                       .imageUrl(givenEntry.getThumb())
                       .uri(givenEntry.getUri())
-                      .followed(false)
                       .build()
       );
     }
   }
 
   @Test
-  @DisplayName("Should filter results that don't match lowercase query")
-  void should_filter() {
-    // given
-    DiscogsArtistSearchResultContainer container = DiscogsArtistSearchResultContainerFactory.withArtistNames(List.of("ab", "AB", "Ab", "AA","bb"));
-
-    // when
-    DiscogsArtistSearchResultDto result = underTest.transform(container, "aB");
-
-    // then
-    assertThat(result.getSearchResults().size()).isEqualTo(3);
-  }
-
-  @Test
   @DisplayName("Should cut suffix ' ($number)' from artist name")
   void should_transform_artist_name() {
     // given
-    var artistName = "Karg";
+    var expectedName = "Karg";
     DiscogsArtistSearchResultContainer container = DiscogsArtistSearchResultContainerFactory.withArtistNames(List.of("Karg (3)"));
 
     // when
-    DiscogsArtistSearchResultDto result = underTest.transform(container, artistName);
+    DiscogsArtistSearchResultDto result = underTest.transform(container);
 
     // then
     assertThat(result.getSearchResults().size()).isEqualTo(1);
-    assertThat(result.getSearchResults().get(0).getName()).isEqualTo(artistName);
+    assertThat(result.getSearchResults().get(0).getName()).isEqualTo(expectedName);
   }
 }

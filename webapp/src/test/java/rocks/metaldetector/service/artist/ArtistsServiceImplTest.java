@@ -12,20 +12,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import rocks.metaldetector.discogs.facade.DiscogsService;
-import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
-import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
 import rocks.metaldetector.spotify.facade.SpotifyService;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
-import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultEntryDtoFactory;
+import rocks.metaldetector.web.api.response.ArtistSearchResponse;
+import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
+import rocks.metaldetector.web.transformer.ArtistSearchResponseTransformer;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,8 +39,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
+import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseEntryDtoFactory;
+import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseFactory;
 import static rocks.metaldetector.testutil.DtoFactory.SpotifyArtistSearchResultDtoFactory;
-import static rocks.metaldetector.testutil.DtoFactory.SpotifyArtistSearchResultEntryDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
 class ArtistsServiceImplTest implements WithAssertions {
@@ -69,6 +68,9 @@ class ArtistsServiceImplTest implements WithAssertions {
   private ArtistTransformer artistTransformer;
 
   @Mock
+  private ArtistSearchResponseTransformer searchResponseTransformer;
+
+  @Mock
   private UserEntity userEntityMock;
 
   @InjectMocks
@@ -79,7 +81,7 @@ class ArtistsServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(currentPublicUserIdSupplier, artistRepository, userRepository, discogsService, artistTransformer, spotifyService);
+    reset(currentPublicUserIdSupplier, artistRepository, userRepository, discogsService, artistTransformer, spotifyService, searchResponseTransformer);
   }
 
   @BeforeEach
@@ -226,6 +228,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
       doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
       doReturn(DiscogsArtistSearchResultDtoFactory.createDefault()).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
+      doReturn(ArtistSearchResponseFactory.discogs()).when(searchResponseTransformer).transformDiscogs(any());
 
       // when
       underTest.searchDiscogsByName(artistQueryString, pageable);
@@ -235,42 +238,60 @@ class ArtistsServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should return results from discogs")
-    void searchDiscogsByName_should_return_search_results() {
+    @DisplayName("Should call searchResultTransformer with discogs result")
+    void searchDiscogsByName_should_call_result_transformer() {
       // given
       var expectedSearchResults = DiscogsArtistSearchResultDtoFactory.createDefault();
       doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
       doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
       doReturn(expectedSearchResults).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
+      doReturn(ArtistSearchResponseFactory.discogs()).when(searchResponseTransformer).transformDiscogs(any());
 
       // when
-      DiscogsArtistSearchResultDto results = underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
+      underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
 
       // then
-      assertThat(results).isEqualTo(expectedSearchResults);
+      verify(searchResponseTransformer, times(1)).transformDiscogs(expectedSearchResults);
+    }
+
+    @Test
+    @DisplayName("Should return searchResultTransformer's result")
+    void searchDiscogsByName_should_return_results() {
+      // given
+      var expectedSearchResult = ArtistSearchResponseFactory.discogs();
+      doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
+      doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
+      doReturn(DiscogsArtistSearchResultDtoFactory.createDefault()).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
+      doReturn(expectedSearchResult).when(searchResponseTransformer).transformDiscogs(any());
+
+      // when
+      ArtistSearchResponse result = underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
+
+      // then
+      assertThat(result).isEqualTo(expectedSearchResult);
     }
 
     @Test
     @DisplayName("Should mark all already followed artists")
     void searchDiscogsByName_should_mark_already_followed_artists() {
       // given
-      var discogsSearchResults = DiscogsArtistSearchResultDtoFactory.createDefault();
-      discogsSearchResults.setSearchResults(createListOfSearchResultEntries(List.of("1", "2", "3")));
+      var discogssearchresults = ArtistSearchResponseFactory.discogs();
+      discogssearchresults.setSearchResults(createListOfSearchResultEntries(List.of("1", "2", "3")));
       doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
       doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
       when(userEntityMock.isFollowing(anyString())).then(invocationOnMock -> {
         String artistId = invocationOnMock.getArgument(0);
         return artistId.equals("1") || artistId.equals("3");
       });
-      doReturn(discogsSearchResults).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
+      doReturn(discogssearchresults).when(searchResponseTransformer).transformDiscogs(any());
 
       // when
-      DiscogsArtistSearchResultDto results = underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
+      var searchResults = underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
 
       // then
-      assertThat(results.getSearchResults().get(0).isFollowed()).isTrue();
-      assertThat(results.getSearchResults().get(1).isFollowed()).isFalse();
-      assertThat(results.getSearchResults().get(2).isFollowed()).isTrue();
+      assertThat(searchResults.getSearchResults().get(0).isFollowed()).isTrue();
+      assertThat(searchResults.getSearchResults().get(1).isFollowed()).isFalse();
+      assertThat(searchResults.getSearchResults().get(2).isFollowed()).isTrue();
     }
 
     @Test
@@ -283,6 +304,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(userId).when(currentPublicUserIdSupplier).get();
       doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
       doReturn(DiscogsArtistSearchResultDtoFactory.createDefault()).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
+      doReturn(ArtistSearchResponseFactory.discogs()).when(searchResponseTransformer).transformDiscogs(any());
 
       // when
       underTest.searchDiscogsByName(artistQueryString, pageable);
@@ -310,11 +332,11 @@ class ArtistsServiceImplTest implements WithAssertions {
       assertThat(throwable).hasMessageContaining(userId);
     }
 
-    private List<DiscogsArtistSearchResultEntryDto> createListOfSearchResultEntries(List<String> externalIds) {
+    private List<ArtistSearchResponseEntryDto> createListOfSearchResultEntries(List<String> externalIds) {
       return List.of(
-          DiscogsArtistSearchResultEntryDtoFactory.withId(externalIds.get(0)),
-          DiscogsArtistSearchResultEntryDtoFactory.withId(externalIds.get(1)),
-          DiscogsArtistSearchResultEntryDtoFactory.withId(externalIds.get(2))
+          ArtistSearchResponseEntryDtoFactory.withId(externalIds.get(0)),
+          ArtistSearchResponseEntryDtoFactory.withId(externalIds.get(1)),
+          ArtistSearchResponseEntryDtoFactory.withId(externalIds.get(2))
       );
     }
   }
@@ -332,6 +354,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
       doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
       doReturn(SpotifyArtistSearchResultDtoFactory.createDefault()).when(spotifyService).searchArtists(any(), anyInt(), anyInt());
+      doReturn(ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any());
 
       // when
       underTest.searchSpotifyByName(artistQueryString, pageable);
@@ -341,26 +364,44 @@ class ArtistsServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should return results from spotify")
-    void searchSpotifyByName_should_return_search_results() {
+    @DisplayName("Should call searchResultTransformer with spotify result")
+    void searchSpotifyByName_should_call_result_transformer() {
       // given
       var expectedSearchResults = SpotifyArtistSearchResultDtoFactory.createDefault();
       doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
       doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
       doReturn(expectedSearchResults).when(spotifyService).searchArtists(any(), anyInt(), anyInt());
+      doReturn(ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any());
 
       // when
-      SpotifyArtistSearchResultDto result = underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
+      underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
 
       // then
-      assertThat(result).isEqualTo(expectedSearchResults);
+      verify(searchResponseTransformer, times(1)).transformSpotify(expectedSearchResults);
+    }
+
+    @Test
+    @DisplayName("Should return searchResultTransformer's result")
+    void searchSpotifyByName_should_return_results() {
+      // given
+      var expectedSearchResult = ArtistSearchResponseFactory.spotify();
+      doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
+      doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
+      doReturn(SpotifyArtistSearchResultDtoFactory.createDefault()).when(spotifyService).searchArtists(any(), anyInt(), anyInt());
+      doReturn(expectedSearchResult).when(searchResponseTransformer).transformSpotify(any());
+
+      // when
+      ArtistSearchResponse result = underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
+
+      // then
+      assertThat(result).isEqualTo(expectedSearchResult);
     }
 
     @Test
     @DisplayName("Should mark all already followed artists")
     void searchSpotifyByName_should_mark_already_followed_artists() {
       // given
-      var spotifySearchResults = SpotifyArtistSearchResultDtoFactory.createDefault();
+      var spotifySearchResults = ArtistSearchResponseFactory.spotify();
       spotifySearchResults.setSearchResults(createListOfSearchResultEntries(List.of("1", "2", "3")));
       doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
       doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
@@ -368,15 +409,15 @@ class ArtistsServiceImplTest implements WithAssertions {
         String artistId = invocationOnMock.getArgument(0);
         return artistId.equals("1") || artistId.equals("3");
       });
-      doReturn(spotifySearchResults).when(spotifyService).searchArtists(any(), anyInt(), anyInt());
+      doReturn(spotifySearchResults).when(searchResponseTransformer).transformSpotify(any());
 
       // when
-      SpotifyArtistSearchResultDto results = underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
+      var searchResults = underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
 
       // then
-      assertThat(results.getSearchResults().get(0).isFollowed()).isTrue();
-      assertThat(results.getSearchResults().get(1).isFollowed()).isFalse();
-      assertThat(results.getSearchResults().get(2).isFollowed()).isTrue();
+      assertThat(searchResults.getSearchResults().get(0).isFollowed()).isTrue();
+      assertThat(searchResults.getSearchResults().get(1).isFollowed()).isFalse();
+      assertThat(searchResults.getSearchResults().get(2).isFollowed()).isTrue();
     }
 
     @Test
@@ -389,6 +430,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(userId).when(currentPublicUserIdSupplier).get();
       doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
       doReturn(SpotifyArtistSearchResultDtoFactory.createDefault()).when(spotifyService).searchArtists(any(), anyInt(), anyInt());
+      doReturn(ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any());
 
       // when
       underTest.searchSpotifyByName(artistQueryString, pageable);
@@ -416,11 +458,11 @@ class ArtistsServiceImplTest implements WithAssertions {
       assertThat(throwable).hasMessageContaining(userId);
     }
 
-    private List<SpotifyArtistSearchResultEntryDto> createListOfSearchResultEntries(List<String> externalIds) {
+    private List<ArtistSearchResponseEntryDto> createListOfSearchResultEntries(List<String> externalIds) {
       return List.of(
-          SpotifyArtistSearchResultEntryDtoFactory.withId(externalIds.get(0)),
-          SpotifyArtistSearchResultEntryDtoFactory.withId(externalIds.get(1)),
-          SpotifyArtistSearchResultEntryDtoFactory.withId(externalIds.get(2))
+          ArtistSearchResponseEntryDtoFactory.withId(externalIds.get(0)),
+          ArtistSearchResponseEntryDtoFactory.withId(externalIds.get(1)),
+          ArtistSearchResponseEntryDtoFactory.withId(externalIds.get(2))
       );
     }
   }

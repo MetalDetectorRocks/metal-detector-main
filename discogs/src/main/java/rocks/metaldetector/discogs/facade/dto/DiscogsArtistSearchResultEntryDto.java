@@ -15,7 +15,6 @@ public class DiscogsArtistSearchResultEntryDto {
   private String name;
   private String imageUrl;
   private String uri;
-  private boolean followed;
 
   public String getUri() {
     return uri != null ? DISCOGS_URL + uri : null;

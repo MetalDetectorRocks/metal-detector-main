@@ -24,7 +24,6 @@ import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer
 import rocks.metaldetector.spotify.config.SpotifyConfig;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.stream.Stream;
@@ -161,7 +160,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
   void test_encoded_query() {
     // given
     var query = "i'm a query";
-    var expectedQuery = URLEncoder.encode(query, Charset.defaultCharset());
+    var expectedQuery = "i%27m+a+query";
     SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
 

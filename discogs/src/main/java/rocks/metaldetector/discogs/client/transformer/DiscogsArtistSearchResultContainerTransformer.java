@@ -18,10 +18,10 @@ public class DiscogsArtistSearchResultContainerTransformer {
 
   private static final String DISCOGS_NAME_REGEX = " \\([\\d]\\)$";
 
-  public DiscogsArtistSearchResultDto transform(DiscogsArtistSearchResultContainer container, String query) {
+  public DiscogsArtistSearchResultDto transform(DiscogsArtistSearchResultContainer container) {
     return DiscogsArtistSearchResultDto.builder()
         .pagination(transformPagination(container.getPagination()))
-        .searchResults(transformArtistSearchResults(container.getResults(), query))
+        .searchResults(transformArtistSearchResults(container.getResults()))
         .build();
   }
 
@@ -33,9 +33,8 @@ public class DiscogsArtistSearchResultContainerTransformer {
         .build();
   }
 
-  private List<DiscogsArtistSearchResultEntryDto> transformArtistSearchResults(List<DiscogsArtistSearchResult> results, String query) {
+  private List<DiscogsArtistSearchResultEntryDto> transformArtistSearchResults(List<DiscogsArtistSearchResult> results) {
     return results.stream()
-        .filter(result -> result.getTitle().toLowerCase().contains(query.toLowerCase()))
         .map(this::transformArtistSearchResult)
         .collect(Collectors.toList());
   }

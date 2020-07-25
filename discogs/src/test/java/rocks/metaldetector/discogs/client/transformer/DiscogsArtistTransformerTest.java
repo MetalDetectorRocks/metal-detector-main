@@ -59,7 +59,7 @@ class DiscogsArtistTransformerTest implements WithAssertions {
 
   @ParameterizedTest(name = "Should not fail if images is {0}")
   @MethodSource("discogsImageProvider")
-  @DisplayName("Image url is null if artist has no images")
+  @DisplayName("Image url is empty if artist has no images")
   void should_not_fail_on_empty_image(List<DiscogsImage> images) {
     // given
     DiscogsArtist discogsArtist = DiscogsArtistFactory.createDefault();

@@ -132,7 +132,6 @@ public class SpotifyDtoFactory {
           .imageUrl("imageUrl")
           .name(artistName)
           .uri("uri")
-          .followed(false)
           .build();
     }
   }
