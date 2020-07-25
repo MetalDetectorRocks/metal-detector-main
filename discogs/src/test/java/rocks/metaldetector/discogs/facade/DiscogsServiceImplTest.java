@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.discogs.client.DiscogsArtistSearchRestClient;
 import rocks.metaldetector.discogs.client.DiscogsDtoFactory.DiscogsArtistSearchResultContainerFactory;
 import rocks.metaldetector.discogs.client.transformer.DiscogsArtistSearchResultContainerTransformer;
+import rocks.metaldetector.discogs.client.transformer.DiscogsArtistSearchResultFilter;
 import rocks.metaldetector.discogs.client.transformer.DiscogsArtistTransformer;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -38,12 +39,15 @@ class DiscogsServiceImplTest implements WithAssertions {
   @Mock
   private DiscogsArtistSearchResultContainerTransformer searchResultTransformer;
 
+  @Mock
+  private DiscogsArtistSearchResultFilter searchResultFilter;
+
   @InjectMocks
   private DiscogsServiceImpl underTest;
 
   @AfterEach
   void setup() {
-    reset(searchClient, artistTransformer, searchResultTransformer);
+    reset(searchClient, artistTransformer, searchResultTransformer, searchResultFilter);
   }
 
   @Nested
@@ -66,11 +70,26 @@ class DiscogsServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should transform the result from search client with search result transformer")
+    @DisplayName("Should call filter with result from search client and query")
+    void should_call_filter() {
+      // given
+      var searchResult = DiscogsArtistSearchResultContainerFactory.createDefault();
+      var query = "query";
+      doReturn(searchResult).when(searchClient).searchByName(any(), anyInt(), anyInt());
+
+      // when
+      underTest.searchArtistByName(query, 1, 1);
+
+      // then
+      verify(searchResultFilter, times(1)).filterDiscogsSearchResults(eq(searchResult), eq(query));
+    }
+
+    @Test
+    @DisplayName("Should transform the result from filter with search result transformer")
     void should_transform_search_results() {
       // given
       var searchResult = DiscogsArtistSearchResultContainerFactory.createDefault();
-      doReturn(searchResult).when(searchClient).searchByName(any(), anyInt(), anyInt());
+      doReturn(searchResult).when(searchResultFilter).filterDiscogsSearchResults(any(), any());
 
       // when
       underTest.searchArtistByName("query", 1, 1);
