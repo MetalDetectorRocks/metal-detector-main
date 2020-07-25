@@ -14,8 +14,6 @@ import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
-import rocks.metaldetector.web.api.response.ArtistSearchResponse;
-import rocks.metaldetector.web.transformer.ArtistSearchResponseTransformer;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +30,6 @@ public class ArtistsServiceImpl implements ArtistsService {
   private final SpotifyService spotifyService;
   private final CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
   private final ArtistTransformer artistTransformer;
-  private final ArtistSearchResponseTransformer artistSearchResponseTransformer;
 
   @Override
   public Optional<ArtistDto> findArtistByExternalId(String externalId) {
@@ -55,7 +52,7 @@ public class ArtistsServiceImpl implements ArtistsService {
 
   @Override
   @Transactional
-  public ArtistSearchResponse searchDiscogsByName(String artistQueryString, Pageable pageable) {
+  public DiscogsArtistSearchResultDto searchDiscogsByName(String artistQueryString, Pageable pageable) {
     String publicUserId = currentPublicUserIdSupplier.get();
     UserEntity userEntity = userRepository.findByPublicId(publicUserId).orElseThrow(() ->
             new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
@@ -63,12 +60,12 @@ public class ArtistsServiceImpl implements ArtistsService {
     DiscogsArtistSearchResultDto result = discogsService.searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
     result.getSearchResults().forEach(artist -> artist.setFollowed(userEntity.isFollowing(artist.getId())));
 
-    return artistSearchResponseTransformer.transformDiscogs(result);
+    return result;
   }
 
   @Override
   @Transactional
-  public ArtistSearchResponse searchSpotifyByName(String artistQueryString, Pageable pageable) {
+  public SpotifyArtistSearchResultDto searchSpotifyByName(String artistQueryString, Pageable pageable) {
     String publicUserId = currentPublicUserIdSupplier.get();
     UserEntity userEntity = userRepository.findByPublicId(publicUserId).orElseThrow(() ->
             new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
@@ -76,6 +73,6 @@ public class ArtistsServiceImpl implements ArtistsService {
     SpotifyArtistSearchResultDto result = spotifyService.searchArtists(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
     result.getSearchResults().forEach(artist -> artist.setFollowed(userEntity.isFollowing(artist.getId())));
 
-    return artistSearchResponseTransformer.transformSpotify(result);
+    return result;
   }
 }

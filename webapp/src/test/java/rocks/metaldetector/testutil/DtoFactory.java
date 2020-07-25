@@ -241,6 +241,12 @@ public class DtoFactory {
           ))
           .build();
     }
+
+    public static SpotifyArtistSearchResultDto empty() {
+      return SpotifyArtistSearchResultDto.builder()
+          .searchResults(Collections.emptyList())
+          .build();
+    }
   }
 
   public static class SpotifyArtistSearchResultEntryDtoFactory {

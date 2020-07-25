@@ -1,6 +1,5 @@
 package rocks.metaldetector.web.controller.rest;
 
-import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +20,7 @@ import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
+import rocks.metaldetector.web.transformer.ArtistSearchResponseTransformer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +32,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseFactory;
+import static rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
+import static rocks.metaldetector.testutil.DtoFactory.SpotifyArtistSearchResultDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
 class ArtistsRestControllerTest implements WithAssertions {
@@ -45,6 +47,9 @@ class ArtistsRestControllerTest implements WithAssertions {
 
   @Mock
   private FollowArtistService followArtistService;
+
+  @Mock
+  private ArtistSearchResponseTransformer responseTransformer;
 
   @InjectMocks
   private ArtistsRestController underTest;
@@ -69,11 +74,11 @@ class ArtistsRestControllerTest implements WithAssertions {
 
     @AfterEach
     void tearDown() {
-      reset(artistsService);
+      reset(artistsService, responseTransformer);
     }
 
     @Test
-    @DisplayName("Should pass request parameter to artist service's spotify search")
+    @DisplayName("Should pass request parameter to spotify search")
     void handleNameSearch_default_spotify() {
       // given
       Map<String, Object> requestParams = new HashMap<>();
@@ -89,6 +94,24 @@ class ArtistsRestControllerTest implements WithAssertions {
     }
 
     @Test
+    @DisplayName("Should pass spotify result to responseTransformer")
+    void handleNameSearch_response_transformer_called_with_spotify_result() {
+      // given
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("query", VALID_SEARCH_REQUEST);
+      requestParams.put("page", DEFAULT_PAGE);
+      requestParams.put("size", DEFAULT_SIZE);
+      var spotifyResult = SpotifyArtistSearchResultDtoFactory.createDefault();
+      doReturn(spotifyResult).when(artistsService).searchSpotifyByName(any(), any());
+
+      // when
+      restAssuredUtils.doGet(requestParams);
+
+      // then
+      verify(responseTransformer, times(1)).transformSpotify(spotifyResult);
+    }
+
+    @Test
     @DisplayName("Should pass request parameter to discogs search if spotify does not return results")
     void handleNameSearch_fallback_discogs() {
       // given
@@ -96,8 +119,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       requestParams.put("query", VALID_SEARCH_REQUEST);
       requestParams.put("page", DEFAULT_PAGE);
       requestParams.put("size", DEFAULT_SIZE);
-      ArtistSearchResponse emptyResult = ArtistSearchResponseFactory.empty();
-      doReturn(emptyResult).when(artistsService).searchSpotifyByName(any(), any());
+      doReturn(SpotifyArtistSearchResultDtoFactory.empty()).when(artistsService).searchSpotifyByName(any(), any());
 
       // when
       restAssuredUtils.doGet(requestParams);
@@ -107,37 +129,140 @@ class ArtistsRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should return status code 200")
-    void handleNameSearch_return_200() {
+    @DisplayName("Should pass discogs result to responseTransformer")
+    void handleNameSearch_response_transformer_called_with_discogs_result() {
       // given
-      var expectedSearchResult = ArtistSearchResponseFactory.spotify();
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("query", VALID_SEARCH_REQUEST);
+      requestParams.put("page", DEFAULT_PAGE);
+      requestParams.put("size", DEFAULT_SIZE);
+      doReturn(SpotifyArtistSearchResultDtoFactory.empty()).when(artistsService).searchSpotifyByName(any(), any());
+      var discogsResult = DiscogsArtistSearchResultDtoFactory.createDefault();
+      doReturn(discogsResult).when(artistsService).searchDiscogsByName(any(), any());
+
+      // when
+      restAssuredUtils.doGet(requestParams);
+
+      // then
+      verify(responseTransformer, times(1)).transformDiscogs(discogsResult);
+    }
+
+    @Test
+    @DisplayName("Should return status code 200 for spotify")
+    void handleNameSearch_return_200_spotify() {
+      // given
       Map<String, Object> requestParams = Map.of(
           "query", VALID_SEARCH_REQUEST,
           "page", DEFAULT_PAGE,
           "size", DEFAULT_SIZE
       );
-      doReturn(expectedSearchResult).when(artistsService).searchSpotifyByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+      var spotifyResult = SpotifyArtistSearchResultDtoFactory.createDefault();
+      doReturn(spotifyResult).when(artistsService).searchSpotifyByName(any(), any());
 
       // when
       var validatableResponse = restAssuredUtils.doGet(requestParams);
 
       // then
       validatableResponse
-          .contentType(ContentType.JSON)
           .statusCode(HttpStatus.OK.value());
     }
 
     @Test
-    @DisplayName("Should return results from artist service")
-    void handleNameSearch_return_result() {
+    @DisplayName("Should return status code 200 for discogs")
+    void handleNameSearch_return_200_discogs() {
       // given
+      Map<String, Object> requestParams = Map.of(
+          "query", VALID_SEARCH_REQUEST,
+          "page", DEFAULT_PAGE,
+          "size", DEFAULT_SIZE
+      );
+      doReturn(SpotifyArtistSearchResultDtoFactory.empty()).when(artistsService).searchSpotifyByName(any(), any());
+      var discogsResult = DiscogsArtistSearchResultDtoFactory.createDefault();
+      doReturn(discogsResult).when(artistsService).searchDiscogsByName(any(), any());
+
+      // when
+      var validatableResponse = restAssuredUtils.doGet(requestParams);
+
+      // then
+      validatableResponse
+          .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("Should call response transformer for spotify")
+    void handleNameSearch_call_response_transformer_spotify() {
+      // given
+      var spotifyResult = SpotifyArtistSearchResultDtoFactory.createDefault();
+      Map<String, Object> requestParams = Map.of(
+          "query", VALID_SEARCH_REQUEST,
+          "page", DEFAULT_PAGE,
+          "size", DEFAULT_SIZE
+      );
+      doReturn(spotifyResult).when(artistsService).searchSpotifyByName(any(), any());
+
+      // when
+      restAssuredUtils.doGet(requestParams);
+
+      // then
+      verify(responseTransformer, times(1)).transformSpotify(spotifyResult);
+    }
+
+    @Test
+    @DisplayName("Should return response transformer's result for spotify")
+    void handleNameSearch_return_result_spotify() {
+      // given
+      var spotifyResult = SpotifyArtistSearchResultDtoFactory.createDefault();
       var expectedSearchResult = ArtistSearchResponseFactory.spotify();
       Map<String, Object> requestParams = Map.of(
           "query", VALID_SEARCH_REQUEST,
           "page", DEFAULT_PAGE,
           "size", DEFAULT_SIZE
       );
-      doReturn(expectedSearchResult).when(artistsService).searchSpotifyByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+      doReturn(spotifyResult).when(artistsService).searchSpotifyByName(any(), any());
+      doReturn(expectedSearchResult).when(responseTransformer).transformSpotify(any());
+
+      // when
+      var validatableResponse = restAssuredUtils.doGet(requestParams);
+
+      // then
+      ArtistSearchResponse searchResponse = validatableResponse.extract().as(ArtistSearchResponse.class);
+      assertThat(searchResponse).isEqualTo(expectedSearchResult);
+    }
+
+    @Test
+    @DisplayName("Should call response transformer for discogs")
+    void handleNameSearch_call_response_transformer_discogs() {
+      // given
+      var discogsResult = DiscogsArtistSearchResultDtoFactory.createDefault();
+      Map<String, Object> requestParams = Map.of(
+          "query", VALID_SEARCH_REQUEST,
+          "page", DEFAULT_PAGE,
+          "size", DEFAULT_SIZE
+      );
+      doReturn(SpotifyArtistSearchResultDtoFactory.empty()).when(artistsService).searchSpotifyByName(any(), any());
+      doReturn(discogsResult).when(artistsService).searchDiscogsByName(any(), any());
+
+      // when
+      restAssuredUtils.doGet(requestParams);
+
+      // then
+      verify(responseTransformer, times(1)).transformDiscogs(discogsResult);
+    }
+
+    @Test
+    @DisplayName("Should return response transformer's result for discogs")
+    void handleNameSearch_return_result_discogs() {
+      // given
+      var discogsResult = DiscogsArtistSearchResultDtoFactory.createDefault();
+      var expectedSearchResult = ArtistSearchResponseFactory.spotify();
+      Map<String, Object> requestParams = Map.of(
+          "query", VALID_SEARCH_REQUEST,
+          "page", DEFAULT_PAGE,
+          "size", DEFAULT_SIZE
+      );
+      doReturn(SpotifyArtistSearchResultDtoFactory.empty()).when(artistsService).searchSpotifyByName(any(), any());
+      doReturn(discogsResult).when(artistsService).searchDiscogsByName(any(), any());
+      doReturn(expectedSearchResult).when(responseTransformer).transformDiscogs(any());
 
       // when
       var validatableResponse = restAssuredUtils.doGet(requestParams);
