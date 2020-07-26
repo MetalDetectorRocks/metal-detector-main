@@ -223,7 +223,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     void test_post_on_cover_url() {
       // given
       var butlerUrl = "cover-url";
-      doReturn(butlerUrl).when(butlerConfig).getCoverUrl();
+      doReturn(butlerUrl).when(butlerConfig).getRetryCoverDownloadUrl();
       doReturn(ResponseEntity.ok().build()).when(restTemplate).postForEntity(anyString(), any(), any());
 
       // when
@@ -237,14 +237,14 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     @DisplayName("Cover url of the butler config is used")
     void test_cover_url_from_butler_config_is_used() {
       // given
-      doReturn("cover-url").when(butlerConfig).getCoverUrl();
+      doReturn("cover-url").when(butlerConfig).getRetryCoverDownloadUrl();
       doReturn(ResponseEntity.ok().build()).when(restTemplate).postForEntity(anyString(), any(), eq(Void.class));
 
       // when
       underTest.createRetryCoverDownloadJob();
 
       // then
-      verify(butlerConfig, times(1)).getCoverUrl();
+      verify(butlerConfig, times(1)).getRetryCoverDownloadUrl();
     }
 
     @ParameterizedTest(name = "If the status is {0}, an ExternalServiceException is thrown")
@@ -252,7 +252,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     @DisplayName("If the status code is not OK on cover download job, an ExternalServiceException is thrown")
     void test_cover_download_job_exception_if_status_is_not_ok(HttpStatus httpStatus) {
       // given
-      doReturn("cover-url").when(butlerConfig).getCoverUrl();
+      doReturn("cover-url").when(butlerConfig).getRetryCoverDownloadUrl();
       doReturn(ResponseEntity.status(httpStatus).build()).when(restTemplate).postForEntity(anyString(), any(), eq(Void.class));
 
       // when

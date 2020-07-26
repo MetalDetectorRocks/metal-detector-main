@@ -62,7 +62,7 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
     @Test
     @DisplayName("Administrator is allowed to GET on endpoint " + COVER_JOB + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
-    void admin_is_allowed_to_query_cover_job_results() throws Exception {
+    void admin_is_allowed_to_create_retry_cover_download_job() throws Exception {
       mockMvc.perform(post(COVER_JOB)
                           .contentType(APPLICATION_JSON))
           .andExpect(status().isOk());
@@ -103,7 +103,7 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
     @Test
     @DisplayName("User is not allowed to GET on endpoint " + COVER_JOB + "'")
     @WithMockUser(roles = "USER")
-    void user_is_not_allowed_to_query_cover_job_results() throws Exception {
+    void user_not_is_allowed_to_create_retry_cover_download_job() throws Exception {
       mockMvc.perform(post(COVER_JOB)
                           .contentType(APPLICATION_JSON))
           .andExpect(status().isForbidden());

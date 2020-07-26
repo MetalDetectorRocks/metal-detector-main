@@ -83,7 +83,7 @@ function createImportReleasesJob() {
 function createRetryCoverDownloadJob() {
   $.ajax({
     method: "POST",
-    url: "/rest/v1/releases/cover",
+    url: "/rest/v1/releases/cover-reload",
     success: function(){
       createToast("Job for retrying cover downloads successfully created!");
     },
