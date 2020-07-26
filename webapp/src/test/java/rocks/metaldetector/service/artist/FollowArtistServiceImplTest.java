@@ -317,21 +317,29 @@ class FollowArtistServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Getting followed artists returns list of artist dtos")
-  void get_followed_should_return_artist_dtos() {
+  @DisplayName("Getting followed artists returns a sorted list of artist dtos")
+  void get_followed_should_return_sorted_artist_dtos() {
     // given
-    ArtistEntity artistEntity = ArtistEntityFactory.withExternalId("1");
-    ArtistDto artistDto = ArtistDtoFactory.withName("Darkthrone");
-    when(currentPublicUserIdSupplier.get()).thenReturn("userId");
-    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
-    when(userEntity.getFollowedArtists()).thenReturn(Set.of(artistEntity));
-    when(artistTransformer.transform(any())).thenReturn(artistDto);
+    ArtistEntity artistEntity1 = ArtistEntityFactory.withExternalId("1");
+    ArtistEntity artistEntity2 = ArtistEntityFactory.withExternalId("2");
+    ArtistEntity artistEntity3 = ArtistEntityFactory.withExternalId("3");
+    ArtistDto artistDto1 = ArtistDtoFactory.withName("Darkthrone");
+    ArtistDto artistDto2 = ArtistDtoFactory.withName("Borknagar");
+    ArtistDto artistDto3 = ArtistDtoFactory.withName("Alcest");
+
+    when(userRepository.findByPublicId(any())).thenReturn(Optional.of(userEntity));
+    when(userEntity.getFollowedArtists()).thenReturn(Set.of(artistEntity1, artistEntity2, artistEntity3));
+    when(artistTransformer.transform(artistEntity1)).thenReturn(artistDto1);
+    when(artistTransformer.transform(artistEntity2)).thenReturn(artistDto2);
+    when(artistTransformer.transform(artistEntity3)).thenReturn(artistDto3);
 
     // when
     List<ArtistDto> followedArtists = underTest.getFollowedArtistsOfCurrentUser();
 
     // then
-    assertThat(followedArtists).hasSize(1);
-    assertThat(followedArtists.get(0)).isEqualTo(artistDto);
+    assertThat(followedArtists).hasSize(3);
+    assertThat(followedArtists.get(0)).isEqualTo(artistDto3);
+    assertThat(followedArtists.get(1)).isEqualTo(artistDto2);
+    assertThat(followedArtists.get(2)).isEqualTo(artistDto1);
   }
 }
