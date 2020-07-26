@@ -87,7 +87,7 @@ export class MyArtistsRenderService {
             this.rowElement = document.createElement("div");
             this.rowElement.className = "row";
         }
-        this.rowElement.insertAdjacentElement("afterbegin", artistDivElement);
+        this.rowElement.insertAdjacentElement("beforeend", artistDivElement);
         this.hostElement.insertAdjacentElement("beforeend", this.rowElement);
     }
 
