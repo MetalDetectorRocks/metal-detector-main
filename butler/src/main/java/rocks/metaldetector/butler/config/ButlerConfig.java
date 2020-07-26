@@ -15,5 +15,6 @@ public class ButlerConfig {
   private String accessToken;
   private String unpaginatedReleasesUrl;
   private String importUrl;
+  private String coverUrl;
 
 }

@@ -164,4 +164,14 @@ class ReleaseServiceImplTest implements WithAssertions {
             ImportJobResultDtoFactory.createDefault()
     ));
   }
+
+  @Test
+  @DisplayName("Creating an cover download job should call butler client")
+  void create_cover_download_job_should_call_butler_client() {
+    // when
+    underTest.createRetryCoverDownloadJob();
+
+    // then
+    verify(butlerClient, times(1)).createRetryCoverDownloadJob();
+  }
 }

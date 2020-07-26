@@ -12,5 +12,7 @@ public interface ReleaseService {
 
   void createImportJob();
 
+  void createRetryCoverDownloadJob();
+
   List<ImportJobResultDto> queryImportJobResults();
 }

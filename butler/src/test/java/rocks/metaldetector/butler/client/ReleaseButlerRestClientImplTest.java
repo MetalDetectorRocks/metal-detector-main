@@ -213,6 +213,60 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     }
   }
 
+  @DisplayName("Test of create cover download job")
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @Nested
+  class CreateCoverDownloadJobTest {
+
+    @Test
+    @DisplayName("A POST call is made on cover url")
+    void test_post_on_cover_url() {
+      // given
+      var butlerUrl = "cover-url";
+      doReturn(butlerUrl).when(butlerConfig).getCoverUrl();
+      doReturn(ResponseEntity.ok().build()).when(restTemplate).postForEntity(anyString(), any(), any());
+
+      // when
+      underTest.createRetryCoverDownloadJob();
+
+      // then
+      verify(restTemplate, times(1)).postForEntity(eq(butlerUrl), any(), any());
+    }
+
+    @Test
+    @DisplayName("Cover url of the butler config is used")
+    void test_cover_url_from_butler_config_is_used() {
+      // given
+      doReturn("cover-url").when(butlerConfig).getCoverUrl();
+      doReturn(ResponseEntity.ok().build()).when(restTemplate).postForEntity(anyString(), any(), eq(Void.class));
+
+      // when
+      underTest.createRetryCoverDownloadJob();
+
+      // then
+      verify(butlerConfig, times(1)).getCoverUrl();
+    }
+
+    @ParameterizedTest(name = "If the status is {0}, an ExternalServiceException is thrown")
+    @MethodSource("httpStatusCodeProvider")
+    @DisplayName("If the status code is not OK on cover download job, an ExternalServiceException is thrown")
+    void test_cover_download_job_exception_if_status_is_not_ok(HttpStatus httpStatus) {
+      // given
+      doReturn("cover-url").when(butlerConfig).getCoverUrl();
+      doReturn(ResponseEntity.status(httpStatus).build()).when(restTemplate).postForEntity(anyString(), any(), eq(Void.class));
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.createRetryCoverDownloadJob());
+
+      // then
+      assertThat(throwable).isInstanceOf(ExternalServiceException.class);
+    }
+
+    private Stream<Arguments> httpStatusCodeProvider() {
+      return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
+    }
+  }
+
   @DisplayName("Test of query import job results")
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
@@ -225,7 +279,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       var butlerUrl = "import-url";
       doReturn(butlerUrl).when(butlerConfig).getImportUrl();
       ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
-      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(anyString(), any(Class.class));
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(anyString(), any());
 
       // when
       underTest.queryImportJobResults();
@@ -240,7 +294,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       // given
       ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
       doReturn("import-url").when(butlerConfig).getImportUrl();
-      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(anyString(), any(Class.class));
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).getForEntity(anyString(), any());
 
       // when
       List<ButlerImportJob> response = underTest.queryImportJobResults();
@@ -254,7 +308,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     void test_exception_if_import_response_is_null() {
       // given
       doReturn("import-url").when(butlerConfig).getImportUrl();
-      doReturn(ResponseEntity.ok(null)).when(restTemplate).getForEntity(anyString(), any(Class.class));
+      doReturn(ResponseEntity.ok(null)).when(restTemplate).getForEntity(anyString(), any());
 
       // when
       Throwable throwable = catchThrowable(() -> underTest.queryImportJobResults());
@@ -270,7 +324,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       // given
       ButlerImportResponse responseMock = ButlerImportResponseFactory.createDefault();
       doReturn("import-url").when(butlerConfig).getImportUrl();
-      doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).getForEntity(anyString(), any(Class.class));
+      doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).getForEntity(anyString(), any());
 
       // when
       Throwable throwable = catchThrowable(() -> underTest.queryImportJobResults());
