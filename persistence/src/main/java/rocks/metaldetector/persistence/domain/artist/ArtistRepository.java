@@ -10,10 +10,10 @@ import java.util.Optional;
 @Repository
 public interface ArtistRepository extends JpaRepository<ArtistEntity, Long> {
 
-  Optional<ArtistEntity> findByExternalId(String externalId);
+  Optional<ArtistEntity> findByExternalIdAndSource(String externalId, ArtistSource source);
 
   List<ArtistEntity> findAllByExternalIdIn(Collection<String> externalIds);
 
-  boolean existsByExternalId(String externalId);
+  boolean existsByExternalIdAndSource(String externalId, ArtistSource source);
 
 }

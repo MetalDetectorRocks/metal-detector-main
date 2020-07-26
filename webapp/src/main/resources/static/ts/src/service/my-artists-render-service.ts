@@ -76,7 +76,7 @@ export class MyArtistsRenderService {
         followedSinceElement.innerHTML = this.createFollowedSinceString(artist.followedSince);
         followIconElement.addEventListener(
             "click",
-            this.handleFollowIconClick.bind(this, followIconElement, artist.artistName, artist.externalId)
+            this.handleFollowIconClick.bind(this, followIconElement, artist)
         );
 
         return artistDivElement;
@@ -96,16 +96,16 @@ export class MyArtistsRenderService {
         return `<i class="material-icons">favorite</i> on ${followedSinceString}`;
     }
 
-    private handleFollowIconClick(followIconElement: HTMLDivElement, artistName: string, artistId: string) {
+    private handleFollowIconClick(followIconElement: HTMLDivElement, artist: Artist) {
         const followIcon = followIconElement.getElementsByTagName("i").item(0)!;
         const currentFollowState = followIcon.textContent;
 
         if (currentFollowState === FollowState.FOLLOWING.toString()) {
-            this.followArtistService.unfollowArtist(artistId, artistName);
+            this.followArtistService.unfollowArtist(artist);
             followIcon.textContent = FollowState.NOT_FOLLOWING.toString();
         }
         else {
-            this.followArtistService.followArtist(artistId, artistName);
+            this.followArtistService.followArtist(artist);
             followIcon.textContent = FollowState.FOLLOWING.toString();
         }
     }

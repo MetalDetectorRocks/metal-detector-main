@@ -31,7 +31,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   @Override
   @Transactional
-  public void follow(String externalId, String source) {
+  public void follow(String externalId, ArtistSource source) {
     ArtistEntity artist = saveAndFetchArtist(externalId, source);
     UserEntity user = currentUser();
     user.addFollowedArtist(artist);
@@ -40,9 +40,9 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   @Override
   @Transactional
-  public void unfollow(String externalId) {
-    ArtistEntity artistEntity = artistRepository.findByExternalId(externalId)
-        .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + externalId + "' not found!"));
+  public void unfollow(String externalId, ArtistSource source) {
+    ArtistEntity artistEntity = artistRepository.findByExternalIdAndSource(externalId, source)
+        .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + externalId + "' (" + source + ") not found!"));
 
     UserEntity user = currentUser();
     user.removeFollowedArtist(artistEntity);
@@ -66,14 +66,14 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     return user.getFollowedArtists().stream().map(artistTransformer::transform).collect(Collectors.toUnmodifiableList());
   }
 
-  private ArtistEntity saveAndFetchArtist(String externalId, String source) {
-    if (artistRepository.existsByExternalId(externalId)) {
+  private ArtistEntity saveAndFetchArtist(String externalId, ArtistSource source) {
+    if (artistRepository.existsByExternalIdAndSource(externalId, source)) {
       //noinspection OptionalGetWithoutIsPresent: call is safe due to prior existsBy check
-      return artistRepository.findByExternalId(externalId).get();
+      return artistRepository.findByExternalIdAndSource(externalId, source).get();
     }
 
     DiscogsArtistDto artist = discogsService.searchArtistById(externalId);
-    ArtistEntity artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl(), ArtistSource.getArtistSourceFromString(source));
+    ArtistEntity artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl(), source);
     return artistRepository.save(artistEntity);
   }
 

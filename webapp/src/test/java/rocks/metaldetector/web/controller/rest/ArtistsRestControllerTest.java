@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseFactory;
 import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFAULT_DISCOGS_PAGE;
 import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFAULT_DISCOGS_SIZE;
@@ -38,8 +40,9 @@ import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFA
 class ArtistsRestControllerTest implements WithAssertions {
 
   private static final String VALID_EXTERNAL_ID = "252211";
-  private static final String VALID_SOURCE = "Discogs";
+  private static final String VALID_SOURCE_STRING = "Discogs";
   private static final String VALID_SEARCH_REQUEST = "Darkthrone";
+  private static final ArtistSource ARTIST_SOURCE = DISCOGS;
 
   @Mock
   private ArtistsService artistsService;
@@ -172,11 +175,10 @@ class ArtistsRestControllerTest implements WithAssertions {
     @DisplayName("Should return 200 when following an artist")
     void handle_follow_return_200() {
       // given
-      Map<String, Object> requestParams = new HashMap<>();
-      requestParams.put("source", VALID_SOURCE);
+      var url = "/" + VALID_SOURCE_STRING + "/" + VALID_EXTERNAL_ID;
 
       // when
-      var validatableResponse = followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNAL_ID, requestParams);
+      var validatableResponse = followArtistRestAssuredUtils.doPost(url);
 
       // then
       validatableResponse.statusCode(HttpStatus.OK.value());
@@ -186,25 +188,24 @@ class ArtistsRestControllerTest implements WithAssertions {
     @DisplayName("Should call follow artist service when following an artist")
     void handle_follow_call_follow_artist_service() {
       // given
-      Map<String, Object> requestParams = new HashMap<>();
-      requestParams.put("source", VALID_SOURCE);
+      var url = "/" + VALID_SOURCE_STRING + "/" + VALID_EXTERNAL_ID;
 
       // when
-      followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNAL_ID, requestParams);
+      followArtistRestAssuredUtils.doPost(url);
 
       // then
-      verify(followArtistService, times(1)).follow(VALID_EXTERNAL_ID, VALID_SOURCE);
+      verify(followArtistService, times(1)).follow(VALID_EXTERNAL_ID, ARTIST_SOURCE);
     }
 
     @Test
     @DisplayName("Should return bad request on invalid source")
     void handle_follow_bad_request() {
       // given
-      Map<String, Object> requestParams = new HashMap<>();
-      requestParams.put("source", "");
+      var INVALID_SOURCE = "something-stupid";
+      var url = "/" + INVALID_SOURCE + "/" + VALID_EXTERNAL_ID;
 
       // when
-      var result = followArtistRestAssuredUtils.doPost("/" + VALID_EXTERNAL_ID, requestParams);
+      var result = followArtistRestAssuredUtils.doPost(url);
 
       // then
       result.status(HttpStatus.BAD_REQUEST);
@@ -213,8 +214,11 @@ class ArtistsRestControllerTest implements WithAssertions {
     @Test
     @DisplayName("Should return 200 when unfollowing an artist")
     void handle_unfollow_return_200() {
+      // given
+      var url = "/" + VALID_SOURCE_STRING + "/" + VALID_EXTERNAL_ID;
+
       // when
-      var validatableResponse = unfollowArtistRestAssuredUtils.doPost("/" + VALID_EXTERNAL_ID);
+      var validatableResponse = unfollowArtistRestAssuredUtils.doPost(url);
 
       // then
       validatableResponse.statusCode(HttpStatus.OK.value());
@@ -223,11 +227,28 @@ class ArtistsRestControllerTest implements WithAssertions {
     @Test
     @DisplayName("Should call follow artist service when unfollowing an artist")
     void handle_unfollow_call_follow_artist_service() {
+      // given
+      var url = "/" + VALID_SOURCE_STRING + "/" + VALID_EXTERNAL_ID;
+
       // when
-      unfollowArtistRestAssuredUtils.doPost("/" + VALID_EXTERNAL_ID);
+      unfollowArtistRestAssuredUtils.doPost(url);
 
       // then
-      verify(followArtistService, times(1)).unfollow(VALID_EXTERNAL_ID);
+      verify(followArtistService, times(1)).unfollow(VALID_EXTERNAL_ID, ARTIST_SOURCE);
+    }
+
+    @Test
+    @DisplayName("Should return bad request on invalid source")
+    void handle_unfollow_bad_request() {
+      // given
+      var INVALID_SOURCE = "something-stupid";
+      var url = "/" + INVALID_SOURCE + "/" + VALID_EXTERNAL_ID;
+
+      // when
+      var result = unfollowArtistRestAssuredUtils.doPost(url);
+
+      // then
+      result.status(HttpStatus.BAD_REQUEST);
     }
   }
 }

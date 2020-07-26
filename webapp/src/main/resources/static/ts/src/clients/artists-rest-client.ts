@@ -15,32 +15,34 @@ export class ArtistsRestClient {
         axiosConfig.params = {
             page: this.getPageFromUrl()
         }
-        return axios.get(this.MY_ARTISTS_URL, axiosConfig)
-            .then((response: AxiosResponse<MyArtistsResponse>) => {
-                return response.data;
-            })
-            .catch((error: AxiosError) => {
-                console.error(error);
-                throw error;
-            });
+        return axios.get(
+            this.MY_ARTISTS_URL, axiosConfig
+        ).then((response: AxiosResponse<MyArtistsResponse>) => {
+            return response.data;
+        }).catch((error: AxiosError) => {
+            console.error(error);
+            throw error;
+        });
     }
 
-    public followArtist(artistId: string): void {
-        // ToDo DanielW: Handle follow after spotify merge
-        axiosConfig.params = {
-            source: "Discogs"
-        }
-        axios.post(`${this.FOLLOW_ARTISTS_URL}/${artistId}`, axiosConfig)
-            .catch((error: AxiosError) => {
-                throw error;
-            });
+    public followArtist(artistId: string, source: string): void {
+        axios.post(
+            `${this.FOLLOW_ARTISTS_URL}/${source}/${artistId}`,
+            {},
+            axiosConfig
+        ).catch((error: AxiosError) => {
+            throw error;
+        });
     }
 
-    public unfollowArtist(artistId: string): void {
-        axios.post(`${this.UNFOLLOW_ARTISTS_URL}/${artistId}`, axiosConfig)
-            .catch((error: AxiosError) => {
-                throw error;
-            });
+    public unfollowArtist(artistId: string, source: string): void {
+        axios.post(
+            `${this.UNFOLLOW_ARTISTS_URL}/${source}/${artistId}`,
+            {},
+            axiosConfig
+        ).catch((error: AxiosError) => {
+            throw error;
+        });
     }
 
     private getPageFromUrl(): string {

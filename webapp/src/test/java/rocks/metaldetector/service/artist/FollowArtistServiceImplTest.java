@@ -14,6 +14,7 @@ import rocks.metaldetector.discogs.facade.DiscogsService;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
+import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
@@ -39,7 +40,7 @@ import static rocks.metaldetector.testutil.DtoFactory.DiscogsArtistDtoFactory;
 class FollowArtistServiceImplTest implements WithAssertions {
 
   private static final String EXTERNAL_ID = "252211";
-  private static final String ARTIST_SOURCE = "Discogs";
+  private static final ArtistSource ARTIST_SOURCE = ArtistSource.DISCOGS;
 
   @Mock
   private UserRepository userRepository;
@@ -71,8 +72,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @DisplayName("Artist is fetched from repository if it already exists on follow")
   void follow_should_get_artist() {
     // given
-    when(artistRepository.existsByExternalId(anyString())).thenReturn(true);
-    when(artistRepository.findByExternalId(anyString())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
+    when(artistRepository.existsByExternalIdAndSource(anyString(), any())).thenReturn(true);
+    when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
     when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
@@ -81,8 +82,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
     // then
     InOrder inOrderVerifier = inOrder(artistRepository);
-    inOrderVerifier.verify(artistRepository, times(1)).existsByExternalId(EXTERNAL_ID);
-    inOrderVerifier.verify(artistRepository, times(1)).findByExternalId(EXTERNAL_ID);
+    inOrderVerifier.verify(artistRepository, times(1)).existsByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
+    inOrderVerifier.verify(artistRepository, times(1)).findByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
   }
 
   @Test
@@ -90,8 +91,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
   void follow_should_get_current_user() {
     // given
     String publicUserId = UUID.randomUUID().toString();
-    when(artistRepository.existsByExternalId(anyString())).thenReturn(true);
-    when(artistRepository.findByExternalId(anyString())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
+    when(artistRepository.existsByExternalIdAndSource(anyString(), any())).thenReturn(true);
+    when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
     when(currentPublicUserIdSupplier.get()).thenReturn(publicUserId);
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
@@ -108,8 +109,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
   void follow_should_throw_exception() {
     // given
     String userId = "publicUserId";
-    when(artistRepository.existsByExternalId(anyString())).thenReturn(true);
-    when(artistRepository.findByExternalId(anyString())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
+    when(artistRepository.existsByExternalIdAndSource(anyString(), any())).thenReturn(true);
+    when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
     when(currentPublicUserIdSupplier.get()).thenReturn(userId);
     when(userRepository.findByPublicId(anyString())).thenThrow(new ResourceNotFoundException(userId));
 
@@ -141,8 +142,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @DisplayName("Discogs is not searched if artist already exists")
   void follow_should_not_search_discogs() {
     // given
-    when(artistRepository.existsByExternalId(anyString())).thenReturn(true);
-    when(artistRepository.findByExternalId(anyString())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
+    when(artistRepository.existsByExternalIdAndSource(anyString(), any())).thenReturn(true);
+    when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
     when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
@@ -174,7 +175,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     assertThat(artistEntity.getArtistName()).isEqualTo(discogsArtist.getName());
     assertThat(artistEntity.getExternalId()).isEqualTo(discogsArtist.getId());
     assertThat(artistEntity.getThumb()).isEqualTo(discogsArtist.getImageUrl());
-    assertThat(artistEntity.getSource().getDisplayName()).isEqualTo(ARTIST_SOURCE);
+    assertThat(artistEntity.getSource()).isEqualTo(ARTIST_SOURCE);
   }
 
   @Test
@@ -182,8 +183,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
   void follow_should_add_artist_to_user() {
     // given
     ArtistEntity artist = ArtistEntityFactory.withExternalId(EXTERNAL_ID);
-    when(artistRepository.existsByExternalId(anyString())).thenReturn(true);
-    when(artistRepository.findByExternalId(anyString())).thenReturn(Optional.of(artist));
+    when(artistRepository.existsByExternalIdAndSource(anyString(), any())).thenReturn(true);
+    when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(artist));
     when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
@@ -199,15 +200,15 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @DisplayName("Artist is fetched from repository on unfollow")
   void unfollow_should_fetch_artist_from_repository() {
     // given
-    when(artistRepository.findByExternalId(anyString())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
+    when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
     when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
-    underTest.unfollow(EXTERNAL_ID);
+    underTest.unfollow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(artistRepository, times(1)).findByExternalId(EXTERNAL_ID);
+    verify(artistRepository, times(1)).findByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
   }
 
   @Test
@@ -215,12 +216,12 @@ class FollowArtistServiceImplTest implements WithAssertions {
   void unfollow_should_fetch_current_user() {
     // given
     String publicUserId = UUID.randomUUID().toString();
-    when(artistRepository.findByExternalId(anyString())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
+    when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
     when(currentPublicUserIdSupplier.get()).thenReturn(publicUserId);
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
-    underTest.unfollow(EXTERNAL_ID);
+    underTest.unfollow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     verify(currentPublicUserIdSupplier, times(1)).get();
@@ -232,12 +233,12 @@ class FollowArtistServiceImplTest implements WithAssertions {
   void unfollow_should_throw_exception() {
     // given
     String userId = "publicUserId";
-    when(artistRepository.findByExternalId(anyString())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
+    when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
     when(currentPublicUserIdSupplier.get()).thenReturn(userId);
     when(userRepository.findByPublicId(anyString())).thenThrow(new ResourceNotFoundException(userId));
 
     // when
-    Throwable throwable = catchThrowable(() -> underTest.unfollow("1"));
+    Throwable throwable = catchThrowable(() -> underTest.unfollow(EXTERNAL_ID, ARTIST_SOURCE));
 
     // then
     assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
@@ -251,12 +252,12 @@ class FollowArtistServiceImplTest implements WithAssertions {
     ArgumentCaptor<UserEntity> argumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
     ArtistEntity artist = ArtistEntityFactory.withExternalId(EXTERNAL_ID);
     userEntity.addFollowedArtist(artist);
-    when(artistRepository.findByExternalId(anyString())).thenReturn(Optional.of(artist));
+    when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(artist));
     when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
-    underTest.unfollow(EXTERNAL_ID);
+    underTest.unfollow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     verify(userRepository, times(1)).save(argumentCaptor.capture());

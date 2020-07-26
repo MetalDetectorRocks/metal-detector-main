@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
@@ -40,18 +41,15 @@ public class ArtistsRestController {
     return ResponseEntity.ok(searchResponse);
   }
 
-  @PostMapping(path = Endpoints.Rest.FOLLOW + "/{externalId}")
-  public ResponseEntity<Void> handleFollow(@PathVariable String externalId, @RequestParam(value = "source") String source) {
-    if (source.isEmpty()) {
-      throw new IllegalArgumentException("Artist source must be set");
-    }
-    followArtistService.follow(externalId, source);
+  @PostMapping(path = Endpoints.Rest.FOLLOW + "/{source}/{externalId}")
+  public ResponseEntity<Void> handleFollow(@PathVariable String source, @PathVariable String externalId) {
+    followArtistService.follow(externalId, ArtistSource.getArtistSourceFromString(source));
     return ResponseEntity.ok().build();
   }
 
-  @PostMapping(path = Endpoints.Rest.UNFOLLOW + "/{externalId}")
-  public ResponseEntity<Void> handleUnfollow(@PathVariable String externalId) {
-    followArtistService.unfollow(externalId);
+  @PostMapping(path = Endpoints.Rest.UNFOLLOW + "/{source}/{externalId}")
+  public ResponseEntity<Void> handleUnfollow(@PathVariable String source, @PathVariable String externalId) {
+    followArtistService.unfollow(externalId, ArtistSource.getArtistSourceFromString(source));
     return ResponseEntity.ok().build();
   }
 }

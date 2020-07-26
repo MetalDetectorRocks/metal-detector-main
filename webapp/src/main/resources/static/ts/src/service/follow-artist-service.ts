@@ -1,5 +1,6 @@
 import { ArtistsRestClient } from "../clients/artists-rest-client";
 import { ToastService } from "./toast-service";
+import { Artist } from "../model/artist.model";
 
 export class FollowArtistService {
 
@@ -11,15 +12,15 @@ export class FollowArtistService {
         this.toastService = toastService;
     }
 
-    public followArtist(artistId: string, artistName: string): void {
-        this.artistRestClient.followArtist(artistId);
-        const toastText = `You are now following "${artistName}"`;
+    public followArtist(artist: Artist): void {
+        this.artistRestClient.followArtist(artist.externalId, artist.source);
+        const toastText = `You are now following "${artist.artistName}"`;
         this.toastService.createToast(toastText);
     }
 
-    public unfollowArtist(artistId: string, artistName: string): void {
-        this.artistRestClient.unfollowArtist(artistId);
-        const toastText = `You no longer follow "${artistName}"`;
+    public unfollowArtist(artist: Artist): void {
+        this.artistRestClient.unfollowArtist(artist.externalId, artist.source);
+        const toastText = `You no longer follow "${artist.artistName}"`;
         this.toastService.createToast(toastText);
     }
 }
