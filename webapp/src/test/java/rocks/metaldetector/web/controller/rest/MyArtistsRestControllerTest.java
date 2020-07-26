@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.service.SlicingService;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
@@ -24,6 +25,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -39,6 +42,9 @@ class MyArtistsRestControllerTest implements WithAssertions {
   @Mock
   private FollowArtistService followArtistService;
 
+  @Mock
+  private SlicingService slicingService;
+
   @InjectMocks
   private MyArtistsRestController underTest;
 
@@ -53,7 +59,7 @@ class MyArtistsRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(followArtistService);
+    reset(followArtistService, slicingService);
   }
 
   @Test
@@ -72,10 +78,37 @@ class MyArtistsRestControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("GET should return results if present")
+  @DisplayName("GET should call followArtistService")
+  void get_should_call_follow_artist_service() {
+    // given
+    doReturn(Collections.emptyList()).when(followArtistService).getFollowedArtistsOfCurrentUser();
+
+    // when
+    restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
+
+    // then
+    verify(followArtistService, times(1)).getFollowedArtistsOfCurrentUser();
+  }
+
+  @Test
+  @DisplayName("GET should call slicingService")
+  void get_should_call_slicing_service() {
+    // given
+    var artists = List.of(ArtistDtoFactory.createDefault());
+    doReturn(artists).when(followArtistService).getFollowedArtistsOfCurrentUser();
+
+    // when
+    restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
+
+    // then
+    verify(slicingService, times(1)).slice(artists, PAGE, SIZE);
+  }
+
+  @Test
+  @DisplayName("GET should return sliced results if present")
   void get_should_return_results() {
     ArtistDto artistDto = ArtistDtoFactory.createDefault();
-    doReturn(List.of(artistDto)).when(followArtistService).getFollowedArtistsOfCurrentUser();
+    doReturn(List.of(artistDto)).when(slicingService).slice(any(), anyInt(), anyInt());
 
     // when
     ValidatableMockMvcResponse validatableResponse = restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
@@ -104,19 +137,6 @@ class MyArtistsRestControllerTest implements WithAssertions {
     assertThat(response.getPagination().getTotalPages()).isEqualTo(1);
     assertThat(response.getPagination().getItemsPerPage()).isEqualTo(SIZE);
     assertThat(response.getPagination().getCurrentPage()).isEqualTo(PAGE);
-  }
-
-  @Test
-  @DisplayName("GET should call followArtistService")
-  void get_should_call_service() {
-    // given
-    doReturn(Collections.emptyList()).when(followArtistService).getFollowedArtistsOfCurrentUser();
-
-    // when
-    restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
-
-    // then
-    verify(followArtistService, times(1)).getFollowedArtistsOfCurrentUser();
   }
 
   @Test
