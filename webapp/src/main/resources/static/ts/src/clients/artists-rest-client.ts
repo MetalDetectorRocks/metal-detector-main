@@ -12,13 +12,12 @@ export class ArtistsRestClient {
     }
 
     public async fetchMyArtists(): Promise<MyArtistsResponse> {
+        axiosConfig.params = {
+            page: this.getPageFromUrl()
+        }
         return axios.get(this.MY_ARTISTS_URL, axiosConfig)
             .then((response: AxiosResponse<MyArtistsResponse>) => {
-                const { data } = response;
-                return {
-                    myArtists: data.myArtists,
-                    pagination: data.pagination
-                }
+                return response.data;
             })
             .catch((error: AxiosError) => {
                 console.error(error);
@@ -27,7 +26,11 @@ export class ArtistsRestClient {
     }
 
     public followArtist(artistId: string): void {
-        axios.post(`${this.FOLLOW_ARTISTS_URL}/${artistId}?source=Discogs`, axiosConfig)
+        // ToDo DanielW: Handle follow after spotify merge
+        axiosConfig.params = {
+            source: "Discogs"
+        }
+        axios.post(`${this.FOLLOW_ARTISTS_URL}/${artistId}`, axiosConfig)
             .catch((error: AxiosError) => {
                 throw error;
             });
@@ -38,5 +41,15 @@ export class ArtistsRestClient {
             .catch((error: AxiosError) => {
                 throw error;
             });
+    }
+
+    private getPageFromUrl(): string {
+        const url = new URL(window.location.href);
+        let page = url.searchParams.get("page") || "1";
+        if (Number.isNaN(page) || +page < 1) {
+            page = "1";
+        }
+
+        return page;
     }
 }

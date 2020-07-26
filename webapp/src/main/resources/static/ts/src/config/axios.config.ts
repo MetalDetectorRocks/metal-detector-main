@@ -1,8 +1,8 @@
 import * as qs from "qs";
 import { PathLike } from "fs";
+import { AxiosRequestConfig } from "axios";
 
-export const axiosConfig = {
-    returnRejectedPromiseOnError: true,
+export const axiosConfig: AxiosRequestConfig = {
     withCredentials: false,
     timeout: 30000,
     headers: {
