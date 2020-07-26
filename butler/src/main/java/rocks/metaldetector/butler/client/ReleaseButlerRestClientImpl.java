@@ -54,6 +54,14 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   }
 
   @Override
+  public void createRetryCoverDownloadJob() {
+    ResponseEntity<Void> responseEntity = releaseButlerRestTemplate.postForEntity(butlerConfig.getCoverUrl(), null, Void.class);
+    if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+      throw new ExternalServiceException("Could not retry cover download (Response code: " + responseEntity.getStatusCode() + ")");
+    }
+  }
+
+  @Override
   public List<ButlerImportJob> queryImportJobResults() {
     ResponseEntity<ButlerImportResponse> responseEntity = releaseButlerRestTemplate.getForEntity(
             butlerConfig.getImportUrl(),

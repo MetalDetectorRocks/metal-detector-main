@@ -51,4 +51,11 @@ public class ReleasesRestController {
     List<ImportJobResultDto> response = releaseService.queryImportJobResults();
     return ResponseEntity.ok(response);
   }
+
+  @PostMapping(path = Endpoints.Rest.COVER_JOB)
+  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+  public ResponseEntity<Void> createRetryCoverDownloadJob() {
+    releaseService.createRetryCoverDownloadJob();
+    return ResponseEntity.ok().build();
+  }
 }

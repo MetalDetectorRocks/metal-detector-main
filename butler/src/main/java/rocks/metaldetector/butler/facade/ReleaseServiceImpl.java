@@ -38,6 +38,11 @@ public class ReleaseServiceImpl implements ReleaseService {
   }
 
   @Override
+  public void createRetryCoverDownloadJob() {
+    butlerClient.createRetryCoverDownloadJob();
+  }
+
+  @Override
   public List<ImportJobResultDto> queryImportJobResults() {
     List<ButlerImportJob> importJobResponses = butlerClient.queryImportJobResults();
     return importJobResponses.stream().map(importJobResponseTransformer::transform).collect(Collectors.toList());
