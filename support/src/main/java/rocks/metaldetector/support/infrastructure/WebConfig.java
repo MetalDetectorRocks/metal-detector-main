@@ -10,6 +10,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -49,6 +50,11 @@ public class WebConfig {
     converter.setSupportedMediaTypes(List.of(TEXT_PLAIN, TEXT_HTML));
 
     return converter;
+  }
+
+  @Bean
+  FormHttpMessageConverter formHttpMessageConverter() {
+    return new FormHttpMessageConverter();
   }
 
   @Bean

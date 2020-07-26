@@ -1,6 +1,5 @@
 package rocks.metaldetector.web.controller.rest;
 
-import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
@@ -16,21 +15,24 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
-import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
+import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseFactory;
+import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFAULT_DISCOGS_PAGE;
+import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFAULT_DISCOGS_SIZE;
 
 @ExtendWith(MockitoExtension.class)
 class ArtistsRestControllerTest implements WithAssertions {
@@ -62,7 +64,8 @@ class ArtistsRestControllerTest implements WithAssertions {
     void setUp() {
       restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH);
       RestAssuredMockMvc.standaloneSetup(underTest,
-                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)));
+                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)),
+                                         RestExceptionsHandler.class);
     }
 
     @AfterEach
@@ -71,8 +74,8 @@ class ArtistsRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should pass request parameter to artist service")
-    void handleNameSearch_pass_arguments() {
+    @DisplayName("Should pass request parameter to spotify search")
+    void handleNameSearch_default_spotify() {
       // given
       Map<String, Object> requestParams = new HashMap<>();
       requestParams.put("query", VALID_SEARCH_REQUEST);
@@ -83,47 +86,62 @@ class ArtistsRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet(requestParams);
 
       // then
-      verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+      verify(artistsService, times(1)).searchSpotifyByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+    }
+
+    @Test
+    @DisplayName("Should pass default parameter to discogs search if spotify does not return results")
+    void handleNameSearch_fallback_discogs() {
+      // given
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("query", VALID_SEARCH_REQUEST);
+      requestParams.put("page", DEFAULT_PAGE);
+      requestParams.put("size", DEFAULT_SIZE);
+      doReturn(ArtistSearchResponseFactory.empty()).when(artistsService).searchSpotifyByName(any(), any());
+
+      // when
+      restAssuredUtils.doGet(requestParams);
+
+      // then
+      verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
     }
 
     @Test
     @DisplayName("Should return status code 200")
     void handleNameSearch_return_200() {
       // given
-      var expectedSearchResult = DiscogsArtistSearchResultDtoFactory.createDefault();
       Map<String, Object> requestParams = Map.of(
           "query", VALID_SEARCH_REQUEST,
           "page", DEFAULT_PAGE,
           "size", DEFAULT_SIZE
       );
-      doReturn(expectedSearchResult).when(artistsService).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+      doReturn(ArtistSearchResponseFactory.spotify()).when(artistsService).searchSpotifyByName(any(), any());
 
       // when
       var validatableResponse = restAssuredUtils.doGet(requestParams);
 
       // then
       validatableResponse
-          .contentType(ContentType.JSON)
           .statusCode(HttpStatus.OK.value());
     }
 
     @Test
-    @DisplayName("Should return results from artist service")
-    void handleNameSearch_return_result() {
+    @DisplayName("Should return response transformer's result for spotify")
+    void handleNameSearch_return_result_spotify() {
       // given
-      var expectedSearchResult = DiscogsArtistSearchResultDtoFactory.createDefault();
+      var expectedSearchResult = ArtistSearchResponseFactory.spotify();
       Map<String, Object> requestParams = Map.of(
           "query", VALID_SEARCH_REQUEST,
           "page", DEFAULT_PAGE,
           "size", DEFAULT_SIZE
       );
-      doReturn(expectedSearchResult).when(artistsService).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+      doReturn(expectedSearchResult).when(artistsService).searchSpotifyByName(any(), any());
 
       // when
       var validatableResponse = restAssuredUtils.doGet(requestParams);
 
       // then
-      DiscogsArtistSearchResultDto searchResponse = validatableResponse.extract().as(DiscogsArtistSearchResultDto.class);
+      ArtistSearchResponse searchResponse = validatableResponse.extract().as(ArtistSearchResponse.class);
       assertThat(searchResponse).isEqualTo(expectedSearchResult);
     }
   }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -100,8 +101,8 @@ public class RestExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), UNPROCESSABLE_ENTITY);
   }
 
-  @ExceptionHandler({ExternalServiceException.class})
-  public ResponseEntity<ErrorResponse> handleExternalServiceException(RuntimeException exception, WebRequest webRequest) {
+  @ExceptionHandler({ExternalServiceException.class, RestClientException.class})
+  public ResponseEntity<ErrorResponse> handleRestExceptions(RuntimeException exception, WebRequest webRequest) {
     log.error(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), HttpStatus.SERVICE_UNAVAILABLE);
   }

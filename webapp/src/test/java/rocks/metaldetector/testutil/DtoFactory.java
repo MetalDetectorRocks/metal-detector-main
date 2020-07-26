@@ -8,15 +8,23 @@ import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.user.UserDto;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
 import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
+import rocks.metaldetector.web.api.response.ArtistSearchResponse;
+import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 
 public class DtoFactory {
 
@@ -81,10 +89,10 @@ public class DtoFactory {
 
     public static UpdateUserRequest createDefault() {
       return UpdateUserRequest.builder()
-              .publicUserId("abc-123")
-              .role("USER")
-              .enabled(true)
-              .build();
+          .publicUserId("abc-123")
+          .role("USER")
+          .enabled(true)
+          .build();
     }
   }
 
@@ -111,10 +119,10 @@ public class DtoFactory {
 
     public static DetectorReleasesRequest createDefault() {
       return DetectorReleasesRequest.builder()
-              .artists(List.of("A", "B", "C"))
-              .dateFrom(LocalDate.now())
-              .dateTo(LocalDate.now().plusDays(30))
-              .build();
+          .artists(List.of("A", "B", "C"))
+          .dateFrom(LocalDate.now())
+          .dateTo(LocalDate.now().plusDays(30))
+          .build();
     }
   }
 
@@ -122,15 +130,29 @@ public class DtoFactory {
 
     public static DiscogsArtistSearchResultDto createDefault() {
       Pagination pagination = Pagination.builder()
-              .totalPages(10)
-              .itemsPerPage(10)
-              .currentPage(1)
-              .build();
+          .totalPages(1)
+          .itemsPerPage(10)
+          .currentPage(1)
+          .build();
 
       return DiscogsArtistSearchResultDto.builder()
-              .searchResults(List.of(DiscogsArtistSearchResultEntryDtoFactory.createDefault()))
-              .pagination(pagination)
-              .build();
+          .searchResults(List.of(DiscogsArtistSearchResultEntryDtoFactory.createDefault()))
+          .pagination(pagination)
+          .build();
+    }
+
+    public static DiscogsArtistSearchResultDto createMultiple() {
+      Pagination pagination = Pagination.builder()
+          .totalPages(10)
+          .itemsPerPage(10)
+          .currentPage(1)
+          .build();
+
+      return DiscogsArtistSearchResultDto.builder()
+          .searchResults(List.of(DiscogsArtistSearchResultEntryDtoFactory.withArtistName("A"),
+                                 DiscogsArtistSearchResultEntryDtoFactory.withArtistName("B")))
+          .pagination(pagination)
+          .build();
     }
   }
 
@@ -142,9 +164,18 @@ public class DtoFactory {
 
     public static DiscogsArtistSearchResultEntryDto withId(String externalId) {
       return DiscogsArtistSearchResultEntryDto.builder()
-              .id(externalId)
-              .name(ARTIST_NAME)
-              .build();
+          .id(externalId)
+          .name(ARTIST_NAME)
+          .build();
+    }
+
+    public static DiscogsArtistSearchResultEntryDto withArtistName(String artistName) {
+      return DiscogsArtistSearchResultEntryDto.builder()
+          .id("abcdef12345")
+          .imageUrl("imageUrl")
+          .name(artistName)
+          .uri("/uri")
+          .build();
     }
   }
 
@@ -152,9 +183,9 @@ public class DtoFactory {
 
     public static DiscogsArtistDto createDefault() {
       return DiscogsArtistDto.builder()
-              .id(EXTERNAL_ID)
-              .name(ARTIST_NAME)
-              .build();
+          .id(EXTERNAL_ID)
+          .name(ARTIST_NAME)
+          .build();
     }
   }
 
@@ -166,10 +197,10 @@ public class DtoFactory {
 
     public static ReleaseDto withArtistName(String artistName) {
       return ReleaseDto.builder()
-              .artist(artistName)
-              .albumTitle("Heavy Release")
-              .releaseDate(LocalDate.now().plusDays(10))
-              .build();
+          .artist(artistName)
+          .albumTitle("Heavy Release")
+          .releaseDate(LocalDate.now().plusDays(10))
+          .build();
     }
   }
 
@@ -191,10 +222,93 @@ public class DtoFactory {
 
     public static ArtistDto withName(String name) {
       return ArtistDto.builder()
-              .artistName(name)
-              .externalId("1")
-              .source("Discogs")
-              .build();
+          .artistName(name)
+          .externalId("1")
+          .source("Discogs")
+          .build();
+    }
+  }
+
+  public static class SpotifyArtistSearchResultDtoFactory {
+
+    public static SpotifyArtistSearchResultDto createDefault() {
+      return SpotifyArtistSearchResultDto.builder()
+          .pagination(new Pagination(1, 1, 10))
+          .searchResults(List.of(
+              SpotifyArtistSearchResultEntryDtoFactory.withArtistName("A"),
+              SpotifyArtistSearchResultEntryDtoFactory.withArtistName("B")
+          ))
+          .build();
+    }
+  }
+
+  public static class SpotifyArtistSearchResultEntryDtoFactory {
+
+    static SpotifyArtistSearchResultEntryDto withArtistName(String artistName) {
+      return SpotifyArtistSearchResultEntryDto.builder()
+          .popularity(100)
+          .genres(List.of("Black Metal"))
+          .id("abcdef12345")
+          .imageUrl("imageUrl")
+          .name(artistName)
+          .uri("uri")
+          .build();
+    }
+  }
+
+  public static class ArtistSearchResponseEntryDtoFactory {
+
+    public static ArtistSearchResponseEntryDto spotifyWithArtistName(String artistName) {
+      return ArtistSearchResponseEntryDto.builder()
+          .popularity(100)
+          .genres(List.of("Black Metal"))
+          .id("abcdef12345")
+          .imageUrl("imageUrl")
+          .name(artistName)
+          .uri("uri")
+          .followed(false)
+          .source(SPOTIFY.getDisplayName())
+          .build();
+    }
+
+    public static ArtistSearchResponseEntryDto discogsWithArtistName(String artistName) {
+      return ArtistSearchResponseEntryDto.builder()
+          .id("abcdef12345")
+          .imageUrl("imageUrl")
+          .name(artistName)
+          .uri("http://discogs.com/uri")
+          .followed(false)
+          .source(DISCOGS.getDisplayName())
+          .build();
+    }
+
+    public static ArtistSearchResponseEntryDto withId(String id) {
+      return ArtistSearchResponseEntryDto.builder()
+          .id(id)
+          .build();
+    }
+  }
+
+  public static class ArtistSearchResponseFactory {
+
+    public static ArtistSearchResponse spotify() {
+      return ArtistSearchResponse.builder()
+          .pagination(new Pagination(1, 1, 10))
+          .searchResults(List.of(ArtistSearchResponseEntryDtoFactory.spotifyWithArtistName("A")))
+          .build();
+    }
+
+    public static ArtistSearchResponse discogs() {
+      return ArtistSearchResponse.builder()
+          .pagination(new Pagination(1, 1, 10))
+          .searchResults(List.of(ArtistSearchResponseEntryDtoFactory.discogsWithArtistName("A")))
+          .build();
+    }
+
+    public static ArtistSearchResponse empty() {
+      return ArtistSearchResponse.builder()
+          .searchResults(Collections.emptyList())
+          .build();
     }
   }
 }

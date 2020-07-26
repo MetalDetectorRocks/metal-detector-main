@@ -11,6 +11,8 @@ import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
 import rocks.metaldetector.support.Pagination;
 
+import java.util.List;
+
 class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertions {
 
   private final DiscogsArtistSearchResultContainerTransformer underTest = new DiscogsArtistSearchResultContainerTransformer();
@@ -56,9 +58,23 @@ class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertion
                       .name(givenEntry.getTitle())
                       .imageUrl(givenEntry.getThumb())
                       .uri(givenEntry.getUri())
-                      .followed(false)
                       .build()
       );
     }
+  }
+
+  @Test
+  @DisplayName("Should cut suffix ' ($number)' from artist name")
+  void should_transform_artist_name() {
+    // given
+    var expectedName = "Karg";
+    DiscogsArtistSearchResultContainer container = DiscogsArtistSearchResultContainerFactory.withArtistNames(List.of("Karg (3)"));
+
+    // when
+    DiscogsArtistSearchResultDto result = underTest.transform(container);
+
+    // then
+    assertThat(result.getSearchResults().size()).isEqualTo(1);
+    assertThat(result.getSearchResults().get(0).getName()).isEqualTo(expectedName);
   }
 }

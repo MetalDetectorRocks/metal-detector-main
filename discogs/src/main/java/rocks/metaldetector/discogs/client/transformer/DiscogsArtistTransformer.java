@@ -10,7 +10,7 @@ import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 public class DiscogsArtistTransformer {
 
   public DiscogsArtistDto transform(DiscogsArtist artist) {
-    String imageUrl = artist.getImages() != null && artist.getImages().size() > 0 ? artist.getImages().get(0).getResourceUrl() : null;
+    String imageUrl = artist.getImages() != null && artist.getImages().size() > 0 ? artist.getImages().get(0).getResourceUrl() : "";
     return DiscogsArtistDto.builder()
             .id(String.valueOf(artist.getId()))
             .name(artist.getName())

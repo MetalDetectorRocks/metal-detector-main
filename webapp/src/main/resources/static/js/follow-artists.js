@@ -1,13 +1,14 @@
 /**
  * Send ajax request to follow an artist
- * @param artistId    Artist's external id
- * @param artistName  The name of the artist
+ * @param artistId    The artist's external id
+ * @param artistName  The artist's name
+ * @param source      The source the artist is fetched from
  * @returns {boolean}
  */
-function followArtist(artistId, artistName) {
+function followArtist(artistId, artistName, source) {
     $.ajax({
         method: "POST",
-        url: "/rest/v1/artists/follow/" + artistId + "?source=Discogs",
+        url: "/rest/v1/artists/follow/" + artistId + "?source=" + source,
         success: function() {
             const icon = $(`#${artistId}`);
             icon.text("favorite");
@@ -23,8 +24,8 @@ function followArtist(artistId, artistName) {
 
 /**
  * Send ajax request to unfollow an artist
- * @param artistId    Artist's external id
- * @param artistName  The name of the artist
+ * @param artistId    The artist's external id
+ * @param artistName  The artist's name
  * @returns {boolean}
  */
 function unfollowArtist(artistId, artistName) {

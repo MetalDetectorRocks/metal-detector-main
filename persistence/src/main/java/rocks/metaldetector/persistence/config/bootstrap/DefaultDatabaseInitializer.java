@@ -15,7 +15,7 @@ import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.util.List;
 
-import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 
 @Component
 @AllArgsConstructor
@@ -25,9 +25,9 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
   private final EntityManager entityManager;
   private final DataSource dataSource;
 
-  private static final String OPETH_DISCOGS_ID = "245797";
-  private static final String DARKTHRONE_DISCOGS_ID = "252211";
-  private static final String MAYHEM_DISCOGS_ID = "14092";
+  private static final String OPETH_SPOTIFY_ID = "0ybFZ2Ab08V8hueghSXm6E";
+  private static final String DARKTHRONE_SPOTIFY_ID = "7kWnE981vITXDnAD2cZmCV";
+  private static final String MAYHEM_SPOTIFY_ID = "0dR10i73opHXuRuLbgxltM";
 
   @Override
   @Transactional
@@ -93,9 +93,9 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
   private void createAndFollowArtists() {
     UserEntity administrator = entityManager.createQuery("select u from users u where u.username = :username", UserEntity.class).setParameter("username", "Administrator").getSingleResult();
 
-    ArtistEntity opeth = new ArtistEntity(OPETH_DISCOGS_ID, "Opeth", "https://img.discogs.com/_ejoULEnb6ub_-_6fUoLW0ZS6C8=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-245797-1584786531-2513.jpeg.jpg", DISCOGS);
-    ArtistEntity darkthrone = new ArtistEntity(DARKTHRONE_DISCOGS_ID, "Darkthrone", "https://img.discogs.com/z6M8OMNo7GXZR9PzQF8WvaqMvXw=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-252211-1579868454-4269.jpeg.jpg", DISCOGS);
-    ArtistEntity mayhem = new ArtistEntity(MAYHEM_DISCOGS_ID, "Mayhem", "https://img.discogs.com/ZtM5dcXMOugk9djxyVN7T6BJm7M=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-14092-1551425950-6112.jpeg.jpg", DISCOGS);
+    ArtistEntity opeth = new ArtistEntity(OPETH_SPOTIFY_ID, "Opeth", "https://img.discogs.com/_ejoULEnb6ub_-_6fUoLW0ZS6C8=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-245797-1584786531-2513.jpeg.jpg", SPOTIFY);
+    ArtistEntity darkthrone = new ArtistEntity(DARKTHRONE_SPOTIFY_ID, "Darkthrone", "https://img.discogs.com/z6M8OMNo7GXZR9PzQF8WvaqMvXw=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-252211-1579868454-4269.jpeg.jpg", SPOTIFY);
+    ArtistEntity mayhem = new ArtistEntity(MAYHEM_SPOTIFY_ID, "Mayhem", "https://img.discogs.com/ZtM5dcXMOugk9djxyVN7T6BJm7M=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-14092-1551425950-6112.jpeg.jpg", SPOTIFY);
 
     entityManager.persist(opeth);
     entityManager.persist(darkthrone);

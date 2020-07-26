@@ -34,6 +34,7 @@ class DiscogsArtistTransformerTest implements WithAssertions {
             DiscogsArtistDto.builder()
                             .id(String.valueOf(discogsArtist.getId()))
                             .name(discogsArtist.getName())
+                            .imageUrl("")
                             .build()
     );
   }
@@ -58,7 +59,7 @@ class DiscogsArtistTransformerTest implements WithAssertions {
 
   @ParameterizedTest(name = "Should not fail if images is {0}")
   @MethodSource("discogsImageProvider")
-  @DisplayName("Image url is null if artist has no images")
+  @DisplayName("Image url is empty if artist has no images")
   void should_not_fail_on_empty_image(List<DiscogsImage> images) {
     // given
     DiscogsArtist discogsArtist = DiscogsArtistFactory.createDefault();
@@ -68,7 +69,7 @@ class DiscogsArtistTransformerTest implements WithAssertions {
     DiscogsArtistDto result = underTest.transform(discogsArtist);
 
     // then
-    assertThat(result.getImageUrl()).isNull();
+    assertThat(result.getImageUrl()).isEmpty();
   }
 
   private static Stream<Arguments> discogsImageProvider() {

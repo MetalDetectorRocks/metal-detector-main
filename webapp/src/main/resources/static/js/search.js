@@ -140,6 +140,7 @@ function createHeadlineText(query, searchResponse) {
  * @param topSearchResult.name      The name of the artist
  * @param topSearchResult.imageUrl  The url of the artist thumbnail
  * @param topSearchResult.followed  True if the current user already follow this artist, false otherwise
+ * @param topSearchResult.source    The source the result is fetched from
  */
 function appendTopSearchResult(topSearchResult) {
     const topResultHtml = renderTopResultHtml({
@@ -147,6 +148,7 @@ function appendTopSearchResult(topSearchResult) {
         name: topSearchResult.name,
         imageUrl: topSearchResult.imageUrl,
         followedByUser: topSearchResult.followed,
+        source: topSearchResult.source,
         followedByAmount: 666
     });
     $("#top-result-container").append(topResultHtml);
@@ -181,7 +183,8 @@ function appendOtherSearchResults(searchResults, currentPage) {
             externalId: result.id,
             name: result.name,
             imageUrl: result.imageUrl,
-            followedByUser: result.followed
+            followedByUser: result.followed,
+            source: result.source
         }));
         counter++;
     });
@@ -256,7 +259,7 @@ function renderTopResultHtml(artistInfo) {
                                     <p class="h4 card-title mt-3">${artistInfo.name}</p>
                                 </div>
                                 <div class="col-md-auto">
-                                    ${renderFollowOrUnfollowIcon(artistInfo.externalId, artistInfo.name, artistInfo.followedByUser)}
+                                    ${renderFollowOrUnfollowIcon(artistInfo.externalId, artistInfo.name, artistInfo.followedByUser, artistInfo.source)}
                                 </div>
                             </div>
                             <div class="row">
@@ -295,7 +298,7 @@ function renderOtherSearchResultsHtml(artistInfo) {
                                 <p class="h5 card-title mt-2">${artistInfo.name}</p>
                             </div>
                             <div class="col-md-auto">
-                                ${renderFollowOrUnfollowIcon(artistInfo.externalId, artistInfo.name, artistInfo.followedByUser)}
+                                ${renderFollowOrUnfollowIcon(artistInfo.externalId, artistInfo.name, artistInfo.followedByUser, artistInfo.source)}
                             </div>
                         </div>
                     </div>
@@ -309,14 +312,15 @@ function renderOtherSearchResultsHtml(artistInfo) {
  * @param artistId        The artist's external id
  * @param artistName      The artist's name
  * @param followedByUser  True if the current user already follow this artist, false otherwise
+ * @param source          The source the artist is fetched from
  * @returns {string}      The whole HTML for follow or unfollow icon
  */
-function renderFollowOrUnfollowIcon(artistId, artistName, followedByUser) {
+function renderFollowOrUnfollowIcon(artistId, artistName, followedByUser, source) {
     artistName = artistName.replace(new RegExp("'", "g"), "");
     artistName = artistName.replace(new RegExp('"', "g"), "");
     return followedByUser ?
         `<i id="${artistId}" class="follow-icon float-right material-icons m-2" onclick="unfollowArtist('${artistId}', '${artistName}')">favorite</i>` :
-        `<i id="${artistId}" class="follow-icon float-right material-icons m-2" onclick="followArtist('${artistId}', '${artistName}')">favorite_border</i>`
+        `<i id="${artistId}" class="follow-icon float-right material-icons m-2" onclick="followArtist('${artistId}', '${artistName}', '${source}')">favorite_border</i>`
 }
 
 /**
