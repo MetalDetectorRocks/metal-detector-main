@@ -76,6 +76,10 @@ function createImportReleasesJob() {
   });
 }
 
+/**
+ * Creates a job for retrying cover downloads
+ * @returns {boolean}
+ */
 function createRetryCoverDownloadJob() {
   $.ajax({
     method: "POST",
