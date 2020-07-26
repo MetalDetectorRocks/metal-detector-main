@@ -44,7 +44,7 @@ public class Endpoints {
     public static final String MY_ARTISTS      = "/rest/v1/my-artists";
     public static final String QUERY_RELEASES  = "/rest/v1/releases";
     public static final String IMPORT_JOB      = "/rest/v1/releases/import";
-    public static final String COVER_JOB       = "/rest/v1/releases/cover";
+    public static final String COVER_JOB       = "/rest/v1/releases/cover-reload";
     public static final String SEARCH          = "/search";
     public static final String FOLLOW          = "/follow";
     public static final String UNFOLLOW        = "/unfollow";
