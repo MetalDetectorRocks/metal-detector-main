@@ -16,6 +16,7 @@ import rocks.metaldetector.support.exceptions.ExternalServiceException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.Map;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
@@ -26,8 +27,13 @@ import static org.springframework.http.HttpMethod.GET;
 @AllArgsConstructor
 public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient {
 
-  static final String SEARCH_ENDPOINT = "/v1/search?q={artistQueryString}&type=artist&offset={offset}";
+  static final String QUERY_PARAMETER_NAME = "artistQueryString";
+  static final String OFFSET_PARAMETER_NAME = "offset";
+  static final String LIMIT_PARAMETER_NAME = "limit";
   static final String AUTHORIZATION_HEADER_PREFIX = "Bearer ";
+  static final String SEARCH_ENDPOINT = "/v1/search?q={" + QUERY_PARAMETER_NAME + "}&"
+                                        + "type=artist&offset={" + OFFSET_PARAMETER_NAME + "}&"
+                                        + "limit={" + LIMIT_PARAMETER_NAME + "}";
 
   private final RestTemplate spotifyRestTemplate;
   private final SpotifyConfig spotifyConfig;
@@ -47,8 +53,9 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
         GET,
         httpEntity,
         SpotifyArtistSearchResultContainer.class,
-        urlEncodedQuery,
-        offset
+        Map.of(QUERY_PARAMETER_NAME, urlEncodedQuery,
+               OFFSET_PARAMETER_NAME, offset,
+               LIMIT_PARAMETER_NAME, pageSize)
     );
 
     SpotifyArtistSearchResultContainer resultContainer = responseEntity.getBody();
