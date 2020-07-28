@@ -26,9 +26,11 @@ import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
@@ -37,6 +39,9 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.AUTHORIZATION_HEADER_PREFIX;
+import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.LIMIT_PARAMETER_NAME;
+import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.OFFSET_PARAMETER_NAME;
+import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.QUERY_PARAMETER_NAME;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.SEARCH_ENDPOINT;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistSearchResultContainerFactory;
 
@@ -53,7 +58,10 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
   private SpotifyArtistSearchClientImpl underTest;
 
   @Captor
-  private ArgumentCaptor<HttpEntity<Object>> argumentCaptor;
+  private ArgumentCaptor<HttpEntity<Object>> httpEntityCaptor;
+
+  @Captor
+  private ArgumentCaptor<Map<String, Object>> urlParameterCaptor;
 
   @AfterEach
   void tearDown() {
@@ -82,13 +90,13 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
     doReturn(baseUrl).when(spotifyConfig).getRestBaseUrl();
     var expectedUrl = baseUrl + SEARCH_ENDPOINT;
     SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
     // when
     underTest.searchByName("token", "query", 1, 10);
 
     // then
-    verify(restTemplate, times(1)).exchange(eq(expectedUrl), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
+    verify(restTemplate, times(1)).exchange(eq(expectedUrl), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
   }
 
   @Test
@@ -96,13 +104,13 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
   void test_correct_http_method() {
     // given
     SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
     // when
     underTest.searchByName("token", "query", 1, 10);
 
     // then
-    verify(restTemplate, times(1)).exchange(any(), eq(GET), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
+    verify(restTemplate, times(1)).exchange(any(), eq(GET), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
   }
 
   @Test
@@ -110,14 +118,14 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
   void test_correct_standard_headers() {
     // given
     SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
     // when
     underTest.searchByName("token", "query", 1, 10);
 
     // then
-    verify(restTemplate, times(1)).exchange(any(), any(), argumentCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
-    HttpEntity<Object> httpEntity = argumentCaptor.getValue();
+    verify(restTemplate, times(1)).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+    HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
     HttpHeaders headers = httpEntity.getHeaders();
     assertThat(headers.getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
     assertThat(headers.getAcceptCharset()).isEqualTo(Collections.singletonList(Charset.defaultCharset()));
@@ -129,14 +137,14 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
     // given
     var token = "token";
     SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
     // when
     underTest.searchByName(token, "query", 1, 10);
 
     // then
-    verify(restTemplate, times(1)).exchange(any(), any(), argumentCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
-    HttpEntity<Object> httpEntity = argumentCaptor.getValue();
+    verify(restTemplate, times(1)).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+    HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
     HttpHeaders headers = httpEntity.getHeaders();
     assertThat(headers.get(AUTHORIZATION)).isEqualTo(Collections.singletonList(AUTHORIZATION_HEADER_PREFIX + token));
   }
@@ -146,13 +154,13 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
   void test_correct_response_type() {
     // given
     SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
     // when
     underTest.searchByName("token", "query", 1, 10);
 
     // then
-    verify(restTemplate, times(1)).exchange(any(), any(), any(), eq(SpotifyArtistSearchResultContainer.class), any(), any());
+    verify(restTemplate, times(1)).exchange(any(), any(), any(), eq(SpotifyArtistSearchResultContainer.class), anyMap());
   }
 
   @Test
@@ -162,13 +170,15 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
     var query = "i'm a query";
     var expectedQuery = "i%27m+a+query";
     SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
     // when
     underTest.searchByName("token", query, 1, 10);
 
     // then
-    verify(restTemplate, times(1)).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), eq(expectedQuery), any());
+    verify(restTemplate, times(1)).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
+    Map<String, Object> urlParameter = urlParameterCaptor.getValue();
+    assertThat(urlParameter.get(QUERY_PARAMETER_NAME)).isEqualTo(expectedQuery);
   }
 
   @ParameterizedTest(name = "for pageNumber = {0} and pageSize = {1} offset is = {2}")
@@ -177,13 +187,32 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
   void test_offset(int pageNumber, int pageSize, int expectedOffset) {
     // given
     SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
     // when
     underTest.searchByName("token", "query", pageNumber, pageSize);
 
     // then
-    verify(restTemplate, times(1)).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), eq(expectedOffset));
+    verify(restTemplate, times(1)).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
+    Map<String, Object> urlParameter = urlParameterCaptor.getValue();
+    assertThat(urlParameter.get(OFFSET_PARAMETER_NAME)).isEqualTo(expectedOffset);
+  }
+
+  @Test
+  @DisplayName("limit is set")
+  void test_limit() {
+    // given
+    var limit = 66;
+    SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+
+    // when
+    underTest.searchByName("token", "query", 1, limit);
+
+    // then
+    verify(restTemplate, times(1)).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
+    Map<String, Object> urlParameter = urlParameterCaptor.getValue();
+    assertThat(urlParameter.get(LIMIT_PARAMETER_NAME)).isEqualTo(limit);
   }
 
   @Test
@@ -191,7 +220,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
   void test_response() {
     // given
     SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
-    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
+    doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
     // when
     SpotifyArtistSearchResultContainer result = underTest.searchByName("token", "query", 1, 10);
@@ -204,7 +233,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
   @DisplayName("if the response is null, an ExternalServiceException is thrown")
   void test_exception_if_response_is_null() {
     // given
-    doReturn(ResponseEntity.ok(null)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
+    doReturn(ResponseEntity.ok(null)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
     // when
     Throwable throwable = catchThrowable(() -> underTest.searchByName("token", "query", 1, 10));
@@ -219,7 +248,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
   void test_exception_if_status_is_not_ok(HttpStatus httpStatus) {
     // given
     SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
-    doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), any(), any());
+    doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
     // when
     Throwable throwable = catchThrowable(() -> underTest.searchByName("token", "query", 1, 10));
