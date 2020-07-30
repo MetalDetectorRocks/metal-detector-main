@@ -42,11 +42,11 @@ export class MyArtistsRenderService {
                 window.location.replace(`?page=${response.pagination.totalPages}`);
             }
             else {
-                let currentCarNo = 1;
+                let currentCardNo = 1;
                 response.myArtists.forEach((artist => {
                     const artistDivElement = this.renderArtistCard(artist);
-                    this.attachArtistCard(artistDivElement, currentCarNo);
-                    currentCarNo++;
+                    this.attachArtistCard(artistDivElement, currentCardNo);
+                    currentCardNo++;
                 }));
 
                 const pagination = response.pagination;
