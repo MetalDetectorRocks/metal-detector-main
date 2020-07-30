@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
+
 class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
 
   @Autowired
@@ -25,11 +28,11 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
 
   @BeforeEach
   void setUp() {
-    artistRepository.save(ArtistEntityFactory.createArtistEntity("1", "1"));
-    artistRepository.save(ArtistEntityFactory.createArtistEntity("2", "2"));
-    artistRepository.save(ArtistEntityFactory.createArtistEntity("3", "3"));
-    artistRepository.save(ArtistEntityFactory.createArtistEntity("4", "4"));
-    artistRepository.save(ArtistEntityFactory.createArtistEntity("5", "5"));
+    artistRepository.save(ArtistEntityFactory.createArtistEntity("1", "1", SPOTIFY));
+    artistRepository.save(ArtistEntityFactory.createArtistEntity("2", "2", SPOTIFY));
+    artistRepository.save(ArtistEntityFactory.createArtistEntity("3", "3", DISCOGS));
+    artistRepository.save(ArtistEntityFactory.createArtistEntity("4", "4", SPOTIFY));
+    artistRepository.save(ArtistEntityFactory.createArtistEntity("5", "5", SPOTIFY));
   }
 
   @AfterEach
@@ -38,53 +41,37 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
   }
 
   @ParameterizedTest(name = "[{index}] => Entity <{0}>")
-  @MethodSource("artistIdProvider")
-  @DisplayName("findByArtistExternalId() finds the correct entity for a given artist id if it exists")
-  void find_by_artist_external_id_should_return_correct_entity(String entity) {
-    Optional<ArtistEntity> artistEntityOptional = artistRepository.findByExternalId(entity);
+  @MethodSource("artistDetailsProvider")
+  @DisplayName("findByExternalIdAndSource() finds the correct entity for a given artist id and source if it exists")
+  void find_by_artist_external_id_should_return_correct_entity(String artistId, ArtistSource source) {
+    Optional<ArtistEntity> artistEntityOptional = artistRepository.findByExternalIdAndSource(artistId, source);
 
     assertThat(artistEntityOptional).isPresent();
-    assertThat(artistEntityOptional.get().getExternalId()).isEqualTo(entity);
-    assertThat(artistEntityOptional.get().getArtistName()).isEqualTo(String.valueOf(entity));
-  }
-
-  private static Stream<Arguments> artistIdProvider() {
-    return Stream.of(
-        Arguments.of("1"),
-        Arguments.of("2"),
-        Arguments.of("3")
-    );
+    assertThat(artistEntityOptional.get().getExternalId()).isEqualTo(artistId);
+    assertThat(artistEntityOptional.get().getArtistName()).isEqualTo(String.valueOf(artistId));
   }
 
   @Test
-  @DisplayName("findByArtistExternalId() returns empty optional if given artist does not exist")
+  @DisplayName("findByExternalIdAndSource() returns empty optional if given artist does not exist")
   void find_by_artist_external_id_should_return_empty_optional() {
-    Optional<ArtistEntity> artistEntityOptional = artistRepository.findByExternalId("0");
+    Optional<ArtistEntity> artistEntityOptional = artistRepository.findByExternalIdAndSource("0", SPOTIFY);
 
     assertThat(artistEntityOptional).isEmpty();
   }
 
   @ParameterizedTest(name = "[{index}] => Entity <{0}>")
-  @MethodSource("artistIdSource")
-  @DisplayName("existsByArtistExternalId() should return true if artist exists")
-  void exists_by_artist_external_id_should_return_true(String entity) {
-    boolean exists = artistRepository.existsByExternalId(entity);
+  @MethodSource("artistDetailsProvider")
+  @DisplayName("existsByExternalIdAndSource() should return true if artist exists")
+  void exists_by_artist_external_id_should_return_true(String entity, ArtistSource source) {
+    boolean exists = artistRepository.existsByExternalIdAndSource(entity, source);
 
     assertThat(exists).isTrue();
   }
 
-  private static Stream<Arguments> artistIdSource() {
-    return Stream.of(
-        Arguments.of("1"),
-        Arguments.of("2"),
-        Arguments.of("3")
-    );
-  }
-
   @Test
-  @DisplayName("existsByArtistExternalId() should return false if artist does not exist")
+  @DisplayName("existsByExternalIdAndSource() should return false if artist does not exist")
   void exists_by_artist_external_id_should_return_false() {
-    boolean exists = artistRepository.existsByExternalId("0");
+    boolean exists = artistRepository.existsByExternalIdAndSource("0", SPOTIFY);
 
     assertThat(exists).isFalse();
   }
@@ -118,6 +105,14 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
       assertThat(entity.getExternalId()).isEqualTo(String.valueOf(i + 1));
       assertThat(entity.getThumb()).isNull();
     }
+  }
+
+  private static Stream<Arguments> artistDetailsProvider() {
+    return Stream.of(
+            Arguments.of("1", SPOTIFY),
+            Arguments.of("2", SPOTIFY),
+            Arguments.of("3", DISCOGS)
+    );
   }
 
   private static Stream<Arguments> inputProviderExternalIds() {

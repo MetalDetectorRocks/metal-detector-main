@@ -8,6 +8,7 @@ import rocks.metaldetector.discogs.facade.DiscogsService;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
+import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
@@ -35,8 +36,8 @@ public class ArtistsServiceImpl implements ArtistsService {
   private final ArtistSearchResponseTransformer responseTransformer;
 
   @Override
-  public Optional<ArtistDto> findArtistByExternalId(String externalId) {
-    return artistRepository.findByExternalId(externalId)
+  public Optional<ArtistDto> findArtistByExternalId(String externalId, ArtistSource source) {
+    return artistRepository.findByExternalIdAndSource(externalId, source)
         .map(artistTransformer::transform);
   }
 
@@ -49,8 +50,8 @@ public class ArtistsServiceImpl implements ArtistsService {
   }
 
   @Override
-  public boolean existsArtistByExternalId(String externalId) {
-    return artistRepository.existsByExternalId(externalId);
+  public boolean existsArtistByExternalId(String externalId, ArtistSource source) {
+    return artistRepository.existsByExternalIdAndSource(externalId, source);
   }
 
   @Override

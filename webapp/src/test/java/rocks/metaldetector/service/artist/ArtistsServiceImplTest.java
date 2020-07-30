@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import rocks.metaldetector.discogs.facade.DiscogsService;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
+import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
@@ -48,6 +49,7 @@ class ArtistsServiceImplTest implements WithAssertions {
 
   private static final String EXTERNAL_ID = "1";
   private static final String ARTIST_NAME = "A";
+  private static final ArtistSource ARTIST_SOURCE = DISCOGS;
 
   @Mock
   private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
@@ -94,11 +96,11 @@ class ArtistsServiceImplTest implements WithAssertions {
   @DisplayName("findArtistByExternalId() should return the correct artist if it exists")
   void find_by_discogs_id_should_return_correct_artist() {
     // given
-    when(artistRepository.findByExternalId(anyString())).thenReturn(Optional.of(artistEntity));
+    when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(artistEntity));
     when(artistTransformer.transform(any())).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
-    Optional<ArtistDto> artistOptional = underTest.findArtistByExternalId(EXTERNAL_ID);
+    Optional<ArtistDto> artistOptional = underTest.findArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     assertThat(artistOptional).isPresent();
@@ -109,23 +111,23 @@ class ArtistsServiceImplTest implements WithAssertions {
   @DisplayName("findArtistByExternalId() should call artist repository")
   void find_by_discogs_id_should_call_artist_repository() {
     // given
-    when(artistRepository.findByExternalId(anyString())).thenReturn(Optional.of(artistEntity));
+    when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(artistEntity));
 
     // when
-    underTest.findArtistByExternalId(EXTERNAL_ID);
+    underTest.findArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(artistRepository, times(1)).findByExternalId(EXTERNAL_ID);
+    verify(artistRepository, times(1)).findByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
   }
 
   @Test
   @DisplayName("findArtistByExternalId() should call artist dto transformer")
   void find_by_discogs_id_should_call_artist_dto_transformer() {
     // given
-    when(artistRepository.findByExternalId(anyString())).thenReturn(Optional.of(artistEntity));
+    when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(artistEntity));
 
     // when
-    underTest.findArtistByExternalId(EXTERNAL_ID);
+    underTest.findArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     verify(artistTransformer, times(1)).transform(artistEntity);
@@ -135,7 +137,7 @@ class ArtistsServiceImplTest implements WithAssertions {
   @DisplayName("findArtistByExternalId() should return an empty optional if artist does not exist")
   void find_by_discogs_id_should_return_empty_optional() {
     // when
-    Optional<ArtistDto> artistOptional = underTest.findArtistByExternalId(EXTERNAL_ID);
+    Optional<ArtistDto> artistOptional = underTest.findArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     assertThat(artistOptional).isEmpty();
@@ -183,10 +185,10 @@ class ArtistsServiceImplTest implements WithAssertions {
   @DisplayName("existsArtistByExternalId() should return true if given entity exists")
   void exists_by_discogs_id_should_return_true() {
     // given
-    when(artistRepository.existsByExternalId(any())).thenReturn(true);
+    when(artistRepository.existsByExternalIdAndSource(any(), any())).thenReturn(true);
 
     // when
-    boolean exists = underTest.existsArtistByExternalId(EXTERNAL_ID);
+    boolean exists = underTest.existsArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     assertThat(exists).isTrue();
@@ -196,10 +198,10 @@ class ArtistsServiceImplTest implements WithAssertions {
   @DisplayName("existsArtistByExternalId() should return false if given entity does not exist")
   void exists_by_discogs_id_should_return_false() {
     // given
-    when(artistRepository.existsByExternalId(any())).thenReturn(false);
+    when(artistRepository.existsByExternalIdAndSource(any(), any())).thenReturn(false);
 
     // when
-    boolean exists = underTest.existsArtistByExternalId(EXTERNAL_ID);
+    boolean exists = underTest.existsArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
     assertThat(exists).isFalse();
@@ -209,10 +211,10 @@ class ArtistsServiceImplTest implements WithAssertions {
   @DisplayName("existsArtistByExternalId() should call artist repository")
   void exists_by_discogs_id_should_call_artist_repository() {
     // when
-    underTest.existsArtistByExternalId(EXTERNAL_ID);
+    underTest.existsArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(artistRepository, times(1)).existsByExternalId(EXTERNAL_ID);
+    verify(artistRepository, times(1)).existsByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
   }
 
   @Nested

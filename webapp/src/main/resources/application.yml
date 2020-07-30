@@ -24,7 +24,7 @@ spring:
     show-sql: false
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create # (create, create-drop, validate, update)
+      ddl-auto: update # (create, create-drop, validate, update)
     open-in-view: false
   cache:
     jcache:

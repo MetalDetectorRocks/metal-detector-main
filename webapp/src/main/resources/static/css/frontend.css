@@ -49,12 +49,12 @@ footer .list-inline-item {
     margin-left: 1.5rem;
 }
 
-/* Homepage Cards */
+/* Cards */
 .card {
     border: 1px solid #404040;
 }
 
-.homepage-card-img {
+.vertical-card-img {
     height: 18rem;
     object-fit: cover;
     border-bottom: 1px solid #404040;
@@ -79,6 +79,16 @@ footer .list-inline-item {
     border-bottom: 1px solid #404040;
 }
 
+/* Following */
+.follow-icon {
+    color: #adafae;
+    cursor: pointer;
+}
+
+.follow-icon:hover {
+    color: #FCFCFC;
+}
+
 /* Other */
 .hyperlink {
     color: #555;
@@ -89,15 +99,6 @@ footer .list-inline-item {
 .hyperlink:hover {
     color: #777777;
     text-decoration: none;
-}
-
-.follow-icon {
-    color: #adafae;
-    cursor: pointer;
-}
-
-.follow-icon:hover {
-    color: #FCFCFC;
 }
 
 .scroll-to-top {
@@ -113,6 +114,12 @@ footer .list-inline-item {
     cursor: pointer;
     border-radius: 10px;
     padding-top: 5px;
+}
+
+.top-right {
+    position: absolute;
+    top: 8px;
+    right: 16px;
 }
 
 /* Overrides */
