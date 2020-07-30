@@ -12,6 +12,8 @@ public interface ReleaseButlerRestClient {
 
   void createImportJob();
 
+  void createRetryCoverDownloadJob();
+
   List<ButlerImportJob> queryImportJobResults();
 
 }

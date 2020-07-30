@@ -15,6 +15,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static rocks.metaldetector.config.constants.Endpoints.Rest.COVER_JOB;
 import static rocks.metaldetector.config.constants.Endpoints.Rest.IMPORT_JOB;
 import static rocks.metaldetector.config.constants.Endpoints.Rest.QUERY_RELEASES;
 
@@ -57,6 +58,15 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
               .contentType(APPLICATION_JSON))
               .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("Administrator is allowed to GET on endpoint " + COVER_JOB + "'")
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void admin_is_allowed_to_create_retry_cover_download_job() throws Exception {
+      mockMvc.perform(post(COVER_JOB)
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isOk());
+    }
   }
 
   @Nested
@@ -88,6 +98,15 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
       mockMvc.perform(get(IMPORT_JOB)
               .contentType(APPLICATION_JSON))
               .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("User is not allowed to GET on endpoint " + COVER_JOB + "'")
+    @WithMockUser(roles = "USER")
+    void user_not_is_allowed_to_create_retry_cover_download_job() throws Exception {
+      mockMvc.perform(post(COVER_JOB)
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isForbidden());
     }
   }
 }

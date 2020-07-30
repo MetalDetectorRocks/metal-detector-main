@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.config.constants.Endpoints;
@@ -36,6 +35,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ExtendWith(MockitoExtension.class)
@@ -116,7 +118,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       // then
       validatableResponse
           .contentType(ContentType.JSON)
-          .statusCode(HttpStatus.OK.value());
+          .statusCode(OK.value());
 
       var result = validatableResponse.extract().as(DetectorReleasesResponse[].class);
       assertThat(Arrays.asList(result)).isEqualTo(transformedResponse);
@@ -134,7 +136,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       // then
       validatableResponse
           .contentType(ContentType.JSON)
-          .statusCode(HttpStatus.BAD_REQUEST.value());
+          .statusCode(BAD_REQUEST.value());
     }
   }
 
@@ -166,7 +168,39 @@ class ReleasesRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doPost();
 
       // then
-      validatableResponse.statusCode(HttpStatus.CREATED.value());
+      validatableResponse.statusCode(CREATED.value());
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests creating a job for retrying cover downloads")
+  class CreateRetryDownloadTest {
+
+    private RestAssuredMockMvcUtils restAssuredUtils;
+
+    @BeforeEach
+    void setUp() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.COVER_JOB);
+    }
+
+    @Test
+    @DisplayName("Should call release service")
+    void should_call_release_service() {
+      // when
+      restAssuredUtils.doPost();
+
+      // then
+      verify(releasesService, times(1)).createRetryCoverDownloadJob();
+    }
+
+    @Test
+    @DisplayName("Should return OK")
+    void should_return_status_ok() {
+      // when
+      ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doPost();
+
+      // then
+      validatableResponse.statusCode(OK.value());
     }
   }
 
@@ -205,7 +239,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doGet();
 
       // then
-      validatableResponse.statusCode(HttpStatus.OK.value());
+      validatableResponse.statusCode(OK.value());
       var result = validatableResponse.extract().body().jsonPath().getList(".", ImportJobResultDto.class);
       assertThat(result).isEqualTo(importJobResultDto);
     }
