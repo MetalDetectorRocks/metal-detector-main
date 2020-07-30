@@ -74,6 +74,13 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("Should do nothing on create cover download job")
+  void should_do_nothing_on_create_cover_download_job() {
+    // when
+    underTest.createRetryCoverDownloadJob();
+  }
+
+  @Test
   @DisplayName("Should return mocked import job responses")
   void should_return_mocked_import_job_responses() {
     // when

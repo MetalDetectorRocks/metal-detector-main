@@ -71,7 +71,24 @@ function createImportReleasesJob() {
       createToast("Import job successfully created!");
     },
     error: function(err){
-      createToast("Error during creating the import job: " + err);
+      createToast("Error creating the import job: " + err);
+    }
+  });
+}
+
+/**
+ * Creates a job for retrying cover downloads
+ * @returns {boolean}
+ */
+function createRetryCoverDownloadJob() {
+  $.ajax({
+    method: "POST",
+    url: "/rest/v1/releases/cover-reload",
+    success: function(){
+      createToast("Job for retrying cover downloads successfully created!");
+    },
+    error: function(err){
+      createToast("Error creating the cover download job: " + err);
     }
   });
 }

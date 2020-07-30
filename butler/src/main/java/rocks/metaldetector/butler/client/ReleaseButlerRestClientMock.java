@@ -46,6 +46,11 @@ public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
   }
 
   @Override
+  public void createRetryCoverDownloadJob() {
+    log.info("Covers successfully downloaded!");
+  }
+
+  @Override
   public List<ButlerImportJob> queryImportJobResults() {
     return List.of(
         new ButlerImportJob(650, 630, LocalDateTime.of(2020, 7, 28, 13, 37, 16), LocalDateTime.of(2020, 7, 28, 13, 39, 51), "Metal Achives"),
