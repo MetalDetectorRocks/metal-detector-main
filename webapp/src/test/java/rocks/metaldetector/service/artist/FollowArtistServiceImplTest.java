@@ -34,13 +34,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.testutil.DtoFactory.DiscogsArtistDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
 class FollowArtistServiceImplTest implements WithAssertions {
 
   private static final String EXTERNAL_ID = "252211";
-  private static final ArtistSource ARTIST_SOURCE = ArtistSource.DISCOGS;
+  private static final ArtistSource ARTIST_SOURCE = DISCOGS;
 
   @Mock
   private UserRepository userRepository;
