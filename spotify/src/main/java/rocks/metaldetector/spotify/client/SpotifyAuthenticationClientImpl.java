@@ -3,6 +3,7 @@ package rocks.metaldetector.spotify.client;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +37,7 @@ public class SpotifyAuthenticationClientImpl implements SpotifyAuthenticationCli
   private final SpotifyConfig spotifyConfig;
 
   @Override
+  @Cacheable("spotifyAuthenticationToken")
   public String getAuthenticationToken() {
     HttpEntity<MultiValueMap<String, String>> httpEntity = createHttpEntity();
     ResponseEntity<SpotifyAuthenticationResponse> responseEntity = spotifyRestTemplate.postForEntity(
