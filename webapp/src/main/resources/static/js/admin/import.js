@@ -31,6 +31,7 @@ function getImportJobs() {
       {"data": "finished"}
     ],
     "autoWidth": false, // fixes window resizing issue
+    "order": [[ 1, "desc" ]],
     "columnDefs": [
       {
         "targets": [1, 2],
