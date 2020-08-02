@@ -13,4 +13,4 @@ const followArtistService = new FollowArtistService(artistsRestClient, toastServ
 const myArtistsRenderService = new MyArtistsRenderService(followArtistService, alertService, loadingIndicatorService);
 
 const response = artistsRestClient.fetchMyArtists();
-myArtistsRenderService.renderResults(response);
+myArtistsRenderService.render(response);
