@@ -10,6 +10,7 @@ import { PaginationComponent } from "../components/pagination/pagination-compone
 export class MyArtistsRenderService {
 
     private readonly MAX_CARDS_PER_ROW = 4;
+    private readonly HOST_ELEMENT_ID = "artists-container";
 
     private readonly followArtistService: FollowArtistService;
     private readonly alertService: AlertService;
@@ -25,11 +26,11 @@ export class MyArtistsRenderService {
         this.loadingIndicatorService = loadingIndicatorService;
         this.paginationComponent = new PaginationComponent();
         this.artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
-        this.hostElement = document.getElementById("artists-container")! as HTMLDivElement;
+        this.hostElement = document.getElementById(this.HOST_ELEMENT_ID)! as HTMLDivElement;
     }
 
     public renderResults(data: Promise<MyArtistsResponse>): void {
-        this.loadingIndicatorService.showLoadingIndicator("artists-container");
+        this.loadingIndicatorService.showLoadingIndicator(this.HOST_ELEMENT_ID);
         data.then((response) => {
             if (response.myArtists.length === 0 && response.pagination.currentPage === 1) {
                 const message = "Currently you do not follow any artist. Start a search for your favorite artists right now.";
@@ -59,7 +60,7 @@ export class MyArtistsRenderService {
             const infoMessage = this.alertService.renderErorAlert(message, false);
             this.hostElement.insertAdjacentElement("afterbegin", infoMessage);
         }).finally(() => {
-            this.loadingIndicatorService.hideLoadingIndicator("artists-container");
+            this.loadingIndicatorService.hideLoadingIndicator(this.HOST_ELEMENT_ID);
         });
     }
 
