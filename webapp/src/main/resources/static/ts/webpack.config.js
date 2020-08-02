@@ -3,9 +3,10 @@ const path = require("path");
 module.exports = {
     mode: "development",
     entry: {
-        search: "./src/search/app.ts",
+        search: "./src/bundles/search.ts",
         myartists: "./src/bundles/my-artists.ts"
     },
+    watch: true,
     output: {
         filename: "[name].bundle.js",
         path: path.resolve(__dirname, "dist"),
