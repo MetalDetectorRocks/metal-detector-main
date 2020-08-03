@@ -23,5 +23,6 @@ public class ReleaseDto {
   private String metalArchivesAlbumUrl;
   private String source;
   private String state;
+  private String coverUrl;
 
 }

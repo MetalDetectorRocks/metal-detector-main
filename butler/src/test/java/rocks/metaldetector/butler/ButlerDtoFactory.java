@@ -79,6 +79,7 @@ public class ButlerDtoFactory {
               .metalArchivesAlbumUrl("url")
               .source("encyclopaedia MetallUm: THE Metal archives")
               .state("not set")
+              .coverUrl("url")
               .build();
     }
   }
