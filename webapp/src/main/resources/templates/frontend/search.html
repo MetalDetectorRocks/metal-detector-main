@@ -5,23 +5,66 @@
       lang="en">
 <head>
     <title>Search</title>
-    <script th:src="@{/js/search.js}" src="#"></script>
-    <script th:src="@{/js/follow-artists.js}" src="#"></script>
-    <script th:src="@{/js/pagination.js}" src="#"></script>
+    <script type="module" th:src="@{/ts/dist/search.bundle.js}" src="#"></script>
 </head>
 <body>
     <section layout:fragment="content">
-        <div id="loading-indicator"></div>
-        <div id="search-result-headline"></div>
-        <div id="top-result-container"></div>
-        <div id="other-results-container"></div>
-        <div id="no-results-container"></div>
+        <template id="top-search-result">
+            <div id="top-search-result-wrapper">
+                <h2 class="h5">Top result</h2>
+                <div class="row mb-5">
+                    <div class="col">
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-auto">
+                                    <img id="top-thumb" class="top-search-card-img" src="#" alt="#">
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col">
+                                            <p id="top-name" class="h4 card-title mt-3"></p>
+                                        </div>
+                                        <div id="top-follow-icon" class="col-md-auto">
+                                            <i class="follow-icon float-right material-icons m-2"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <p id="follow-info" class="h6 card-subtitle"></p>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col"></div>
+                </div>
+            </div>
+        </template>
+        <template id="search-result">
+            <div class="col-4">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-md-auto">
+                            <img id="other-thumb" class="search-card-img" src="#" alt="#">
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <p id="other-name" class="h5 card-title mt-2"></p>
+                                </div>
+                                <div id="other-follow-icon" class="col-md-auto">
+                                    <i class="follow-icon float-right material-icons m-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
 
-        <script th:inline="javascript">
-            $(document).ready(function () {
-                search();
-            })
-        </script>
+        <div id="search-result-container" class="mb-3"></div>
     </section>
 </body>
 </html>

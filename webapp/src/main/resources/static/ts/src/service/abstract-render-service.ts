@@ -17,7 +17,8 @@ export abstract class AbstractRenderService<T> {
         this.loadingIndicatorService.showLoadingIndicator(this.getHostElementId());
         data.then((response) => {
             this.onRendering(response);
-        }).catch(() => {
+        }).catch((reason) => {
+            console.debug(reason);
             this.onCatch();
         }).finally(() => {
             this.loadingIndicatorService.hideLoadingIndicator(this.getHostElementId());
@@ -29,7 +30,7 @@ export abstract class AbstractRenderService<T> {
     protected abstract onRendering(data: T): void;
 
     protected onCatch(): void {
-        const message = "Damn it! A satanic error has occurred. Please try again later.";
+        const message = '<h3 class="h5">Damn it! A satanic error has occurred.</h3>Please try again later.';
         const infoMessage = this.alertService.renderErorAlert(message, false);
         this.hostElement.insertAdjacentElement("afterbegin", infoMessage);
     }

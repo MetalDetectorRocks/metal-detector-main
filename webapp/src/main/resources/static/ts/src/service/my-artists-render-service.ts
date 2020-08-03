@@ -29,7 +29,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
 
     protected onRendering(response: MyArtistsResponse): void {
         if (response.myArtists.length === 0 && response.pagination.currentPage === 1) {
-            const message = "Currently you do not follow any artist. Start a search for your favorite artists right now.";
+            const message = '<h3 class="h5">Currently you do not follow any artist.</h3>Start a search for your favorite artists right now.';
             const infoMessage = this.alertService.renderInfoAlert(message, false);
             this.hostElement.insertAdjacentElement("afterbegin", infoMessage);
         }
