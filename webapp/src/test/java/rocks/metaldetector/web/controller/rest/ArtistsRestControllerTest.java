@@ -93,12 +93,12 @@ class ArtistsRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should pass default parameter to discogs search if spotify does not return results")
+    @DisplayName("Should pass default parameter to discogs search if spotify does not return results for first page")
     void handleNameSearch_fallback_discogs() {
       // given
       Map<String, Object> requestParams = new HashMap<>();
       requestParams.put("query", VALID_SEARCH_REQUEST);
-      requestParams.put("page", DEFAULT_PAGE);
+      requestParams.put("page", 1);
       requestParams.put("size", DEFAULT_SIZE);
       doReturn(ArtistSearchResponseFactory.empty()).when(artistsService).searchSpotifyByName(any(), any());
 
@@ -107,6 +107,23 @@ class ArtistsRestControllerTest implements WithAssertions {
 
       // then
       verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
+    }
+
+    @Test
+    @DisplayName("Should not pass default parameter to discogs search if spotify does not return results for all other pages than first page")
+    void handleNameSearch_no_fallback_to_discogs() {
+      // given
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("query", VALID_SEARCH_REQUEST);
+      requestParams.put("page", 2);
+      requestParams.put("size", DEFAULT_SIZE);
+      doReturn(ArtistSearchResponseFactory.empty()).when(artistsService).searchSpotifyByName(any(), any());
+
+      // when
+      restAssuredUtils.doGet(requestParams);
+
+      // then
+      verify(artistsService, times(0)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
     }
 
     @Test
