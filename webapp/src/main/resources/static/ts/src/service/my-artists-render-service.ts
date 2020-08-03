@@ -1,6 +1,5 @@
 import { MyArtistsResponse } from "../model/my-artists-response.model";
 import { FollowArtistService } from "./follow-artist-service";
-import { FollowState } from "../model/follow-state.model";
 import { Artist } from "../model/artist.model";
 import { AlertService } from "./alert-service";
 import { Pagination } from "../model/pagination.model";
@@ -41,11 +40,11 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         }
         else {
             let currentCardNo = 1;
-            response.myArtists.forEach((artist => {
+            response.myArtists.forEach(artist => {
                 const artistDivElement = this.renderArtistCard(artist);
                 this.attachArtistCard(artistDivElement, currentCardNo);
                 currentCardNo++;
-            }));
+            });
 
             const pagination = response.pagination;
             if (pagination.totalPages > 1) {
@@ -59,6 +58,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         const artistDivElement = artistTemplateNode.firstElementChild as HTMLDivElement;
         const artistThumbElement = artistDivElement.querySelector("#thumb") as HTMLImageElement;
         const followIconElement = artistDivElement.querySelector("#follow-icon") as HTMLDivElement;
+        const followIcon = followIconElement.getElementsByTagName("i").item(0)!;
         const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
         const followedSinceElement = artistDivElement.querySelector("#followed-since") as HTMLDivElement;
 
@@ -67,7 +67,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         followedSinceElement.innerHTML = this.createFollowedSinceString(artist.followedSince);
         followIconElement.addEventListener(
             "click",
-            this.handleFollowIconClick.bind(this, followIconElement, artist)
+            this.handleFollowIconClick.bind(this, followIcon, artist)
         );
 
         return artistDivElement;
@@ -87,18 +87,12 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         return `<i class="material-icons">favorite</i> on ${followedSinceString}`;
     }
 
-    private handleFollowIconClick(followIconElement: HTMLDivElement, artist: Artist) {
-        const followIcon = followIconElement.getElementsByTagName("i").item(0)!;
-        const currentFollowState = followIcon.textContent;
-
-        if (currentFollowState === FollowState.FOLLOWING.toString()) {
-            this.followArtistService.unfollowArtist(artist);
-            followIcon.textContent = FollowState.NOT_FOLLOWING.toString();
-        }
-        else {
-            this.followArtistService.followArtist(artist);
-            followIcon.textContent = FollowState.FOLLOWING.toString();
-        }
+    private handleFollowIconClick(followIconElement: HTMLElement, artist: Artist) {
+        this.followArtistService.handleFollowIconClick(followIconElement, {
+            externalId: artist.externalId,
+            artistName: artist.artistName,
+            source: artist.source
+        })
     }
 
     private attachPagination(paginationData: Pagination) {
