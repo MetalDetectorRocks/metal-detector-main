@@ -1,6 +1,13 @@
 import { ArtistsRestClient } from "../clients/artists-rest-client";
 import { ToastService } from "./toast-service";
-import { Artist } from "../model/artist.model";
+import { FollowState } from "../model/follow-state.model";
+
+export interface FollowArtistInfo {
+
+    readonly externalId: string;
+    readonly artistName: string;
+    readonly source: string;
+}
 
 export class FollowArtistService {
 
@@ -12,15 +19,28 @@ export class FollowArtistService {
         this.toastService = toastService;
     }
 
-    public followArtist(artist: Artist): void {
-        this.artistRestClient.followArtist(artist.externalId, artist.source);
-        const toastText = `You are now following "${artist.artistName}"`;
+    public handleFollowIconClick(followIconElement: HTMLElement, info: FollowArtistInfo): void {
+        const currentFollowState = followIconElement.textContent;
+
+        if (currentFollowState === FollowState.FOLLOWING.toString()) {
+            this.unfollowArtist(info);
+            followIconElement.textContent = FollowState.NOT_FOLLOWING.toString();
+        }
+        else {
+            this.followArtist(info);
+            followIconElement.textContent = FollowState.FOLLOWING.toString();
+        }
+    }
+
+    public followArtist(info: FollowArtistInfo): void {
+        this.artistRestClient.followArtist(info.externalId, info.source);
+        const toastText = `You are now following "${info.artistName}"`;
         this.toastService.createToast(toastText);
     }
 
-    public unfollowArtist(artist: Artist): void {
-        this.artistRestClient.unfollowArtist(artist.externalId, artist.source);
-        const toastText = `You no longer follow "${artist.artistName}"`;
+    public unfollowArtist(info: FollowArtistInfo): void {
+        this.artistRestClient.unfollowArtist(info.externalId, info.source);
+        const toastText = `You no longer follow "${info.artistName}"`;
         this.toastService.createToast(toastText);
     }
 }
