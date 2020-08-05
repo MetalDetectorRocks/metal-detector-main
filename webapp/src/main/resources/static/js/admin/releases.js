@@ -41,11 +41,23 @@ function getReleases() {
         {"data": "source"}
       ],
       "autoWidth": false, // fixes window resizing issue
+      "order": [[ 2, "asc" ], [0, "asc"]],
       "columnDefs": [
         {
           "targets": [2],
           "render": formatUtcDate
-        }
+        },
+        {
+          "targets": [3, 4],
+          "render": function (data) {
+            if (isEmpty(data)) {
+              return 'n/a';
+            }
+            else {
+              return data;
+            }
+          }
+        },
       ]
   });
 }
