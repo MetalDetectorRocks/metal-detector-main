@@ -16,7 +16,7 @@ public class HomepageServiceMock implements HomepageService {
     LocalDate now = LocalDate.now();
     List<ReleaseDto> upcomingReleases = createUpcomingReleases(now);
     List<ReleaseDto> recentReleases = createRecentReleases(now);
-    List<ArtistDto> recentlyFollowedArtists = createRecentlyFollowedArtists();
+    List<ArtistDto> recentlyFollowedArtists = createRecentlyFollowedArtists(now);
     return HomepageResponse.builder()
         .upcomingReleases(upcomingReleases)
         .recentReleases(recentReleases)
@@ -42,11 +42,11 @@ public class HomepageServiceMock implements HomepageService {
     return List.of(freierWilleFreierGeist, sonsOfNorthernDarkness, ritualeSatanum, ageOfExcuse);
   }
 
-  private List<ArtistDto> createRecentlyFollowedArtists() {
-    ArtistDto harakiriForTheSky = ArtistDto.builder().artistName("Harakiri For the Sky").thumb("/images/dummy/harakiri-for-the-sky.jpg").build();
-    ArtistDto marduk = ArtistDto.builder().artistName("Marduk").thumb("/images/dummy/marduk.jpg").build();
-    ArtistDto abbath = ArtistDto.builder().artistName("Abbath").thumb("/images/dummy/abbath.jpg").build();
-    ArtistDto alcest = ArtistDto.builder().artistName("Alcest").thumb("/images/dummy/alcest.jpg").build();
+  private List<ArtistDto> createRecentlyFollowedArtists(LocalDate now) {
+    ArtistDto harakiriForTheSky = ArtistDto.builder().artistName("Harakiri For the Sky").thumb("/images/dummy/harakiri-for-the-sky.jpg").followedSince(now.minusDays(3)).build();
+    ArtistDto marduk = ArtistDto.builder().artistName("Marduk").thumb("/images/dummy/marduk.jpg").followedSince(now.minusDays(7)).build();
+    ArtistDto abbath = ArtistDto.builder().artistName("Abbath").thumb("/images/dummy/abbath.jpg").followedSince(now.minusDays(15)).build();
+    ArtistDto alcest = ArtistDto.builder().artistName("Alcest").thumb("/images/dummy/alcest.jpg").followedSince(now.minusDays(26)).build();
     return List.of(harakiriForTheSky, marduk, abbath, alcest);
   }
 }

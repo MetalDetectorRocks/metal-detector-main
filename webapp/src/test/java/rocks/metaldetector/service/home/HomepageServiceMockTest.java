@@ -9,7 +9,7 @@ class HomepageServiceMockTest implements WithAssertions {
   HomepageServiceMock underTest = new HomepageServiceMock();
 
   @Test
-  @DisplayName("homeResponse with mock results is created")
+  @DisplayName("homepageResponse with mock results is created")
   void test_response() {
     // when
     var result = underTest.createHomeResponse();
