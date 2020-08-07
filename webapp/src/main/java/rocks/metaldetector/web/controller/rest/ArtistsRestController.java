@@ -34,7 +34,7 @@ public class ArtistsRestController {
                                                                @RequestParam(value = "size", defaultValue = "40") int size) {
     ArtistSearchResponse searchResponse = artistsService.searchSpotifyByName(query, PageRequest.of(page, size));
 
-    if (searchResponse.getSearchResults().isEmpty()) {
+    if (page == 1 && searchResponse.getSearchResults().isEmpty()) {
       searchResponse = artistsService.searchDiscogsByName(query, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
     }
 

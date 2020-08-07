@@ -19,7 +19,7 @@ export class AlertService {
     private renderAlert(alertType: string, text: string, dismissible: boolean): HTMLDivElement {
         const alertElement = document.createElement("div");
         alertElement.classList.add("alert", alertType);
-        alertElement.textContent = text;
+        alertElement.innerHTML = text;
         alertElement.setAttribute("role", "alert");
 
         if (dismissible) {

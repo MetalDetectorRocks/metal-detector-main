@@ -4,7 +4,7 @@ const CleanPlugin = require("clean-webpack-plugin");
 module.exports = {
     mode: "production",
     entry: {
-        search: "./src/search/app.ts",
+        search: "./src/bundles/search.ts",
         myartists: "./src/bundles/my-artists.ts"
     },
     output: {
