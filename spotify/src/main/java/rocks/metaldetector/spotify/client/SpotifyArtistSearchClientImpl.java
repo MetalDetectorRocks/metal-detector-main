@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.config.SpotifyConfig;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
@@ -27,10 +28,13 @@ import static org.springframework.http.HttpMethod.GET;
 @AllArgsConstructor
 public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient {
 
+  static final String ID_PARAMETER_NAME = "id";
   static final String QUERY_PARAMETER_NAME = "artistQueryString";
   static final String OFFSET_PARAMETER_NAME = "offset";
   static final String LIMIT_PARAMETER_NAME = "limit";
   static final String AUTHORIZATION_HEADER_PREFIX = "Bearer ";
+
+  static final String GET_ARTIST_ENDPOINT = "v1/artists/{" + ID_PARAMETER_NAME + "}";
   static final String SEARCH_ENDPOINT = "/v1/search?q={" + QUERY_PARAMETER_NAME + "}&"
                                         + "type=artist&offset={" + OFFSET_PARAMETER_NAME + "}&"
                                         + "limit={" + LIMIT_PARAMETER_NAME + "}";
@@ -65,6 +69,26 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
     }
 
     return resultContainer;
+  }
+
+  @Override
+  public SpotifyArtist searchById(String authenticationToken, String externalId) {
+    HttpEntity<Object> httpEntity = createQueryHttpEntity(authenticationToken);
+    ResponseEntity<SpotifyArtist> responseEntity = spotifyRestTemplate.exchange(
+            spotifyConfig.getRestBaseUrl() + GET_ARTIST_ENDPOINT,
+            GET,
+            httpEntity,
+            SpotifyArtist.class,
+            Map.of(ID_PARAMETER_NAME, externalId)
+    );
+
+    SpotifyArtist spotifyArtist = responseEntity.getBody();
+    var shouldNotHappen = spotifyArtist == null || !responseEntity.getStatusCode().is2xxSuccessful();
+    if (shouldNotHappen) {
+      throw new ExternalServiceException("Could not get artist with id '" + externalId + "' from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
+    }
+
+    return spotifyArtist;
   }
 
   private HttpEntity<Object> createQueryHttpEntity(String authenticationToken) {
