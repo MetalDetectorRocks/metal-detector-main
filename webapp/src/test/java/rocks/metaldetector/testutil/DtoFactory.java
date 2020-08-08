@@ -8,8 +8,8 @@ import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.user.UserDto;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
 import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
@@ -244,8 +244,8 @@ public class DtoFactory {
 
   public static class SpotifyArtistSearchResultEntryDtoFactory {
 
-    static SpotifyArtistSearchResultEntryDto withArtistName(String artistName) {
-      return SpotifyArtistSearchResultEntryDto.builder()
+    static SpotifyArtistDto withArtistName(String artistName) {
+      return SpotifyArtistDto.builder()
           .popularity(100)
           .genres(List.of("Black Metal"))
           .id("abcdef12345")

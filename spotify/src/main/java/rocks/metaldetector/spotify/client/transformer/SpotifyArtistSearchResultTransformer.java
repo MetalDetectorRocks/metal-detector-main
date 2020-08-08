@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
 import rocks.metaldetector.support.Pagination;
 
 import java.util.List;
@@ -34,14 +34,14 @@ public class SpotifyArtistSearchResultTransformer {
                                                                   : searchResult.getTotal() / searchResult.getLimit() + 1;
   }
 
-  private List<SpotifyArtistSearchResultEntryDto> transformArtistSearchResults(List<SpotifyArtist> results) {
+  private List<SpotifyArtistDto> transformArtistSearchResults(List<SpotifyArtist> results) {
     return results.stream()
         .map(this::transformArtistSearchResult)
         .collect(Collectors.toList());
   }
 
-  private SpotifyArtistSearchResultEntryDto transformArtistSearchResult(SpotifyArtist result) {
-    return SpotifyArtistSearchResultEntryDto.builder()
+  private SpotifyArtistDto transformArtistSearchResult(SpotifyArtist result) {
+    return SpotifyArtistDto.builder()
         .id(result.getId())
         .name(result.getName())
         .imageUrl(result.getImages().isEmpty() ? "" : result.getImages().get(0).getUrl())

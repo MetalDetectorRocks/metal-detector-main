@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Builder
-public class SpotifyArtistSearchResultEntryDto {
+public class SpotifyArtistDto {
 
   private String id;
   private String name;

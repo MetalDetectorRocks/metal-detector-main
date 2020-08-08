@@ -8,8 +8,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
 import rocks.metaldetector.support.Pagination;
 
 import java.util.stream.Stream;
@@ -45,9 +45,9 @@ class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
     assertThat(result.getSearchResults().size()).isEqualTo(container.getArtists().getItems().size());
     for (int index = 0; index < result.getSearchResults().size(); index++) {
       SpotifyArtist givenEntry = container.getArtists().getItems().get(index);
-      SpotifyArtistSearchResultEntryDto resultEntry = result.getSearchResults().get(index);
+      SpotifyArtistDto resultEntry = result.getSearchResults().get(index);
       assertThat(resultEntry).isEqualTo(
-          SpotifyArtistSearchResultEntryDto.builder()
+          SpotifyArtistDto.builder()
               .id(givenEntry.getId())
               .name(givenEntry.getName())
               .imageUrl(givenEntry.getImages().get(0).getUrl())

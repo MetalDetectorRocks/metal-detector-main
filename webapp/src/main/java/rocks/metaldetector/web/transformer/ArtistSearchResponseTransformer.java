@@ -3,8 +3,8 @@ package rocks.metaldetector.web.transformer;
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
 
@@ -24,11 +24,11 @@ public class ArtistSearchResponseTransformer {
         .build();
   }
 
-  private List<ArtistSearchResponseEntryDto> transformSpotifySearchResults(List<SpotifyArtistSearchResultEntryDto> spotifySearchResults) {
+  private List<ArtistSearchResponseEntryDto> transformSpotifySearchResults(List<SpotifyArtistDto> spotifySearchResults) {
     return spotifySearchResults.stream().map(this::transformSpotifySearchResult).collect(Collectors.toList());
   }
 
-  private ArtistSearchResponseEntryDto transformSpotifySearchResult(SpotifyArtistSearchResultEntryDto spotifySearchResult) {
+  private ArtistSearchResponseEntryDto transformSpotifySearchResult(SpotifyArtistDto spotifySearchResult) {
     return ArtistSearchResponseEntryDto.builder()
         .id(spotifySearchResult.getId())
         .name(spotifySearchResult.getName())
