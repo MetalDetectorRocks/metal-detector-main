@@ -34,7 +34,7 @@ public class SpotifyArtistSearchClientMock implements SpotifyArtistSearchClient 
   }
 
   @Override
-  public SpotifyArtist searchById(String authenticationToken, String externalId) {
+  public SpotifyArtist searchById(String authenticationToken, String artistId) {
     return createOpeth();
   }
 

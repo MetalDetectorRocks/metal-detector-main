@@ -7,6 +7,6 @@ public interface SpotifyArtistSearchClient {
 
   SpotifyArtistSearchResultContainer searchByName(String authenticationToken, String artistQueryString, int pageNumber, int pageSize);
 
-  SpotifyArtist searchById(String authenticationToken, String externalId);
+  SpotifyArtist searchById(String authenticationToken, String artistId);
 
 }
