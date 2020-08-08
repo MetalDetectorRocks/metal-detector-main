@@ -18,7 +18,7 @@ class SpotifyArtistSearchClientMockTest implements WithAssertions {
     var result = underTest.searchByName("token", "query", 1, 10);
 
     // then
-    assertThat(result.getArtists().getItems().size()).isEqualTo(1);
+    assertThat(result.getSearchResult().getArtists().size()).isEqualTo(1);
   }
 
   @Test

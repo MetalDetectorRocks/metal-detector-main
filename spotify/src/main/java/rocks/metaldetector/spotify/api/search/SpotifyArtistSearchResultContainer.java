@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 })
 public class SpotifyArtistSearchResultContainer {
 
-  private SpotifyArtistSearchResult artists;
+  private SpotifyArtistSearchResult searchResult;
 
 }
