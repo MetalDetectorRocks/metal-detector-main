@@ -54,7 +54,7 @@ class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
     underTest.transform(container);
 
     // then
-    for (SpotifyArtist spotifyArtist : container.getSearchResult().getArtists()) {
+    for (SpotifyArtist spotifyArtist : container.getArtists().getItems()) {
       verify(artistTransformer, times(1)).transform(spotifyArtist);
     }
   }
@@ -64,7 +64,7 @@ class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
   void should_set_result_from_artist_transformer() {
     // given
     SpotifyArtistSearchResultContainer container = SpotifyArtistSearchResultContainerFactory.createDefault();
-    for (SpotifyArtist spotifyArtist : container.getSearchResult().getArtists()) {
+    for (SpotifyArtist spotifyArtist : container.getArtists().getItems()) {
       var spotifyArtistDtoMock = SpotifyArtistDtoFactory.withArtistName(spotifyArtist.getName());
       doReturn(spotifyArtistDtoMock).when(artistTransformer).transform(spotifyArtist);
     }
@@ -73,8 +73,8 @@ class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
     SpotifyArtistSearchResultDto result = underTest.transform(container);
 
     // then
-    for (int index = 0; index < container.getSearchResult().getArtists().size(); index++) {
-      var givenArtist = container.getSearchResult().getArtists().get(index);
+    for (int index = 0; index < container.getArtists().getItems().size(); index++) {
+      var givenArtist = container.getArtists().getItems().get(index);
       var resultArtist = result.getSearchResults().get(index);
       assertThat(resultArtist.getName()).isEqualTo(givenArtist.getName());
     }

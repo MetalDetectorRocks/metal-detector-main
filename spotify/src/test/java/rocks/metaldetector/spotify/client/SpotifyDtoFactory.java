@@ -19,13 +19,13 @@ public class SpotifyDtoFactory {
 
     public static SpotifyArtistSearchResultContainer createDefault() {
       return SpotifyArtistSearchResultContainer.builder()
-          .searchResult(SpotifyArtistSearchResultFactory.createDefault())
+          .artists(SpotifyArtistSearchResultFactory.createDefault())
           .build();
     }
 
     public static SpotifyArtistSearchResultContainer withIndivualPagination(int offset, int limit, int total) {
       return SpotifyArtistSearchResultContainer.builder()
-          .searchResult(SpotifyArtistSearchResultFactory.withIndividualPagination(offset, limit, total))
+          .artists(SpotifyArtistSearchResultFactory.withIndividualPagination(offset, limit, total))
           .build();
     }
   }
@@ -40,7 +40,7 @@ public class SpotifyDtoFactory {
           .previous("previousPageLink")
           .offset(10)
           .total(20)
-          .artists(List.of(
+          .items(List.of(
               SpotfiyArtistFatory.withArtistName("A"),
               SpotfiyArtistFatory.withArtistName("B")
           ))
@@ -55,7 +55,7 @@ public class SpotifyDtoFactory {
           .previous("previousPageLink")
           .offset(offset)
           .total(total)
-          .artists(Collections.emptyList())
+          .items(Collections.emptyList())
           .build();
     }
   }
