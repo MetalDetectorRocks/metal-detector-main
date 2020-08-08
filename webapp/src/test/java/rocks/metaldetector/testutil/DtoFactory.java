@@ -235,16 +235,20 @@ public class DtoFactory {
       return SpotifyArtistSearchResultDto.builder()
           .pagination(new Pagination(1, 1, 10))
           .searchResults(List.of(
-              SpotifyArtistSearchResultEntryDtoFactory.withArtistName("A"),
-              SpotifyArtistSearchResultEntryDtoFactory.withArtistName("B")
+              SpotifyArtistDtoFactory.withArtistName("A"),
+              SpotifyArtistDtoFactory.withArtistName("B")
           ))
           .build();
     }
   }
 
-  public static class SpotifyArtistSearchResultEntryDtoFactory {
+  public static class SpotifyArtistDtoFactory {
 
-    static SpotifyArtistDto withArtistName(String artistName) {
+    public static SpotifyArtistDto createDefault() {
+      return withArtistName("Slayer");
+    }
+
+    public static SpotifyArtistDto withArtistName(String artistName) {
       return SpotifyArtistDto.builder()
           .popularity(100)
           .genres(List.of("Black Metal"))
