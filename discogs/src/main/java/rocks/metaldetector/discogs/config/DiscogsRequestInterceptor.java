@@ -16,6 +16,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Slf4j
 public class DiscogsRequestInterceptor implements ClientHttpRequestInterceptor, WithTokenRemover {
 
+  static final String TOKEN_PREFIX = "Discogs token=";
+
   private final DiscogsConfig discogsConfig;
 
   DiscogsRequestInterceptor(DiscogsConfig discogsConfig) {
@@ -26,7 +28,7 @@ public class DiscogsRequestInterceptor implements ClientHttpRequestInterceptor, 
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
     request.getHeaders().setAccept(List.of(MediaType.APPLICATION_JSON));
     request.getHeaders().set("User-Agent", discogsConfig.getUserAgent());
-    request.getHeaders().set(AUTHORIZATION, "Discogs token=" + discogsConfig.getAccessToken());
+    request.getHeaders().set(AUTHORIZATION, TOKEN_PREFIX + discogsConfig.getAccessToken());
 
     log.info("URI: {}", request.getURI());
     log.info("Headers: {}", removeTokenForLogging(request.getHeaders().toString()));
