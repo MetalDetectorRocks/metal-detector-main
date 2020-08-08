@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.config.SpotifyConfig;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
@@ -41,10 +42,13 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.AUTHORIZATION_HEADER_PREFIX;
+import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.GET_ARTIST_ENDPOINT;
+import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.ID_PARAMETER_NAME;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.LIMIT_PARAMETER_NAME;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.OFFSET_PARAMETER_NAME;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.QUERY_PARAMETER_NAME;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.SEARCH_ENDPOINT;
+import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyArtistFatory;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistSearchResultContainerFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -277,6 +281,178 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
               Arguments.of(1, 15, 0),
               Arguments.of(2, 10, 10),
               Arguments.of(3, 15, 30)
+      );
+    }
+
+    private Stream<Arguments> httpStatusCodeProvider() {
+      return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
+    }
+  }
+
+  @Nested
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @DisplayName("Tests for method searchById()")
+  class SearchByIdTest {
+
+    @ParameterizedTest(name = "If the artistId is <{0}>, an IllegalArgumentException is thrown")
+    @MethodSource("invalidArtistIdProvider")
+    @DisplayName("An IllegalArgumentException is thrown when artistId is invalid.")
+    void test_invalid_artist_id(String artistId) {
+      // when
+      var throwable = catchThrowable(() -> underTest.searchById("token", artistId));
+
+      // then
+      assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("Correct url is called")
+    void test_correct_url_is_called() {
+      // given
+      var spotifyBaseUrl = "spotify-url";
+      var expectedSearchUrl = spotifyBaseUrl + GET_ARTIST_ENDPOINT;
+      var responseMock = SpotfiyArtistFatory.withArtistName("Slayer");
+      doReturn(spotifyBaseUrl).when(spotifyConfig).getRestBaseUrl();
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), spotifyArtistClass(), anyMap());
+
+      // when
+      underTest.searchById("token", "666");
+
+      // then
+      verify(restTemplate, times(1)).exchange(eq(expectedSearchUrl), any(), any(), spotifyArtistClass(), anyMap());
+    }
+
+    @Test
+    @DisplayName("A GET call is made on Spotify artist search url")
+    void test_get_on_artist_search_url() {
+      // given
+      var responseMock = SpotfiyArtistFatory.withArtistName("Slayer");
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), spotifyArtistClass(), anyMap());
+
+      // when
+      underTest.searchById("token", "666");
+
+      // then
+      verify(restTemplate, times(1)).exchange(any(), eq(GET), any(), spotifyArtistClass(), anyMap());
+    }
+
+    @Test
+    @DisplayName("correct standard headers are set")
+    void test_correct_standard_headers() {
+      // given
+      var responseMock = SpotfiyArtistFatory.withArtistName("Slayer");
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), spotifyArtistClass(), anyMap());
+
+      // when
+      underTest.searchById("token", "666");
+
+      // then
+      verify(restTemplate, times(1)).exchange(any(), any(), httpEntityCaptor.capture(), spotifyArtistClass(), anyMap());
+      HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
+      HttpHeaders headers = httpEntity.getHeaders();
+      assertThat(headers.getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
+      assertThat(headers.getAcceptCharset()).isEqualTo(Collections.singletonList(Charset.defaultCharset()));
+    }
+
+    @Test
+    @DisplayName("token is set  with prefix in authorization header")
+    void test_correct_authorization_header() {
+      // given
+      var token = "token";
+      var responseMock = SpotfiyArtistFatory.withArtistName("Slayer");
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), spotifyArtistClass(), anyMap());
+
+      // when
+      underTest.searchById(token, "666");
+
+      // then
+      verify(restTemplate, times(1)).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
+      HttpHeaders headers = httpEntity.getHeaders();
+      assertThat(headers.get(AUTHORIZATION)).isEqualTo(Collections.singletonList(AUTHORIZATION_HEADER_PREFIX + token));
+    }
+
+    @Test
+    @DisplayName("correct response type is requested")
+    void test_correct_response_type() {
+      // given
+      var responseMock = SpotfiyArtistFatory.withArtistName("Slayer");
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), spotifyArtistClass(), anyMap());
+
+      // when
+      underTest.searchById("token", "666");
+
+      // then
+      verify(restTemplate, times(1)).exchange(any(), any(), any(), eq(SpotifyArtist.class), anyMap());
+    }
+
+    @Test
+    @DisplayName("The provided artistId is sent as url parameter.")
+    void test_artist_id_as_url_parameter() {
+      // given
+      var artistId = "666";
+      var responseMock = SpotfiyArtistFatory.withArtistName("Slayer");
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), spotifyArtistClass(), anyMap());
+
+      // when
+      underTest.searchById("token", artistId);
+
+      // then
+      verify(restTemplate, times(1)).exchange(any(), any(), any(), spotifyArtistClass(), urlParameterCaptor.capture());
+      Map<String, Object> urlParameter = urlParameterCaptor.getValue();
+      assertThat(urlParameter.get(ID_PARAMETER_NAME)).isEqualTo(artistId);
+    }
+
+    @Test
+    @DisplayName("response is returned")
+    void test_response() {
+      // given
+      var responseMock = SpotfiyArtistFatory.withArtistName("Slayer");
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), spotifyArtistClass(), anyMap());
+
+      // when
+      var result = underTest.searchById("token", "666");
+
+      // then
+      assertThat(result).isEqualTo(responseMock);
+    }
+
+    @Test
+    @DisplayName("If the response is null, an ExternalServiceException is thrown")
+    void test_exception_if_response_is_null() {
+      // given
+      doReturn(ResponseEntity.ok(null)).when(restTemplate).exchange(any(), any(), any(), spotifyArtistClass(), anyMap());
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.searchById("token", "666"));
+
+      // then
+      assertThat(throwable).isInstanceOf(ExternalServiceException.class);
+    }
+
+    @ParameterizedTest(name = "If the status is {0}, an ExternalServiceException is thrown")
+    @MethodSource("httpStatusCodeProvider")
+    @DisplayName("If the status code is not OK, an ExternalServiceException is thrown")
+    void test_exception_if_status_is_not_ok(HttpStatus httpStatus) {
+      // given
+      var responseMock = SpotfiyArtistFatory.withArtistName("Slayer");
+      doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).exchange(any(), any(), any(), spotifyArtistClass(), anyMap());
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.searchById("token", "666"));
+
+      // then
+      assertThat(throwable).isInstanceOf(ExternalServiceException.class);
+    }
+
+    private Class<SpotifyArtist> spotifyArtistClass() {
+      return ArgumentMatchers.any();
+    }
+
+    private Stream<Arguments> invalidArtistIdProvider() {
+      return Stream.of(
+              Arguments.of((Object) null),
+              Arguments.of("")
       );
     }
 

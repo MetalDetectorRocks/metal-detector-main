@@ -72,20 +72,24 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
   }
 
   @Override
-  public SpotifyArtist searchById(String authenticationToken, String externalId) {
+  public SpotifyArtist searchById(String authenticationToken, String artistId) {
+    if (artistId == null || artistId.isEmpty()) {
+      throw new IllegalArgumentException("externalId must not be empty");
+    }
+
     HttpEntity<Object> httpEntity = createQueryHttpEntity(authenticationToken);
     ResponseEntity<SpotifyArtist> responseEntity = spotifyRestTemplate.exchange(
             spotifyConfig.getRestBaseUrl() + GET_ARTIST_ENDPOINT,
             GET,
             httpEntity,
             SpotifyArtist.class,
-            Map.of(ID_PARAMETER_NAME, externalId)
+            Map.of(ID_PARAMETER_NAME, artistId)
     );
 
     SpotifyArtist spotifyArtist = responseEntity.getBody();
     var shouldNotHappen = spotifyArtist == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
-      throw new ExternalServiceException("Could not get artist with id '" + externalId + "' from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
+      throw new ExternalServiceException("Could not get artist with id '" + artistId + "' from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
     }
 
     return spotifyArtist;
