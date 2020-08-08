@@ -6,8 +6,8 @@ import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.api.search.SpotifyFollowers;
 import rocks.metaldetector.spotify.api.search.SpotifyImage;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
 import rocks.metaldetector.support.Pagination;
 
 import java.util.Collections;
@@ -124,8 +124,8 @@ public class SpotifyDtoFactory {
 
   static class SpotifyArtistSearchResultEntryDtoFactory {
 
-    static SpotifyArtistSearchResultEntryDto withArtistName(String artistName) {
-      return SpotifyArtistSearchResultEntryDto.builder()
+    static SpotifyArtistDto withArtistName(String artistName) {
+      return SpotifyArtistDto.builder()
           .popularity(100)
           .genres(List.of("Black Metal"))
           .id("abcdef12345")
