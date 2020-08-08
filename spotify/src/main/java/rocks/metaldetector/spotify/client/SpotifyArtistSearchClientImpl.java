@@ -34,7 +34,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
   static final String LIMIT_PARAMETER_NAME = "limit";
   static final String AUTHORIZATION_HEADER_PREFIX = "Bearer ";
 
-  static final String GET_ARTIST_ENDPOINT = "v1/artists/{" + ID_PARAMETER_NAME + "}";
+  static final String GET_ARTIST_ENDPOINT = "/v1/artists/{" + ID_PARAMETER_NAME + "}";
   static final String SEARCH_ENDPOINT = "/v1/search?q={" + QUERY_PARAMETER_NAME + "}&"
                                         + "type=artist&offset={" + OFFSET_PARAMETER_NAME + "}&"
                                         + "limit={" + LIMIT_PARAMETER_NAME + "}";
