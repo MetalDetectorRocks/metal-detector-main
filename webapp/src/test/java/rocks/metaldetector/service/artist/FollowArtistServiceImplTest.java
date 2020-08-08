@@ -18,6 +18,7 @@ import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
@@ -35,7 +36,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 import static rocks.metaldetector.testutil.DtoFactory.DiscogsArtistDtoFactory;
+import static rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
 class FollowArtistServiceImplTest implements WithAssertions {
@@ -48,6 +51,9 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
   @Mock
   private ArtistRepository artistRepository;
+
+  @Mock
+  private SpotifyService spotifyService;
 
   @Mock
   private DiscogsService discogsService;
@@ -66,7 +72,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(userRepository, artistRepository, currentPublicUserIdSupplier, discogsService, artistTransformer, userEntity);
+    reset(userRepository, artistRepository, currentPublicUserIdSupplier, discogsService, artistTransformer, userEntity, spotifyService);
   }
 
   @Test
@@ -124,7 +130,24 @@ class FollowArtistServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Artist is searched on discogs if it does not yet exist on follow")
+  @DisplayName("Spotify Artist is only searched on Spotify if it does not yet exist on follow")
+  void follow_should_search_spotify() {
+    // given
+    when(spotifyService.searchArtistById(anyString())).thenReturn(SpotifyArtistDtoFactory.createDefault());
+    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+    when(artistRepository.save(any())).thenReturn(ArtistEntityFactory.withExternalId(EXTERNAL_ID));
+    when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
+
+    // when
+    underTest.follow(EXTERNAL_ID, SPOTIFY);
+
+    // then
+    verify(spotifyService, times(1)).searchArtistById(EXTERNAL_ID);
+    verifyNoInteractions(discogsService);
+  }
+
+  @Test
+  @DisplayName("Discogs Artist is only searched on Discogs if it does not yet exist on follow")
   void follow_should_search_discogs() {
     // given
     when(discogsService.searchArtistById(anyString())).thenReturn(DiscogsArtistDtoFactory.createDefault());
@@ -133,15 +156,16 @@ class FollowArtistServiceImplTest implements WithAssertions {
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
 
     // when
-    underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
+    underTest.follow(EXTERNAL_ID, DISCOGS);
 
     // then
     verify(discogsService, times(1)).searchArtistById(EXTERNAL_ID);
+    verifyNoInteractions(spotifyService);
   }
 
   @Test
-  @DisplayName("Discogs is not searched if artist already exists")
-  void follow_should_not_search_discogs() {
+  @DisplayName("Neither Spotify nor Discogs is searched if artist already exists")
+  void follow_should_not_search() {
     // given
     when(artistRepository.existsByExternalIdAndSource(anyString(), any())).thenReturn(true);
     when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
@@ -152,6 +176,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
+    verifyNoInteractions(spotifyService);
     verifyNoInteractions(discogsService);
   }
 
