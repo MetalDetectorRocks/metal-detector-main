@@ -21,15 +21,15 @@ public class SpotifyArtistSearchResultTransformer {
   public SpotifyArtistSearchResultDto transform(SpotifyArtistSearchResultContainer searchResult) {
     return SpotifyArtistSearchResultDto.builder()
         .pagination(transformPagination(searchResult))
-        .searchResults(transformArtistSearchResults(searchResult.getSearchResult().getArtists()))
+        .searchResults(transformArtistSearchResults(searchResult.getArtists().getItems()))
         .build();
   }
 
   private Pagination transformPagination(SpotifyArtistSearchResultContainer searchResult) {
     return Pagination.builder()
-        .currentPage(searchResult.getSearchResult().getOffset() / searchResult.getSearchResult().getLimit() + 1)
-        .itemsPerPage(searchResult.getSearchResult().getLimit())
-        .totalPages(calculateTotalPages(searchResult.getSearchResult()))
+        .currentPage(searchResult.getArtists().getOffset() / searchResult.getArtists().getLimit() + 1)
+        .itemsPerPage(searchResult.getArtists().getLimit())
+        .totalPages(calculateTotalPages(searchResult.getArtists()))
         .build();
   }
 

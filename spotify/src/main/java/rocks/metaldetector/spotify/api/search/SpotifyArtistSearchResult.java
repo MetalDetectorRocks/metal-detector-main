@@ -28,7 +28,7 @@ public class SpotifyArtistSearchResult {
   private String href;
 
   @JsonProperty("items")
-  private List<SpotifyArtist> artists;
+  private List<SpotifyArtist> items;
 
   @JsonProperty("limit")
   private int limit;
