@@ -21,9 +21,9 @@ public class SpotifyArtistSearchClientMock implements SpotifyArtistSearchClient 
   @Override
   public SpotifyArtistSearchResultContainer searchByName(String authenticationToken, String artistQueryString, int pageNumber, int pageSize) {
     return SpotifyArtistSearchResultContainer.builder()
-        .artists(SpotifyArtistSearchResult.builder()
+        .searchResult(SpotifyArtistSearchResult.builder()
                      .href("https://api.spotify.com/v1/search?query=Opeth&type=artist&offset=0&limit=20")
-                     .items(List.of(createOpeth()))
+                     .artists(List.of(createOpeth()))
                      .limit(20)
                      .next(null)
                      .previous(null)

@@ -355,14 +355,14 @@ class ArtistsServiceImplTest implements WithAssertions {
       var pageable = PageRequest.of(1, 10);
       doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
       doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
-      doReturn(SpotifyArtistSearchResultDtoFactory.createDefault()).when(spotifyService).searchArtists(any(), anyInt(), anyInt());
+      doReturn(SpotifyArtistSearchResultDtoFactory.createDefault()).when(spotifyService).searchArtistByName(any(), anyInt(), anyInt());
       doReturn(ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any());
 
       // when
       underTest.searchSpotifyByName(artistQueryString, pageable);
 
       // then
-      verify(spotifyService, times(1)).searchArtists(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
+      verify(spotifyService, times(1)).searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
     }
 
     @Test
@@ -372,7 +372,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       var expectedSearchResults = SpotifyArtistSearchResultDtoFactory.createDefault();
       doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
       doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
-      doReturn(expectedSearchResults).when(spotifyService).searchArtists(any(), anyInt(), anyInt());
+      doReturn(expectedSearchResults).when(spotifyService).searchArtistByName(any(), anyInt(), anyInt());
       doReturn(ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any());
 
       // when
@@ -389,7 +389,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       var expectedSearchResult = ArtistSearchResponseFactory.spotify();
       doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
       doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
-      doReturn(SpotifyArtistSearchResultDtoFactory.createDefault()).when(spotifyService).searchArtists(any(), anyInt(), anyInt());
+      doReturn(SpotifyArtistSearchResultDtoFactory.createDefault()).when(spotifyService).searchArtistByName(any(), anyInt(), anyInt());
       doReturn(expectedSearchResult).when(searchResponseTransformer).transformSpotify(any());
 
       // when
@@ -431,7 +431,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       var userId = "userId";
       doReturn(userId).when(currentPublicUserIdSupplier).get();
       doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
-      doReturn(SpotifyArtistSearchResultDtoFactory.createDefault()).when(spotifyService).searchArtists(any(), anyInt(), anyInt());
+      doReturn(SpotifyArtistSearchResultDtoFactory.createDefault()).when(spotifyService).searchArtistByName(any(), anyInt(), anyInt());
       doReturn(ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any());
 
       // when

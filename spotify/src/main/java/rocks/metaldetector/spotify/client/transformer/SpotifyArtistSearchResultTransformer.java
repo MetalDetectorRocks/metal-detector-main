@@ -1,5 +1,6 @@
 package rocks.metaldetector.spotify.client.transformer;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResult;
@@ -12,20 +13,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class SpotifyArtistSearchResultTransformer {
+
+  private final SpotifyArtistTransformer artistTransformer;
 
   public SpotifyArtistSearchResultDto transform(SpotifyArtistSearchResultContainer searchResult) {
     return SpotifyArtistSearchResultDto.builder()
         .pagination(transformPagination(searchResult))
-        .searchResults(transformArtistSearchResults(searchResult.getArtists().getItems()))
+        .searchResults(transformArtistSearchResults(searchResult.getSearchResult().getArtists()))
         .build();
   }
 
   private Pagination transformPagination(SpotifyArtistSearchResultContainer searchResult) {
     return Pagination.builder()
-        .currentPage(searchResult.getArtists().getOffset() / searchResult.getArtists().getLimit() + 1)
-        .itemsPerPage(searchResult.getArtists().getLimit())
-        .totalPages(calculateTotalPages(searchResult.getArtists()))
+        .currentPage(searchResult.getSearchResult().getOffset() / searchResult.getSearchResult().getLimit() + 1)
+        .itemsPerPage(searchResult.getSearchResult().getLimit())
+        .totalPages(calculateTotalPages(searchResult.getSearchResult()))
         .build();
   }
 
@@ -36,18 +40,7 @@ public class SpotifyArtistSearchResultTransformer {
 
   private List<SpotifyArtistDto> transformArtistSearchResults(List<SpotifyArtist> results) {
     return results.stream()
-        .map(this::transformArtistSearchResult)
+        .map(artistTransformer::transform)
         .collect(Collectors.toList());
-  }
-
-  private SpotifyArtistDto transformArtistSearchResult(SpotifyArtist result) {
-    return SpotifyArtistDto.builder()
-        .id(result.getId())
-        .name(result.getName())
-        .imageUrl(result.getImages().isEmpty() ? "" : result.getImages().get(0).getUrl())
-        .uri(result.getUri())
-        .genres(result.getGenres())
-        .popularity(result.getPopularity())
-        .build();
   }
 }
