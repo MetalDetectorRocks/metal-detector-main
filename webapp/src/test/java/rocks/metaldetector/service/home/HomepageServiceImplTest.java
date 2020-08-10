@@ -23,7 +23,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static rocks.metaldetector.service.home.HomepageServiceImpl.RESULT_LIMIT;
 
 @ExtendWith(MockitoExtension.class)
 class HomepageServiceImplTest implements WithAssertions {
@@ -74,7 +73,7 @@ class HomepageServiceImplTest implements WithAssertions {
     underTest.createHomeResponse();
 
     // then
-    verify(releaseService, times(1)).findReleases(any(), eq(expectedDate), eq(expectedDate.plusMonths(1)));
+    verify(releaseService, times(1)).findReleases(any(), eq(expectedDate), eq(expectedDate.plusMonths(6)));
   }
 
   @Test
@@ -120,7 +119,7 @@ class HomepageServiceImplTest implements WithAssertions {
     var result = underTest.createHomeResponse();
 
     // then
-    assertThat(result.getUpcomingReleases().size()).isEqualTo(RESULT_LIMIT);
+    assertThat(result.getUpcomingReleases().size()).isEqualTo(4);
     assertThat(result.getUpcomingReleases()).doesNotContain(tooMuch);
   }
 }

@@ -38,7 +38,7 @@ public class HomepageServiceImpl implements HomepageService {
       return Collections.emptyList();
     }
 
-    return releaseService.findReleases(followedArtists, now, now.plusMonths(1))
+    return releaseService.findReleases(followedArtists, now, now.plusMonths(6))
         .stream().limit(RESULT_LIMIT).collect(Collectors.toList());
   }
 }
