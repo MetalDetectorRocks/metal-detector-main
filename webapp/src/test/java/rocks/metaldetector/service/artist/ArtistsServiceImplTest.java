@@ -89,7 +89,7 @@ class ArtistsServiceImplTest implements WithAssertions {
   @BeforeEach
   void setUp() {
     artistEntity = new ArtistEntity(EXTERNAL_ID, ARTIST_NAME, null, DISCOGS);
-    artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, "Discogs");
+    artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, "Discogs", null);
   }
 
   @Test

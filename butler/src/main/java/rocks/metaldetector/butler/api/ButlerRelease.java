@@ -24,7 +24,8 @@ import java.util.List;
     "metalArchivesArtistUrl",
     "metalArchivesAlbumUrl",
     "source",
-    "state"
+    "state",
+    "coverUrl"
 })
 @NoArgsConstructor
 public class ButlerRelease {
@@ -61,5 +62,8 @@ public class ButlerRelease {
 
   @JsonProperty("state")
   private String state;
+
+  @JsonProperty("coverUrl")
+  private String coverUrl;
 
 }

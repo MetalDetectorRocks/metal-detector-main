@@ -35,6 +35,7 @@ public class ButlerReleaseResponseTransformer {
             .metalArchivesAlbumUrl(release.getMetalArchivesAlbumUrl())
             .source(enumPrettyPrinter.prettyPrintEnumValue(release.getSource()))
             .state(enumPrettyPrinter.prettyPrintEnumValue(STATE_NOT_SET))
+            .coverUrl(release.getCoverUrl())
             .build();
   }
 }

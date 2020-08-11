@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,5 +17,6 @@ public class ArtistDto {
   private String artistName;
   private String thumb;
   private String source;
+  private LocalDate followedSince;
 
 }
