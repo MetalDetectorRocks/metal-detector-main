@@ -1,6 +1,7 @@
 package rocks.metaldetector.spotify.client.transformer;
 
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import rocks.metaldetector.support.Pagination;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistDtoFactory;
@@ -32,6 +34,11 @@ class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
 
   @InjectMocks
   private SpotifyArtistSearchResultTransformer underTest;
+
+  @AfterEach
+  void tearDown() {
+    reset(artistTransformer);
+  }
 
   @ParameterizedTest
   @MethodSource("paginationProvider")
