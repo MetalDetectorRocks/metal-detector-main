@@ -1,6 +1,7 @@
 package rocks.metaldetector.discogs.client.transformer;
 
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -30,6 +32,11 @@ class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertion
 
   @InjectMocks
   private DiscogsArtistSearchResultContainerTransformer underTest;
+
+  @AfterEach
+  void tearDown() {
+    reset(artistNameTransformer);
+  }
 
   @Test
   @DisplayName("Should transform DiscogsPagination to Pagination")

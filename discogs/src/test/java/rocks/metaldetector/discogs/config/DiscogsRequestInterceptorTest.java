@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
-import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestExecution;
 
 import java.io.IOException;
@@ -18,6 +17,9 @@ import java.util.List;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.USER_AGENT;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static rocks.metaldetector.discogs.config.DiscogsRequestInterceptor.TOKEN_PREFIX;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,7 +50,7 @@ class DiscogsRequestInterceptorTest implements WithAssertions {
     underTest.intercept(httpRequestMock, new byte[]{}, clientHttpRequestExecutionMock);
 
     // then
-    verify(httpHeadersMock, times(1)).setAccept(List.of(MediaType.APPLICATION_JSON));
+    verify(httpHeadersMock, times(1)).setAccept(List.of(APPLICATION_JSON));
   }
 
   @Test
@@ -63,7 +65,7 @@ class DiscogsRequestInterceptorTest implements WithAssertions {
     underTest.intercept(httpRequestMock, new byte[]{}, clientHttpRequestExecutionMock);
 
     // then
-    verify(httpHeadersMock, times(1)).set(HttpHeaders.USER_AGENT, userAgent);
+    verify(httpHeadersMock, times(1)).set(USER_AGENT, userAgent);
   }
 
   @Test
@@ -78,7 +80,7 @@ class DiscogsRequestInterceptorTest implements WithAssertions {
     underTest.intercept(httpRequestMock, new byte[]{}, clientHttpRequestExecutionMock);
 
     // then
-    verify(httpHeadersMock, times(1)).set(HttpHeaders.AUTHORIZATION, TOKEN_PREFIX + token);
+    verify(httpHeadersMock, times(1)).set(AUTHORIZATION, TOKEN_PREFIX + token);
   }
 
   @Test
