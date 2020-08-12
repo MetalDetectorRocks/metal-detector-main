@@ -1,25 +1,44 @@
 package rocks.metaldetector.spotify.client.transformer;
 
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
 import rocks.metaldetector.support.Pagination;
 
 import java.util.stream.Stream;
 
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistDtoFactory;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistSearchResultContainerFactory;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistSearchResultContainerFactory.withIndivualPagination;
 
+@ExtendWith(MockitoExtension.class)
 class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
 
-  private final SpotifyArtistSearchResultTransformer underTest = new SpotifyArtistSearchResultTransformer();
+  @Mock
+  private SpotifyArtistTransformer artistTransformer;
+
+  @InjectMocks
+  private SpotifyArtistSearchResultTransformer underTest;
+
+  @AfterEach
+  void tearDown() {
+    reset(artistTransformer);
+  }
 
   @ParameterizedTest
   @MethodSource("paginationProvider")
@@ -33,29 +52,38 @@ class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Should transform SpotifyArtistSearchResult to SpotifyArtistSearchResultEntryDto")
-  void should_transform() {
+  @DisplayName("Should transform SpotifyArtist with SpotifyArtistTransformer")
+  void should_use_artist_transformer() {
     // given
     SpotifyArtistSearchResultContainer container = SpotifyArtistSearchResultContainerFactory.createDefault();
+
+    // when
+    underTest.transform(container);
+
+    // then
+    for (SpotifyArtist spotifyArtist : container.getArtists().getItems()) {
+      verify(artistTransformer, times(1)).transform(spotifyArtist);
+    }
+  }
+
+  @Test
+  @DisplayName("Should set result from SpotifyArtistTransformer")
+  void should_set_result_from_artist_transformer() {
+    // given
+    SpotifyArtistSearchResultContainer container = SpotifyArtistSearchResultContainerFactory.createDefault();
+    for (SpotifyArtist spotifyArtist : container.getArtists().getItems()) {
+      var spotifyArtistDtoMock = SpotifyArtistDtoFactory.withArtistName(spotifyArtist.getName());
+      doReturn(spotifyArtistDtoMock).when(artistTransformer).transform(spotifyArtist);
+    }
 
     // when
     SpotifyArtistSearchResultDto result = underTest.transform(container);
 
     // then
-    assertThat(result.getSearchResults().size()).isEqualTo(container.getArtists().getItems().size());
-    for (int index = 0; index < result.getSearchResults().size(); index++) {
-      SpotifyArtist givenEntry = container.getArtists().getItems().get(index);
-      SpotifyArtistSearchResultEntryDto resultEntry = result.getSearchResults().get(index);
-      assertThat(resultEntry).isEqualTo(
-          SpotifyArtistSearchResultEntryDto.builder()
-              .id(givenEntry.getId())
-              .name(givenEntry.getName())
-              .imageUrl(givenEntry.getImages().get(0).getUrl())
-              .uri(givenEntry.getUri())
-              .genres(givenEntry.getGenres())
-              .popularity(givenEntry.getPopularity())
-              .build()
-      );
+    for (int index = 0; index < container.getArtists().getItems().size(); index++) {
+      var givenArtist = container.getArtists().getItems().get(index);
+      var resultArtist = result.getSearchResults().get(index);
+      assertThat(resultArtist.getName()).isEqualTo(givenArtist.getName());
     }
   }
 
