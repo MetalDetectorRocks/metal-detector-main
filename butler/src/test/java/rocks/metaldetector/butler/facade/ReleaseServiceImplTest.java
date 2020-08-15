@@ -67,37 +67,37 @@ class ReleaseServiceImplTest implements WithAssertions {
     LocalDate to = LocalDate.of(2020, 12, 31);
 
     // when
-    underTest.findReleases(artists, from, to);
+    underTest.findAllReleases(artists, from, to);
 
     // then
     verify(releaseRequestTransformer, times(1)).transform(artists, from, to);
   }
 
   @Test
-  @DisplayName("Querying releases should pass transformed arguments to butler client")
+  @DisplayName("Querying all releases should pass transformed arguments to butler client")
   void query_releases_should_call_butler_client() {
     // given
     ButlerReleasesRequest request = ButlerReleaseRequestFactory.createDefault();
     when(releaseRequestTransformer.transform(any(), any(), any())).thenReturn(request);
 
     // when
-    underTest.findReleases(null, null, null);
+    underTest.findAllReleases(null, null, null);
 
     // then
-    verify(butlerClient, times(1)).queryReleases(eq(request));
+    verify(butlerClient, times(1)).queryAllReleases(eq(request));
   }
 
   @Test
-  @DisplayName("Querying releases should transform and return response from butler client")
+  @DisplayName("Querying all releases should transform and return response from butler client")
   void query_releases_should_return_transformed_response() {
     // given
     ButlerReleasesResponse response = ButlerReleasesResponseFactory.createDefault();
     List<ReleaseDto> expectedResult = List.of(ReleaseDtoFactory.createDefault());
-    when(butlerClient.queryReleases(any())).thenReturn(response);
+    when(butlerClient.queryAllReleases(any())).thenReturn(response);
     when(releaseResponseTransformer.transform(response)).thenReturn(expectedResult);
 
     // when
-    List<ReleaseDto> releases = underTest.findReleases(null, null, null);
+    List<ReleaseDto> releases = underTest.findAllReleases(null, null, null);
 
     // then
     verify(releaseResponseTransformer, times(1)).transform(response);

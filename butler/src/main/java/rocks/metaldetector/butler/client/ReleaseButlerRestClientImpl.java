@@ -30,7 +30,7 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   private final ButlerConfig butlerConfig;
 
   @Override
-  public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {
+  public ButlerReleasesResponse queryAllReleases(ButlerReleasesRequest request) {
     HttpEntity<ButlerReleasesRequest> requestEntity = createQueryHttpEntity(request);
 
     ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(butlerConfig.getUnpaginatedReleasesUrl(),
@@ -43,6 +43,11 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
     }
 
     return response;
+  }
+
+  @Override
+  public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {
+    return null;
   }
 
   @Override

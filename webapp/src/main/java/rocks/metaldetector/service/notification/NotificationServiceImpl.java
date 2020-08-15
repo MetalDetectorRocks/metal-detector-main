@@ -38,7 +38,7 @@ public class NotificationServiceImpl implements NotificationService {
         .map(ArtistDto::getArtistName).collect(Collectors.toList());
 
     if (!followedArtistsNames.isEmpty()) {
-      List<ReleaseDto> newReleases = releaseService.findReleases(followedArtistsNames, LocalDate.now(), LocalDate.now().plusMonths(3));
+      List<ReleaseDto> newReleases = releaseService.findAllReleases(followedArtistsNames, LocalDate.now(), LocalDate.now().plusMonths(3));
 
       if (!newReleases.isEmpty()) {
         emailService.sendEmail(new NewReleasesEmail(user.getEmail(), user.getUsername(), newReleases));

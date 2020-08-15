@@ -38,7 +38,8 @@ public class HomepageServiceImpl implements HomepageService {
       return Collections.emptyList();
     }
 
-    return releaseService.findReleases(followedArtists, now, now.plusMonths(6))
+    // ToDo DanielW: Use paginated version
+    return releaseService.findAllReleases(followedArtists, now, now.plusMonths(6))
         .stream().limit(RESULT_LIMIT).collect(Collectors.toList());
   }
 }

@@ -26,9 +26,9 @@ public class ReleaseServiceImpl implements ReleaseService {
   private final ButlerImportJobTransformer importJobResponseTransformer;
 
   @Override
-  public List<ReleaseDto> findReleases(Iterable<String> artists, LocalDate dateFrom, LocalDate dateTo) {
+  public List<ReleaseDto> findAllReleases(Iterable<String> artists, LocalDate dateFrom, LocalDate dateTo) {
     ButlerReleasesRequest request = queryRequestTransformer.transform(artists, dateFrom, dateTo);
-    ButlerReleasesResponse response = butlerClient.queryReleases(request);
+    ButlerReleasesResponse response = butlerClient.queryAllReleases(request);
     return queryResponseTransformer.transform(response);
   }
 

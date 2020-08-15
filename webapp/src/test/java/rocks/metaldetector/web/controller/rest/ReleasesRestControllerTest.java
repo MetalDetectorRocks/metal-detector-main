@@ -85,7 +85,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       restAssuredUtils.doPost(request);
 
       // then
-      verify(releasesService, times(1)).findReleases(request.getArtists(), request.getDateFrom(), request.getDateTo());
+      verify(releasesService, times(1)).findAllReleases(request.getArtists(), request.getDateFrom(), request.getDateTo());
     }
 
     @Test
@@ -94,7 +94,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       // given
       var request = DetectorReleaseRequestFactory.createDefault();
       var releases = List.of(ReleaseDtoFactory.createDefault());
-      doReturn(releases).when(releasesService).findReleases(any(), any(), any());
+      doReturn(releases).when(releasesService).findAllReleases(any(), any(), any());
 
       // when
       restAssuredUtils.doPost(request);
@@ -109,7 +109,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       // given
       var request = DetectorReleaseRequestFactory.createDefault();
       var transformedResponse = List.of(new DetectorReleasesResponse());
-      doReturn(Collections.emptyList()).when(releasesService).findReleases(any(), any(), any());
+      doReturn(Collections.emptyList()).when(releasesService).findAllReleases(any(), any(), any());
       doReturn(transformedResponse).when(releasesResponseTransformer).transformListOf(any());
 
       // when

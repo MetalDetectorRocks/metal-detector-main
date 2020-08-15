@@ -58,7 +58,7 @@ class HomepageServiceImplTest implements WithAssertions {
     underTest.createHomeResponse();
 
     // then
-    verify(releaseService, times(1)).findReleases(eq(followedArtistsNames), any(), any());
+    verify(releaseService, times(1)).findAllReleases(eq(followedArtistsNames), any(), any());
   }
 
   @Test
@@ -73,7 +73,7 @@ class HomepageServiceImplTest implements WithAssertions {
     underTest.createHomeResponse();
 
     // then
-    verify(releaseService, times(1)).findReleases(any(), eq(expectedDate), eq(expectedDate.plusMonths(6)));
+    verify(releaseService, times(1)).findAllReleases(any(), eq(expectedDate), eq(expectedDate.plusMonths(6)));
   }
 
   @Test
@@ -95,7 +95,7 @@ class HomepageServiceImplTest implements WithAssertions {
     // given
     List<ReleaseDto> upcomingReleases = List.of(ReleaseDtoFactory.withArtistName("A"), ReleaseDtoFactory.withArtistName("B"));
     doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfCurrentUser();
-    doReturn(upcomingReleases).when(releaseService).findReleases(any(), any(), any());
+    doReturn(upcomingReleases).when(releaseService).findAllReleases(any(), any(), any());
 
     // when
     var result = underTest.createHomeResponse();
@@ -114,7 +114,7 @@ class HomepageServiceImplTest implements WithAssertions {
         ReleaseDtoFactory.withArtistName("C"), ReleaseDtoFactory.withArtistName("D"),
         tooMuch);
     doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfCurrentUser();
-    doReturn(upcomingReleases).when(releaseService).findReleases(any(), any(), any());
+    doReturn(upcomingReleases).when(releaseService).findAllReleases(any(), any(), any());
 
     var result = underTest.createHomeResponse();
 

@@ -44,7 +44,7 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
     when(objectMapper.readValue(any(Reader.class), any(Class.class))).thenReturn(null);
 
     // when
-    underTest.queryReleases(null);
+    underTest.queryAllReleases(null);
 
     // then
     verify(resourceLoader, times(1)).getResource(startsWith("classpath:"));
@@ -59,7 +59,7 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
     when(objectMapper.readValue(any(Reader.class), any(Class.class))).thenReturn(expectedResult);
 
     // when
-    ButlerReleasesResponse response = underTest.queryReleases(null);
+    ButlerReleasesResponse response = underTest.queryAllReleases(null);
 
     // then
     verify(objectMapper, times(1)).readValue(any(Reader.class), any(Class.class));

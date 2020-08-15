@@ -31,8 +31,8 @@ public class ReleasesRestController {
   @PostMapping(path = Endpoints.Rest.QUERY_RELEASES,
                consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<List<DetectorReleasesResponse>> getReleases(@Valid @RequestBody DetectorReleasesRequest request) {
-    List<ReleaseDto> releaseDtos = releaseService.findReleases(request.getArtists(), request.getDateFrom(), request.getDateTo());
+  public ResponseEntity<List<DetectorReleasesResponse>> findAllReleases(@Valid @RequestBody DetectorReleasesRequest request) {
+    List<ReleaseDto> releaseDtos = releaseService.findAllReleases(request.getArtists(), request.getDateFrom(), request.getDateTo());
     List<DetectorReleasesResponse> response = releasesResponseTransformer.transformListOf(releaseDtos);
     return ResponseEntity.ok(response);
   }

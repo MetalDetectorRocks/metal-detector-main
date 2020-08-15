@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ReleaseService {
 
-  List<ReleaseDto> findReleases(Iterable<String> artists, LocalDate dateFrom, LocalDate dateTo);
+  List<ReleaseDto> findAllReleases(Iterable<String> artists, LocalDate dateFrom, LocalDate dateTo);
 
   void createImportJob();
 

@@ -62,10 +62,10 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     reset(restTemplate, butlerConfig);
   }
 
-  @DisplayName("Test of query releases")
+  @DisplayName("Test of query all releases")
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
-  class QueryReleasesTest {
+  class QueryAllReleasesTest {
 
     @Test
     @DisplayName("A POST call is made on the injected releases URL")
@@ -78,7 +78,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), eq(ButlerReleasesResponse.class));
 
       // when
-      underTest.queryReleases(request);
+      underTest.queryAllReleases(request);
 
       // then
       verify(restTemplate, times(1)).postForEntity(eq(butlerUrl), any(), eq(ButlerReleasesResponse.class));
@@ -94,7 +94,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
       // when
-      underTest.queryReleases(request);
+      underTest.queryAllReleases(request);
 
       // then
       verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptorReleases.capture(), any());
@@ -116,7 +116,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
       // when
-      ButlerReleasesResponse response = underTest.queryReleases(request);
+      ButlerReleasesResponse response = underTest.queryAllReleases(request);
 
       // then
       assertThat(response).isEqualTo(responseMock);
@@ -131,7 +131,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       doReturn(ResponseEntity.ok(null)).when(restTemplate).postForEntity(anyString(), any(), any());
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.queryReleases(request));
+      Throwable throwable = catchThrowable(() -> underTest.queryAllReleases(request));
 
       // then
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
@@ -148,7 +148,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.queryReleases(request));
+      Throwable throwable = catchThrowable(() -> underTest.queryAllReleases(request));
 
       // then
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
