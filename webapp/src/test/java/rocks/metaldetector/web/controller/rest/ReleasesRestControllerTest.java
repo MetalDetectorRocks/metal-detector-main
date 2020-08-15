@@ -9,7 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,19 +21,22 @@ import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
+import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.TimeRange;
-import rocks.metaldetector.testutil.DtoFactory.DetectorReleaseRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.ImportJobResultDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
+import rocks.metaldetector.testutil.DtoFactory.ReleaseRequestFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
-import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
-import rocks.metaldetector.web.api.response.DetectorReleasesResponse;
-import rocks.metaldetector.web.transformer.DetectorReleasesResponseTransformer;
+import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
+import rocks.metaldetector.web.api.request.ReleasesRequest;
+import rocks.metaldetector.web.api.response.ReleasesResponse;
+import rocks.metaldetector.web.transformer.ReleasesResponseTransformer;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -40,6 +47,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static rocks.metaldetector.testutil.DtoFactory.PaginatedReleaseRequestFactory;
 
 @ExtendWith(MockitoExtension.class)
 class ReleasesRestControllerTest implements WithAssertions {
@@ -48,7 +56,7 @@ class ReleasesRestControllerTest implements WithAssertions {
   private ReleaseService releasesService;
 
   @Mock
-  private DetectorReleasesResponseTransformer releasesResponseTransformer;
+  private ReleasesResponseTransformer releasesResponseTransformer;
 
   @InjectMocks
   private ReleasesRestController underTest;
@@ -66,21 +74,22 @@ class ReleasesRestControllerTest implements WithAssertions {
   }
 
   @Nested
-  @DisplayName("Tests for endpoint '" + Endpoints.Rest.QUERY_RELEASES + "'")
-  class QueryReleasesTest {
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @DisplayName("Tests for endpoint '" + Endpoints.Rest.QUERY_ALL_RELEASES + "'")
+  class QueryAllReleasesTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.QUERY_RELEASES);
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.QUERY_ALL_RELEASES);
     }
 
     @Test
     @DisplayName("Should pass query request parameter to release service")
     void should_pass_query_parameter_to_release_service() {
       // given
-      DetectorReleasesRequest request = DetectorReleaseRequestFactory.createDefault();
+      ReleasesRequest request = ReleaseRequestFactory.createDefault();
 
       // when
       restAssuredUtils.doPost(request);
@@ -90,10 +99,10 @@ class ReleasesRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should use transformer to transform releases to a list of DetectorReleasesResponse")
+    @DisplayName("Should use transformer to transform releases to a list of ReleasesResponse")
     void should_use_releases_transformer() {
       // given
-      var request = DetectorReleaseRequestFactory.createDefault();
+      var request = ReleaseRequestFactory.createDefault();
       var releases = List.of(ReleaseDtoFactory.createDefault());
       doReturn(releases).when(releasesService).findAllReleases(any(), any());
 
@@ -108,8 +117,8 @@ class ReleasesRestControllerTest implements WithAssertions {
     @DisplayName("Should return the transformed releases response")
     void should_return_releases() {
       // given
-      var request = DetectorReleaseRequestFactory.createDefault();
-      var transformedResponse = List.of(new DetectorReleasesResponse());
+      var request = ReleaseRequestFactory.createDefault();
+      var transformedResponse = List.of(new ReleasesResponse());
       doReturn(Collections.emptyList()).when(releasesService).findAllReleases(any(), any());
       doReturn(transformedResponse).when(releasesResponseTransformer).transformListOf(any());
 
@@ -121,16 +130,14 @@ class ReleasesRestControllerTest implements WithAssertions {
           .contentType(ContentType.JSON)
           .statusCode(OK.value());
 
-      var result = validatableResponse.extract().as(DetectorReleasesResponse[].class);
+      var result = validatableResponse.extract().as(ReleasesResponse[].class);
       assertThat(Arrays.asList(result)).isEqualTo(transformedResponse);
     }
 
-    @Test
+    @ParameterizedTest(name = "Should return 400 on invalid query request <{0}>")
+    @MethodSource("requestProvider")
     @DisplayName("Should return 400 on invalid query request")
-    void test_invalid_query_requests() {
-      // given
-      DetectorReleasesRequest request = new DetectorReleasesRequest(LocalDate.now(), LocalDate.now().plusDays(1), null);
-
+    void test_invalid_query_requests(ReleasesRequest request) {
       // when
       var validatableResponse = restAssuredUtils.doPost(request);
 
@@ -138,6 +145,112 @@ class ReleasesRestControllerTest implements WithAssertions {
       validatableResponse
           .contentType(ContentType.JSON)
           .statusCode(BAD_REQUEST.value());
+    }
+
+    private Stream<Arguments> requestProvider() {
+      var validFrom = LocalDate.now();
+      var validTo = LocalDate.now().plusDays(10);
+      var validArtists = List.of("Darkthrone", "Karg");
+
+      return Stream.of(
+              Arguments.of(new ReleasesRequest(validFrom.plusDays(20), validTo, validArtists)),
+              Arguments.of(new ReleasesRequest(validFrom, validTo, null))
+      );
+    }
+  }
+
+  @Nested
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @DisplayName("Tests for endpoint '" + Endpoints.Rest.QUERY_RELEASES + "'")
+  class QueryReleasesTest {
+
+    private RestAssuredMockMvcUtils restAssuredUtils;
+
+    @BeforeEach
+    void setUp() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.QUERY_RELEASES);
+    }
+
+    @Test
+    @DisplayName("Should pass query request parameter to release service")
+    void should_pass_query_parameter_to_release_service() {
+      // given
+      PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
+
+      // when
+      restAssuredUtils.doPost(request);
+
+      // then
+      verify(releasesService, times(1)).findReleases(
+              request.getArtists(),
+              new TimeRange(request.getDateFrom(), request.getDateTo()),
+              new PageRequest(request.getPage(), request.getSize())
+      );
+    }
+
+    @Test
+    @DisplayName("Should use transformer to transform releases to a list of ReleasesResponse")
+    void should_use_releases_transformer() {
+      // given
+      var request = PaginatedReleaseRequestFactory.createDefault();
+      var releases = List.of(ReleaseDtoFactory.createDefault());
+      doReturn(releases).when(releasesService).findReleases(any(), any(), any());
+
+      // when
+      restAssuredUtils.doPost(request);
+
+      // then
+      verify(releasesResponseTransformer, times(1)).transformListOf(releases);
+    }
+
+    @Test
+    @DisplayName("Should return the transformed releases response")
+    void should_return_releases() {
+      // given
+      var request = PaginatedReleaseRequestFactory.createDefault();
+      var transformedResponse = List.of(new ReleasesResponse());
+      doReturn(Collections.emptyList()).when(releasesService).findReleases(any(), any(), any());
+      doReturn(transformedResponse).when(releasesResponseTransformer).transformListOf(any());
+
+      // when
+      var validatableResponse = restAssuredUtils.doPost(request);
+
+      // then
+      validatableResponse
+              .contentType(ContentType.JSON)
+              .statusCode(OK.value());
+
+      var result = validatableResponse.extract().as(ReleasesResponse[].class);
+      assertThat(Arrays.asList(result)).isEqualTo(transformedResponse);
+    }
+
+    @ParameterizedTest(name = "Should return 400 on invalid query request <{0}>")
+    @MethodSource("requestProvider")
+    @DisplayName("Should return 400 on invalid query request")
+    void test_invalid_query_requests(PaginatedReleasesRequest request) {
+      // when
+      var validatableResponse = restAssuredUtils.doPost(request);
+
+      // then
+      validatableResponse
+              .contentType(ContentType.JSON)
+              .statusCode(BAD_REQUEST.value());
+    }
+
+    private Stream<Arguments> requestProvider() {
+      var validPage = 1;
+      var validSize = 10;
+      var validFrom = LocalDate.now();
+      var validTo = LocalDate.now().plusDays(10);
+      var validArtists = List.of("Darkthrone", "Karg");
+
+      return Stream.of(
+              Arguments.of(new PaginatedReleasesRequest(0, validSize, validFrom, validTo, validArtists)),
+              Arguments.of(new PaginatedReleasesRequest(validPage, 0, validFrom, validTo, validArtists)),
+              Arguments.of(new PaginatedReleasesRequest(validPage, 51, validFrom, validTo, validArtists)),
+              Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validFrom.plusDays(20), validTo, validArtists)),
+              Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validFrom, validTo, null))
+      );
     }
   }
 
