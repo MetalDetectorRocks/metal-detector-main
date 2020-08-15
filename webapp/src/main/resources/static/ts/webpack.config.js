@@ -4,7 +4,8 @@ module.exports = {
     mode: "development",
     entry: {
         search: "./src/bundles/search.ts",
-        myartists: "./src/bundles/my-artists.ts"
+        myartists: "./src/bundles/my-artists.ts",
+        homepage: "./src/bundles/homepage.ts"
     },
     watch: true,
     output: {
