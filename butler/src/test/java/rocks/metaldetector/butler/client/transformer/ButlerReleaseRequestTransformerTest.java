@@ -32,4 +32,20 @@ class ButlerReleaseRequestTransformerTest implements WithAssertions {
     assertThat(result.getPage()).isEqualTo(pageRequest.getPage());
     assertThat(result.getSize()).isEqualTo(pageRequest.getSize());
   }
+
+  @Test
+  @DisplayName("page and size is 0 if PageRequest is null")
+  void page_request_can_be_null() {
+    // given
+    Iterable<String> artists = List.of("A", "B", "C");
+    TimeRange timeRange = new TimeRange(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 1));
+
+    // when
+    ButlerReleasesRequest result = underTest.transform(artists, timeRange, null);
+
+    // then
+
+    assertThat(result.getPage()).isEqualTo(0);
+    assertThat(result.getSize()).isEqualTo(0);
+  }
 }
