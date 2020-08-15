@@ -33,21 +33,35 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   public ButlerReleasesResponse queryAllReleases(ButlerReleasesRequest request) {
     HttpEntity<ButlerReleasesRequest> requestEntity = createQueryHttpEntity(request);
 
-    ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(butlerConfig.getUnpaginatedReleasesUrl(),
-                                                                                                    requestEntity, ButlerReleasesResponse.class);
-    ButlerReleasesResponse response = responseEntity.getBody();
+    ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(
+            butlerConfig.getUnpaginatedReleasesUrl(),
+            requestEntity,
+            ButlerReleasesResponse.class
+    );
 
+    return handleReleaseResponseEntity(request, responseEntity);
+  }
+
+  @Override
+  public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {
+    HttpEntity<ButlerReleasesRequest> requestEntity = createQueryHttpEntity(request);
+    ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(
+            butlerConfig.getReleasesUrl(),
+            requestEntity,
+            ButlerReleasesResponse.class
+    );
+
+    return handleReleaseResponseEntity(request, responseEntity);
+  }
+
+  private ButlerReleasesResponse handleReleaseResponseEntity(ButlerReleasesRequest request, ResponseEntity<ButlerReleasesResponse> responseEntity) {
+    ButlerReleasesResponse response = responseEntity.getBody();
     var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
       throw new ExternalServiceException("Could not get releases for request: '" + request + "' (Response code: " + responseEntity.getStatusCode() + ")");
     }
 
     return response;
-  }
-
-  @Override
-  public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {
-    return null;
   }
 
   @Override
