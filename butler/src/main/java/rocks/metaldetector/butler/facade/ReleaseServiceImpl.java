@@ -11,8 +11,9 @@ import rocks.metaldetector.butler.client.transformer.ButlerReleaseRequestTransfo
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
+import rocks.metaldetector.support.PageRequest;
+import rocks.metaldetector.support.TimeRange;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,9 +27,16 @@ public class ReleaseServiceImpl implements ReleaseService {
   private final ButlerImportJobTransformer importJobResponseTransformer;
 
   @Override
-  public List<ReleaseDto> findAllReleases(Iterable<String> artists, LocalDate dateFrom, LocalDate dateTo) {
-    ButlerReleasesRequest request = queryRequestTransformer.transform(artists, dateFrom, dateTo);
+  public List<ReleaseDto> findAllReleases(Iterable<String> artists, TimeRange timeRange) {
+    ButlerReleasesRequest request = queryRequestTransformer.transform(artists, timeRange, null);
     ButlerReleasesResponse response = butlerClient.queryAllReleases(request);
+    return queryResponseTransformer.transform(response);
+  }
+
+  @Override
+  public List<ReleaseDto> findReleases(Iterable<String> artists, TimeRange timeRange, PageRequest pageRequest) {
+    ButlerReleasesRequest request = queryRequestTransformer.transform(artists, timeRange, pageRequest);
+    ButlerReleasesResponse response = butlerClient.queryReleases(request);
     return queryResponseTransformer.transform(response);
   }
 
