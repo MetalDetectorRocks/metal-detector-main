@@ -46,16 +46,24 @@
   z-index: 1;
   right: 2rem;
   bottom: 2rem;
+}
+
+#toast.info {
   background-color: #182030;
   border: 1px solid #246;
 }
 
+#toast.error {
+  background-color: rgba(85, 6, 6, 0.50);
+  border: 1px solid #ea1717;
+}
+
 #toast.show {
   visibility: visible;
-  /* Add animation: Take 0.5 seconds to fade in and out the toast.
+  /* Take 0.5 seconds to fade in and 0.6 seconds (to avoid flickering) to fade out the toast.
   However, delay the fade out process for 2.5 seconds */
-  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  -webkit-animation: fadein 0.5s, fadeout 0.6s 2.5s;
+  animation: fadein 0.5s, fadeout 0.6s 2.5s;
 }
 
 /* Fading Overlay */

@@ -36,7 +36,6 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
     ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(butlerConfig.getUnpaginatedReleasesUrl(),
                                                                                                     requestEntity, ButlerReleasesResponse.class);
     ButlerReleasesResponse response = responseEntity.getBody();
-
     var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
       throw new ExternalServiceException("Could not get releases for request: '" + request + "' (Response code: " + responseEntity.getStatusCode() + ")");

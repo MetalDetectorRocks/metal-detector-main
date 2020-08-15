@@ -23,24 +23,30 @@ export class FollowArtistService {
         const currentFollowState = followIconElement.textContent;
 
         if (currentFollowState === FollowState.FOLLOWING.toString()) {
-            this.unfollowArtist(info);
-            followIconElement.textContent = FollowState.NOT_FOLLOWING.toString();
+            this.unfollowArtist(followIconElement, info);
         }
         else {
-            this.followArtist(info);
-            followIconElement.textContent = FollowState.FOLLOWING.toString();
+            this.followArtist(followIconElement, info);
         }
     }
 
-    public followArtist(info: FollowArtistInfo): void {
-        this.artistRestClient.followArtist(info.externalId, info.source);
-        const toastText = `You are now following "${info.artistName}"`;
-        this.toastService.createToast(toastText);
+    public followArtist(followIconElement: HTMLElement, info: FollowArtistInfo): void {
+        this.artistRestClient
+            .followArtist(info.externalId, info.source)
+            .then(() => {
+                const toastText = `You are now following "${info.artistName}"`;
+                this.toastService.createInfoToast(toastText);
+                followIconElement.textContent = FollowState.FOLLOWING.toString();
+            });
     }
 
-    public unfollowArtist(info: FollowArtistInfo): void {
-        this.artistRestClient.unfollowArtist(info.externalId, info.source);
-        const toastText = `You no longer follow "${info.artistName}"`;
-        this.toastService.createToast(toastText);
+    public unfollowArtist(followIconElement: HTMLElement, info: FollowArtistInfo): void {
+        this.artistRestClient
+            .unfollowArtist(info.externalId, info.source)
+            .then(() => {
+                const toastText = `You no longer follow "${info.artistName}"`;
+                this.toastService.createInfoToast(toastText);
+                followIconElement.textContent = FollowState.NOT_FOLLOWING.toString();
+            });
     }
 }

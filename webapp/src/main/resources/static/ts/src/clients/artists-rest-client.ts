@@ -2,6 +2,8 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { axiosConfig } from "../config/axios.config";
 import { MyArtistsResponse } from "../model/my-artists-response.model";
 import { SearchResponse } from "../model/search-response.model";
+import { ToastService } from "../service/toast-service";
+import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
 
 export class ArtistsRestClient {
 
@@ -10,7 +12,10 @@ export class ArtistsRestClient {
     private readonly FOLLOW_ARTISTS_URL = "/rest/v1/artists/follow";
     private readonly UNFOLLOW_ARTISTS_URL = "/rest/v1/artists/unfollow";
 
-    constructor() {
+    private readonly toastService: ToastService;
+
+    constructor(toastService: ToastService) {
+        this.toastService = toastService;
     }
 
     public async searchArtist(): Promise<SearchResponse> {
@@ -45,22 +50,24 @@ export class ArtistsRestClient {
         });
     }
 
-    public followArtist(artistId: string, source: string): void {
-        axios.post(
+    public async followArtist(artistId: string, source: string): Promise<any> {
+        return axios.post(
             `${this.FOLLOW_ARTISTS_URL}/${source}/${artistId}`,
             {},
             axiosConfig
         ).catch((error: AxiosError) => {
+            this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
             throw error;
         });
     }
 
-    public unfollowArtist(artistId: string, source: string): void {
-        axios.post(
+    public async unfollowArtist(artistId: string, source: string): Promise<any> {
+        return axios.post(
             `${this.UNFOLLOW_ARTISTS_URL}/${source}/${artistId}`,
             {},
             axiosConfig
         ).catch((error: AxiosError) => {
+            this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
             throw error;
         });
     }
