@@ -8,7 +8,7 @@ import { LoadingIndicatorService } from "../service/loading-indicator-service";
 const toastService = new ToastService();
 const alertService = new AlertService();
 const loadingIndicatorService = new LoadingIndicatorService();
-const artistsRestClient = new ArtistsRestClient();
+const artistsRestClient = new ArtistsRestClient(toastService);
 const followArtistService = new FollowArtistService(artistsRestClient, toastService);
 const myArtistsRenderService = new MyArtistsRenderService(followArtistService, alertService, loadingIndicatorService);
 
