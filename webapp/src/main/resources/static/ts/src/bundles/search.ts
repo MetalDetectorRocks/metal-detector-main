@@ -8,7 +8,7 @@ import { AlertService } from "../service/alert-service";
 const toastService = new ToastService();
 const loadingIndicatorService = new LoadingIndicatorService();
 const alertService = new AlertService();
-const artistsRestClient = new ArtistsRestClient();
+const artistsRestClient = new ArtistsRestClient(toastService);
 const followArtistService = new FollowArtistService(artistsRestClient, toastService);
 const searchRenderService = new SearchRenderService(followArtistService, alertService, loadingIndicatorService);
 

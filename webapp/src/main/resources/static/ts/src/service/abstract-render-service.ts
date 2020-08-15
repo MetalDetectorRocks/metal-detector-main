@@ -1,5 +1,6 @@
 import { AlertService } from "./alert-service";
 import { LoadingIndicatorService } from "./loading-indicator-service";
+import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
 
 export abstract class AbstractRenderService<T> {
 
@@ -30,7 +31,7 @@ export abstract class AbstractRenderService<T> {
     protected abstract onRendering(data: T): void;
 
     protected onCatch(): void {
-        const message = '<h3 class="h5">Damn it! A satanic error has occurred.</h3>Please try again later.';
+        const message = `<h3 class="h5">${UNKNOWN_ERROR_MESSAGE}</h3>Please try again later.`;
         const infoMessage = this.alertService.renderErorAlert(message, false);
         this.hostElement.insertAdjacentElement("afterbegin", infoMessage);
     }

@@ -56,6 +56,7 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
 
   private ButlerReleasesResponse handleReleaseResponseEntity(ButlerReleasesRequest request, ResponseEntity<ButlerReleasesResponse> responseEntity) {
     ButlerReleasesResponse response = responseEntity.getBody();
+
     var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
       throw new ExternalServiceException("Could not get releases for request: '" + request + "' (Response code: " + responseEntity.getStatusCode() + ")");
