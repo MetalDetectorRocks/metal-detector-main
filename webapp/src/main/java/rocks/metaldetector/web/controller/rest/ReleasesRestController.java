@@ -12,6 +12,7 @@ import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
 import rocks.metaldetector.web.api.response.DetectorReleasesResponse;
 import rocks.metaldetector.web.transformer.DetectorReleasesResponseTransformer;
@@ -32,7 +33,7 @@ public class ReleasesRestController {
                consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<List<DetectorReleasesResponse>> findAllReleases(@Valid @RequestBody DetectorReleasesRequest request) {
-    List<ReleaseDto> releaseDtos = releaseService.findAllReleases(request.getArtists(), request.getDateFrom(), request.getDateTo());
+    List<ReleaseDto> releaseDtos = releaseService.findAllReleases(request.getArtists(), new TimeRange(request.getDateFrom(), request.getDateTo()));
     List<DetectorReleasesResponse> response = releasesResponseTransformer.transformListOf(releaseDtos);
     return ResponseEntity.ok(response);
   }

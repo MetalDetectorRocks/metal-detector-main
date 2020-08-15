@@ -10,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.support.PageRequest;
+import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 
@@ -58,22 +60,38 @@ class HomepageServiceImplTest implements WithAssertions {
     underTest.createHomeResponse();
 
     // then
-    verify(releaseService, times(1)).findAllReleases(eq(followedArtistsNames), any(), any());
+    verify(releaseService, times(1)).findReleases(eq(followedArtistsNames), any(), any());
   }
 
   @Test
   @DisplayName("releaseService is called with correct dates")
   void test_release_service_called_with_correct_dates() {
     // given
-    var expectedDate = LocalDate.now();
-    doReturn(List.of(ArtistDtoFactory.withName("A"), ArtistDtoFactory.withName("B")))
-        .when(followArtistService).getFollowedArtistsOfCurrentUser();
+    var now = LocalDate.now();
+    var expectedTimeRange = new TimeRange(now, now.plusMonths(6));
+    var followedArtists = List.of(ArtistDtoFactory.withName("A"), ArtistDtoFactory.withName("B"));
+    doReturn(followedArtists).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
     // when
     underTest.createHomeResponse();
 
     // then
-    verify(releaseService, times(1)).findAllReleases(any(), eq(expectedDate), eq(expectedDate.plusMonths(6)));
+    verify(releaseService, times(1)).findReleases(any(), eq(expectedTimeRange), any());
+  }
+
+  @Test
+  @DisplayName("releaseService is called with a fixed page request")
+  void test_release_service_called_with_fixed_page_request() {
+    // given
+    var expectedPageRequest = new PageRequest(1, 4);
+    var followedArtists = List.of(ArtistDtoFactory.withName("A"), ArtistDtoFactory.withName("B"));
+    doReturn(followedArtists).when(followArtistService).getFollowedArtistsOfCurrentUser();
+
+    // when
+    underTest.createHomeResponse();
+
+    // then
+    verify(releaseService, times(1)).findReleases(any(), any(), eq(expectedPageRequest));
   }
 
   @Test
@@ -95,31 +113,12 @@ class HomepageServiceImplTest implements WithAssertions {
     // given
     List<ReleaseDto> upcomingReleases = List.of(ReleaseDtoFactory.withArtistName("A"), ReleaseDtoFactory.withArtistName("B"));
     doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfCurrentUser();
-    doReturn(upcomingReleases).when(releaseService).findAllReleases(any(), any(), any());
+    doReturn(upcomingReleases).when(releaseService).findReleases(any(), any(), any());
 
     // when
     var result = underTest.createHomeResponse();
 
     // then
     assertThat(result.getUpcomingReleases()).isEqualTo(upcomingReleases);
-  }
-
-  @Test
-  @DisplayName("only the first four upcoming releases are returned")
-  void test_upcoming_releases_limit() {
-    // given
-    var tooMuch = ReleaseDtoFactory.withArtistName("E");
-    var upcomingReleases = List.of(
-        ReleaseDtoFactory.withArtistName("A"), ReleaseDtoFactory.withArtistName("B"),
-        ReleaseDtoFactory.withArtistName("C"), ReleaseDtoFactory.withArtistName("D"),
-        tooMuch);
-    doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfCurrentUser();
-    doReturn(upcomingReleases).when(releaseService).findAllReleases(any(), any(), any());
-
-    var result = underTest.createHomeResponse();
-
-    // then
-    assertThat(result.getUpcomingReleases().size()).isEqualTo(4);
-    assertThat(result.getUpcomingReleases()).doesNotContain(tooMuch);
   }
 }

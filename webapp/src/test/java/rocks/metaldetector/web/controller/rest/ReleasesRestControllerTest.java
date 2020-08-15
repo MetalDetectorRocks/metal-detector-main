@@ -17,6 +17,7 @@ import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
+import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.testutil.DtoFactory.DetectorReleaseRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.ImportJobResultDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
@@ -85,7 +86,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       restAssuredUtils.doPost(request);
 
       // then
-      verify(releasesService, times(1)).findAllReleases(request.getArtists(), request.getDateFrom(), request.getDateTo());
+      verify(releasesService, times(1)).findAllReleases(request.getArtists(), new TimeRange(request.getDateFrom(), request.getDateTo()));
     }
 
     @Test
@@ -94,7 +95,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       // given
       var request = DetectorReleaseRequestFactory.createDefault();
       var releases = List.of(ReleaseDtoFactory.createDefault());
-      doReturn(releases).when(releasesService).findAllReleases(any(), any(), any());
+      doReturn(releases).when(releasesService).findAllReleases(any(), any());
 
       // when
       restAssuredUtils.doPost(request);
@@ -109,7 +110,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       // given
       var request = DetectorReleaseRequestFactory.createDefault();
       var transformedResponse = List.of(new DetectorReleasesResponse());
-      doReturn(Collections.emptyList()).when(releasesService).findAllReleases(any(), any(), any());
+      doReturn(Collections.emptyList()).when(releasesService).findAllReleases(any(), any());
       doReturn(transformedResponse).when(releasesResponseTransformer).transformListOf(any());
 
       // when
