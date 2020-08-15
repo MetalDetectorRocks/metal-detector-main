@@ -6,8 +6,8 @@ import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.api.search.SpotifyFollowers;
 import rocks.metaldetector.spotify.api.search.SpotifyImage;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
 import rocks.metaldetector.support.Pagination;
 
 import java.util.Collections;
@@ -25,7 +25,7 @@ public class SpotifyDtoFactory {
 
     public static SpotifyArtistSearchResultContainer withIndivualPagination(int offset, int limit, int total) {
       return SpotifyArtistSearchResultContainer.builder()
-          .artists(SpotifyArtistSearchResultFactory.withIndivualPagination(offset, limit, total))
+          .artists(SpotifyArtistSearchResultFactory.withIndividualPagination(offset, limit, total))
           .build();
     }
   }
@@ -47,7 +47,7 @@ public class SpotifyDtoFactory {
           .build();
     }
 
-    static SpotifyArtistSearchResult withIndivualPagination(int offset, int limit, int total) {
+    static SpotifyArtistSearchResult withIndividualPagination(int offset, int limit, int total) {
       return SpotifyArtistSearchResult.builder()
           .href("query")
           .limit(limit)
@@ -60,9 +60,9 @@ public class SpotifyDtoFactory {
     }
   }
 
-  static class SpotfiyArtistFatory {
+  public static class SpotfiyArtistFatory {
 
-    static SpotifyArtist withArtistName(String artistName) {
+    public static SpotifyArtist withArtistName(String artistName) {
       return SpotifyArtist.builder()
           .externalUrls(Collections.emptyMap())
           .followers(SpotfiyFollowersFatory.createDefault())
@@ -115,17 +115,17 @@ public class SpotifyDtoFactory {
       return SpotifyArtistSearchResultDto.builder()
           .pagination(new Pagination(1,1,10))
           .searchResults(List.of(
-              SpotifyArtistSearchResultEntryDtoFactory.withArtistName("A"),
-              SpotifyArtistSearchResultEntryDtoFactory.withArtistName("B")
+              SpotifyArtistDtoFactory.withArtistName("A"),
+              SpotifyArtistDtoFactory.withArtistName("B")
           ))
           .build();
     }
   }
 
-  static class SpotifyArtistSearchResultEntryDtoFactory {
+  public static class SpotifyArtistDtoFactory {
 
-    static SpotifyArtistSearchResultEntryDto withArtistName(String artistName) {
-      return SpotifyArtistSearchResultEntryDto.builder()
+    public static SpotifyArtistDto withArtistName(String artistName) {
+      return SpotifyArtistDto.builder()
           .popularity(100)
           .genres(List.of("Black Metal"))
           .id("abcdef12345")

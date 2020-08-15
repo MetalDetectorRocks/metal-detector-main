@@ -13,5 +13,5 @@ import java.util.List;
 public class SpotifyArtistSearchResultDto {
 
   private Pagination pagination;
-  private List<SpotifyArtistSearchResultEntryDto> searchResults;
+  private List<SpotifyArtistDto> searchResults;
 }

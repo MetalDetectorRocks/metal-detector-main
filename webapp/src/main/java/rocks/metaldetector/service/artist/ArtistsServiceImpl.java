@@ -67,7 +67,7 @@ public class ArtistsServiceImpl implements ArtistsService {
   @Override
   @Transactional
   public ArtistSearchResponse searchSpotifyByName(String artistQueryString, Pageable pageable) {
-    SpotifyArtistSearchResultDto result = spotifyService.searchArtists(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
+    SpotifyArtistSearchResultDto result = spotifyService.searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
     ArtistSearchResponse searchResponse = responseTransformer.transformSpotify(result);
     UserEntity userEntity = getUserEntity();
     searchResponse.getSearchResults().forEach(artist -> artist.setFollowed(userEntity.isFollowing(artist.getId())));

@@ -1,11 +1,16 @@
 package rocks.metaldetector.discogs.client.transformer;
 
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.discogs.api.DiscogsArtist;
 import rocks.metaldetector.discogs.api.DiscogsImage;
 import rocks.metaldetector.discogs.client.DiscogsDtoFactory.DiscogsArtistFactory;
@@ -16,9 +21,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+@ExtendWith(MockitoExtension.class)
 class DiscogsArtistTransformerTest implements WithAssertions {
 
-  private DiscogsArtistTransformer underTest = new DiscogsArtistTransformer();
+  @Mock
+  private DiscogsArtistNameTransformer artistNameTransformer;
+
+  @InjectMocks
+  private DiscogsArtistTransformer underTest;
+
+  @AfterEach
+  void tearDown() {
+    reset(artistNameTransformer);
+  }
 
   @Test
   @DisplayName("Should transform DiscogsArtist to DiscogsArtistDto")
@@ -33,10 +54,25 @@ class DiscogsArtistTransformerTest implements WithAssertions {
     assertThat(result).isEqualTo(
             DiscogsArtistDto.builder()
                             .id(String.valueOf(discogsArtist.getId()))
-                            .name(discogsArtist.getName())
                             .imageUrl("")
                             .build()
     );
+  }
+
+  @Test
+  @DisplayName("Should use DiscogsArtistNameTransformer to transform artist name")
+  void should_transform_artist_name() {
+    // given
+    var expectedName = "Slayer";
+    DiscogsArtist discogsArtist = DiscogsArtistFactory.createDefault();
+    doReturn(expectedName).when(artistNameTransformer).transformArtistName(anyString());
+
+    // when
+    DiscogsArtistDto result = underTest.transform(discogsArtist);
+
+    // then
+    verify(artistNameTransformer, times(1)).transformArtistName(discogsArtist.getName());
+    assertThat(result.getName()).isEqualTo(expectedName);
   }
 
   @Test
@@ -75,7 +111,7 @@ class DiscogsArtistTransformerTest implements WithAssertions {
   private static Stream<Arguments> discogsImageProvider() {
     return Stream.of(
             Arguments.of(Collections.emptyList()),
-            Arguments.of((List) null)
+            Arguments.of((List<DiscogsImage>) null)
     );
   }
 }

@@ -1,8 +1,13 @@
 package rocks.metaldetector.discogs.client.transformer;
 
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResult;
 import rocks.metaldetector.discogs.api.DiscogsArtistSearchResultContainer;
 import rocks.metaldetector.discogs.api.DiscogsPagination;
@@ -13,9 +18,25 @@ import rocks.metaldetector.support.Pagination;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+@ExtendWith(MockitoExtension.class)
 class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertions {
 
-  private final DiscogsArtistSearchResultContainerTransformer underTest = new DiscogsArtistSearchResultContainerTransformer();
+  @Mock
+  private DiscogsArtistNameTransformer artistNameTransformer;
+
+  @InjectMocks
+  private DiscogsArtistSearchResultContainerTransformer underTest;
+
+  @AfterEach
+  void tearDown() {
+    reset(artistNameTransformer);
+  }
 
   @Test
   @DisplayName("Should transform DiscogsPagination to Pagination")
@@ -55,7 +76,6 @@ class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertion
       assertThat(resultEntry).isEqualTo(
               DiscogsArtistSearchResultEntryDto.builder()
                       .id(String.valueOf(givenEntry.getId()))
-                      .name(givenEntry.getTitle())
                       .imageUrl(givenEntry.getThumb())
                       .uri(givenEntry.getUri())
                       .build()
@@ -64,17 +84,19 @@ class DiscogsArtistSearchResultContainerTransformerTest implements WithAssertion
   }
 
   @Test
-  @DisplayName("Should cut suffix ' ($number)' from artist name")
+  @DisplayName("Should use DiscogsArtistNameTransformer to transform artist name")
   void should_transform_artist_name() {
     // given
+    var givenName = "Karg (3)";
     var expectedName = "Karg";
-    DiscogsArtistSearchResultContainer container = DiscogsArtistSearchResultContainerFactory.withArtistNames(List.of("Karg (3)"));
+    DiscogsArtistSearchResultContainer container = DiscogsArtistSearchResultContainerFactory.withArtistNames(List.of(givenName));
+    doReturn(expectedName).when(artistNameTransformer).transformArtistName(anyString());
 
     // when
     DiscogsArtistSearchResultDto result = underTest.transform(container);
 
     // then
-    assertThat(result.getSearchResults().size()).isEqualTo(1);
+    verify(artistNameTransformer, times(1)).transformArtistName(givenName);
     assertThat(result.getSearchResults().get(0).getName()).isEqualTo(expectedName);
   }
 }
