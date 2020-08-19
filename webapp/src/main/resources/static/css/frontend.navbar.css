@@ -21,6 +21,10 @@ nav .container {
     white-space: nowrap;
 }
 
+.nav-link.active {
+    color: #1D7097;
+}
+
 .navbar-expand-lg .navbar-nav {
     align-items: center;
 }
