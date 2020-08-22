@@ -19,11 +19,11 @@ import java.util.List;
 @AllArgsConstructor
 public class PaginatedReleasesRequest implements WithTimeRangeValidation {
 
-  @Min(value = 1L, message = "'page' must be greater than zero!")
+  @Min(value = 1, message = "'page' must be greater than zero!")
   private int page;
 
-  @Min(value = 1L, message = "'size' must be greater than zero!")
-  @Max(value = 50L, message = "'size' must be equal or less than 50!")
+  @Min(value = 1, message = "'size' must be greater than zero!")
+  @Max(value = 50, message = "'size' must be equal or less than 50!")
   private int size;
 
   @Nullable
