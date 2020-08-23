@@ -11,6 +11,7 @@ import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.NewReleasesEmail;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.support.TimeRange;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,7 +39,8 @@ public class NotificationServiceImpl implements NotificationService {
         .map(ArtistDto::getArtistName).collect(Collectors.toList());
 
     if (!followedArtistsNames.isEmpty()) {
-      List<ReleaseDto> newReleases = releaseService.findReleases(followedArtistsNames, LocalDate.now(), LocalDate.now().plusMonths(3));
+      var now = LocalDate.now();
+      List<ReleaseDto> newReleases = releaseService.findAllReleases(followedArtistsNames, new TimeRange(now, now.plusMonths(3)));
 
       if (!newReleases.isEmpty()) {
         emailService.sendEmail(new NewReleasesEmail(user.getEmail(), user.getUsername(), newReleases));

@@ -33,6 +33,11 @@ public class SpotifyArtistSearchClientMock implements SpotifyArtistSearchClient 
         .build();
   }
 
+  @Override
+  public SpotifyArtist searchById(String authenticationToken, String artistId) {
+    return createOpeth();
+  }
+
   private SpotifyArtist createOpeth() {
     return SpotifyArtist.builder()
         .id("0ybFZ2Ab08V8hueghSXm6E")
@@ -46,7 +51,7 @@ public class SpotifyArtistSearchClientMock implements SpotifyArtistSearchClient 
                             .height(640)
                             .width(640)
                             .build()))
-        .name("Opteh")
+        .name("Opeth")
         .build();
   }
 }

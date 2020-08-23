@@ -3,10 +3,8 @@ package rocks.metaldetector.web.api.request;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
@@ -17,12 +15,14 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DetectorReleasesRequest {
+public class ReleasesRequest implements WithTimeRangeValidation {
 
   @Nullable
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate dateFrom;
 
   @Nullable
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate dateTo;
 
   @NotNull

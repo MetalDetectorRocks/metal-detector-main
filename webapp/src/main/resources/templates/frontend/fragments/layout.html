@@ -42,17 +42,17 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <form class="search-form form-group" action="#" th:action="@{/artists/search}" method="GET">
               <label for="query"></label>
-              <input id="query" type="text" class="form-control" th:name="query" placeholder="Search" required>
+              <input id="query" autocomplete="off" type="text" class="form-control" th:name="query" placeholder="Search" required>
             </form>
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/blog}">Blog</a>
+                <a class="nav-link" th:classappend="${#request.requestURI == '/blog' ? 'active':''}" href="#" th:href="@{/blog}">Blog</a>
+              </li>
+              <li class="nav-item ">
+                <a class="nav-link" th:classappend="${#request.requestURI == '/my-artists' ? 'active':''}" href="#" th:href="@{/my-artists}">My Artists</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/my-artists}">My Artists</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/releases}">Releases</a>
+                <a class="nav-link" th:classappend="${#request.requestURI == '/releases' ? 'active':''}" href="#" th:href="@{/releases}">Releases</a>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

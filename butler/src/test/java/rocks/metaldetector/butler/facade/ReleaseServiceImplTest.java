@@ -3,7 +3,9 @@ package rocks.metaldetector.butler.facade;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -21,6 +23,8 @@ import rocks.metaldetector.butler.client.transformer.ButlerReleaseRequestTransfo
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
+import rocks.metaldetector.support.PageRequest;
+import rocks.metaldetector.support.TimeRange;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -58,50 +62,107 @@ class ReleaseServiceImplTest implements WithAssertions {
     reset(butlerClient, releaseRequestTransformer, releaseResponseTransformer, importJobResponseTransformer);
   }
 
-  @Test
-  @DisplayName("Querying releases should use request transformer to transform arguments")
-  void query_releases_should_transform_request_arguments() {
-    // given
-    Iterable<String> artists = List.of("A", "B", "C");
-    LocalDate from = LocalDate.of(2020, 1, 1);
-    LocalDate to = LocalDate.of(2020, 12, 31);
+  @DisplayName("Test of findAllReleases()")
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @Nested
+  class FindAllReleasesTest {
 
-    // when
-    underTest.findReleases(artists, from, to);
+    @Test
+    @DisplayName("Should use request transformer to transform arguments")
+    void should_transform_request_arguments() {
+      // given
+      Iterable<String> artists = List.of("A", "B", "C");
+      TimeRange timeRange = new TimeRange(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31));
 
-    // then
-    verify(releaseRequestTransformer, times(1)).transform(artists, from, to);
+      // when
+      underTest.findAllReleases(artists, timeRange);
+
+      // then
+      verify(releaseRequestTransformer, times(1)).transform(artists, timeRange, null);
+    }
+
+    @Test
+    @DisplayName("Should pass transformed arguments to butler client")
+    void Should_call_butler_client() {
+      // given
+      ButlerReleasesRequest request = ButlerReleaseRequestFactory.createDefault();
+      when(releaseRequestTransformer.transform(any(), any(), any())).thenReturn(request);
+
+      // when
+      underTest.findAllReleases(null, null);
+
+      // then
+      verify(butlerClient, times(1)).queryAllReleases(eq(request));
+    }
+
+    @Test
+    @DisplayName("Should transform and return response from butler client")
+    void should_return_transformed_response() {
+      // given
+      ButlerReleasesResponse response = ButlerReleasesResponseFactory.createDefault();
+      List<ReleaseDto> expectedResult = List.of(ReleaseDtoFactory.createDefault());
+      when(butlerClient.queryAllReleases(any())).thenReturn(response);
+      when(releaseResponseTransformer.transform(response)).thenReturn(expectedResult);
+
+      // when
+      List<ReleaseDto> releases = underTest.findAllReleases(null, null);
+
+      // then
+      verify(releaseResponseTransformer, times(1)).transform(response);
+      assertThat(releases).isEqualTo(expectedResult);
+    }
   }
 
-  @Test
-  @DisplayName("Querying releases should pass transformed arguments to butler client")
-  void query_releases_should_call_butler_client() {
-    // given
-    ButlerReleasesRequest request = ButlerReleaseRequestFactory.createDefault();
-    when(releaseRequestTransformer.transform(any(), any(), any())).thenReturn(request);
+  @DisplayName("Test of findReleases() with PageRequest")
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @Nested
+  class FindReleasesTest {
 
-    // when
-    underTest.findReleases(null, null, null);
+    @Test
+    @DisplayName("Should use request transformer to transform arguments")
+    void should_transform_request_arguments() {
+      // given
+      Iterable<String> artists = List.of("A", "B", "C");
+      TimeRange timeRange = new TimeRange(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31));
+      PageRequest pageRequest = new PageRequest(10, 1);
 
-    // then
-    verify(butlerClient, times(1)).queryReleases(eq(request));
-  }
+      // when
+      underTest.findReleases(artists, timeRange, pageRequest);
 
-  @Test
-  @DisplayName("Querying releases should transform and return response from butler client")
-  void query_releases_should_return_transformed_response() {
-    // given
-    ButlerReleasesResponse response = ButlerReleasesResponseFactory.createDefault();
-    List<ReleaseDto> expectedResult = List.of(ReleaseDtoFactory.createDefault());
-    when(butlerClient.queryReleases(any())).thenReturn(response);
-    when(releaseResponseTransformer.transform(response)).thenReturn(expectedResult);
+      // then
+      verify(releaseRequestTransformer, times(1)).transform(artists, timeRange, pageRequest);
+    }
 
-    // when
-    List<ReleaseDto> releases = underTest.findReleases(null, null, null);
+    @Test
+    @DisplayName("Should pass transformed arguments to butler client")
+    void Should_call_butler_client() {
+      // given
+      ButlerReleasesRequest request = ButlerReleaseRequestFactory.createDefault();
+      when(releaseRequestTransformer.transform(any(), any(), any())).thenReturn(request);
 
-    // then
-    verify(releaseResponseTransformer, times(1)).transform(response);
-    assertThat(releases).isEqualTo(expectedResult);
+      // when
+      underTest.findReleases(null, null, null);
+
+      // then
+      verify(butlerClient, times(1)).queryReleases(eq(request));
+    }
+
+    @Test
+    @DisplayName("Should transform and return response from butler client")
+    void should_return_transformed_response() {
+      // given
+      ButlerReleasesResponse response = ButlerReleasesResponseFactory.createDefault();
+      List<ReleaseDto> expectedResult = List.of(ReleaseDtoFactory.createDefault());
+      when(butlerClient.queryReleases(any())).thenReturn(response);
+      when(releaseResponseTransformer.transform(response)).thenReturn(expectedResult);
+
+      // when
+      List<ReleaseDto> releases = underTest.findReleases(null, null, null);
+
+      // then
+      verify(releaseResponseTransformer, times(1)).transform(response);
+      assertThat(releases).isEqualTo(expectedResult);
+    }
   }
 
   @Test

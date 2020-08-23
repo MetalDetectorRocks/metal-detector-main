@@ -5,7 +5,8 @@ module.exports = {
     mode: "production",
     entry: {
         search: "./src/bundles/search.ts",
-        myartists: "./src/bundles/my-artists.ts"
+        myartists: "./src/bundles/my-artists.ts",
+        homepage: "./src/bundles/homepage.ts"
     },
     output: {
         filename: "[name].bundle.js",

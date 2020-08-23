@@ -21,6 +21,10 @@ nav .container {
     white-space: nowrap;
 }
 
+.nav-link.active {
+    color: #1D7097;
+}
+
 .navbar-expand-lg .navbar-nav {
     align-items: center;
 }
@@ -50,6 +54,8 @@ nav .container {
     background-color: #282828;
     color: #adafae !important;
     border-color: #404040;
+    font-size: 1.5rem;
+    font-family: 'Metal Mania', cursive;
 }
 
 .search-form input:focus {
@@ -57,5 +63,5 @@ nav .container {
 }
 
 .search-form input::placeholder {
-    color: #adafae;
+    color: #5c5c5c;
 }

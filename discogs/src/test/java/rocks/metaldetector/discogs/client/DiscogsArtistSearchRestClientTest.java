@@ -176,7 +176,7 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
   @DisplayName("Tests for method searchById()")
   class SearchByIdTest {
 
-    @ParameterizedTest(name = "If the artistId is '{0}', an IllegalArgumentException is thrown")
+    @ParameterizedTest(name = "If the artistId is <{0}>, an IllegalArgumentException is thrown")
     @MethodSource("invalidArtistIdProvider")
     @DisplayName("An IllegalArgumentException is thrown when artistId is invalid.")
     void test_invalid_artist_id(String artistId) {

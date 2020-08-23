@@ -21,13 +21,13 @@ import static org.mockito.Mockito.when;
 import static rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
-class DetectorReleasesResponseTransformerTest implements WithAssertions {
+class ReleasesResponseTransformerTest implements WithAssertions {
 
   @Mock
   private FollowArtistService followArtistService;
 
   @InjectMocks
-  private DetectorReleasesResponseTransformer underTest;
+  private ReleasesResponseTransformer underTest;
 
   @AfterEach
   void tearDown() {
@@ -35,7 +35,7 @@ class DetectorReleasesResponseTransformerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Should transform list of ReleaseDto to a list of DetectorReleasesResponse")
+  @DisplayName("Should transform list of ReleaseDto to a list of ReleasesResponse")
   void should_transform() {
     // given
     String artistName1 = "Metallica";

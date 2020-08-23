@@ -1,18 +1,22 @@
 package rocks.metaldetector.spotify.client.transformer;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
 import rocks.metaldetector.support.Pagination;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class SpotifyArtistSearchResultTransformer {
+
+  private final SpotifyArtistTransformer artistTransformer;
 
   public SpotifyArtistSearchResultDto transform(SpotifyArtistSearchResultContainer searchResult) {
     return SpotifyArtistSearchResultDto.builder()
@@ -34,20 +38,9 @@ public class SpotifyArtistSearchResultTransformer {
                                                                   : searchResult.getTotal() / searchResult.getLimit() + 1;
   }
 
-  private List<SpotifyArtistSearchResultEntryDto> transformArtistSearchResults(List<SpotifyArtist> results) {
+  private List<SpotifyArtistDto> transformArtistSearchResults(List<SpotifyArtist> results) {
     return results.stream()
-        .map(this::transformArtistSearchResult)
+        .map(artistTransformer::transform)
         .collect(Collectors.toList());
-  }
-
-  private SpotifyArtistSearchResultEntryDto transformArtistSearchResult(SpotifyArtist result) {
-    return SpotifyArtistSearchResultEntryDto.builder()
-        .id(result.getId())
-        .name(result.getName())
-        .imageUrl(result.getImages().isEmpty() ? "" : result.getImages().get(0).getUrl())
-        .uri(result.getUri())
-        .genres(result.getGenres())
-        .popularity(result.getPopularity())
-        .build();
   }
 }

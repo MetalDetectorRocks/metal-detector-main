@@ -5,6 +5,9 @@ import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,6 +19,8 @@ import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 
 import java.io.Reader;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -36,34 +41,45 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
   @InjectMocks
   ReleaseButlerRestClientMock underTest;
 
-  @Test
+  @ParameterizedTest(name = "Should use resource loader to load a resource from classpath")
+  @MethodSource("queryMethodProvider")
   @DisplayName("Should use resource loader to load a resource from classpath")
-  void test() throws Exception {
+  void test(Function<ReleaseButlerRestClientMock, ButlerReleasesResponse> function) throws Exception {
     // given
     when(resourceLoader.getResource(anyString())).thenReturn(new ClassPathResource(""));
     when(objectMapper.readValue(any(Reader.class), any(Class.class))).thenReturn(null);
 
     // when
-    underTest.queryReleases(null);
+    function.apply(underTest);
 
     // then
     verify(resourceLoader, times(1)).getResource(startsWith("classpath:"));
   }
 
-  @Test
+  @ParameterizedTest(name = "Should use object mapper to map classpath resource that should be returned")
+  @MethodSource("queryMethodProvider")
   @DisplayName("Should use object mapper to map classpath resource that should be returned")
-  void should_return_mock_query_response() throws Exception {
+  void should_return_mock_query_response(Function<ReleaseButlerRestClientMock, ButlerReleasesResponse> function) throws Exception {
     // given
     ButlerReleasesResponse expectedResult = ButlerReleasesResponseFactory.createDefault();
     when(resourceLoader.getResource(anyString())).thenReturn(new ClassPathResource(""));
     when(objectMapper.readValue(any(Reader.class), any(Class.class))).thenReturn(expectedResult);
 
     // when
-    ButlerReleasesResponse response = underTest.queryReleases(null);
+    ButlerReleasesResponse response = function.apply(underTest);
 
     // then
     verify(objectMapper, times(1)).readValue(any(Reader.class), any(Class.class));
     assertThat(response).isEqualTo(expectedResult);
+  }
+
+  private static Stream<Arguments> queryMethodProvider() {
+    Function<ReleaseButlerRestClientMock, ButlerReleasesResponse> queryReleases = underTest -> underTest.queryReleases(null);
+    Function<ReleaseButlerRestClientMock, ButlerReleasesResponse> queryAllReleases = underTest -> underTest.queryAllReleases(null);
+    return Stream.of(
+            Arguments.of(queryReleases),
+            Arguments.of(queryAllReleases)
+    );
   }
 
   @Test

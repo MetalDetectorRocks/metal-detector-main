@@ -8,8 +8,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
-import rocks.metaldetector.testutil.DtoFactory.DetectorReleaseRequestFactory;
-import rocks.metaldetector.web.transformer.DetectorReleasesResponseTransformer;
+import rocks.metaldetector.testutil.DtoFactory.ReleaseRequestFactory;
+import rocks.metaldetector.web.transformer.ReleasesResponseTransformer;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -17,7 +17,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static rocks.metaldetector.config.constants.Endpoints.Rest.COVER_JOB;
 import static rocks.metaldetector.config.constants.Endpoints.Rest.IMPORT_JOB;
+import static rocks.metaldetector.config.constants.Endpoints.Rest.QUERY_ALL_RELEASES;
 import static rocks.metaldetector.config.constants.Endpoints.Rest.QUERY_RELEASES;
+import static rocks.metaldetector.testutil.DtoFactory.PaginatedReleaseRequestFactory;
 
 @WebMvcTest(controllers = ReleasesRestController.class)
 public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
@@ -26,18 +28,28 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
   private ReleaseService releaseService;
 
   @MockBean
-  private DetectorReleasesResponseTransformer releasesResponseTransformer;
+  private ReleasesResponseTransformer releasesResponseTransformer;
 
   @Nested
   @DisplayName("Administrator is allowed to send requests to all endpoints")
   class AdministratorRoleTest {
 
     @Test
+    @DisplayName("Administrator is allowed to POST on endpoint " + QUERY_ALL_RELEASES + "'")
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void admin_is_allowed_to_query_all_releases() throws Exception {
+      mockMvc.perform(post(QUERY_ALL_RELEASES)
+              .content(objectMapper.writeValueAsString(ReleaseRequestFactory.createDefault()))
+              .contentType(APPLICATION_JSON))
+              .andExpect(status().isOk());
+    }
+
+    @Test
     @DisplayName("Administrator is allowed to POST on endpoint " + QUERY_RELEASES + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_query_releases() throws Exception {
       mockMvc.perform(post(QUERY_RELEASES)
-              .content(objectMapper.writeValueAsString(DetectorReleaseRequestFactory.createDefault()))
+              .content(objectMapper.writeValueAsString(PaginatedReleaseRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON))
               .andExpect(status().isOk());
     }
@@ -74,11 +86,21 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
   class UserRoleTest {
 
     @Test
+    @DisplayName("User is not allowed to POST on endpoint " + QUERY_ALL_RELEASES + "'")
+    @WithMockUser(roles = "USER")
+    void user_is_not_allowed_to_query_all_releases() throws Exception {
+      mockMvc.perform(post(QUERY_ALL_RELEASES)
+              .content(objectMapper.writeValueAsString(PaginatedReleaseRequestFactory.createDefault()))
+              .contentType(APPLICATION_JSON))
+              .andExpect(status().isForbidden());
+    }
+
+    @Test
     @DisplayName("User is allowed to POST on endpoint " + QUERY_RELEASES + "'")
     @WithMockUser(roles = "USER")
     void user_is_allowed_to_query_releases() throws Exception {
       mockMvc.perform(post(QUERY_RELEASES)
-              .content(objectMapper.writeValueAsString(DetectorReleaseRequestFactory.createDefault()))
+              .content(objectMapper.writeValueAsString(PaginatedReleaseRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON))
               .andExpect(status().isOk());
     }
@@ -105,8 +127,8 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
     @WithMockUser(roles = "USER")
     void user_not_is_allowed_to_create_retry_cover_download_job() throws Exception {
       mockMvc.perform(post(COVER_JOB)
-                          .contentType(APPLICATION_JSON))
-          .andExpect(status().isForbidden());
+              .contentType(APPLICATION_JSON))
+              .andExpect(status().isForbidden());
     }
   }
 }

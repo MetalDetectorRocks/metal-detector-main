@@ -8,12 +8,13 @@ import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.user.UserDto;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultEntryDto;
 import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
-import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
+import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
+import rocks.metaldetector.web.api.request.ReleasesRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
@@ -115,14 +116,27 @@ public class DtoFactory {
     }
   }
 
-  public static class DetectorReleaseRequestFactory {
+  public static class ReleaseRequestFactory {
 
-    public static DetectorReleasesRequest createDefault() {
-      return DetectorReleasesRequest.builder()
+    public static ReleasesRequest createDefault() {
+      return ReleasesRequest.builder()
           .artists(List.of("A", "B", "C"))
           .dateFrom(LocalDate.now())
           .dateTo(LocalDate.now().plusDays(30))
           .build();
+    }
+  }
+
+  public static class PaginatedReleaseRequestFactory {
+
+    public static PaginatedReleasesRequest createDefault() {
+      return PaginatedReleasesRequest.builder()
+              .page(1)
+              .size(10)
+              .artists(List.of("A", "B", "C"))
+              .dateFrom(LocalDate.now())
+              .dateTo(LocalDate.now().plusDays(30))
+              .build();
     }
   }
 
@@ -235,17 +249,21 @@ public class DtoFactory {
       return SpotifyArtistSearchResultDto.builder()
           .pagination(new Pagination(1, 1, 10))
           .searchResults(List.of(
-              SpotifyArtistSearchResultEntryDtoFactory.withArtistName("A"),
-              SpotifyArtistSearchResultEntryDtoFactory.withArtistName("B")
+              SpotifyArtistDtoFactory.withArtistName("A"),
+              SpotifyArtistDtoFactory.withArtistName("B")
           ))
           .build();
     }
   }
 
-  public static class SpotifyArtistSearchResultEntryDtoFactory {
+  public static class SpotifyArtistDtoFactory {
 
-    static SpotifyArtistSearchResultEntryDto withArtistName(String artistName) {
-      return SpotifyArtistSearchResultEntryDto.builder()
+    public static SpotifyArtistDto createDefault() {
+      return withArtistName("Slayer");
+    }
+
+    public static SpotifyArtistDto withArtistName(String artistName) {
+      return SpotifyArtistDto.builder()
           .popularity(100)
           .genres(List.of("Black Metal"))
           .id("abcdef12345")

@@ -5,26 +5,26 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
-import rocks.metaldetector.web.api.response.DetectorReleasesResponse;
+import rocks.metaldetector.web.api.response.ReleasesResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class DetectorReleasesResponseTransformer {
+public class ReleasesResponseTransformer {
 
   private final FollowArtistService followArtistService;
 
-  public List<DetectorReleasesResponse> transformListOf(List<ReleaseDto> releases) {
+  public List<ReleasesResponse> transformListOf(List<ReleaseDto> releases) {
     var followedArtistsNames = followArtistService.getFollowedArtistsOfCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
     return releases.stream()
                    .map(release -> transform(release, followedArtistsNames))
                    .collect(Collectors.toList());
   }
 
-  private DetectorReleasesResponse transform(ReleaseDto release, List<String> followedArtistsNames) {
-    return DetectorReleasesResponse.builder()
+  private ReleasesResponse transform(ReleaseDto release, List<String> followedArtistsNames) {
+    return ReleasesResponse.builder()
             .artist(release.getArtist())
             .albumTitle(release.getAlbumTitle())
             .releaseDate(release.getReleaseDate())

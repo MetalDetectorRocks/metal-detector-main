@@ -12,6 +12,8 @@ import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.spotify.facade.SpotifyService;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.util.Comparator;
@@ -25,6 +27,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   private final UserRepository userRepository;
   private final ArtistRepository artistRepository;
+  private final SpotifyService spotifyService;
   private final DiscogsService discogsService;
   private final ArtistTransformer artistTransformer;
   private final CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
@@ -72,8 +75,17 @@ public class FollowArtistServiceImpl implements FollowArtistService {
       return artistRepository.findByExternalIdAndSource(externalId, source).get();
     }
 
-    DiscogsArtistDto artist = discogsService.searchArtistById(externalId);
-    ArtistEntity artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl(), source);
+    ArtistEntity artistEntity = switch (source) {
+      case DISCOGS -> {
+        DiscogsArtistDto artist = discogsService.searchArtistById(externalId);
+        yield new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl(), source);
+      }
+      case SPOTIFY -> {
+        SpotifyArtistDto artist = spotifyService.searchArtistById(externalId);
+        yield new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl(), source);
+      }
+    };
+
     return artistRepository.save(artistEntity);
   }
 

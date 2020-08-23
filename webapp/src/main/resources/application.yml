@@ -69,6 +69,7 @@ spotify:
 
 metal-release-butler:
   host: http://localhost:8095
+  releases-url: ${metal-release-butler.host}/rest/v1/releases
   unpaginated-releases-url: ${metal-release-butler.host}/rest/v1/releases/unpaginated
   import-url: ${metal-release-butler.host}/rest/v1/releases/import
   retry-cover-download-url: ${metal-release-butler.host}/rest/v1/releases/cover-reload
