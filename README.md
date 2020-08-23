@@ -71,7 +71,7 @@ If you start the application with the default Spring profile, all emails sent by
 
 To start the application locally in PROD profile, the following preparatory actions are necessary:
 
-1. Complete steps 1 to 6 from [Run application locally (Default profile)](#run-application-locally-default).
+1. Complete steps 1 to 7 from [Run application locally (Default profile)](#run-application-locally-default).
 
 2. Define the email server connection details in file `application-preview.yml`. Define at least the following properties for the connection:
     - `spring.mail.host`
