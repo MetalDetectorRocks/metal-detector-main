@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.LocalDate;
 
@@ -17,11 +14,19 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonPropertyOrder({
+    "page",
+    "size",
     "dateFrom",
     "dateTo",
     "artists"
 })
 public class ButlerReleasesRequest {
+
+  @JsonProperty("page")
+  private int page;
+
+  @JsonProperty("size")
+  private int size;
 
   @JsonProperty("dateFrom")
   private LocalDate dateFrom;

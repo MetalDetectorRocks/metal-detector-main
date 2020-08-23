@@ -5,6 +5,8 @@ import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.support.PageRequest;
+import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.web.api.response.HomepageResponse;
 
 import java.time.LocalDate;
@@ -24,21 +26,21 @@ public class HomepageServiceImpl implements HomepageService {
   public HomepageResponse createHomeResponse() {
     List<String> followedArtists = followArtistService.getFollowedArtistsOfCurrentUser()
         .stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
-    LocalDate now = LocalDate.now();
 
-    List<ReleaseDto> upcomingReleases = findUpcomingReleases(followedArtists, now);
-
+    List<ReleaseDto> upcomingReleases = findUpcomingReleases(followedArtists);
     return HomepageResponse.builder()
         .upcomingReleases(upcomingReleases)
         .build();
   }
 
-  private List<ReleaseDto> findUpcomingReleases(List<String> followedArtists, LocalDate now) {
+  private List<ReleaseDto> findUpcomingReleases(List<String> followedArtists) {
     if (followedArtists.isEmpty()) {
       return Collections.emptyList();
     }
 
-    return releaseService.findReleases(followedArtists, now, now.plusMonths(6))
-        .stream().limit(RESULT_LIMIT).collect(Collectors.toList());
+    LocalDate now = LocalDate.now();
+    TimeRange timeRange = new TimeRange(now, now.plusMonths(6));
+    PageRequest pageRequest = new PageRequest(1, RESULT_LIMIT);
+    return releaseService.findReleases(followedArtists, timeRange, pageRequest);
   }
 }

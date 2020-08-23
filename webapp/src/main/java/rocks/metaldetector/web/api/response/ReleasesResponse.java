@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DetectorReleasesResponse {
+public class ReleasesResponse {
 
   private String artist;
   private List<String> additionalArtists;

@@ -2,13 +2,16 @@ package rocks.metaldetector.butler.facade;
 
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
+import rocks.metaldetector.support.PageRequest;
+import rocks.metaldetector.support.TimeRange;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface ReleaseService {
 
-  List<ReleaseDto> findReleases(Iterable<String> artists, LocalDate dateFrom, LocalDate dateTo);
+  List<ReleaseDto> findReleases(Iterable<String> artists, TimeRange timeRange, PageRequest pageRequest);
+
+  List<ReleaseDto> findAllReleases(Iterable<String> artists, TimeRange timeRange);
 
   void createImportJob();
 

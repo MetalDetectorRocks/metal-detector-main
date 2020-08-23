@@ -12,9 +12,12 @@ import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.web.api.request.DetectorReleasesRequest;
-import rocks.metaldetector.web.api.response.DetectorReleasesResponse;
-import rocks.metaldetector.web.transformer.DetectorReleasesResponseTransformer;
+import rocks.metaldetector.support.PageRequest;
+import rocks.metaldetector.support.TimeRange;
+import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
+import rocks.metaldetector.web.api.request.ReleasesRequest;
+import rocks.metaldetector.web.api.response.ReleasesResponse;
+import rocks.metaldetector.web.transformer.ReleasesResponseTransformer;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -26,34 +29,47 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class ReleasesRestController {
 
   private final ReleaseService releaseService;
-  private final DetectorReleasesResponseTransformer releasesResponseTransformer;
+  private final ReleasesResponseTransformer releasesResponseTransformer;
+
+  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+  @PostMapping(path = Endpoints.Rest.QUERY_ALL_RELEASES,
+               consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  public ResponseEntity<List<ReleasesResponse>> findAllReleases(@Valid @RequestBody ReleasesRequest request) {
+    var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
+    List<ReleaseDto> releaseDtos = releaseService.findAllReleases(request.getArtists(), timeRange);
+    List<ReleasesResponse> response = releasesResponseTransformer.transformListOf(releaseDtos);
+    return ResponseEntity.ok(response);
+  }
 
   @PostMapping(path = Endpoints.Rest.QUERY_RELEASES,
                consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<List<DetectorReleasesResponse>> getReleases(@Valid @RequestBody DetectorReleasesRequest request) {
-    List<ReleaseDto> releaseDtos = releaseService.findReleases(request.getArtists(), request.getDateFrom(), request.getDateTo());
-    List<DetectorReleasesResponse> response = releasesResponseTransformer.transformListOf(releaseDtos);
+  public ResponseEntity<List<ReleasesResponse>> findReleases(@Valid @RequestBody PaginatedReleasesRequest request) {
+    var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
+    var pageRequest = new PageRequest(request.getPage(), request.getSize());
+    List<ReleaseDto> releaseDtos = releaseService.findReleases(request.getArtists(), timeRange, pageRequest);
+    List<ReleasesResponse> response = releasesResponseTransformer.transformListOf(releaseDtos);
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping(path = Endpoints.Rest.IMPORT_JOB)
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+  @PostMapping(path = Endpoints.Rest.IMPORT_JOB)
   public ResponseEntity<Void> createImportJob() {
     releaseService.createImportJob();
     return ResponseEntity.status(CREATED).build();
   }
 
+  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   @GetMapping(path = Endpoints.Rest.IMPORT_JOB,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   public ResponseEntity<List<ImportJobResultDto>> getImportJobResults() {
     List<ImportJobResultDto> response = releaseService.queryImportJobResults();
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping(path = Endpoints.Rest.COVER_JOB)
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+  @PostMapping(path = Endpoints.Rest.COVER_JOB)
   public ResponseEntity<Void> createRetryCoverDownloadJob() {
     releaseService.createRetryCoverDownloadJob();
     return ResponseEntity.ok().build();

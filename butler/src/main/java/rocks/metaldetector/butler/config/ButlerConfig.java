@@ -13,6 +13,7 @@ public class ButlerConfig {
 
   private String host;
   private String accessToken;
+  private String releasesUrl;
   private String unpaginatedReleasesUrl;
   private String importUrl;
   private String retryCoverDownloadUrl;

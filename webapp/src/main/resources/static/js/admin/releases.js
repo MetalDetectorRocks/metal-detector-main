@@ -22,7 +22,7 @@ function getReleases() {
   dateFrom.setDate(dateFrom.getDate() - 90);
   return $("#releases-table").DataTable({
       "ajax": {
-        "url": "/rest/v1/releases",
+        "url": "/rest/v1/releases/all",
         "type": "POST",
         "dataType": "json",
         "contentType": "application/json",

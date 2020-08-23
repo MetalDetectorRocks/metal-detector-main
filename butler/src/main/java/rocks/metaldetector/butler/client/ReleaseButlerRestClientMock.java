@@ -30,7 +30,16 @@ public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
   private final ObjectMapper objectMapper;
 
   @Override
+  public ButlerReleasesResponse queryAllReleases(ButlerReleasesRequest request) {
+    return loadReleasesFromFile();
+  }
+
+  @Override
   public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {
+    return loadReleasesFromFile();
+  }
+
+  private ButlerReleasesResponse loadReleasesFromFile() {
     Resource mockResource = resourceLoader.getResource("classpath:mock-releases.json");
     try (Reader reader = new InputStreamReader(mockResource.getInputStream(), UTF_8)) {
       return objectMapper.readValue(reader, ButlerReleasesResponse.class);

@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface ReleaseButlerRestClient {
 
+  ButlerReleasesResponse queryAllReleases(ButlerReleasesRequest request);
+
   ButlerReleasesResponse queryReleases(ButlerReleasesRequest request);
 
   void createImportJob();
