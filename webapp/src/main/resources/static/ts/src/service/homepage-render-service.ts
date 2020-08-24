@@ -4,6 +4,7 @@ import {HomepageResponse} from "../model/homepage-response.model";
 import {AbstractRenderService} from "./abstract-render-service";
 import {Artist} from "../model/artist.model";
 import {Release} from "../model/release.model";
+import {Utils} from "../utils/utils";
 
 export class HomepageRenderService extends AbstractRenderService<HomepageResponse> {
 
@@ -92,16 +93,12 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     }
 
     private createReleasedInString(releaseDate: Date): string {
-        const now = Date.now();
-        const then = new Date(releaseDate).valueOf();
-        const releasedInDays = Math.round((now - then) / 1000 / 60 / 60 / 24);
+        const releasedInDays = Utils.calculateTimeRange(releaseDate);
         return `In ${releasedInDays} days`;
     }
 
     private createFollowedSinceString(followedSince: Date): string {
-        const now = Date.now();
-        const then = new Date(followedSince).valueOf();
-        const followedForDays = Math.round((now - then) / 1000 / 60 / 60 / 24);
+        const followedForDays = Utils.calculateTimeRange(followedSince)
         return `${followedForDays} days ago`;
     }
 }
