@@ -18,7 +18,7 @@ export class ReleasesRestClient extends AbstractRestClient {
             artists: []
         }
 
-        return axios.post(
+        return await axios.post(
             this.RELEASES_URL,
             request,
             axiosConfig

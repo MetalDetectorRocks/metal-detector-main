@@ -27,7 +27,7 @@ export class ArtistsRestClient extends AbstractRestClient {
             size: 40
         }
 
-        return axios.get(
+        return await axios.get(
             this.SEARCH_URL, axiosConfig
         ).then((response: AxiosResponse<SearchResponse>) => {
             return response.data;
@@ -42,7 +42,7 @@ export class ArtistsRestClient extends AbstractRestClient {
             page: this.getPageFromUrl()
         }
 
-        return axios.get(
+        return await axios.get(
             this.MY_ARTISTS_URL, axiosConfig
         ).then((response: AxiosResponse<MyArtistsResponse>) => {
             return response.data;
@@ -53,7 +53,7 @@ export class ArtistsRestClient extends AbstractRestClient {
     }
 
     public async followArtist(artistId: string, source: string): Promise<any> {
-        return axios.post(
+        return await axios.post(
             `${this.FOLLOW_ARTISTS_URL}/${source}/${artistId}`,
             {},
             axiosConfig
@@ -64,7 +64,7 @@ export class ArtistsRestClient extends AbstractRestClient {
     }
 
     public async unfollowArtist(artistId: string, source: string): Promise<any> {
-        return axios.post(
+        return await axios.post(
             `${this.UNFOLLOW_ARTISTS_URL}/${source}/${artistId}`,
             {},
             axiosConfig

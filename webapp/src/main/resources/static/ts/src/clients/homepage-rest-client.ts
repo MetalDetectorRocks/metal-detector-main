@@ -12,7 +12,7 @@ export class HomepageRestClient extends AbstractRestClient {
     }
 
     public async fetchHomepage(): Promise<HomepageResponse> {
-        return axios.get(
+        return await axios.get(
           this.HOMEPAGE_URL, axiosConfig
         ).then((response: AxiosResponse<HomepageResponse>) => {
             return response.data;
