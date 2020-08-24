@@ -34,11 +34,11 @@ import rocks.metaldetector.web.transformer.ReleasesResponseTransformer;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -99,18 +99,20 @@ class ReleasesRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should use transformer to transform releases to a list of ReleasesResponse")
+    @DisplayName("Should use transformer to transform each ReleaseDto")
     void should_use_releases_transformer() {
       // given
       var request = ReleaseRequestFactory.createDefault();
-      var releases = List.of(ReleaseDtoFactory.createDefault());
-      doReturn(releases).when(releasesService).findAllReleases(any(), any());
+      var release1 = ReleaseDtoFactory.withArtistName("Metallica");
+      var release2 = ReleaseDtoFactory.withArtistName("Slayer");
+      doReturn(List.of(release1, release2)).when(releasesService).findAllReleases(any(), any());
 
       // when
       restAssuredUtils.doPost(request);
 
       // then
-      verify(releasesResponseTransformer, times(1)).transformListOf(releases);
+      verify(releasesResponseTransformer, times(1)).transform(eq(release1));
+      verify(releasesResponseTransformer, times(1)).transform(eq(release2));
     }
 
     @Test
@@ -118,9 +120,9 @@ class ReleasesRestControllerTest implements WithAssertions {
     void should_return_releases() {
       // given
       var request = ReleaseRequestFactory.createDefault();
-      var transformedResponse = List.of(new ReleasesResponse());
-      doReturn(Collections.emptyList()).when(releasesService).findAllReleases(any(), any());
-      doReturn(transformedResponse).when(releasesResponseTransformer).transformListOf(any());
+      var transformedResponse = new ReleasesResponse();
+      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(releasesService).findAllReleases(any(), any());
+      doReturn(transformedResponse).when(releasesResponseTransformer).transform(any());
 
       // when
       var validatableResponse = restAssuredUtils.doPost(request);
@@ -131,7 +133,7 @@ class ReleasesRestControllerTest implements WithAssertions {
           .statusCode(OK.value());
 
       var result = validatableResponse.extract().as(ReleasesResponse[].class);
-      assertThat(Arrays.asList(result)).isEqualTo(transformedResponse);
+      assertThat(Arrays.asList(result)).isEqualTo(List.of(transformedResponse));
     }
 
     @ParameterizedTest(name = "Should return 400 on invalid query request <{0}>")
@@ -189,18 +191,20 @@ class ReleasesRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should use transformer to transform releases to a list of ReleasesResponse")
+    @DisplayName("Should use transformer to transform each ReleaseDto")
     void should_use_releases_transformer() {
       // given
       var request = PaginatedReleaseRequestFactory.createDefault();
-      var releases = List.of(ReleaseDtoFactory.createDefault());
-      doReturn(releases).when(releasesService).findReleases(any(), any(), any());
+      var release1 = ReleaseDtoFactory.withArtistName("Metallica");
+      var release2 = ReleaseDtoFactory.withArtistName("Slayer");
+      doReturn(List.of(release1, release2)).when(releasesService).findReleases(any(), any(), any());
 
       // when
       restAssuredUtils.doPost(request);
 
       // then
-      verify(releasesResponseTransformer, times(1)).transformListOf(releases);
+      verify(releasesResponseTransformer, times(1)).transform(eq(release1));
+      verify(releasesResponseTransformer, times(1)).transform(eq(release2));
     }
 
     @Test
@@ -208,9 +212,9 @@ class ReleasesRestControllerTest implements WithAssertions {
     void should_return_releases() {
       // given
       var request = PaginatedReleaseRequestFactory.createDefault();
-      var transformedResponse = List.of(new ReleasesResponse());
-      doReturn(Collections.emptyList()).when(releasesService).findReleases(any(), any(), any());
-      doReturn(transformedResponse).when(releasesResponseTransformer).transformListOf(any());
+      var transformedResponse = new ReleasesResponse();
+      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(releasesService).findReleases(any(), any(), any());
+      doReturn(transformedResponse).when(releasesResponseTransformer).transform(any());
 
       // when
       var validatableResponse = restAssuredUtils.doPost(request);
@@ -221,7 +225,7 @@ class ReleasesRestControllerTest implements WithAssertions {
               .statusCode(OK.value());
 
       var result = validatableResponse.extract().as(ReleasesResponse[].class);
-      assertThat(Arrays.asList(result)).isEqualTo(transformedResponse);
+      assertThat(Arrays.asList(result)).isEqualTo(List.of(transformedResponse));
     }
 
     @ParameterizedTest(name = "Should return 400 on invalid query request <{0}>")

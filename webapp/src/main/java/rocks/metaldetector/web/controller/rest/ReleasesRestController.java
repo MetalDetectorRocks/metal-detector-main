@@ -21,6 +21,7 @@ import rocks.metaldetector.web.transformer.ReleasesResponseTransformer;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -38,7 +39,7 @@ public class ReleasesRestController {
   public ResponseEntity<List<ReleasesResponse>> findAllReleases(@Valid @RequestBody ReleasesRequest request) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
     List<ReleaseDto> releaseDtos = releaseService.findAllReleases(request.getArtists(), timeRange);
-    List<ReleasesResponse> response = releasesResponseTransformer.transformListOf(releaseDtos);
+    List<ReleasesResponse> response = releaseDtos.stream().map(releasesResponseTransformer::transform).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
 
@@ -49,7 +50,7 @@ public class ReleasesRestController {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
     var pageRequest = new PageRequest(request.getPage(), request.getSize());
     List<ReleaseDto> releaseDtos = releaseService.findReleases(request.getArtists(), timeRange, pageRequest);
-    List<ReleasesResponse> response = releasesResponseTransformer.transformListOf(releaseDtos);
+    List<ReleasesResponse> response = releaseDtos.stream().map(releasesResponseTransformer::transform).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
 
