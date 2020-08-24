@@ -27,7 +27,7 @@ h1, h2 {
     font-size: 1.3rem !important;
 }
 
-p {
+p, legend {
     color: #adafae !important;
 }
 
@@ -87,6 +87,22 @@ footer .list-inline-item {
 
 .follow-icon:hover {
     color: #FCFCFC;
+}
+
+/* Releases */
+.release-cover-img {
+    height: 22rem;
+    width: 22rem;
+    object-fit: cover;
+    border-right: 1px solid #404040;
+}
+
+#release-filter .custom-control {
+    margin-bottom: 0.5rem;
+}
+
+.custom-border-left {
+    border-left: 2px solid #404040;
 }
 
 /* Other */
