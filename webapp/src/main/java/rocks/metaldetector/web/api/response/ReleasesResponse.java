@@ -25,6 +25,5 @@ public class ReleasesResponse {
   private String metalArchivesAlbumUrl;
   private String source;
   private String state;
-  private boolean isFollowed;
 
 }

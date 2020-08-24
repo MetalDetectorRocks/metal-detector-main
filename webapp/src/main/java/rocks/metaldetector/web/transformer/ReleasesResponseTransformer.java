@@ -3,27 +3,13 @@ package rocks.metaldetector.web.transformer;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
-import rocks.metaldetector.service.artist.ArtistDto;
-import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.web.api.response.ReleasesResponse;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class ReleasesResponseTransformer {
 
-  private final FollowArtistService followArtistService;
-
-  public List<ReleasesResponse> transformListOf(List<ReleaseDto> releases) {
-    var followedArtistsNames = followArtistService.getFollowedArtistsOfCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
-    return releases.stream()
-                   .map(release -> transform(release, followedArtistsNames))
-                   .collect(Collectors.toList());
-  }
-
-  private ReleasesResponse transform(ReleaseDto release, List<String> followedArtistsNames) {
+  public ReleasesResponse transform(ReleaseDto release) {
     return ReleasesResponse.builder()
             .artist(release.getArtist())
             .albumTitle(release.getAlbumTitle())
@@ -36,7 +22,6 @@ public class ReleasesResponseTransformer {
             .metalArchivesAlbumUrl(release.getMetalArchivesAlbumUrl())
             .source(release.getSource())
             .state(release.getState())
-            .isFollowed(followedArtistsNames.contains(release.getArtist()))
             .build();
   }
 }
