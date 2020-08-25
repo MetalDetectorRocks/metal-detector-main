@@ -49,49 +49,39 @@ class HomepageServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("releaseService is called with followed artists' names")
-  void test_release_service_called_with_followed_artists_names() {
+  @DisplayName("releaseService is called to get upcoming releases")
+  void test_release_service_called_for_upcoming_releases() {
     // given
     var followedArtists = List.of(ArtistDtoFactory.withName("A"), ArtistDtoFactory.withName("B"));
     var followedArtistsNames = List.of("A", "B");
-    doReturn(followedArtists).when(followArtistService).getFollowedArtistsOfCurrentUser();
-
-    // when
-    underTest.createHomeResponse();
-
-    // then
-    verify(releaseService, times(1)).findReleases(eq(followedArtistsNames), any(), any());
-  }
-
-  @Test
-  @DisplayName("releaseService is called with correct dates")
-  void test_release_service_called_with_correct_dates() {
-    // given
     var now = LocalDate.now();
     var expectedTimeRange = new TimeRange(now, now.plusMonths(6));
-    var followedArtists = List.of(ArtistDtoFactory.withName("A"), ArtistDtoFactory.withName("B"));
+    var expectedPageRequest = new PageRequest(1, 4);
     doReturn(followedArtists).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
     // when
     underTest.createHomeResponse();
 
     // then
-    verify(releaseService, times(1)).findReleases(any(), eq(expectedTimeRange), any());
+    verify(releaseService, times(1)).findReleases(eq(followedArtistsNames), eq(expectedTimeRange), eq(expectedPageRequest));
   }
 
   @Test
-  @DisplayName("releaseService is called with a fixed page request")
-  void test_release_service_called_with_fixed_page_request() {
+  @DisplayName("releaseService is called to get recent releases")
+  void test_release_service_called_for_recent_releases() {
     // given
-    var expectedPageRequest = new PageRequest(1, 4);
     var followedArtists = List.of(ArtistDtoFactory.withName("A"), ArtistDtoFactory.withName("B"));
+    var followedArtistsNames = List.of("A", "B");
+    var now = LocalDate.now();
+    var expectedTimeRange = new TimeRange(now.minusMonths(6), now);
+    var expectedPageRequest = new PageRequest(1, 4);
     doReturn(followedArtists).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
     // when
     underTest.createHomeResponse();
 
     // then
-    verify(releaseService, times(1)).findReleases(any(), any(), eq(expectedPageRequest));
+    verify(releaseService, times(1)).findReleases(eq(followedArtistsNames), eq(expectedTimeRange), eq(expectedPageRequest));
   }
 
   @Test
@@ -112,13 +102,34 @@ class HomepageServiceImplTest implements WithAssertions {
   void test_upcoming_releases_are_returned() {
     // given
     List<ReleaseDto> upcomingReleases = List.of(ReleaseDtoFactory.withArtistName("A"), ReleaseDtoFactory.withArtistName("B"));
+    var now = LocalDate.now();
+    var expectedTimeRange = new TimeRange(now, now.plusMonths(6));
     doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfCurrentUser();
-    doReturn(upcomingReleases).when(releaseService).findReleases(any(), any(), any());
+    doReturn(upcomingReleases).when(releaseService).findReleases(any(), eq(expectedTimeRange), any());
 
     // when
     var result = underTest.createHomeResponse();
 
     // then
     assertThat(result.getUpcomingReleases()).isEqualTo(upcomingReleases);
+  }
+
+  @Test
+  @DisplayName("recent releases are returned")
+  void test_recent_releases_are_returned() {
+    // given
+    List<ReleaseDto> recentReleases = List.of(ReleaseDtoFactory.withArtistName("A"), ReleaseDtoFactory.withArtistName("B"));
+    var now = LocalDate.now();
+    var expectedTimeRangeRecent = new TimeRange(now.minusMonths(6), now);
+    var expectedTimeRangeUpcoming = new TimeRange(now, now.plusMonths(6));
+    doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfCurrentUser();
+    doReturn(recentReleases).when(releaseService).findReleases(any(), eq(expectedTimeRangeRecent), any());
+    doReturn(Collections.emptyList()).when(releaseService).findReleases(any(), eq(expectedTimeRangeUpcoming), any());
+
+    // when
+    var result = underTest.createHomeResponse();
+
+    // then
+    assertThat(result.getRecentReleases()).isEqualTo(recentReleases);
   }
 }

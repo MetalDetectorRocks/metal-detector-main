@@ -27,20 +27,33 @@ public class HomepageServiceImpl implements HomepageService {
     List<String> followedArtists = followArtistService.getFollowedArtistsOfCurrentUser()
         .stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
 
-    List<ReleaseDto> upcomingReleases = findUpcomingReleases(followedArtists);
+    LocalDate now = LocalDate.now();
+    PageRequest pageRequest = new PageRequest(1, RESULT_LIMIT);
+
+    List<ReleaseDto> upcomingReleases = findUpcomingReleases(followedArtists, now, pageRequest);
+    List<ReleaseDto> recentReleases = findRecentReleases(followedArtists, now, pageRequest);
+
     return HomepageResponse.builder()
         .upcomingReleases(upcomingReleases)
+        .recentReleases(recentReleases)
         .build();
   }
 
-  private List<ReleaseDto> findUpcomingReleases(List<String> followedArtists) {
+  private List<ReleaseDto> findUpcomingReleases(List<String> followedArtists, LocalDate now, PageRequest pageRequest) {
     if (followedArtists.isEmpty()) {
       return Collections.emptyList();
     }
 
-    LocalDate now = LocalDate.now();
     TimeRange timeRange = new TimeRange(now, now.plusMonths(6));
-    PageRequest pageRequest = new PageRequest(1, RESULT_LIMIT);
+    return releaseService.findReleases(followedArtists, timeRange, pageRequest);
+  }
+
+  private List<ReleaseDto> findRecentReleases(List<String> followedArtists, LocalDate now, PageRequest pageRequest) {
+    if (followedArtists.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    TimeRange timeRange = new TimeRange(now.minusMonths(6), now);
     return releaseService.findReleases(followedArtists, timeRange, pageRequest);
   }
 }
