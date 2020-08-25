@@ -13,11 +13,24 @@
         <template id="artist-card">
             <div class="col-lg-3">
                 <div class="card mb-3">
-                    <img class="vertical-card-img" src="#" alt="" id="thumb">
+                    <img class="vertical-card-img" src="#" alt="" id="artist-thumb">
                     <div class="card-body">
                         <p class="h5 card-title" id="artist-name"></p>
                     </div>
-                    <div class="card-footer text-muted" id="followed-since">
+                    <div class="card-footer text-muted" id="artist-followed-since">
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template id="release-card">
+            <div class="col-lg-3">
+                <div class="card mb-3">
+                    <img class="vertical-card-img" src="#" alt="" id="release-cover">
+                    <div class="card-body">
+                        <p class="h5 card-title" id="release-artist-name"></p>
+                        <p class="h6 card-subtitle" id="release-title"></p>
+                    </div>
+                    <div class="card-footer text-muted" id="release-date">
                     </div>
                 </div>
             </div>
@@ -26,8 +39,6 @@
         <h1 class="h4">Hell Yeah, <span sec:authentication="name">Username</span>!</h1>
 
         <div id="home-container" class="mb-3">
-            <h2 class="h5 mt-4 mb-2">Recently followed artists</h2>
-            <div id="recently-followed-row" class="row"></div>
         </div>
     </section>
 </body>
