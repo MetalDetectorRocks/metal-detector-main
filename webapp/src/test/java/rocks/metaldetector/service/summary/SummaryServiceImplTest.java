@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import rocks.metaldetector.testutil.DtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 
 import java.util.List;
@@ -23,12 +24,15 @@ class SummaryServiceImplTest implements WithAssertions {
   @Mock
   private ReleaseCollector releaseCollector;
 
+  @Mock
+  private ArtistCollector artistCollector;
+
   @InjectMocks
   private SummaryServiceImpl underTest;
 
   @AfterEach
   void tearDown() {
-    reset(releaseCollector);
+    reset(releaseCollector, artistCollector);
   }
 
   @Test
@@ -49,6 +53,16 @@ class SummaryServiceImplTest implements WithAssertions {
 
     // then
     verify(releaseCollector, times(1)).collectRecentReleases();
+  }
+
+  @Test
+  @DisplayName("artistCollector is called to get top followed artists")
+  void test_artist_collector_top_artists() {
+    // when
+    underTest.createSummaryResponse();
+
+    // then
+    verify(artistCollector, times(1)).collectTopFollowedArtists();
   }
 
   @Test
@@ -77,5 +91,19 @@ class SummaryServiceImplTest implements WithAssertions {
 
     // then
     assertThat(result.getRecentReleases()).isEqualTo(releases);
+  }
+
+  @Test
+  @DisplayName("top followed artists are returned")
+  void test_top_followed_artists_returned() {
+    // given
+    var artists = List.of(DtoFactory.ArtistDtoFactory.createDefault());
+    doReturn(artists).when(artistCollector).collectTopFollowedArtists();
+
+    // when
+    var result = underTest.createSummaryResponse();
+
+    // then
+    assertThat(result.getFavoriteCommunityArtists()).isEqualTo(artists);
   }
 }
