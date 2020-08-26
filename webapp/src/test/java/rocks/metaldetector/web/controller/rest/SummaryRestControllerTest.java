@@ -11,10 +11,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.service.home.HomepageService;
+import rocks.metaldetector.service.summary.SummaryService;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
-import rocks.metaldetector.web.api.response.HomepageResponse;
+import rocks.metaldetector.web.api.response.SummaryResponse;
 
 import java.util.List;
 
@@ -26,13 +26,13 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-class HomepageRestControllerTest implements WithAssertions {
+class SummaryRestControllerTest implements WithAssertions {
 
   @Mock
-  private HomepageService homepageService;
+  private SummaryService summaryService;
 
   @InjectMocks
-  private HomepageRestController underTest;
+  private SummaryRestController underTest;
 
   private RestAssuredMockMvcUtils restAssuredMockMvcUtils;
 
@@ -45,7 +45,7 @@ class HomepageRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(homepageService);
+    reset(summaryService);
   }
 
   @Test
@@ -55,7 +55,7 @@ class HomepageRestControllerTest implements WithAssertions {
     restAssuredMockMvcUtils.doGet();
 
     // then
-    verify(homepageService, times(1)).createHomeResponse();
+    verify(summaryService, times(1)).createSummaryResponse();
   }
 
   @Test
@@ -73,14 +73,14 @@ class HomepageRestControllerTest implements WithAssertions {
   void test_response() {
     // given
     var upcomingReleases = List.of(ReleaseDtoFactory.withArtistName("A"), ReleaseDtoFactory.withArtistName("B"));
-    var responseMock = HomepageResponse.builder().upcomingReleases(upcomingReleases).build();
-    doReturn(responseMock).when(homepageService).createHomeResponse();
+    var responseMock = SummaryResponse.builder().upcomingReleases(upcomingReleases).build();
+    doReturn(responseMock).when(summaryService).createSummaryResponse();
 
     // when
     var result = restAssuredMockMvcUtils.doGet();
 
     // then
-    var responseBody = (HomepageResponse) result.extract().as(HomepageResponse.class);
+    var responseBody = (SummaryResponse) result.extract().as(SummaryResponse.class);
     assertThat(responseBody.getUpcomingReleases()).isEqualTo(upcomingReleases);
   }
 }

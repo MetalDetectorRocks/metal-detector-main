@@ -7,19 +7,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.config.constants.Endpoints;
-import rocks.metaldetector.service.home.HomepageService;
-import rocks.metaldetector.web.api.response.HomepageResponse;
+import rocks.metaldetector.service.summary.SummaryService;
+import rocks.metaldetector.web.api.response.SummaryResponse;
 
 @RestController
 @RequestMapping(Endpoints.Rest.HOME)
 @AllArgsConstructor
-public class HomepageRestController {
+public class SummaryRestController {
 
-  private final HomepageService homepageService;
+  private final SummaryService summaryService;
 
   @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<HomepageResponse> handleHomeRequest() {
-    HomepageResponse homepageResponse = homepageService.createHomeResponse();
-    return ResponseEntity.ok(homepageResponse);
+  public ResponseEntity<SummaryResponse> handleSummaryRequest() {
+    SummaryResponse summaryResponse = summaryService.createSummaryResponse();
+    return ResponseEntity.ok(summaryResponse);
   }
 }
