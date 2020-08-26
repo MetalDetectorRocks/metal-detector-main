@@ -17,5 +17,6 @@ public class SpotifyArtistDto {
   private String uri;
   private List<String> genres;
   private int popularity;
+  private int follower;
 
 }

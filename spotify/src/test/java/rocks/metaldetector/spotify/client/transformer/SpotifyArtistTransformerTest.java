@@ -41,6 +41,7 @@ class SpotifyArtistTransformerTest implements WithAssertions {
                       .uri(givenArtist.getUri())
                       .genres(givenArtist.getGenres())
                       .popularity(givenArtist.getPopularity())
+                      .follower(givenArtist.getFollowers().getTotal())
                       .build()
     );
   }

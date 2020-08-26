@@ -19,5 +19,7 @@ public class ArtistSearchResponseEntryDto {
   private boolean followed;
   private List<String> genres;
   private int popularity;
+  private int metalDetectorFollower;
+  private int spotifyFollower;
 
 }

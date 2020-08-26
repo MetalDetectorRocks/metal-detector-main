@@ -1,8 +1,10 @@
 package rocks.metaldetector.web.transformer;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
+import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
@@ -15,7 +17,10 @@ import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 
 @Component
+@AllArgsConstructor
 public class ArtistSearchResponseTransformer {
+
+  private final ArtistRepository artistRepository;
 
   public ArtistSearchResponse transformSpotify(SpotifyArtistSearchResultDto spotifySearchResult) {
     return ArtistSearchResponse.builder()
@@ -37,6 +42,8 @@ public class ArtistSearchResponseTransformer {
         .source(SPOTIFY.getDisplayName())
         .genres(spotifySearchResult.getGenres())
         .popularity(spotifySearchResult.getPopularity())
+        .metalDetectorFollower(artistRepository.countArtistFollower(spotifySearchResult.getName()))
+        .spotifyFollower(spotifySearchResult.getFollower())
         .build();
   }
 
@@ -58,6 +65,7 @@ public class ArtistSearchResponseTransformer {
         .uri(discogsSearchResult.getUri())
         .imageUrl(discogsSearchResult.getImageUrl())
         .source(DISCOGS.getDisplayName())
+        .metalDetectorFollower(artistRepository.countArtistFollower(discogsSearchResult.getName()))
         .build();
   }
 }

@@ -8,7 +8,7 @@ export interface SearchResponseEntry {
     readonly followed: boolean;
     readonly genres: string[];
     readonly popularity: string;
-    readonly amountOfMetalDetectorFollowers: number;
-    readonly amountOfSpotifyFollowers: number;
+    readonly metalDetectorFollower: number;
+    readonly spotifyFollower: number;
 
 }
