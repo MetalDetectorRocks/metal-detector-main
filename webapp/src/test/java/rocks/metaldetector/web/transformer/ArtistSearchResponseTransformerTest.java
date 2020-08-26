@@ -1,11 +1,15 @@
 package rocks.metaldetector.web.transformer;
 
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultDto;
+import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
@@ -13,6 +17,11 @@ import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseEntryDtoFactory;
 import static rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
 import static rocks.metaldetector.testutil.DtoFactory.SpotifyArtistSearchResultDtoFactory;
@@ -20,7 +29,16 @@ import static rocks.metaldetector.testutil.DtoFactory.SpotifyArtistSearchResultD
 @ExtendWith(MockitoExtension.class)
 class ArtistSearchResponseTransformerTest implements WithAssertions {
 
-  private ArtistSearchResponseTransformer underTest = new ArtistSearchResponseTransformer();
+  @Mock
+  private ArtistRepository artistRepository;
+
+  @InjectMocks
+  private ArtistSearchResponseTransformer underTest;
+
+  @AfterEach
+  void tearDown() {
+    reset(artistRepository);
+  }
 
   @Test
   @DisplayName("Spotify pagination is transformed")
@@ -62,7 +80,70 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
       assertThat(resultEntry.getUri()).isEqualTo(expectedResultEntry.getUri());
       assertThat(resultEntry.getSource()).isEqualTo(expectedResultEntry.getSource());
       assertThat(resultEntry.isFollowed()).isEqualTo(expectedResultEntry.isFollowed());
+      assertThat(resultEntry.getSpotifyFollower()).isEqualTo(expectedResultEntry.getSpotifyFollower());
     }
+  }
+
+  @Test
+  @DisplayName("artistRepository is called for every spotify search result")
+  void test_artist_repository_is_called_for_spotify_results() {
+    // given
+    SpotifyArtistSearchResultDto searchResultDto = SpotifyArtistSearchResultDtoFactory.createDefault();
+    doReturn(1).when(artistRepository).countArtistFollower(anyString());
+
+    // when
+    underTest.transformSpotify(searchResultDto);
+
+    // then
+    verify(artistRepository, times(1)).countArtistFollower(searchResultDto.getSearchResults().get(0).getName());
+    verify(artistRepository, times(1)).countArtistFollower(searchResultDto.getSearchResults().get(1).getName());
+  }
+
+  @Test
+  @DisplayName("number of artist followers for spotify search result is returned")
+  void test_count_follower_spotify() {
+    // given
+    SpotifyArtistSearchResultDto searchResultDto = SpotifyArtistSearchResultDtoFactory.createDefault();
+    var expectedFollowersA = 1;
+    var expectedFollowersB = 2;
+    doReturn(expectedFollowersA).when(artistRepository).countArtistFollower(searchResultDto.getSearchResults().get(0).getName());
+    doReturn(expectedFollowersB).when(artistRepository).countArtistFollower(searchResultDto.getSearchResults().get(1).getName());
+
+    // when
+    var result = underTest.transformSpotify(searchResultDto);
+
+    // then
+    assertThat(result.getSearchResults().get(0).getMetalDetectorFollower()).isEqualTo(expectedFollowersA);
+    assertThat(result.getSearchResults().get(1).getMetalDetectorFollower()).isEqualTo(expectedFollowersB);
+  }
+
+  @Test
+  @DisplayName("artistRepository is called for every discogs search result")
+  void test_artist_repository_is_called_for_discogs_results() {
+    // given
+    DiscogsArtistSearchResultDto searchResultDto = DiscogsArtistSearchResultDtoFactory.createDefault();
+    doReturn(1).when(artistRepository).countArtistFollower(anyString());
+
+    // when
+    underTest.transformDiscogs(searchResultDto);
+
+    // then
+    verify(artistRepository, times(1)).countArtistFollower(searchResultDto.getSearchResults().get(0).getName());
+  }
+
+  @Test
+  @DisplayName("number of artist followers for discogs search result is returned")
+  void test_count_follower_discogs() {
+    // given
+    DiscogsArtistSearchResultDto searchResultDto = DiscogsArtistSearchResultDtoFactory.createDefault();
+    var expectedFollowers = 666;
+    doReturn(expectedFollowers).when(artistRepository).countArtistFollower(searchResultDto.getSearchResults().get(0).getName());
+
+    // when
+    var result = underTest.transformDiscogs(searchResultDto);
+
+    // then
+    assertThat(result.getSearchResults().get(0).getMetalDetectorFollower()).isEqualTo(expectedFollowers);
   }
 
   @Test
