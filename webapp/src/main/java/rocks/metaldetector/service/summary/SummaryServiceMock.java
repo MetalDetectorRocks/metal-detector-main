@@ -1,23 +1,23 @@
-package rocks.metaldetector.service.home;
+package rocks.metaldetector.service.summary;
 
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
-import rocks.metaldetector.web.api.response.HomepageResponse;
+import rocks.metaldetector.web.api.response.SummaryResponse;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class HomepageServiceMock implements HomepageService {
+public class SummaryServiceMock implements SummaryService {
 
   @Override
-  public HomepageResponse createHomeResponse() {
+  public SummaryResponse createSummaryResponse() {
     LocalDate now = LocalDate.now();
     List<ReleaseDto> upcomingReleases = createUpcomingReleases(now);
     List<ReleaseDto> recentReleases = createRecentReleases(now);
     List<ArtistDto> recentlyFollowedArtists = createRecentlyFollowedArtists(now);
-    return HomepageResponse.builder()
+    return SummaryResponse.builder()
         .upcomingReleases(upcomingReleases)
         .recentReleases(recentReleases)
         .mostExpectedReleases(upcomingReleases)

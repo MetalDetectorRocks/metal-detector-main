@@ -11,6 +11,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import rocks.metaldetector.persistence.BaseDataJpaTest;
 import rocks.metaldetector.persistence.WithIntegrationTestConfig;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.UserFactory;
+import rocks.metaldetector.persistence.domain.user.UserRepository;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,28 +27,48 @@ import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY
 class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
 
   @Autowired
-  private ArtistRepository artistRepository;
+  private ArtistRepository underTest;
+
+  @Autowired
+  private UserRepository userRepository;
+
+  private ArtistEntity artist1 = ArtistEntityFactory.createArtistEntity("1", "1", SPOTIFY);
+  private ArtistEntity artist2 = ArtistEntityFactory.createArtistEntity("2", "2", SPOTIFY);
+  private ArtistEntity artist3 = ArtistEntityFactory.createArtistEntity("3", "3", DISCOGS);
+  private ArtistEntity artist4 = ArtistEntityFactory.createArtistEntity("4", "4", SPOTIFY);
+  private ArtistEntity artist5 = ArtistEntityFactory.createArtistEntity("5", "5", SPOTIFY);
+
+  private UserEntity userA = UserFactory.createUser("A", "a@test.com");
+  private UserEntity userB = UserFactory.createUser("B", "b@test.com");
+  private UserEntity userC = UserFactory.createUser("C", "c@test.com");
 
   @BeforeEach
   void setUp() {
-    artistRepository.save(ArtistEntityFactory.createArtistEntity("1", "1", SPOTIFY));
-    artistRepository.save(ArtistEntityFactory.createArtistEntity("2", "2", SPOTIFY));
-    artistRepository.save(ArtistEntityFactory.createArtistEntity("3", "3", DISCOGS));
-    artistRepository.save(ArtistEntityFactory.createArtistEntity("4", "4", SPOTIFY));
-    artistRepository.save(ArtistEntityFactory.createArtistEntity("5", "5", SPOTIFY));
+    underTest.save(artist1);
+    underTest.save(artist2);
+    underTest.save(artist3);
+    underTest.save(artist4);
+    underTest.save(artist5);
+
+    userRepository.save(userA);
+    userRepository.save(userB);
+    userRepository.save(userC);
   }
 
   @AfterEach
   void tearDown() {
-    artistRepository.deleteAll();
+    underTest.deleteAll();
+    userRepository.deleteAll();
   }
 
   @ParameterizedTest(name = "[{index}] => Entity <{0}>")
   @MethodSource("artistDetailsProvider")
   @DisplayName("findByExternalIdAndSource() finds the correct entity for a given artist id and source if it exists")
   void find_by_artist_external_id_should_return_correct_entity(String artistId, ArtistSource source) {
-    Optional<ArtistEntity> artistEntityOptional = artistRepository.findByExternalIdAndSource(artistId, source);
+    // when
+    Optional<ArtistEntity> artistEntityOptional = underTest.findByExternalIdAndSource(artistId, source);
 
+    // then
     assertThat(artistEntityOptional).isPresent();
     assertThat(artistEntityOptional.get().getExternalId()).isEqualTo(artistId);
     assertThat(artistEntityOptional.get().getArtistName()).isEqualTo(String.valueOf(artistId));
@@ -54,8 +77,10 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
   @Test
   @DisplayName("findByExternalIdAndSource() returns empty optional if given artist does not exist")
   void find_by_artist_external_id_should_return_empty_optional() {
-    Optional<ArtistEntity> artistEntityOptional = artistRepository.findByExternalIdAndSource("0", SPOTIFY);
+    // when
+    Optional<ArtistEntity> artistEntityOptional = underTest.findByExternalIdAndSource("0", SPOTIFY);
 
+    // then
     assertThat(artistEntityOptional).isEmpty();
   }
 
@@ -63,24 +88,30 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
   @MethodSource("artistDetailsProvider")
   @DisplayName("existsByExternalIdAndSource() should return true if artist exists")
   void exists_by_artist_external_id_should_return_true(String entity, ArtistSource source) {
-    boolean exists = artistRepository.existsByExternalIdAndSource(entity, source);
+    // when
+    boolean exists = underTest.existsByExternalIdAndSource(entity, source);
 
+    // then
     assertThat(exists).isTrue();
   }
 
   @Test
   @DisplayName("existsByExternalIdAndSource() should return false if artist does not exist")
   void exists_by_artist_external_id_should_return_false() {
-    boolean exists = artistRepository.existsByExternalIdAndSource("0", SPOTIFY);
+    // when
+    boolean exists = underTest.existsByExternalIdAndSource("0", SPOTIFY);
 
+    // then
     assertThat(exists).isFalse();
   }
 
   @Test
   @DisplayName("findAllByArtistExternalIds() should return correct entities if they exist")
   void find_all_by_artist_external_ids_should_return_correct_entities() {
-    List<ArtistEntity> artistEntities = artistRepository.findAllByExternalIdIn(List.of("0", "1", "2"));
+    // when
+    List<ArtistEntity> artistEntities = underTest.findAllByExternalIdIn(List.of("0", "1", "2"));
 
+    // then
     assertThat(artistEntities).hasSize(2);
 
     for (int i = 0; i < artistEntities.size(); i++) {
@@ -95,8 +126,10 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
   @MethodSource("inputProviderExternalIds")
   @DisplayName("findAllByArtistExternalIds() should return correct entities if they exist")
   void find_all_by_artist_external_ids_should_return_correct_entities_parametrized(Collection<String> externalIds) {
-    List<ArtistEntity> artistEntities = artistRepository.findAllByExternalIdIn(externalIds);
+    // when
+    List<ArtistEntity> artistEntities = underTest.findAllByExternalIdIn(externalIds);
 
+    // then
     assertThat(artistEntities).hasSize(externalIds.size());
 
     for (int i = 0; i < externalIds.size(); i++) {
@@ -105,6 +138,33 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
       assertThat(entity.getExternalId()).isEqualTo(String.valueOf(i + 1));
       assertThat(entity.getThumb()).isNull();
     }
+  }
+
+  @Test
+  @DisplayName("findTopArtists() finds the most followed artists in the correct order")
+  void test_find_top_artists() {
+    // given
+    int limit = 2;
+    userA.addFollowedArtist(artist1);
+    userA.addFollowedArtist(artist2);
+    userA.addFollowedArtist(artist3);
+
+    userB.addFollowedArtist(artist2);
+    userB.addFollowedArtist(artist3);
+
+    userC.addFollowedArtist(artist3);
+
+    userRepository.save(userA);
+    userRepository.save(userB);
+    userRepository.save(userC);
+
+    // when
+    var result = underTest.findTopArtists(limit);
+
+    // then
+    assertThat(result).hasSize(limit);
+    assertThat(result.get(0)).isEqualTo(artist3);
+    assertThat(result.get(1)).isEqualTo(artist2);
   }
 
   private static Stream<Arguments> artistDetailsProvider() {

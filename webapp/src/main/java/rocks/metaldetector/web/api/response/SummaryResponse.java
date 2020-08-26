@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class HomepageResponse {
+public class SummaryResponse {
 
   private List<ReleaseDto> upcomingReleases;
   private List<ReleaseDto> recentReleases;

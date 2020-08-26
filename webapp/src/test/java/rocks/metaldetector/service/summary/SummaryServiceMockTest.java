@@ -1,18 +1,18 @@
-package rocks.metaldetector.service.home;
+package rocks.metaldetector.service.summary;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HomepageServiceMockTest implements WithAssertions {
+class SummaryServiceMockTest implements WithAssertions {
 
-  HomepageServiceMock underTest = new HomepageServiceMock();
+  SummaryServiceMock underTest = new SummaryServiceMock();
 
   @Test
   @DisplayName("homepageResponse with mock results is created")
   void test_response() {
     // when
-    var result = underTest.createHomeResponse();
+    var result = underTest.createSummaryResponse();
 
     // then
     assertThat(result).isNotNull();
