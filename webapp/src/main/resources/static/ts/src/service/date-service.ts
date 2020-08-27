@@ -17,7 +17,7 @@ export class DateService {
         return Math.round((then - now) / 1000 / 60 / 60 / 24);
     }
 
-    public compare(release1: Release, release2: Release): number {
+    public compareReleaseDates(release1: Release, release2: Release): number {
         const date1AsNumber = release1.releaseDate.valueOf();
         const date2AsNumber = release2.releaseDate.valueOf();
 
