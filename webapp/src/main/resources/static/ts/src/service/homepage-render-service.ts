@@ -49,10 +49,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
             this.attachCard(releaseDivElement, upcomingReleasesRowElement);
         });
 
-        if (response.upcomingReleases.length == this.CARDS_PER_ROW - 1) {
-            const placeholderDivElement = this.renderPlaceholderCard();
-            this.attachCard(placeholderDivElement, upcomingReleasesRowElement);
-        }
+        this.insertPlaceholder(response.upcomingReleases.length, upcomingReleasesRowElement);
     }
 
     private renderRecentReleasesRow(response: HomepageResponse): void {
@@ -70,6 +67,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
             const placeholderDivElement = this.renderPlaceholderCard();
             this.attachCard(placeholderDivElement, recentReleasesRowElement);
         }
+        this.insertPlaceholder(response.recentReleases.length, recentReleasesRowElement);
     }
 
     private renderReleaseRow(response: HomepageResponse): void {
@@ -77,7 +75,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
             this.insertHeadingElement("Releases");
             const releasesRow = this.insertRowElement();
 
-            response.recentReleases.sort(this.dateService.compare);
+            response.recentReleases.sort(this.dateService.compareReleaseDates);
 
             response.recentReleases.forEach(release => {
                 const releaseDivElement = this.renderReleaseCard(release);
@@ -87,16 +85,16 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
             });
 
             response.upcomingReleases.forEach(release => {
-                const releaseDivElement = this.renderReleaseCard(release);
-                const releaseDateElement = releaseDivElement.querySelector("#release-date") as HTMLDivElement;
-                releaseDateElement.innerHTML = this.createReleasedInString(release.releaseDate);
-                this.attachCard(releaseDivElement, releasesRow);
+                if (releasesRow.querySelectorAll(":scope > div").length < this.CARDS_PER_ROW) {
+                    const releaseDivElement = this.renderReleaseCard(release);
+                    const releaseDateElement = releaseDivElement.querySelector("#release-date") as HTMLDivElement;
+                    releaseDateElement.innerHTML = this.createReleasedInString(release.releaseDate);
+                    this.attachCard(releaseDivElement, releasesRow);
+                }
             });
 
-            if (response.recentReleases.length + response.upcomingReleases.length == this.CARDS_PER_ROW - 1) {
-                const placeholderDivElement = this.renderPlaceholderCard();
-                this.attachCard(placeholderDivElement, releasesRow);
-            }
+            const elementCount = response.recentReleases.length + response.upcomingReleases.length;
+            this.insertPlaceholder(elementCount, releasesRow);
         }
     }
 
@@ -199,5 +197,12 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         recentlyFollowedRowElement.className = "row";
         this.hostElement.insertAdjacentElement("beforeend", recentlyFollowedRowElement);
         return recentlyFollowedRowElement;
+    }
+
+    private insertPlaceholder(elementCount: number, rowElement: HTMLDivElement): void {
+        if (elementCount == this.CARDS_PER_ROW - 1) {
+            const placeholderDivElement = this.renderPlaceholderCard();
+            this.attachCard(placeholderDivElement, rowElement);
+        }
     }
 }
