@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
-import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.TimeRange;
 
@@ -22,15 +21,6 @@ import static rocks.metaldetector.service.summary.SummaryServiceImpl.TIME_RANGE_
 public class ReleaseCollector {
 
   private final ReleaseService releaseService;
-  private final FollowArtistService followArtistService;
-
-  public List<ReleaseDto> collectUpcomingReleases() {
-    List<ArtistDto> followedArtists = followArtistService.getFollowedArtistsOfCurrentUser();
-    LocalDate now = LocalDate.now();
-    TimeRange timeRange = new TimeRange(now, now.plusMonths(TIME_RANGE_MONTHS));
-
-    return collectReleases(followedArtists, timeRange);
-  }
 
   public List<ReleaseDto> collectUpcomingReleases(List<ArtistDto> artists) {
     LocalDate now = LocalDate.now();
@@ -39,12 +29,11 @@ public class ReleaseCollector {
     return collectReleases(artists, timeRange);
   }
 
-  public List<ReleaseDto> collectRecentReleases() {
-    List<ArtistDto> followedArtists = followArtistService.getFollowedArtistsOfCurrentUser();
+  public List<ReleaseDto> collectRecentReleases(List<ArtistDto> artists) {
     LocalDate now = LocalDate.now();
     TimeRange timeRange = new TimeRange(now.minusMonths(TIME_RANGE_MONTHS), now);
 
-    return collectReleases(followedArtists, timeRange);
+    return collectReleases(artists, timeRange);
   }
 
   private List<ReleaseDto> collectReleases(List<ArtistDto> artists, TimeRange timeRange) {
