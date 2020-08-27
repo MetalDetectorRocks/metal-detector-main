@@ -21,11 +21,13 @@ public class SummaryServiceImpl implements SummaryService {
     List<ReleaseDto> upcomingReleases = releaseCollector.collectUpcomingReleases();
     List<ReleaseDto> recentReleases = releaseCollector.collectRecentReleases();
     List<ArtistDto> mostFollowedArtists = artistCollector.collectTopFollowedArtists();
+    List<ReleaseDto> mostExpectedReleases = releaseCollector.collectUpcomingReleases(mostFollowedArtists);
 
     return SummaryResponse.builder()
         .upcomingReleases(upcomingReleases)
         .recentReleases(recentReleases)
         .favoriteCommunityArtists(mostFollowedArtists)
+        .mostExpectedReleases(mostExpectedReleases)
         .build();
   }
 }
