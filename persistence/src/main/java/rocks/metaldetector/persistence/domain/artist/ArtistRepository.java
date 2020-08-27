@@ -25,4 +25,10 @@ public interface ArtistRepository extends JpaRepository<ArtistEntity, Long> {
                  "limit :limit",
          nativeQuery = true)
   List<ArtistEntity> findTopArtists(@Param("limit") int limit);
+
+  @Query(value = "select count(a.external_id) " +
+                 "from artists a left join users_followed_artists ufa on a.id = ufa.artist_id " +
+                 "where a.external_id = :externalId",
+         nativeQuery = true)
+  int countArtistFollower(@Param("externalId") String externalId);
 }

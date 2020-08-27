@@ -167,6 +167,25 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
     assertThat(result.get(1)).isEqualTo(artist2);
   }
 
+  @Test
+  @DisplayName("countArtistFollower() count the users that follow the given artist")
+  void test_count_artist_follower() {
+    // given
+    userA.addFollowedArtist(artist3);
+    userB.addFollowedArtist(artist3);
+    userC.addFollowedArtist(artist3);
+
+    userRepository.save(userA);
+    userRepository.save(userB);
+    userRepository.save(userC);
+
+    // when
+    var result = underTest.countArtistFollower(artist3.getExternalId());
+
+    // then
+    assertThat(result).isEqualTo(3);
+  }
+
   private static Stream<Arguments> artistDetailsProvider() {
     return Stream.of(
             Arguments.of("1", SPOTIFY),
