@@ -180,7 +180,7 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
     userRepository.save(userC);
 
     // when
-    var result = underTest.countArtistFollower(artist3.getArtistName());
+    var result = underTest.countArtistFollower(artist3.getExternalId());
 
     // then
     assertThat(result).isEqualTo(3);

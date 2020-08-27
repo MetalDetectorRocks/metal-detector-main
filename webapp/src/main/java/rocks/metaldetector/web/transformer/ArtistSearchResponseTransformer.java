@@ -42,7 +42,7 @@ public class ArtistSearchResponseTransformer {
         .source(SPOTIFY.getDisplayName())
         .genres(spotifySearchResult.getGenres())
         .popularity(spotifySearchResult.getPopularity())
-        .metalDetectorFollower(artistRepository.countArtistFollower(spotifySearchResult.getName()))
+        .metalDetectorFollower(artistRepository.countArtistFollower(spotifySearchResult.getId()))
         .spotifyFollower(spotifySearchResult.getFollower())
         .build();
   }
@@ -65,7 +65,7 @@ public class ArtistSearchResponseTransformer {
         .uri(discogsSearchResult.getUri())
         .imageUrl(discogsSearchResult.getImageUrl())
         .source(DISCOGS.getDisplayName())
-        .metalDetectorFollower(artistRepository.countArtistFollower(discogsSearchResult.getName()))
+        .metalDetectorFollower(artistRepository.countArtistFollower(discogsSearchResult.getId()))
         .build();
   }
 }
