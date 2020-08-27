@@ -95,8 +95,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
     underTest.transformSpotify(searchResultDto);
 
     // then
-    verify(artistRepository, times(1)).countArtistFollower(searchResultDto.getSearchResults().get(0).getName());
-    verify(artistRepository, times(1)).countArtistFollower(searchResultDto.getSearchResults().get(1).getName());
+    verify(artistRepository, times(searchResultDto.getSearchResults().size())).countArtistFollower(searchResultDto.getSearchResults().get(0).getId());
   }
 
   @Test
@@ -104,17 +103,15 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
   void test_count_follower_spotify() {
     // given
     SpotifyArtistSearchResultDto searchResultDto = SpotifyArtistSearchResultDtoFactory.createDefault();
-    var expectedFollowersA = 1;
-    var expectedFollowersB = 2;
-    doReturn(expectedFollowersA).when(artistRepository).countArtistFollower(searchResultDto.getSearchResults().get(0).getName());
-    doReturn(expectedFollowersB).when(artistRepository).countArtistFollower(searchResultDto.getSearchResults().get(1).getName());
+    var expectedFollowers = 2;
+    doReturn(expectedFollowers).when(artistRepository).countArtistFollower(anyString());
 
     // when
     var result = underTest.transformSpotify(searchResultDto);
 
     // then
-    assertThat(result.getSearchResults().get(0).getMetalDetectorFollower()).isEqualTo(expectedFollowersA);
-    assertThat(result.getSearchResults().get(1).getMetalDetectorFollower()).isEqualTo(expectedFollowersB);
+    assertThat(result.getSearchResults().get(0).getMetalDetectorFollower()).isEqualTo(expectedFollowers);
+    assertThat(result.getSearchResults().get(1).getMetalDetectorFollower()).isEqualTo(expectedFollowers);
   }
 
   @Test
@@ -128,7 +125,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
     underTest.transformDiscogs(searchResultDto);
 
     // then
-    verify(artistRepository, times(1)).countArtistFollower(searchResultDto.getSearchResults().get(0).getName());
+    verify(artistRepository, times(1)).countArtistFollower(searchResultDto.getSearchResults().get(0).getId());
   }
 
   @Test
@@ -137,7 +134,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
     // given
     DiscogsArtistSearchResultDto searchResultDto = DiscogsArtistSearchResultDtoFactory.createDefault();
     var expectedFollowers = 666;
-    doReturn(expectedFollowers).when(artistRepository).countArtistFollower(searchResultDto.getSearchResults().get(0).getName());
+    doReturn(expectedFollowers).when(artistRepository).countArtistFollower(anyString());
 
     // when
     var result = underTest.transformDiscogs(searchResultDto);
