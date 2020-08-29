@@ -1,7 +1,7 @@
 package rocks.metaldetector.service.summary;
 
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.ArtistTransformer;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
 
-@Service
+@Component
 @AllArgsConstructor
 public class ArtistCollector {
 

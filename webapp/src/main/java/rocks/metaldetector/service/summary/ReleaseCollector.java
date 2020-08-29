@@ -1,11 +1,10 @@
 package rocks.metaldetector.service.summary;
 
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
-import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.TimeRange;
 
@@ -17,36 +16,33 @@ import java.util.stream.Collectors;
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.TIME_RANGE_MONTHS;
 
-@Service
+@Component
 @AllArgsConstructor
 public class ReleaseCollector {
 
   private final ReleaseService releaseService;
-  private final FollowArtistService followArtistService;
 
-  public List<ReleaseDto> collectUpcomingReleases() {
+  public List<ReleaseDto> collectUpcomingReleases(List<ArtistDto> artists) {
     LocalDate now = LocalDate.now();
     TimeRange timeRange = new TimeRange(now, now.plusMonths(TIME_RANGE_MONTHS));
 
-    return collectReleases(timeRange);
+    return collectReleases(artists, timeRange);
   }
 
-  public List<ReleaseDto> collectRecentReleases() {
+  public List<ReleaseDto> collectRecentReleases(List<ArtistDto> artists) {
     LocalDate now = LocalDate.now();
     TimeRange timeRange = new TimeRange(now.minusMonths(TIME_RANGE_MONTHS), now);
 
-    return collectReleases(timeRange);
+    return collectReleases(artists, timeRange);
   }
 
-  private List<ReleaseDto> collectReleases(TimeRange timeRange) {
-    List<String> followedArtists = followArtistService.getFollowedArtistsOfCurrentUser()
-        .stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
-
-    if (followedArtists.isEmpty()) {
+  private List<ReleaseDto> collectReleases(List<ArtistDto> artists, TimeRange timeRange) {
+    if (artists.isEmpty()) {
       return Collections.emptyList();
     }
 
+    List<String> artistNames = artists.stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
     PageRequest pageRequest = new PageRequest(1, RESULT_LIMIT);
-    return releaseService.findReleases(followedArtists, timeRange, pageRequest);
+    return releaseService.findReleases(artistNames, timeRange, pageRequest);
   }
 }

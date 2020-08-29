@@ -270,6 +270,7 @@ public class DtoFactory {
           .imageUrl("imageUrl")
           .name(artistName)
           .uri("uri")
+          .follower(666)
           .build();
     }
   }
@@ -286,6 +287,7 @@ public class DtoFactory {
           .uri("uri")
           .followed(false)
           .source(SPOTIFY.getDisplayName())
+          .spotifyFollower(666)
           .build();
     }
 

@@ -18,6 +18,7 @@ public class SpotifyArtistTransformer {
             .uri(spotifyArtist.getUri())
             .genres(spotifyArtist.getGenres())
             .popularity(spotifyArtist.getPopularity())
+            .follower(spotifyArtist.getFollowers().getTotal())
             .build();
   }
 
