@@ -11,16 +11,14 @@ import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.TimeRange;
-import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
-import rocks.metaldetector.web.api.request.ReleasesRequest;
 import rocks.metaldetector.web.api.response.ReleasesResponse;
 import rocks.metaldetector.web.transformer.ReleasesResponseTransformer;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
@@ -36,7 +34,7 @@ public class ReleasesRestController {
   public ResponseEntity<List<ReleasesResponse>> findAllReleases(@RequestParam(value = "dateFrom", defaultValue = "") LocalDate dateFrom,
                                                                 @RequestParam(value = "dateTo", defaultValue = "") LocalDate dateTo) {
     var timeRange = new TimeRange(dateFrom, dateTo);
-    List<ReleaseDto> releaseDtos = releaseService.findAllReleases(timeRange);
+    List<ReleaseDto> releaseDtos = releaseService.findAllReleases(emptyList(), timeRange);
     List<ReleasesResponse> response = releaseDtos.stream().map(releasesResponseTransformer::transform).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
@@ -49,7 +47,7 @@ public class ReleasesRestController {
                                                              @RequestParam(value = "dateTo", defaultValue = "") LocalDate dateTo) {
     var timeRange = new TimeRange(dateFrom, dateTo);
     var pageRequest = new PageRequest(page, size);
-    List<ReleaseDto> releaseDtos = releaseService.findReleases(timeRange, pageRequest);
+    List<ReleaseDto> releaseDtos = releaseService.findReleases(emptyList(), timeRange, pageRequest);
     List<ReleasesResponse> response = releaseDtos.stream().map(releasesResponseTransformer::transform).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }

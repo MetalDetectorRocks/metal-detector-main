@@ -40,7 +40,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     if (!followedArtistsNames.isEmpty()) {
       var now = LocalDate.now();
-      List<ReleaseDto> newReleases = releaseService.findAllReleases(new TimeRange(now, now.plusMonths(3)));
+      List<ReleaseDto> newReleases = releaseService.findAllReleases(followedArtistsNames, new TimeRange(now, now.plusMonths(3)));
 
       if (!newReleases.isEmpty()) {
         emailService.sendEmail(new NewReleasesEmail(user.getEmail(), user.getUsername(), newReleases));
