@@ -1,20 +1,20 @@
-import {LoadingIndicatorService} from "./loading-indicator-service";
-import {AlertService} from "./alert-service";
-import {HomepageResponse} from "../model/homepage-response.model";
-import {AbstractRenderService} from "./abstract-render-service";
-import {Artist} from "../model/artist.model";
-import {Release} from "../model/release.model";
-import {DateService} from "./date-service";
+import { LoadingIndicatorService } from "./loading-indicator-service";
+import { AlertService } from "./alert-service";
+import { HomepageResponse } from "../model/homepage-response.model";
+import { AbstractRenderService } from "./abstract-render-service";
+import { Artist } from "../model/artist.model";
+import { Release } from "../model/release.model";
+import { DateFormatService } from "./date-format-service";
 
 export class HomepageRenderService extends AbstractRenderService<HomepageResponse> {
 
-    private readonly dateService: DateService;
+    private readonly dateFormatService: DateFormatService;
     private readonly artistTemplateElement: HTMLTemplateElement;
     private readonly releaseTemplateElement: HTMLTemplateElement;
 
-    constructor(alertService: AlertService, loadingIndicatorService: LoadingIndicatorService, dateService: DateService) {
+    constructor(alertService: AlertService, loadingIndicatorService: LoadingIndicatorService, dateService: DateFormatService) {
         super(alertService, loadingIndicatorService);
-        this.dateService = dateService;
+        this.dateFormatService = dateService;
         this.artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
         this.releaseTemplateElement = document.getElementById("release-card")! as HTMLTemplateElement;
     }
@@ -36,7 +36,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         response.recentReleases.forEach(release => {
             const releaseDivElement = this.renderReleaseCard(release);
             const releaseDateElement = releaseDivElement.querySelector("#release-date") as HTMLDivElement;
-            releaseDateElement.innerHTML = this.createReleasedBeforeString(release.releaseDate);
+            releaseDateElement.innerHTML = this.dateFormatService.formatRelative(release.releaseDate);
             this.attachCard(releaseDivElement, recentReleasesRowElement);
         });
     }
@@ -58,7 +58,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         response.upcomingReleases.forEach(release => {
             const releaseDivElement = this.renderReleaseCard(release);
             const releaseDateElement = releaseDivElement.querySelector("#release-date") as HTMLDivElement;
-            releaseDateElement.innerHTML = this.createReleasedInString(release.releaseDate);
+            releaseDateElement.innerHTML = this.dateFormatService.formatRelative(release.releaseDate);
             this.attachCard(releaseDivElement, upcomingReleasesRowElement);
         });
     }
@@ -72,7 +72,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
         artistThumbElement.src = artist.thumb;
         artistNameElement.textContent = artist.artistName;
-        followedSinceElement.innerHTML = this.createFollowedSinceString(artist.followedSince);
+        followedSinceElement.innerHTML = this.dateFormatService.formatRelative(artist.followedSince);
 
         return artistDivElement;
     }
@@ -93,21 +93,6 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
     private attachCard(divElement: HTMLDivElement, rowElement: HTMLDivElement): void {
         rowElement.insertAdjacentElement("beforeend", divElement);
-    }
-
-    private createReleasedBeforeString(releaseDate: Date): string {
-        const releasedInDays = this.dateService.calculatePastTimeRange(releaseDate);
-        return `${releasedInDays} days ago`;
-    }
-
-    private createReleasedInString(releaseDate: Date): string {
-        const releasedInDays = this.dateService.calculateFutureTimeRange(releaseDate);
-        return `In ${releasedInDays} days`;
-    }
-
-    private createFollowedSinceString(followedSince: Date): string {
-        const followedForDays = this.dateService.calculatePastTimeRange(followedSince)
-        return `${followedForDays} days ago`;
     }
 
     private insertHeadingElement(heading: string): void {

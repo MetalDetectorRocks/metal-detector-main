@@ -91,8 +91,8 @@ footer .list-inline-item {
 
 /* Releases */
 .release-cover-img {
-    height: 22rem;
-    width: 22rem;
+    height: 20rem;
+    width: 20rem;
     object-fit: cover;
     border-right: 1px solid #404040;
 }

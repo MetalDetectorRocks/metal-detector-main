@@ -9,278 +9,165 @@
 </head>
 <body>
     <section layout:fragment="content">
-        <template id="release-card">
+        <template id="detailed-release-card">
             <div class="card mb-3">
-                <img class="homepage-card-img" src="#" alt="#">
-                <div class="card-body">
-                    <p class="h5 card-title"></p>
-                    <p class="h6 card-subtitle"></p>
-                </div>
-                <div class="card-footer text-muted">
+                <div class="row">
+                    <div class="col-md-auto">
+                        <img class="release-cover-img" src="#" alt="#" id="release-cover">
+                    </div>
+                    <div class="col-7">
+                        <p class="h5 card-title mt-3 mb-4" id="release-title"></p>
+                        <div class="row" id="additional-artists-wrapper">
+                            <div class="col">
+                                <p>
+                                    <strong>Additional artists</strong><br />
+                                    <span id="additional-artists"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p>
+                                    <strong>Release Date</strong><br />
+                                    <span id="release-date"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p>
+                                    <strong>Type</strong><br />
+                                    <span id="release-type"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p>
+                                    <strong>Genre</strong><br />
+                                    <span id="release-genre"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </template>
 
         <h1 class="h4">Releases</h1>
-        <div id="releases-container">
-            <div class="row">
-                <div class="col-9">
-                    <div class="card mb-3">
-                        <div class="row">
-                            <div class="col-md-auto">
-                                <img class="release-cover-img" src="/images/dummy/karg_traktat.jpg" alt="#">
-                            </div>
-                            <div class="col-7">
-                                <p class="h4 card-title mt-3 mb-4">Karg - Traktat</p>
-                                <div class="row">
-                                    <div class="col">
-                                        <p>
-                                            <strong>Additional artists</strong><br />
-                                            Karg, Harakiri for the Sky, Foo, Bar, Foobar, Karg, Harakiri for the Sky, Foo
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p>
-                                            <strong>Release Date</strong><br />
-                                            2020-08-24
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p>
-                                            <strong>Type</strong><br />
-                                            Full Length
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p>
-                                            <strong>Genre</strong><br />
-                                            Post Modern Black Metal
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="row">
-                            <div class="col-md-auto">
-                                <img class="release-cover-img" src="/images/dummy/behexen_rituale-satanum.jpg" alt="#">
-                            </div>
-                            <div class="col-7">
-                                <p class="h4 card-title mt-3 mb-4">Behexen - Rituale Satanum</p>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p>
-                                            <strong>Release Date</strong><br />
-                                            2020-08-29
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p>
-                                            <strong>Type</strong><br />
-                                            Full Length
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p>
-                                            <strong>Genre</strong><br />
-                                            Black Metal
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="row">
-                            <div class="col-md-auto">
-                                <img class="release-cover-img" src="/images/dummy/darkthrone_transilvanian-hunger.jpg" alt="#">
-                            </div>
-                            <div class="col-7">
-                                <p class="h4 card-title mt-3 mb-4">Darkthrone - Transilvanian Hunger</p>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p>
-                                            <strong>Release Date</strong><br />
-                                            2020-09-01
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p>
-                                            <strong>Type</strong><br />
-                                            Full Length
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p>
-                                            <strong>Genre</strong><br />
-                                            Black Metal
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="row">
-                            <div class="col-md-auto">
-                                <img class="release-cover-img" src="/images/dummy/immortal_sons-of_northern_darkness.jpg" alt="#">
-                            </div>
-                            <div class="col-7">
-                                <p class="h4 card-title mt-3 mb-4">Immortal - Sons of Northern Darkness</p>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p>
-                                            <strong>Release Date</strong><br />
-                                            2020-10-06
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p>
-                                            <strong>Type</strong><br />
-                                            Full Length
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p>
-                                            <strong>Genre</strong><br />
-                                            Black Metal
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="release-filter" class="col-3 custom-border-left">
-                    <fieldset class="mb-3">
-                        <legend>Search</legend>
-                        <div class="form-group">
+        <div class="row">
+            <div class="col-9" id="releases-container">
+            </div>
+            <div class="col-3 custom-border-left" id="release-filter">
+                <fieldset class="mb-3">
+                    <legend>Search</legend>
+                    <div class="form-group">
+                        <label>
                             <input type="text" class="form-control" placeholder="Artist or album name">
+                        </label>
+                    </div>
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Artists</legend>
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="all-artists-rb" name="releases" class="custom-control-input" checked="">
+                            <label class="custom-control-label" for="all-artists-rb">All artists</label>
                         </div>
-                    </fieldset>
-                    <fieldset class="mb-3">
-                        <legend>Artists</legend>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="all-artists-rb" name="releases" class="custom-control-input" checked="">
-                                <label class="custom-control-label" for="all-artists-rb">All artists</label>
-                            </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="followed-artists-releases-rb" name="releases" class="custom-control-input">
-                                <label class="custom-control-label" for="followed-artists-releases-rb">Only followed artists</label>
-                            </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="followed-artists-releases-rb" name="releases" class="custom-control-input">
+                            <label class="custom-control-label" for="followed-artists-releases-rb">Only followed artists</label>
                         </div>
-                    </fieldset>
-                    <fieldset class="mb-3">
-                        <legend>View mode</legend>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="detailed-rb" name="view" class="custom-control-input" checked="">
-                                <label class="custom-control-label" for="detailed-rb">Detailed</label>
-                            </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="compact-rb" name="releases" class="custom-control-input">
-                                <label class="custom-control-label" for="compact-rb">Compact</label>
-                            </div>
+                    </div>
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>View mode</legend>
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="detailed-rb" name="view" class="custom-control-input" checked="">
+                            <label class="custom-control-label" for="detailed-rb">Detailed</label>
                         </div>
-                    </fieldset>
-                    <fieldset class="mb-3">
-                        <legend>Time</legend>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="time-all-rb" name="time" class="custom-control-input" checked="">
-                                <label class="custom-control-label" for="time-all-rb">All</label>
-                            </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="time-last-month-rb" name="time" class="custom-control-input">
-                                <label class="custom-control-label" for="time-last-month-rb">Last month</label>
-                            </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="time-last-3-month-rb" name="time" class="custom-control-input">
-                                <label class="custom-control-label" for="time-last-3-month-rb">Last 3 months</label>
-                            </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="time-next-month-rb" name="time" class="custom-control-input">
-                                <label class="custom-control-label" for="time-next-month-rb">Next month</label>
-                            </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="time-next-3-months-rb" name="time" class="custom-control-input">
-                                <label class="custom-control-label" for="time-next-3-months-rb">Next 3 months</label>
-                            </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="time-all-upcoming-rb" name="time" class="custom-control-input">
-                                <label class="custom-control-label" for="time-all-upcoming-rb">All upcoming</label>
-                            </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="compact-rb" name="releases" class="custom-control-input">
+                            <label class="custom-control-label" for="compact-rb">Compact</label>
                         </div>
-                    </fieldset>
-                    <fieldset class="mb-3">
-                        <legend>Release Type</legend>
-                        <div class="form-group">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="full-length-cb" checked="">
-                                <label class="custom-control-label" for="full-length-cb">Full Length</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="ep-cb" checked="">
-                                <label class="custom-control-label" for="ep-cb">EP</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="split-cb" checked="">
-                                <label class="custom-control-label" for="split-cb">Split</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="compilation-cb" checked="">
-                                <label class="custom-control-label" for="compilation-cb">Compilation</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="demo-cb" checked="">
-                                <label class="custom-control-label" for="demo-cb">Demo</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="live-album-cb" checked="">
-                                <label class="custom-control-label" for="live-album-cb">Live Album</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="single-cb" checked="">
-                                <label class="custom-control-label" for="single-cb">Single</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="boxed-set-cb" checked="">
-                                <label class="custom-control-label" for="boxed-set-cb">Boxed Set</label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="video-cb" checked="">
-                                <label class="custom-control-label" for="video-cb">Video</label>
-                            </div>
-                            <div class="mt-2">
-                                <a href="#">Select all</a>
-                            </div>
+                    </div>
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Time</legend>
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="time-all-rb" name="time" class="custom-control-input">
+                            <label class="custom-control-label" for="time-all-rb">All</label>
                         </div>
-                    </fieldset>
-                </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="time-all-upcoming-rb" name="time" class="custom-control-input" checked="">
+                            <label class="custom-control-label" for="time-all-upcoming-rb">All upcoming</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="time-next-month-rb" name="time" class="custom-control-input">
+                            <label class="custom-control-label" for="time-next-month-rb">Next month</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="time-next-3-months-rb" name="time" class="custom-control-input">
+                            <label class="custom-control-label" for="time-next-3-months-rb">Next 3 months</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="time-last-month-rb" name="time" class="custom-control-input">
+                            <label class="custom-control-label" for="time-last-month-rb">Last month</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="time-last-3-month-rb" name="time" class="custom-control-input">
+                            <label class="custom-control-label" for="time-last-3-month-rb">Last 3 months</label>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Release Type</legend>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="full-length-cb" checked="">
+                            <label class="custom-control-label" for="full-length-cb">Full Length</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="ep-cb" checked="">
+                            <label class="custom-control-label" for="ep-cb">EP</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="split-cb" checked="">
+                            <label class="custom-control-label" for="split-cb">Split</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="compilation-cb" checked="">
+                            <label class="custom-control-label" for="compilation-cb">Compilation</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="demo-cb" checked="">
+                            <label class="custom-control-label" for="demo-cb">Demo</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="live-album-cb" checked="">
+                            <label class="custom-control-label" for="live-album-cb">Live Album</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="single-cb" checked="">
+                            <label class="custom-control-label" for="single-cb">Single</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="boxed-set-cb" checked="">
+                            <label class="custom-control-label" for="boxed-set-cb">Boxed Set</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="video-cb" checked="">
+                            <label class="custom-control-label" for="video-cb">Video</label>
+                        </div>
+                        <div class="mt-2">
+                            <a href="#">Select all</a>
+                        </div>
+                    </div>
+                </fieldset>
             </div>
         </div>
     </section>
 </body>
 </html>
-
-<!--ToDo DanielW: Gibt es bei den Metal Hammer Releases ein Default Mapping? -->

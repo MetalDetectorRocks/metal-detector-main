@@ -3,24 +3,38 @@
     {
       "artist": "Metallica",
       "albumTitle": "Master of Puppets",
-      "releaseDate": "2020-05-02",
-      "genre": "Thrash",
+      "releaseDate": "1986-03-03",
+      "genre": "Thrash Metal",
       "type": "FULL_LENGTH",
-      "metalArchivesArtistUrl": "http://metal-archives.de/metallica",
-      "metalArchivesAlbumUrl": "http://metal-archives.de/master-of-puppets",
+      "metalArchivesArtistUrl": "https://www.metal-archives.com/bands/Metallica/125",
+      "metalArchivesAlbumUrl": "https://www.metal-archives.com/albums/Metallica/Master_of_Puppets/547",
       "source": "METAL_ARCHIVES",
-      "state": "OK"
+      "state": "OK",
+      "coverUrl": "https://www.metal-archives.com/images/5/4/7/547.jpg?4520"
     },
     {
       "artist": "Slayer",
       "albumTitle": "Reign in Blood",
-      "estimatedReleaseDate": "Fall",
-      "genre": "Thrash",
+      "releaseDate": "1986-10-07",
+      "genre": "Thrash Metal",
       "type": "FULL_LENGTH",
-      "metalArchivesArtistUrl": "http://metal-archives.de/slayer",
-      "metalArchivesAlbumUrl": "http://metal-archives.de/reign-in-blood",
+      "metalArchivesArtistUrl": "https://www.metal-archives.com/bands/Slayer/72",
+      "metalArchivesAlbumUrl": "https://www.metal-archives.com/albums/Slayer/Reign_in_Blood/212",
       "source": "METAL_ARCHIVES",
-      "state": "OK"
+      "state": "OK",
+      "coverUrl": "https://www.metal-archives.com/images/2/1/2/212.jpg?5922"
+    },
+    {
+      "artist": "Der Weg einer Freiheit",
+      "albumTitle": "Agonie",
+      "estimatedReleaseDate": "Summer 2011",
+      "genre": "Black Metal",
+      "type": "EP",
+      "metalArchivesArtistUrl": "https://www.metal-archives.com/bands/Der_Weg_einer_Freiheit/3540275159",
+      "metalArchivesAlbumUrl": "https://www.metal-archives.com/albums/Der_Weg_einer_Freiheit/Agonie/307789",
+      "source": "METAL_ARCHIVES",
+      "state": "OK",
+      "coverUrl": "https://www.metal-archives.com/images/3/0/7/7/307789.jpg?0535"
     }
   ]
 }
