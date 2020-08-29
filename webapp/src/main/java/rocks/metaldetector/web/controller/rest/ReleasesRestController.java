@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
@@ -20,6 +17,7 @@ import rocks.metaldetector.web.api.response.ReleasesResponse;
 import rocks.metaldetector.web.transformer.ReleasesResponseTransformer;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,23 +31,25 @@ public class ReleasesRestController {
   private final ReleasesResponseTransformer releasesResponseTransformer;
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-  @PostMapping(path = Endpoints.Rest.QUERY_ALL_RELEASES,
-               consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+  @GetMapping(path = Endpoints.Rest.QUERY_ALL_RELEASES,
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<List<ReleasesResponse>> findAllReleases(@Valid @RequestBody ReleasesRequest request) {
-    var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
-    List<ReleaseDto> releaseDtos = releaseService.findAllReleases(request.getArtists(), timeRange);
+  public ResponseEntity<List<ReleasesResponse>> findAllReleases(@RequestParam(value = "dateFrom", defaultValue = "") LocalDate dateFrom,
+                                                                @RequestParam(value = "dateTo", defaultValue = "") LocalDate dateTo) {
+    var timeRange = new TimeRange(dateFrom, dateTo);
+    List<ReleaseDto> releaseDtos = releaseService.findAllReleases(timeRange);
     List<ReleasesResponse> response = releaseDtos.stream().map(releasesResponseTransformer::transform).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping(path = Endpoints.Rest.QUERY_RELEASES,
-               consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+  @GetMapping(path = Endpoints.Rest.QUERY_RELEASES,
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<List<ReleasesResponse>> findReleases(@Valid @RequestBody PaginatedReleasesRequest request) {
-    var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
-    var pageRequest = new PageRequest(request.getPage(), request.getSize());
-    List<ReleaseDto> releaseDtos = releaseService.findReleases(request.getArtists(), timeRange, pageRequest);
+  public ResponseEntity<List<ReleasesResponse>> findReleases(@RequestParam(value = "page", defaultValue = "1") int page,
+                                                             @RequestParam(value = "size", defaultValue = "40") int size,
+                                                             @RequestParam(value = "dateFrom", defaultValue = "") LocalDate dateFrom,
+                                                             @RequestParam(value = "dateTo", defaultValue = "") LocalDate dateTo) {
+    var timeRange = new TimeRange(dateFrom, dateTo);
+    var pageRequest = new PageRequest(page, size);
+    List<ReleaseDto> releaseDtos = releaseService.findReleases(timeRange, pageRequest);
     List<ReleasesResponse> response = releaseDtos.stream().map(releasesResponseTransformer::transform).collect(Collectors.toList());
     return ResponseEntity.ok(response);
   }
