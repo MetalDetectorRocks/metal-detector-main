@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
+import rocks.metaldetector.spotify.api.search.SpotifyFollowers;
 import rocks.metaldetector.spotify.api.search.SpotifyImage;
 
 import java.util.List;
@@ -52,6 +53,7 @@ public class SpotifyArtistSearchClientMock implements SpotifyArtistSearchClient 
                             .width(640)
                             .build()))
         .name("Opeth")
+        .followers(SpotifyFollowers.builder().total(100).build())
         .build();
   }
 }
