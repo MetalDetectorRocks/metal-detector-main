@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface ReleaseService {
 
-  List<ReleaseDto> findReleases(TimeRange timeRange, PageRequest pageRequest);
+  List<ReleaseDto> findReleases(Iterable<String> artists, TimeRange timeRange, PageRequest pageRequest);
 
-  List<ReleaseDto> findAllReleases(TimeRange timeRange);
+  List<ReleaseDto> findAllReleases(Iterable<String> artists, TimeRange timeRange);
 
   void createImportJob();
 
