@@ -3,11 +3,11 @@ package rocks.metaldetector.service.artist;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.TopArtist;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 class ArtistTransformerTest implements WithAssertions {
 
@@ -33,7 +33,7 @@ class ArtistTransformerTest implements WithAssertions {
   @DisplayName("Should transform TopArtist to ArtistDto")
   void should_transform_top_artist_to_dto() {
     // given
-    TopArtist topArtist = Mockito.mock(TopArtist.class);
+    TopArtist topArtist = mock(TopArtist.class);
     doReturn("artist").when(topArtist).getArtistName();
     doReturn("thumb").when(topArtist).getThumb();
 
