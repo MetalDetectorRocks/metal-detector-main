@@ -24,4 +24,3 @@ public class ArtistCollector {
         .collect(Collectors.toList());
   }
 }
-
