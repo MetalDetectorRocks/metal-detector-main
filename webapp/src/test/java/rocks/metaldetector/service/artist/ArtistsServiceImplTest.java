@@ -97,7 +97,7 @@ class ArtistsServiceImplTest implements WithAssertions {
   void find_by_discogs_id_should_return_correct_artist() {
     // given
     when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(artistEntity));
-    when(artistTransformer.transform(any())).thenReturn(ArtistDtoFactory.createDefault());
+    when(artistTransformer.transform(any(ArtistEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     Optional<ArtistDto> artistOptional = underTest.findArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
@@ -148,7 +148,7 @@ class ArtistsServiceImplTest implements WithAssertions {
   void find_all_by_discogs_ids_should_return_all_entities_that_exist() {
     // given
     when(artistRepository.findAllByExternalIdIn(any())).thenReturn(List.of(artistEntity));
-    when(artistTransformer.transform(any())).thenReturn(ArtistDtoFactory.createDefault());
+    when(artistTransformer.transform(any(ArtistEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     List<ArtistDto> artists = underTest.findAllArtistsByExternalIds(List.of(EXTERNAL_ID, "0"));

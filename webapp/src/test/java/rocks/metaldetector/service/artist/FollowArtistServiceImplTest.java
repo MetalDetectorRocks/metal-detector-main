@@ -333,7 +333,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     when(currentPublicUserIdSupplier.get()).thenReturn("userId");
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
     when(userEntity.getFollowedArtists()).thenReturn(Set.of(artist1, artist2));
-    when(artistTransformer.transform(any())).thenReturn(ArtistDtoFactory.createDefault());
+    when(artistTransformer.transform(any(ArtistEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     underTest.getFollowedArtistsOfCurrentUser();
