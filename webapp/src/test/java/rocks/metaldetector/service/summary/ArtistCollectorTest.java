@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
-import rocks.metaldetector.service.artist.ArtistEntityFactory;
+import rocks.metaldetector.persistence.domain.artist.TopArtist;
 import rocks.metaldetector.service.artist.ArtistTransformer;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -53,22 +54,22 @@ class ArtistCollectorTest implements WithAssertions {
   @DisplayName("artistTransformer is called for each artist")
   void test_artist_transformer_is_called_for_artists() {
     // given
-    var artistEntities = List.of(ArtistEntityFactory.withExternalId("1"), ArtistEntityFactory.withExternalId("2"));
-    doReturn(artistEntities).when(artistRepository).findTopArtists(anyInt());
+    var topArtists = List.of(mock(TopArtist.class), mock(TopArtist.class));
+    doReturn(topArtists).when(artistRepository).findTopArtists(anyInt());
 
     // when
     underTest.collectTopFollowedArtists();
 
     // then
-    verify(artistTransformer, times(1)).transform(artistEntities.get(0));
-    verify(artistTransformer, times(1)).transform(artistEntities.get(1));
+    verify(artistTransformer, times(1)).transform(topArtists.get(0));
+    verify(artistTransformer, times(1)).transform(topArtists.get(1));
   }
 
   @Test
   @DisplayName("artist dtos are returned")
   void test_artist_dtos_are_returned() {
     // given
-    var artistEntities = List.of(ArtistEntityFactory.withExternalId("1"), ArtistEntityFactory.withExternalId("2"));
+    var artistEntities = List.of(mock(TopArtist.class), mock(TopArtist.class));
     doReturn(artistEntities).when(artistRepository).findTopArtists(anyInt());
     var expectedArtistDtos = List.of(ArtistDtoFactory.withName("A"), ArtistDtoFactory.withName("B"));
     doReturn(expectedArtistDtos.get(0)).when(artistTransformer).transform(artistEntities.get(0));

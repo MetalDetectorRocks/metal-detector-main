@@ -4,10 +4,14 @@ import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
+import rocks.metaldetector.persistence.domain.artist.TopArtist;
+
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 class ArtistTransformerTest implements WithAssertions {
 
-  private ArtistTransformer underTest = new ArtistTransformer();
+  private final ArtistTransformer underTest = new ArtistTransformer();
 
   @Test
   @DisplayName("Should transform ArtistEntity to ArtistDto")
@@ -23,5 +27,21 @@ class ArtistTransformerTest implements WithAssertions {
     assertThat(result.getArtistName()).isEqualTo(artistEntity.getArtistName());
     assertThat(result.getThumb()).isEqualTo(artistEntity.getThumb());
     assertThat(result.getSource()).isEqualTo(artistEntity.getSource().getDisplayName());
+  }
+
+  @Test
+  @DisplayName("Should transform TopArtist to ArtistDto")
+  void should_transform_top_artist_to_dto() {
+    // given
+    TopArtist topArtist = mock(TopArtist.class);
+    doReturn("artist").when(topArtist).getArtistName();
+    doReturn("thumb").when(topArtist).getThumb();
+
+    // when
+    ArtistDto result = underTest.transform(topArtist);
+
+    // then
+    assertThat(result.getArtistName()).isEqualTo(topArtist.getArtistName());
+    assertThat(result.getThumb()).isEqualTo(topArtist.getThumb());
   }
 }
