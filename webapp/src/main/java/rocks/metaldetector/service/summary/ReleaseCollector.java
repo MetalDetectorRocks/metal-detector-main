@@ -10,6 +10,7 @@ import rocks.metaldetector.support.TimeRange;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,8 +33,11 @@ public class ReleaseCollector {
   public List<ReleaseDto> collectRecentReleases(List<ArtistDto> artists) {
     LocalDate now = LocalDate.now();
     TimeRange timeRange = new TimeRange(now.minusMonths(TIME_RANGE_MONTHS), now);
-
-    return collectReleases(artists, timeRange);
+    List<ReleaseDto> releases = collectReleases(artists, timeRange);
+    releases.sort(Comparator.comparing(ReleaseDto::getReleaseDate).reversed()
+                      .thenComparing(ReleaseDto::getArtist)
+                      .thenComparing(ReleaseDto::getAlbumTitle));
+    return releases;
   }
 
   private List<ReleaseDto> collectReleases(List<ArtistDto> artists, TimeRange timeRange) {
