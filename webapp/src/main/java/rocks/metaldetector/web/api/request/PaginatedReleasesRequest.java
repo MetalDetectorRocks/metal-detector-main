@@ -20,11 +20,11 @@ import java.util.List;
 public class PaginatedReleasesRequest implements WithTimeRangeValidation {
 
   @Min(value = 1, message = "'page' must be greater than zero!")
-  private int page;
+  private int page = 1;
 
   @Min(value = 1, message = "'size' must be greater than zero!")
   @Max(value = 50, message = "'size' must be equal or less than 50!")
-  private int size;
+  private int size = 40;
 
   @Nullable
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -33,8 +33,5 @@ public class PaginatedReleasesRequest implements WithTimeRangeValidation {
   @Nullable
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate dateTo;
-
-  @NotNull
-  private List<String> artists;
 
 }
