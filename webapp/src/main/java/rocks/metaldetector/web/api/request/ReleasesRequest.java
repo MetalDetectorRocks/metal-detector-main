@@ -25,7 +25,4 @@ public class ReleasesRequest implements WithTimeRangeValidation {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate dateTo;
 
-  @NotNull
-  private List<String> artists;
-
 }

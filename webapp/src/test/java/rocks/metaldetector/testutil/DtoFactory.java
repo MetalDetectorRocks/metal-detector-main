@@ -120,7 +120,6 @@ public class DtoFactory {
 
     public static ReleasesRequest createDefault() {
       return ReleasesRequest.builder()
-          .artists(List.of("A", "B", "C"))
           .dateFrom(LocalDate.now())
           .dateTo(LocalDate.now().plusDays(30))
           .build();
@@ -133,7 +132,6 @@ public class DtoFactory {
       return PaginatedReleasesRequest.builder()
               .page(1)
               .size(10)
-              .artists(List.of("A", "B", "C"))
               .dateFrom(LocalDate.now())
               .dateTo(LocalDate.now().plusDays(30))
               .build();

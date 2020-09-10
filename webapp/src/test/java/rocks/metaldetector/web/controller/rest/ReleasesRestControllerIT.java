@@ -35,20 +35,20 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
   class AdministratorRoleTest {
 
     @Test
-    @DisplayName("Administrator is allowed to POST on endpoint " + QUERY_ALL_RELEASES + "'")
+    @DisplayName("Administrator is allowed to GET on endpoint " + QUERY_ALL_RELEASES + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_query_all_releases() throws Exception {
-      mockMvc.perform(post(QUERY_ALL_RELEASES)
+      mockMvc.perform(get(QUERY_ALL_RELEASES)
               .content(objectMapper.writeValueAsString(ReleaseRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON))
               .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Administrator is allowed to POST on endpoint " + QUERY_RELEASES + "'")
+    @DisplayName("Administrator is allowed to GET on endpoint " + QUERY_RELEASES + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_query_releases() throws Exception {
-      mockMvc.perform(post(QUERY_RELEASES)
+      mockMvc.perform(get(QUERY_RELEASES)
               .content(objectMapper.writeValueAsString(PaginatedReleaseRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON))
               .andExpect(status().isOk());
@@ -86,20 +86,20 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
   class UserRoleTest {
 
     @Test
-    @DisplayName("User is not allowed to POST on endpoint " + QUERY_ALL_RELEASES + "'")
+    @DisplayName("User is not allowed to GET on endpoint " + QUERY_ALL_RELEASES + "'")
     @WithMockUser(roles = "USER")
     void user_is_not_allowed_to_query_all_releases() throws Exception {
-      mockMvc.perform(post(QUERY_ALL_RELEASES)
+      mockMvc.perform(get(QUERY_ALL_RELEASES)
               .content(objectMapper.writeValueAsString(PaginatedReleaseRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON))
               .andExpect(status().isForbidden());
     }
 
     @Test
-    @DisplayName("User is allowed to POST on endpoint " + QUERY_RELEASES + "'")
+    @DisplayName("User is allowed to GET on endpoint " + QUERY_RELEASES + "'")
     @WithMockUser(roles = "USER")
     void user_is_allowed_to_query_releases() throws Exception {
-      mockMvc.perform(post(QUERY_RELEASES)
+      mockMvc.perform(get(QUERY_RELEASES)
               .content(objectMapper.writeValueAsString(PaginatedReleaseRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON))
               .andExpect(status().isOk());

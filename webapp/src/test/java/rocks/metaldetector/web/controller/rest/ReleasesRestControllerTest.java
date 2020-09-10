@@ -33,10 +33,10 @@ import rocks.metaldetector.web.api.response.ReleasesResponse;
 import rocks.metaldetector.web.transformer.ReleasesResponseTransformer;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -92,10 +92,10 @@ class ReleasesRestControllerTest implements WithAssertions {
       ReleasesRequest request = ReleaseRequestFactory.createDefault();
 
       // when
-      restAssuredUtils.doPost(request);
+      restAssuredUtils.doGet(toMap(request));
 
       // then
-      verify(releasesService, times(1)).findAllReleases(request.getArtists(), new TimeRange(request.getDateFrom(), request.getDateTo()));
+      verify(releasesService, times(1)).findAllReleases(Collections.emptyList(), new TimeRange(request.getDateFrom(), request.getDateTo()));
     }
 
     @Test
@@ -108,7 +108,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       doReturn(List.of(release1, release2)).when(releasesService).findAllReleases(any(), any());
 
       // when
-      restAssuredUtils.doPost(request);
+      restAssuredUtils.doGet(toMap(request));
 
       // then
       verify(releasesResponseTransformer, times(1)).transform(eq(release1));
@@ -125,7 +125,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       doReturn(transformedResponse).when(releasesResponseTransformer).transform(any());
 
       // when
-      var validatableResponse = restAssuredUtils.doPost(request);
+      var validatableResponse = restAssuredUtils.doGet(toMap(request));
 
       // then
       validatableResponse
@@ -141,7 +141,7 @@ class ReleasesRestControllerTest implements WithAssertions {
     @DisplayName("Should return 400 on invalid query request")
     void test_invalid_query_requests(ReleasesRequest request) {
       // when
-      var validatableResponse = restAssuredUtils.doPost(request);
+      var validatableResponse = restAssuredUtils.doGet(toMap(request));
 
       // then
       validatableResponse
@@ -152,12 +152,18 @@ class ReleasesRestControllerTest implements WithAssertions {
     private Stream<Arguments> requestProvider() {
       var validFrom = LocalDate.now();
       var validTo = LocalDate.now().plusDays(10);
-      var validArtists = List.of("Darkthrone", "Karg");
 
       return Stream.of(
-              Arguments.of(new ReleasesRequest(validFrom.plusDays(20), validTo, validArtists)),
-              Arguments.of(new ReleasesRequest(validFrom, validTo, null))
+              Arguments.of(new ReleasesRequest(validFrom.plusDays(20), validTo))
       );
+    }
+
+    private Map<String, Object> toMap(ReleasesRequest request) {
+      Map<String, Object> map = new HashMap<>();
+      map.put("dateFrom", request.getDateFrom().toString());
+      map.put("dateTo", request.getDateTo().toString());
+
+      return map;
     }
   }
 
@@ -180,11 +186,11 @@ class ReleasesRestControllerTest implements WithAssertions {
       PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
 
       // when
-      restAssuredUtils.doPost(request);
+      restAssuredUtils.doGet(toMap(request));
 
       // then
       verify(releasesService, times(1)).findReleases(
-              request.getArtists(),
+              Collections.emptyList(),
               new TimeRange(request.getDateFrom(), request.getDateTo()),
               new PageRequest(request.getPage(), request.getSize())
       );
@@ -200,7 +206,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       doReturn(List.of(release1, release2)).when(releasesService).findReleases(any(), any(), any());
 
       // when
-      restAssuredUtils.doPost(request);
+      restAssuredUtils.doGet(toMap(request));
 
       // then
       verify(releasesResponseTransformer, times(1)).transform(eq(release1));
@@ -217,7 +223,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       doReturn(transformedResponse).when(releasesResponseTransformer).transform(any());
 
       // when
-      var validatableResponse = restAssuredUtils.doPost(request);
+      var validatableResponse = restAssuredUtils.doGet(toMap(request));
 
       // then
       validatableResponse
@@ -233,7 +239,7 @@ class ReleasesRestControllerTest implements WithAssertions {
     @DisplayName("Should return 400 on invalid query request")
     void test_invalid_query_requests(PaginatedReleasesRequest request) {
       // when
-      var validatableResponse = restAssuredUtils.doPost(request);
+      var validatableResponse = restAssuredUtils.doGet(toMap(request));
 
       // then
       validatableResponse
@@ -246,15 +252,23 @@ class ReleasesRestControllerTest implements WithAssertions {
       var validSize = 10;
       var validFrom = LocalDate.now();
       var validTo = LocalDate.now().plusDays(10);
-      var validArtists = List.of("Darkthrone", "Karg");
 
       return Stream.of(
-              Arguments.of(new PaginatedReleasesRequest(0, validSize, validFrom, validTo, validArtists)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, 0, validFrom, validTo, validArtists)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, 51, validFrom, validTo, validArtists)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validFrom.plusDays(20), validTo, validArtists)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validFrom, validTo, null))
+              Arguments.of(new PaginatedReleasesRequest(0, validSize, validFrom, validTo)),
+              Arguments.of(new PaginatedReleasesRequest(validPage, 0, validFrom, validTo)),
+              Arguments.of(new PaginatedReleasesRequest(validPage, 51, validFrom, validTo)),
+              Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validFrom.plusDays(20), validTo))
       );
+    }
+
+    private Map<String, Object> toMap(PaginatedReleasesRequest request) {
+      Map<String, Object> map = new HashMap<>();
+      map.put("page", request.getPage());
+      map.put("size", request.getSize());
+      map.put("dateFrom", request.getDateFrom().toString());
+      map.put("dateTo", request.getDateTo().toString());
+
+      return map;
     }
   }
 
