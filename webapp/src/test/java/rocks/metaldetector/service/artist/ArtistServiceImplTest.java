@@ -45,7 +45,7 @@ import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseFactor
 import static rocks.metaldetector.testutil.DtoFactory.SpotifyArtistSearchResultDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
-class ArtistsServiceImplTest implements WithAssertions {
+class ArtistServiceImplTest implements WithAssertions {
 
   private static final String EXTERNAL_ID = "1";
   private static final String ARTIST_NAME = "A";
@@ -76,7 +76,10 @@ class ArtistsServiceImplTest implements WithAssertions {
   private UserEntity userEntityMock;
 
   @InjectMocks
-  private ArtistsServiceImpl underTest;
+  private ArtistServiceImpl underTest;
+
+  @InjectMocks
+  private ArtistSearchServiceImpl underTestSearch;
 
   private ArtistEntity artistEntity;
   private ArtistDto artistDto;
@@ -233,7 +236,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(ArtistSearchResponseFactory.discogs()).when(searchResponseTransformer).transformDiscogs(any());
 
       // when
-      underTest.searchDiscogsByName(artistQueryString, pageable);
+      underTestSearch.searchDiscogsByName(artistQueryString, pageable);
 
       // then
       verify(discogsService, times(1)).searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
@@ -250,7 +253,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(ArtistSearchResponseFactory.discogs()).when(searchResponseTransformer).transformDiscogs(any());
 
       // when
-      underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
+      underTestSearch.searchDiscogsByName("the query", PageRequest.of(1, 10));
 
       // then
       verify(searchResponseTransformer, times(1)).transformDiscogs(expectedSearchResults);
@@ -267,7 +270,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(expectedSearchResult).when(searchResponseTransformer).transformDiscogs(any());
 
       // when
-      ArtistSearchResponse result = underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
+      ArtistSearchResponse result = underTestSearch.searchDiscogsByName("the query", PageRequest.of(1, 10));
 
       // then
       assertThat(result).isEqualTo(expectedSearchResult);
@@ -288,7 +291,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(discogssearchresults).when(searchResponseTransformer).transformDiscogs(any());
 
       // when
-      var searchResults = underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
+      var searchResults = underTestSearch.searchDiscogsByName("the query", PageRequest.of(1, 10));
 
       // then
       assertThat(searchResults.getSearchResults().get(0).isFollowed()).isTrue();
@@ -309,7 +312,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(ArtistSearchResponseFactory.discogs()).when(searchResponseTransformer).transformDiscogs(any());
 
       // when
-      underTest.searchDiscogsByName(artistQueryString, pageable);
+      underTestSearch.searchDiscogsByName(artistQueryString, pageable);
 
       // then
       verify(currentPublicUserIdSupplier, times(1)).get();
@@ -327,7 +330,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doThrow(new ResourceNotFoundException(userId)).when(userRepository).findByPublicId(anyString());
 
       // when
-      var throwable = catchThrowable(() -> underTest.searchDiscogsByName(artistQueryString, pageable));
+      var throwable = catchThrowable(() -> underTestSearch.searchDiscogsByName(artistQueryString, pageable));
 
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
@@ -359,7 +362,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any());
 
       // when
-      underTest.searchSpotifyByName(artistQueryString, pageable);
+      underTestSearch.searchSpotifyByName(artistQueryString, pageable);
 
       // then
       verify(spotifyService, times(1)).searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
@@ -376,7 +379,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any());
 
       // when
-      underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
+      underTestSearch.searchSpotifyByName("the query", PageRequest.of(1, 10));
 
       // then
       verify(searchResponseTransformer, times(1)).transformSpotify(expectedSearchResults);
@@ -393,7 +396,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(expectedSearchResult).when(searchResponseTransformer).transformSpotify(any());
 
       // when
-      ArtistSearchResponse result = underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
+      ArtistSearchResponse result = underTestSearch.searchSpotifyByName("the query", PageRequest.of(1, 10));
 
       // then
       assertThat(result).isEqualTo(expectedSearchResult);
@@ -414,7 +417,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(spotifySearchResults).when(searchResponseTransformer).transformSpotify(any());
 
       // when
-      var searchResults = underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
+      var searchResults = underTestSearch.searchSpotifyByName("the query", PageRequest.of(1, 10));
 
       // then
       assertThat(searchResults.getSearchResults().get(0).isFollowed()).isTrue();
@@ -435,7 +438,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doReturn(ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any());
 
       // when
-      underTest.searchSpotifyByName(artistQueryString, pageable);
+      underTestSearch.searchSpotifyByName(artistQueryString, pageable);
 
       // then
       verify(currentPublicUserIdSupplier, times(1)).get();
@@ -453,7 +456,7 @@ class ArtistsServiceImplTest implements WithAssertions {
       doThrow(new ResourceNotFoundException(userId)).when(userRepository).findByPublicId(anyString());
 
       // when
-      var throwable = catchThrowable(() -> underTest.searchSpotifyByName(artistQueryString, pageable));
+      var throwable = catchThrowable(() -> underTestSearch.searchSpotifyByName(artistQueryString, pageable));
 
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
