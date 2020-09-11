@@ -1,0 +1,519 @@
+{
+	"info": {
+		"_postman_id": "f2b5779f-9bd1-470b-9f7f-d340e3192367",
+		"name": "Metal Detector",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Home",
+			"item": [
+				{
+					"name": "Home",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/home",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"home"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Artists",
+			"item": [
+				{
+					"name": "Search Artist",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/artists/search?query=nirvana&page=1&size=40",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"artists",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "nirvana"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "40"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Follow Artist",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/artists/follow/spotify/7kWnE981vITXDnAD2cZmCV",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"artists",
+								"follow",
+								"spotify",
+								"7kWnE981vITXDnAD2cZmCV"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unfollow Artist",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/artists/unfollow/spotify/7kWnE981vITXDnAD2cZmCV",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"artists",
+								"unfollow",
+								"spotify",
+								"7kWnE981vITXDnAD2cZmCV"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show Followed Artists",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/my-artists?page=1&size=20",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"my-artists"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Notify User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/notify/2c545ef2-1c07-43cd-9a23-9bd0bf9178e3",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"notify",
+								"2c545ef2-1c07-43cd-9a23-9bd0bf9178e3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Notify All Users",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/notify",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"notify"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Releases",
+			"item": [
+				{
+					"name": "Create Import Job",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/releases/import",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"releases",
+								"import"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find All Releases",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/releases",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"releases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Releases",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/rest/v1/releases",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"releases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Import Job Results",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/releases/import",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"releases",
+								"import"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Retry Cover Download Job",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/releases/cover-reload",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"releases",
+								"cover-reload"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/rest/v1/users/2c545ef2-1c07-43cd-9a23-9bd0bf9178e3",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"users",
+								"2c545ef2-1c07-43cd-9a23-9bd0bf9178e3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"publicId\": \"2c545ef2-1c07-43cd-9a23-11111111111\",\n    \"username\": \"Test User 1\",\n    \"email\": \"test.user1@example.com\",\n    \"plainPassword\": \"123456789\",\n    \"verifyPlainPassword\": \"123456789\",\n    \"enabled\": true,\n    \"role\": \"User\",\n    \"lastLogin\": null,\n    \"createdBy\": \"ANONYMOUS\",\n    \"createdDateTime\": \"2020-08-20T17:34:30.583\",\n    \"lastModifiedDateTime\": \"2020-08-20T17:34:30.583\",\n    \"lastModifiedBy\": \"ANONYMOUS\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/rest/v1/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"publicId\": \"46cc983f-c23e-4ce2-9ca3-2ab9c3ecbeea\",\n    \"publicUserId\": \"46cc983f-c23e-4ce2-9ca3-2ab9c3ecbeea\",\n    \"username\": \"Updated Test User 1\",\n    \"email\": \"test.user1@example.com\",\n    \"plainPassword\": \"123456789\",\n    \"verifyPlainPassword\": \"123456789\",\n    \"enabled\": true,\n    \"role\": \"User\",\n    \"lastLogin\": null,\n    \"createdBy\": \"ANONYMOUS\",\n    \"createdDateTime\": \"2020-08-20T17:34:30.583\",\n    \"lastModifiedDateTime\": \"2020-08-20T17:34:30.583\",\n    \"lastModifiedBy\": \"ANONYMOUS\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/rest/v1/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"rest",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
