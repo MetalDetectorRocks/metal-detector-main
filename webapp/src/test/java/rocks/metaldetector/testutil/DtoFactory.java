@@ -214,6 +214,14 @@ public class DtoFactory {
           .releaseDate(LocalDate.now().plusDays(10))
           .build();
     }
+
+    public static ReleaseDto withReleaseDate(LocalDate releaseDate) {
+      return ReleaseDto.builder()
+          .artist("Evil Artist")
+          .albumTitle("Heavy Release")
+          .releaseDate(releaseDate)
+          .build();
+    }
   }
 
   public static class ImportJobResultDtoFactory {
