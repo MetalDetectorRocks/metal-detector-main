@@ -14,12 +14,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.service.artist.ArtistSearchService;
 import rocks.metaldetector.service.artist.ArtistService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 

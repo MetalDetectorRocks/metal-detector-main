@@ -1,4 +1,4 @@
-package rocks.metaldetector.config.constants;
+package rocks.metaldetector.support;
 
 import java.util.List;
 import java.util.stream.Stream;

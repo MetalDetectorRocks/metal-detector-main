@@ -10,7 +10,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.support.Endpoints;
 
 class CustomLogoutSuccessHandlerTest implements WithAssertions {
 

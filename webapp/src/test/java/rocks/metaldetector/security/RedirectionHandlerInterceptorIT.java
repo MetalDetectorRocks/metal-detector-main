@@ -15,7 +15,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 
 import java.util.Arrays;

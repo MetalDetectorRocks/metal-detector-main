@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
-import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.TimeRange;

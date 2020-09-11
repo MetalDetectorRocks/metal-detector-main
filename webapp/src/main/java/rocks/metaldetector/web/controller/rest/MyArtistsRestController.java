@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.SlicingService;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.spotify.facade.SpotifyService;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.response.MyArtistsResponse;
 

@@ -14,10 +14,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static rocks.metaldetector.config.constants.Endpoints.Rest.COVER_JOB;
-import static rocks.metaldetector.config.constants.Endpoints.Rest.IMPORT_JOB;
-import static rocks.metaldetector.config.constants.Endpoints.Rest.QUERY_ALL_RELEASES;
-import static rocks.metaldetector.config.constants.Endpoints.Rest.QUERY_RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.COVER_JOB;
+import static rocks.metaldetector.support.Endpoints.Rest.IMPORT_JOB;
+import static rocks.metaldetector.support.Endpoints.Rest.QUERY_ALL_RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.QUERY_RELEASES;
 import static rocks.metaldetector.testutil.DtoFactory.PaginatedReleaseRequestFactory;
 
 @WebMvcTest(controllers = ReleasesRestController.class)

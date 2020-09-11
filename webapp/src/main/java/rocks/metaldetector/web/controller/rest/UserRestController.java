@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.service.user.UserDto;
+import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.UserResponse;
@@ -23,7 +23,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static rocks.metaldetector.config.constants.Endpoints.Rest.USERS;
+import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 
 @RestController
 @RequestMapping(USERS)
