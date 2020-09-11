@@ -16,7 +16,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.support.Endpoints;
 
 import java.util.List;
 import java.util.stream.Stream;

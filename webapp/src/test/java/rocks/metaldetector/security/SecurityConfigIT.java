@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import static org.hamcrest.Matchers.containsString;

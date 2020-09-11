@@ -15,7 +15,7 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
-import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.support.Endpoints;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

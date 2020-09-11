@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static rocks.metaldetector.config.constants.Endpoints.Rest.USERS;
+import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 
 @WebMvcTest(controllers = UserRestController.class)
 class UserRestControllerIT extends BaseWebMvcTestWithSecurity {

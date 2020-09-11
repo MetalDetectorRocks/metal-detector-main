@@ -13,12 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.user.OnResetPasswordRequestCompleteEvent;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 

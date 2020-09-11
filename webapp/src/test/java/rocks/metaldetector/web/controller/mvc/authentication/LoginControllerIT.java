@@ -13,8 +13,8 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.user.UserEntityFactory;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import java.util.stream.Stream;

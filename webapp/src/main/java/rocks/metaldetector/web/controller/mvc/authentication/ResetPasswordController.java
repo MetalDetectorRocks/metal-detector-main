@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 
 import javax.validation.Valid;

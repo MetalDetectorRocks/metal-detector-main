@@ -11,8 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.notification.NotificationService;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import static org.mockito.Mockito.reset;

@@ -8,8 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;

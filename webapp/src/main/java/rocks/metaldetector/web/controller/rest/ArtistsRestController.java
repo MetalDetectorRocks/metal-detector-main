@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.service.artist.ArtistsService;
 import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 
 @RestController

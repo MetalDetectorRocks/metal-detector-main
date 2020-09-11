@@ -17,13 +17,13 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.handler.CustomAccessDeniedHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationFailureHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
 import rocks.metaldetector.security.handler.CustomLogoutSuccessHandler;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.SecurityProperties;
 
 import javax.sql.DataSource;
