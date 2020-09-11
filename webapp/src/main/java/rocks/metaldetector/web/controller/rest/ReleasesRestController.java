@@ -17,7 +17,6 @@ import rocks.metaldetector.web.api.response.ReleasesResponse;
 import rocks.metaldetector.web.transformer.ReleasesResponseTransformer;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
