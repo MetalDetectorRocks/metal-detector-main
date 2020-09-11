@@ -11,6 +11,8 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     private readonly dateService: DateService;
     private readonly artistTemplateElement: HTMLTemplateElement;
     private readonly releaseTemplateElement: HTMLTemplateElement;
+    private readonly MAX_CARDS_PER_ROW: number = 4;
+    private readonly MIN_CARDS_PER_ROW: number = this.MAX_CARDS_PER_ROW - 1;
 
     constructor(alertService: AlertService, loadingIndicatorService: LoadingIndicatorService, dateService: DateService) {
         super(alertService, loadingIndicatorService);
@@ -24,43 +26,69 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     }
 
     protected onRendering(response: HomepageResponse): void {
-        this.renderUpcomingReleasesRow(response);
-        this.renderRecentReleasesRow(response);
-        this.renderRecentlyFollowedRow(response);
-    }
+        if (response.upcomingReleases.length >= this.MIN_CARDS_PER_ROW &&
+            response.recentReleases.length >= this.MIN_CARDS_PER_ROW) {
+            this.renderUpcomingReleasesRow(response);
+            this.renderRecentReleasesRow(response);
+        }
+        else {
+            this.renderReleaseRow(response);
+        }
 
-    private renderRecentReleasesRow(response: HomepageResponse): void {
-        this.insertHeadingElement("Recent releases")
-        const recentReleasesRowElement = this.insertRowElement();
-
-        response.recentReleases.forEach(release => {
-            const releaseDivElement = this.renderReleaseCard(release);
-            const releaseDateElement = releaseDivElement.querySelector("#release-date") as HTMLDivElement;
-            releaseDateElement.innerHTML = this.createReleasedBeforeString(release.releaseDate);
-            this.attachCard(releaseDivElement, recentReleasesRowElement);
-        });
-    }
-
-    private renderRecentlyFollowedRow(response: HomepageResponse): void {
-        this.insertHeadingElement("Recently followed artists")
-        const recentlyFollowedRowElement = this.insertRowElement();
-
-        response.recentlyFollowedArtists.forEach(artist => {
-            const artistDivElement = this.renderArtistCard(artist);
-            this.attachCard(artistDivElement, recentlyFollowedRowElement);
-        });
+        this.renderRecentlyFollowedArtistsRow(response);
+        this.renderFavoriteCommunityArtistsRow(response);
     }
 
     private renderUpcomingReleasesRow(response: HomepageResponse) {
         this.insertHeadingElement("Upcoming releases")
         const upcomingReleasesRowElement = this.insertRowElement();
+        this.renderReleaseCards(response.upcomingReleases, upcomingReleasesRowElement);
+        this.insertPlaceholder(response.upcomingReleases.length, upcomingReleasesRowElement);
+    }
 
-        response.upcomingReleases.forEach(release => {
-            const releaseDivElement = this.renderReleaseCard(release);
-            const releaseDateElement = releaseDivElement.querySelector("#release-date") as HTMLDivElement;
-            releaseDateElement.innerHTML = this.createReleasedInString(release.releaseDate);
-            this.attachCard(releaseDivElement, upcomingReleasesRowElement);
-        });
+    private renderRecentReleasesRow(response: HomepageResponse): void {
+        this.insertHeadingElement("Recent releases")
+        const recentReleasesRowElement = this.insertRowElement();
+        this.renderReleaseCards(response.recentReleases, recentReleasesRowElement);
+        this.insertPlaceholder(response.recentReleases.length, recentReleasesRowElement);
+    }
+
+    private renderReleaseRow(response: HomepageResponse): void {
+        const releases = response.recentReleases.concat(response.upcomingReleases)
+          .splice(0, this.MAX_CARDS_PER_ROW);
+
+        if (releases.length) {
+            this.insertHeadingElement("Releases");
+            const releasesRow = this.insertRowElement();
+            this.renderReleaseCards(releases, releasesRow);
+            this.insertPlaceholder(releases.length, releasesRow);
+        }
+    }
+
+    private renderRecentlyFollowedArtistsRow(response: HomepageResponse): void {
+        if (response.recentlyFollowedArtists.length) {
+            this.insertHeadingElement("Recently followed artists")
+            const recentlyFollowedRowElement = this.insertRowElement();
+
+            response.recentlyFollowedArtists.forEach(artist => {
+                const artistDivElement = this.renderArtistCard(artist);
+                const followedSinceElement = artistDivElement.querySelector("#artist-followed-since") as HTMLDivElement;
+                followedSinceElement.innerHTML = this.createDateString(artist.followedSince);
+                this.attachCard(artistDivElement, recentlyFollowedRowElement);
+            });
+        }
+    }
+
+    private renderFavoriteCommunityArtistsRow(response: HomepageResponse): void {
+        if (response.favoriteCommunityArtists.length) {
+            this.insertHeadingElement("The community's favorite artists")
+            const recentlyFollowedRowElement = this.insertRowElement();
+
+            response.favoriteCommunityArtists.forEach(artist => {
+                const artistDivElement = this.renderArtistCard(artist);
+                this.attachCard(artistDivElement, recentlyFollowedRowElement);
+            });
+        }
     }
 
     private renderArtistCard(artist: Artist): HTMLDivElement {
@@ -68,13 +96,20 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         const artistDivElement = artistTemplateNode.firstElementChild as HTMLDivElement;
         const artistThumbElement = artistDivElement.querySelector("#artist-thumb") as HTMLImageElement;
         const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
-        const followedSinceElement = artistDivElement.querySelector("#artist-followed-since") as HTMLDivElement;
 
         artistThumbElement.src = artist.thumb;
         artistNameElement.textContent = artist.artistName;
-        followedSinceElement.innerHTML = this.createFollowedSinceString(artist.followedSince);
 
         return artistDivElement;
+    }
+
+    private renderReleaseCards(releases: Release[], rowElement: HTMLDivElement): void {
+        releases.forEach(release => {
+            const releaseDivElement = this.renderReleaseCard(release);
+            const releaseDateElement = releaseDivElement.querySelector("#release-date") as HTMLDivElement;
+            releaseDateElement.innerHTML = this.createDateString(release.releaseDate);
+            this.attachCard(releaseDivElement, rowElement);
+        });
     }
 
     private renderReleaseCard(release: Release): HTMLDivElement {
@@ -91,23 +126,36 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         return releaseDivElement;
     }
 
+    private renderPlaceholderCard(): HTMLDivElement {
+        const artistTemplateNode = document.importNode(this.releaseTemplateElement.content, true);
+        const divElement = artistTemplateNode.firstElementChild as HTMLDivElement;
+        const thumbElement = divElement.querySelector("#release-cover") as HTMLImageElement;
+        const nameElement = divElement.querySelector("#release-artist-name") as HTMLParagraphElement;
+        const subtitleElement = divElement.querySelector("#release-title") as HTMLParagraphElement;
+        const footerElement = divElement.querySelector("#release-date") as HTMLDivElement;
+
+        thumbElement.src = "/images/question-mark.jpg";
+        nameElement.textContent = "Nothing here..."
+        subtitleElement.textContent = "Want to see more?";
+        footerElement.innerHTML = "Follow more artists!";
+
+        return divElement;
+    }
+
     private attachCard(divElement: HTMLDivElement, rowElement: HTMLDivElement): void {
         rowElement.insertAdjacentElement("beforeend", divElement);
     }
 
-    private createReleasedBeforeString(releaseDate: Date): string {
-        const releasedInDays = this.dateService.calculatePastTimeRange(releaseDate);
-        return `${releasedInDays} days ago`;
-    }
+    private createDateString(date: Date): string {
+        let timeRange = this.dateService.calculateTimeRange(date);
 
-    private createReleasedInString(releaseDate: Date): string {
-        const releasedInDays = this.dateService.calculateFutureTimeRange(releaseDate);
-        return `In ${releasedInDays} days`;
-    }
-
-    private createFollowedSinceString(followedSince: Date): string {
-        const followedForDays = this.dateService.calculatePastTimeRange(followedSince)
-        return `${followedForDays} days ago`;
+        if (timeRange >= 0) {
+            return `In ${timeRange} days`;
+        }
+        else {
+            timeRange = -timeRange;
+            return `${timeRange} days ago`;
+        }
     }
 
     private insertHeadingElement(heading: string): void {
@@ -122,5 +170,12 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         recentlyFollowedRowElement.className = "row";
         this.hostElement.insertAdjacentElement("beforeend", recentlyFollowedRowElement);
         return recentlyFollowedRowElement;
+    }
+
+    private insertPlaceholder(elementCount: number, rowElement: HTMLDivElement): void {
+        if (elementCount < this.MAX_CARDS_PER_ROW) {
+            const placeholderDivElement = this.renderPlaceholderCard();
+            this.attachCard(placeholderDivElement, rowElement);
+        }
     }
 }
