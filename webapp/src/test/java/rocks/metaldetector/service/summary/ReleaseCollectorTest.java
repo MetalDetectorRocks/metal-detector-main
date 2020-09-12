@@ -11,13 +11,18 @@ import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
+import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -87,6 +92,21 @@ class ReleaseCollectorTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("collecting upcoming releases returns list of releases")
+  void test_upcoming_returns_releases() {
+    // given
+    var artists = List.of(ArtistDtoFactory.withName("A"));
+    var releases = List.of(ReleaseDtoFactory.createDefault(), ReleaseDtoFactory.createDefault());
+    doReturn(releases).when(releaseService).findReleases(any(), any(), any());
+
+    // when
+    var result = underTest.collectUpcomingReleases(artists);
+
+    // then
+    assertThat(result).isEqualTo(releases);
+  }
+
+  @Test
   @DisplayName("collecting recent releases does not call releaseService when no artists are given")
   void test_recent_releases_does_not_call_release_service() {
     // when
@@ -137,5 +157,23 @@ class ReleaseCollectorTest implements WithAssertions {
 
     // then
     verify(releaseService, times(1)).findReleases(any(), any(), eq(expectedPageRequest));
+  }
+
+  @Test
+  @DisplayName("collecting recent releases returns list of releases, sorted by descending release date")
+  void test_recent_returns_releases() {
+    // given
+    var artists = List.of(ArtistDtoFactory.withName("A"));
+    var now = LocalDate.now();
+    var releases = Stream.of(ReleaseDtoFactory.withReleaseDate(now), ReleaseDtoFactory.withReleaseDate(now.plusDays(10))).collect(Collectors.toList());
+    doReturn(new ArrayList<>(releases)).when(releaseService).findReleases(any(), any(), any());
+
+    // when
+    var result = underTest.collectRecentReleases(artists);
+
+    // then
+    assertThat(result).hasSize(releases.size());
+    assertThat(result.get(0)).isEqualTo(releases.get(1));
+    assertThat(result.get(1)).isEqualTo(releases.get(0));
   }
 }

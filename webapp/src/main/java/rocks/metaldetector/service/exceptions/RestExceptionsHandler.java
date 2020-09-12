@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -71,10 +73,20 @@ public class RestExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), UNSUPPORTED_MEDIA_TYPE);
   }
 
-  @ExceptionHandler({MethodArgumentNotValidException.class})
-  public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException exception, WebRequest webRequest) {
+  @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
+  public ResponseEntity<ErrorResponse> handleValidationErrors(Exception exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
-    return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), BAD_REQUEST);
+    BindingResult bindingResult = null;
+    if (exception instanceof MethodArgumentNotValidException) {
+      bindingResult = ((MethodArgumentNotValidException) exception).getBindingResult();
+    }
+    else if (exception instanceof BindException) {
+      bindingResult = ((BindException) exception).getBindingResult();
+    }
+
+    return bindingResult != null
+            ? new ResponseEntity<>(createErrorResponse(bindingResult), new HttpHeaders(), BAD_REQUEST)
+            : handleAllOtherExceptions(exception, webRequest);
   }
 
   @ExceptionHandler({UserAlreadyExistsException.class, IllegalUserActionException.class})
@@ -117,12 +129,12 @@ public class RestExceptionsHandler {
     return new ErrorResponse(exception.getMessage());
   }
 
-  private ErrorResponse createErrorResponse(MethodArgumentNotValidException exception) {
-    List<String> fieldErrors = exception.getBindingResult().getAllErrors()
-        .stream()
-        .map(this::transformFieldError)
-        .sorted()
-        .collect(Collectors.toList());
+  private ErrorResponse createErrorResponse(BindingResult bindingResult) {
+    List<String> fieldErrors = bindingResult.getAllErrors()
+            .stream()
+            .map(this::transformFieldError)
+            .sorted()
+            .collect(Collectors.toList());
 
     return new ErrorResponse(fieldErrors);
   }
@@ -130,10 +142,10 @@ public class RestExceptionsHandler {
   private String transformFieldError(ObjectError error) {
     if (error instanceof FieldError) {
       return "Error regarding field '" +
-             ((FieldError) error).getField() +
-             "': " +
-             error.getDefaultMessage() +
-             ".";
+              ((FieldError) error).getField() +
+              "': " +
+              error.getDefaultMessage() +
+              ".";
     }
     else {
       return error.getDefaultMessage();

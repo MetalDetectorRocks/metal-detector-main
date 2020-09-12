@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @Builder
@@ -24,8 +22,5 @@ public class ReleasesRequest implements WithTimeRangeValidation {
   @Nullable
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate dateTo;
-
-  @NotNull
-  private List<String> artists;
 
 }
