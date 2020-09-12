@@ -22,13 +22,10 @@ function getReleases() {
   dateFrom.setDate(dateFrom.getDate() - 90);
   return $("#releases-table").DataTable({
       "ajax": {
-        "url": "/rest/v1/releases/all",
-        "type": "POST",
+        "url": `/rest/v1/releases/all?dateFrom=${formatUtcDate(dateFrom)}`,
+        "type": "GET",
         "dataType": "json",
         "contentType": "application/json",
-        "data": function () {
-          return JSON.stringify({"artists": [], "dateFrom": dateFrom});
-        },
         "dataSrc": ""
       },
       "pagingType": "simple_numbers",
