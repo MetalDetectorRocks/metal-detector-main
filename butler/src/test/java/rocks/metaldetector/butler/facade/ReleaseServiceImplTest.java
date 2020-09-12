@@ -23,7 +23,9 @@ import rocks.metaldetector.butler.client.transformer.ButlerReleaseRequestTransfo
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
+import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
+import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.support.TimeRange;
 
 import java.time.LocalDate;
@@ -102,13 +104,13 @@ class ReleaseServiceImplTest implements WithAssertions {
       ButlerReleasesResponse response = ButlerReleasesResponseFactory.createDefault();
       List<ReleaseDto> expectedResult = List.of(ReleaseDtoFactory.createDefault());
       when(butlerClient.queryAllReleases(any())).thenReturn(response);
-      when(releaseResponseTransformer.transform(response)).thenReturn(expectedResult);
+      when(releaseResponseTransformer.transformToList(response)).thenReturn(expectedResult);
 
       // when
       List<ReleaseDto> releases = underTest.findAllReleases(null, null);
 
       // then
-      verify(releaseResponseTransformer, times(1)).transform(response);
+      verify(releaseResponseTransformer, times(1)).transformToList(response);
       assertThat(releases).isEqualTo(expectedResult);
     }
   }
@@ -152,15 +154,15 @@ class ReleaseServiceImplTest implements WithAssertions {
     void should_return_transformed_response() {
       // given
       ButlerReleasesResponse response = ButlerReleasesResponseFactory.createDefault();
-      List<ReleaseDto> expectedResult = List.of(ReleaseDtoFactory.createDefault());
+      Page<ReleaseDto> expectedResult = new Page<>(List.of(ReleaseDtoFactory.createDefault()), new Pagination());
       when(butlerClient.queryReleases(any())).thenReturn(response);
-      when(releaseResponseTransformer.transform(response)).thenReturn(expectedResult);
+      when(releaseResponseTransformer.transformToPage(response)).thenReturn(expectedResult);
 
       // when
-      List<ReleaseDto> releases = underTest.findReleases(null, null, null);
+      Page<ReleaseDto> releases = underTest.findReleases(null, null, null);
 
       // then
-      verify(releaseResponseTransformer, times(1)).transform(response);
+      verify(releaseResponseTransformer, times(1)).transformToPage(response);
       assertThat(releases).isEqualTo(expectedResult);
     }
   }

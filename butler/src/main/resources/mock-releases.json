@@ -1,4 +1,8 @@
 {
+  "currentPage": 1,
+  "size": 10,
+  "totalPages": 1,
+  "totalReleases": 3,
   "releases": [
     {
       "artist": "Metallica",

@@ -19,9 +19,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
+import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
+import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
+import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.testutil.DtoFactory.ImportJobResultDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
@@ -29,15 +32,16 @@ import rocks.metaldetector.testutil.DtoFactory.ReleaseRequestFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
-import rocks.metaldetector.web.api.response.ReleasesResponse;
-import rocks.metaldetector.web.transformer.ReleasesResponseTransformer;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -54,9 +58,6 @@ class ReleasesRestControllerTest implements WithAssertions {
   @Mock
   private ReleaseService releasesService;
 
-  @Mock
-  private ReleasesResponseTransformer releasesResponseTransformer;
-
   @InjectMocks
   private ReleasesRestController underTest;
 
@@ -69,7 +70,7 @@ class ReleasesRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(releasesService, releasesResponseTransformer);
+    reset(releasesService);
   }
 
   @Nested
@@ -98,30 +99,12 @@ class ReleasesRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should use transformer to transform each ReleaseDto")
-    void should_use_releases_transformer() {
-      // given
-      var request = ReleaseRequestFactory.createDefault();
-      var release1 = ReleaseDtoFactory.withArtistName("Metallica");
-      var release2 = ReleaseDtoFactory.withArtistName("Slayer");
-      doReturn(List.of(release1, release2)).when(releasesService).findAllReleases(any(), any());
-
-      // when
-      restAssuredUtils.doGet(toMap(request));
-
-      // then
-      verify(releasesResponseTransformer, times(1)).transform(eq(release1));
-      verify(releasesResponseTransformer, times(1)).transform(eq(release2));
-    }
-
-    @Test
-    @DisplayName("Should return the transformed releases response")
+    @DisplayName("Should return releases from release service")
     void should_return_releases() {
       // given
       var request = ReleaseRequestFactory.createDefault();
-      var transformedResponse = new ReleasesResponse();
-      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(releasesService).findAllReleases(any(), any());
-      doReturn(transformedResponse).when(releasesResponseTransformer).transform(any());
+      var releases = List.of(ReleaseDtoFactory.createDefault());
+      doReturn(releases).when(releasesService).findAllReleases(any(), any());
 
       // when
       var validatableResponse = restAssuredUtils.doGet(toMap(request));
@@ -131,8 +114,8 @@ class ReleasesRestControllerTest implements WithAssertions {
           .contentType(ContentType.JSON)
           .statusCode(OK.value());
 
-      var result = validatableResponse.extract().as(ReleasesResponse[].class);
-      assertThat(Arrays.asList(result)).isEqualTo(List.of(transformedResponse));
+      var result = validatableResponse.extract().as(ReleaseDto[].class);
+      assertThat(Arrays.asList(result)).isEqualTo(releases);
     }
 
     @ParameterizedTest(name = "Should return 400 on invalid query request <{0}>")
@@ -196,30 +179,13 @@ class ReleasesRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should use transformer to transform each ReleaseDto")
-    void should_use_releases_transformer() {
-      // given
-      var request = PaginatedReleaseRequestFactory.createDefault();
-      var release1 = ReleaseDtoFactory.withArtistName("Metallica");
-      var release2 = ReleaseDtoFactory.withArtistName("Slayer");
-      doReturn(List.of(release1, release2)).when(releasesService).findReleases(any(), any(), any());
-
-      // when
-      restAssuredUtils.doGet(toMap(request));
-
-      // then
-      verify(releasesResponseTransformer, times(1)).transform(eq(release1));
-      verify(releasesResponseTransformer, times(1)).transform(eq(release2));
-    }
-
-    @Test
-    @DisplayName("Should return the transformed releases response")
+    @DisplayName("Should return the page from release service")
     void should_return_releases() {
       // given
       var request = PaginatedReleaseRequestFactory.createDefault();
-      var transformedResponse = new ReleasesResponse();
-      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(releasesService).findReleases(any(), any(), any());
-      doReturn(transformedResponse).when(releasesResponseTransformer).transform(any());
+      var releases = List.of(ReleaseDtoFactory.createDefault());
+      var page = new Page<>(releases, new Pagination(1, 1, 5));
+      doReturn(page).when(releasesService).findReleases(any(), any(), any());
 
       // when
       var validatableResponse = restAssuredUtils.doGet(toMap(request));
@@ -229,8 +195,11 @@ class ReleasesRestControllerTest implements WithAssertions {
               .contentType(ContentType.JSON)
               .statusCode(OK.value());
 
-      var result = validatableResponse.extract().as(ReleasesResponse[].class);
-      assertThat(Arrays.asList(result)).isEqualTo(List.of(transformedResponse));
+      var jsonPath = validatableResponse.extract().jsonPath();
+      var paginationResult = jsonPath.getObject("pagination", Pagination.class);
+      var itemsResult = jsonPath.getObject("items", ReleaseDto[].class);
+      assertThat(paginationResult).isEqualTo(page.getPagination());
+      assertThat(Arrays.asList(itemsResult)).isEqualTo(page.getItems());
     }
 
     @ParameterizedTest(name = "Should return 400 on invalid query request <{0}>")

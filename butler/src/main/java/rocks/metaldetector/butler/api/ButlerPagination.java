@@ -6,18 +6,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ButlerReleasesResponse {
+public class ButlerPagination {
 
-  @JsonProperty("pagination")
-  private ButlerPagination pagination;
+  @JsonProperty("currentPage")
+  private int currentPage;
 
-  @JsonProperty("releases")
-  private List<ButlerRelease> releases;
+  @JsonProperty("size")
+  private int size;
+
+  @JsonProperty("totalPages")
+  private int totalPages;
+
+  @JsonProperty("totalReleases")
+  private long totalReleases;
 
 }

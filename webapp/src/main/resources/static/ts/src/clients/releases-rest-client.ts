@@ -1,26 +1,29 @@
-import { axiosConfig } from "../config/axios.config";
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { ReleasesResponse } from "../model/releases-response.model";
-import { AbstractRestClient } from "./abstract-rest-client";
+import {axiosConfig} from "../config/axios.config";
+import axios, {AxiosError, AxiosResponse} from "axios";
+import {ReleasesResponse} from "../model/releases-response.model";
+import {AbstractRestClient} from "./abstract-rest-client";
+import {DateFormat, DateFormatService} from "../service/date-format-service";
 
 export class ReleasesRestClient extends AbstractRestClient {
 
     private readonly RELEASES_URL = "/rest/v1/releases";
 
-    constructor() {
+    private readonly dateFormatService: DateFormatService;
+
+    constructor(dateFormatService: DateFormatService) {
         super();
+        this.dateFormatService = dateFormatService;
     }
 
     public async fetchReleases(): Promise<ReleasesResponse> {
-        const request = {
+        axiosConfig.params = {
             page: this.getPageFromUrl(),
             size: 30,
-            artists: []
+            dateFrom: this.dateFormatService.format(new Date().toUTCString(), DateFormat.UTC)
         }
 
-        return await axios.post(
+        return await axios.get(
             this.RELEASES_URL,
-            request,
             axiosConfig
         ).then((response: AxiosResponse<ReleasesResponse>) => {
             return response.data;
