@@ -13,6 +13,8 @@
 
 5. [ Start the application ](#start-application)
 
+6. [ Import Postman collection ](#postman-collection)
+
 <a name="introduction"></a>
 ## 1 Introduction
 This repository contains the source code for the Metal Detector application. The application is a Spring Boot application and currently under development. 
@@ -115,3 +117,10 @@ There are three example users with the following credentials:
 | JohnD          | john.doe       | USER           |
 | MariaT         | maria.thompson | USER           |
 | Administrator  | simsalabim     | ADMINISTRATOR  |
+
+<a name="postman-collection"></a>
+## 6 Import Postman collection
+
+Click the button below to import a Postman collection holding some of the most important requests. Please follow this tutorial to import a [Postman collection](https://www.getpostman.com/docs/collections).
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/run-collection/237a57215d5d6f0f9fb6)
