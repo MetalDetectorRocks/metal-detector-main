@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
@@ -32,7 +34,7 @@ public class ReleasesRestController {
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   @GetMapping(path = Endpoints.Rest.QUERY_ALL_RELEASES,
-               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<List<ReleasesResponse>> findAllReleases(@Valid ReleasesRequest request) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
     List<ReleaseDto> releaseDtos = releaseService.findAllReleases(emptyList(), timeRange);
