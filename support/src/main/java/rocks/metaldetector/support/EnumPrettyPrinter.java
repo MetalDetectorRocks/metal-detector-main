@@ -8,7 +8,7 @@ import java.util.List;
 @Service
 public class EnumPrettyPrinter {
 
-  private static final List<String> EXCEPTIONS = List.of(
+  private static final List<String> EXEMPTIONS = List.of(
           "EP"
   );
 
@@ -16,7 +16,7 @@ public class EnumPrettyPrinter {
     if (value == null) {
       return null;
     }
-    else if (EXCEPTIONS.contains(value)) {
+    else if (EXEMPTIONS.contains(value)) {
       return value;
     }
     else {

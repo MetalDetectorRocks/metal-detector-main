@@ -35,7 +35,7 @@ class EnumPrettyPrinterTest implements WithAssertions {
   }
 
   @ParameterizedTest(name = "Should not transform <{0}>")
-  @MethodSource("exceptionValueProvider")
+  @MethodSource("exemptionValueProvider")
   @DisplayName("Should not transform the given value")
   void should_not_transform(String givenValue) {
     // when
@@ -55,7 +55,7 @@ class EnumPrettyPrinterTest implements WithAssertions {
     );
   }
 
-  private static Stream<Arguments> exceptionValueProvider() {
+  private static Stream<Arguments> exemptionValueProvider() {
     return Stream.of(
             Arguments.of("EP")
     );
