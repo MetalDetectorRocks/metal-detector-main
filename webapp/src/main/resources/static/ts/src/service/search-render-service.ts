@@ -1,12 +1,12 @@
-import {FollowArtistService} from "./follow-artist-service";
-import {LoadingIndicatorService} from "./loading-indicator-service";
-import {PaginationComponent} from "../components/pagination/pagination-component";
-import {AlertService} from "./alert-service";
-import {AbstractRenderService} from "./abstract-render-service";
-import {SearchResponse} from "../model/search-response.model";
-import {Pagination} from "../model/pagination.model";
-import {SearchResponseEntry} from "../model/search-response-entry.model";
-import {FollowState} from "../model/follow-state.model";
+import { FollowArtistService } from "./follow-artist-service";
+import { LoadingIndicatorService } from "./loading-indicator-service";
+import { PaginationComponent } from "../components/pagination/pagination-component";
+import { AlertService } from "./alert-service";
+import { AbstractRenderService } from "./abstract-render-service";
+import { SearchResponse } from "../model/search-response.model";
+import { Pagination } from "../model/pagination.model";
+import { SearchResponseEntry } from "../model/search-response-entry.model";
+import { FollowState } from "../model/follow-state.model";
 
 export class SearchRenderService extends AbstractRenderService<SearchResponse> {
 
@@ -182,7 +182,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     }
 
     private determineArtistImageUrl(imageUrl: string): string {
-        return imageUrl.trim() ? imageUrl : "/images/unknown-artist-img.jpg";
+        return imageUrl.trim() ? imageUrl : "/images/unknown-img.jpg";
     }
 
     private getQueryFromUrl(): string {

@@ -1,13 +1,173 @@
 <!DOCTYPE html>
 <html layout:decorate="~{frontend/fragments/layout}"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
       lang="en">
 <head>
     <title>Releases</title>
+    <script type="module" th:src="@{/ts/dist/releases.bundle.js}" src="#"></script>
 </head>
 <body>
     <section layout:fragment="content">
+        <template id="detailed-release-card">
+            <div class="card mb-3">
+                <div class="row">
+                    <div class="col-md-auto">
+                        <img class="release-cover-img" src="#" alt="#" id="release-cover">
+                    </div>
+                    <div class="col-7">
+                        <p class="h5 card-title mt-3 mb-4" id="release-title"></p>
+                        <div class="row" id="additional-artists-wrapper">
+                            <div class="col">
+                                <p>
+                                    <strong>Additional artists</strong><br />
+                                    <span id="additional-artists"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p>
+                                    <strong>Release date</strong><br />
+                                    <span id="release-date"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p>
+                                    <strong>Type</strong><br />
+                                    <span id="release-type"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p>
+                                    <strong>Genre</strong><br />
+                                    <span id="release-genre"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
         <h1 class="h4">Releases</h1>
+        <div class="row">
+            <div class="col-9" id="releases-container">
+            </div>
+            <div class="col-3 custom-border-left" id="release-filter">
+                <fieldset class="mb-3">
+                    <legend>Search</legend>
+                    <div class="form-group">
+                        <label>
+                            <input type="text" class="form-control" placeholder="Artist or album name">
+                        </label>
+                    </div>
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Artists</legend>
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="all-artists-rb" name="releases" class="custom-control-input" checked="">
+                            <label class="custom-control-label" for="all-artists-rb">All artists</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="followed-artists-releases-rb" name="releases" class="custom-control-input">
+                            <label class="custom-control-label" for="followed-artists-releases-rb">Only followed artists</label>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>View mode</legend>
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="detailed-rb" name="view" class="custom-control-input" checked="">
+                            <label class="custom-control-label" for="detailed-rb">Detailed</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="compact-rb" name="releases" class="custom-control-input">
+                            <label class="custom-control-label" for="compact-rb">Compact</label>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Time</legend>
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="time-all-rb" name="time" class="custom-control-input">
+                            <label class="custom-control-label" for="time-all-rb">All</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="time-all-upcoming-rb" name="time" class="custom-control-input" checked="">
+                            <label class="custom-control-label" for="time-all-upcoming-rb">All upcoming</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="time-next-month-rb" name="time" class="custom-control-input">
+                            <label class="custom-control-label" for="time-next-month-rb">Next month</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="time-next-3-months-rb" name="time" class="custom-control-input">
+                            <label class="custom-control-label" for="time-next-3-months-rb">Next 3 months</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="time-last-month-rb" name="time" class="custom-control-input">
+                            <label class="custom-control-label" for="time-last-month-rb">Last month</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="time-last-3-month-rb" name="time" class="custom-control-input">
+                            <label class="custom-control-label" for="time-last-3-month-rb">Last 3 months</label>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Release Type</legend>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="full-length-cb" checked="">
+                            <label class="custom-control-label" for="full-length-cb">Full Length</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="ep-cb" checked="">
+                            <label class="custom-control-label" for="ep-cb">EP</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="split-cb" checked="">
+                            <label class="custom-control-label" for="split-cb">Split</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="compilation-cb" checked="">
+                            <label class="custom-control-label" for="compilation-cb">Compilation</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="demo-cb" checked="">
+                            <label class="custom-control-label" for="demo-cb">Demo</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="live-album-cb" checked="">
+                            <label class="custom-control-label" for="live-album-cb">Live Album</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="single-cb" checked="">
+                            <label class="custom-control-label" for="single-cb">Single</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="boxed-set-cb" checked="">
+                            <label class="custom-control-label" for="boxed-set-cb">Boxed Set</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="video-cb" checked="">
+                            <label class="custom-control-label" for="video-cb">Video</label>
+                        </div>
+                        <div class="mt-2">
+                            <a href="#">Select all</a>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
     </section>
 </body>
 </html>

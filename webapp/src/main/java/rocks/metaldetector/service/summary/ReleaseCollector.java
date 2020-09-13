@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
+import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.TimeRange;
 
@@ -47,6 +48,7 @@ public class ReleaseCollector {
 
     List<String> artistNames = artists.stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
     PageRequest pageRequest = new PageRequest(1, RESULT_LIMIT);
-    return releaseService.findReleases(artistNames, timeRange, pageRequest);
+    Page<ReleaseDto> releasePage = releaseService.findReleases(artistNames, timeRange, pageRequest);
+    return releasePage.getItems();
   }
 }

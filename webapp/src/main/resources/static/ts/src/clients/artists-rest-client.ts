@@ -2,10 +2,11 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { axiosConfig } from "../config/axios.config";
 import { MyArtistsResponse } from "../model/my-artists-response.model";
 import { SearchResponse } from "../model/search-response.model";
+import { AbstractRestClient } from "./abstract-rest-client";
 import { ToastService } from "../service/toast-service";
 import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
 
-export class ArtistsRestClient {
+export class ArtistsRestClient extends AbstractRestClient {
 
     private readonly SEARCH_URL = "/rest/v1/artists/search";
     private readonly MY_ARTISTS_URL = "/rest/v1/my-artists";
@@ -15,17 +16,18 @@ export class ArtistsRestClient {
     private readonly toastService: ToastService;
 
     constructor(toastService: ToastService) {
+        super();
         this.toastService = toastService;
     }
 
     public async searchArtist(): Promise<SearchResponse> {
         axiosConfig.params = {
-            query: this.getQueryFromUrl(),
+            query: this.getParameterFromUrl("query"),
             page: this.getPageFromUrl(),
             size: 40
         }
 
-        return axios.get(
+        return await axios.get(
             this.SEARCH_URL, axiosConfig
         ).then((response: AxiosResponse<SearchResponse>) => {
             return response.data;
@@ -40,7 +42,7 @@ export class ArtistsRestClient {
             page: this.getPageFromUrl()
         }
 
-        return axios.get(
+        return await axios.get(
             this.MY_ARTISTS_URL, axiosConfig
         ).then((response: AxiosResponse<MyArtistsResponse>) => {
             return response.data;
@@ -51,7 +53,7 @@ export class ArtistsRestClient {
     }
 
     public async followArtist(artistId: string, source: string): Promise<any> {
-        return axios.post(
+        return await axios.post(
             `${this.FOLLOW_ARTISTS_URL}/${source}/${artistId}`,
             {},
             axiosConfig
@@ -62,7 +64,7 @@ export class ArtistsRestClient {
     }
 
     public async unfollowArtist(artistId: string, source: string): Promise<any> {
-        return axios.post(
+        return await axios.post(
             `${this.UNFOLLOW_ARTISTS_URL}/${source}/${artistId}`,
             {},
             axiosConfig
@@ -70,20 +72,5 @@ export class ArtistsRestClient {
             this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
             throw error;
         });
-    }
-
-    private getPageFromUrl(): string {
-        const url = new URL(window.location.href);
-        let page = url.searchParams.get("page") || "1";
-        if (Number.isNaN(page) || +page < 1) {
-            page = "1";
-        }
-
-        return page;
-    }
-
-    private getQueryFromUrl(): string {
-        const url = new URL(window.location.href);
-        return url.searchParams.get("query") || "";
     }
 }

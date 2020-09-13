@@ -6,13 +6,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleaseFactory;
+import rocks.metaldetector.butler.api.ButlerPagination;
 import rocks.metaldetector.butler.api.ButlerRelease;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.support.EnumPrettyPrinter;
+import rocks.metaldetector.support.Page;
 
 import java.util.List;
 
@@ -31,6 +34,44 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
   private ButlerReleaseResponseTransformer underTest;
 
   @Test
+  @DisplayName("Should transform pagination infos from ButlerReleasesResponse to Pagination within Page of ReleaseDto")
+  void should_transform_butler_releases_response_to_page_of_release_dto() {
+    // given
+    ButlerRelease release = ButlerReleaseFactory.createDefault();
+    ButlerReleasesResponse response = ButlerReleasesResponse
+            .builder()
+            .pagination(new ButlerPagination(1, 10, 2, 20))
+            .releases(List.of(release))
+            .build();
+
+    // when
+    Page<ReleaseDto> resultPage = underTest.transformToPage(response);
+
+    // then
+    assertThat(resultPage.getPagination().getCurrentPage()).isEqualTo(1);
+    assertThat(resultPage.getPagination().getItemsPerPage()).isEqualTo(10);
+    assertThat(resultPage.getPagination().getTotalPages()).isEqualTo(2);
+  }
+
+  @Test
+  @DisplayName("Should use method transformToList to transform releases")
+  void should_use_method_transform_to_list_to_transform_releases() {
+    // given
+    ButlerReleaseResponseTransformer transformer = Mockito.spy(new ButlerReleaseResponseTransformer(enumPrettyPrinter));
+    ButlerRelease release = ButlerReleaseFactory.createDefault();
+    ButlerReleasesResponse response = ButlerReleasesResponse.builder()
+            .releases(List.of(release))
+            .pagination(new ButlerPagination())
+            .build();
+
+    // when
+    transformer.transformToPage(response);
+
+    // then
+    verify(transformer, times(1)).transformToList(eq(response));
+  }
+
+  @Test
   @DisplayName("Should transform ButlerReleaseResponse to list of ReleaseDto")
   void should_transform() {
     // given
@@ -38,7 +79,7 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
     ButlerReleasesResponse response = ButlerReleasesResponse.builder().releases(List.of(release)).build();
 
     // when
-    List<ReleaseDto> releaseDtos = underTest.transform(response);
+    List<ReleaseDto> releaseDtos = underTest.transformToList(response);
 
     // then
     assertThat(releaseDtos).hasSize(1);
@@ -67,7 +108,7 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
     ButlerReleasesResponse response = ButlerReleasesResponse.builder().releases(List.of(release)).build();
 
     // when
-    underTest.transform(response);
+    underTest.transformToList(response);
 
     // then
     verify(enumPrettyPrinter, times(1)).prettyPrintEnumValue(eq(release.getType()));

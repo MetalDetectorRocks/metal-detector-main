@@ -3,7 +3,7 @@ export interface Release {
     readonly artist: string;
     readonly additionalArtists: string[];
     readonly albumTitle: string;
-    readonly releaseDate: Date;
+    readonly releaseDate: string;
     readonly estimatedReleaseDate: string;
     readonly genre: string;
     readonly type: string;

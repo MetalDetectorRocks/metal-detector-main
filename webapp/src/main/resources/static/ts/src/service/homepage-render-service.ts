@@ -4,19 +4,19 @@ import {HomepageResponse} from "../model/homepage-response.model";
 import {AbstractRenderService} from "./abstract-render-service";
 import {Artist} from "../model/artist.model";
 import {Release} from "../model/release.model";
-import {DateService} from "./date-service";
+import {DateFormatService} from "./date-format-service";
 
 export class HomepageRenderService extends AbstractRenderService<HomepageResponse> {
 
-    private readonly dateService: DateService;
+    private readonly dateFormatService: DateFormatService;
     private readonly artistTemplateElement: HTMLTemplateElement;
     private readonly releaseTemplateElement: HTMLTemplateElement;
     private readonly MAX_CARDS_PER_ROW: number = 4;
     private readonly MIN_CARDS_PER_ROW: number = this.MAX_CARDS_PER_ROW - 1;
 
-    constructor(alertService: AlertService, loadingIndicatorService: LoadingIndicatorService, dateService: DateService) {
+    constructor(alertService: AlertService, loadingIndicatorService: LoadingIndicatorService, dateService: DateFormatService) {
         super(alertService, loadingIndicatorService);
-        this.dateService = dateService;
+        this.dateFormatService = dateService;
         this.artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
         this.releaseTemplateElement = document.getElementById("release-card")! as HTMLTemplateElement;
     }
@@ -73,7 +73,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
             response.recentlyFollowedArtists.forEach(artist => {
                 const artistDivElement = this.renderArtistCard(artist);
                 const followedSinceElement = artistDivElement.querySelector("#artist-followed-since") as HTMLDivElement;
-                followedSinceElement.innerHTML = this.createDateString(artist.followedSince);
+                followedSinceElement.innerHTML = this.dateFormatService.formatRelative(artist.followedSince);
                 this.attachCard(artistDivElement, recentlyFollowedRowElement);
             });
         }
@@ -107,7 +107,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         releases.forEach(release => {
             const releaseDivElement = this.renderReleaseCard(release);
             const releaseDateElement = releaseDivElement.querySelector("#release-date") as HTMLDivElement;
-            releaseDateElement.innerHTML = this.createDateString(release.releaseDate);
+            releaseDateElement.innerHTML = this.dateFormatService.formatRelative(release.releaseDate);
             this.attachCard(releaseDivElement, rowElement);
         });
     }
@@ -144,18 +144,6 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
     private attachCard(divElement: HTMLDivElement, rowElement: HTMLDivElement): void {
         rowElement.insertAdjacentElement("beforeend", divElement);
-    }
-
-    private createDateString(date: Date): string {
-        let timeRange = this.dateService.calculateTimeRange(date);
-
-        if (timeRange >= 0) {
-            return `In ${timeRange} days`;
-        }
-        else {
-            timeRange = -timeRange;
-            return `${timeRange} days ago`;
-        }
     }
 
     private insertHeadingElement(heading: string): void {

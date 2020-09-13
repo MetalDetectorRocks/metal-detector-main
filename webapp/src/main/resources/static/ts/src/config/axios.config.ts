@@ -4,7 +4,7 @@ import { AxiosRequestConfig } from "axios";
 
 export const axiosConfig: AxiosRequestConfig = {
     withCredentials: false,
-    timeout: 30000,
+    timeout: 60000,
     headers: {
         common: {
             "Cache-Control": "no-cache, no-store, must-revalidate",

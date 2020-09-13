@@ -34,6 +34,17 @@ class EnumPrettyPrinterTest implements WithAssertions {
     assertThat(result).isEqualTo(expectedValue);
   }
 
+  @ParameterizedTest(name = "Should not transform <{0}>")
+  @MethodSource("exemptionValueProvider")
+  @DisplayName("Should not transform the given value")
+  void should_not_transform(String givenValue) {
+    // when
+    String result = underTest.prettyPrintEnumValue(givenValue);
+
+    // then
+    assertThat(result).isEqualTo(givenValue);
+  }
+
   private static Stream<Arguments> valueProvider() {
     return Stream.of(
             Arguments.of("value", "Value"),
@@ -41,6 +52,12 @@ class EnumPrettyPrinterTest implements WithAssertions {
             Arguments.of("example_value", "Example Value"),
             Arguments.of("EXAMPLE_VALUE", "Example Value"),
             Arguments.of("eXAMPLE_vALUE", "Example Value")
+    );
+  }
+
+  private static Stream<Arguments> exemptionValueProvider() {
+    return Stream.of(
+            Arguments.of("EP")
     );
   }
 }
