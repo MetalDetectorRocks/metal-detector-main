@@ -77,7 +77,7 @@ class ArtistsRestControllerTest implements WithAssertions {
 
     @AfterEach
     void tearDown() {
-      reset(artistSearchService);
+      reset(artistService, artistSearchService, followArtistService);
     }
 
     @Test
