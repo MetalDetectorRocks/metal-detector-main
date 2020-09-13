@@ -6,6 +6,7 @@ module.exports = {
     entry: {
         search: "./src/bundles/search.ts",
         myartists: "./src/bundles/my-artists.ts",
+        releases: "./src/bundles/releases.ts",
         homepage: "./src/bundles/homepage.ts"
     },
     output: {

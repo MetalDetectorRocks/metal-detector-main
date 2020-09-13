@@ -3,7 +3,7 @@ export interface Artist {
     readonly externalId: string;
     readonly artistName: string;
     readonly thumb: string;
-    readonly followedSince: Date;
+    readonly followedSince: string;
     readonly source: string;
 
 }

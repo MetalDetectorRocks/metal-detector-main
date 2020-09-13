@@ -82,7 +82,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         this.hostElement.insertAdjacentElement("beforeend", this.rowElement);
     }
 
-    private createFollowedSinceString(followedSince: Date): string {
+    private createFollowedSinceString(followedSince: string): string {
         const followedSinceString = new Date(2020, 1, 1).toDateString();
         return `<i class="material-icons">favorite</i> on ${followedSinceString}`;
     }

@@ -8,7 +8,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.facade.ReleaseService;
+import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
+import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
@@ -54,9 +56,10 @@ class ReleaseCollectorTest implements WithAssertions {
     // given
     var expectedArtistNames = List.of("A");
     var artists = List.of(ArtistDtoFactory.withName("A"));
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
 
-    underTest.collectUpcomingReleases(artists);
     // when
+    underTest.collectUpcomingReleases(artists);
 
     // then
     verify(releaseService, times(1)).findReleases(eq(expectedArtistNames), any(), any());
@@ -69,6 +72,7 @@ class ReleaseCollectorTest implements WithAssertions {
     var now = LocalDate.now();
     var expectedTimeRange = new TimeRange(now, now.plusMonths(TIME_RANGE_MONTHS));
     var artists = List.of(ArtistDtoFactory.withName("A"));
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
 
     // when
     underTest.collectUpcomingReleases(artists);
@@ -83,6 +87,7 @@ class ReleaseCollectorTest implements WithAssertions {
     // given
     var expectedPageRequest = new PageRequest(1, RESULT_LIMIT);
     var artists = List.of(ArtistDtoFactory.withName("A"));
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
 
     // when
     underTest.collectUpcomingReleases(artists);
@@ -97,7 +102,7 @@ class ReleaseCollectorTest implements WithAssertions {
     // given
     var artists = List.of(ArtistDtoFactory.withName("A"));
     var releases = List.of(ReleaseDtoFactory.createDefault(), ReleaseDtoFactory.createDefault());
-    doReturn(releases).when(releaseService).findReleases(any(), any(), any());
+    doReturn(new Page<>(releases, new Pagination())).when(releaseService).findReleases(any(), any(), any());
 
     // when
     var result = underTest.collectUpcomingReleases(artists);
@@ -122,6 +127,7 @@ class ReleaseCollectorTest implements WithAssertions {
     // given
     var expectedArtistNames = List.of("A");
     var artists = List.of(ArtistDtoFactory.withName("A"));
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
 
     // when
     underTest.collectRecentReleases(artists);
@@ -137,6 +143,7 @@ class ReleaseCollectorTest implements WithAssertions {
     var now = LocalDate.now();
     var expectedTimeRange = new TimeRange(now.minusMonths(TIME_RANGE_MONTHS), now);
     var artists = List.of(ArtistDtoFactory.withName("A"));
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
 
     // when
     underTest.collectRecentReleases(artists);
@@ -151,6 +158,7 @@ class ReleaseCollectorTest implements WithAssertions {
     // given
     var expectedPageRequest = new PageRequest(1, RESULT_LIMIT);
     var artists = List.of(ArtistDtoFactory.withName("A"));
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
 
     // when
     underTest.collectRecentReleases(artists);
@@ -164,9 +172,15 @@ class ReleaseCollectorTest implements WithAssertions {
   void test_recent_returns_releases() {
     // given
     var artists = List.of(ArtistDtoFactory.withName("A"));
-    var now = LocalDate.now();
-    var releases = Stream.of(ReleaseDtoFactory.withReleaseDate(now), ReleaseDtoFactory.withReleaseDate(now.plusDays(10))).collect(Collectors.toList());
-    doReturn(new ArrayList<>(releases)).when(releaseService).findReleases(any(), any(), any());
+    var today = LocalDate.now();
+    var tenDayseAgo = today.minusDays(10);
+    var twentyDaysAgo = today.minusDays(20);
+    var releases = Stream.of(
+            ReleaseDtoFactory.withReleaseDate(twentyDaysAgo),
+            ReleaseDtoFactory.withReleaseDate(today),
+            ReleaseDtoFactory.withReleaseDate(tenDayseAgo))
+            .collect(Collectors.toList());
+    doReturn(new Page<>(new ArrayList<>(releases), new Pagination())).when(releaseService).findReleases(any(), any(), any());
 
     // when
     var result = underTest.collectRecentReleases(artists);
@@ -174,6 +188,7 @@ class ReleaseCollectorTest implements WithAssertions {
     // then
     assertThat(result).hasSize(releases.size());
     assertThat(result.get(0)).isEqualTo(releases.get(1));
-    assertThat(result.get(1)).isEqualTo(releases.get(0));
+    assertThat(result.get(1)).isEqualTo(releases.get(2));
+    assertThat(result.get(2)).isEqualTo(releases.get(0));
   }
 }

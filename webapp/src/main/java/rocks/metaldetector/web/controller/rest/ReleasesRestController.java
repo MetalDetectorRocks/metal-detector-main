@@ -11,16 +11,14 @@ import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.config.constants.Endpoints;
+import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
-import rocks.metaldetector.web.api.response.ReleasesResponse;
-import rocks.metaldetector.web.transformer.ReleasesResponseTransformer;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -30,26 +28,23 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class ReleasesRestController {
 
   private final ReleaseService releaseService;
-  private final ReleasesResponseTransformer releasesResponseTransformer;
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   @GetMapping(path = Endpoints.Rest.QUERY_ALL_RELEASES,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<List<ReleasesResponse>> findAllReleases(@Valid ReleasesRequest request) {
+  public ResponseEntity<List<ReleaseDto>> findAllReleases(@Valid ReleasesRequest request) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
     List<ReleaseDto> releaseDtos = releaseService.findAllReleases(emptyList(), timeRange);
-    List<ReleasesResponse> response = releaseDtos.stream().map(releasesResponseTransformer::transform).collect(Collectors.toList());
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(releaseDtos);
   }
 
   @GetMapping(path = Endpoints.Rest.QUERY_RELEASES,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<List<ReleasesResponse>> findReleases(@Valid PaginatedReleasesRequest request) {
+  public ResponseEntity<Page<ReleaseDto>> findReleases(@Valid PaginatedReleasesRequest request) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
     var pageRequest = new PageRequest(request.getPage(), request.getSize());
-    List<ReleaseDto> releaseDtos = releaseService.findReleases(emptyList(), timeRange, pageRequest);
-    List<ReleasesResponse> response = releaseDtos.stream().map(releasesResponseTransformer::transform).collect(Collectors.toList());
-    return ResponseEntity.ok(response);
+    Page<ReleaseDto> releasePage = releaseService.findReleases(emptyList(), timeRange, pageRequest);
+    return ResponseEntity.ok(releasePage);
   }
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")

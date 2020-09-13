@@ -9,7 +9,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseRequestFactory;
-import rocks.metaldetector.web.transformer.ReleasesResponseTransformer;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,9 +25,6 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
 
   @MockBean
   private ReleaseService releaseService;
-
-  @MockBean
-  private ReleasesResponseTransformer releasesResponseTransformer;
 
   @Nested
   @DisplayName("Administrator is allowed to send requests to all endpoints")

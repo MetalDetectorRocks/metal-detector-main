@@ -15,10 +15,9 @@ public class Pagination {
   private int currentPage;
   private int itemsPerPage;
 
-  public Pagination(long total, int page, int size) {
-    this.totalPages = (int) Math.ceil((double) total / size);
+  public Pagination(long totalItems, int page, int size) {
+    this.totalPages = (int) Math.ceil((double) totalItems / size);
     this.currentPage = page;
     this.itemsPerPage = size;
   }
-
 }
