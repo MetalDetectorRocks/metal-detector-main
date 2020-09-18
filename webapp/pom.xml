@@ -143,6 +143,12 @@
             <artifactId>metal-detector-butler</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- Misc -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
