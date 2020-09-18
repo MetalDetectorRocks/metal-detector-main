@@ -9,4 +9,6 @@ public interface SpotifyService {
 
   SpotifyArtistDto searchArtistById(String artistId);
 
+  String getSpotifyAuthorizationUrl();
+
 }
