@@ -15,7 +15,7 @@
     <name>metal-detector-butler</name>
 
     <properties>
-        <java.version>14</java.version>
+        <java.version>15</java.version>
     </properties>
 
     <dependencies>
@@ -23,6 +23,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>rocks.metal-detector</groupId>
             <artifactId>metal-detector-support</artifactId>
