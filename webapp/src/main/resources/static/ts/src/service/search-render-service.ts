@@ -125,8 +125,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
 
     private determineFollowerAmountStatement(metalDetectorFollower: number): string {
 
-        let followerAmountStatement: string;
-        followerAmountStatement = "";
+        let followerAmountStatement = "";
 
         if (metalDetectorFollower === 0) {
             followerAmountStatement = "Not followed by any users";
