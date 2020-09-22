@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
-import rocks.metaldetector.service.artist.ArtistsService;
+import rocks.metaldetector.service.artist.ArtistSearchService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 
@@ -24,7 +24,7 @@ public class ArtistsRestController {
   static final int DEFAULT_DISCOGS_PAGE = 1;
   static final int DEFAULT_DISCOGS_SIZE = 50;
 
-  private final ArtistsService artistsService;
+  private final ArtistSearchService artistSearchService;
   private final FollowArtistService followArtistService;
 
   @GetMapping(path = Endpoints.Rest.SEARCH,
@@ -32,10 +32,10 @@ public class ArtistsRestController {
   public ResponseEntity<ArtistSearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
                                                                @RequestParam(value = "page", defaultValue = "1") int page,
                                                                @RequestParam(value = "size", defaultValue = "40") int size) {
-    ArtistSearchResponse searchResponse = artistsService.searchSpotifyByName(query, PageRequest.of(page, size));
+    ArtistSearchResponse searchResponse = artistSearchService.searchSpotifyByName(query, PageRequest.of(page, size));
 
     if (page == 1 && searchResponse.getSearchResults().isEmpty()) {
-      searchResponse = artistsService.searchDiscogsByName(query, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
+      searchResponse = artistSearchService.searchDiscogsByName(query, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
     }
 
     return ResponseEntity.ok(searchResponse);
