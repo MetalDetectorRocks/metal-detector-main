@@ -118,9 +118,28 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
             this.handleFollowIconClick.bind(this, followIconElement, entry)
         );
         followIconElement.textContent = entry.followed ? FollowState.FOLLOWING.toString() : FollowState.NOT_FOLLOWING.toString();
-        followInfoElement.textContent = `Followed by ${entry.metalDetectorFollower} users`;
+        followInfoElement.textContent = this.determineFollowerAmountStatement(entry.metalDetectorFollower);
 
         return topSearchResultDivElement;
+    }
+
+    private determineFollowerAmountStatement(metalDetectorFollower: number): string {
+
+        let followerAmountStatement = "";
+
+        if (metalDetectorFollower === 0) {
+            followerAmountStatement = "Not followed by any users";
+        }
+
+        else if (metalDetectorFollower === 1) {
+            followerAmountStatement = "Followed by 1 user";
+        }
+
+        else if (metalDetectorFollower > 1) {
+            followerAmountStatement = `Followed by ${metalDetectorFollower} users`;
+        }
+
+        return followerAmountStatement;
     }
 
     private renderOtherSearchResults(currentPage: number, searchResults: SearchResponseEntry[]): HTMLDivElement {
