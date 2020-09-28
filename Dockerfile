@@ -1,4 +1,4 @@
-FROM openjdk:14.0.2-slim-buster
+FROM openjdk:15-slim-buster
 
 ENV TZ=Europe/Berlin
 

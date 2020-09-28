@@ -15,7 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
-import rocks.metaldetector.service.artist.ArtistsService;
+import rocks.metaldetector.service.artist.ArtistSearchService;
+import rocks.metaldetector.service.artist.ArtistService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.support.Endpoints;
@@ -45,7 +46,10 @@ class ArtistsRestControllerTest implements WithAssertions {
   private static final ArtistSource ARTIST_SOURCE = DISCOGS;
 
   @Mock
-  private ArtistsService artistsService;
+  private ArtistService artistService;
+
+  @Mock
+  private ArtistSearchService artistSearchService;
 
   @Mock
   private FollowArtistService followArtistService;
@@ -73,7 +77,7 @@ class ArtistsRestControllerTest implements WithAssertions {
 
     @AfterEach
     void tearDown() {
-      reset(artistsService);
+      reset(artistService, artistSearchService, followArtistService);
     }
 
     @Test
@@ -89,7 +93,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet(requestParams);
 
       // then
-      verify(artistsService, times(1)).searchSpotifyByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+      verify(artistSearchService, times(1)).searchSpotifyByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
     }
 
     @Test
@@ -100,13 +104,13 @@ class ArtistsRestControllerTest implements WithAssertions {
       requestParams.put("query", VALID_SEARCH_REQUEST);
       requestParams.put("page", 1);
       requestParams.put("size", DEFAULT_SIZE);
-      doReturn(ArtistSearchResponseFactory.empty()).when(artistsService).searchSpotifyByName(any(), any());
+      doReturn(ArtistSearchResponseFactory.empty()).when(artistSearchService).searchSpotifyByName(any(), any());
 
       // when
       restAssuredUtils.doGet(requestParams);
 
       // then
-      verify(artistsService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
+      verify(artistSearchService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
     }
 
     @Test
@@ -117,13 +121,13 @@ class ArtistsRestControllerTest implements WithAssertions {
       requestParams.put("query", VALID_SEARCH_REQUEST);
       requestParams.put("page", 2);
       requestParams.put("size", DEFAULT_SIZE);
-      doReturn(ArtistSearchResponseFactory.empty()).when(artistsService).searchSpotifyByName(any(), any());
+      doReturn(ArtistSearchResponseFactory.empty()).when(artistSearchService).searchSpotifyByName(any(), any());
 
       // when
       restAssuredUtils.doGet(requestParams);
 
       // then
-      verify(artistsService, times(0)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
+      verify(artistSearchService, times(0)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
     }
 
     @Test
@@ -135,7 +139,7 @@ class ArtistsRestControllerTest implements WithAssertions {
           "page", DEFAULT_PAGE,
           "size", DEFAULT_SIZE
       );
-      doReturn(ArtistSearchResponseFactory.spotify()).when(artistsService).searchSpotifyByName(any(), any());
+      doReturn(ArtistSearchResponseFactory.spotify()).when(artistSearchService).searchSpotifyByName(any(), any());
 
       // when
       var validatableResponse = restAssuredUtils.doGet(requestParams);
@@ -155,7 +159,7 @@ class ArtistsRestControllerTest implements WithAssertions {
           "page", DEFAULT_PAGE,
           "size", DEFAULT_SIZE
       );
-      doReturn(expectedSearchResult).when(artistsService).searchSpotifyByName(any(), any());
+      doReturn(expectedSearchResult).when(artistSearchService).searchSpotifyByName(any(), any());
 
       // when
       var validatableResponse = restAssuredUtils.doGet(requestParams);
@@ -185,7 +189,7 @@ class ArtistsRestControllerTest implements WithAssertions {
 
     @AfterEach
     void tearDown() {
-      reset(artistsService, followArtistService);
+      reset(artistService, followArtistService);
     }
 
     @Test

@@ -15,7 +15,7 @@
     <name>metal-detector-webapp</name>
 
     <properties>
-        <java.version>14</java.version>
+        <java.version>15</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
@@ -24,7 +24,7 @@
         <rest-assured.version>4.2.0</rest-assured.version>
         <bootstrap.version>4.5.2</bootstrap.version>
         <datatables.version>1.10.21</datatables.version>
-        <thymeleaf-dialect.version>2.4.1</thymeleaf-dialect.version>
+        <thymeleaf-dialect.version>2.5.1</thymeleaf-dialect.version>
     </properties>
 
     <dependencies>
