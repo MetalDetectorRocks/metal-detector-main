@@ -7,6 +7,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
+import rocks.metaldetector.persistence.domain.blogpost.BlogpostEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 
@@ -46,6 +47,7 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
     createUser();
     createAdministrator();
     createAndFollowArtists();
+    createBlogpost();
   }
 
   private void createUser() {
@@ -106,5 +108,32 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
     administrator.addFollowedArtist(mayhem);
 
     entityManager.merge(administrator);
+  }
+
+  private void createBlogpost() {
+    BlogpostEntity blogpost1 = BlogpostEntity.builder()
+            .title("Example Title Blogpost 1")
+            .slug("example-title-blogpost-1")
+            .text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.")
+            .draftFlag(true)
+            .build();
+
+    BlogpostEntity blogpost2 = BlogpostEntity.builder()
+            .title("Example Title Blogpost 2")
+            .slug("example-title-blogpost-2")
+            .text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.")
+            .draftFlag(true)
+            .build();
+
+    BlogpostEntity blogpost3 = BlogpostEntity.builder()
+            .title("Example Title Blogpost 3")
+            .slug("example-title-blogpost-3")
+            .text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.")
+            .draftFlag(true)
+            .build();
+
+    entityManager.persist(blogpost1);
+    entityManager.persist(blogpost2);
+    entityManager.persist(blogpost3);
   }
 }
