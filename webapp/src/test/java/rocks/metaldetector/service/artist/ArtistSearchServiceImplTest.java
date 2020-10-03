@@ -22,7 +22,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -113,9 +112,9 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
 
             // then
-            verify(followArtistService, times(1)).isCurrentUserFollowing(eq("1"), eq(ArtistSource.DISCOGS));
-            verify(followArtistService, times(1)).isCurrentUserFollowing(eq("2"), eq(ArtistSource.DISCOGS));
-            verify(followArtistService, times(1)).isCurrentUserFollowing(eq("3"), eq(ArtistSource.DISCOGS));
+            verify(followArtistService, times(1)).isCurrentUserFollowing("1", ArtistSource.DISCOGS);
+            verify(followArtistService, times(1)).isCurrentUserFollowing("2", ArtistSource.DISCOGS);
+            verify(followArtistService, times(1)).isCurrentUserFollowing("3", ArtistSource.DISCOGS);
         }
 
         @Test
@@ -207,9 +206,9 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
 
             // then
-            verify(followArtistService, times(1)).isCurrentUserFollowing(eq("1"), eq(ArtistSource.SPOTIFY));
-            verify(followArtistService, times(1)).isCurrentUserFollowing(eq("2"), eq(ArtistSource.SPOTIFY));
-            verify(followArtistService, times(1)).isCurrentUserFollowing(eq("3"), eq(ArtistSource.SPOTIFY));
+            verify(followArtistService, times(1)).isCurrentUserFollowing("1", ArtistSource.SPOTIFY);
+            verify(followArtistService, times(1)).isCurrentUserFollowing("2", ArtistSource.SPOTIFY);
+            verify(followArtistService, times(1)).isCurrentUserFollowing("3", ArtistSource.SPOTIFY);
         }
 
         @Test

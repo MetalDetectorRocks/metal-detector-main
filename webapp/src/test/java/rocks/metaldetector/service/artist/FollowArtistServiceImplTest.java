@@ -32,7 +32,6 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -228,7 +227,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
     // then
     FollowActionEntity followAction = FollowActionEntity.builder().user(userEntity).artist(artist).build();
-    verify(followActionRepository, times(1)).save(eq(followAction));
+    verify(followActionRepository, times(1)).save(followAction);
   }
 
   @Test
@@ -291,7 +290,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.unfollow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(followActionRepository, times(1)).deleteByUserAndArtist(eq(userEntity), eq(artist));
+    verify(followActionRepository, times(1)).deleteByUserAndArtist(userEntity, artist);
   }
 
   @Test
@@ -395,7 +394,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
     // then
     verify(currentPublicUserIdSupplier, times(1)).get();
-    verify(userRepository, times(1)).findByPublicId(eq(PUBLIC_USER_ID));
+    verify(userRepository, times(1)).findByPublicId(PUBLIC_USER_ID);
   }
 
   @Test
@@ -424,7 +423,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.getFollowedArtistsOfCurrentUser();
 
     // then
-    verify(followActionRepository, times(1)).findAllByUser(eq(userEntity));
+    verify(followActionRepository, times(1)).findAllByUser(userEntity);
   }
 
   @Test
@@ -445,8 +444,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.getFollowedArtistsOfCurrentUser();
 
     // then
-    verify(artistTransformer, times(1)).transform(eq(artist1));
-    verify(artistTransformer, times(1)).transform(eq(artist2));
+    verify(artistTransformer, times(1)).transform(artist1);
+    verify(artistTransformer, times(1)).transform(artist2);
   }
 
   @Test
