@@ -13,4 +13,6 @@ public interface FollowActionRepository extends JpaRepository<FollowActionEntity
 
   void deleteByUserAndArtist(UserEntity user, ArtistEntity artistEntity);
 
+  boolean existsByUserIdAndArtistId(Long userId, Long artistId);
+
 }

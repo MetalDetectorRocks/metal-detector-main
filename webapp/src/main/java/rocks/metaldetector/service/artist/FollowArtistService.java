@@ -8,7 +8,7 @@ public interface FollowArtistService {
 
   void follow(String externalArtistId, ArtistSource source);
   void unfollow(String externalArtistId, ArtistSource source);
-  boolean isFollowing(String publicUserId, String externalArtistId);
+  boolean isCurrentUserFollowing(String externalArtistId, ArtistSource source);
   List<ArtistDto> getFollowedArtistsOfCurrentUser();
   List<ArtistDto> getFollowedArtistsOfUser(String publicUserId);
 }
