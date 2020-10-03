@@ -430,22 +430,19 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @DisplayName("Getting followed artists calls artist transformer for every artist")
   void get_followed_should_call_artist_transformer() {
     // given
-    ArtistEntity artist1 = mock(ArtistEntity.class);
-    ArtistEntity artist2 = mock(ArtistEntity.class);
+    FollowActionEntity followAction1 = mock(FollowActionEntity.class);
+    FollowActionEntity followAction2 = mock(FollowActionEntity.class);
     when(currentPublicUserIdSupplier.get()).thenReturn(PUBLIC_USER_ID);
     when(userRepository.findByPublicId(anyString())).thenReturn(Optional.of(userEntity));
-    when(followActionRepository.findAllByUser(any())).thenReturn(List.of(
-            FollowActionEntity.builder().user(userEntity).artist(artist1).build(),
-            FollowActionEntity.builder().user(userEntity).artist(artist2).build()
-    ));
-    when(artistTransformer.transform(any(ArtistEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
+    when(followActionRepository.findAllByUser(any())).thenReturn(List.of(followAction1, followAction2));
+    when(artistTransformer.transform(any(FollowActionEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     underTest.getFollowedArtistsOfCurrentUser();
 
     // then
-    verify(artistTransformer, times(1)).transform(artist1);
-    verify(artistTransformer, times(1)).transform(artist2);
+    verify(artistTransformer, times(1)).transform(followAction1);
+    verify(artistTransformer, times(1)).transform(followAction2);
   }
 
   @Test
