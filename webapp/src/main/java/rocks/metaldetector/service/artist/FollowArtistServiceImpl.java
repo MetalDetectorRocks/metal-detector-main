@@ -82,7 +82,6 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   private List<ArtistDto> getFollowedArtists(UserEntity user) {
     return followActionRepository.findAllByUser(user).stream()
-            .map(FollowActionEntity::getArtist)
             .map(artistTransformer::transform)
             .sorted(Comparator.comparing(ArtistDto::getArtistName))
             .collect(Collectors.toUnmodifiableList());

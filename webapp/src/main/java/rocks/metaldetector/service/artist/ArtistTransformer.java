@@ -2,6 +2,7 @@ package rocks.metaldetector.service.artist;
 
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
+import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.TopArtist;
 
 @Component
@@ -21,5 +22,11 @@ public class ArtistTransformer {
         .artistName(topArtist.getArtistName())
         .thumb(topArtist.getThumb())
         .build();
+  }
+
+  public ArtistDto transform(FollowActionEntity followAction) {
+    ArtistDto artistDto = transform(followAction.getArtist());
+    artistDto.setFollowedSince(followAction.getCreatedDateTime().toLocalDate());
+    return artistDto;
   }
 }

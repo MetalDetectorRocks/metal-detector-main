@@ -1,24 +1,27 @@
-import { MyArtistsResponse } from "../model/my-artists-response.model";
-import { FollowArtistService } from "./follow-artist-service";
-import { Artist } from "../model/artist.model";
-import { AlertService } from "./alert-service";
-import { Pagination } from "../model/pagination.model";
-import { LoadingIndicatorService } from "./loading-indicator-service";
-import { PaginationComponent } from "../components/pagination/pagination-component";
-import { AbstractRenderService } from "./abstract-render-service";
+import {MyArtistsResponse} from "../model/my-artists-response.model";
+import {FollowArtistService} from "./follow-artist-service";
+import {Artist} from "../model/artist.model";
+import {AlertService} from "./alert-service";
+import {Pagination} from "../model/pagination.model";
+import {LoadingIndicatorService} from "./loading-indicator-service";
+import {PaginationComponent} from "../components/pagination/pagination-component";
+import {AbstractRenderService} from "./abstract-render-service";
+import {DateFormat, DateFormatService} from "./date-format-service";
 
 export class MyArtistsRenderService extends AbstractRenderService<MyArtistsResponse> {
 
     private readonly MAX_CARDS_PER_ROW = 4;
 
     private readonly followArtistService: FollowArtistService;
+    private readonly dateFormatService: DateFormatService;
     private readonly paginationComponent: PaginationComponent;
     private readonly artistTemplateElement: HTMLTemplateElement;
     private rowElement?: HTMLDivElement;
 
-    constructor(followArtistService: FollowArtistService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
+    constructor(followArtistService: FollowArtistService, dateFormatService: DateFormatService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
         super(alertService, loadingIndicatorService);
         this.followArtistService = followArtistService;
+        this.dateFormatService = dateFormatService;
         this.paginationComponent = new PaginationComponent();
         this.artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
     }
@@ -83,7 +86,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
     }
 
     private createFollowedSinceString(followedSince: string): string {
-        const followedSinceString = new Date(2020, 1, 1).toDateString();
+        const followedSinceString = this.dateFormatService.format(followedSince, DateFormat.LONG)
         return `<i class="material-icons">favorite</i> on ${followedSinceString}`;
     }
 
