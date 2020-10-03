@@ -32,7 +32,6 @@ public class ArtistSearchServiceImpl implements ArtistSearchService {
         DiscogsArtistSearchResultDto result = discogsService.searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
         ArtistSearchResponse searchResponse = responseTransformer.transformDiscogs(result);
         UserEntity userEntity = getUserEntity();
-        // ToDo DanielW: Adjust tests
         searchResponse.getSearchResults().forEach(artist -> artist.setFollowed(
                 followArtistService.isFollowing(userEntity.getPublicId(), artist.getId()))
         );
@@ -45,7 +44,6 @@ public class ArtistSearchServiceImpl implements ArtistSearchService {
         SpotifyArtistSearchResultDto result = spotifyService.searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
         ArtistSearchResponse searchResponse = responseTransformer.transformSpotify(result);
         UserEntity userEntity = getUserEntity();
-        // ToDo DanielW: Adjust tests
         searchResponse.getSearchResults().forEach(artist -> artist.setFollowed(
                 followArtistService.isFollowing(userEntity.getPublicId(), artist.getId()))
         );
