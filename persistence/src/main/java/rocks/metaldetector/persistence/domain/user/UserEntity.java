@@ -2,6 +2,7 @@ package rocks.metaldetector.persistence.domain.user;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -29,6 +30,7 @@ import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
+@EqualsAndHashCode(callSuper = true)
 @Entity(name = "users")
 public class UserEntity extends BaseEntity implements UserDetails {
 
