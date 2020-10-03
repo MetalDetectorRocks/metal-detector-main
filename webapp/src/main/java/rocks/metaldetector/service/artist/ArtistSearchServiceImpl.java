@@ -21,7 +21,7 @@ public class ArtistSearchServiceImpl implements ArtistSearchService {
 
     private final UserRepository userRepository;
     private final CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
-
+    private final FollowArtistService followArtistService;
     private final DiscogsService discogsService;
     private final SpotifyService spotifyService;
     private final ArtistSearchResponseTransformer responseTransformer;
@@ -32,7 +32,10 @@ public class ArtistSearchServiceImpl implements ArtistSearchService {
         DiscogsArtistSearchResultDto result = discogsService.searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
         ArtistSearchResponse searchResponse = responseTransformer.transformDiscogs(result);
         UserEntity userEntity = getUserEntity();
-        searchResponse.getSearchResults().forEach(artist -> artist.setFollowed(userEntity.isFollowing(artist.getId())));
+        // ToDo DanielW: Adjust tests
+        searchResponse.getSearchResults().forEach(artist -> artist.setFollowed(
+                followArtistService.isFollowing(userEntity.getPublicId(), artist.getId()))
+        );
         return searchResponse;
     }
 
@@ -42,7 +45,10 @@ public class ArtistSearchServiceImpl implements ArtistSearchService {
         SpotifyArtistSearchResultDto result = spotifyService.searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
         ArtistSearchResponse searchResponse = responseTransformer.transformSpotify(result);
         UserEntity userEntity = getUserEntity();
-        searchResponse.getSearchResults().forEach(artist -> artist.setFollowed(userEntity.isFollowing(artist.getId())));
+        // ToDo DanielW: Adjust tests
+        searchResponse.getSearchResults().forEach(artist -> artist.setFollowed(
+                followArtistService.isFollowing(userEntity.getPublicId(), artist.getId()))
+        );
         return searchResponse;
     }
 
