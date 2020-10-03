@@ -12,19 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @JsonPropertyOrder({
-    "access_token",
-    "token_type",
-    "expires_in"
+    "grant_type"
 })
-public class SpotifyAuthenticationResponse {
+public class SpotifyAppAuthenticationRequest {
 
-  @JsonProperty("access_token")
-  private String accessToken;
-
-  @JsonProperty("token_type")
-  private String tokenType;
-
-  @JsonProperty("expires_in")
-  private int expiresIn;
+  @JsonProperty("grant_type")
+  private String grantType;
 
 }

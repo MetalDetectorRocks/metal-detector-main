@@ -17,7 +17,7 @@ class SpotifyAuthenticationClientMockTest implements WithAssertions {
   @DisplayName("Should return mock token string")
   void test() {
     // when
-    var result = underTest.getAuthenticationToken();
+    var result = underTest.getAppAuthenticationToken();
 
     // then
     assertThat(result).isEqualTo(MOCK_TOKEN);

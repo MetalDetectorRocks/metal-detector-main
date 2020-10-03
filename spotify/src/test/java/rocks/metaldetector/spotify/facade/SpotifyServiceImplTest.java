@@ -67,7 +67,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistByName("query", 1, 10);
 
       // then
-      verify(authenticationClient, times(1)).getAuthenticationToken();
+      verify(authenticationClient, times(1)).getAppAuthenticationToken();
     }
 
     @Test
@@ -75,7 +75,7 @@ class SpotifyServiceImplTest implements WithAssertions {
     void test_search_client_token() {
       // given
       var token = "token";
-      doReturn(token).when(authenticationClient).getAuthenticationToken();
+      doReturn(token).when(authenticationClient).getAppAuthenticationToken();
 
       // when
       underTest.searchArtistByName("query", 1, 10);
@@ -163,7 +163,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistById("666");
 
       // then
-      verify(authenticationClient, times(1)).getAuthenticationToken();
+      verify(authenticationClient, times(1)).getAppAuthenticationToken();
     }
 
     @Test
@@ -171,7 +171,7 @@ class SpotifyServiceImplTest implements WithAssertions {
     void test_search_client_token() {
       // given
       var token = "token";
-      doReturn(token).when(authenticationClient).getAuthenticationToken();
+      doReturn(token).when(authenticationClient).getAppAuthenticationToken();
 
       // when
       underTest.searchArtistById("666");

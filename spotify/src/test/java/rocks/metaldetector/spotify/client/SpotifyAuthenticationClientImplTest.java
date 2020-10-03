@@ -21,7 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.spotify.api.authentication.SpotifyAuthenticationResponse;
+import rocks.metaldetector.spotify.api.authentication.SpotifyAppAuthenticationResponse;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
@@ -38,10 +38,10 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static rocks.metaldetector.spotify.client.SpotifyAuthenticationClientImpl.APP_AUTH_REQUEST_VALUE;
 import static rocks.metaldetector.spotify.client.SpotifyAuthenticationClientImpl.AUTHORIZATION_ENDPOINT;
 import static rocks.metaldetector.spotify.client.SpotifyAuthenticationClientImpl.AUTHORIZATION_HEADER_PREFIX;
-import static rocks.metaldetector.spotify.client.SpotifyAuthenticationClientImpl.REQUEST_KEY;
-import static rocks.metaldetector.spotify.client.SpotifyAuthenticationClientImpl.REQUEST_VALUE;
+import static rocks.metaldetector.spotify.client.SpotifyAuthenticationClientImpl.GRANT_TYPE_KEY;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyAuthenticationResponseFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,11 +71,11 @@ class SpotifyAuthenticationClientImplTest implements WithAssertions {
     var baseUrl = "baseUrl";
     doReturn(baseUrl).when(spotifyProperties).getAuthenticationBaseUrl();
     var expectedUrl = baseUrl + AUTHORIZATION_ENDPOINT;
-    SpotifyAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
+    SpotifyAppAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
     // when
-    underTest.getAuthenticationToken();
+    underTest.getAppAuthenticationToken();
 
     // then
     verify(restTemplate, times(1)).postForEntity(eq(expectedUrl), any(), any());
@@ -85,29 +85,29 @@ class SpotifyAuthenticationClientImplTest implements WithAssertions {
   @DisplayName("correct request body is set")
   void test_correct_requerst_body() {
     // given
-    SpotifyAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
+    SpotifyAppAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
     // when
-    underTest.getAuthenticationToken();
+    underTest.getAppAuthenticationToken();
 
     // then
     verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
     HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
     assertThat(httpEntity.getBody()).isNotNull();
     assertThat(httpEntity.getBody().size()).isEqualTo(1);
-    assertThat(httpEntity.getBody().get(REQUEST_KEY)).isEqualTo(List.of(REQUEST_VALUE));
+    assertThat(httpEntity.getBody().get(GRANT_TYPE_KEY)).isEqualTo(List.of(APP_AUTH_REQUEST_VALUE));
   }
 
   @Test
   @DisplayName("correct standard headers are set")
   void test_correct_standard_headers() {
     // given
-    SpotifyAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
+    SpotifyAppAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
     // when
-    underTest.getAuthenticationToken();
+    underTest.getAppAuthenticationToken();
 
     // then
     verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
@@ -127,11 +127,11 @@ class SpotifyAuthenticationClientImplTest implements WithAssertions {
     var clientSecret = "clientSecret";
     doReturn(clientSecret).when(spotifyProperties).getClientSecret();
     var expectedAuthorizationHeader = AUTHORIZATION_HEADER_PREFIX + Base64.encodeBase64String((clientId + ":" + clientSecret).getBytes());
-    SpotifyAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
+    SpotifyAppAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
     // when
-    underTest.getAuthenticationToken();
+    underTest.getAppAuthenticationToken();
 
     // then
     verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
@@ -144,25 +144,25 @@ class SpotifyAuthenticationClientImplTest implements WithAssertions {
   @DisplayName("correct response type is requested")
   void test_correct_response_type() {
     // given
-    SpotifyAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
+    SpotifyAppAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
     // when
-    underTest.getAuthenticationToken();
+    underTest.getAppAuthenticationToken();
 
     // then
-    verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(SpotifyAuthenticationResponse.class));
+    verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(SpotifyAppAuthenticationResponse.class));
   }
 
   @Test
   @DisplayName("accessToken is returned")
   void test_return_value() {
     // given
-    SpotifyAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
+    SpotifyAppAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
     // when
-    String result = underTest.getAuthenticationToken();
+    String result = underTest.getAppAuthenticationToken();
 
     // then
     assertThat(result).isEqualTo(responseMock.getAccessToken());
@@ -175,7 +175,7 @@ class SpotifyAuthenticationClientImplTest implements WithAssertions {
     doReturn(ResponseEntity.ok(null)).when(restTemplate).postForEntity(anyString(), any(), any());
 
     // when
-    Throwable throwable = catchThrowable(() -> underTest.getAuthenticationToken());
+    Throwable throwable = catchThrowable(() -> underTest.getAppAuthenticationToken());
 
     // then
     assertThat(throwable).isInstanceOf(ExternalServiceException.class);
@@ -186,11 +186,11 @@ class SpotifyAuthenticationClientImplTest implements WithAssertions {
   @DisplayName("if the status code is not OK, an ExternalServiceException is thrown")
   void test_exception_if_status_is_not_ok(HttpStatus httpStatus) {
     // given
-    SpotifyAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
+    SpotifyAppAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
     doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
     // when
-    Throwable throwable = catchThrowable(() -> underTest.getAuthenticationToken());
+    Throwable throwable = catchThrowable(() -> underTest.getAppAuthenticationToken());
 
     // then
     assertThat(throwable).isInstanceOf(ExternalServiceException.class);
