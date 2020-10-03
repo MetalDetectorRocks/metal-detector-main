@@ -452,22 +452,18 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @DisplayName("Getting followed artists returns a sorted list of artist dtos")
   void get_followed_should_return_sorted_artist_dtos() {
     // given
-    ArtistEntity artistEntity1 = mock(ArtistEntity.class);
-    ArtistEntity artistEntity2 = mock(ArtistEntity.class);
-    ArtistEntity artistEntity3 = mock(ArtistEntity.class);
+    FollowActionEntity followAction1 = mock(FollowActionEntity.class);
+    FollowActionEntity followAction2 = mock(FollowActionEntity.class);
+    FollowActionEntity followAction3 = mock(FollowActionEntity.class);
     ArtistDto artistDto1 = ArtistDtoFactory.withName("Darkthrone");
     ArtistDto artistDto2 = ArtistDtoFactory.withName("Borknagar");
     ArtistDto artistDto3 = ArtistDtoFactory.withName("Alcest");
 
     when(userRepository.findByPublicId(any())).thenReturn(Optional.of(userEntity));
-    when(followActionRepository.findAllByUser(any())).thenReturn(List.of(
-            FollowActionEntity.builder().user(userEntity).artist(artistEntity1).build(),
-            FollowActionEntity.builder().user(userEntity).artist(artistEntity2).build(),
-            FollowActionEntity.builder().user(userEntity).artist(artistEntity3).build()
-    ));
-    when(artistTransformer.transform(artistEntity1)).thenReturn(artistDto1);
-    when(artistTransformer.transform(artistEntity2)).thenReturn(artistDto2);
-    when(artistTransformer.transform(artistEntity3)).thenReturn(artistDto3);
+    when(followActionRepository.findAllByUser(any())).thenReturn(List.of(followAction1, followAction2, followAction3));
+    when(artistTransformer.transform(followAction1)).thenReturn(artistDto1);
+    when(artistTransformer.transform(followAction2)).thenReturn(artistDto2);
+    when(artistTransformer.transform(followAction3)).thenReturn(artistDto3);
 
     // when
     List<ArtistDto> followedArtists = underTest.getFollowedArtistsOfCurrentUser();
