@@ -20,6 +20,7 @@ import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -37,7 +38,6 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   @Override
   @Transactional
-  // ToDo DanielW: Adjust tests
   public void follow(String externalArtistId, ArtistSource source) {
     ArtistEntity artist = saveAndFetchArtist(externalArtistId, source);
     FollowActionEntity followAction = FollowActionEntity.builder()
@@ -50,31 +50,37 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   @Override
   @Transactional
-  // ToDo DanielW: Adjust tests
   public void unfollow(String externalArtistId, ArtistSource source) {
-    ArtistEntity artistEntity = artistRepository.findByExternalIdAndSource(externalArtistId, source)
-        .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + externalArtistId + "' (" + source + ") not found!"));
-
+    ArtistEntity artistEntity = fetchArtistEntity(externalArtistId, source);
     followActionRepository.deleteByUserAndArtist(currentUser(), artistEntity);
   }
 
   @Override
-  public boolean isFollowing(String publicUserId, String externalArtistId) {
-    return false; // ToDo DanielW: Implement and test
+  public boolean isCurrentUserFollowing(String externalArtistId, ArtistSource source) {
+    UserEntity user = currentUser();
+    Optional<ArtistEntity> artistOptional = artistRepository.findByExternalIdAndSource(externalArtistId, source);
+
+    if (artistOptional.isEmpty()) {
+      return false;
+    }
+
+    return followActionRepository.existsByUserIdAndArtistId(user.getId(), artistOptional.get().getId());
   }
 
   @Override
   @Transactional
-  // ToDo DanielW: Adjust tests
   public List<ArtistDto> getFollowedArtistsOfCurrentUser() {
-    return getFollowedArtistsOfUser(currentUser().getPublicId());
+    return getFollowedArtists(currentUser());
   }
 
   @Override
   @Transactional
-  // ToDo DanielW: Adjust tests
   public List<ArtistDto> getFollowedArtistsOfUser(String publicUserId) {
     UserEntity user = fetchUserEntity(publicUserId);
+    return getFollowedArtists(user);
+  }
+
+  private List<ArtistDto> getFollowedArtists(UserEntity user) {
     return followActionRepository.findAllByUser(user).stream()
             .map(FollowActionEntity::getArtist)
             .map(artistTransformer::transform)
@@ -84,8 +90,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   private ArtistEntity saveAndFetchArtist(String externalId, ArtistSource source) {
     if (artistRepository.existsByExternalIdAndSource(externalId, source)) {
-      //noinspection OptionalGetWithoutIsPresent: call is safe due to prior existsBy check
-      return artistRepository.findByExternalIdAndSource(externalId, source).get();
+      return fetchArtistEntity(externalId, source);
     }
 
     ArtistEntity artistEntity = switch (source) {
@@ -107,7 +112,14 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   }
 
   private UserEntity fetchUserEntity(String publicUserId) {
-    return userRepository.findByPublicId(publicUserId)
-        .orElseThrow(() -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!"));
+    return userRepository
+            .findByPublicId(publicUserId)
+            .orElseThrow(() -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!"));
+  }
+
+  private ArtistEntity fetchArtistEntity(String externalArtistId, ArtistSource source) {
+    return artistRepository
+            .findByExternalIdAndSource(externalArtistId, source)
+            .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + externalArtistId + "' (" + source + ") not found!"));
   }
 }
