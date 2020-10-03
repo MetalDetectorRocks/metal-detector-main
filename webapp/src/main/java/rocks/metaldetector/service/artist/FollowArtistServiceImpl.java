@@ -9,6 +9,8 @@ import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
+import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
+import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
@@ -27,6 +29,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   private final UserRepository userRepository;
   private final ArtistRepository artistRepository;
+  private final FollowActionRepository followActionRepository;
   private final SpotifyService spotifyService;
   private final DiscogsService discogsService;
   private final ArtistTransformer artistTransformer;
@@ -34,39 +37,49 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   @Override
   @Transactional
-  public void follow(String externalId, ArtistSource source) {
-    ArtistEntity artist = saveAndFetchArtist(externalId, source);
-    UserEntity user = currentUser();
-    user.addFollowedArtist(artist);
-    userRepository.save(user);
+  // ToDo DanielW: Adjust tests
+  public void follow(String externalArtistId, ArtistSource source) {
+    ArtistEntity artist = saveAndFetchArtist(externalArtistId, source);
+    FollowActionEntity followAction = FollowActionEntity.builder()
+            .user(currentUser())
+            .artist(artist)
+            .build();
+
+    followActionRepository.save(followAction);
   }
 
   @Override
   @Transactional
-  public void unfollow(String externalId, ArtistSource source) {
-    ArtistEntity artistEntity = artistRepository.findByExternalIdAndSource(externalId, source)
-        .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + externalId + "' (" + source + ") not found!"));
+  // ToDo DanielW: Adjust tests
+  public void unfollow(String externalArtistId, ArtistSource source) {
+    ArtistEntity artistEntity = artistRepository.findByExternalIdAndSource(externalArtistId, source)
+        .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + externalArtistId + "' (" + source + ") not found!"));
 
-    UserEntity user = currentUser();
-    user.removeFollowedArtist(artistEntity);
-    userRepository.save(user);
+    followActionRepository.deleteByUserAndArtist(currentUser(), artistEntity);
+  }
+
+  @Override
+  public boolean isFollowing(String publicUserId, String externalArtistId) {
+    return false; // ToDo DanielW: Implement and test
   }
 
   @Override
   @Transactional
+  // ToDo DanielW: Adjust tests
   public List<ArtistDto> getFollowedArtistsOfCurrentUser() {
-    UserEntity user = currentUser();
-    return user.getFollowedArtists().stream()
+    return getFollowedArtistsOfUser(currentUser().getPublicId());
+  }
+
+  @Override
+  @Transactional
+  // ToDo DanielW: Adjust tests
+  public List<ArtistDto> getFollowedArtistsOfUser(String publicUserId) {
+    UserEntity user = fetchUserEntity(publicUserId);
+    return followActionRepository.findAllByUser(user).stream()
+            .map(FollowActionEntity::getArtist)
             .map(artistTransformer::transform)
             .sorted(Comparator.comparing(ArtistDto::getArtistName))
             .collect(Collectors.toUnmodifiableList());
-  }
-
-  @Override
-  @Transactional
-  public List<ArtistDto> getFollowedArtistsOfUser(String publicUserId) {
-    UserEntity user = fetchUserEntity(publicUserId);
-    return user.getFollowedArtists().stream().map(artistTransformer::transform).collect(Collectors.toUnmodifiableList());
   }
 
   private ArtistEntity saveAndFetchArtist(String externalId, ArtistSource source) {

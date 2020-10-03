@@ -1,14 +1,16 @@
 package rocks.metaldetector.service.artist;
 
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import rocks.metaldetector.discogs.facade.DiscogsService;
-import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
@@ -23,11 +25,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ArtistSearchServiceImplTest implements WithAssertions {
@@ -46,6 +52,8 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
 
     @Mock
     private SpotifyService spotifyService;
+
+    @Mock FollowArtistService followArtistService;
 
     @Mock
     private ArtistSearchResponseTransformer searchResponseTransformer;
@@ -122,8 +130,8 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             discogssearchresults.setSearchResults(createListOfSearchResultEntries(List.of("1", "2", "3")));
             doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
             doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
-            when(userEntityMock.isFollowing(anyString())).then(invocationOnMock -> {
-                String artistId = invocationOnMock.getArgument(0);
+            when(followArtistService.isFollowing(anyString(), anyString())).then(invocationOnMock -> {
+                String artistId = invocationOnMock.getArgument(1);
                 return artistId.equals("1") || artistId.equals("3");
             });
             doReturn(discogssearchresults).when(searchResponseTransformer).transformDiscogs(any());
@@ -248,8 +256,8 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             spotifySearchResults.setSearchResults(createListOfSearchResultEntries(List.of("1", "2", "3")));
             doReturn(UUID.randomUUID().toString()).when(currentPublicUserIdSupplier).get();
             doReturn(Optional.of(userEntityMock)).when(userRepository).findByPublicId(anyString());
-            when(userEntityMock.isFollowing(anyString())).then(invocationOnMock -> {
-                String artistId = invocationOnMock.getArgument(0);
+            when(followArtistService.isFollowing(anyString(), anyString())).then(invocationOnMock -> {
+                String artistId = invocationOnMock.getArgument(1);
                 return artistId.equals("1") || artistId.equals("3");
             });
             doReturn(spotifySearchResults).when(searchResponseTransformer).transformSpotify(any());

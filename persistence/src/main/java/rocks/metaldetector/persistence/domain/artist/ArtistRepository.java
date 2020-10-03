@@ -19,7 +19,7 @@ public interface ArtistRepository extends JpaRepository<ArtistEntity, Long> {
   boolean existsByExternalIdAndSource(String externalId, ArtistSource source);
 
   @Query(value = "select a.artist_name as artistName, a.thumb as thumb " +
-                 "from artists as a left join users_followed_artists as ufa on a.id = ufa.artist_id " +
+                 "from artists as a left join follow_actions as fa on a.id = fa.artist_id " +
                  "group by a.artist_name, a.thumb " +
                  "order by count(a.id) desc " +
                  "limit :limit",
@@ -27,7 +27,7 @@ public interface ArtistRepository extends JpaRepository<ArtistEntity, Long> {
   List<TopArtist> findTopArtists(@Param("limit") int limit);
 
   @Query(value = "select count(a.external_id) " +
-                 "from artists a left join users_followed_artists ufa on a.id = ufa.artist_id " +
+                 "from artists a left join follow_actions fa on a.id = fa.artist_id " +
                  "where a.external_id = :externalId",
          nativeQuery = true)
   int countArtistFollower(@Param("externalId") String externalId);

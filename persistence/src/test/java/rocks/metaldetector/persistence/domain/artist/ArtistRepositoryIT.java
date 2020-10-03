@@ -32,15 +32,18 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
   @Autowired
   private UserRepository userRepository;
 
-  private ArtistEntity artist1 = ArtistEntityFactory.createArtistEntity("1", "1", SPOTIFY);
-  private ArtistEntity artist2 = ArtistEntityFactory.createArtistEntity("2", "2", SPOTIFY);
-  private ArtistEntity artist3 = ArtistEntityFactory.createArtistEntity("3", "3", DISCOGS);
-  private ArtistEntity artist4 = ArtistEntityFactory.createArtistEntity("4", "4", SPOTIFY);
-  private ArtistEntity artist5 = ArtistEntityFactory.createArtistEntity("5", "5", SPOTIFY);
+  @Autowired
+  private FollowActionRepository followActionRepository;
 
-  private UserEntity userA = UserFactory.createUser("A", "a@test.com");
-  private UserEntity userB = UserFactory.createUser("B", "b@test.com");
-  private UserEntity userC = UserFactory.createUser("C", "c@test.com");
+  private final ArtistEntity artist1 = ArtistEntityFactory.createArtistEntity("1", "1", SPOTIFY);
+  private final ArtistEntity artist2 = ArtistEntityFactory.createArtistEntity("2", "2", SPOTIFY);
+  private final ArtistEntity artist3 = ArtistEntityFactory.createArtistEntity("3", "3", DISCOGS);
+  private final ArtistEntity artist4 = ArtistEntityFactory.createArtistEntity("4", "4", SPOTIFY);
+  private final ArtistEntity artist5 = ArtistEntityFactory.createArtistEntity("5", "5", SPOTIFY);
+
+  private final UserEntity userA = UserFactory.createUser("A", "a@test.com");
+  private final UserEntity userB = UserFactory.createUser("B", "b@test.com");
+  private final UserEntity userC = UserFactory.createUser("C", "c@test.com");
 
   @BeforeEach
   void setUp() {
@@ -57,6 +60,7 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
 
   @AfterEach
   void tearDown() {
+    followActionRepository.deleteAll();
     underTest.deleteAll();
     userRepository.deleteAll();
   }
@@ -145,18 +149,12 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
   void test_find_top_artists() {
     // given
     int limit = 2;
-    userA.addFollowedArtist(artist1);
-    userA.addFollowedArtist(artist2);
-    userA.addFollowedArtist(artist3);
-
-    userB.addFollowedArtist(artist2);
-    userB.addFollowedArtist(artist3);
-
-    userC.addFollowedArtist(artist3);
-
-    userRepository.save(userA);
-    userRepository.save(userB);
-    userRepository.save(userC);
+    follow(userA, artist1);
+    follow(userA, artist2);
+    follow(userA, artist3);
+    follow(userB, artist2);
+    follow(userB, artist3);
+    follow(userC, artist3);
 
     // when
     var result = underTest.findTopArtists(limit);
@@ -174,13 +172,9 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
   @DisplayName("countArtistFollower() count the users that follow the given artist")
   void test_count_artist_follower() {
     // given
-    userA.addFollowedArtist(artist3);
-    userB.addFollowedArtist(artist3);
-    userC.addFollowedArtist(artist3);
-
-    userRepository.save(userA);
-    userRepository.save(userB);
-    userRepository.save(userC);
+    follow(userA, artist3);
+    follow(userB, artist3);
+    follow(userC, artist3);
 
     // when
     var result = underTest.countArtistFollower(artist3.getExternalId());
@@ -203,5 +197,9 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
         Arguments.of(List.of("1")),
         Arguments.of(Collections.emptyList())
     );
+  }
+
+  private void follow(UserEntity user, ArtistEntity artist) {
+    followActionRepository.save(FollowActionEntity.builder().user(user).artist(artist).build());
   }
 }

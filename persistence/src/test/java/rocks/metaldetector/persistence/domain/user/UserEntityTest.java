@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 
 import java.util.Collections;
 import java.util.Set;
@@ -200,71 +199,6 @@ class UserEntityTest implements WithAssertions {
 
       assertThat(setEmptyPassword).isInstanceOf(IllegalArgumentException.class);
       assertThat(setEmptyPassword).hasMessage("It seems that the new password has not been correctly encrypted.");
-    }
-  }
-
-  @DisplayName("Following artists tests")
-  @Nested
-  class FollowingArtistsTests {
-
-    @Test
-    @DisplayName("Following an artist add the artist to user and user to artist")
-    void adding_artist_adds_artist_and_user() {
-      // given
-      UserEntity user = UserFactory.createUser("user", "email");
-      ArtistEntity artist = ArtistFactory.withExternalId("1");
-
-      // when
-      user.addFollowedArtist(artist);
-
-      // then
-      assertThat(user.getFollowedArtists()).containsExactly(artist);
-      assertThat(artist.getFollowedByUsers()).containsExactly(user);
-    }
-
-    @Test
-    @DisplayName("Unfollowing an artist removes the artist from user and user from artist")
-    void removing_artist_removes_artist_and_user() {
-      // given
-      UserEntity user = UserFactory.createUser("user", "email");
-      ArtistEntity artist = ArtistFactory.withExternalId("1");
-      user.addFollowedArtist(artist);
-
-      // when
-      user.removeFollowedArtist(artist);
-
-      // then
-      assertThat(user.getFollowedArtists()).doesNotContain(artist);
-      assertThat(artist.getFollowedByUsers()).doesNotContain(user);
-    }
-
-    @Test
-    @DisplayName("Should return true if user follows artist")
-    void should_return_true_for_following() {
-      // given
-      UserEntity user = UserFactory.createUser("user", "email");
-      ArtistEntity artist = ArtistFactory.withExternalId("1");
-      user.addFollowedArtist(artist);
-
-      // when
-      boolean result = user.isFollowing(artist.getExternalId());
-
-      // then
-      assertThat(result).isTrue();
-    }
-
-    @Test
-    @DisplayName("Should return false if user does not follow artist")
-    void should_return_false_for_following() {
-      // given
-      UserEntity user = UserFactory.createUser("user", "email");
-      ArtistEntity artist = ArtistFactory.withExternalId("1");
-
-      // when
-      boolean result = user.isFollowing(artist.getExternalId());
-
-      // then
-      assertThat(result).isFalse();
     }
   }
 
