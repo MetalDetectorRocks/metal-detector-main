@@ -9,8 +9,8 @@ import java.util.List;
 @Repository
 public interface FollowActionRepository extends JpaRepository<FollowActionEntity, Long> {
 
-  List<FollowActionEntity> findAllByUser(UserEntity user); // ToDo DanielW: Test
+  List<FollowActionEntity> findAllByUser(UserEntity user);
 
-  void deleteByUserAndArtist(UserEntity user, ArtistEntity artistEntity); // ToDo DanielW: Test
+  void deleteByUserAndArtist(UserEntity user, ArtistEntity artistEntity);
 
 }
