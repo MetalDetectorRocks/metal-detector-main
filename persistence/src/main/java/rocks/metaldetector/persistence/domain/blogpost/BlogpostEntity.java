@@ -6,6 +6,7 @@ import rocks.metaldetector.persistence.domain.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.Max;
 
 @Getter
 @NoArgsConstructor
@@ -13,13 +14,14 @@ import javax.persistence.Entity;
 public class BlogpostEntity extends BaseEntity {
 
     @Column(name = "title", nullable = false, unique = true)
+    @Max(value = 255)
     private String title;
 
     @Column(name = "slug", nullable = false, unique = true)
+    @Max(value = 255)
     private String slug;
 
-    //TODO: Figure out appropriate data type
-    @Column(name = "text", nullable = false)
+    @Column(columnDefinition="TEXT", name = "text", nullable = false)
     private String text;
 
     @Column(name = "draft_flag", nullable = false)
