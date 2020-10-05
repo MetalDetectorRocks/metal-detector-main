@@ -14,11 +14,11 @@ import javax.validation.constraints.Max;
 public class BlogpostEntity extends BaseEntity {
 
     @Column(name = "title", nullable = false, unique = true)
-    @Max(value = 255)
+    @Max(value = 255, message = "Title should have a maximum of 255 characters")
     private String title;
 
     @Column(name = "slug", nullable = false, unique = true)
-    @Max(value = 255)
+    @Max(value = 255, message = "Slug should have a maximum of 255 characters")
     private String slug;
 
     @Column(columnDefinition="TEXT", name = "text", nullable = false)
