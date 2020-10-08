@@ -18,7 +18,7 @@ public class SpotifyUserAuthorizationRestController {
   private final SpotifyUserAuthorizationService spotifyUserAuthorizationService;
 
   @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<SpotifyUserAuthorizationResponse> authorizeUser() {
+  public ResponseEntity<SpotifyUserAuthorizationResponse> prepareUserAuthorization() {
     String authorizationUrl = spotifyUserAuthorizationService.prepareAuthorization();
     return ResponseEntity.ok().body(new SpotifyUserAuthorizationResponse(authorizationUrl));
   }

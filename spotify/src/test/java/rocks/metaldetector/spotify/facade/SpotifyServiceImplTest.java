@@ -14,7 +14,7 @@ import rocks.metaldetector.spotify.client.SpotifyArtistSearchClient;
 import rocks.metaldetector.spotify.client.SpotifyAuthenticationClient;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistSearchResultTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistTransformer;
-import rocks.metaldetector.spotify.config.SpotifyConfig;
+import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -46,15 +46,14 @@ class SpotifyServiceImplTest implements WithAssertions {
   private SpotifyArtistTransformer artistTransformer;
 
   @Mock
-  private SpotifyConfig spotifyConfig;
-
+  private SpotifyProperties spotifyProperties;
 
   @InjectMocks
   private SpotifyServiceImpl underTest;
 
   @AfterEach
   void tearDown() {
-    reset(searchClient, authenticationClient, resultTransformer, artistTransformer, spotifyConfig);
+    reset(searchClient, authenticationClient, resultTransformer, artistTransformer, spotifyProperties);
   }
 
   @Nested
@@ -234,24 +233,21 @@ class SpotifyServiceImplTest implements WithAssertions {
     void test_correct_url_returned() {
       // given
       var host = "host";
-      var port = 8080;
       var clientId = "clientId";
       var baseUrl = "baseUrl";
-      var encodedRedirectUrl = host + "%3A" + port + "%2Fprofile%2Fauthorize";
+      var encodedRedirectUrl = host + "%2Fprofile%2Fspotify-callback";
       var encodedScopes = "user-library-read+user-follow-read";
-      doReturn(host).when(spotifyConfig).getHost();
-      doReturn(port).when(spotifyConfig).getPort();
-      doReturn(clientId).when(spotifyConfig).getClientId();
-      doReturn(baseUrl).when(spotifyConfig).getAuthenticationBaseUrl();
+      var expectedUrl = baseUrl + "/authorize" + "?client_id=" + clientId + "&response_type=code" +
+                        "&redirect_uri=" + encodedRedirectUrl + "&scope=" + encodedScopes + "&state=";
+      doReturn(host).when(spotifyProperties).getApplicationHostUrl();
+      doReturn(clientId).when(spotifyProperties).getClientId();
+      doReturn(baseUrl).when(spotifyProperties).getAuthenticationBaseUrl();
 
       // when
       var result = underTest.getSpotifyAuthorizationUrl();
 
       // then
-      assertThat(result).startsWith(baseUrl);
-      assertThat(result).contains("client_id=" + clientId);
-      assertThat(result).contains("redirect_uri=" + encodedRedirectUrl);
-      assertThat(result).contains("scope=" + encodedScopes);
+      assertThat(result).isEqualTo(expectedUrl);
     }
 
     @Test
@@ -261,10 +257,9 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.getSpotifyAuthorizationUrl();
 
       // then
-      verify(spotifyConfig, times(1)).getHost();
-      verify(spotifyConfig, times(1)).getPort();
-      verify(spotifyConfig, times(1)).getClientId();
-      verify(spotifyConfig, times(1)).getAuthenticationBaseUrl();
+      verify(spotifyProperties, times(1)).getClientId();
+      verify(spotifyProperties, times(1)).getAuthenticationBaseUrl();
+      verify(spotifyProperties, times(1)).getApplicationHostUrl();
     }
   }
 }

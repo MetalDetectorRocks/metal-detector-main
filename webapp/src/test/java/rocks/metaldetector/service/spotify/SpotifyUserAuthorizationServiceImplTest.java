@@ -92,9 +92,9 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     verify(userRepository, times(1)).save(argumentCaptor.capture());
 
     UserEntity userEntity = argumentCaptor.getValue();
-    assertThat(userEntity.getSpotifyAuthorizationEntity()).isNotNull();
-    assertThat(userEntity.getSpotifyAuthorizationEntity().getState()).isNotNull();
-    assertThat(userEntity.getSpotifyAuthorizationEntity().getState()).hasSize(STATE_SIZE);
+    assertThat(userEntity.getSpotifyAuthorization()).isNotNull();
+    assertThat(userEntity.getSpotifyAuthorization().getState()).isNotNull();
+    assertThat(userEntity.getSpotifyAuthorization().getState()).hasSize(STATE_SIZE);
   }
 
   @Test

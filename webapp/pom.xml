@@ -25,6 +25,7 @@
         <bootstrap.version>4.5.2</bootstrap.version>
         <datatables.version>1.10.21</datatables.version>
         <thymeleaf-dialect.version>2.5.1</thymeleaf-dialect.version>
+        <apache-commons-lang3.version>3.11</apache-commons-lang3.version>
     </properties>
 
     <dependencies>
@@ -148,6 +149,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <version>${apache-commons-lang3.version}</version>
         </dependency>
     </dependencies>
 

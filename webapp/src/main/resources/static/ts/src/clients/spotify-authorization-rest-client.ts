@@ -7,7 +7,7 @@ import {SpotifyUserAuthorizationResponse} from "../model/spotify-user-authorizat
 
 export class SpotifyAuthorizationRestClient extends AbstractRestClient {
 
-    private readonly SPOTIFY_AUTHORIZATION_ENDPOINT = "/rest/v1/authorize-spotify";
+    private readonly SPOTIFY_AUTHORIZATION_ENDPOINT = "/rest/v1/auth/spotify";
 
     private readonly toastService: ToastService;
 

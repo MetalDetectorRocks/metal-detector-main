@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
-import rocks.metaldetector.spotify.config.SpotifyConfig;
+import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.net.URLEncoder;
@@ -40,7 +40,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
                                         + "limit={" + LIMIT_PARAMETER_NAME + "}";
 
   private final RestTemplate spotifyRestTemplate;
-  private final SpotifyConfig spotifyConfig;
+  private final SpotifyProperties spotifyProperties;
 
   @Override
   public SpotifyArtistSearchResultContainer searchByName(String authenticationToken, String artistQueryString, int pageNumber, int pageSize) {
@@ -53,7 +53,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
     int offset = pageSize * (pageNumber - 1);
 
     ResponseEntity<SpotifyArtistSearchResultContainer> responseEntity = spotifyRestTemplate.exchange(
-        spotifyConfig.getRestBaseUrl() + SEARCH_ENDPOINT,
+        spotifyProperties.getRestBaseUrl() + SEARCH_ENDPOINT,
         GET,
         httpEntity,
         SpotifyArtistSearchResultContainer.class,
@@ -79,11 +79,11 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
 
     HttpEntity<Object> httpEntity = createQueryHttpEntity(authenticationToken);
     ResponseEntity<SpotifyArtist> responseEntity = spotifyRestTemplate.exchange(
-            spotifyConfig.getRestBaseUrl() + GET_ARTIST_ENDPOINT,
-            GET,
-            httpEntity,
-            SpotifyArtist.class,
-            Map.of(ID_PARAMETER_NAME, artistId)
+        spotifyProperties.getRestBaseUrl() + GET_ARTIST_ENDPOINT,
+        GET,
+        httpEntity,
+        SpotifyArtist.class,
+        Map.of(ID_PARAMETER_NAME, artistId)
     );
 
     SpotifyArtist spotifyArtist = responseEntity.getBody();

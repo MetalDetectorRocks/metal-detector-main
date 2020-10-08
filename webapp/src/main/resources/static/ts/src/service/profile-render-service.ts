@@ -8,10 +8,6 @@ export class ProfileRenderService {
         this.spotifyAuthorizationRestClient = spotifyAuthorizationRestClient;
     }
 
-    protected getHostElementId(): string {
-        return "profile-container";
-    }
-
     public render(): void {
         const authorizationButton = document.getElementById("authorization-button")! as HTMLButtonElement;
         authorizationButton.addEventListener("click", this.doSpotifyRedirect.bind(this));
@@ -19,6 +15,7 @@ export class ProfileRenderService {
 
     private doSpotifyRedirect() {
         const authorizationResponse = this.spotifyAuthorizationRestClient.getAuthorizationUrl()
-        authorizationResponse.then(response => window.location.href = response.authorizationUrl);
+        // authorizationResponse.then(response => window.location.href = response.authorizationUrl);
+        authorizationResponse.then(response => window.open(response.authorizationUrl, "_blank"));
     }
 }

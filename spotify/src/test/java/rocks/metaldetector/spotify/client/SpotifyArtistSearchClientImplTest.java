@@ -24,7 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
-import rocks.metaldetector.spotify.config.SpotifyConfig;
+import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.nio.charset.Charset;
@@ -58,7 +58,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
   private RestTemplate restTemplate;
 
   @Mock
-  private SpotifyConfig spotifyConfig;
+  private SpotifyProperties spotifyProperties;
 
   @InjectMocks
   private SpotifyArtistSearchClientImpl underTest;
@@ -71,7 +71,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(restTemplate, spotifyConfig);
+    reset(restTemplate, spotifyProperties);
   }
 
   @Nested
@@ -98,7 +98,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
     void test_correct_url_is_called() {
       // given
       var baseUrl = "baseUrl";
-      doReturn(baseUrl).when(spotifyConfig).getRestBaseUrl();
+      doReturn(baseUrl).when(spotifyProperties).getRestBaseUrl();
       var expectedUrl = baseUrl + SEARCH_ENDPOINT;
       SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
@@ -312,7 +312,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       var spotifyBaseUrl = "spotify-url";
       var expectedSearchUrl = spotifyBaseUrl + GET_ARTIST_ENDPOINT;
       var responseMock = SpotfiyArtistFatory.withArtistName("Slayer");
-      doReturn(spotifyBaseUrl).when(spotifyConfig).getRestBaseUrl();
+      doReturn(spotifyBaseUrl).when(spotifyProperties).getRestBaseUrl();
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), spotifyArtistClass(), anyMap());
 
       // when

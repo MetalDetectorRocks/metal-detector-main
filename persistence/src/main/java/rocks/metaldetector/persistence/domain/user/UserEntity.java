@@ -76,8 +76,8 @@ public class UserEntity extends BaseEntity implements UserDetails {
   private LocalDateTime lastLogin;
 
   @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "spotify_authorization_entity", referencedColumnName = "id")
-  private SpotifyAuthorizationEntity spotifyAuthorizationEntity;
+  @JoinColumn(name = "spotify_authorization", referencedColumnName = "id")
+  private SpotifyAuthorizationEntity spotifyAuthorization;
 
   @Builder
   public UserEntity(@NonNull String username, @NonNull String email, @NonNull String password,
@@ -171,7 +171,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     this.lastLogin = lastLogin;
   }
 
-  public void setSpotifyAuthorizationEntity(SpotifyAuthorizationEntity authenticationEntity) {
-    this.spotifyAuthorizationEntity = authenticationEntity;
+  public void setSpotifyAuthorization(SpotifyAuthorizationEntity authenticationEntity) {
+    this.spotifyAuthorization = authenticationEntity;
   }
 }

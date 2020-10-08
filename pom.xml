@@ -58,7 +58,6 @@
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <jacoco.version>0.8.6</jacoco.version>
         <apache-commons-text.version>1.9</apache-commons-text.version>
-        <apache-commons-lang3.version>3.11</apache-commons-lang3.version>
     </properties>
 
     <dependencies>
@@ -110,11 +109,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>${apache-commons-text.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${apache-commons-lang3.version}</version>
         </dependency>
 
 
