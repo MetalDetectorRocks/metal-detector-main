@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
 @AllArgsConstructor(access = AccessLevel.PRIVATE) // for lombok builder
 @Entity(name="tokens")
 public class TokenEntity extends BaseEntity {

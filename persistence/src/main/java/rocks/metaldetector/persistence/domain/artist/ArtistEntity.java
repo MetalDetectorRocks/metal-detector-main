@@ -19,7 +19,7 @@ import java.util.Set;
 
 @Getter
 @Entity(name = "artists")
-@NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
 @ToString
 @EqualsAndHashCode(callSuper = true, exclude = "followedByUsers")
 public class ArtistEntity extends BaseEntity {

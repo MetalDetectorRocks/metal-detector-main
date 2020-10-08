@@ -37,7 +37,7 @@ import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINIST
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
 @EqualsAndHashCode(callSuper = true, exclude = "followedArtists")
 @Entity(name = "users")
 public class UserEntity extends BaseEntity implements UserDetails {
@@ -84,8 +84,8 @@ public class UserEntity extends BaseEntity implements UserDetails {
   private Set<ArtistEntity> followedArtists;
 
   @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "spotify_authorization_entity", referencedColumnName = "id")
-  private SpotifyAuthorizationEntity spotifyAuthorizationEntity;
+  @JoinColumn(name = "spotify_authorization", referencedColumnName = "id")
+  private SpotifyAuthorizationEntity spotifyAuthorization;
 
   @Builder
   public UserEntity(@NonNull String username, @NonNull String email, @NonNull String password,
@@ -198,7 +198,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     return followedArtists.stream().map(ArtistEntity::getExternalId).collect(Collectors.toList()).contains(externalId);
   }
 
-  public void setSpotifyAuthorizationEntity(SpotifyAuthorizationEntity authenticationEntity) {
-    this.spotifyAuthorizationEntity = authenticationEntity;
+  public void setSpotifyAuthorization(SpotifyAuthorizationEntity authenticationEntity) {
+    this.spotifyAuthorization = authenticationEntity;
   }
 }

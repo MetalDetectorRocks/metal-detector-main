@@ -1,4 +1,4 @@
-package rocks.metaldetector.config.misc;
+package rocks.metaldetector.support;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,5 +12,5 @@ import org.springframework.context.annotation.PropertySource;
 public class ApplicationProperties {
 
   private String host;
-
+  private int port;
 }

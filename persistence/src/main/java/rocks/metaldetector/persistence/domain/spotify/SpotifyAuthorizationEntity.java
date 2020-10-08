@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PACKAGE) // for hibernate and model mapper
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
 @EqualsAndHashCode(callSuper = true)
 @Entity(name = "spotifyAuthorizations")
 public class SpotifyAuthorizationEntity extends BaseEntity {
@@ -26,7 +26,7 @@ public class SpotifyAuthorizationEntity extends BaseEntity {
   @Column(name = "refresh_token", unique = true)
   private String refreshToken;
 
-  @OneToOne(mappedBy = "spotifyAuthorizationEntity")
+  @OneToOne(mappedBy = "spotifyAuthorization")
   private UserEntity user;
 
   public SpotifyAuthorizationEntity(String state) {

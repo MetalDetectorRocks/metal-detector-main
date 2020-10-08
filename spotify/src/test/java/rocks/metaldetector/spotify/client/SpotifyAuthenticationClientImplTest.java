@@ -22,7 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.spotify.api.authentication.SpotifyAuthenticationResponse;
-import rocks.metaldetector.spotify.config.SpotifyConfig;
+import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.nio.charset.Charset;
@@ -51,7 +51,7 @@ class SpotifyAuthenticationClientImplTest implements WithAssertions {
   private RestTemplate restTemplate;
 
   @Mock
-  private SpotifyConfig spotifyConfig;
+  private SpotifyProperties spotifyProperties;
 
   @InjectMocks
   private SpotifyAuthenticationClientImpl underTest;
@@ -61,7 +61,7 @@ class SpotifyAuthenticationClientImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(restTemplate, spotifyConfig);
+    reset(restTemplate, spotifyProperties);
   }
 
   @Test
@@ -69,7 +69,7 @@ class SpotifyAuthenticationClientImplTest implements WithAssertions {
   void test_correct_url_is_called() {
     // given
     var baseUrl = "baseUrl";
-    doReturn(baseUrl).when(spotifyConfig).getAuthenticationBaseUrl();
+    doReturn(baseUrl).when(spotifyProperties).getAuthenticationBaseUrl();
     var expectedUrl = baseUrl + AUTHORIZATION_ENDPOINT;
     SpotifyAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
@@ -123,9 +123,9 @@ class SpotifyAuthenticationClientImplTest implements WithAssertions {
   void test_correct_authorization_header() {
     // given
     var clientId = "clientId";
-    doReturn(clientId).when(spotifyConfig).getClientId();
+    doReturn(clientId).when(spotifyProperties).getClientId();
     var clientSecret = "clientSecret";
-    doReturn(clientSecret).when(spotifyConfig).getClientSecret();
+    doReturn(clientSecret).when(spotifyProperties).getClientSecret();
     var expectedAuthorizationHeader = AUTHORIZATION_HEADER_PREFIX + Base64.encodeBase64String((clientId + ":" + clientSecret).getBytes());
     SpotifyAuthenticationResponse responseMock = SpotifyAuthenticationResponseFactory.createDefault();
     doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
