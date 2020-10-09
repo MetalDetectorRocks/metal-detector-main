@@ -45,7 +45,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
     UserEntity currentUser = userRepository.findByPublicId(publicUserId).orElseThrow(
         () -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
     );
-    SpotifyAuthorizationEntity authorizationEntity = currentUser.getSpotifyAuthorizationEntity();
+    SpotifyAuthorizationEntity authorizationEntity = currentUser.getSpotifyAuthorization();
 
     checkState(authorizationEntity, spotifyState);
 

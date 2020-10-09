@@ -13,11 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.spotify.api.authentication.SpotifyAuthenticationResponse;
-import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.spotify.api.authentication.SpotifyAppAuthenticationResponse;
 import rocks.metaldetector.spotify.api.authentication.SpotifyUserAuthorizationResponse;
-import rocks.metaldetector.spotify.config.SpotifyConfig;
+import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
@@ -67,7 +65,7 @@ public class SpotifyAuthenticationClientImpl implements SpotifyAuthenticationCli
     MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
     request.add(GRANT_TYPE_KEY, USER_AUTH_REQUEST_VALUE);
     request.add(CODE_REQUEST_KEY, code);
-    request.add(REDIRECT_URI_KEY, spotifyProperties.getHost() + ":" + spotifyConfig.getPort() + Endpoints.Frontend.PROFILE + Endpoints.Frontend.AUTHORIZE);
+    request.add(REDIRECT_URI_KEY, spotifyProperties.getApplicationHostUrl() + Endpoints.Frontend.PROFILE + Endpoints.Frontend.SPOTIFY_CALLBACK);
 
     HttpEntity<MultiValueMap<String, String>> httpEntity = createHttpEntity(request);
     ResponseEntity<SpotifyUserAuthorizationResponse> responseEntity = spotifyRestTemplate.postForEntity(
