@@ -2,6 +2,7 @@ package rocks.metaldetector.service.spotify;
 
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
@@ -40,6 +41,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
 
   @Override
   @Transactional
+  @Async
   public void fetchToken(String spotifyState, String spotifyCode) {
     String publicUserId = currentPublicUserIdSupplier.get();
     UserEntity currentUser = userRepository.findByPublicId(publicUserId).orElseThrow(
