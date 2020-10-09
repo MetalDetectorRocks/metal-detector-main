@@ -54,6 +54,8 @@ public class Endpoints {
     public static final String USERS      = "/rest/v1/users";
     public static final String NOTIFY     = "/rest/v1/notify";
 
+    public static final String BLOGPOSTS      = "/rest/v1/blogposts";
+
     public static final String TEST       = "/rest/v1/only-for-testing";
   }
 
