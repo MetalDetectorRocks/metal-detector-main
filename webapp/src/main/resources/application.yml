@@ -49,6 +49,7 @@ server:
   error:
     whitelabel:
       enabled: true
+    path: /error
   tomcat:
     accesslog:
       enabled: true

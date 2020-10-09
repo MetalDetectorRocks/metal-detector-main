@@ -19,7 +19,7 @@ public class CustomErrorController implements ErrorController {
 
   @Override
   public String getErrorPath() {
-    return Endpoints.ERROR;
+    return null;
   }
 
   @RequestMapping(Endpoints.ERROR)
