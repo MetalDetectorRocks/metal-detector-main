@@ -36,14 +36,14 @@ public class SpotifyServiceImpl implements SpotifyService {
 
   @Override
   public SpotifyArtistSearchResultDto searchArtistByName(String artistQueryString, int pageNumber, int pageSize) {
-    String authenticationToken = spotifyAuthenticationClient.getAppAuthenticationToken();
+    String authenticationToken = spotifyAuthenticationClient.getAppAuthorizationToken();
     SpotifyArtistSearchResultContainer searchResult = spotifyArtistSearchClient.searchByName(authenticationToken, artistQueryString, pageNumber, pageSize);
     return searchResultTransformer.transform(searchResult);
   }
 
   @Override
   public SpotifyArtistDto searchArtistById(String artistId) {
-    String authenticationToken = spotifyAuthenticationClient.getAppAuthenticationToken();
+    String authenticationToken = spotifyAuthenticationClient.getAppAuthorizationToken();
     SpotifyArtist spotifyArtist = spotifyArtistSearchClient.searchById(authenticationToken, artistId);
     return spotifyArtistTransformer.transform(spotifyArtist);
   }

@@ -1,6 +1,7 @@
 package rocks.metaldetector.spotify.client;
 
 import rocks.metaldetector.spotify.api.authentication.SpotifyAppAuthenticationResponse;
+import rocks.metaldetector.spotify.api.authentication.SpotifyUserAuthorizationResponse;
 import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
@@ -8,6 +9,7 @@ import rocks.metaldetector.spotify.api.search.SpotifyFollowers;
 import rocks.metaldetector.spotify.api.search.SpotifyImage;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
+import rocks.metaldetector.spotify.facade.dto.SpotifyUserAuthorizationDto;
 import rocks.metaldetector.support.Pagination;
 
 import java.util.Collections;
@@ -98,12 +100,38 @@ public class SpotifyDtoFactory {
     }
   }
 
-  public static class SpotifyAuthenticationResponseFactory {
+  public static class SpotifyAppAuthenticationResponseFactory {
 
     public static SpotifyAppAuthenticationResponse createDefault() {
       return SpotifyAppAuthenticationResponse.builder()
           .accessToken("accessToken")
           .expiresIn(3600)
+          .tokenType("tokenType")
+          .build();
+    }
+  }
+
+  public static class SpotfiyUserAuthorizationResponseFactory {
+
+    public static SpotifyUserAuthorizationResponse createDefault() {
+      return SpotifyUserAuthorizationResponse.builder()
+          .accessToken("accessToken")
+          .refreshToken("refreshToken")
+          .expiresIn(3600)
+          .scope("scope")
+          .tokenType("tokenType")
+          .build();
+    }
+  }
+
+  public static class SpotfiyUserAuthorizationDtoFactory {
+
+    public static SpotifyUserAuthorizationDto createDefault() {
+      return SpotifyUserAuthorizationDto.builder()
+          .accessToken("accessToken")
+          .refreshToken("refreshToken")
+          .expiresIn(3600)
+          .scope("scope")
           .tokenType("tokenType")
           .build();
     }

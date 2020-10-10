@@ -19,6 +19,7 @@ import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Collections;
 
@@ -42,8 +43,8 @@ public class SpotifyAuthenticationClientImpl implements SpotifyAuthenticationCli
   private final SpotifyProperties spotifyProperties;
 
   @Override
-  @Cacheable("spotifyAuthenticationToken")
-  public String getAppAuthenticationToken() {
+  @Cacheable("spotifyAppAuthorizationToken")
+  public String getAppAuthorizationToken() {
     MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
     request.add(GRANT_TYPE_KEY, APP_AUTH_REQUEST_VALUE);
 
@@ -54,7 +55,7 @@ public class SpotifyAuthenticationClientImpl implements SpotifyAuthenticationCli
     SpotifyAppAuthenticationResponse resultContainer = responseEntity.getBody();
     var shouldNotHappen = resultContainer == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
-      throw new ExternalServiceException("Could not get authentication token from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
+      throw new ExternalServiceException("Could not get app authorization token from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
     }
 
     return resultContainer.getAccessToken();
@@ -65,7 +66,7 @@ public class SpotifyAuthenticationClientImpl implements SpotifyAuthenticationCli
     MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
     request.add(GRANT_TYPE_KEY, USER_AUTH_REQUEST_VALUE);
     request.add(CODE_REQUEST_KEY, code);
-    request.add(REDIRECT_URI_KEY, spotifyProperties.getApplicationHostUrl() + Endpoints.Frontend.PROFILE + Endpoints.Frontend.SPOTIFY_CALLBACK);
+    request.add(REDIRECT_URI_KEY, URLEncoder.encode(spotifyProperties.getApplicationHostUrl() + Endpoints.Frontend.PROFILE + Endpoints.Frontend.SPOTIFY_CALLBACK, Charset.defaultCharset()));
 
     HttpEntity<MultiValueMap<String, String>> httpEntity = createHttpEntity(request);
     ResponseEntity<SpotifyUserAuthorizationResponse> responseEntity = spotifyRestTemplate.postForEntity(
@@ -74,7 +75,7 @@ public class SpotifyAuthenticationClientImpl implements SpotifyAuthenticationCli
     SpotifyUserAuthorizationResponse resultContainer = responseEntity.getBody();
     var shouldNotHappen = resultContainer == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
-      throw new ExternalServiceException("Could not get authentication token from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
+      throw new ExternalServiceException("Could not get user authorization token from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
     }
 
     return resultContainer;

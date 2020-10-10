@@ -12,8 +12,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.client.SpotifyArtistSearchClient;
 import rocks.metaldetector.spotify.client.SpotifyAuthenticationClient;
+import rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyUserAuthorizationDtoFactory;
+import rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyUserAuthorizationResponseFactory;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistSearchResultTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistTransformer;
+import rocks.metaldetector.spotify.client.transformer.SpotifyUserAuthorizationTransformer;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 
@@ -48,12 +51,15 @@ class SpotifyServiceImplTest implements WithAssertions {
   @Mock
   private SpotifyProperties spotifyProperties;
 
+  @Mock
+  private SpotifyUserAuthorizationTransformer userAuthorizationTransformer;
+
   @InjectMocks
   private SpotifyServiceImpl underTest;
 
   @AfterEach
   void tearDown() {
-    reset(searchClient, authenticationClient, resultTransformer, artistTransformer, spotifyProperties);
+    reset(searchClient, authenticationClient, resultTransformer, artistTransformer, spotifyProperties, userAuthorizationTransformer);
   }
 
   @Nested
@@ -67,7 +73,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistByName("query", 1, 10);
 
       // then
-      verify(authenticationClient, times(1)).getAppAuthenticationToken();
+      verify(authenticationClient, times(1)).getAppAuthorizationToken();
     }
 
     @Test
@@ -75,7 +81,7 @@ class SpotifyServiceImplTest implements WithAssertions {
     void test_search_client_token() {
       // given
       var token = "token";
-      doReturn(token).when(authenticationClient).getAppAuthenticationToken();
+      doReturn(token).when(authenticationClient).getAppAuthorizationToken();
 
       // when
       underTest.searchArtistByName("query", 1, 10);
@@ -163,7 +169,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistById("666");
 
       // then
-      verify(authenticationClient, times(1)).getAppAuthenticationToken();
+      verify(authenticationClient, times(1)).getAppAuthorizationToken();
     }
 
     @Test
@@ -171,7 +177,7 @@ class SpotifyServiceImplTest implements WithAssertions {
     void test_search_client_token() {
       // given
       var token = "token";
-      doReturn(token).when(authenticationClient).getAppAuthenticationToken();
+      doReturn(token).when(authenticationClient).getAppAuthorizationToken();
 
       // when
       underTest.searchArtistById("666");
@@ -260,6 +266,52 @@ class SpotifyServiceImplTest implements WithAssertions {
       verify(spotifyProperties, times(1)).getClientId();
       verify(spotifyProperties, times(1)).getAuthenticationBaseUrl();
       verify(spotifyProperties, times(1)).getApplicationHostUrl();
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests for method getAccessToken")
+  class AccessTokenTest {
+
+    @Test
+    @DisplayName("spotifyAuthenticationClient is called")
+    void test_authentication_client_called() {
+      // given
+      var code = "code";
+
+      // when
+      underTest.getAccessToken(code);
+
+      // then
+      verify(authenticationClient, times(1)).getUserAuthorizationToken(code);
+    }
+
+    @Test
+    @DisplayName("userAuthorizationTransformer is called")
+    void test_user_authorization_transformer_called() {
+      // given
+      var response = SpotfiyUserAuthorizationResponseFactory.createDefault();
+      doReturn(response).when(authenticationClient).getUserAuthorizationToken(anyString());
+
+      // when
+      var result = underTest.getAccessToken("code");
+
+      // then
+      verify(userAuthorizationTransformer, times(1)).transform(response);
+    }
+
+    @Test
+    @DisplayName("result is returned")
+    void test_result_is_returned() {
+      // given
+      var userAuthorizationDto = SpotfiyUserAuthorizationDtoFactory.createDefault();
+      doReturn(userAuthorizationDto).when(userAuthorizationTransformer).transform(any());
+
+      // when
+      var result = underTest.getAccessToken("code");
+
+      // then
+      assertThat(result).isEqualTo(userAuthorizationDto);
     }
   }
 }
