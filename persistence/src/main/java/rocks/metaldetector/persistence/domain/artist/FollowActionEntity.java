@@ -1,6 +1,7 @@
 package rocks.metaldetector.persistence.domain.artist;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,8 @@ import javax.persistence.OneToOne;
 @Getter
 @Entity(name = "followActions")
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
+@AllArgsConstructor(access = AccessLevel.PRIVATE) // for lombok builder
+@Builder
 @ToString
 public class FollowActionEntity extends BaseEntity {
 
@@ -29,9 +32,4 @@ public class FollowActionEntity extends BaseEntity {
   @NonNull
   private ArtistEntity artist;
 
-  @Builder
-  public FollowActionEntity(@NonNull UserEntity user, @NonNull ArtistEntity artist) {
-    this.user = user;
-    this.artist = artist;
-  }
 }
