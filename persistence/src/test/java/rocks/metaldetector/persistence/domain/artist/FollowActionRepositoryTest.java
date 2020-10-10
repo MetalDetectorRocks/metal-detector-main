@@ -73,4 +73,24 @@ class FollowActionRepositoryTest extends BaseDataJpaTest implements WithAssertio
     // then
     assertThat(followActions).containsExactly(userBFollowsArtist2);
   }
+
+  @Test
+  @DisplayName("Should return true if a follow action exists for a given user and artist")
+  void should_return_true_if_a_follow_action_exists() {
+    // when
+    boolean result = underTest.existsByUserIdAndArtistId(userA.getId(), artist1.getId());
+
+    // then
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  @DisplayName("Should return false if a follow action does not exist for a given user and artist")
+  void should_return_false_if_a_follow_action_does_not_exist() {
+    // when
+    boolean result = underTest.existsByUserIdAndArtistId(userB.getId(), artist3.getId());
+
+    // then
+    assertThat(result).isFalse();
+  }
 }
