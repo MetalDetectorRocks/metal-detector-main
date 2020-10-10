@@ -6,20 +6,19 @@ import rocks.metaldetector.persistence.domain.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-//import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
 
 @Getter
 @NoArgsConstructor
 @Entity(name = "blogposts")
 public class BlogpostEntity extends BaseEntity {
 
-    //TODO: Figure out way to add dependencies for Max annotation
     @Column(name = "title", nullable = false, unique = true)
-    //@Max(value = 255, message = "Title should have a maximum of 255 characters")
+    @Size(min = 2, max = 255)
     private String title;
 
     @Column(name = "slug", nullable = false, unique = true)
-    //@Max(value = 255, message = "Slug should have a maximum of 255 characters")
+    @Size(min = 2, max = 255)
     private String slug;
 
     @Column(columnDefinition="TEXT", name = "text", nullable = false)
