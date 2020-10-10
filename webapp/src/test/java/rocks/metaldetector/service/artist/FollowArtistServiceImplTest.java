@@ -309,7 +309,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("isCurrentUserFollowing(): should fetch user entity")
+  @DisplayName("isCurrentUserFollowing(): should throw exception")
   void isCurrentUserFollowing_should_throw_exception() {
     // given
     doReturn(PUBLIC_USER_ID).when(currentPublicUserIdSupplier).get();
