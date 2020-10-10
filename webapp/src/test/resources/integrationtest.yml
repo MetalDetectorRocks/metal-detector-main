@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    datasource:
+      username: sa
+      password:
+  h2:
+    console:
+      enabled: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  mail:
+    host: test-mail-host
+    username: test-mail-username
+    password: test-mail-password
+
+rocks:
+  metaldetector:
+    security:
+      enabled: false
+
+security:
+  token-issuer: Test
+  token-secret: test-secret
+  remember-me-secret: test-remember-me-secret
+
+server:
+  port: 8080
+
+spotify:
+  client-id: clientId
+  client-secret: clientSecret
