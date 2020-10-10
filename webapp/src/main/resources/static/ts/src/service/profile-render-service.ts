@@ -15,7 +15,6 @@ export class ProfileRenderService {
 
     private doSpotifyRedirect() {
         const authorizationResponse = this.spotifyAuthorizationRestClient.getAuthorizationUrl()
-        // authorizationResponse.then(response => window.location.href = response.authorizationUrl);
-        authorizationResponse.then(response => window.open(response.authorizationUrl, "_blank"));
+        authorizationResponse.then(response => window.location.href = response.authorizationUrl);
     }
 }

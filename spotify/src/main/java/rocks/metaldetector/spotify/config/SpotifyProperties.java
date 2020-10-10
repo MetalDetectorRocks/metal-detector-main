@@ -1,6 +1,6 @@
 package rocks.metaldetector.spotify.config;
 
-import lombok.Getter;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -14,16 +14,16 @@ import java.util.List;
 @Configuration
 @PropertySource(value = "classpath:application.yml")
 @ConfigurationProperties(prefix = "spotify")
-@Getter
+@Data
 public class SpotifyProperties {
 
-  private final Environment environment;
-  private final String clientId;
-  private final String clientSecret;
-  private final String restBaseUrl;
-  private final String authenticationBaseUrl;
-  private final String applicationHostUrl;
-  private final int applicationPort;
+  private Environment environment;
+  private String clientId;
+  private String clientSecret;
+  private String restBaseUrl;
+  private String authenticationBaseUrl;
+  private String applicationHostUrl;
+  private int applicationPort;
 
   public SpotifyProperties(Environment environment, ApplicationProperties applicationProperties,
                            @Value("${client-id}") String clientId,
