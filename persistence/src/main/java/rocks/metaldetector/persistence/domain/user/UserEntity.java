@@ -10,14 +10,19 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import rocks.metaldetector.persistence.domain.BaseEntity;
+import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
+import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -67,6 +72,10 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
   @Column(name = "last_login")
   private LocalDateTime lastLogin;
+
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "spotify_authorization", referencedColumnName = "id")
+  private SpotifyAuthorizationEntity spotifyAuthorization;
 
   @Builder
   public UserEntity(@NonNull String username, @NonNull String email, @NonNull String password,
@@ -160,4 +169,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     this.lastLogin = lastLogin;
   }
 
+  public void setSpotifyAuthorization(SpotifyAuthorizationEntity authenticationEntity) {
+    this.spotifyAuthorization = authenticationEntity;
+  }
 }

@@ -1,7 +1,7 @@
 package rocks.metaldetector.service.email;
 
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.constants.ViewNames;
+import rocks.metaldetector.support.Endpoints;
 
 public final class ForgotPasswordEmail extends AbstractEmail {
 

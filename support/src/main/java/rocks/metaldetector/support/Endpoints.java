@@ -1,4 +1,4 @@
-package rocks.metaldetector.config.constants;
+package rocks.metaldetector.support;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -27,29 +27,31 @@ public class Endpoints {
   }
 
   public static class Frontend {
-    public static final String HOME       = "/home";
-    public static final String ARTISTS    = "/artists/search";
-    public static final String SETTINGS   = "/settings";
-    public static final String PROFILE    = "/profile";
-    public static final String RELEASES   = "/releases";
-    public static final String MY_ARTISTS = "/my-artists";
-    public static final String BLOG       = "/blog";
-    public static final String IMPRINT    = "/imprint";
-    public static final String STATUS     = "/status";
-    public static final String TEST       = "/only-for-testing";
+    public static final String HOME             = "/home";
+    public static final String ARTISTS          = "/artists/search";
+    public static final String SETTINGS         = "/settings";
+    public static final String PROFILE          = "/profile";
+    public static final String RELEASES         = "/releases";
+    public static final String MY_ARTISTS       = "/my-artists";
+    public static final String BLOG             = "/blog";
+    public static final String IMPRINT          = "/imprint";
+    public static final String STATUS           = "/status";
+    public static final String TEST             = "/only-for-testing";
+    public static final String SPOTIFY_CALLBACK = "/spotify-callback";
   }
 
   public static class Rest {
-    public static final String HOME               = "/rest/v1/home";
-    public static final String ARTISTS            = "/rest/v1/artists";
-    public static final String MY_ARTISTS         = "/rest/v1/my-artists";
-    public static final String QUERY_ALL_RELEASES = "/rest/v1/releases/all";
-    public static final String QUERY_RELEASES     = "/rest/v1/releases";
-    public static final String IMPORT_JOB         = "/rest/v1/releases/import";
-    public static final String COVER_JOB          = "/rest/v1/releases/cover-reload";
-    public static final String SEARCH             = "/search";
-    public static final String FOLLOW             = "/follow";
-    public static final String UNFOLLOW           = "/unfollow";
+    public static final String HOME                   = "/rest/v1/home";
+    public static final String ARTISTS                = "/rest/v1/artists";
+    public static final String MY_ARTISTS             = "/rest/v1/my-artists";
+    public static final String SPOTIFY_AUTHORIZATION  = "/rest/v1/auth/spotify";
+    public static final String QUERY_ALL_RELEASES     = "/rest/v1/releases/all";
+    public static final String QUERY_RELEASES         = "/rest/v1/releases";
+    public static final String IMPORT_JOB             = "/rest/v1/releases/import";
+    public static final String COVER_JOB              = "/rest/v1/releases/cover-reload";
+    public static final String SEARCH                 = "/search";
+    public static final String FOLLOW                 = "/follow";
+    public static final String UNFOLLOW               = "/unfollow";
 
     public static final String USERS      = "/rest/v1/users";
     public static final String NOTIFY     = "/rest/v1/notify";

@@ -6,8 +6,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.notification.NotificationService;
+import rocks.metaldetector.support.Endpoints;
 
 @RestController
 @AllArgsConstructor

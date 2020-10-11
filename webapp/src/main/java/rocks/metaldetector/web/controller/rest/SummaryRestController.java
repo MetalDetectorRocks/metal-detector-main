@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.service.summary.SummaryService;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.api.response.SummaryResponse;
 
 @RestController

@@ -12,8 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.support.Endpoints;
 
 import java.util.UUID;
 

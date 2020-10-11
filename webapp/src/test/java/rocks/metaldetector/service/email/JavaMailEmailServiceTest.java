@@ -13,8 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.ISpringTemplateEngine;
-import rocks.metaldetector.config.constants.Endpoints;
 import rocks.metaldetector.config.misc.MailProperties;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.CurrentThreadExecutor;
 
 import javax.mail.internet.MimeMessage;

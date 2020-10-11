@@ -14,6 +14,7 @@ import rocks.metaldetector.spotify.client.SpotifyArtistSearchClient;
 import rocks.metaldetector.spotify.client.SpotifyAuthenticationClient;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistSearchResultTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistTransformer;
+import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -44,12 +45,15 @@ class SpotifyServiceImplTest implements WithAssertions {
   @Mock
   private SpotifyArtistTransformer artistTransformer;
 
+  @Mock
+  private SpotifyProperties spotifyProperties;
+
   @InjectMocks
   private SpotifyServiceImpl underTest;
 
   @AfterEach
   void tearDown() {
-    reset(searchClient, authenticationClient, resultTransformer, artistTransformer);
+    reset(searchClient, authenticationClient, resultTransformer, artistTransformer, spotifyProperties);
   }
 
   @Nested
@@ -217,6 +221,45 @@ class SpotifyServiceImplTest implements WithAssertions {
 
       // then
       assertThat(response).isEqualTo(transformedSearchResult);
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests for method getSpotifyAuthorizationUrl")
+  class AuthorizationUrlTest {
+
+    @Test
+    @DisplayName("authorization url with necessary parameters is returned")
+    void test_correct_url_returned() {
+      // given
+      var host = "host";
+      var clientId = "clientId";
+      var baseUrl = "baseUrl";
+      var encodedRedirectUrl = host + "%2Fprofile%2Fspotify-callback";
+      var encodedScopes = "user-library-read+user-follow-read";
+      var expectedUrl = baseUrl + "/authorize" + "?client_id=" + clientId + "&response_type=code" +
+                        "&redirect_uri=" + encodedRedirectUrl + "&scope=" + encodedScopes + "&state=";
+      doReturn(host).when(spotifyProperties).getApplicationHostUrl();
+      doReturn(clientId).when(spotifyProperties).getClientId();
+      doReturn(baseUrl).when(spotifyProperties).getAuthenticationBaseUrl();
+
+      // when
+      var result = underTest.getSpotifyAuthorizationUrl();
+
+      // then
+      assertThat(result).isEqualTo(expectedUrl);
+    }
+
+    @Test
+    @DisplayName("spotifyConfig is called for relevant properties")
+    void test_spotify_config_is_called() {
+      // when
+      underTest.getSpotifyAuthorizationUrl();
+
+      // then
+      verify(spotifyProperties, times(1)).getClientId();
+      verify(spotifyProperties, times(1)).getAuthenticationBaseUrl();
+      verify(spotifyProperties, times(1)).getApplicationHostUrl();
     }
   }
 }

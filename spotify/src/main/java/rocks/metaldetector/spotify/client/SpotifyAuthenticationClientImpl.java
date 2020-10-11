@@ -14,7 +14,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.spotify.api.authentication.SpotifyAuthenticationResponse;
-import rocks.metaldetector.spotify.config.SpotifyConfig;
+import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.nio.charset.Charset;
@@ -34,14 +34,14 @@ public class SpotifyAuthenticationClientImpl implements SpotifyAuthenticationCli
   static final String AUTHORIZATION_HEADER_PREFIX = "Basic ";
 
   private final RestTemplate spotifyRestTemplate;
-  private final SpotifyConfig spotifyConfig;
+  private final SpotifyProperties spotifyProperties;
 
   @Override
   @Cacheable("spotifyAuthenticationToken")
   public String getAuthenticationToken() {
     HttpEntity<MultiValueMap<String, String>> httpEntity = createHttpEntity();
     ResponseEntity<SpotifyAuthenticationResponse> responseEntity = spotifyRestTemplate.postForEntity(
-        spotifyConfig.getAuthenticationBaseUrl() + AUTHORIZATION_ENDPOINT, httpEntity, SpotifyAuthenticationResponse.class);
+        spotifyProperties.getAuthenticationBaseUrl() + AUTHORIZATION_ENDPOINT, httpEntity, SpotifyAuthenticationResponse.class);
 
     SpotifyAuthenticationResponse resultContainer = responseEntity.getBody();
     var shouldNotHappen = resultContainer == null || !responseEntity.getStatusCode().is2xxSuccessful();
@@ -66,6 +66,6 @@ public class SpotifyAuthenticationClientImpl implements SpotifyAuthenticationCli
   }
 
   private String createAuthorizationHeader() {
-    return AUTHORIZATION_HEADER_PREFIX + Base64.encodeBase64String((spotifyConfig.getClientId() + ":" + spotifyConfig.getClientSecret()).getBytes());
+    return AUTHORIZATION_HEADER_PREFIX + Base64.encodeBase64String((spotifyProperties.getClientId() + ":" + spotifyProperties.getClientSecret()).getBytes());
   }
 }

@@ -57,7 +57,7 @@
         <coveralls-plugin.version>4.3.0</coveralls-plugin.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <jacoco.version>0.8.6</jacoco.version>
-        <apache-commons.version>1.9</apache-commons.version>
+        <apache-commons-text.version>1.9</apache-commons-text.version>
     </properties>
 
     <dependencies>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>${apache-commons.version}</version>
+            <version>${apache-commons-text.version}</version>
         </dependency>
 
 

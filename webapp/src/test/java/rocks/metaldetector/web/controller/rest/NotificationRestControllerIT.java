@@ -12,7 +12,7 @@ import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static rocks.metaldetector.config.constants.Endpoints.Rest.NOTIFY;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFY;
 
 @WebMvcTest(controllers = NotificationRestController.class)
 public class NotificationRestControllerIT extends BaseWebMvcTestWithSecurity {

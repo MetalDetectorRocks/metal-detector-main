@@ -7,7 +7,8 @@ module.exports = {
         search: "./src/bundles/search.ts",
         myartists: "./src/bundles/my-artists.ts",
         releases: "./src/bundles/releases.ts",
-        homepage: "./src/bundles/homepage.ts"
+        homepage: "./src/bundles/homepage.ts",
+        profile: "./src/bundles/profile.ts"
     },
     output: {
         filename: "[name].bundle.js",
