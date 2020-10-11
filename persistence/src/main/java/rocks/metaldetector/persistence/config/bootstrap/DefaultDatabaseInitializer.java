@@ -7,6 +7,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
+import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 
@@ -91,20 +92,40 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
   }
 
   private void createAndFollowArtists() {
-    UserEntity administrator = entityManager.createQuery("select u from users u where u.username = :username", UserEntity.class).setParameter("username", "Administrator").getSingleResult();
+    UserEntity administrator = entityManager.createQuery("select u from users u where u.username = :username", UserEntity.class)
+            .setParameter("username", "Administrator").getSingleResult();
 
-    ArtistEntity opeth = new ArtistEntity(OPETH_SPOTIFY_ID, "Opeth", "https://img.discogs.com/_ejoULEnb6ub_-_6fUoLW0ZS6C8=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-245797-1584786531-2513.jpeg.jpg", SPOTIFY);
-    ArtistEntity darkthrone = new ArtistEntity(DARKTHRONE_SPOTIFY_ID, "Darkthrone", "https://img.discogs.com/z6M8OMNo7GXZR9PzQF8WvaqMvXw=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-252211-1579868454-4269.jpeg.jpg", SPOTIFY);
-    ArtistEntity mayhem = new ArtistEntity(MAYHEM_SPOTIFY_ID, "Mayhem", "https://img.discogs.com/ZtM5dcXMOugk9djxyVN7T6BJm7M=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-14092-1551425950-6112.jpeg.jpg", SPOTIFY);
+    ArtistEntity opeth = ArtistEntity.builder()
+            .externalId(OPETH_SPOTIFY_ID)
+            .artistName("Opeth")
+            .source(SPOTIFY)
+            .thumb("https://img.discogs.com/_ejoULEnb6ub_-_6fUoLW0ZS6C8=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-245797-1584786531-2513.jpeg.jpg")
+            .build();
+
+    ArtistEntity darkthrone = ArtistEntity.builder()
+            .externalId(DARKTHRONE_SPOTIFY_ID)
+            .artistName("Darkthrone")
+            .source(SPOTIFY)
+            .thumb("https://img.discogs.com/z6M8OMNo7GXZR9PzQF8WvaqMvXw=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-252211-1579868454-4269.jpeg.jpg")
+            .build();
+
+    ArtistEntity mayhem = ArtistEntity.builder()
+            .externalId(MAYHEM_SPOTIFY_ID)
+            .artistName("Mayhem")
+            .source(SPOTIFY)
+            .thumb("https://img.discogs.com/ZtM5dcXMOugk9djxyVN7T6BJm7M=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-14092-1551425950-6112.jpeg.jpg")
+            .build();
 
     entityManager.persist(opeth);
     entityManager.persist(darkthrone);
     entityManager.persist(mayhem);
 
-    administrator.addFollowedArtist(opeth);
-    administrator.addFollowedArtist(darkthrone);
-    administrator.addFollowedArtist(mayhem);
+    FollowActionEntity opethFollowAction = FollowActionEntity.builder().artist(opeth).user(administrator).build();
+    FollowActionEntity darkthroneFollowAction = FollowActionEntity.builder().artist(darkthrone).user(administrator).build();
+    FollowActionEntity mayhemFollowAction = FollowActionEntity.builder().artist(mayhem).user(administrator).build();
 
-    entityManager.merge(administrator);
+    entityManager.persist(opethFollowAction);
+    entityManager.persist(darkthroneFollowAction);
+    entityManager.persist(mayhemFollowAction);
   }
 }
