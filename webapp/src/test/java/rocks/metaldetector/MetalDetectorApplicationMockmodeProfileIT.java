@@ -8,7 +8,9 @@ import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 
 @SpringBootTest
 @ActiveProfiles("mockmode")
-@TestPropertySource(locations = "classpath:integrationtest.yml")
+@TestPropertySource(properties = {
+    "spring.datasource.url=jdbc:h2:mem:test-mockmode;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+})
 class MetalDetectorApplicationMockmodeProfileIT implements WithIntegrationTestConfig {
 
   @Test
