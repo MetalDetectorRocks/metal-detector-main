@@ -63,7 +63,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
 
   private void checkState(SpotifyAuthorizationEntity authorizationEntity, String providedState) {
     if (authorizationEntity == null || authorizationEntity.getState() == null) {
-      throw new IllegalStateException("snh: spotify authorization entity is null");
+      throw new IllegalStateException("snh: spotify authorization entity or state is null");
     }
 
     if (!authorizationEntity.getState().equals(providedState)) {
