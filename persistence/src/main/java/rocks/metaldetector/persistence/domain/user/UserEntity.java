@@ -10,7 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import rocks.metaldetector.persistence.domain.BaseEntity;
-import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 
@@ -22,13 +21,10 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,7 +34,7 @@ import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
-@EqualsAndHashCode(callSuper = true, exclude = "followedArtists")
+@EqualsAndHashCode(callSuper = true)
 @Entity(name = "users")
 public class UserEntity extends BaseEntity implements UserDetails {
 
@@ -76,13 +72,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
   @Column(name = "last_login")
   private LocalDateTime lastLogin;
 
-  @ManyToMany
-  @JoinTable(
-          joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-          inverseJoinColumns = @JoinColumn(name = "artist_id", referencedColumnName = "id")
-  )
-  private Set<ArtistEntity> followedArtists;
-
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "spotify_authorization", referencedColumnName = "id")
   private SpotifyAuthorizationEntity spotifyAuthorization;
@@ -95,7 +84,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
     this.password = password;
     this.userRoles = userRoles;
     this.enabled = enabled;
-    this.followedArtists = new HashSet<>();
   }
 
   public void setPublicId(String newPublicId) {
@@ -178,24 +166,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
   public void setLastLogin(LocalDateTime lastLogin) {
     this.lastLogin = lastLogin;
-  }
-
-  public Set<ArtistEntity> getFollowedArtists() {
-    return Set.copyOf(followedArtists);
-  }
-
-  public void addFollowedArtist(ArtistEntity artistEntity) {
-    followedArtists.add(artistEntity);
-    artistEntity.addFollowing(this);
-  }
-
-  public void removeFollowedArtist(ArtistEntity artistEntity) {
-    followedArtists.remove(artistEntity);
-    artistEntity.removeFollowing(this);
-  }
-
-  public boolean isFollowing(String externalId) {
-    return followedArtists.stream().map(ArtistEntity::getExternalId).collect(Collectors.toList()).contains(externalId);
   }
 
   public void setSpotifyAuthorization(SpotifyAuthorizationEntity authenticationEntity) {
