@@ -40,6 +40,7 @@ class ArtistTransformerTest implements WithAssertions {
     TopArtist topArtist = mock(TopArtist.class);
     doReturn("artist").when(topArtist).getArtistName();
     doReturn("thumb").when(topArtist).getThumb();
+    doReturn("externalId").when(topArtist).getExternalId();
 
     // when
     ArtistDto result = underTest.transform(topArtist);
@@ -47,6 +48,7 @@ class ArtistTransformerTest implements WithAssertions {
     // then
     assertThat(result.getArtistName()).isEqualTo(topArtist.getArtistName());
     assertThat(result.getThumb()).isEqualTo(topArtist.getThumb());
+    assertThat(result.getExternalId()).isEqualTo(topArtist.getExternalId());
   }
 
   @Test

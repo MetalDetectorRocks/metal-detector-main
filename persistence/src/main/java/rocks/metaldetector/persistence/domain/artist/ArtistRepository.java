@@ -18,9 +18,9 @@ public interface ArtistRepository extends JpaRepository<ArtistEntity, Long> {
 
   boolean existsByExternalIdAndSource(String externalId, ArtistSource source);
 
-  @Query(value = "select a.artist_name as artistName, a.thumb as thumb " +
+  @Query(value = "select a.artist_name as artistName, a.thumb as thumb, a.external_id as externalId " +
                  "from artists as a left join follow_actions as fa on a.id = fa.artist_id " +
-                 "group by a.artist_name, a.thumb " +
+                 "group by a.artist_name, a.thumb, a.external_id " +
                  "order by count(a.id) desc " +
                  "limit :limit",
          nativeQuery = true)
