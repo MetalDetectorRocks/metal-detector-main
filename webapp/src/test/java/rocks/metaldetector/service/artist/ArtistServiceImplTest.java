@@ -4,13 +4,11 @@ import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 import rocks.metaldetector.discogs.facade.DiscogsService;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
@@ -19,30 +17,19 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
 import rocks.metaldetector.spotify.facade.SpotifyService;
-import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
-import rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
-import rocks.metaldetector.web.api.response.ArtistSearchResponse;
-import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
 import rocks.metaldetector.web.transformer.ArtistSearchResponseTransformer;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
-import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseEntryDtoFactory;
-import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseFactory;
-import static rocks.metaldetector.testutil.DtoFactory.SpotifyArtistSearchResultDtoFactory;
 
 @ExtendWith(MockitoExtension.class)
 class ArtistServiceImplTest implements WithAssertions {
@@ -89,7 +76,7 @@ class ArtistServiceImplTest implements WithAssertions {
   @BeforeEach
   void setUp() {
     artistEntity = new ArtistEntity(EXTERNAL_ID, ARTIST_NAME, null, DISCOGS);
-    artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, "Discogs", null);
+    artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, "Discogs", null, 666);
   }
 
   @Test

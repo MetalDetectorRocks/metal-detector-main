@@ -1,6 +1,8 @@
 package rocks.metaldetector.service.summary;
 
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
@@ -8,6 +10,8 @@ import rocks.metaldetector.web.api.response.SummaryResponse;
 
 import java.util.List;
 
+@Service
+@Profile({"default", "preview", "prod"})
 @AllArgsConstructor
 public class SummaryServiceImpl implements SummaryService {
 
@@ -22,6 +26,7 @@ public class SummaryServiceImpl implements SummaryService {
   public SummaryResponse createSummaryResponse() {
     List<ArtistDto> currentUsersFollowedArtists = followArtistService.getFollowedArtistsOfCurrentUser();
     List<ArtistDto> mostFollowedArtists = artistCollector.collectTopFollowedArtists();
+    List<ArtistDto> recentlyFollowedArtists = artistCollector.collectRecentlyFollowedArtists();
 
     List<ReleaseDto> upcomingReleases = releaseCollector.collectUpcomingReleases(currentUsersFollowedArtists);
     List<ReleaseDto> recentReleases = releaseCollector.collectRecentReleases(currentUsersFollowedArtists);
@@ -32,6 +37,7 @@ public class SummaryServiceImpl implements SummaryService {
         .recentReleases(recentReleases)
         .favoriteCommunityArtists(mostFollowedArtists)
         .mostExpectedReleases(mostExpectedReleases)
+        .recentlyFollowedArtists(recentlyFollowedArtists)
         .build();
   }
 }

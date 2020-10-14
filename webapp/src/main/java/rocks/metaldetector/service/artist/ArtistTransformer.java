@@ -19,6 +19,7 @@ public class ArtistTransformer {
 
   public ArtistDto transform(TopArtist topArtist) {
     return ArtistDto.builder()
+        .externalId(topArtist.getExternalId())
         .artistName(topArtist.getArtistName())
         .thumb(topArtist.getThumb())
         .build();
