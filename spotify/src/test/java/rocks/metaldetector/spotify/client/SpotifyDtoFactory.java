@@ -1,7 +1,7 @@
 package rocks.metaldetector.spotify.client;
 
-import rocks.metaldetector.spotify.api.authentication.SpotifyAppAuthenticationResponse;
-import rocks.metaldetector.spotify.api.authentication.SpotifyUserAuthorizationResponse;
+import rocks.metaldetector.spotify.api.authorization.SpotifyAppAuthorizationResponse;
+import rocks.metaldetector.spotify.api.authorization.SpotifyUserAuthorizationResponse;
 import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
@@ -102,8 +102,8 @@ public class SpotifyDtoFactory {
 
   public static class SpotifyAppAuthenticationResponseFactory {
 
-    public static SpotifyAppAuthenticationResponse createDefault() {
-      return SpotifyAppAuthenticationResponse.builder()
+    public static SpotifyAppAuthorizationResponse createDefault() {
+      return SpotifyAppAuthorizationResponse.builder()
           .accessToken("accessToken")
           .expiresIn(3600)
           .tokenType("tokenType")

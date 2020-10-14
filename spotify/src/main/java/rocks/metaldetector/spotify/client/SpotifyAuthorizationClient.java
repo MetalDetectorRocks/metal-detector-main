@@ -1,8 +1,8 @@
 package rocks.metaldetector.spotify.client;
 
-import rocks.metaldetector.spotify.api.authentication.SpotifyUserAuthorizationResponse;
+import rocks.metaldetector.spotify.api.authorization.SpotifyUserAuthorizationResponse;
 
-public interface SpotifyAuthenticationClient {
+public interface SpotifyAuthorizationClient {
 
   String getAppAuthorizationToken();
 

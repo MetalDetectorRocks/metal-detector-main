@@ -168,7 +168,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     this.lastLogin = lastLogin;
   }
 
-  public void setSpotifyAuthorization(SpotifyAuthorizationEntity authenticationEntity) {
-    this.spotifyAuthorization = authenticationEntity;
+  public void setSpotifyAuthorization(SpotifyAuthorizationEntity authorizationEntity) {
+    this.spotifyAuthorization = authorizationEntity;
   }
 }

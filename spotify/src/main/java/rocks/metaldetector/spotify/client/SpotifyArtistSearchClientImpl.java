@@ -43,12 +43,12 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
   private final SpotifyProperties spotifyProperties;
 
   @Override
-  public SpotifyArtistSearchResultContainer searchByName(String authenticationToken, String artistQueryString, int pageNumber, int pageSize) {
+  public SpotifyArtistSearchResultContainer searchByName(String authorizationToken, String artistQueryString, int pageNumber, int pageSize) {
     if (artistQueryString == null || artistQueryString.isEmpty()) {
       return SpotifyArtistSearchResultContainer.builder().build();
     }
 
-    HttpEntity<Object> httpEntity = createQueryHttpEntity(authenticationToken);
+    HttpEntity<Object> httpEntity = createQueryHttpEntity(authorizationToken);
     String urlEncodedQuery = URLEncoder.encode(artistQueryString, Charset.defaultCharset());
     int offset = pageSize * (pageNumber - 1);
 

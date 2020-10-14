@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.spotify.api.authentication.SpotifyAppAuthenticationResponse;
-import rocks.metaldetector.spotify.api.authentication.SpotifyUserAuthorizationResponse;
+import rocks.metaldetector.spotify.api.authorization.SpotifyAppAuthorizationResponse;
+import rocks.metaldetector.spotify.api.authorization.SpotifyUserAuthorizationResponse;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
@@ -29,7 +29,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Service
 @Profile({"default", "preview", "prod"})
 @AllArgsConstructor
-public class SpotifyAuthenticationClientImpl implements SpotifyAuthenticationClient {
+public class SpotifyAuthorizationClientImpl implements SpotifyAuthorizationClient {
 
   static final String AUTHORIZATION_ENDPOINT = "/api/token";
   static final String GRANT_TYPE_KEY = "grant_type";
@@ -49,10 +49,10 @@ public class SpotifyAuthenticationClientImpl implements SpotifyAuthenticationCli
     request.add(GRANT_TYPE_KEY, APP_AUTH_REQUEST_VALUE);
 
     HttpEntity<MultiValueMap<String, String>> httpEntity = createHttpEntity(request);
-    ResponseEntity<SpotifyAppAuthenticationResponse> responseEntity = spotifyRestTemplate.postForEntity(
-        spotifyProperties.getAuthenticationBaseUrl() + AUTHORIZATION_ENDPOINT, httpEntity, SpotifyAppAuthenticationResponse.class);
+    ResponseEntity<SpotifyAppAuthorizationResponse> responseEntity = spotifyRestTemplate.postForEntity(
+        spotifyProperties.getAuthenticationBaseUrl() + AUTHORIZATION_ENDPOINT, httpEntity, SpotifyAppAuthorizationResponse.class);
 
-    SpotifyAppAuthenticationResponse resultContainer = responseEntity.getBody();
+    SpotifyAppAuthorizationResponse resultContainer = responseEntity.getBody();
     var shouldNotHappen = resultContainer == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
       throw new ExternalServiceException("Could not get app authorization token from Spotify (Response code: " + responseEntity.getStatusCode() + ")");

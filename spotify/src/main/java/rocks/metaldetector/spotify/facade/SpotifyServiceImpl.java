@@ -2,11 +2,11 @@ package rocks.metaldetector.spotify.facade;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import rocks.metaldetector.spotify.api.authentication.SpotifyUserAuthorizationResponse;
+import rocks.metaldetector.spotify.api.authorization.SpotifyUserAuthorizationResponse;
 import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.client.SpotifyArtistSearchClient;
-import rocks.metaldetector.spotify.client.SpotifyAuthenticationClient;
+import rocks.metaldetector.spotify.client.SpotifyAuthorizationClient;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistSearchResultTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyUserAuthorizationTransformer;
@@ -28,7 +28,7 @@ public class SpotifyServiceImpl implements SpotifyService {
   static final List<String> REQUIRED_SCOPES = List.of("user-library-read", "user-follow-read");
 
   private final SpotifyArtistSearchClient spotifyArtistSearchClient;
-  private final SpotifyAuthenticationClient spotifyAuthenticationClient;
+  private final SpotifyAuthorizationClient spotifyAuthorizationClient;
   private final SpotifyArtistSearchResultTransformer searchResultTransformer;
   private final SpotifyArtistTransformer spotifyArtistTransformer;
   private final SpotifyUserAuthorizationTransformer spotifyUserAuthorizationTransformer;
@@ -36,14 +36,14 @@ public class SpotifyServiceImpl implements SpotifyService {
 
   @Override
   public SpotifyArtistSearchResultDto searchArtistByName(String artistQueryString, int pageNumber, int pageSize) {
-    String authenticationToken = spotifyAuthenticationClient.getAppAuthorizationToken();
-    SpotifyArtistSearchResultContainer searchResult = spotifyArtistSearchClient.searchByName(authenticationToken, artistQueryString, pageNumber, pageSize);
+    String authorizationToken = spotifyAuthorizationClient.getAppAuthorizationToken();
+    SpotifyArtistSearchResultContainer searchResult = spotifyArtistSearchClient.searchByName(authorizationToken, artistQueryString, pageNumber, pageSize);
     return searchResultTransformer.transform(searchResult);
   }
 
   @Override
   public SpotifyArtistDto searchArtistById(String artistId) {
-    String authenticationToken = spotifyAuthenticationClient.getAppAuthorizationToken();
+    String authenticationToken = spotifyAuthorizationClient.getAppAuthorizationToken();
     SpotifyArtist spotifyArtist = spotifyArtistSearchClient.searchById(authenticationToken, artistId);
     return spotifyArtistTransformer.transform(spotifyArtist);
   }
@@ -59,7 +59,7 @@ public class SpotifyServiceImpl implements SpotifyService {
 
   @Override
   public SpotifyUserAuthorizationDto getAccessToken(String code) {
-    SpotifyUserAuthorizationResponse response = spotifyAuthenticationClient.getUserAuthorizationToken(code);
+    SpotifyUserAuthorizationResponse response = spotifyAuthorizationClient.getUserAuthorizationToken(code);
     return spotifyUserAuthorizationTransformer.transform(response);
   }
 }

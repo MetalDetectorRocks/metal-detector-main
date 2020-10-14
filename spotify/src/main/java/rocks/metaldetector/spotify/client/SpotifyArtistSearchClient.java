@@ -5,7 +5,7 @@ import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer
 
 public interface SpotifyArtistSearchClient {
 
-  SpotifyArtistSearchResultContainer searchByName(String authenticationToken, String artistQueryString, int pageNumber, int pageSize);
+  SpotifyArtistSearchResultContainer searchByName(String authorizationToken, String artistQueryString, int pageNumber, int pageSize);
 
   SpotifyArtist searchById(String authenticationToken, String artistId);
 

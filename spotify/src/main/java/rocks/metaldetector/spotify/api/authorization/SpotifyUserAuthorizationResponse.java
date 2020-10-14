@@ -1,4 +1,4 @@
-package rocks.metaldetector.spotify.api.authentication;
+package rocks.metaldetector.spotify.api.authorization;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

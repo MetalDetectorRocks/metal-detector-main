@@ -1,7 +1,7 @@
 package rocks.metaldetector.spotify.client.transformer;
 
 import org.springframework.stereotype.Component;
-import rocks.metaldetector.spotify.api.authentication.SpotifyUserAuthorizationResponse;
+import rocks.metaldetector.spotify.api.authorization.SpotifyUserAuthorizationResponse;
 import rocks.metaldetector.spotify.facade.dto.SpotifyUserAuthorizationDto;
 
 @Component

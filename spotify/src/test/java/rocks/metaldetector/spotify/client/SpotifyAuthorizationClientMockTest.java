@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static rocks.metaldetector.spotify.client.SpotifyAuthenticationClientMock.MOCK_TOKEN;
+import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientMock.MOCK_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-class SpotifyAuthenticationClientMockTest implements WithAssertions {
+class SpotifyAuthorizationClientMockTest implements WithAssertions {
 
-  private SpotifyAuthenticationClientMock underTest = new SpotifyAuthenticationClientMock();
+  private SpotifyAuthorizationClientMock underTest = new SpotifyAuthorizationClientMock();
 
   @Test
   @DisplayName("getAppAuthenticationToken: should return mock token string")

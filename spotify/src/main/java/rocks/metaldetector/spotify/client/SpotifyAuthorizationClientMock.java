@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import rocks.metaldetector.spotify.api.authentication.SpotifyUserAuthorizationResponse;
+import rocks.metaldetector.spotify.api.authorization.SpotifyUserAuthorizationResponse;
 
 @Slf4j
 @Service
 @Profile("mockmode")
 @AllArgsConstructor
-public class SpotifyAuthenticationClientMock implements SpotifyAuthenticationClient {
+public class SpotifyAuthorizationClientMock implements SpotifyAuthorizationClient {
 
   static final String MOCK_TOKEN = "i'm a token";
 

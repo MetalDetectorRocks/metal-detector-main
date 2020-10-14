@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.client.SpotifyArtistSearchClient;
-import rocks.metaldetector.spotify.client.SpotifyAuthenticationClient;
+import rocks.metaldetector.spotify.client.SpotifyAuthorizationClient;
 import rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyUserAuthorizationDtoFactory;
 import rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyUserAuthorizationResponseFactory;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistSearchResultTransformer;
@@ -40,7 +40,7 @@ class SpotifyServiceImplTest implements WithAssertions {
   private SpotifyArtistSearchClient searchClient;
 
   @Mock
-  private SpotifyAuthenticationClient authenticationClient;
+  private SpotifyAuthorizationClient authenticationClient;
 
   @Mock
   private SpotifyArtistSearchResultTransformer resultTransformer;
