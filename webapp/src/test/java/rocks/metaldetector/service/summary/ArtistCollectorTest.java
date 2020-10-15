@@ -5,10 +5,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
@@ -22,16 +22,17 @@ import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
+import java.sql.Date;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -81,7 +82,9 @@ class ArtistCollectorTest implements WithAssertions {
   void test_artist_transformer_is_called_for_artists() {
     // given
     var topArtists = List.of(mock(TopArtist.class), mock(TopArtist.class));
+    var artistDto = ArtistDtoFactory.createDefault();
     doReturn(topArtists).when(artistRepository).findTopArtists(anyInt());
+    doReturn(artistDto).when(artistTransformer).transform(any(TopArtist.class));
 
     // when
     underTest.collectTopFollowedArtists();
@@ -122,7 +125,7 @@ class ArtistCollectorTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("collectTopFollowedArtists: userRepository is called")
+  @DisplayName("collectRecentlyFollowedArtists: userRepository is called")
   void test_user_repository_called() {
     // given
     var userId = "userId";
@@ -137,11 +140,11 @@ class ArtistCollectorTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("collectTopFollowedArtists: userRepository throws exception when publicUserId not found")
+  @DisplayName("collectRecentlyFollowedArtists: userRepository throws exception when publicUserId not found")
   void test_user_repository_throws_exception() {
     // given
     var publicUserId = "publicUserId";
-    doThrow(new ResourceNotFoundException(publicUserId)).when(userRepository).findByPublicId(publicUserId);
+    doThrow(new ResourceNotFoundException(publicUserId)).when(userRepository).findByPublicId(any());
 
     // when
     Throwable throwable = catchThrowable(() -> underTest.collectRecentlyFollowedArtists());
@@ -152,7 +155,7 @@ class ArtistCollectorTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("collectTopFollowedArtists: followActionRepository is called with user")
+  @DisplayName("collectRecentlyFollowedArtists: followActionRepository is called with user")
   void test_follow_action_repository_called() {
     // given
     doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
@@ -165,26 +168,87 @@ class ArtistCollectorTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("collectTopFollowedArtists: artistTransformer is called for every followActionEntity")
+  @DisplayName("collectRecentlyFollowedArtists: artistTransformer is called for every followActionEntity")
   void test_artist_transformer_called() {
     // given
-    ArtistEntity artist1 = ArtistEntityFactory.withExternalId("1");
-    ArtistEntity artist2 = ArtistEntityFactory.withExternalId("2");
-    FollowActionEntity userFollowsArtist1 = FollowActionEntity.builder().user(userEntity).artist(artist1).build();
-    FollowActionEntity userFollowsArtist2 = FollowActionEntity.builder().user(userEntity).artist(artist2).build();
-    userFollowsArtist1.setCreatedDateTime(Date.from(Instant.now()));
-    userFollowsArtist2.setCreatedDateTime(Date.from(Instant.now()));
+    var artist1 = ArtistEntityFactory.withExternalId("1");
+    var artist2 = ArtistEntityFactory.withExternalId("2");
+    var userFollowsArtist1 = FollowActionEntity.builder().user(userEntity).artist(artist1).build();
+    var userFollowsArtist2 = FollowActionEntity.builder().user(userEntity).artist(artist2).build();
     var followActionEntities = List.of(userFollowsArtist1, userFollowsArtist2);
+    followActionEntities.forEach(action -> action.setCreatedDateTime(Date.from(Instant.now())));
     doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
     doReturn(followActionEntities).when(followActionRepository).findAllByUser(any());
-    doReturn(ArtistDtoFactory.createDefault()).when(artistTransformer).transform(userFollowsArtist1);
-    doReturn(ArtistDtoFactory.createDefault()).when(artistTransformer).transform(userFollowsArtist2);
 
     // when
     underTest.collectRecentlyFollowedArtists();
 
     // then
-    verify(artistTransformer, times(1)).transform(eq(userFollowsArtist1));
-    verify(artistTransformer, times(1)).transform(eq(userFollowsArtist2));
+    verify(artistTransformer, times(1)).transform(userFollowsArtist1);
+    verify(artistTransformer, times(1)).transform(userFollowsArtist2);
+  }
+
+  @Test
+  @DisplayName("collectRecentlyFollowedArtists: dtos are sorted with descending following date")
+  void test_dtos_sorted_by_reversed_created_date() {
+    // given
+    var artist1 = ArtistEntityFactory.withExternalId("1");
+    var artist2 = ArtistEntityFactory.withExternalId("2");
+    var userFollowsArtist1 = FollowActionEntity.builder().user(userEntity).artist(artist1).build();
+    var userFollowsArtist2 = FollowActionEntity.builder().user(userEntity).artist(artist2).build();
+    userFollowsArtist1.setCreatedDateTime(Date.from(Instant.now().minus(1, DAYS)));
+    userFollowsArtist2.setCreatedDateTime(Date.from(Instant.now()));
+    var followActionEntities = List.of(userFollowsArtist1, userFollowsArtist2);
+    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+    doReturn(followActionEntities).when(followActionRepository).findAllByUser(any());
+    InOrder inOrder = inOrder(artistTransformer);
+
+    // when
+    underTest.collectRecentlyFollowedArtists();
+
+    // then
+    inOrder.verify(artistTransformer, times(1)).transform(userFollowsArtist2);
+    inOrder.verify(artistTransformer, times(1)).transform(userFollowsArtist1);
+  }
+
+
+  @Test
+  @DisplayName("collectRecentlyFollowedArtists: result size is limited")
+  void test_result_limited() {
+    // given
+    var artist = ArtistEntityFactory.withExternalId("1");
+    var userFollowsArtist1 = FollowActionEntity.builder().user(userEntity).artist(artist).build();
+    var userFollowsArtist2 = FollowActionEntity.builder().user(userEntity).artist(artist).build();
+    var userFollowsArtist3 = FollowActionEntity.builder().user(userEntity).artist(artist).build();
+    var userFollowsArtist4 = FollowActionEntity.builder().user(userEntity).artist(artist).build();
+    var userFollowsArtist5 = FollowActionEntity.builder().user(userEntity).artist(artist).build();
+    var followActionEntities = List.of(userFollowsArtist1, userFollowsArtist2, userFollowsArtist3, userFollowsArtist4, userFollowsArtist5);
+    followActionEntities.forEach(action -> action.setCreatedDateTime(Date.from(Instant.now())));
+    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+    doReturn(followActionEntities).when(followActionRepository).findAllByUser(any());
+
+    // when
+    var result = underTest.collectRecentlyFollowedArtists();
+
+    // then
+    assertThat(result).hasSize(RESULT_LIMIT);
+  }
+
+  @Test
+  @DisplayName("collectRecentlyFollowedArtists: transformed artistDtos are returned")
+  void test_dtos_are_returned() {
+    // given
+    var artist = ArtistEntityFactory.withExternalId("1");
+    var followAction = FollowActionEntity.builder().user(userEntity).artist(artist).build();
+    var expectedArtist = ArtistDtoFactory.createDefault();
+    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+    doReturn(List.of(followAction)).when(followActionRepository).findAllByUser(any());
+    doReturn(expectedArtist).when(artistTransformer).transform(followAction);
+
+    // when
+    var result = underTest.collectRecentlyFollowedArtists();
+
+    // then
+    assertThat(result).containsExactly(expectedArtist);
   }
 }

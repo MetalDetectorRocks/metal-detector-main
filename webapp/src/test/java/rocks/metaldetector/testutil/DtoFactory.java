@@ -245,6 +245,7 @@ public class DtoFactory {
           .artistName(name)
           .externalId("1")
           .source("Discogs")
+          .follower(666)
           .build();
     }
   }
