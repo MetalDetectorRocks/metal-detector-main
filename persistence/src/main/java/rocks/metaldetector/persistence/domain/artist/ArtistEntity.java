@@ -2,6 +2,7 @@ package rocks.metaldetector.persistence.domain.artist;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -17,6 +18,7 @@ import javax.persistence.Enumerated;
 @Entity(name = "artists")
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
 @ToString
+@EqualsAndHashCode(callSuper = true)
 public class ArtistEntity extends BaseEntity {
 
   @Column(name = "external_id", nullable = false, updatable = false)
