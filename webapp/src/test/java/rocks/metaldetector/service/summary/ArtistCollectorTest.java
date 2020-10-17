@@ -26,6 +26,8 @@ import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.mockito.ArgumentMatchers.any;
@@ -211,19 +213,15 @@ class ArtistCollectorTest implements WithAssertions {
     inOrder.verify(artistTransformer, times(1)).transform(userFollowsArtist1);
   }
 
-
   @Test
   @DisplayName("collectRecentlyFollowedArtists: result size is limited")
   void test_result_limited() {
     // given
     var artist = ArtistEntityFactory.withExternalId("1");
-    var userFollowsArtist1 = FollowActionEntity.builder().user(userEntity).artist(artist).build();
-    var userFollowsArtist2 = FollowActionEntity.builder().user(userEntity).artist(artist).build();
-    var userFollowsArtist3 = FollowActionEntity.builder().user(userEntity).artist(artist).build();
-    var userFollowsArtist4 = FollowActionEntity.builder().user(userEntity).artist(artist).build();
-    var userFollowsArtist5 = FollowActionEntity.builder().user(userEntity).artist(artist).build();
-    var followActionEntities = List.of(userFollowsArtist1, userFollowsArtist2, userFollowsArtist3, userFollowsArtist4, userFollowsArtist5);
-    followActionEntities.forEach(action -> action.setCreatedDateTime(Date.from(Instant.now())));
+    var followActionEntities = IntStream.rangeClosed(1, RESULT_LIMIT + 1)
+        .mapToObj(value -> FollowActionEntity.builder().user(userEntity).artist(artist).build())
+        .peek(action -> action.setCreatedDateTime(Date.from(Instant.now())))
+        .collect(Collectors.toList());
     doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
     doReturn(followActionEntities).when(followActionRepository).findAllByUser(any());
 
