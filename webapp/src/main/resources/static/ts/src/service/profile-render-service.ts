@@ -1,11 +1,11 @@
-import {SpotifyAuthorizationRestClient} from "../clients/spotify-authorization-rest-client";
+import {SpotifyRestClient} from "../clients/spotify-rest-client";
 
 export class ProfileRenderService {
 
-    private readonly spotifyAuthorizationRestClient: SpotifyAuthorizationRestClient;
+    private readonly spotifyRestClient: SpotifyRestClient;
 
-    constructor(spotifyAuthorizationRestClient: SpotifyAuthorizationRestClient) {
-        this.spotifyAuthorizationRestClient = spotifyAuthorizationRestClient;
+    constructor(spotifyRestClient: SpotifyRestClient) {
+        this.spotifyRestClient = spotifyRestClient;
     }
 
     public render(): void {
@@ -13,8 +13,8 @@ export class ProfileRenderService {
         authorizationButton.addEventListener("click", this.doSpotifyRedirect.bind(this));
     }
 
-    private doSpotifyRedirect() {
-        const authorizationResponse = this.spotifyAuthorizationRestClient.getAuthorizationUrl()
+    private doSpotifyRedirect(): void {
+        const authorizationResponse = this.spotifyRestClient.getAuthorizationUrl()
         authorizationResponse.then(response => window.location.href = response.authorizationUrl);
     }
 }

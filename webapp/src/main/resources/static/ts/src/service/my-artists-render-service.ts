@@ -7,6 +7,7 @@ import {LoadingIndicatorService} from "./loading-indicator-service";
 import {PaginationComponent} from "../components/pagination/pagination-component";
 import {AbstractRenderService} from "./abstract-render-service";
 import {DateFormat, DateFormatService} from "./date-format-service";
+import {SpotifyRestClient} from "../clients/spotify-rest-client";
 
 export class MyArtistsRenderService extends AbstractRenderService<MyArtistsResponse> {
 
@@ -16,12 +17,14 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
     private readonly dateFormatService: DateFormatService;
     private readonly paginationComponent: PaginationComponent;
     private readonly artistTemplateElement: HTMLTemplateElement;
+    private readonly spotifyRestClient: SpotifyRestClient;
     private rowElement?: HTMLDivElement;
 
-    constructor(followArtistService: FollowArtistService, dateFormatService: DateFormatService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
+    constructor(followArtistService: FollowArtistService, dateFormatService: DateFormatService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService, spotifyRestClient: SpotifyRestClient) {
         super(alertService, loadingIndicatorService);
         this.followArtistService = followArtistService;
         this.dateFormatService = dateFormatService;
+        this.spotifyRestClient = spotifyRestClient;
         this.paginationComponent = new PaginationComponent();
         this.artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
     }
@@ -31,6 +34,8 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
     }
 
     protected onRendering(response: MyArtistsResponse): void {
+        this.renderImportButton();
+
         if (response.myArtists.length === 0 && response.pagination.currentPage === 1) {
             const message = '<h3 class="h5">Currently you do not follow any artist.</h3>Start a search for your favorite artists right now.';
             const infoMessage = this.alertService.renderInfoAlert(message, false);
@@ -76,7 +81,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         return artistDivElement;
     }
 
-    private attachArtistCard(artistDivElement: HTMLDivElement, currentCarNo: number) {
+    private attachArtistCard(artistDivElement: HTMLDivElement, currentCarNo: number): void {
         if (this.rowElement === undefined || currentCarNo % this.MAX_CARDS_PER_ROW === 1) {
             this.rowElement = document.createElement("div");
             this.rowElement.className = "row";
@@ -90,7 +95,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         return `<i class="material-icons">favorite</i> on ${followedSinceString}`;
     }
 
-    private handleFollowIconClick(followIconElement: HTMLElement, artist: Artist) {
+    private handleFollowIconClick(followIconElement: HTMLElement, artist: Artist): void {
         this.followArtistService.handleFollowIconClick(followIconElement, {
             externalId: artist.externalId,
             artistName: artist.artistName,
@@ -98,8 +103,17 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         })
     }
 
-    private attachPagination(paginationData: Pagination) {
+    private attachPagination(paginationData: Pagination): void {
         const paginationList = this.paginationComponent.render(paginationData);
         this.hostElement.insertAdjacentElement("beforeend", paginationList);
+    }
+
+    private renderImportButton(): void {
+        const importButton = document.getElementById("spotify-import-button")! as HTMLButtonElement;
+        importButton.addEventListener("click", this.doSpotifyArtistImport.bind(this))
+    }
+
+    private doSpotifyArtistImport(): void {
+        const importResponse = this.spotifyRestClient.importArtists();
     }
 }
