@@ -172,8 +172,8 @@ class SummaryServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("")
-  void test_most_recently_followed_artists_returned() {
+  @DisplayName("recently followed artists are returned")
+  void test_recently_followed_artists_returned() {
     // given
     var artists = List.of(ArtistDtoFactory.createDefault());
     doReturn(artists).when(artistCollector).collectRecentlyFollowedArtists();
