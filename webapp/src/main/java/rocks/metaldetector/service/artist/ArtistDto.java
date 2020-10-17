@@ -18,5 +18,6 @@ public class ArtistDto {
   private String thumb;
   private String source;
   private LocalDate followedSince;
+  private int follower;
 
 }

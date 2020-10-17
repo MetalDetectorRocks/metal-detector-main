@@ -5,5 +5,6 @@ export interface Artist {
     readonly thumb: string;
     readonly followedSince: string;
     readonly source: string;
+    readonly follower: number;
 
 }

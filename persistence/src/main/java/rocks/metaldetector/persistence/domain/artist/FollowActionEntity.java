@@ -3,6 +3,7 @@ package rocks.metaldetector.persistence.domain.artist;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -20,6 +21,7 @@ import javax.persistence.OneToOne;
 @AllArgsConstructor(access = AccessLevel.PRIVATE) // for lombok builder
 @Builder
 @ToString
+@EqualsAndHashCode(callSuper = true)
 public class FollowActionEntity extends BaseEntity {
 
   @OneToOne(targetEntity = UserEntity.class)

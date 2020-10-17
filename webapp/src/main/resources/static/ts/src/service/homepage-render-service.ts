@@ -72,7 +72,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
             response.recentlyFollowedArtists.forEach(artist => {
                 const artistDivElement = this.renderArtistCard(artist);
-                const followedSinceElement = artistDivElement.querySelector("#artist-followed-since") as HTMLDivElement;
+                const followedSinceElement = artistDivElement.querySelector("#artist-sub-title") as HTMLDivElement;
                 followedSinceElement.innerHTML = this.dateFormatService.formatRelative(artist.followedSince);
                 this.attachCard(artistDivElement, recentlyFollowedRowElement);
             });
@@ -86,6 +86,8 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
             response.favoriteCommunityArtists.forEach(artist => {
                 const artistDivElement = this.renderArtistCard(artist);
+                const followerElement = artistDivElement.querySelector("#artist-sub-title") as HTMLDivElement;
+                followerElement.innerHTML = artist.follower + " follower";
                 this.attachCard(artistDivElement, recentlyFollowedRowElement);
             });
         }

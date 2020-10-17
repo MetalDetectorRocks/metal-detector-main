@@ -105,6 +105,16 @@ class SummaryServiceImplTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("artistCollector is called to get recently followed artists")
+  void test_artist_collector_recently_artists() {
+    // when
+    underTest.createSummaryResponse();
+
+    // then
+    verify(artistCollector, times(1)).collectRecentlyFollowedArtists();
+  }
+
+  @Test
   @DisplayName("upcoming releases are returned")
   void test_upcoming_releases_returned() {
     // given
@@ -159,5 +169,19 @@ class SummaryServiceImplTest implements WithAssertions {
 
     // then
     assertThat(result.getMostExpectedReleases()).isEqualTo(releases);
+  }
+
+  @Test
+  @DisplayName("recently followed artists are returned")
+  void test_recently_followed_artists_returned() {
+    // given
+    var artists = List.of(ArtistDtoFactory.createDefault());
+    doReturn(artists).when(artistCollector).collectRecentlyFollowedArtists();
+
+    // when
+    var result = underTest.createSummaryResponse();
+
+    // then
+    assertThat(result.getRecentlyFollowedArtists()).isEqualTo(artists);
   }
 }

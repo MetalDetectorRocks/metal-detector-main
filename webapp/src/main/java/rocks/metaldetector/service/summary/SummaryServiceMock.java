@@ -1,5 +1,6 @@
 package rocks.metaldetector.service.summary;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@Profile("mockmode")
 public class SummaryServiceMock implements SummaryService {
 
   @Override
@@ -43,10 +45,10 @@ public class SummaryServiceMock implements SummaryService {
   }
 
   private List<ArtistDto> createRecentlyFollowedArtists(LocalDate now) {
-    ArtistDto harakiriForTheSky = ArtistDto.builder().artistName("Harakiri For the Sky").thumb("/images/dummy/harakiri-for-the-sky.jpg").followedSince(now.minusDays(3)).build();
-    ArtistDto marduk = ArtistDto.builder().artistName("Marduk").thumb("/images/dummy/marduk.jpg").followedSince(now.minusDays(7)).build();
-    ArtistDto abbath = ArtistDto.builder().artistName("Abbath").thumb("/images/dummy/abbath.jpg").followedSince(now.minusDays(15)).build();
-    ArtistDto alcest = ArtistDto.builder().artistName("Alcest").thumb("/images/dummy/alcest.jpg").followedSince(now.minusDays(26)).build();
+    ArtistDto harakiriForTheSky = ArtistDto.builder().artistName("Harakiri For the Sky").thumb("/images/dummy/harakiri-for-the-sky.jpg").followedSince(now.minusDays(3)).follower(666).build();
+    ArtistDto marduk = ArtistDto.builder().artistName("Marduk").thumb("/images/dummy/marduk.jpg").followedSince(now.minusDays(7)).follower(666).build();
+    ArtistDto abbath = ArtistDto.builder().artistName("Abbath").thumb("/images/dummy/abbath.jpg").followedSince(now.minusDays(15)).follower(666).build();
+    ArtistDto alcest = ArtistDto.builder().artistName("Alcest").thumb("/images/dummy/alcest.jpg").followedSince(now.minusDays(26)).follower(666).build();
     return List.of(alcest, abbath, marduk, harakiriForTheSky);
   }
 }
