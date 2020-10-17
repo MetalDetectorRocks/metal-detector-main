@@ -1,4 +1,4 @@
-package rocks.metaldetector.spotify.api.authentication;
+package rocks.metaldetector.spotify.api.authorization;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @JsonPropertyOrder({
     "grant_type"
 })
-public class SpotifyAuthenticationRequest {
+public class SpotifyAppAuthorizationRequest {
 
   @JsonProperty("grant_type")
   private String grantType;

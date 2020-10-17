@@ -29,7 +29,7 @@
         </resources>
     </cache>
 
-    <cache alias="spotifyAuthenticationToken">
+    <cache alias="spotifyAppAuthorizationToken">
         <value-type>java.lang.String</value-type>
 
         <expiry>
