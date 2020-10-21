@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.spotify.api.search.SpotifyArtist;
+import rocks.metaldetector.spotify.api.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
@@ -41,7 +41,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
-import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.AUTHORIZATION_HEADER_PREFIX;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.GET_ARTIST_ENDPOINT;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.ID_PARAMETER_NAME;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.LIMIT_PARAMETER_NAME;
@@ -53,6 +52,8 @@ import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtist
 
 @ExtendWith(MockitoExtension.class)
 class SpotifyArtistSearchClientImplTest implements WithAssertions {
+
+  private static final String AUTHORIZATION_HEADER_PREFIX = "Bearer ";
 
   @Mock
   private RestTemplate restTemplate;

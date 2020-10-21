@@ -23,13 +23,13 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ExtendWith(MockitoExtension.class)
-class SpotifyUserAuthorizationRestControllerTest implements WithAssertions {
+class SpotifyRestControllerTest implements WithAssertions {
 
   @Mock
   private SpotifyUserAuthorizationService spotifyUserAuthorizationServiceService;
 
   @InjectMocks
-  private SpotifyUserAuthorizationRestController underTest;
+  private SpotifyRestController underTest;
 
   private RestAssuredMockMvcUtils restAssuredMockMvcUtils;
 

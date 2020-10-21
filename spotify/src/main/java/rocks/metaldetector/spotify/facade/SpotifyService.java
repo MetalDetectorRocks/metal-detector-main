@@ -1,8 +1,11 @@
 package rocks.metaldetector.spotify.facade;
 
+import rocks.metaldetector.spotify.facade.dto.SpotifyAlbumDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyUserAuthorizationDto;
+
+import java.util.List;
 
 public interface SpotifyService {
 
@@ -10,7 +13,11 @@ public interface SpotifyService {
 
   SpotifyArtistDto searchArtistById(String artistId);
 
+  List<SpotifyArtistDto> searchArtistsByIds(List<String> artistIds);
+
   String getSpotifyAuthorizationUrl();
 
   SpotifyUserAuthorizationDto getAccessToken(String code);
+
+  List<SpotifyAlbumDto> importAlbums(String token);
 }

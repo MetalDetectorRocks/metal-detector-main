@@ -1,12 +1,12 @@
 package rocks.metaldetector.spotify.client;
 
+import rocks.metaldetector.spotify.api.SpotifyArtist;
+import rocks.metaldetector.spotify.api.SpotifyImage;
 import rocks.metaldetector.spotify.api.authorization.SpotifyAppAuthorizationResponse;
 import rocks.metaldetector.spotify.api.authorization.SpotifyUserAuthorizationResponse;
-import rocks.metaldetector.spotify.api.search.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.api.search.SpotifyFollowers;
-import rocks.metaldetector.spotify.api.search.SpotifyImage;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyUserAuthorizationDto;

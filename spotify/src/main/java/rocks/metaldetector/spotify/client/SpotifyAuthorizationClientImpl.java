@@ -19,11 +19,8 @@ import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Collections;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
 @Service
@@ -37,7 +34,6 @@ public class SpotifyAuthorizationClientImpl implements SpotifyAuthorizationClien
   static final String REDIRECT_URI_KEY = "redirect_uri";
   static final String APP_AUTH_REQUEST_VALUE = "client_credentials";
   static final String USER_AUTH_REQUEST_VALUE = "authorization_code";
-  static final String AUTHORIZATION_HEADER_PREFIX = "Basic ";
 
   private final RestTemplate spotifyRestTemplate;
   private final SpotifyProperties spotifyProperties;
@@ -66,7 +62,7 @@ public class SpotifyAuthorizationClientImpl implements SpotifyAuthorizationClien
     MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
     request.add(GRANT_TYPE_KEY, USER_AUTH_REQUEST_VALUE);
     request.add(CODE_REQUEST_KEY, code);
-    request.add(REDIRECT_URI_KEY, URLEncoder.encode(spotifyProperties.getApplicationHostUrl() + Endpoints.Frontend.PROFILE + Endpoints.Frontend.SPOTIFY_CALLBACK, Charset.defaultCharset()));
+    request.add(REDIRECT_URI_KEY, spotifyProperties.getApplicationHostUrl() + Endpoints.Frontend.PROFILE + Endpoints.Frontend.SPOTIFY_CALLBACK);
 
     HttpEntity<MultiValueMap<String, String>> httpEntity = createHttpEntity(request);
     ResponseEntity<SpotifyUserAuthorizationResponse> responseEntity = spotifyRestTemplate.postForEntity(
@@ -86,11 +82,11 @@ public class SpotifyAuthorizationClientImpl implements SpotifyAuthorizationClien
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
-    headers.set(AUTHORIZATION, createAuthorizationHeader());
+    headers.setBasicAuth(createAuthorizationHeader());
     return new HttpEntity<>(request, headers);
   }
 
   private String createAuthorizationHeader() {
-    return AUTHORIZATION_HEADER_PREFIX + Base64.encodeBase64String((spotifyProperties.getClientId() + ":" + spotifyProperties.getClientSecret()).getBytes());
+    return Base64.encodeBase64String((spotifyProperties.getClientId() + ":" + spotifyProperties.getClientSecret()).getBytes());
   }
 }

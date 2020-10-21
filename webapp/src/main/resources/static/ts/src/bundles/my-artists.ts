@@ -14,7 +14,7 @@ const artistsRestClient = new ArtistsRestClient(toastService);
 const followArtistService = new FollowArtistService(artistsRestClient, toastService);
 const spotifyRestClient = new SpotifyRestClient(toastService);
 const dateFormatService = new DateFormatService();
-const myArtistsRenderService = new MyArtistsRenderService(followArtistService, dateFormatService, alertService, loadingIndicatorService, spotifyRestClient);
+const myArtistsRenderService = new MyArtistsRenderService(followArtistService, dateFormatService, alertService, loadingIndicatorService, spotifyRestClient, toastService);
 
 const response = artistsRestClient.fetchMyArtists();
 myArtistsRenderService.render(response);

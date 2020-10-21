@@ -8,8 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.spotify.api.search.SpotifyArtist;
-import rocks.metaldetector.spotify.api.search.SpotifyImage;
+import rocks.metaldetector.spotify.api.SpotifyArtist;
+import rocks.metaldetector.spotify.api.SpotifyImage;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 
 import java.util.Collections;

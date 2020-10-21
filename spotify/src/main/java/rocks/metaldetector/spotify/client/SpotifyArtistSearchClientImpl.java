@@ -9,17 +9,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.spotify.api.search.SpotifyArtist;
+import rocks.metaldetector.spotify.api.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
+import rocks.metaldetector.spotify.api.search.SpotifyArtistsContainer;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
 
 @Slf4j
@@ -32,9 +33,9 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
   static final String QUERY_PARAMETER_NAME = "artistQueryString";
   static final String OFFSET_PARAMETER_NAME = "offset";
   static final String LIMIT_PARAMETER_NAME = "limit";
-  static final String AUTHORIZATION_HEADER_PREFIX = "Bearer ";
 
   static final String GET_ARTIST_ENDPOINT = "/v1/artists/{" + ID_PARAMETER_NAME + "}";
+  static final String GET_ARTISTS_ENDPOINT = "/v1/artists?ids={" + ID_PARAMETER_NAME + "}";
   static final String SEARCH_ENDPOINT = "/v1/search?q={" + QUERY_PARAMETER_NAME + "}&"
                                         + "type=artist&offset={" + OFFSET_PARAMETER_NAME + "}&"
                                         + "limit={" + LIMIT_PARAMETER_NAME + "}";
@@ -95,11 +96,36 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
     return spotifyArtist;
   }
 
+  @Override
+  public SpotifyArtistsContainer searchByIds(String authenticationToken, List<String> artistIds) {
+    if (artistIds == null || artistIds.isEmpty()) {
+      throw new IllegalArgumentException("artistIds must not be empty");
+    }
+
+    HttpEntity<Object> httpEntity = createQueryHttpEntity(authenticationToken);
+    String artistIdsString = String.join(",", artistIds);
+    ResponseEntity<SpotifyArtistsContainer> responseEntity = spotifyRestTemplate.exchange(
+        spotifyProperties.getRestBaseUrl() + GET_ARTISTS_ENDPOINT,
+        GET,
+        httpEntity,
+        SpotifyArtistsContainer.class,
+        Map.of(ID_PARAMETER_NAME, artistIdsString)
+    );
+
+    SpotifyArtistsContainer spotifyArtistsContainer = responseEntity.getBody();
+    var shouldNotHappen = spotifyArtistsContainer == null || !responseEntity.getStatusCode().is2xxSuccessful();
+    if (shouldNotHappen) {
+      throw new ExternalServiceException("Could not get artists from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
+    }
+
+    return spotifyArtistsContainer;
+  }
+
   private HttpEntity<Object> createQueryHttpEntity(String authenticationToken) {
     HttpHeaders headers = new HttpHeaders();
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
-    headers.set(AUTHORIZATION, AUTHORIZATION_HEADER_PREFIX + authenticationToken);
+    headers.setBearerAuth(authenticationToken);
     return new HttpEntity<>(headers);
   }
 }

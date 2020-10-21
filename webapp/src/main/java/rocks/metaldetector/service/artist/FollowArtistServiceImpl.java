@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
+
 @AllArgsConstructor
 @Service
 @Slf4j
@@ -41,11 +43,30 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   public void follow(String externalArtistId, ArtistSource source) {
     ArtistEntity artist = saveAndFetchArtist(externalArtistId, source);
     FollowActionEntity followAction = FollowActionEntity.builder()
-            .user(currentUser())
-            .artist(artist)
-            .build();
+        .user(currentUser())
+        .artist(artist)
+        .build();
 
     followActionRepository.save(followAction);
+  }
+
+  @Override
+  @Transactional
+  public void follow(SpotifyArtistDto spotifyArtistDto) {
+    ArtistEntity artistEntity = saveAndFetchArtist(spotifyArtistDto);
+    String publicUserId = currentPublicUserIdSupplier.get();
+    UserEntity currentUser = userRepository.findByPublicId(publicUserId).orElseThrow(
+        () -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
+    );
+
+    if (!followActionRepository.existsByUserIdAndArtistId(currentUser.getId(), artistEntity.getId())) {
+      FollowActionEntity followAction = FollowActionEntity.builder()
+          .user(currentUser())
+          .artist(artistEntity)
+          .build();
+
+      followActionRepository.save(followAction);
+    }
   }
 
   @Override
@@ -82,9 +103,9 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   private List<ArtistDto> getFollowedArtists(UserEntity user) {
     return followActionRepository.findAllByUser(user).stream()
-            .map(artistTransformer::transform)
-            .sorted(Comparator.comparing(ArtistDto::getArtistName))
-            .collect(Collectors.toUnmodifiableList());
+        .map(artistTransformer::transform)
+        .sorted(Comparator.comparing(ArtistDto::getArtistName))
+        .collect(Collectors.toUnmodifiableList());
   }
 
   private ArtistEntity saveAndFetchArtist(String externalId, ArtistSource source) {
@@ -106,19 +127,31 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     return artistRepository.save(artistEntity);
   }
 
+  private ArtistEntity saveAndFetchArtist(SpotifyArtistDto spotifyArtistDto) {
+    ArtistEntity artistEntity;
+    if (artistRepository.existsByExternalIdAndSource(spotifyArtistDto.getId(), SPOTIFY)) {
+      artistEntity = fetchArtistEntity(spotifyArtistDto.getId(), SPOTIFY);
+    }
+    else {
+      artistEntity = new ArtistEntity(spotifyArtistDto.getId(), spotifyArtistDto.getName(), spotifyArtistDto.getImageUrl(), SPOTIFY);
+      artistRepository.save(artistEntity);
+    }
+    return artistEntity;
+  }
+
   private UserEntity currentUser() {
     return fetchUserEntity(currentPublicUserIdSupplier.get());
   }
 
   private UserEntity fetchUserEntity(String publicUserId) {
     return userRepository
-            .findByPublicId(publicUserId)
-            .orElseThrow(() -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!"));
+        .findByPublicId(publicUserId)
+        .orElseThrow(() -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!"));
   }
 
   private ArtistEntity fetchArtistEntity(String externalArtistId, ArtistSource source) {
     return artistRepository
-            .findByExternalIdAndSource(externalArtistId, source)
-            .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + externalArtistId + "' (" + source + ") not found!"));
+        .findByExternalIdAndSource(externalArtistId, source)
+        .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + externalArtistId + "' (" + source + ") not found!"));
   }
 }

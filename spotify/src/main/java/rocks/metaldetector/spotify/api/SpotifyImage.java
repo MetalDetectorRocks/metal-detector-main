@@ -1,4 +1,4 @@
-package rocks.metaldetector.spotify.api.search;
+package rocks.metaldetector.spotify.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
