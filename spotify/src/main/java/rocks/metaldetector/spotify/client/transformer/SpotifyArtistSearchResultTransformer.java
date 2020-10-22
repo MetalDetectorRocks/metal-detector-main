@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SpotifyArtistSearchResultTransformer {
 
+  private static final int SPOTIFY_MAX_ITEMS = 2_000;
+
   private final SpotifyArtistTransformer artistTransformer;
 
   public SpotifyArtistSearchResultDto transform(SpotifyArtistSearchResultContainer searchResult) {
@@ -34,7 +36,7 @@ public class SpotifyArtistSearchResultTransformer {
   }
 
   private int calculateTotalPages(SpotifyArtistSearchResult searchResult) {
-    int total = Math.min(searchResult.getTotal(), 2000); // Spotify Bug Workaround (see https://bit.ly/34iuJ3Q)
+    int total = Math.min(searchResult.getTotal(), SPOTIFY_MAX_ITEMS); // Spotify Bug Workaround (see https://bit.ly/34iuJ3Q)
     return divideAndRoundUp(total, searchResult.getLimit());
   }
 
