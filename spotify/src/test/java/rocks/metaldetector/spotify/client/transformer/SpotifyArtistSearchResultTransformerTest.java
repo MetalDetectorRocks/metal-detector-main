@@ -91,7 +91,8 @@ class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
     return Stream.of(
         Arguments.of(withIndivualPagination(0, 10, 1), new Pagination(1, 1, 10)),
         Arguments.of(withIndivualPagination(10, 10, 15), new Pagination(2, 2, 10)),
-        Arguments.of(withIndivualPagination(5, 20, 30), new Pagination(2, 1, 20))
+        Arguments.of(withIndivualPagination(5, 20, 30), new Pagination(2, 1, 20)),
+        Arguments.of(withIndivualPagination(1960, 40, 4000), new Pagination(50, 50, 40))
     );
   }
 }
