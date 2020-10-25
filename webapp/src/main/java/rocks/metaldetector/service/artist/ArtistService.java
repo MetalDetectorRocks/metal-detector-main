@@ -14,7 +14,7 @@ public interface ArtistService {
 
   boolean existsArtistByExternalId(String externalId, ArtistSource source);
 
-  List<ArtistDto> persistAndReturn(List<SpotifyArtistDto> spotifyArtistDtos);
+  void persistArtists(List<SpotifyArtistDto> spotifyArtistDtos);
 
   List<String> findNewArtistIds(List<String> artistIds);
 

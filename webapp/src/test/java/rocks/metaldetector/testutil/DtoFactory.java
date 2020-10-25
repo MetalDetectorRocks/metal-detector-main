@@ -245,7 +245,7 @@ public class DtoFactory {
     public static ArtistDto withName(String name) {
       return ArtistDto.builder()
           .artistName(name)
-          .externalId("1")
+          .externalId(name)
           .source("Discogs")
           .follower(666)
           .build();

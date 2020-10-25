@@ -48,20 +48,21 @@ public class SpotifyArtistImportServiceImpl implements SpotifyArtistImportServic
         .collect(Collectors.toList());
 
     List<String> newArtistsIds = artistService.findNewArtistIds(artistIds);
+    persistNewArtists(newArtistsIds);
 
-    return persistAndReturnNewArtists(newArtistsIds).stream()
+    return artistService.findAllArtistsByExternalIds(artistIds).stream()
         .filter(artist -> !followArtistService.isCurrentUserFollowing(artist.getExternalId(), SPOTIFY))
         .peek(artist -> followArtistService.follow(artist.getExternalId(), SPOTIFY))
         .collect(Collectors.toList());
   }
 
-  private List<ArtistDto> persistAndReturnNewArtists(List<String> newArtistsIds) {
+  private void persistNewArtists(List<String> newArtistsIds) {
     List<SpotifyArtistDto> spotifyArtistDtos = new ArrayList<>();
     int totalPages = (int) Math.ceil((double) newArtistsIds.size() / (double) PAGE_SIZE);
     for (int i = 1; i <= totalPages; i++) {
       List<String> idsPerPage = slicingService.slice(newArtistsIds, i, PAGE_SIZE);
       spotifyArtistDtos.addAll(spotifyService.searchArtistsByIds(idsPerPage));
     }
-    return artistService.persistAndReturn(spotifyArtistDtos);
+    artistService.persistArtists(spotifyArtistDtos);
   }
 }

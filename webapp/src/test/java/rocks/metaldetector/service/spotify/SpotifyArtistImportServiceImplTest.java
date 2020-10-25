@@ -133,16 +133,14 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
   @DisplayName("artistService is called to get new artist ids")
   void test_artist_service_called() {
     // given
-    var album = SpotifyAlbumDtoFactory.createDefault();
-    var id = "id";
-    album.getArtists().get(0).setId(id);
-    doReturn(List.of(album)).when(spotifyService).importAlbums(any());
+    var albumDto = SpotifyAlbumDtoFactory.createDefault();
+    doReturn(List.of(albumDto)).when(spotifyService).importAlbums(any());
 
     // when
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(artistService, times(1)).findNewArtistIds(List.of(id));
+    verify(artistService, times(1)).findNewArtistIds(List.of(albumDto.getArtists().get(0).getId()));
   }
 
   @Test
@@ -227,60 +225,64 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(artistService, times(1)).persistAndReturn(List.of(spotifyDto, spotifyDto, spotifyDto));
+    verify(artistService, times(1)).persistArtists(List.of(spotifyDto, spotifyDto, spotifyDto));
+  }
+
+  @Test
+  @DisplayName("artistService is called to get all imported artists after persisting")
+  void test_artist_service_gets_all_artists() {
+    // given
+    var albumDto = SpotifyAlbumDtoFactory.createDefault();
+    doReturn(List.of(albumDto)).when(spotifyService).importAlbums(any());
+
+    // when
+    underTest.importArtistsFromLikedReleases();
+
+    // then
+    verify(artistService, times(1)).findAllArtistsByExternalIds(List.of(albumDto.getArtists().get(0).getId()));
   }
 
   @Test
   @DisplayName("followArtistService is called to check for already followed artistDtos")
   void test_follow_artist_service_called_to_check_followed() {
     // given
-    var artist1 = ArtistDtoFactory.createDefault();
-    var artist2 = ArtistDtoFactory.createDefault();
-    var id1 = "id1";
-    var id2 = "id2";
-    artist1.setExternalId(id1);
-    artist2.setExternalId(id2);
-    doReturn(List.of(artist1, artist2)).when(artistService).persistAndReturn(any());
+    var artistDtos = List.of(ArtistDtoFactory.withName("A"), ArtistDtoFactory.withName("B"));
+    doReturn(artistDtos).when(artistService).findAllArtistsByExternalIds(any());
 
     // when
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(followArtistService, times(1)).isCurrentUserFollowing(id1, SPOTIFY);
-    verify(followArtistService, times(1)).isCurrentUserFollowing(id2, SPOTIFY);
+    verify(followArtistService, times(1)).isCurrentUserFollowing(artistDtos.get(0).getExternalId(), SPOTIFY);
+    verify(followArtistService, times(1)).isCurrentUserFollowing(artistDtos.get(1).getExternalId(), SPOTIFY);
   }
 
   @Test
   @DisplayName("followArtistService is called to follow new artistDtos")
   void test_follow_artist_service_called_to_follow() {
     // given
-    var artist1 = ArtistDtoFactory.createDefault();
-    var artist2 = ArtistDtoFactory.createDefault();
-    var id1 = "id1";
-    var id2 = "id2";
-    artist1.setExternalId(id1);
-    artist2.setExternalId(id2);
-    doReturn(List.of(artist1, artist2)).when(artistService).persistAndReturn(any());
+    var artistDtos = List.of(ArtistDtoFactory.withName("A"), ArtistDtoFactory.withName("B"));
+    doReturn(artistDtos).when(artistService).findAllArtistsByExternalIds(any());
 
     // when
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(followArtistService, times(1)).follow(id1, SPOTIFY);
-    verify(followArtistService, times(1)).follow(id2, SPOTIFY);
+    verify(followArtistService, times(1)).follow(artistDtos.get(0).getExternalId(), SPOTIFY);
+    verify(followArtistService, times(1)).follow(artistDtos.get(1).getExternalId(), SPOTIFY);
   }
 
   @Test
   @DisplayName("artistDtos are returned")
   void test_artist_dtos_are_returned() {
     // given
-    var artists = List.of(ArtistDtoFactory.createDefault(), ArtistDtoFactory.createDefault());
-    doReturn(artists).when(artistService).persistAndReturn(any());
+    var artistDtos = List.of(ArtistDtoFactory.withName("A"), ArtistDtoFactory.withName("B"));
+    doReturn(artistDtos).when(artistService).findAllArtistsByExternalIds(any());
 
     // when
     var result = underTest.importArtistsFromLikedReleases();
 
     // then
-    assertThat(result).isEqualTo(artists);
+    assertThat(result).isEqualTo(artistDtos);
   }
 }

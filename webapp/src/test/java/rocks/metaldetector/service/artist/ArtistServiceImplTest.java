@@ -37,7 +37,7 @@ import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS
 @ExtendWith(MockitoExtension.class)
 class ArtistServiceImplTest implements WithAssertions {
 
-  private static final String EXTERNAL_ID = "1";
+  private static final String EXTERNAL_ID = "A";
   private static final String ARTIST_NAME = "A";
   private static final ArtistSource ARTIST_SOURCE = DISCOGS;
 
@@ -208,35 +208,19 @@ class ArtistServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("persistAndReturn: calls artistRepository with all entities")
+  @DisplayName("persistArtists: calls artistRepository with all entities")
   void test_artist_repository_called_with_all_entities() {
     // given
     var spotifyDtos = List.of(SpotifyArtistDtoFactory.withArtistName("a"), SpotifyArtistDtoFactory.withArtistName("b"));
     var expectedEntities = List.of(ArtistEntityFactory.withExternalId("a"), ArtistEntityFactory.withExternalId("b"));
 
     // when
-    underTest.persistAndReturn(spotifyDtos);
+    underTest.persistArtists(spotifyDtos);
 
     // then
     verify(artistRepository, times(1)).saveAll(argumentCaptor.capture());
     List<ArtistEntity> capturedEntites = argumentCaptor.getValue();
     assertThat(capturedEntites).isEqualTo(expectedEntities);
-  }
-
-  @Test
-  @DisplayName("persistAndReturn: artistTransformer is called for every entity")
-  void test_artist_transformer_called() {
-    // given
-    var spotifyDtos = List.of(SpotifyArtistDtoFactory.withArtistName("a"), SpotifyArtistDtoFactory.withArtistName("b"));
-    var expectedEntityA = ArtistEntityFactory.withExternalId("a");
-    var expectedEntityB = ArtistEntityFactory.withExternalId("b");
-
-    // when
-    underTest.persistAndReturn(spotifyDtos);
-
-    // then
-    verify(artistTransformer, times(1)).transform(expectedEntityA);
-    verify(artistTransformer, times(1)).transform(expectedEntityB);
   }
 
   @Test
