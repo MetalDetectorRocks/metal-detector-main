@@ -11,7 +11,7 @@ import rocks.metaldetector.spotify.api.search.SpotifyArtistsContainer;
 import rocks.metaldetector.spotify.client.SpotifyArtistSearchClient;
 import rocks.metaldetector.spotify.client.SpotifyAuthorizationClient;
 import rocks.metaldetector.spotify.client.SpotifyImportClient;
-import rocks.metaldetector.spotify.client.transformer.SpotifyAlbumImportResultTransformer;
+import rocks.metaldetector.spotify.client.transformer.SpotifyAlbumTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistSearchResultTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyUserAuthorizationTransformer;
@@ -41,7 +41,7 @@ public class SpotifyServiceImpl implements SpotifyService {
   private final SpotifyArtistSearchResultTransformer searchResultTransformer;
   private final SpotifyArtistTransformer artistTransformer;
   private final SpotifyUserAuthorizationTransformer userAuthorizationTransformer;
-  private final SpotifyAlbumImportResultTransformer albumImportResultTransformer;
+  private final SpotifyAlbumTransformer albumTransformer;
   private final SpotifyProperties spotifyProperties;
 
   @Override
@@ -92,8 +92,11 @@ public class SpotifyServiceImpl implements SpotifyService {
       resultItems.addAll(importResult.getItems());
       offset += importResult.getLimit();
     }
-    while (importResult.getOffset() < importResult.getTotal());
+    while (offset < importResult.getTotal());
 
-    return albumImportResultTransformer.transform(resultItems);
+    return resultItems.stream()
+        .map(SpotifyAlbumImportResultItem::getAlbum)
+        .map(albumTransformer::transform)
+        .collect(Collectors.toList());
   }
 }

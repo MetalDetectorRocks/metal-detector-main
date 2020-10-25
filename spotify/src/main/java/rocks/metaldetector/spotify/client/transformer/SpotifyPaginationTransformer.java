@@ -16,7 +16,6 @@ public class SpotifyPaginationTransformer {
   }
 
   private int calculateTotalPages(SpotifyPaginatedResult paginatedResult) {
-    return paginatedResult.getTotal() % paginatedResult.getLimit() == 0 ? paginatedResult.getTotal() / paginatedResult.getLimit()
-                                                                        : paginatedResult.getTotal() / paginatedResult.getLimit() + 1;
+    return (int) Math.ceil((double) paginatedResult.getTotal() / (double) paginatedResult.getLimit());
   }
 }

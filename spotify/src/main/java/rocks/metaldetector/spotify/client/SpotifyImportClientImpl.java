@@ -59,7 +59,7 @@ public class SpotifyImportClientImpl implements SpotifyImportClient {
 
   private HttpEntity<Object> createHttpEntity(String token) {
     HttpHeaders headers = new HttpHeaders();
-    headers.setAccept(Collections.singletonList(MediaType.ALL));
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
     headers.setBearerAuth(token);
     return new HttpEntity<>(headers);

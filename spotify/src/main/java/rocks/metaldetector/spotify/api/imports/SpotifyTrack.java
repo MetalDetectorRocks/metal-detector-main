@@ -63,9 +63,6 @@ public class SpotifyTrack {
   @JsonProperty("is_playable")
   private boolean isPlayable;
 
-  @JsonProperty("linked_from")
-  private String linkedFrom; // todo NilsD was geht hier?
-
   @JsonProperty("restrictions")
   private SpotifyRestriction restrictions;
 

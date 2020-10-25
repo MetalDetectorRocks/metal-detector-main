@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -13,11 +15,11 @@ import rocks.metaldetector.discogs.facade.DiscogsService;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
+import rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
 import rocks.metaldetector.web.transformer.ArtistSearchResponseTransformer;
 
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -59,11 +62,11 @@ class ArtistServiceImplTest implements WithAssertions {
   @Mock
   private ArtistSearchResponseTransformer searchResponseTransformer;
 
-  @Mock
-  private UserEntity userEntityMock;
-
   @InjectMocks
   private ArtistServiceImpl underTest;
+
+  @Captor
+  private ArgumentCaptor<List<ArtistEntity>> argumentCaptor;
 
   private ArtistEntity artistEntity;
   private ArtistDto artistDto;
@@ -204,4 +207,64 @@ class ArtistServiceImplTest implements WithAssertions {
     verify(artistRepository, times(1)).existsByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
   }
 
+  @Test
+  @DisplayName("persistAndReturn: calls artistRepository with all entities")
+  void test_artist_repository_called_with_all_entities() {
+    // given
+    var spotifyDtos = List.of(SpotifyArtistDtoFactory.withArtistName("a"), SpotifyArtistDtoFactory.withArtistName("b"));
+    var expectedEntities = List.of(ArtistEntityFactory.withExternalId("a"), ArtistEntityFactory.withExternalId("b"));
+
+    // when
+    underTest.persistAndReturn(spotifyDtos);
+
+    // then
+    verify(artistRepository, times(1)).saveAll(argumentCaptor.capture());
+    List<ArtistEntity> capturedEntites = argumentCaptor.getValue();
+    assertThat(capturedEntites).isEqualTo(expectedEntities);
+  }
+
+  @Test
+  @DisplayName("persistAndReturn: artistTransformer is called for every entity")
+  void test_artist_transformer_called() {
+    // given
+    var spotifyDtos = List.of(SpotifyArtistDtoFactory.withArtistName("a"), SpotifyArtistDtoFactory.withArtistName("b"));
+    var expectedEntityA = ArtistEntityFactory.withExternalId("a");
+    var expectedEntityB = ArtistEntityFactory.withExternalId("b");
+
+    // when
+    underTest.persistAndReturn(spotifyDtos);
+
+    // then
+    verify(artistTransformer, times(1)).transform(expectedEntityA);
+    verify(artistTransformer, times(1)).transform(expectedEntityB);
+  }
+
+  @Test
+  @DisplayName("findNewArtistIds: artistRepository is called to get all existing artists from given ids")
+  void test_artist_repository_called_for_existing_artists() {
+    // given
+    var artistIds = List.of("id1", "id2");
+
+    // when
+    underTest.findNewArtistIds(artistIds);
+
+    // then
+    verify(artistRepository, times(1)).findAllByExternalIdIn(artistIds);
+  }
+
+  @Test
+  @DisplayName("findNewArtistIds: new ids are returned")
+  void test_new_artist_ids_returned() {
+    // given
+    var existingId = "existingId";
+    var newId = "newId";
+    var artistIds = List.of(existingId, newId);
+    doReturn(List.of(ArtistEntityFactory.withExternalId(existingId))).when(artistRepository).findAllByExternalIdIn(any());
+
+    // when
+    var result = underTest.findNewArtistIds(artistIds);
+
+    // then
+    assertThat(result).isEqualTo(List.of(newId));
+  }
 }

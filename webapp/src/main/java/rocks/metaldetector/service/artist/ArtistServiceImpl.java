@@ -5,11 +5,13 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 
 @Service
 @AllArgsConstructor
@@ -25,7 +27,7 @@ public class ArtistServiceImpl implements ArtistService {
   }
 
   @Override
-  public List<ArtistDto> findAllArtistsByExternalIds(Collection<String> externalIds) {
+  public List<ArtistDto> findAllArtistsByExternalIds(List<String> externalIds) {
     List<ArtistEntity> artistEntities = artistRepository.findAllByExternalIdIn(externalIds);
     return artistEntities.stream()
         .map(artistTransformer::transform)
@@ -37,4 +39,25 @@ public class ArtistServiceImpl implements ArtistService {
     return artistRepository.existsByExternalIdAndSource(externalId, source);
   }
 
+  @Override
+  public List<ArtistDto> persistAndReturn(List<SpotifyArtistDto> spotifyArtistDtos) {
+    List<ArtistEntity> artistEntities = spotifyArtistDtos.stream()
+        .map(artistDto -> new ArtistEntity(artistDto.getId(), artistDto.getName(), artistDto.getImageUrl(), SPOTIFY))
+        .collect(Collectors.toList());
+    artistRepository.saveAll(artistEntities);
+
+    return artistEntities.stream()
+        .map(artistTransformer::transform)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<String> findNewArtistIds(List<String> artistIds) {
+    List<String> existingArtistIds = artistRepository.findAllByExternalIdIn(artistIds).stream()
+        .map(ArtistEntity::getExternalId)
+        .collect(Collectors.toList());
+    return artistIds.stream()
+        .filter(id -> !existingArtistIds.contains(id))
+        .collect(Collectors.toList());
+  }
 }

@@ -8,6 +8,7 @@ import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.user.UserDto;
+import rocks.metaldetector.spotify.facade.dto.SpotifyAlbumDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.support.Pagination;
@@ -20,6 +21,7 @@ import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -130,11 +132,11 @@ public class DtoFactory {
 
     public static PaginatedReleasesRequest createDefault() {
       return PaginatedReleasesRequest.builder()
-              .page(1)
-              .size(10)
-              .dateFrom(LocalDate.now())
-              .dateTo(LocalDate.now().plusDays(30))
-              .build();
+          .page(1)
+          .size(10)
+          .dateFrom(LocalDate.now())
+          .dateTo(LocalDate.now().plusDays(30))
+          .build();
     }
   }
 
@@ -273,11 +275,39 @@ public class DtoFactory {
       return SpotifyArtistDto.builder()
           .popularity(100)
           .genres(List.of("Black Metal"))
-          .id("abcdef12345")
+          .id(artistName)
           .imageUrl("imageUrl")
           .name(artistName)
           .uri("uri")
           .follower(666)
+          .build();
+    }
+  }
+
+  public static class SpotifyAlbumDtoFactory {
+
+    public static SpotifyAlbumDto createDefault() {
+      return SpotifyAlbumDto.builder()
+          .artists(new ArrayList<>(List.of(SpotifyArtistDtoFactory.withArtistName("artist"))))
+          .uri("uri")
+          .popularity(666)
+          .name("albumName")
+          .imageUrl("imageUrl")
+          .genres(List.of("genre"))
+          .id("albumId")
+          .build();
+    }
+
+    public static SpotifyAlbumDto withTwoArtist() {
+      return SpotifyAlbumDto.builder()
+          .artists(new ArrayList<>(List.of(SpotifyArtistDtoFactory.withArtistName("artist1"),
+                                           SpotifyArtistDtoFactory.withArtistName("artist2"))))
+          .uri("uri")
+          .popularity(666)
+          .name("albumName")
+          .imageUrl("imageUrl")
+          .genres(List.of("genre"))
+          .id("albumId")
           .build();
     }
   }
@@ -288,7 +318,7 @@ public class DtoFactory {
       return ArtistSearchResponseEntryDto.builder()
           .popularity(100)
           .genres(List.of("Black Metal"))
-          .id("abcdef12345")
+          .id(artistName)
           .imageUrl("imageUrl")
           .name(artistName)
           .uri("uri")

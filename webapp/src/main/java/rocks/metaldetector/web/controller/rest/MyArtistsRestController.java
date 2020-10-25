@@ -29,7 +29,7 @@ public class MyArtistsRestController {
                                                         @RequestParam(value = "size", defaultValue = "20") int size) {
     List<ArtistDto> followedArtists = followArtistService.getFollowedArtistsOfCurrentUser();
 
-    int totalPages = followedArtists.size() % size == 0 ? followedArtists.size() / size : followedArtists.size() / size + 1;
+    int totalPages = (int) Math.ceil((double) followedArtists.size() / (double) size);
     Pagination pagination = new Pagination(totalPages, page, size);
     MyArtistsResponse response = new MyArtistsResponse(slicingService.slice(followedArtists, page, size), pagination);
     return ResponseEntity.ok(response);

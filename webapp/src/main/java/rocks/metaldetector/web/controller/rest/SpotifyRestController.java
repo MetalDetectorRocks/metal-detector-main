@@ -32,7 +32,7 @@ public class SpotifyRestController {
   @PostMapping(path = Endpoints.Rest.SPOTIFY_ARTIST_IMPORT,
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<SpotifyArtistImportResponse> importArtists() {
-    List<ArtistDto> artists = artistImportService.importArtists();
+    List<ArtistDto> artists = artistImportService.importArtistsFromLikedReleases();
     return ResponseEntity.ok(new SpotifyArtistImportResponse(artists));
   }
 }

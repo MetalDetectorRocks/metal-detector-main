@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface SpotifyArtistImportService {
 
-  List<ArtistDto> importArtists();
+  List<ArtistDto> importArtistsFromLikedReleases();
 }

@@ -95,7 +95,8 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
     underTest.transformSpotify(searchResultDto);
 
     // then
-    verify(artistRepository, times(searchResultDto.getSearchResults().size())).countArtistFollower(searchResultDto.getSearchResults().get(0).getId());
+    verify(artistRepository, times(1)).countArtistFollower(searchResultDto.getSearchResults().get(0).getId());
+    verify(artistRepository, times(1)).countArtistFollower(searchResultDto.getSearchResults().get(1).getId());
   }
 
   @Test

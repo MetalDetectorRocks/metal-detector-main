@@ -241,7 +241,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       // given
       var code = "code";
       var host = "host";
-      var expectedRedirectUri = host + "%2Fprofile%2Fspotify-callback";;
+      var expectedRedirectUri = host + "/profile/spotify-callback";;
       SpotifyUserAuthorizationResponse responseMock = SpotfiyUserAuthorizationResponseFactory.createDefault();
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
       doReturn(host).when(spotifyProperties).getApplicationHostUrl();
