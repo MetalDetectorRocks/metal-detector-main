@@ -50,6 +50,7 @@ public class SpotifyArtistImportServiceImpl implements SpotifyArtistImportServic
     List<String> newArtistsIds = artistService.findNewArtistIds(artistIds);
 
     return persistAndReturnNewArtists(newArtistsIds).stream()
+        .filter(artist -> !followArtistService.isCurrentUserFollowing(artist.getExternalId(), SPOTIFY))
         .peek(artist -> followArtistService.follow(artist.getExternalId(), SPOTIFY))
         .collect(Collectors.toList());
   }

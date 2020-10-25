@@ -231,8 +231,28 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("followArtistService is called for every returned artistDto")
-  void test_follow_artist_service_called() {
+  @DisplayName("followArtistService is called to check for already followed artistDtos")
+  void test_follow_artist_service_called_to_check_followed() {
+    // given
+    var artist1 = ArtistDtoFactory.createDefault();
+    var artist2 = ArtistDtoFactory.createDefault();
+    var id1 = "id1";
+    var id2 = "id2";
+    artist1.setExternalId(id1);
+    artist2.setExternalId(id2);
+    doReturn(List.of(artist1, artist2)).when(artistService).persistAndReturn(any());
+
+    // when
+    underTest.importArtistsFromLikedReleases();
+
+    // then
+    verify(followArtistService, times(1)).isCurrentUserFollowing(id1, SPOTIFY);
+    verify(followArtistService, times(1)).isCurrentUserFollowing(id2, SPOTIFY);
+  }
+
+  @Test
+  @DisplayName("followArtistService is called to follow new artistDtos")
+  void test_follow_artist_service_called_to_follow() {
     // given
     var artist1 = ArtistDtoFactory.createDefault();
     var artist2 = ArtistDtoFactory.createDefault();
