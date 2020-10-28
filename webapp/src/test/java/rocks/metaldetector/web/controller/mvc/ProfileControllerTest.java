@@ -111,6 +111,6 @@ class ProfileControllerTest {
     callbackRestAssuredUtils.doGet(parameter);
 
     // then
-    verify(userAuthorizationService, times(1)).fetchToken(state, code);
+    verify(userAuthorizationService, times(1)).fetchInitialToken(state, code);
   }
 }

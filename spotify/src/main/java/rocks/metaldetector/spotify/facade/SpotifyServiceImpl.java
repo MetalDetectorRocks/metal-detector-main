@@ -62,4 +62,10 @@ public class SpotifyServiceImpl implements SpotifyService {
     SpotifyUserAuthorizationResponse response = spotifyAuthorizationClient.getUserAuthorizationToken(code);
     return spotifyUserAuthorizationTransformer.transform(response);
   }
+
+  @Override
+  public SpotifyUserAuthorizationDto refreshToken(String refreshToken) {
+    SpotifyUserAuthorizationResponse response = spotifyAuthorizationClient.refreshUserAuthorizationToken(refreshToken);
+    return spotifyUserAuthorizationTransformer.transform(response);
+  }
 }

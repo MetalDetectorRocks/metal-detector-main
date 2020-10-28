@@ -1,8 +1,10 @@
 package rocks.metaldetector.persistence.domain.spotify;
 
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import rocks.metaldetector.persistence.domain.BaseEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
@@ -13,6 +15,8 @@ import javax.persistence.OneToOne;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
+@AllArgsConstructor(access = AccessLevel.PRIVATE) // for lombok builder
+@Builder
 @EqualsAndHashCode(callSuper = true)
 @Entity(name = "spotifyAuthorizations")
 public class SpotifyAuthorizationEntity extends BaseEntity {

@@ -4,5 +4,7 @@ public interface SpotifyUserAuthorizationService {
 
   String prepareAuthorization();
 
-  void fetchToken(String state, String code);
+  void fetchInitialToken(String state, String code);
+
+  String getOrRefreshToken();
 }

@@ -13,4 +13,6 @@ public interface SpotifyService {
   String getSpotifyAuthorizationUrl();
 
   SpotifyUserAuthorizationDto getAccessToken(String code);
+
+  SpotifyUserAuthorizationDto refreshToken(String refreshToken);
 }

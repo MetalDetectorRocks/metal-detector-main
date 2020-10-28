@@ -29,4 +29,14 @@ public class SpotifyAuthorizationClientMock implements SpotifyAuthorizationClien
         .scope("everything")
         .build();
   }
+
+  @Override
+  public SpotifyUserAuthorizationResponse refreshUserAuthorizationToken(String refreshToken) {
+    return SpotifyUserAuthorizationResponse.builder()
+        .accessToken(MOCK_TOKEN)
+        .tokenType("type")
+        .expiresIn(3600)
+        .scope("everything")
+        .build();
+  }
 }
