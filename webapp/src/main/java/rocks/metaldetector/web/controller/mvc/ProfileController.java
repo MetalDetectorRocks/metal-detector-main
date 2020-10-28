@@ -25,7 +25,7 @@ public class ProfileController {
   @GetMapping(path = Endpoints.Frontend.SPOTIFY_CALLBACK)
   public ModelAndView showProfile(@RequestParam(value = "code") String code,
                                   @RequestParam(value = "state") String state) {
-    spotifyUserAuthorizationService.fetchToken(state, code);
+    spotifyUserAuthorizationService.fetchInitialToken(state, code);
     return new ModelAndView(ViewNames.Frontend.PROFILE);
   }
 }
