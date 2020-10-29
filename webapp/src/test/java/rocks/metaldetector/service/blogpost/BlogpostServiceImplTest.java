@@ -18,7 +18,7 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class BlogpostServiceTest implements WithAssertions {
+public class BlogpostServiceImplTest implements WithAssertions {
 
     @Mock
     private BlogpostRepository blogpostRepository;
