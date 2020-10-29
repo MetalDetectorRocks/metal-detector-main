@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SpotifyArtistSearchResultTransformer {
 
+  private static final int SPOTIFY_MAX_ITEMS = 2_000;
+
   private final SpotifyArtistTransformer artistTransformer;
 
   public SpotifyArtistSearchResultDto transform(SpotifyArtistSearchResultContainer searchResult) {
@@ -34,13 +36,17 @@ public class SpotifyArtistSearchResultTransformer {
   }
 
   private int calculateTotalPages(SpotifyArtistSearchResult searchResult) {
-    return searchResult.getTotal() % searchResult.getLimit() == 0 ? searchResult.getTotal() / searchResult.getLimit()
-                                                                  : searchResult.getTotal() / searchResult.getLimit() + 1;
+    int total = Math.min(searchResult.getTotal(), SPOTIFY_MAX_ITEMS); // Spotify Bug Workaround (see https://bit.ly/34iuJ3Q)
+    return divideAndRoundUp(total, searchResult.getLimit());
   }
 
   private List<SpotifyArtistDto> transformArtistSearchResults(List<SpotifyArtist> results) {
     return results.stream()
         .map(artistTransformer::transform)
         .collect(Collectors.toList());
+  }
+
+  private int divideAndRoundUp(int dividend, int divisor) {
+    return (int) Math.ceil((double) dividend / (double) divisor);
   }
 }
