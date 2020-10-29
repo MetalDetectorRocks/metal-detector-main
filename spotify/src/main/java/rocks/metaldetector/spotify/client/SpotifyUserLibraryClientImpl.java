@@ -23,7 +23,7 @@ import static org.springframework.http.HttpMethod.GET;
 @Service
 @Profile({"default", "preview", "prod"})
 @AllArgsConstructor
-public class SpotifyImportClientImpl implements SpotifyImportClient {
+public class SpotifyUserLibraryClientImpl implements SpotifyUserLibraryClient {
 
   static final int LIMIT = 50;
   static final String OFFSET_PARAMETER_NAME = "offset";
@@ -35,7 +35,7 @@ public class SpotifyImportClientImpl implements SpotifyImportClient {
   private final SpotifyProperties spotifyProperties;
 
   @Override
-  public SpotfiyAlbumImportResult importAlbums(String token, int offset) {
+  public SpotfiyAlbumImportResult fetchLikedAlbums(String token, int offset) {
     if (token == null || token.isEmpty()) {
       throw new IllegalArgumentException("token must not be empty");
     }

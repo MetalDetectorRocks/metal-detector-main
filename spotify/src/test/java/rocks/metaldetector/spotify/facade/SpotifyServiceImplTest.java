@@ -18,7 +18,7 @@ import rocks.metaldetector.spotify.client.SpotifyAuthorizationClient;
 import rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyUserAuthorizationDtoFactory;
 import rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyUserAuthorizationResponseFactory;
 import rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyAlbumFactory;
-import rocks.metaldetector.spotify.client.SpotifyImportClient;
+import rocks.metaldetector.spotify.client.SpotifyUserLibraryClient;
 import rocks.metaldetector.spotify.client.transformer.SpotifyAlbumTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistSearchResultTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistTransformer;
@@ -26,9 +26,12 @@ import rocks.metaldetector.spotify.client.transformer.SpotifyUserAuthorizationTr
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.spotify.facade.dto.SpotifyAlbumDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
+import rocks.metaldetector.support.SlicingService;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -42,6 +45,7 @@ import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyArtist
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistDtoFactory;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistSearchResultContainerFactory;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistSearchResultDtoFactory;
+import static rocks.metaldetector.spotify.facade.SpotifyServiceImpl.PAGE_SIZE;
 
 @ExtendWith(MockitoExtension.class)
 class SpotifyServiceImplTest implements WithAssertions {
@@ -68,14 +72,17 @@ class SpotifyServiceImplTest implements WithAssertions {
   private SpotifyAlbumTransformer albumTransformer;
 
   @Mock
-  private SpotifyImportClient importClient;
+  private SpotifyUserLibraryClient importClient;
+
+  @Mock
+  private SlicingService slicingService;
 
   @InjectMocks
   private SpotifyServiceImpl underTest;
 
   @AfterEach
   void tearDown() {
-    reset(searchClient, authenticationClient, resultTransformer, artistTransformer, spotifyProperties, userAuthorizationTransformer, importClient, albumTransformer);
+    reset(searchClient, authenticationClient, resultTransformer, artistTransformer, spotifyProperties, userAuthorizationTransformer, importClient, albumTransformer, slicingService);
   }
 
   @Nested
@@ -251,16 +258,33 @@ class SpotifyServiceImplTest implements WithAssertions {
   class SearchByIdsTest {
 
     @Test
-    @DisplayName("Should call authentication client")
-    void test_authentication_client_called() {
+    @DisplayName("slicingService is called for every page of new artists")
+    void test_slicing_service_is_called() {
       // given
+      var artists = IntStream.rangeClosed(1, 101).mapToObj(String::valueOf).collect(Collectors.toList());
       doReturn(SpotifyArtistsContainer.builder().artists(Collections.emptyList()).build()).when(searchClient).searchByIds(any(), any());
 
       // when
-      underTest.searchArtistsByIds(List.of("666"));
+      underTest.searchArtistsByIds(artists);
 
       // then
-      verify(authenticationClient, times(1)).getAppAuthorizationToken();
+      verify(slicingService, times(1)).slice(artists, 1, PAGE_SIZE);
+      verify(slicingService, times(1)).slice(artists, 2, PAGE_SIZE);
+      verify(slicingService, times(1)).slice(artists, 3, PAGE_SIZE);
+    }
+
+    @Test
+    @DisplayName("authentication client is called for every page")
+    void test_authentication_client_called() {
+      // given
+      var artists = IntStream.rangeClosed(1, 101).mapToObj(String::valueOf).collect(Collectors.toList());
+      doReturn(SpotifyArtistsContainer.builder().artists(Collections.emptyList()).build()).when(searchClient).searchByIds(any(), any());
+
+      // when
+      underTest.searchArtistsByIds(artists);
+
+      // then
+      verify(authenticationClient, times(3)).getAppAuthorizationToken();
     }
 
     @Test
@@ -279,17 +303,18 @@ class SpotifyServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should pass provided artist ids to search client")
+    @DisplayName("Should pass every page of provided artist ids to search client")
     void should_pass_arguments() {
       // given
-      var artistIds = List.of("666");
+      var artists = IntStream.rangeClosed(1, 101).mapToObj(String::valueOf).collect(Collectors.toList());
       doReturn(SpotifyArtistsContainer.builder().artists(Collections.emptyList()).build()).when(searchClient).searchByIds(any(), any());
+      doReturn(artists).when(slicingService).slice(any(), anyInt(), anyInt());
 
       // when
-      underTest.searchArtistsByIds(artistIds);
+      underTest.searchArtistsByIds(artists);
 
       // then
-      verify(searchClient, times(1)).searchByIds(any(), eq(artistIds));
+      verify(searchClient, times(3)).searchByIds(any(), eq(artists));
     }
 
     @Test
@@ -457,8 +482,8 @@ class SpotifyServiceImplTest implements WithAssertions {
   }
 
   @Nested
-  @DisplayName("Tests for method importAlbums()")
-  class ImportAlbumsTest {
+  @DisplayName("Tests for method fetchLikedAlbums()")
+  class FetchLikedAlbumsTest {
 
     @Test
     @DisplayName("importClient is called with token")
@@ -466,13 +491,13 @@ class SpotifyServiceImplTest implements WithAssertions {
       // given
       var token = "token";
       var mockResult = SpotfiyAlbumImportResult.builder().items(Collections.emptyList()).build();
-      doReturn(mockResult).when(importClient).importAlbums(any(), anyInt());
+      doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), anyInt());
 
       // when
-      underTest.importAlbums(token);
+      underTest.fetchLikedAlbums(token);
 
       // then
-      verify(importClient, times(1)).importAlbums(eq(token), anyInt());
+      verify(importClient, times(1)).fetchLikedAlbums(eq(token), anyInt());
     }
 
     @Test
@@ -480,17 +505,17 @@ class SpotifyServiceImplTest implements WithAssertions {
     void test_offset_increasing() {
       // given
       var mockResult = SpotfiyAlbumImportResult.builder().items(Collections.emptyList()).total(30).limit(10).build();
-      doReturn(mockResult).when(importClient).importAlbums(any(), eq(0));
-      doReturn(mockResult).when(importClient).importAlbums(any(), eq(10));
-      doReturn(mockResult).when(importClient).importAlbums(any(), eq(20));
+      doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), eq(0));
+      doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), eq(10));
+      doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), eq(20));
 
       // when
-      underTest.importAlbums("token");
+      underTest.fetchLikedAlbums("token");
 
       // then
-      verify(importClient, times(1)).importAlbums(any(), eq(0));
-      verify(importClient, times(1)).importAlbums(any(), eq(10));
-      verify(importClient, times(1)).importAlbums(any(), eq(20));
+      verify(importClient, times(1)).fetchLikedAlbums(any(), eq(0));
+      verify(importClient, times(1)).fetchLikedAlbums(any(), eq(10));
+      verify(importClient, times(1)).fetchLikedAlbums(any(), eq(20));
     }
 
     @Test
@@ -501,10 +526,10 @@ class SpotifyServiceImplTest implements WithAssertions {
       var secondAlbum = SpotifyAlbumImportResultItem.builder().album(SpotifyAlbumFactory.withName("secondAlbum")).build();
       var resultItems = List.of(firstAlbum, secondAlbum);
       var mockResult = SpotfiyAlbumImportResult.builder().items(resultItems).build();
-      doReturn(mockResult).when(importClient).importAlbums(any(), anyInt());
+      doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), anyInt());
 
       // when
-      underTest.importAlbums("token");
+      underTest.fetchLikedAlbums("token");
 
       // then
       verify(albumTransformer, times(1)).transform(firstAlbum.getAlbum());
@@ -518,11 +543,11 @@ class SpotifyServiceImplTest implements WithAssertions {
       var album = SpotifyAlbumImportResultItem.builder().album(SpotifyAlbumFactory.withName("firstAlbum")).build();
       var mockResult = SpotfiyAlbumImportResult.builder().items(List.of(album)).build();
       var spotifyAlbumDto = SpotifyAlbumDto.builder().build();
-      doReturn(mockResult).when(importClient).importAlbums(any(), anyInt());
+      doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), anyInt());
       doReturn(spotifyAlbumDto).when(albumTransformer).transform(any());
 
       // when
-      var result = underTest.importAlbums("token");
+      var result = underTest.fetchLikedAlbums("token");
 
       // then
       assertThat(result).containsExactly(spotifyAlbumDto);

@@ -2,7 +2,7 @@ package rocks.metaldetector.spotify.client;
 
 import rocks.metaldetector.spotify.api.imports.SpotfiyAlbumImportResult;
 
-public interface SpotifyImportClient {
+public interface SpotifyUserLibraryClient {
 
-  SpotfiyAlbumImportResult importAlbums(String token, int offset);
+  SpotfiyAlbumImportResult fetchLikedAlbums(String token, int offset);
 }

@@ -1,7 +1,6 @@
 package rocks.metaldetector.service.artist;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.discogs.facade.DiscogsService;
@@ -23,11 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
-
 @AllArgsConstructor
 @Service
-@Slf4j
 public class FollowArtistServiceImpl implements FollowArtistService {
 
   private final UserRepository userRepository;
@@ -48,25 +44,6 @@ public class FollowArtistServiceImpl implements FollowArtistService {
         .build();
 
     followActionRepository.save(followAction);
-  }
-
-  @Override
-  @Transactional
-  public void follow(SpotifyArtistDto spotifyArtistDto) {
-    ArtistEntity artistEntity = saveAndFetchArtist(spotifyArtistDto);
-    String publicUserId = currentPublicUserIdSupplier.get();
-    UserEntity currentUser = userRepository.findByPublicId(publicUserId).orElseThrow(
-        () -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
-    );
-
-    if (!followActionRepository.existsByUserIdAndArtistId(currentUser.getId(), artistEntity.getId())) {
-      FollowActionEntity followAction = FollowActionEntity.builder()
-          .user(currentUser())
-          .artist(artistEntity)
-          .build();
-
-      followActionRepository.save(followAction);
-    }
   }
 
   @Override
@@ -125,18 +102,6 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     };
 
     return artistRepository.save(artistEntity);
-  }
-
-  private ArtistEntity saveAndFetchArtist(SpotifyArtistDto spotifyArtistDto) {
-    ArtistEntity artistEntity;
-    if (artistRepository.existsByExternalIdAndSource(spotifyArtistDto.getId(), SPOTIFY)) {
-      artistEntity = fetchArtistEntity(spotifyArtistDto.getId(), SPOTIFY);
-    }
-    else {
-      artistEntity = new ArtistEntity(spotifyArtistDto.getId(), spotifyArtistDto.getName(), spotifyArtistDto.getImageUrl(), SPOTIFY);
-      artistRepository.save(artistEntity);
-    }
-    return artistEntity;
   }
 
   private UserEntity currentUser() {

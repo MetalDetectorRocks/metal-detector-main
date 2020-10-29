@@ -18,10 +18,10 @@ import java.util.List;
 @Service
 @Profile("mockmode")
 @AllArgsConstructor
-public class SpotifyImportClientMock implements SpotifyImportClient {
+public class SpotifyUserLibraryClientMock implements SpotifyUserLibraryClient {
 
   @Override
-  public SpotfiyAlbumImportResult importAlbums(String token, int offset) {
+  public SpotfiyAlbumImportResult fetchLikedAlbums(String token, int offset) {
     return SpotfiyAlbumImportResult.builder()
         .href("https://api.spotify.com/v1/search?query=Opeth&type=artist&offset=0&limit=20")
         .items(List.of(createARomanceWithViolence()))

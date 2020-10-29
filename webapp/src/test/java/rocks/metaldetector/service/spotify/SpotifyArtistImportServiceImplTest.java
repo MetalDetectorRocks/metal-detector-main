@@ -13,7 +13,6 @@ import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
-import rocks.metaldetector.service.SlicingService;
 import rocks.metaldetector.service.artist.ArtistService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.user.UserEntityFactory;
@@ -25,18 +24,14 @@ import rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
-import static rocks.metaldetector.service.spotify.SpotifyArtistImportServiceImpl.PAGE_SIZE;
 
 @ExtendWith(MockitoExtension.class)
 class SpotifyArtistImportServiceImplTest implements WithAssertions {
@@ -56,9 +51,6 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
   @Mock
   private ArtistService artistService;
 
-  @Mock
-  private SlicingService slicingService;
-
   @InjectMocks
   private SpotifyArtistImportServiceImpl underTest;
 
@@ -73,7 +65,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(spotifyService, currentPublicUserIdSupplier, userRepository, followArtistService, artistService, slicingService);
+    reset(spotifyService, currentPublicUserIdSupplier, userRepository, followArtistService, artistService);
   }
 
   @Test
@@ -126,7 +118,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(spotifyService, times(1)).importAlbums(accessToken);
+    verify(spotifyService, times(1)).fetchLikedAlbums(accessToken);
   }
 
   @Test
@@ -134,7 +126,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
   void test_artist_service_called() {
     // given
     var albumDto = SpotifyAlbumDtoFactory.createDefault();
-    doReturn(List.of(albumDto)).when(spotifyService).importAlbums(any());
+    doReturn(List.of(albumDto)).when(spotifyService).fetchLikedAlbums(any());
 
     // when
     underTest.importArtistsFromLikedReleases();
@@ -152,7 +144,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     var id2 = "id2";
     album.getArtists().get(0).setId(id1);
     album.getArtists().get(1).setId(id2);
-    doReturn(List.of(album)).when(spotifyService).importAlbums(any());
+    doReturn(List.of(album)).when(spotifyService).fetchLikedAlbums(any());
 
     // when
     underTest.importArtistsFromLikedReleases();
@@ -171,7 +163,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     firstAlbum.getArtists().get(0).setId(id);
     secondAlbum.getArtists().get(0).setId(id);
     var albumDtos = List.of(firstAlbum, secondAlbum);
-    doReturn(albumDtos).when(spotifyService).importAlbums(any());
+    doReturn(albumDtos).when(spotifyService).fetchLikedAlbums(any());
 
     // when
     underTest.importArtistsFromLikedReleases();
@@ -181,51 +173,31 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("slicingService is called for every page of new artists")
-  void test_slicing_service_is_called() {
+  @DisplayName("spotifyService is called to fetch artists")
+  void test_spotify_service_called_with_new_artists_list() {
     // given
-    var artists = IntStream.rangeClosed(1, 101).mapToObj(String::valueOf).collect(Collectors.toList());
+    var artists = List.of("id1", "id2");
     doReturn(artists).when(artistService).findNewArtistIds(any());
 
     // when
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(slicingService, times(1)).slice(artists, 1, PAGE_SIZE);
-    verify(slicingService, times(1)).slice(artists, 2, PAGE_SIZE);
-    verify(slicingService, times(1)).slice(artists, 3, PAGE_SIZE);
-  }
-
-  @Test
-  @DisplayName("spotifyService is called with slicingService's result to fetch artists")
-  void test_spotify_service_called_with_sliced_list() {
-    // given
-    var artists = IntStream.rangeClosed(1, 101).mapToObj(String::valueOf).collect(Collectors.toList());
-    doReturn(artists).when(artistService).findNewArtistIds(any());
-    doReturn(artists).when(slicingService).slice(any(), anyInt(), anyInt());
-
-    // when
-    underTest.importArtistsFromLikedReleases();
-
-    // then
-    verify(spotifyService, times(3)).searchArtistsByIds(artists);
+    verify(spotifyService, times(1)).searchArtistsByIds(artists);
   }
 
   @Test
   @DisplayName("artistService is called to persists all fetched artists")
   void test_artist_service_called_to_persist_new_artists() {
     // given
-    var artists = IntStream.rangeClosed(1, 101).mapToObj(String::valueOf).collect(Collectors.toList());
-    var spotifyDto = SpotifyArtistDtoFactory.withArtistName("a");
-    doReturn(artists).when(artistService).findNewArtistIds(any());
-    doReturn(artists).when(slicingService).slice(any(), anyInt(), anyInt());
-    doReturn(List.of(spotifyDto)).when(spotifyService).searchArtistsByIds(any());
+    var spotifyDtos = List.of(SpotifyArtistDtoFactory.withArtistName("a"));
+    doReturn(spotifyDtos).when(spotifyService).searchArtistsByIds(any());
 
     // when
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(artistService, times(1)).persistArtists(List.of(spotifyDto, spotifyDto, spotifyDto));
+    verify(artistService, times(1)).persistArtists(spotifyDtos);
   }
 
   @Test
@@ -233,7 +205,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
   void test_artist_service_gets_all_artists() {
     // given
     var albumDto = SpotifyAlbumDtoFactory.createDefault();
-    doReturn(List.of(albumDto)).when(spotifyService).importAlbums(any());
+    doReturn(List.of(albumDto)).when(spotifyService).fetchLikedAlbums(any());
 
     // when
     underTest.importArtistsFromLikedReleases();

@@ -21,5 +21,5 @@ public interface SpotifyService {
 
   SpotifyUserAuthorizationDto refreshToken(String refreshToken);
 
-  List<SpotifyAlbumDto> importAlbums(String token);
+  List<SpotifyAlbumDto> fetchLikedAlbums(String token);
 }

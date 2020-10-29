@@ -10,7 +10,7 @@ import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer
 import rocks.metaldetector.spotify.api.search.SpotifyArtistsContainer;
 import rocks.metaldetector.spotify.client.SpotifyArtistSearchClient;
 import rocks.metaldetector.spotify.client.SpotifyAuthorizationClient;
-import rocks.metaldetector.spotify.client.SpotifyImportClient;
+import rocks.metaldetector.spotify.client.SpotifyUserLibraryClient;
 import rocks.metaldetector.spotify.client.transformer.SpotifyAlbumTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistSearchResultTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistTransformer;
@@ -21,6 +21,7 @@ import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyUserAuthorizationDto;
 import rocks.metaldetector.support.Endpoints;
+import rocks.metaldetector.support.SlicingService;
 
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -34,15 +35,17 @@ public class SpotifyServiceImpl implements SpotifyService {
 
   private static final String USER_AUTHORIZATION_ENDPOINT = "/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=%s&state=";
   static final List<String> REQUIRED_SCOPES = List.of("user-library-read", "user-follow-read");
+  static final int PAGE_SIZE = 50;
 
   private final SpotifyArtistSearchClient artistSearchClient;
   private final SpotifyAuthorizationClient authorizationClient;
-  private final SpotifyImportClient importClient;
+  private final SpotifyUserLibraryClient importClient;
   private final SpotifyArtistSearchResultTransformer searchResultTransformer;
   private final SpotifyArtistTransformer artistTransformer;
   private final SpotifyUserAuthorizationTransformer userAuthorizationTransformer;
   private final SpotifyAlbumTransformer albumTransformer;
   private final SpotifyProperties spotifyProperties;
+  private final SlicingService slicingService;
 
   @Override
   public SpotifyArtistSearchResultDto searchArtistByName(String artistQueryString, int pageNumber, int pageSize) {
@@ -60,9 +63,15 @@ public class SpotifyServiceImpl implements SpotifyService {
 
   @Override
   public List<SpotifyArtistDto> searchArtistsByIds(List<String> artistIds) {
-    String authenticationToken = authorizationClient.getAppAuthorizationToken();
-    SpotifyArtistsContainer spotifyArtistsContainer = artistSearchClient.searchByIds(authenticationToken, artistIds);
-    return spotifyArtistsContainer.getArtists().stream()
+    List<SpotifyArtist> spotifyArtists = new ArrayList<>();
+    int totalPages = (int) Math.ceil((double) artistIds.size() / (double) PAGE_SIZE);
+    for (int i = 1; i <= totalPages; i++) {
+      List<String> idsPerPage = slicingService.slice(artistIds, i, PAGE_SIZE);
+      String authenticationToken = authorizationClient.getAppAuthorizationToken();
+      SpotifyArtistsContainer spotifyArtistsContainer = artistSearchClient.searchByIds(authenticationToken, idsPerPage);
+      spotifyArtists.addAll(spotifyArtistsContainer.getArtists());
+    }
+    return spotifyArtists.stream()
         .map(artistTransformer::transform)
         .collect(Collectors.toList());
   }
@@ -83,12 +92,12 @@ public class SpotifyServiceImpl implements SpotifyService {
   }
 
   @Override
-  public List<SpotifyAlbumDto> importAlbums(String token) {
+  public List<SpotifyAlbumDto> fetchLikedAlbums(String token) {
     int offset = 0;
     List<SpotifyAlbumImportResultItem> resultItems = new ArrayList<>();
     SpotfiyAlbumImportResult importResult;
     do {
-      importResult = importClient.importAlbums(token, offset);
+      importResult = importClient.fetchLikedAlbums(token, offset);
       resultItems.addAll(importResult.getItems());
       offset += importResult.getLimit();
     }

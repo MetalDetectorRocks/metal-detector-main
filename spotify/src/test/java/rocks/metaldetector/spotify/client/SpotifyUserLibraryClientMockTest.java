@@ -4,15 +4,15 @@ import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class SpotifyImportClientMockTest implements WithAssertions {
+class SpotifyUserLibraryClientMockTest implements WithAssertions {
 
-  private SpotifyImportClientMock underTest = new SpotifyImportClientMock();
+  private SpotifyUserLibraryClientMock underTest = new SpotifyUserLibraryClientMock();
 
   @Test
   @DisplayName("mock is not null")
   void test_result_not_null() {
     // when
-    var result = underTest.importAlbums("token", 666);
+    var result = underTest.fetchLikedAlbums("token", 666);
 
     // then
     assertThat(result).isNotNull();
