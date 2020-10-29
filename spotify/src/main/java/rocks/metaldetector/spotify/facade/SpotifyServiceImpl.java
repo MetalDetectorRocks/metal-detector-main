@@ -99,4 +99,10 @@ public class SpotifyServiceImpl implements SpotifyService {
         .map(albumTransformer::transform)
         .collect(Collectors.toList());
   }
+
+  @Override
+  public SpotifyUserAuthorizationDto refreshToken(String refreshToken) {
+    SpotifyUserAuthorizationResponse response = spotifyAuthorizationClient.refreshUserAuthorizationToken(refreshToken);
+    return spotifyUserAuthorizationTransformer.transform(response);
+  }
 }

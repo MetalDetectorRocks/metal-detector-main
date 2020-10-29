@@ -47,7 +47,9 @@ import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.
 import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.CODE_REQUEST_KEY;
 import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.GRANT_TYPE_KEY;
 import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.REDIRECT_URI_KEY;
+import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.REFRESH_TOKEN_KEY;
 import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.USER_AUTH_REQUEST_VALUE;
+import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.USER_REFRESH_AUTH_REQUEST_VALUE;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyAppAuthenticationResponseFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -221,7 +223,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
 
     @Test
     @DisplayName("a POST call is made on spotify authorization endpoint")
-    void test() {
+    void test_correct_url_called() {
       // given
       var baseUrl = "baseUrl";
       doReturn(baseUrl).when(spotifyProperties).getAuthenticationBaseUrl();
@@ -304,14 +306,14 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
     @DisplayName("correct response type is requested")
     void test_correct_response_type() {
       // given
-      SpotifyAppAuthorizationResponse responseMock = SpotifyAppAuthenticationResponseFactory.createDefault();
+      SpotifyUserAuthorizationResponse responseMock = SpotfiyUserAuthorizationResponseFactory.createDefault();
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
       // when
-      underTest.getAppAuthorizationToken();
+      underTest.getUserAuthorizationToken("code");
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(SpotifyAppAuthorizationResponse.class));
+      verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(SpotifyUserAuthorizationResponse.class));
     }
 
     @Test
@@ -351,6 +353,149 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
 
       // when
       Throwable throwable = catchThrowable(() -> underTest.getUserAuthorizationToken("code"));
+
+      // then
+      assertThat(throwable).isInstanceOf(ExternalServiceException.class);
+    }
+
+    private Stream<Arguments> httpStatusCodeProvider() {
+      return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
+    }
+  }
+
+  @Nested
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @DisplayName("Tests for refreshing user authentication")
+  class RefreshUserAuthorizationTest {
+
+    @Test
+    @DisplayName("a POST call is made on spotify authorization endpoint")
+    void test_correct_url_called() {
+      // given
+      var baseUrl = "baseUrl";
+      doReturn(baseUrl).when(spotifyProperties).getAuthenticationBaseUrl();
+      SpotifyUserAuthorizationResponse responseMock = SpotfiyUserAuthorizationResponseFactory.createDefault();
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
+
+      // when
+      underTest.refreshUserAuthorizationToken("refreshToken");
+
+      // then
+      verify(restTemplate, times(1)).postForEntity(eq(baseUrl + AUTHORIZATION_ENDPOINT), any(), any());
+    }
+
+    @Test
+    @DisplayName("correct request body is set")
+    void test_correct_request_body() {
+      // given
+      var refreshToken = "refreshToken";
+      SpotifyUserAuthorizationResponse responseMock = SpotfiyUserAuthorizationResponseFactory.createDefault();
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
+
+      // when
+      underTest.refreshUserAuthorizationToken(refreshToken);
+
+      // then
+      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+      HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
+      assertThat(httpEntity.getBody()).isNotNull();
+      assertThat(httpEntity.getBody().size()).isEqualTo(2);
+      assertThat(httpEntity.getBody().get(GRANT_TYPE_KEY)).isEqualTo(List.of(USER_REFRESH_AUTH_REQUEST_VALUE));
+      assertThat(httpEntity.getBody().get(REFRESH_TOKEN_KEY)).isEqualTo(List.of(refreshToken));
+    }
+
+    @Test
+    @DisplayName("correct standard headers are set")
+    void test_correct_standard_headers() {
+      // given
+      SpotifyUserAuthorizationResponse responseMock = SpotfiyUserAuthorizationResponseFactory.createDefault();
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
+
+      // when
+      underTest.refreshUserAuthorizationToken("refreshToken");
+
+      // then
+      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+      HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
+      HttpHeaders headers = httpEntity.getHeaders();
+      assertThat(headers.getContentType()).isEqualTo(MediaType.APPLICATION_FORM_URLENCODED);
+      assertThat(headers.getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
+      assertThat(headers.getAcceptCharset()).isEqualTo(Collections.singletonList(Charset.defaultCharset()));
+    }
+
+    @Test
+    @DisplayName("correct authorization header is set")
+    void test_correct_authorization_header() {
+      // given
+      var clientId = "clientId";
+      doReturn(clientId).when(spotifyProperties).getClientId();
+      var clientSecret = "clientSecret";
+      doReturn(clientSecret).when(spotifyProperties).getClientSecret();
+      var expectedAuthorizationHeader = AUTHORIZATION_HEADER_PREFIX + Base64.encodeBase64String((clientId + ":" + clientSecret).getBytes());
+      SpotifyUserAuthorizationResponse responseMock = SpotfiyUserAuthorizationResponseFactory.createDefault();
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
+
+      // when
+      underTest.refreshUserAuthorizationToken("refreshToken");
+
+      // then
+      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+      HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
+      HttpHeaders headers = httpEntity.getHeaders();
+      assertThat(headers.get(AUTHORIZATION)).isEqualTo(List.of(expectedAuthorizationHeader));
+    }
+
+    @Test
+    @DisplayName("correct response type is requested")
+    void test_correct_response_type() {
+      // given
+      SpotifyUserAuthorizationResponse responseMock = SpotfiyUserAuthorizationResponseFactory.createDefault();
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
+
+      // when
+      underTest.refreshUserAuthorizationToken("refreshToken");
+
+      // then
+      verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(SpotifyUserAuthorizationResponse.class));
+    }
+
+    @Test
+    @DisplayName("SpotifyUserAuthorizationResponse is returned")
+    void test_return_value() {
+      // given
+      SpotifyUserAuthorizationResponse responseMock = SpotfiyUserAuthorizationResponseFactory.createDefault();
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
+
+      // when
+      var result = underTest.refreshUserAuthorizationToken("refreshToken");
+
+      // then
+      assertThat(result).isEqualTo(responseMock);
+    }
+
+    @Test
+    @DisplayName("if the response is null, an ExternalServiceException is thrown")
+    void test_exception_if_response_is_null() {
+      // given
+      doReturn(ResponseEntity.ok(null)).when(restTemplate).postForEntity(anyString(), any(), any());
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.refreshUserAuthorizationToken("refreshToken"));
+
+      // then
+      assertThat(throwable).isInstanceOf(ExternalServiceException.class);
+    }
+
+    @ParameterizedTest(name = "if the status is {0}, an ExternalServiceException is thrown")
+    @MethodSource("httpStatusCodeProvider")
+    @DisplayName("if the status code is not OK, an ExternalServiceException is thrown")
+    void test_exception_if_status_is_not_ok(HttpStatus httpStatus) {
+      // given
+      SpotifyUserAuthorizationResponse responseMock = SpotfiyUserAuthorizationResponseFactory.createDefault();
+      doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.refreshUserAuthorizationToken("refreshToken"));
 
       // then
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);

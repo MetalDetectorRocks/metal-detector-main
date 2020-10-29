@@ -389,7 +389,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       doReturn(response).when(authenticationClient).getUserAuthorizationToken(anyString());
 
       // when
-      var result = underTest.getAccessToken("code");
+      underTest.getAccessToken("code");
 
       // then
       verify(userAuthorizationTransformer, times(1)).transform(response);
@@ -404,6 +404,52 @@ class SpotifyServiceImplTest implements WithAssertions {
 
       // when
       var result = underTest.getAccessToken("code");
+
+      // then
+      assertThat(result).isEqualTo(userAuthorizationDto);
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests for method refreshToken")
+  class RefreshAccessTokenTest {
+
+    @Test
+    @DisplayName("spotifyAuthenticationClient is called")
+    void test_authentication_client_called() {
+      // given
+      var refreshToken = "refreshToken";
+
+      // when
+      underTest.refreshToken(refreshToken);
+
+      // then
+      verify(authenticationClient, times(1)).refreshUserAuthorizationToken(refreshToken);
+    }
+
+    @Test
+    @DisplayName("userAuthorizationTransformer is called")
+    void test_user_authorization_transformer_called() {
+      // given
+      var response = SpotfiyUserAuthorizationResponseFactory.createDefault();
+      doReturn(response).when(authenticationClient).refreshUserAuthorizationToken(anyString());
+
+      // when
+      underTest.refreshToken("refreshToken");
+
+      // then
+      verify(userAuthorizationTransformer, times(1)).transform(response);
+    }
+
+    @Test
+    @DisplayName("result is returned")
+    void test_result_is_returned() {
+      // given
+      var userAuthorizationDto = SpotfiyUserAuthorizationDtoFactory.createDefault();
+      doReturn(userAuthorizationDto).when(userAuthorizationTransformer).transform(any());
+
+      // when
+      var result = underTest.refreshToken("refreshToken");
 
       // then
       assertThat(result).isEqualTo(userAuthorizationDto);

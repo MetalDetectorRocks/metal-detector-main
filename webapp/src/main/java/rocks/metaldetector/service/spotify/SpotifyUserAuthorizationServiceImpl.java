@@ -12,6 +12,8 @@ import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.spotify.facade.dto.SpotifyUserAuthorizationDto;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
+import java.time.LocalDateTime;
+
 @Service
 @AllArgsConstructor
 public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthorizationService {
@@ -40,7 +42,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
 
   @Override
   @Transactional
-  public void fetchToken(String spotifyState, String spotifyCode) {
+  public void fetchInitialToken(String spotifyState, String spotifyCode) {
     String publicUserId = currentPublicUserIdSupplier.get();
     UserEntity currentUser = userRepository.findByPublicId(publicUserId).orElseThrow(
         () -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
@@ -57,6 +59,34 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
     authorizationEntity.setExpiresIn(authorizationDto.getExpiresIn());
 
     userRepository.save(currentUser);
+  }
+
+  @Override
+  @Transactional
+  public String getOrRefreshToken() {
+    String publicUserId = currentPublicUserIdSupplier.get();
+    UserEntity currentUser = userRepository.findByPublicId(publicUserId).orElseThrow(
+        () -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
+    );
+    SpotifyAuthorizationEntity authorizationEntity = currentUser.getSpotifyAuthorization();
+
+    if (authorizationEntity == null || authorizationEntity.getRefreshToken() == null || authorizationEntity.getRefreshToken().isEmpty()) {
+      throw new IllegalStateException("refresh token is empty");
+    }
+
+    if (authorizationEntity.getCreatedDateTime().plusSeconds(authorizationEntity.getExpiresIn()).isAfter(LocalDateTime.now())) {
+      return authorizationEntity.getAccessToken();
+    }
+
+    SpotifyUserAuthorizationDto refreshedToken = spotifyService.refreshToken(authorizationEntity.getRefreshToken());
+    authorizationEntity.setAccessToken(refreshedToken.getAccessToken());
+    authorizationEntity.setScope(refreshedToken.getScope());
+    authorizationEntity.setTokenType(refreshedToken.getTokenType());
+    authorizationEntity.setExpiresIn(refreshedToken.getExpiresIn());
+
+    userRepository.save(currentUser);
+
+    return refreshedToken.getAccessToken();
   }
 
   private void checkState(SpotifyAuthorizationEntity authorizationEntity, String providedState) {

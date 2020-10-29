@@ -19,5 +19,7 @@ public interface SpotifyService {
 
   SpotifyUserAuthorizationDto getAccessToken(String code);
 
+  SpotifyUserAuthorizationDto refreshToken(String refreshToken);
+
   List<SpotifyAlbumDto> importAlbums(String token);
 }
