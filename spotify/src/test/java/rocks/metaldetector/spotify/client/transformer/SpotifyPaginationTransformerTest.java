@@ -33,9 +33,10 @@ class SpotifyPaginationTransformerTest implements WithAssertions {
 
   private static Stream<Arguments> paginationProvider() {
     return Stream.of(
-        Arguments.of(10, 5, 1, Pagination.builder().currentPage(6).itemsPerPage(1).totalPages(10).build()),
-        Arguments.of(10, 0, 1, Pagination.builder().currentPage(1).itemsPerPage(1).totalPages(10).build()),
-        Arguments.of(10, 9, 2, Pagination.builder().currentPage(5).itemsPerPage(2).totalPages(5).build())
+        Arguments.of(1, 0, 10, Pagination.builder().currentPage(1).itemsPerPage(10).totalPages(1).build()),
+        Arguments.of(15, 10, 10, Pagination.builder().currentPage(2).itemsPerPage(10).totalPages(2).build()),
+        Arguments.of(30, 5, 20, Pagination.builder().currentPage(1).itemsPerPage(20).totalPages(2).build()),
+        Arguments.of(4000, 1960, 40, Pagination.builder().currentPage(50).itemsPerPage(40).totalPages(50).build())
     );
   }
 }
