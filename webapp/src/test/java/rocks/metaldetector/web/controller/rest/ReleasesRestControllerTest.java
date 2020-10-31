@@ -19,8 +19,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
-import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
+import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
@@ -44,7 +44,6 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -95,7 +94,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet(toMap(request));
 
       // then
-      verify(releasesService, times(1)).findAllReleases(Collections.emptyList(), new TimeRange(request.getDateFrom(), request.getDateTo()));
+      verify(releasesService).findAllReleases(Collections.emptyList(), new TimeRange(request.getDateFrom(), request.getDateTo()));
     }
 
     @Test
@@ -171,7 +170,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet(toMap(request));
 
       // then
-      verify(releasesService, times(1)).findReleases(
+      verify(releasesService).findReleases(
               Collections.emptyList(),
               new TimeRange(request.getDateFrom(), request.getDateTo()),
               new PageRequest(request.getPage(), request.getSize())
@@ -258,7 +257,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       restAssuredUtils.doPost();
 
       // then
-      verify(releasesService, times(1)).createImportJob();
+      verify(releasesService).createImportJob();
     }
 
     @Test
@@ -290,7 +289,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       restAssuredUtils.doPost();
 
       // then
-      verify(releasesService, times(1)).createRetryCoverDownloadJob();
+      verify(releasesService).createRetryCoverDownloadJob();
     }
 
     @Test
@@ -322,7 +321,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet();
 
       // then
-      verify(releasesService, times(1)).queryImportJobResults();
+      verify(releasesService).queryImportJobResults();
     }
 
     @Test

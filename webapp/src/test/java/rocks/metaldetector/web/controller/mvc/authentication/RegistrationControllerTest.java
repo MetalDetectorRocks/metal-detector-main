@@ -46,7 +46,6 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -155,7 +154,7 @@ class RegistrationControllerTest implements WithAssertions {
       restAssuredUtils.doPost(paramValues, ContentType.HTML);
 
       // then
-      verify(userService, times(1)).createUser(any());
+      verify(userService).createUser(any());
     }
 
     @Test
@@ -169,7 +168,7 @@ class RegistrationControllerTest implements WithAssertions {
       restAssuredUtils.doPost(paramValues, ContentType.HTML);
 
       // when
-      verify(eventPublisher, times(1)).publishEvent(any());
+      verify(eventPublisher).publishEvent(any());
     }
 
     @Test
@@ -183,7 +182,7 @@ class RegistrationControllerTest implements WithAssertions {
       restAssuredUtils.doPost(paramValues, ContentType.HTML);
 
       // when
-      verify(modelMapper, times(1)).map(objectMapper.convertValue(paramValues, RegisterUserRequest.class), UserDto.class);
+      verify(modelMapper).map(objectMapper.convertValue(paramValues, RegisterUserRequest.class), UserDto.class);
     }
 
     @Test
@@ -217,7 +216,7 @@ class RegistrationControllerTest implements WithAssertions {
       restAssuredUtils.doPost(paramValues, ContentType.HTML);
 
       // when
-      verify(eventPublisher, times(1)).publishEvent(eventCaptor.capture());
+      verify(eventPublisher).publishEvent(eventCaptor.capture());
       assertThat(eventCaptor.getValue().getUserDto()).isEqualTo(userDto);
     }
 
@@ -325,7 +324,7 @@ class RegistrationControllerTest implements WithAssertions {
       restAssuredUtils.doGet("?token=" + token);
 
       // then
-      verify(userService, times(1)).verifyEmailToken(token);
+      verify(userService).verifyEmailToken(token);
     }
 
     @Test
@@ -353,7 +352,7 @@ class RegistrationControllerTest implements WithAssertions {
       restAssuredUtils.doGet("?token=" + NOT_EXISTING_TOKEN);
 
       // then
-      verify(userService, times(1)).verifyEmailToken(NOT_EXISTING_TOKEN);
+      verify(userService).verifyEmailToken(NOT_EXISTING_TOKEN);
     }
 
     @Test
@@ -381,7 +380,7 @@ class RegistrationControllerTest implements WithAssertions {
       restAssuredUtils.doGet("?token=" + EXPIRED_TOKEN);
 
       // then
-      verify(userService, times(1)).verifyEmailToken(EXPIRED_TOKEN);
+      verify(userService).verifyEmailToken(EXPIRED_TOKEN);
     }
   }
 
@@ -416,7 +415,7 @@ class RegistrationControllerTest implements WithAssertions {
       restAssuredUtils.doGet("?token=" + token);
 
       // then
-      verify(tokenService, times(1)).resendExpiredEmailVerificationToken(token);
+      verify(tokenService).resendExpiredEmailVerificationToken(token);
     }
 
     @Test
@@ -444,7 +443,7 @@ class RegistrationControllerTest implements WithAssertions {
       restAssuredUtils.doGet("?token=" + NOT_EXISTING_TOKEN);
 
       // then
-      verify(tokenService, times(1)).resendExpiredEmailVerificationToken(NOT_EXISTING_TOKEN);
+      verify(tokenService).resendExpiredEmailVerificationToken(NOT_EXISTING_TOKEN);
     }
   }
 }

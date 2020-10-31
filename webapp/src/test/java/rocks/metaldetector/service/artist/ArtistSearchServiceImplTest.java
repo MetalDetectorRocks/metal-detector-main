@@ -24,7 +24,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,7 +66,7 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             underTest.searchDiscogsByName(artistQueryString, pageable);
 
             // then
-            verify(discogsService, times(1)).searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
+            verify(discogsService).searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
         }
 
         @Test
@@ -82,7 +81,7 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
 
             // then
-            verify(searchResponseTransformer, times(1)).transformDiscogs(expectedSearchResults);
+            verify(searchResponseTransformer).transformDiscogs(expectedSearchResults);
         }
 
         @Test
@@ -112,9 +111,9 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
 
             // then
-            verify(followArtistService, times(1)).isCurrentUserFollowing("1", ArtistSource.DISCOGS);
-            verify(followArtistService, times(1)).isCurrentUserFollowing("2", ArtistSource.DISCOGS);
-            verify(followArtistService, times(1)).isCurrentUserFollowing("3", ArtistSource.DISCOGS);
+            verify(followArtistService).isCurrentUserFollowing("1", ArtistSource.DISCOGS);
+            verify(followArtistService).isCurrentUserFollowing("2", ArtistSource.DISCOGS);
+            verify(followArtistService).isCurrentUserFollowing("3", ArtistSource.DISCOGS);
         }
 
         @Test
@@ -161,7 +160,7 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             underTest.searchSpotifyByName(artistQueryString, pageable);
 
             // then
-            verify(spotifyService, times(1)).searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
+            verify(spotifyService).searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
         }
 
         @Test
@@ -176,7 +175,7 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
 
             // then
-            verify(searchResponseTransformer, times(1)).transformSpotify(expectedSearchResults);
+            verify(searchResponseTransformer).transformSpotify(expectedSearchResults);
         }
 
         @Test
@@ -206,9 +205,9 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
 
             // then
-            verify(followArtistService, times(1)).isCurrentUserFollowing("1", ArtistSource.SPOTIFY);
-            verify(followArtistService, times(1)).isCurrentUserFollowing("2", ArtistSource.SPOTIFY);
-            verify(followArtistService, times(1)).isCurrentUserFollowing("3", ArtistSource.SPOTIFY);
+            verify(followArtistService).isCurrentUserFollowing("1", ArtistSource.SPOTIFY);
+            verify(followArtistService).isCurrentUserFollowing("2", ArtistSource.SPOTIFY);
+            verify(followArtistService).isCurrentUserFollowing("3", ArtistSource.SPOTIFY);
         }
 
         @Test

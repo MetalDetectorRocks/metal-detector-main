@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
@@ -50,7 +49,7 @@ class DiscogsRequestInterceptorTest implements WithAssertions {
     underTest.intercept(httpRequestMock, new byte[]{}, clientHttpRequestExecutionMock);
 
     // then
-    verify(httpHeadersMock, times(1)).setAccept(List.of(APPLICATION_JSON));
+    verify(httpHeadersMock).setAccept(List.of(APPLICATION_JSON));
   }
 
   @Test
@@ -65,7 +64,7 @@ class DiscogsRequestInterceptorTest implements WithAssertions {
     underTest.intercept(httpRequestMock, new byte[]{}, clientHttpRequestExecutionMock);
 
     // then
-    verify(httpHeadersMock, times(1)).set(USER_AGENT, userAgent);
+    verify(httpHeadersMock).set(USER_AGENT, userAgent);
   }
 
   @Test
@@ -80,7 +79,7 @@ class DiscogsRequestInterceptorTest implements WithAssertions {
     underTest.intercept(httpRequestMock, new byte[]{}, clientHttpRequestExecutionMock);
 
     // then
-    verify(httpHeadersMock, times(1)).set(AUTHORIZATION, TOKEN_PREFIX + token);
+    verify(httpHeadersMock).set(AUTHORIZATION, TOKEN_PREFIX + token);
   }
 
   @Test
@@ -94,6 +93,6 @@ class DiscogsRequestInterceptorTest implements WithAssertions {
     underTest.intercept(httpRequestMock, bodyAsByteArray, clientHttpRequestExecutionMock);
 
     // then
-    verify(clientHttpRequestExecutionMock, times(1)).execute(httpRequestMock, bodyAsByteArray);
+    verify(clientHttpRequestExecutionMock).execute(httpRequestMock, bodyAsByteArray);
   }
 }

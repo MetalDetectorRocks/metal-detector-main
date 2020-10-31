@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportJobFactory;
 
@@ -105,6 +104,6 @@ class ButlerImportJobTransformerTest implements WithAssertions {
     underTest.transform(importJob);
 
     // then
-    verify(enumPrettyPrinter, times(1)).prettyPrintEnumValue(eq(importJob.getSource()));
+    verify(enumPrettyPrinter).prettyPrintEnumValue(eq(importJob.getSource()));
   }
 }

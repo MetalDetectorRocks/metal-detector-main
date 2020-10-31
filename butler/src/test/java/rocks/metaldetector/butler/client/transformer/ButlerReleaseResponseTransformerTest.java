@@ -20,7 +20,6 @@ import rocks.metaldetector.support.Page;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer.STATE_NOT_SET;
 
@@ -68,7 +67,7 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
     transformer.transformToPage(response);
 
     // then
-    verify(transformer, times(1)).transformToList(eq(response));
+    verify(transformer).transformToList(eq(response));
   }
 
   @Test
@@ -111,8 +110,8 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
     underTest.transformToList(response);
 
     // then
-    verify(enumPrettyPrinter, times(1)).prettyPrintEnumValue(eq(release.getType()));
-    verify(enumPrettyPrinter, times(1)).prettyPrintEnumValue(eq(release.getSource()));
-    verify(enumPrettyPrinter, times(1)).prettyPrintEnumValue(eq(STATE_NOT_SET));
+    verify(enumPrettyPrinter).prettyPrintEnumValue(eq(release.getType()));
+    verify(enumPrettyPrinter).prettyPrintEnumValue(eq(release.getSource()));
+    verify(enumPrettyPrinter).prettyPrintEnumValue(eq(STATE_NOT_SET));
   }
 }

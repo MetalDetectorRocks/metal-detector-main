@@ -19,7 +19,6 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,7 +48,7 @@ class SummaryServiceImplTest implements WithAssertions {
     underTest.createSummaryResponse();
 
     // then
-    verify(followArtistService, times(1)).getFollowedArtistsOfCurrentUser();
+    verify(followArtistService).getFollowedArtistsOfCurrentUser();
   }
 
   @Test
@@ -63,7 +62,7 @@ class SummaryServiceImplTest implements WithAssertions {
     underTest.createSummaryResponse();
 
     // then
-    verify(releaseCollector, times(1)).collectUpcomingReleases(eq(artists));
+    verify(releaseCollector).collectUpcomingReleases(eq(artists));
   }
 
   @Test
@@ -77,7 +76,7 @@ class SummaryServiceImplTest implements WithAssertions {
     underTest.createSummaryResponse();
 
     // then
-    verify(releaseCollector, times(1)).collectRecentReleases(eq(artists));
+    verify(releaseCollector).collectRecentReleases(eq(artists));
   }
 
   @Test
@@ -91,7 +90,7 @@ class SummaryServiceImplTest implements WithAssertions {
     underTest.createSummaryResponse();
 
     // then
-    verify(releaseCollector, times(1)).collectUpcomingReleases(eq(artists));
+    verify(releaseCollector).collectUpcomingReleases(eq(artists));
   }
 
   @Test
@@ -101,7 +100,7 @@ class SummaryServiceImplTest implements WithAssertions {
     underTest.createSummaryResponse();
 
     // then
-    verify(artistCollector, times(1)).collectTopFollowedArtists();
+    verify(artistCollector).collectTopFollowedArtists();
   }
 
   @Test
@@ -111,7 +110,7 @@ class SummaryServiceImplTest implements WithAssertions {
     underTest.createSummaryResponse();
 
     // then
-    verify(artistCollector, times(1)).collectRecentlyFollowedArtists();
+    verify(artistCollector).collectRecentlyFollowedArtists();
   }
 
   @Test

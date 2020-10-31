@@ -29,7 +29,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 
@@ -75,7 +74,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(currentPublicUserIdSupplier, times(1)).get();
+    verify(currentPublicUserIdSupplier).get();
   }
 
   @Test
@@ -89,7 +88,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(userRepository, times(1)).findByPublicId(publicUserId);
+    verify(userRepository).findByPublicId(publicUserId);
   }
 
   @Test
@@ -118,7 +117,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(spotifyService, times(1)).fetchLikedAlbums(accessToken);
+    verify(spotifyService).fetchLikedAlbums(accessToken);
   }
 
   @Test
@@ -132,7 +131,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(artistService, times(1)).findNewArtistIds(List.of(albumDto.getArtists().get(0).getId()));
+    verify(artistService).findNewArtistIds(List.of(albumDto.getArtists().get(0).getId()));
   }
 
   @Test
@@ -150,7 +149,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(artistService, times(1)).findNewArtistIds(List.of(id1, id2));
+    verify(artistService).findNewArtistIds(List.of(id1, id2));
   }
 
   @Test
@@ -169,7 +168,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(artistService, times(1)).findNewArtistIds(List.of(id));
+    verify(artistService).findNewArtistIds(List.of(id));
   }
 
   @Test
@@ -183,7 +182,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(spotifyService, times(1)).searchArtistsByIds(artists);
+    verify(spotifyService).searchArtistsByIds(artists);
   }
 
   @Test
@@ -197,7 +196,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(artistService, times(1)).persistArtists(spotifyDtos);
+    verify(artistService).persistArtists(spotifyDtos);
   }
 
   @Test
@@ -211,7 +210,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(artistService, times(1)).findAllArtistsByExternalIds(List.of(albumDto.getArtists().get(0).getId()));
+    verify(artistService).findAllArtistsByExternalIds(List.of(albumDto.getArtists().get(0).getId()));
   }
 
   @Test
@@ -225,8 +224,8 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(followArtistService, times(1)).isCurrentUserFollowing(artistDtos.get(0).getExternalId(), SPOTIFY);
-    verify(followArtistService, times(1)).isCurrentUserFollowing(artistDtos.get(1).getExternalId(), SPOTIFY);
+    verify(followArtistService).isCurrentUserFollowing(artistDtos.get(0).getExternalId(), SPOTIFY);
+    verify(followArtistService).isCurrentUserFollowing(artistDtos.get(1).getExternalId(), SPOTIFY);
   }
 
   @Test
@@ -240,8 +239,8 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(followArtistService, times(1)).follow(artistDtos.get(0).getExternalId(), SPOTIFY);
-    verify(followArtistService, times(1)).follow(artistDtos.get(1).getExternalId(), SPOTIFY);
+    verify(followArtistService).follow(artistDtos.get(0).getExternalId(), SPOTIFY);
+    verify(followArtistService).follow(artistDtos.get(1).getExternalId(), SPOTIFY);
   }
 
   @Test

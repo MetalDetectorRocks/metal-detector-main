@@ -20,7 +20,6 @@ import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,7 +54,7 @@ class SummaryRestControllerTest implements WithAssertions {
     restAssuredMockMvcUtils.doGet();
 
     // then
-    verify(summaryService, times(1)).createSummaryResponse();
+    verify(summaryService).createSummaryResponse();
   }
 
   @Test

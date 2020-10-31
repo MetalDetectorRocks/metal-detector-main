@@ -39,7 +39,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.APP_AUTH_REQUEST_VALUE;
@@ -93,7 +92,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.getAppAuthorizationToken();
 
       // then
-      verify(restTemplate, times(1)).postForEntity(eq(expectedUrl), any(), any());
+      verify(restTemplate).postForEntity(eq(expectedUrl), any(), any());
     }
 
     @Test
@@ -107,7 +106,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.getAppAuthorizationToken();
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+      verify(restTemplate).postForEntity(anyString(), argumentCaptor.capture(), any());
       HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
       assertThat(httpEntity.getBody()).isNotNull();
       assertThat(httpEntity.getBody().size()).isEqualTo(1);
@@ -125,7 +124,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.getAppAuthorizationToken();
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+      verify(restTemplate).postForEntity(anyString(), argumentCaptor.capture(), any());
       HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
       HttpHeaders headers = httpEntity.getHeaders();
       assertThat(headers.getContentType()).isEqualTo(MediaType.APPLICATION_FORM_URLENCODED);
@@ -149,7 +148,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.getAppAuthorizationToken();
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+      verify(restTemplate).postForEntity(anyString(), argumentCaptor.capture(), any());
       HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
       HttpHeaders headers = httpEntity.getHeaders();
       assertThat(headers.get(AUTHORIZATION)).isEqualTo(List.of(expectedAuthorizationHeader));
@@ -166,7 +165,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.getAppAuthorizationToken();
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(SpotifyAppAuthorizationResponse.class));
+      verify(restTemplate).postForEntity(anyString(), any(), eq(SpotifyAppAuthorizationResponse.class));
     }
 
     @Test
@@ -234,7 +233,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.getUserAuthorizationToken("code");
 
       // then
-      verify(restTemplate, times(1)).postForEntity(eq(baseUrl + AUTHORIZATION_ENDPOINT), any(), any());
+      verify(restTemplate).postForEntity(eq(baseUrl + AUTHORIZATION_ENDPOINT), any(), any());
     }
 
     @Test
@@ -252,7 +251,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.getUserAuthorizationToken(code);
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+      verify(restTemplate).postForEntity(anyString(), argumentCaptor.capture(), any());
       HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
       assertThat(httpEntity.getBody()).isNotNull();
       assertThat(httpEntity.getBody().size()).isEqualTo(3);
@@ -272,7 +271,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.getUserAuthorizationToken("code");
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+      verify(restTemplate).postForEntity(anyString(), argumentCaptor.capture(), any());
       HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
       HttpHeaders headers = httpEntity.getHeaders();
       assertThat(headers.getContentType()).isEqualTo(MediaType.APPLICATION_FORM_URLENCODED);
@@ -296,7 +295,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.getUserAuthorizationToken("code");
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+      verify(restTemplate).postForEntity(anyString(), argumentCaptor.capture(), any());
       HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
       HttpHeaders headers = httpEntity.getHeaders();
       assertThat(headers.get(AUTHORIZATION)).isEqualTo(List.of(expectedAuthorizationHeader));
@@ -313,7 +312,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.getUserAuthorizationToken("code");
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(SpotifyUserAuthorizationResponse.class));
+      verify(restTemplate).postForEntity(anyString(), any(), eq(SpotifyUserAuthorizationResponse.class));
     }
 
     @Test
@@ -381,7 +380,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.refreshUserAuthorizationToken("refreshToken");
 
       // then
-      verify(restTemplate, times(1)).postForEntity(eq(baseUrl + AUTHORIZATION_ENDPOINT), any(), any());
+      verify(restTemplate).postForEntity(eq(baseUrl + AUTHORIZATION_ENDPOINT), any(), any());
     }
 
     @Test
@@ -396,7 +395,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.refreshUserAuthorizationToken(refreshToken);
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+      verify(restTemplate).postForEntity(anyString(), argumentCaptor.capture(), any());
       HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
       assertThat(httpEntity.getBody()).isNotNull();
       assertThat(httpEntity.getBody().size()).isEqualTo(2);
@@ -415,7 +414,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.refreshUserAuthorizationToken("refreshToken");
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+      verify(restTemplate).postForEntity(anyString(), argumentCaptor.capture(), any());
       HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
       HttpHeaders headers = httpEntity.getHeaders();
       assertThat(headers.getContentType()).isEqualTo(MediaType.APPLICATION_FORM_URLENCODED);
@@ -439,7 +438,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.refreshUserAuthorizationToken("refreshToken");
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptor.capture(), any());
+      verify(restTemplate).postForEntity(anyString(), argumentCaptor.capture(), any());
       HttpEntity<MultiValueMap<String, String>> httpEntity = argumentCaptor.getValue();
       HttpHeaders headers = httpEntity.getHeaders();
       assertThat(headers.get(AUTHORIZATION)).isEqualTo(List.of(expectedAuthorizationHeader));
@@ -456,7 +455,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       underTest.refreshUserAuthorizationToken("refreshToken");
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(SpotifyUserAuthorizationResponse.class));
+      verify(restTemplate).postForEntity(anyString(), any(), eq(SpotifyUserAuthorizationResponse.class));
     }
 
     @Test

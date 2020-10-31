@@ -21,7 +21,6 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
@@ -62,7 +61,7 @@ class ConsoleEmailServiceTest implements WithAssertions {
     emailService.sendEmail(email);
 
     // then
-    verify(templateEngine, times(1)).process(templateNameCaptor.capture(), contextCaptor.capture());
+    verify(templateEngine).process(templateNameCaptor.capture(), contextCaptor.capture());
 
     assertThat(templateNameCaptor.getValue()).isEqualTo(email.getTemplateName());
     assertThat(contextCaptor.getValue().getVariable("newReleases")).isEqualTo(releases);
@@ -78,6 +77,6 @@ class ConsoleEmailServiceTest implements WithAssertions {
     emailService.sendEmail(email);
 
     // then
-    verify(mailProperties, times(1)).getFromEmail();
+    verify(mailProperties).getFromEmail();
   }
 }

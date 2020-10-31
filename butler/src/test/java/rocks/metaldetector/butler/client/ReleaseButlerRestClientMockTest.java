@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.startsWith;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,7 +52,7 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
     function.apply(underTest);
 
     // then
-    verify(resourceLoader, times(1)).getResource(startsWith("classpath:"));
+    verify(resourceLoader).getResource(startsWith("classpath:"));
   }
 
   @ParameterizedTest(name = "Should use object mapper to map classpath resource that should be returned")
@@ -69,7 +68,7 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
     ButlerReleasesResponse response = function.apply(underTest);
 
     // then
-    verify(objectMapper, times(1)).readValue(any(Reader.class), any(Class.class));
+    verify(objectMapper).readValue(any(Reader.class), any(Class.class));
     assertThat(response).isEqualTo(expectedResult);
   }
 

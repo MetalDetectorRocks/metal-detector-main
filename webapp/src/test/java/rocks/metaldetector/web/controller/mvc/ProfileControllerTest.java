@@ -17,7 +17,6 @@ import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import java.util.Map;
 
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -111,6 +110,6 @@ class ProfileControllerTest {
     callbackRestAssuredUtils.doGet(parameter);
 
     // then
-    verify(userAuthorizationService, times(1)).fetchInitialToken(state, code);
+    verify(userAuthorizationService).fetchInitialToken(state, code);
   }
 }

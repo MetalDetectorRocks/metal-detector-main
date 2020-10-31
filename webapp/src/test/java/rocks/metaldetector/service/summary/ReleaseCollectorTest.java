@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
@@ -62,7 +61,7 @@ class ReleaseCollectorTest implements WithAssertions {
     underTest.collectUpcomingReleases(artists);
 
     // then
-    verify(releaseService, times(1)).findReleases(eq(expectedArtistNames), any(), any());
+    verify(releaseService).findReleases(eq(expectedArtistNames), any(), any());
   }
 
   @Test
@@ -78,7 +77,7 @@ class ReleaseCollectorTest implements WithAssertions {
     underTest.collectUpcomingReleases(artists);
 
     // then
-    verify(releaseService, times(1)).findReleases(any(), eq(expectedTimeRange), any());
+    verify(releaseService).findReleases(any(), eq(expectedTimeRange), any());
   }
 
   @Test
@@ -93,7 +92,7 @@ class ReleaseCollectorTest implements WithAssertions {
     underTest.collectUpcomingReleases(artists);
 
     // then
-    verify(releaseService, times(1)).findReleases(any(), any(), eq(expectedPageRequest));
+    verify(releaseService).findReleases(any(), any(), eq(expectedPageRequest));
   }
 
   @Test
@@ -133,7 +132,7 @@ class ReleaseCollectorTest implements WithAssertions {
     underTest.collectRecentReleases(artists);
 
     // then
-    verify(releaseService, times(1)).findReleases(eq(expectedArtistNames), any(), any());
+    verify(releaseService).findReleases(eq(expectedArtistNames), any(), any());
   }
 
   @Test
@@ -149,7 +148,7 @@ class ReleaseCollectorTest implements WithAssertions {
     underTest.collectRecentReleases(artists);
 
     // then
-    verify(releaseService, times(1)).findReleases(any(), eq(expectedTimeRange), any());
+    verify(releaseService).findReleases(any(), eq(expectedTimeRange), any());
   }
 
   @Test
@@ -164,7 +163,7 @@ class ReleaseCollectorTest implements WithAssertions {
     underTest.collectRecentReleases(artists);
 
     // then
-    verify(releaseService, times(1)).findReleases(any(), any(), eq(expectedPageRequest));
+    verify(releaseService).findReleases(any(), any(), eq(expectedPageRequest));
   }
 
   @Test

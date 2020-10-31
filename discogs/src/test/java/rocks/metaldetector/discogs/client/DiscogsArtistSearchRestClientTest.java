@@ -30,7 +30,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.discogs.client.DiscogsArtistSearchRestClientImpl.ARTIST_ID_SEARCH_URL_FRAGMENT;
 import static rocks.metaldetector.discogs.client.DiscogsArtistSearchRestClientImpl.ARTIST_NAME_SEARCH_URL_FRAGMENT;
@@ -90,7 +89,7 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
       underTest.searchByName("query", 1, 1);
 
       // then
-      verify(restTemplate, times(1)).getForEntity(eq(expectedSearchUrl), any(), any(), any(), any());
+      verify(restTemplate).getForEntity(eq(expectedSearchUrl), any(), any(), any(), any());
     }
 
     @Test
@@ -105,7 +104,7 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
       underTest.searchByName(query, 1, 1);
 
       // then
-      verify(restTemplate, times(1)).getForEntity(any(), any(), eq(query), any(), any());
+      verify(restTemplate).getForEntity(any(), any(), eq(query), any(), any());
     }
 
     @Test
@@ -121,7 +120,7 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
       underTest.searchByName("query", page, size);
 
       // then
-      verify(restTemplate, times(1)).getForEntity(any(), any(), any(), eq(page), eq(size));
+      verify(restTemplate).getForEntity(any(), any(), any(), eq(page), eq(size));
     }
 
     @Test
@@ -201,7 +200,7 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
       underTest.searchById("123");
 
       // then
-      verify(restTemplate, times(1)).getForEntity(eq(expectedSearchUrl), any(), anyString());
+      verify(restTemplate).getForEntity(eq(expectedSearchUrl), any(), anyString());
     }
 
     @Test
@@ -216,7 +215,7 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
       underTest.searchById(artistId);
 
       // then
-      verify(restTemplate, times(1)).getForEntity(any(), any(), eq(artistId));
+      verify(restTemplate).getForEntity(any(), any(), eq(artistId));
     }
 
     @Test

@@ -143,7 +143,7 @@ class UserServiceTest implements WithAssertions {
       userService.createUser(givenUserDto);
 
       // then
-      verify(userRepository, times(1)).save(userEntityCaptor.capture());
+      verify(userRepository).save(userEntityCaptor.capture());
       UserEntity passedUserEntity = userEntityCaptor.getValue();
       assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
       assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
@@ -250,7 +250,7 @@ class UserServiceTest implements WithAssertions {
       userService.createAdministrator(givenUserDto);
 
       // then
-      verify(userRepository, times(1)).save(userEntityCaptor.capture());
+      verify(userRepository).save(userEntityCaptor.capture());
       UserEntity passedUserEntity = userEntityCaptor.getValue();
       assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
       assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
@@ -276,7 +276,7 @@ class UserServiceTest implements WithAssertions {
       UserDto userDto = userService.getUserByPublicId(PUBLIC_ID);
 
       // then
-      verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
+      verify(userRepository).findByPublicId(PUBLIC_ID);
       assertThat(userDto.getUsername()).isEqualTo(user.getUsername());
       assertThat(userDto.getEmail()).isEqualTo(user.getEmail());
     }
@@ -291,7 +291,7 @@ class UserServiceTest implements WithAssertions {
       Throwable throwable = catchThrowable(() -> userService.getUserByPublicId(PUBLIC_ID));
 
       // then
-      verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
+      verify(userRepository).findByPublicId(PUBLIC_ID);
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
       assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
     }
@@ -310,7 +310,7 @@ class UserServiceTest implements WithAssertions {
       Optional<UserDto> userDto = userService.getUserByEmailOrUsername(EMAIL);
 
       // then
-      verify(userRepository, times(1)).findByEmail(EMAIL);
+      verify(userRepository).findByEmail(EMAIL);
       verify(userRepository, never()).findByUsername(EMAIL);
       assertThat(userDto).isPresent();
       assertThat(userDto.get().getUsername()).isEqualTo(USERNAME);
@@ -331,8 +331,8 @@ class UserServiceTest implements WithAssertions {
       Optional<UserDto> userDto = userService.getUserByEmailOrUsername(USERNAME);
 
       // then
-      verify(userRepository, times(1)).findByEmail(USERNAME);
-      verify(userRepository, times(1)).findByUsername(USERNAME);
+      verify(userRepository).findByEmail(USERNAME);
+      verify(userRepository).findByUsername(USERNAME);
       assertThat(userDto).isPresent();
       assertThat(userDto.get().getUsername()).isEqualTo(USERNAME);
       assertThat(userDto.get().getEmail()).isEqualTo(EMAIL);
@@ -351,8 +351,8 @@ class UserServiceTest implements WithAssertions {
       Optional<UserDto> userDto = userService.getUserByEmailOrUsername(NOT_EXISTING);
 
       // then
-      verify(userRepository, times(1)).findByEmail(NOT_EXISTING);
-      verify(userRepository, times(1)).findByUsername(NOT_EXISTING);
+      verify(userRepository).findByEmail(NOT_EXISTING);
+      verify(userRepository).findByUsername(NOT_EXISTING);
       assertThat(userDto).isEmpty();
     }
 
@@ -403,7 +403,7 @@ class UserServiceTest implements WithAssertions {
       userService.getAllUsers();
 
       // then
-      verify(userRepository, times(1)).findAll();
+      verify(userRepository).findAll();
     }
 
     @Test
@@ -439,7 +439,7 @@ class UserServiceTest implements WithAssertions {
       userService.getAllActiveUsers();
 
       // then
-      verify(userRepository, times(1)).findAll();
+      verify(userRepository).findAll();
     }
 
     @Test
@@ -498,7 +498,7 @@ class UserServiceTest implements WithAssertions {
       assertThat(userDtoList.get(0).getEmail()).isEqualTo(user1.getEmail());
       assertThat(userDtoList.get(1).getUsername()).isEqualTo(user2.getUsername());
       assertThat(userDtoList.get(1).getEmail()).isEqualTo(user2.getEmail());
-      verify(userRepository, times(1)).findAll(PageRequest.of(PAGE, LIMIT));
+      verify(userRepository).findAll(PageRequest.of(PAGE, LIMIT));
     }
   }
 
@@ -525,9 +525,9 @@ class UserServiceTest implements WithAssertions {
       UserDto userDto = userService.updateUser(PUBLIC_ID, userDtoForUpdate);
 
       // then
-      verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
-      verify(userRepository, times(1)).save(userEntityCaptor.capture());
-      verify(currentPublicUserIdSupplier, times(1)).get();
+      verify(userRepository).findByPublicId(PUBLIC_ID);
+      verify(userRepository).save(userEntityCaptor.capture());
+      verify(currentPublicUserIdSupplier).get();
       assertThat(userDto).isNotNull();
       assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
       assertThat(userEntityCaptor.getValue().getUserRoles()).containsExactly(ROLE_ADMINISTRATOR);
@@ -552,9 +552,9 @@ class UserServiceTest implements WithAssertions {
       UserDto userDto = userService.updateUser(PUBLIC_ID, userDtoForUpdate);
 
       // then
-      verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
-      verify(userRepository, times(1)).save(userEntityCaptor.capture());
-      verify(currentPublicUserIdSupplier, times(1)).get();
+      verify(userRepository).findByPublicId(PUBLIC_ID);
+      verify(userRepository).save(userEntityCaptor.capture());
+      verify(currentPublicUserIdSupplier).get();
       assertThat(userDto).isNotNull();
       assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
       assertThat(userEntityCaptor.getValue().isEnabled()).isFalse();
@@ -572,7 +572,7 @@ class UserServiceTest implements WithAssertions {
       Throwable throwable = catchThrowable(() -> userService.updateUser(PUBLIC_ID, userDtoForUpdate));
 
       // then
-      verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
+      verify(userRepository).findByPublicId(PUBLIC_ID);
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
       assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
     }
@@ -633,10 +633,10 @@ class UserServiceTest implements WithAssertions {
       userService.changePassword(TOKEN, NEW_PLAIN_PASSWORD);
 
       // then
-      verify(userRepository, times(1)).save(userEntityCaptor.capture());
-      verify(tokenService, times(1)).getResetPasswordTokenByTokenString(TOKEN);
-      verify(tokenService, times(1)).deleteToken(tokenEntity);
-      verify(jwtsSupport, times(1)).getClaims(TOKEN);
+      verify(userRepository).save(userEntityCaptor.capture());
+      verify(tokenService).getResetPasswordTokenByTokenString(TOKEN);
+      verify(tokenService).deleteToken(tokenEntity);
+      verify(jwtsSupport).getClaims(TOKEN);
       assertThat(userEntityCaptor.getValue().getPassword()).isEqualTo(NEW_ENCRYPTED_PASSWORD);
     }
 
@@ -686,8 +686,8 @@ class UserServiceTest implements WithAssertions {
       userService.deleteUser(PUBLIC_ID);
 
       // then
-      verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
-      verify(userRepository, times(1)).delete(user);
+      verify(userRepository).findByPublicId(PUBLIC_ID);
+      verify(userRepository).delete(user);
     }
 
     @Test
@@ -700,7 +700,7 @@ class UserServiceTest implements WithAssertions {
       Throwable throwable = catchThrowable(() -> userService.deleteUser(PUBLIC_ID));
 
       // then
-      verify(userRepository, times(1)).findByPublicId(PUBLIC_ID);
+      verify(userRepository).findByPublicId(PUBLIC_ID);
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
       assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
     }
@@ -723,8 +723,8 @@ class UserServiceTest implements WithAssertions {
       UserDetails userDetails = userService.loadUserByUsername(USERNAME);
 
       // then
-      verify(userRepository, times(1)).findByEmail(USERNAME);
-      verify(userRepository, times(1)).findByUsername(USERNAME);
+      verify(userRepository).findByEmail(USERNAME);
+      verify(userRepository).findByUsername(USERNAME);
       assertThat(userDetails).isNotNull();
       assertThat(userDetails.getUsername()).isEqualTo(user.getUsername());
       assertThat(userDetails.isEnabled()).isEqualTo(user.isEnabled());
@@ -742,8 +742,8 @@ class UserServiceTest implements WithAssertions {
       Throwable throwable = catchThrowable(() -> userService.loadUserByUsername(USERNAME));
 
       // then
-      verify(userRepository, times(1)).findByEmail(USERNAME);
-      verify(userRepository, times(1)).findByUsername(USERNAME);
+      verify(userRepository).findByEmail(USERNAME);
+      verify(userRepository).findByUsername(USERNAME);
       assertThat(throwable).isInstanceOf(UsernameNotFoundException.class);
       assertThat(throwable).hasMessageContaining(USER_NOT_FOUND.toDisplayString());
     }
@@ -767,8 +767,8 @@ class UserServiceTest implements WithAssertions {
       userService.verifyEmailToken(TOKEN_STRING);
 
       // then
-      verify(userRepository, times(1)).save(userEntityCaptor.capture());
-      verify(tokenRepository, times(1)).delete(tokenEntity);
+      verify(userRepository).save(userEntityCaptor.capture());
+      verify(tokenRepository).delete(tokenEntity);
       assertThat(userEntityCaptor.getValue().isEnabled()).isTrue();
     }
 
@@ -821,7 +821,7 @@ class UserServiceTest implements WithAssertions {
       userService.persistSuccessfulLogin(userEntity.getPublicId());
 
       // then
-      verify(userRepository, times(1)).save(userEntityCaptor.capture());
+      verify(userRepository).save(userEntityCaptor.capture());
 
       UserEntity entity = userEntityCaptor.getValue();
       assertThat(entity.getLastLogin()).isCloseTo(LocalDateTime.now(), new TemporalUnitLessThanOffset(1, ChronoUnit.SECONDS));
@@ -838,7 +838,7 @@ class UserServiceTest implements WithAssertions {
       userService.persistSuccessfulLogin(userEntity.getPublicId());
 
       // then
-      verify(userRepository, times(1)).findByPublicId(userEntity.getPublicId());
+      verify(userRepository).findByPublicId(userEntity.getPublicId());
     }
 
     @Test
@@ -852,7 +852,7 @@ class UserServiceTest implements WithAssertions {
       userService.persistSuccessfulLogin(notExistingId);
 
       // then
-      verify(userRepository, times(1)).findByPublicId(notExistingId);
+      verify(userRepository).findByPublicId(notExistingId);
 
       // and
       verifyNoMoreInteractions(userRepository);

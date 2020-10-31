@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,7 +70,7 @@ class DiscogsArtistTransformerTest implements WithAssertions {
     DiscogsArtistDto result = underTest.transform(discogsArtist);
 
     // then
-    verify(artistNameTransformer, times(1)).transformArtistName(discogsArtist.getName());
+    verify(artistNameTransformer).transformArtistName(discogsArtist.getName());
     assertThat(result.getName()).isEqualTo(expectedName);
   }
 
