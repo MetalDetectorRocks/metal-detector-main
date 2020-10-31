@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -99,7 +98,7 @@ class LoginControllerIT extends BaseWebMvcTestWithSecurity {
     mockMvc.perform(requestBuilder);
 
     // then
-    verify(userService, times(1)).loadUserByUsername(USERNAME);
+    verify(userService).loadUserByUsername(USERNAME);
   }
 
   @ParameterizedTest(name = "[{index}]: Username <{0}> and Password <{1}>")
@@ -135,7 +134,7 @@ class LoginControllerIT extends BaseWebMvcTestWithSecurity {
 
     // then
     String expectedUsernameArgument = (username == null || username.isBlank()) ? "" : username;
-    verify(userService, times(1)).loadUserByUsername(expectedUsernameArgument);
+    verify(userService).loadUserByUsername(expectedUsernameArgument);
   }
 
   private static Stream<Arguments> credentialProvider() {

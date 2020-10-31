@@ -39,7 +39,6 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
@@ -111,7 +110,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByName("token", "query", 1, 10);
 
       // then
-      verify(restTemplate, times(1)).exchange(eq(expectedUrl), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      verify(restTemplate).exchange(eq(expectedUrl), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
     }
 
     @Test
@@ -125,7 +124,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByName("token", "query", 1, 10);
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), eq(GET), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      verify(restTemplate).exchange(any(), eq(GET), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
     }
 
     @Test
@@ -139,7 +138,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByName("token", "query", 1, 10);
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
       HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
       HttpHeaders headers = httpEntity.getHeaders();
       assertThat(headers.getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -158,7 +157,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByName(token, "query", 1, 10);
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
       HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
       HttpHeaders headers = httpEntity.getHeaders();
       assertThat(headers.get(AUTHORIZATION)).isEqualTo(Collections.singletonList(AUTHORIZATION_HEADER_PREFIX + token));
@@ -175,7 +174,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByName("token", "query", 1, 10);
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), any(), eq(SpotifyArtistSearchResultContainer.class), anyMap());
+      verify(restTemplate).exchange(any(), any(), any(), eq(SpotifyArtistSearchResultContainer.class), anyMap());
     }
 
     @Test
@@ -191,7 +190,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByName("token", query, 1, 10);
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
+      verify(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
       Map<String, Object> urlParameter = urlParameterCaptor.getValue();
       assertThat(urlParameter.get(QUERY_PARAMETER_NAME)).isEqualTo(expectedQuery);
     }
@@ -208,7 +207,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByName("token", "query", pageNumber, pageSize);
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
+      verify(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
       Map<String, Object> urlParameter = urlParameterCaptor.getValue();
       assertThat(urlParameter.get(OFFSET_PARAMETER_NAME)).isEqualTo(expectedOffset);
     }
@@ -225,7 +224,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByName("token", "query", 1, limit);
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
+      verify(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
       Map<String, Object> urlParameter = urlParameterCaptor.getValue();
       assertThat(urlParameter.get(LIMIT_PARAMETER_NAME)).isEqualTo(limit);
     }
@@ -323,7 +322,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchById("token", "666");
 
       // then
-      verify(restTemplate, times(1)).exchange(eq(expectedSearchUrl), any(), any(), spotifyArtistClass(), anyMap());
+      verify(restTemplate).exchange(eq(expectedSearchUrl), any(), any(), spotifyArtistClass(), anyMap());
     }
 
     @Test
@@ -337,7 +336,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchById("token", "666");
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), eq(GET), any(), spotifyArtistClass(), anyMap());
+      verify(restTemplate).exchange(any(), eq(GET), any(), spotifyArtistClass(), anyMap());
     }
 
     @Test
@@ -351,7 +350,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchById("token", "666");
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), httpEntityCaptor.capture(), spotifyArtistClass(), anyMap());
+      verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), spotifyArtistClass(), anyMap());
       HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
       HttpHeaders headers = httpEntity.getHeaders();
       assertThat(headers.getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -370,7 +369,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchById(token, "666");
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
       HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
       HttpHeaders headers = httpEntity.getHeaders();
       assertThat(headers.get(AUTHORIZATION)).isEqualTo(Collections.singletonList(AUTHORIZATION_HEADER_PREFIX + token));
@@ -387,7 +386,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchById("token", "666");
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), any(), eq(SpotifyArtist.class), anyMap());
+      verify(restTemplate).exchange(any(), any(), any(), eq(SpotifyArtist.class), anyMap());
     }
 
     @Test
@@ -402,7 +401,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchById("token", artistId);
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), any(), spotifyArtistClass(), urlParameterCaptor.capture());
+      verify(restTemplate).exchange(any(), any(), any(), spotifyArtistClass(), urlParameterCaptor.capture());
       Map<String, Object> urlParameter = urlParameterCaptor.getValue();
       assertThat(urlParameter.get(ID_PARAMETER_NAME)).isEqualTo(artistId);
     }
@@ -497,7 +496,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByIds("token", List.of("666"));
 
       // then
-      verify(restTemplate, times(1)).exchange(eq(expectedSearchUrl), any(), any(), spotifyArtistContainerClass(), anyMap());
+      verify(restTemplate).exchange(eq(expectedSearchUrl), any(), any(), spotifyArtistContainerClass(), anyMap());
     }
 
     @Test
@@ -513,7 +512,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByIds("token", List.of("666"));
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), eq(GET), any(), spotifyArtistContainerClass(), anyMap());
+      verify(restTemplate).exchange(any(), eq(GET), any(), spotifyArtistContainerClass(), anyMap());
     }
 
     @Test
@@ -529,7 +528,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByIds("token", List.of("666"));
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), httpEntityCaptor.capture(), spotifyArtistContainerClass(), anyMap());
+      verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), spotifyArtistContainerClass(), anyMap());
       HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
       HttpHeaders headers = httpEntity.getHeaders();
       assertThat(headers.getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -550,7 +549,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByIds(token, List.of("666"));
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
       HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
       HttpHeaders headers = httpEntity.getHeaders();
       assertThat(headers.get(AUTHORIZATION)).isEqualTo(Collections.singletonList(AUTHORIZATION_HEADER_PREFIX + token));
@@ -569,7 +568,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByIds("token", List.of("666"));
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), any(), eq(SpotifyArtistsContainer.class), anyMap());
+      verify(restTemplate).exchange(any(), any(), any(), eq(SpotifyArtistsContainer.class), anyMap());
     }
 
     @Test
@@ -586,7 +585,7 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
       underTest.searchByIds("token", artistIds);
 
       // then
-      verify(restTemplate, times(1)).exchange(any(), any(), any(), spotifyArtistContainerClass(), urlParameterCaptor.capture());
+      verify(restTemplate).exchange(any(), any(), any(), spotifyArtistContainerClass(), urlParameterCaptor.capture());
       Map<String, Object> urlParameter = urlParameterCaptor.getValue();
       assertThat(urlParameter.get(ID_PARAMETER_NAME)).isEqualTo(String.join(",", artistIds));
     }

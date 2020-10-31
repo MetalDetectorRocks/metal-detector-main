@@ -29,7 +29,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
@@ -107,7 +106,7 @@ class ArtistServiceImplTest implements WithAssertions {
     underTest.findArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(artistRepository, times(1)).findByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
+    verify(artistRepository).findByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
   }
 
   @Test
@@ -120,7 +119,7 @@ class ArtistServiceImplTest implements WithAssertions {
     underTest.findArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(artistTransformer, times(1)).transform(artistEntity);
+    verify(artistTransformer).transform(artistEntity);
   }
 
   @Test
@@ -155,7 +154,7 @@ class ArtistServiceImplTest implements WithAssertions {
     underTest.findAllArtistsByExternalIds(List.of(EXTERNAL_ID, "0"));
 
     // then
-    verify(artistRepository, times(1)).findAllByExternalIdIn(List.of(EXTERNAL_ID, "0"));
+    verify(artistRepository).findAllByExternalIdIn(List.of(EXTERNAL_ID, "0"));
   }
 
   @Test
@@ -168,7 +167,7 @@ class ArtistServiceImplTest implements WithAssertions {
     underTest.findAllArtistsByExternalIds(List.of(EXTERNAL_ID, "0"));
 
     // then
-    verify(artistTransformer, times(1)).transform(artistEntity);
+    verify(artistTransformer).transform(artistEntity);
   }
 
   @Test
@@ -204,7 +203,7 @@ class ArtistServiceImplTest implements WithAssertions {
     underTest.existsArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(artistRepository, times(1)).existsByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
+    verify(artistRepository).existsByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
   }
 
   @Test
@@ -218,7 +217,7 @@ class ArtistServiceImplTest implements WithAssertions {
     underTest.persistArtists(spotifyDtos);
 
     // then
-    verify(artistRepository, times(1)).saveAll(argumentCaptor.capture());
+    verify(artistRepository).saveAll(argumentCaptor.capture());
     List<ArtistEntity> capturedEntites = argumentCaptor.getValue();
     assertThat(capturedEntites).isEqualTo(expectedEntities);
   }
@@ -233,7 +232,7 @@ class ArtistServiceImplTest implements WithAssertions {
     underTest.findNewArtistIds(artistIds);
 
     // then
-    verify(artistRepository, times(1)).findAllByExternalIdIn(artistIds);
+    verify(artistRepository).findAllByExternalIdIn(artistIds);
   }
 
   @Test

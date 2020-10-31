@@ -37,7 +37,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -99,8 +98,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
     // then
     InOrder inOrderVerifier = inOrder(artistRepository);
-    inOrderVerifier.verify(artistRepository, times(1)).existsByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
-    inOrderVerifier.verify(artistRepository, times(1)).findByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
+    inOrderVerifier.verify(artistRepository).existsByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
+    inOrderVerifier.verify(artistRepository).findByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
   }
 
   @Test
@@ -116,8 +115,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(currentPublicUserIdSupplier, times(1)).get();
-    verify(userRepository, times(1)).findByPublicId(PUBLIC_USER_ID);
+    verify(currentPublicUserIdSupplier).get();
+    verify(userRepository).findByPublicId(PUBLIC_USER_ID);
   }
 
   @Test
@@ -150,7 +149,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.follow(EXTERNAL_ID, SPOTIFY);
 
     // then
-    verify(spotifyService, times(1)).searchArtistById(EXTERNAL_ID);
+    verify(spotifyService).searchArtistById(EXTERNAL_ID);
     verifyNoInteractions(discogsService);
   }
 
@@ -167,7 +166,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.follow(EXTERNAL_ID, DISCOGS);
 
     // then
-    verify(discogsService, times(1)).searchArtistById(EXTERNAL_ID);
+    verify(discogsService).searchArtistById(EXTERNAL_ID);
     verifyNoInteractions(spotifyService);
   }
 
@@ -203,7 +202,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(artistRepository, times(1)).save(argumentCaptor.capture());
+    verify(artistRepository).save(argumentCaptor.capture());
 
     ArtistEntity artistEntity = argumentCaptor.getValue();
     assertThat(artistEntity.getArtistName()).isEqualTo(discogsArtist.getName());
@@ -227,7 +226,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
     // then
     FollowActionEntity followAction = FollowActionEntity.builder().user(userEntity).artist(artist).build();
-    verify(followActionRepository, times(1)).save(followAction);
+    verify(followActionRepository).save(followAction);
   }
 
   @Test
@@ -242,7 +241,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.unfollow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(artistRepository, times(1)).findByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
+    verify(artistRepository).findByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
   }
 
   @Test
@@ -257,8 +256,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.unfollow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(currentPublicUserIdSupplier, times(1)).get();
-    verify(userRepository, times(1)).findByPublicId(PUBLIC_USER_ID);
+    verify(currentPublicUserIdSupplier).get();
+    verify(userRepository).findByPublicId(PUBLIC_USER_ID);
   }
 
   @Test
@@ -290,7 +289,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.unfollow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(followActionRepository, times(1)).deleteByUserAndArtist(userEntity, artist);
+    verify(followActionRepository).deleteByUserAndArtist(userEntity, artist);
   }
 
   @Test
@@ -304,8 +303,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.isCurrentUserFollowing(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(currentPublicUserIdSupplier, times(1)).get();
-    verify(userRepository, times(1)).findByPublicId(PUBLIC_USER_ID);
+    verify(currentPublicUserIdSupplier).get();
+    verify(userRepository).findByPublicId(PUBLIC_USER_ID);
   }
 
   @Test
@@ -333,7 +332,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.isCurrentUserFollowing(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(artistRepository, times(1)).findByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
+    verify(artistRepository).findByExternalIdAndSource(EXTERNAL_ID, ARTIST_SOURCE);
   }
 
   @Test
@@ -363,7 +362,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.isCurrentUserFollowing(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(followActionRepository, times(1)).existsByUserIdAndArtistId(userEntity.getId(), artistEntity.getId());
+    verify(followActionRepository).existsByUserIdAndArtistId(userEntity.getId(), artistEntity.getId());
   }
 
   @ParameterizedTest(name = "should return {0}")
@@ -393,8 +392,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.getFollowedArtistsOfCurrentUser();
 
     // then
-    verify(currentPublicUserIdSupplier, times(1)).get();
-    verify(userRepository, times(1)).findByPublicId(PUBLIC_USER_ID);
+    verify(currentPublicUserIdSupplier).get();
+    verify(userRepository).findByPublicId(PUBLIC_USER_ID);
   }
 
   @Test
@@ -423,7 +422,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.getFollowedArtistsOfCurrentUser();
 
     // then
-    verify(followActionRepository, times(1)).findAllByUser(userEntity);
+    verify(followActionRepository).findAllByUser(userEntity);
   }
 
   @Test
@@ -441,8 +440,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.getFollowedArtistsOfCurrentUser();
 
     // then
-    verify(artistTransformer, times(1)).transform(followAction1);
-    verify(artistTransformer, times(1)).transform(followAction2);
+    verify(artistTransformer).transform(followAction1);
+    verify(artistTransformer).transform(followAction2);
   }
 
   @Test

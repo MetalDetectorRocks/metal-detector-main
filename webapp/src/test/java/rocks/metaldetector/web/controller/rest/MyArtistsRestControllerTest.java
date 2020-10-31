@@ -29,7 +29,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
@@ -87,7 +86,7 @@ class MyArtistsRestControllerTest implements WithAssertions {
     restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
 
     // then
-    verify(followArtistService, times(1)).getFollowedArtistsOfCurrentUser();
+    verify(followArtistService).getFollowedArtistsOfCurrentUser();
   }
 
   @Test
@@ -101,7 +100,7 @@ class MyArtistsRestControllerTest implements WithAssertions {
     restAssuredMockMvcUtils.doGet(Map.of("page", PAGE, "size", SIZE));
 
     // then
-    verify(slicingService, times(1)).slice(artists, PAGE, SIZE);
+    verify(slicingService).slice(artists, PAGE, SIZE);
   }
 
   @Test

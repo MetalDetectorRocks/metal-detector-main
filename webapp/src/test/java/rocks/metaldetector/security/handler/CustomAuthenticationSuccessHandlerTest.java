@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import rocks.metaldetector.support.Endpoints;
 
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler.SAVED_REQUEST_ATTRIBUTE;
 
@@ -60,7 +59,7 @@ class CustomAuthenticationSuccessHandlerTest implements WithAssertions {
     underTest.onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
 
     // then
-    verify(savedRequestRedirectionHandler, times(1)).onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
+    verify(savedRequestRedirectionHandler).onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
   }
 
 }

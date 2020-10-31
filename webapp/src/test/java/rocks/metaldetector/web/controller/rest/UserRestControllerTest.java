@@ -163,7 +163,7 @@ class UserRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet("/" + USER_ID);
 
       // then
-      verify(userService, times(1)).getUserByPublicId(USER_ID);
+      verify(userService).getUserByPublicId(USER_ID);
     }
 
     @Test
@@ -198,7 +198,7 @@ class UserRestControllerTest implements WithAssertions {
       restAssuredUtils.doPost(request);
 
       // then
-      verify(userService, times(1)).createAdministrator(userDtoCaptor.capture());
+      verify(userService).createAdministrator(userDtoCaptor.capture());
       assertThat(userDtoCaptor.getValue()).isEqualTo(expectedPassedUserDto);
     }
 
@@ -301,7 +301,7 @@ class UserRestControllerTest implements WithAssertions {
       UserResponse user = response.extract().as(UserResponse.class);
       assertThat(user.getRole()).isEqualTo(NEW_ROLE);
       assertThat(user.isEnabled()).isFalse();
-      verify(userService, times(1)).updateUser(eq(USER_ID), any());
+      verify(userService).updateUser(eq(USER_ID), any());
     }
 
     @ParameterizedTest

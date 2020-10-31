@@ -35,7 +35,6 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
@@ -92,7 +91,7 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     underTest.fetchLikedAlbums("token", 666);
 
     // then
-    verify(restTemplate, times(1)).exchange(eq(baseUrl + GET_MY_ALBUMS_ENDPOINT), any(), any(), ArgumentMatchers.<Class<SpotfiyAlbumImportResult>>any(), anyMap());
+    verify(restTemplate).exchange(eq(baseUrl + GET_MY_ALBUMS_ENDPOINT), any(), any(), ArgumentMatchers.<Class<SpotfiyAlbumImportResult>>any(), anyMap());
   }
 
   @Test
@@ -105,7 +104,7 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     underTest.fetchLikedAlbums("token", 666);
 
     // then
-    verify(spotifyProperties, times(1)).getRestBaseUrl();
+    verify(spotifyProperties).getRestBaseUrl();
   }
 
   @Test
@@ -118,7 +117,7 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     underTest.fetchLikedAlbums("token", 666);
 
     // then
-    verify(restTemplate, times(1)).exchange(any(), eq(GET), any(), ArgumentMatchers.<Class<SpotfiyAlbumImportResult>>any(), anyMap());
+    verify(restTemplate).exchange(any(), eq(GET), any(), ArgumentMatchers.<Class<SpotfiyAlbumImportResult>>any(), anyMap());
   }
 
   @Test
@@ -131,7 +130,7 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     underTest.fetchLikedAlbums("token", 666);
 
     // then
-    verify(restTemplate, times(1)).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+    verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
     HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
     HttpHeaders headers = httpEntity.getHeaders();
     assertThat(headers.getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -148,7 +147,7 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     // when
     underTest.fetchLikedAlbums(token, 666);
     // then
-    verify(restTemplate, times(1)).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+    verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
     HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
     HttpHeaders headers = httpEntity.getHeaders();
     assertThat(headers.get(AUTHORIZATION)).isEqualTo(Collections.singletonList(AUTHORIZATION_HEADER_PREFIX + token));
@@ -164,7 +163,7 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     underTest.fetchLikedAlbums("token", 666);
 
     // then
-    verify(restTemplate, times(1)).exchange(any(), any(), any(), eq(SpotfiyAlbumImportResult.class), anyMap());
+    verify(restTemplate).exchange(any(), any(), any(), eq(SpotfiyAlbumImportResult.class), anyMap());
   }
 
   @Test
@@ -178,7 +177,7 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     underTest.fetchLikedAlbums("token", offset);
 
     // then
-    verify(restTemplate, times(1)).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
+    verify(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
     Map<String, Object> urlParameter = urlParameterCaptor.getValue();
     assertThat(urlParameter.get(LIMIT_PARAMETER_NAME)).isEqualTo(LIMIT);
     assertThat(urlParameter.get(OFFSET_PARAMETER_NAME)).isEqualTo(offset);

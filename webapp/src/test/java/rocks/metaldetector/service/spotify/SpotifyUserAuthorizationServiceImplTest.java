@@ -35,7 +35,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -79,7 +78,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       underTest.prepareAuthorization();
 
       // then
-      verify(currentPublicUserIdSupplier, times(1)).get();
+      verify(currentPublicUserIdSupplier).get();
     }
 
     @Test
@@ -93,7 +92,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       underTest.prepareAuthorization();
 
       // then
-      verify(userRepository, times(1)).findByPublicId(userId);
+      verify(userRepository).findByPublicId(userId);
     }
 
     @Test
@@ -106,7 +105,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       underTest.prepareAuthorization();
 
       // then
-      verify(userRepository, times(1)).save(argumentCaptor.capture());
+      verify(userRepository).save(argumentCaptor.capture());
 
       UserEntity userEntity = argumentCaptor.getValue();
       assertThat(userEntity.getSpotifyAuthorization()).isNotNull();
@@ -137,7 +136,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       underTest.prepareAuthorization();
 
       // then
-      verify(spotifyService, times(1)).getSpotifyAuthorizationUrl();
+      verify(spotifyService).getSpotifyAuthorizationUrl();
     }
 
     @Test
@@ -177,7 +176,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       underTest.fetchInitialToken("state", "code");
 
       // then
-      verify(currentPublicUserIdSupplier, times(1)).get();
+      verify(currentPublicUserIdSupplier).get();
     }
 
     @Test
@@ -191,7 +190,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       underTest.fetchInitialToken("state", "code");
 
       // then
-      verify(userRepository, times(1)).findByPublicId(userId);
+      verify(userRepository).findByPublicId(userId);
     }
 
     @Test
@@ -269,7 +268,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       underTest.fetchInitialToken("state", code);
 
       // then
-      verify(spotifyService, times(1)).getAccessToken(code);
+      verify(spotifyService).getAccessToken(code);
     }
 
     @Test
@@ -290,7 +289,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       underTest.fetchInitialToken("state", "code");
 
       // then
-      verify(userRepository, times(1)).save(argumentCaptor.capture());
+      verify(userRepository).save(argumentCaptor.capture());
       SpotifyAuthorizationEntity updatedAuthorization = argumentCaptor.getValue().getSpotifyAuthorization();
       assertThat(updatedAuthorization.getAccessToken()).isEqualTo(authorizationDto.getAccessToken());
       assertThat(updatedAuthorization.getRefreshToken()).isEqualTo(authorizationDto.getRefreshToken());
@@ -323,7 +322,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       underTest.getOrRefreshToken();
 
       // then
-      verify(currentPublicUserIdSupplier, times(1)).get();
+      verify(currentPublicUserIdSupplier).get();
     }
 
     @Test
@@ -337,7 +336,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       underTest.getOrRefreshToken();
 
       // then
-      verify(userRepository, times(1)).findByPublicId(userId);
+      verify(userRepository).findByPublicId(userId);
     }
 
     @Test
@@ -403,7 +402,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       underTest.getOrRefreshToken();
 
       // then
-      verify(spotifyService, times(1)).refreshToken(user.getSpotifyAuthorization().getRefreshToken());
+      verify(spotifyService).refreshToken(user.getSpotifyAuthorization().getRefreshToken());
     }
 
     @Test
@@ -422,7 +421,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       underTest.getOrRefreshToken();
 
       // then
-      verify(userRepository, times(1)).save(argumentCaptor.capture());
+      verify(userRepository).save(argumentCaptor.capture());
       var updatedAuthorizationEntity = argumentCaptor.getValue().getSpotifyAuthorization();
       assertThat(updatedAuthorizationEntity.getAccessToken()).isEqualTo(authorizationDto.getAccessToken());
       assertThat(updatedAuthorizationEntity.getScope()).isEqualTo(authorizationDto.getScope());

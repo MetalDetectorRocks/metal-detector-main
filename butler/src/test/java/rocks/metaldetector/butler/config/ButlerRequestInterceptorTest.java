@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.butler.config.ButlerRequestInterceptor.TOKEN_PREFIX;
 
@@ -48,7 +47,7 @@ class ButlerRequestInterceptorTest implements WithAssertions {
     underTest.intercept(httpRequestMock, new byte[]{}, clientHttpRequestExecutionMock);
 
     // then
-    verify(httpHeadersMock, times(1)).setAccept(List.of(MediaType.APPLICATION_JSON));
+    verify(httpHeadersMock).setAccept(List.of(MediaType.APPLICATION_JSON));
   }
 
   @Test
@@ -63,7 +62,7 @@ class ButlerRequestInterceptorTest implements WithAssertions {
     underTest.intercept(httpRequestMock, new byte[]{}, clientHttpRequestExecutionMock);
 
     // then
-    verify(httpHeadersMock, times(1)).set(HttpHeaders.AUTHORIZATION, TOKEN_PREFIX + token);
+    verify(httpHeadersMock).set(HttpHeaders.AUTHORIZATION, TOKEN_PREFIX + token);
   }
 
   @Test
@@ -77,6 +76,6 @@ class ButlerRequestInterceptorTest implements WithAssertions {
     underTest.intercept(httpRequestMock, bodyAsByteArray, clientHttpRequestExecutionMock);
 
     // then
-    verify(clientHttpRequestExecutionMock, times(1)).execute(httpRequestMock, bodyAsByteArray);
+    verify(clientHttpRequestExecutionMock).execute(httpRequestMock, bodyAsByteArray);
   }
 }

@@ -38,7 +38,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportResponseFactory;
 
@@ -81,7 +80,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       underTest.queryAllReleases(request);
 
       // then
-      verify(restTemplate, times(1)).postForEntity(eq(butlerUrl), any(), eq(ButlerReleasesResponse.class));
+      verify(restTemplate).postForEntity(eq(butlerUrl), any(), eq(ButlerReleasesResponse.class));
     }
 
     @Test
@@ -97,7 +96,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       underTest.queryAllReleases(request);
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptorReleases.capture(), any());
+      verify(restTemplate).postForEntity(anyString(), argumentCaptorReleases.capture(), any());
 
       HttpEntity<ButlerReleasesRequest> httpEntity = argumentCaptorReleases.getValue();
       assertThat(httpEntity.getBody()).isEqualTo(request);
@@ -178,7 +177,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       underTest.queryReleases(request);
 
       // then
-      verify(restTemplate, times(1)).postForEntity(eq(butlerUrl), any(), eq(ButlerReleasesResponse.class));
+      verify(restTemplate).postForEntity(eq(butlerUrl), any(), eq(ButlerReleasesResponse.class));
     }
 
     @Test
@@ -194,7 +193,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       underTest.queryReleases(request);
 
       // then
-      verify(restTemplate, times(1)).postForEntity(anyString(), argumentCaptorReleases.capture(), any());
+      verify(restTemplate).postForEntity(anyString(), argumentCaptorReleases.capture(), any());
 
       HttpEntity<ButlerReleasesRequest> httpEntity = argumentCaptorReleases.getValue();
       assertThat(httpEntity.getBody()).isEqualTo(request);
@@ -273,7 +272,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       underTest.createImportJob();
 
       // then
-      verify(restTemplate, times(1)).postForEntity(eq(butlerUrl), any(), any());
+      verify(restTemplate).postForEntity(eq(butlerUrl), any(), any());
     }
 
     @Test
@@ -287,7 +286,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       underTest.createImportJob();
 
       // then
-      verify(butlerConfig, times(1)).getImportUrl();
+      verify(butlerConfig).getImportUrl();
     }
 
     @ParameterizedTest(name = "If the status is {0}, an ExternalServiceException is thrown")
@@ -327,7 +326,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       underTest.createRetryCoverDownloadJob();
 
       // then
-      verify(restTemplate, times(1)).postForEntity(eq(butlerUrl), any(), any());
+      verify(restTemplate).postForEntity(eq(butlerUrl), any(), any());
     }
 
     @Test
@@ -341,7 +340,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       underTest.createRetryCoverDownloadJob();
 
       // then
-      verify(butlerConfig, times(1)).getRetryCoverDownloadUrl();
+      verify(butlerConfig).getRetryCoverDownloadUrl();
     }
 
     @ParameterizedTest(name = "If the status is {0}, an ExternalServiceException is thrown")
@@ -382,7 +381,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       underTest.queryImportJobResults();
 
       // then
-      verify(restTemplate, times(1)).getForEntity(eq(butlerUrl), eq(ButlerImportResponse.class));
+      verify(restTemplate).getForEntity(eq(butlerUrl), eq(ButlerImportResponse.class));
     }
 
     @Test

@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,8 +50,8 @@ class SpotifyAlbumTransformerTest implements WithAssertions {
     underTest.transform(spotifyAlbum);
 
     // then
-    verify(artistTransformer, times(1)).transform(spotifyAlbum.getArtists().get(0));
-    verify(artistTransformer, times(1)).transform(spotifyAlbum.getArtists().get(1));
+    verify(artistTransformer).transform(spotifyAlbum.getArtists().get(0));
+    verify(artistTransformer).transform(spotifyAlbum.getArtists().get(1));
   }
 
   @Test

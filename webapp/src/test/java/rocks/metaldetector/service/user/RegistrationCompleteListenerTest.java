@@ -14,7 +14,6 @@ import rocks.metaldetector.service.email.AbstractEmail;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.token.TokenService;
 
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -47,8 +46,8 @@ class RegistrationCompleteListenerTest implements WithAssertions {
     listener.onApplicationEvent(event);
 
     // then
-    verify(tokenService, times(1)).createEmailVerificationToken(userDto.getPublicId());
-    verify(emailService, times(1)).sendEmail(emailCaptor.capture());
+    verify(tokenService).createEmailVerificationToken(userDto.getPublicId());
+    verify(emailService).sendEmail(emailCaptor.capture());
 
     AbstractEmail email = emailCaptor.getValue();
     String verificationUrl = (String) email.getEnhancedViewModel("dummy-base-url").get("verificationUrl");

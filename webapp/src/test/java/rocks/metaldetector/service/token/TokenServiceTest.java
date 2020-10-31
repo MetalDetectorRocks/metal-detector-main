@@ -29,7 +29,6 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -71,7 +70,7 @@ class TokenServiceTest implements WithAssertions {
 
     Optional<TokenEntity> result = tokenService.getResetPasswordTokenByTokenString(TOKEN);
 
-    verify(tokenRepository, times(1)).findResetPasswordToken(TOKEN);
+    verify(tokenRepository).findResetPasswordToken(TOKEN);
     assertThat(result).isPresent();
     assertThat(result.get().getTokenString()).isEqualTo(tokenEntity.getTokenString());
     assertThat(result.get().getTokenType()).isEqualTo(TokenType.PASSWORD_RESET);
@@ -84,7 +83,7 @@ class TokenServiceTest implements WithAssertions {
 
     Optional<TokenEntity> result = tokenService.getResetPasswordTokenByTokenString(TOKEN);
 
-    verify(tokenRepository, times(1)).findResetPasswordToken(TOKEN);
+    verify(tokenRepository).findResetPasswordToken(TOKEN);
     assertThat(result).isEmpty();
   }
 
@@ -99,9 +98,9 @@ class TokenServiceTest implements WithAssertions {
     String createdTokenString = tokenService.createEmailVerificationToken(PUBLIC_USER_ID);
 
     assertThat(createdTokenString).isEqualTo(TOKEN);
-    verify(jwtsSupport, times(1)).generateToken(PUBLIC_USER_ID, Duration.ofDays(10));
-    verify(userRepository, times(1)).findByPublicId(PUBLIC_USER_ID);
-    verify(tokenRepository, times(1)).save(tokenEntityArgumentCaptor.capture());
+    verify(jwtsSupport).generateToken(PUBLIC_USER_ID, Duration.ofDays(10));
+    verify(userRepository).findByPublicId(PUBLIC_USER_ID);
+    verify(tokenRepository).save(tokenEntityArgumentCaptor.capture());
     assertThat(tokenEntityArgumentCaptor.getValue().getTokenType()).isEqualTo(TokenType.EMAIL_VERIFICATION);
   }
 
@@ -116,9 +115,9 @@ class TokenServiceTest implements WithAssertions {
     String createdTokenString = tokenService.createResetPasswordToken(PUBLIC_USER_ID);
 
     assertThat(createdTokenString).isEqualTo(TOKEN);
-    verify(jwtsSupport, times(1)).generateToken(PUBLIC_USER_ID, Duration.ofHours(1));
-    verify(userRepository, times(1)).findByPublicId(PUBLIC_USER_ID);
-    verify(tokenRepository, times(1)).save(tokenEntityArgumentCaptor.capture());
+    verify(jwtsSupport).generateToken(PUBLIC_USER_ID, Duration.ofHours(1));
+    verify(userRepository).findByPublicId(PUBLIC_USER_ID);
+    verify(tokenRepository).save(tokenEntityArgumentCaptor.capture());
     assertThat(tokenEntityArgumentCaptor.getValue().getTokenType()).isEqualTo(TokenType.PASSWORD_RESET);
   }
 
@@ -134,7 +133,7 @@ class TokenServiceTest implements WithAssertions {
     // then
     assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
     assertThat(throwable).hasMessageContaining(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString());
-    verify(userRepository, times(1)).findByPublicId(anyString());
+    verify(userRepository).findByPublicId(anyString());
   }
 
   @Test
@@ -156,9 +155,9 @@ class TokenServiceTest implements WithAssertions {
 
     tokenService.resendExpiredEmailVerificationToken(TOKEN);
 
-    verify(tokenRepository, times(1)).findEmailVerificationToken(TOKEN);
-    verify(tokenRepository, times(1)).delete(tokenEntity);
-    verify(emailService, times(1)).sendEmail(emailArgumentCaptor.capture());
+    verify(tokenRepository).findEmailVerificationToken(TOKEN);
+    verify(tokenRepository).delete(tokenEntity);
+    verify(emailService).sendEmail(emailArgumentCaptor.capture());
 
     assertThat(emailArgumentCaptor.getValue()).isInstanceOf(RegistrationVerificationEmail.class);
     assertThat(emailArgumentCaptor.getValue().getRecipient()).isEqualTo(userOfToken.getEmail());
@@ -171,6 +170,6 @@ class TokenServiceTest implements WithAssertions {
 
     tokenService.deleteToken(tokenEntity);
 
-    verify(tokenRepository, times(1)).delete(tokenEntity);
+    verify(tokenRepository).delete(tokenEntity);
   }
 }

@@ -20,7 +20,6 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -65,7 +64,7 @@ class DatabaseInitializerTest implements WithAssertions {
     underTest.run(null);
 
     // then
-    verify(entityManager, times(1)).persist(captor.capture());
+    verify(entityManager).persist(captor.capture());
     assertThat(captor.getValue().isAdministrator()).isTrue();
   }
 }

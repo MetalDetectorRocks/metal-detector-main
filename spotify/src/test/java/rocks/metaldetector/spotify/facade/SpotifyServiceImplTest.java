@@ -96,7 +96,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistByName("query", 1, 10);
 
       // then
-      verify(authenticationClient, times(1)).getAppAuthorizationToken();
+      verify(authenticationClient).getAppAuthorizationToken();
     }
 
     @Test
@@ -110,7 +110,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistByName("query", 1, 10);
 
       // then
-      verify(searchClient, times(1)).searchByName(eq(token), any(), anyInt(), anyInt());
+      verify(searchClient).searchByName(eq(token), any(), anyInt(), anyInt());
     }
 
     @Test
@@ -123,7 +123,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistByName(query, 1, 10);
 
       // then
-      verify(searchClient, times(1)).searchByName(any(), eq(query), anyInt(), anyInt());
+      verify(searchClient).searchByName(any(), eq(query), anyInt(), anyInt());
     }
 
     @Test
@@ -136,7 +136,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistByName("query", pageNumber, 10);
 
       // then
-      verify(searchClient, times(1)).searchByName(any(), any(), eq(pageNumber), anyInt());
+      verify(searchClient).searchByName(any(), any(), eq(pageNumber), anyInt());
     }
 
     @Test
@@ -149,7 +149,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistByName("query", 1, pageSize);
 
       // then
-      verify(searchClient, times(1)).searchByName(any(), any(), anyInt(), eq(pageSize));
+      verify(searchClient).searchByName(any(), any(), anyInt(), eq(pageSize));
     }
 
     @Test
@@ -163,7 +163,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistByName("query", 1, 10);
 
       // then
-      verify(resultTransformer, times(1)).transform(resultContainer);
+      verify(resultTransformer).transform(resultContainer);
     }
 
     @Test
@@ -192,7 +192,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistById("666");
 
       // then
-      verify(authenticationClient, times(1)).getAppAuthorizationToken();
+      verify(authenticationClient).getAppAuthorizationToken();
     }
 
     @Test
@@ -206,7 +206,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistById("666");
 
       // then
-      verify(searchClient, times(1)).searchById(eq(token), anyString());
+      verify(searchClient).searchById(eq(token), anyString());
     }
 
     @Test
@@ -219,7 +219,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistById(artistId);
 
       // then
-      verify(searchClient, times(1)).searchById(any(), eq(artistId));
+      verify(searchClient).searchById(any(), eq(artistId));
     }
 
     @Test
@@ -233,7 +233,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistById("666");
 
       // then
-      verify(artistTransformer, times(1)).transform(eq(artist));
+      verify(artistTransformer).transform(eq(artist));
     }
 
     @Test
@@ -268,9 +268,9 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistsByIds(artists);
 
       // then
-      verify(slicingService, times(1)).slice(artists, 1, PAGE_SIZE);
-      verify(slicingService, times(1)).slice(artists, 2, PAGE_SIZE);
-      verify(slicingService, times(1)).slice(artists, 3, PAGE_SIZE);
+      verify(slicingService).slice(artists, 1, PAGE_SIZE);
+      verify(slicingService).slice(artists, 2, PAGE_SIZE);
+      verify(slicingService).slice(artists, 3, PAGE_SIZE);
     }
 
     @Test
@@ -299,7 +299,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistsByIds(List.of("666"));
 
       // then
-      verify(searchClient, times(1)).searchByIds(eq(token), any());
+      verify(searchClient).searchByIds(eq(token), any());
     }
 
     @Test
@@ -329,8 +329,8 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistsByIds(List.of("666"));
 
       // then
-      verify(artistTransformer, times(1)).transform(eq(artists.getArtists().get(0)));
-      verify(artistTransformer, times(1)).transform(eq(artists.getArtists().get(1)));
+      verify(artistTransformer).transform(eq(artists.getArtists().get(0)));
+      verify(artistTransformer).transform(eq(artists.getArtists().get(1)));
     }
 
     @Test
@@ -383,9 +383,9 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.getSpotifyAuthorizationUrl();
 
       // then
-      verify(spotifyProperties, times(1)).getClientId();
-      verify(spotifyProperties, times(1)).getAuthenticationBaseUrl();
-      verify(spotifyProperties, times(1)).getApplicationHostUrl();
+      verify(spotifyProperties).getClientId();
+      verify(spotifyProperties).getAuthenticationBaseUrl();
+      verify(spotifyProperties).getApplicationHostUrl();
     }
   }
 
@@ -403,7 +403,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.getAccessToken(code);
 
       // then
-      verify(authenticationClient, times(1)).getUserAuthorizationToken(code);
+      verify(authenticationClient).getUserAuthorizationToken(code);
     }
 
     @Test
@@ -417,7 +417,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.getAccessToken("code");
 
       // then
-      verify(userAuthorizationTransformer, times(1)).transform(response);
+      verify(userAuthorizationTransformer).transform(response);
     }
 
     @Test
@@ -449,7 +449,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.refreshToken(refreshToken);
 
       // then
-      verify(authenticationClient, times(1)).refreshUserAuthorizationToken(refreshToken);
+      verify(authenticationClient).refreshUserAuthorizationToken(refreshToken);
     }
 
     @Test
@@ -463,7 +463,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.refreshToken("refreshToken");
 
       // then
-      verify(userAuthorizationTransformer, times(1)).transform(response);
+      verify(userAuthorizationTransformer).transform(response);
     }
 
     @Test
@@ -497,7 +497,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.fetchLikedAlbums(token);
 
       // then
-      verify(importClient, times(1)).fetchLikedAlbums(eq(token), anyInt());
+      verify(importClient).fetchLikedAlbums(eq(token), anyInt());
     }
 
     @Test
@@ -513,9 +513,9 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.fetchLikedAlbums("token");
 
       // then
-      verify(importClient, times(1)).fetchLikedAlbums(any(), eq(0));
-      verify(importClient, times(1)).fetchLikedAlbums(any(), eq(10));
-      verify(importClient, times(1)).fetchLikedAlbums(any(), eq(20));
+      verify(importClient).fetchLikedAlbums(any(), eq(0));
+      verify(importClient).fetchLikedAlbums(any(), eq(10));
+      verify(importClient).fetchLikedAlbums(any(), eq(20));
     }
 
     @Test
@@ -532,8 +532,8 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.fetchLikedAlbums("token");
 
       // then
-      verify(albumTransformer, times(1)).transform(firstAlbum.getAlbum());
-      verify(albumTransformer, times(1)).transform(secondAlbum.getAlbum());
+      verify(albumTransformer).transform(firstAlbum.getAlbum());
+      verify(albumTransformer).transform(secondAlbum.getAlbum());
     }
 
     @Test

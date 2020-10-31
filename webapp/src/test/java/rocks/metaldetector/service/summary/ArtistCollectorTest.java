@@ -37,7 +37,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
 
@@ -76,7 +75,7 @@ class ArtistCollectorTest implements WithAssertions {
     underTest.collectTopFollowedArtists();
 
     // then
-    verify(artistRepository, times(1)).findTopArtists(RESULT_LIMIT);
+    verify(artistRepository).findTopArtists(RESULT_LIMIT);
   }
 
   @Test
@@ -92,8 +91,8 @@ class ArtistCollectorTest implements WithAssertions {
     underTest.collectTopFollowedArtists();
 
     // then
-    verify(artistTransformer, times(1)).transform(topArtists.get(0));
-    verify(artistTransformer, times(1)).transform(topArtists.get(1));
+    verify(artistTransformer).transform(topArtists.get(0));
+    verify(artistTransformer).transform(topArtists.get(1));
   }
 
   @Test
@@ -123,7 +122,7 @@ class ArtistCollectorTest implements WithAssertions {
     underTest.collectRecentlyFollowedArtists();
 
     // then
-    verify(currentPublicUserIdSupplier, times(1)).get();
+    verify(currentPublicUserIdSupplier).get();
   }
 
   @Test
@@ -138,7 +137,7 @@ class ArtistCollectorTest implements WithAssertions {
     underTest.collectRecentlyFollowedArtists();
 
     // then
-    verify(userRepository, times(1)).findByPublicId(userId);
+    verify(userRepository).findByPublicId(userId);
   }
 
   @Test
@@ -166,7 +165,7 @@ class ArtistCollectorTest implements WithAssertions {
     underTest.collectRecentlyFollowedArtists();
 
     // then
-    verify(followActionRepository, times(1)).findAllByUser(userEntity);
+    verify(followActionRepository).findAllByUser(userEntity);
   }
 
   @Test
@@ -186,8 +185,8 @@ class ArtistCollectorTest implements WithAssertions {
     underTest.collectRecentlyFollowedArtists();
 
     // then
-    verify(artistTransformer, times(1)).transform(userFollowsArtist1);
-    verify(artistTransformer, times(1)).transform(userFollowsArtist2);
+    verify(artistTransformer).transform(userFollowsArtist1);
+    verify(artistTransformer).transform(userFollowsArtist2);
   }
 
   @Test
@@ -209,8 +208,8 @@ class ArtistCollectorTest implements WithAssertions {
     underTest.collectRecentlyFollowedArtists();
 
     // then
-    inOrder.verify(artistTransformer, times(1)).transform(userFollowsArtist2);
-    inOrder.verify(artistTransformer, times(1)).transform(userFollowsArtist1);
+    inOrder.verify(artistTransformer).transform(userFollowsArtist2);
+    inOrder.verify(artistTransformer).transform(userFollowsArtist1);
   }
 
   @Test

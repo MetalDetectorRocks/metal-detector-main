@@ -37,7 +37,6 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -111,7 +110,7 @@ class ResetPasswordControllerTest implements WithAssertions {
     restAssuredUtils.doGet("?token=" + token);
 
     // then
-    verify(tokenService, times(1)).getResetPasswordTokenByTokenString(token);
+    verify(tokenService).getResetPasswordTokenByTokenString(token);
   }
 
   @Test
@@ -145,7 +144,7 @@ class ResetPasswordControllerTest implements WithAssertions {
     restAssuredUtils.doGet("?token=" + token);
 
     // then
-    verify(tokenService, times(1)).getResetPasswordTokenByTokenString(token);
+    verify(tokenService).getResetPasswordTokenByTokenString(token);
   }
 
   @Test
@@ -179,7 +178,7 @@ class ResetPasswordControllerTest implements WithAssertions {
     restAssuredUtils.doGet("?token=" + token);
 
     // then
-    verify(tokenService, times(1)).getResetPasswordTokenByTokenString(token);
+    verify(tokenService).getResetPasswordTokenByTokenString(token);
   }
 
   @Test
@@ -215,7 +214,7 @@ class ResetPasswordControllerTest implements WithAssertions {
                             ContentType.HTML);
 
     // then
-    verify(userService, times(1)).changePassword(token, password);
+    verify(userService).changePassword(token, password);
   }
 
   @ParameterizedTest(name = "[{index}]: {0}")

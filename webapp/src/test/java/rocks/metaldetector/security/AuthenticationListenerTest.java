@@ -16,7 +16,6 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.service.user.UserService;
 
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -69,7 +68,7 @@ class AuthenticationListenerTest {
     underTest.onAuthenticationSuccess(successEvent);
 
     // then
-    verify(loginAttemptService, times(1)).loginSucceeded(ipHash);
+    verify(loginAttemptService).loginSucceeded(ipHash);
   }
 
   @Test
@@ -87,7 +86,7 @@ class AuthenticationListenerTest {
     underTest.onAuthenticationSuccess(successEvent);
 
     // then
-    verify(userService, times(1)).persistSuccessfulLogin(publicId);
+    verify(userService).persistSuccessfulLogin(publicId);
   }
 
   @Test
@@ -104,6 +103,6 @@ class AuthenticationListenerTest {
     underTest.onAuthenticationFailure(failureEvent);
 
     // then
-    verify(loginAttemptService, times(1)).loginFailed(ipHash);
+    verify(loginAttemptService).loginFailed(ipHash);
   }
 }

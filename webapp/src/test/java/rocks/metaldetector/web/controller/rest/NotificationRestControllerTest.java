@@ -16,7 +16,6 @@ import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
@@ -60,7 +59,7 @@ class NotificationRestControllerTest implements WithAssertions {
     restAssuredUtils.doPost();
 
     // then
-    verify(notificationService, times(1)).notifyAllUsers();
+    verify(notificationService).notifyAllUsers();
   }
 
   @Test
@@ -86,6 +85,6 @@ class NotificationRestControllerTest implements WithAssertions {
     restAssuredUtils.doPost("/" + userId);
 
     // then
-    verify(notificationService, times(1)).notifyUser(userId);
+    verify(notificationService).notifyUser(userId);
   }
 }

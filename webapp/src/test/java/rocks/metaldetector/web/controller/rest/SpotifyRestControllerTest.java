@@ -23,7 +23,6 @@ import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
@@ -72,7 +71,7 @@ class SpotifyRestControllerTest implements WithAssertions {
     authorizationRestAssuredMockMvcUtils.doGet();
 
     // then
-    verify(userAuthorizationService, times(1)).prepareAuthorization();
+    verify(userAuthorizationService).prepareAuthorization();
   }
 
   @Test
@@ -107,7 +106,7 @@ class SpotifyRestControllerTest implements WithAssertions {
     importRestAssuredMockMvcUtils.doPost();
 
     // then
-    verify(artistImportService, times(1)).importArtistsFromLikedReleases();
+    verify(artistImportService).importArtistsFromLikedReleases();
   }
 
   @Test

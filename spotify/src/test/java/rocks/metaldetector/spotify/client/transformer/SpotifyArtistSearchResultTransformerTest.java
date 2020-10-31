@@ -14,7 +14,6 @@ import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistDtoFactory;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistSearchResultContainerFactory;
@@ -46,7 +45,7 @@ class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
     underTest.transform(container);
 
     // then
-    verify(paginationTransformer, times(1)).transform(container.getArtists());
+    verify(paginationTransformer).transform(container.getArtists());
   }
 
   @Test
@@ -60,7 +59,7 @@ class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
 
     // then
     for (SpotifyArtist spotifyArtist : container.getArtists().getItems()) {
-      verify(artistTransformer, times(1)).transform(spotifyArtist);
+      verify(artistTransformer).transform(spotifyArtist);
     }
   }
 
