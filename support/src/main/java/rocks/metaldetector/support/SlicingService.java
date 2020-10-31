@@ -1,4 +1,4 @@
-package rocks.metaldetector.service;
+package rocks.metaldetector.support;
 
 import org.springframework.stereotype.Service;
 

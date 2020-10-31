@@ -4,10 +4,12 @@ import {AbstractRestClient} from "./abstract-rest-client";
 import {ToastService} from "../service/toast-service";
 import {UNKNOWN_ERROR_MESSAGE} from "../config/messages.config";
 import {SpotifyUserAuthorizationResponse} from "../model/spotify-user-authorization-response.model";
+import {SpotifyArtistImportResponse} from "../model/spotify-artist-import-response.model";
 
-export class SpotifyAuthorizationRestClient extends AbstractRestClient {
+export class SpotifyRestClient extends AbstractRestClient {
 
-    private readonly SPOTIFY_AUTHORIZATION_ENDPOINT = "/rest/v1/auth/spotify";
+    private readonly SPOTIFY_AUTHORIZATION_ENDPOINT = "/rest/v1/spotify/auth";
+    private readonly SPOTIFY_ARTIST_IMPORT_ENDPOINT = "/rest/v1/spotify/import";
 
     private readonly toastService: ToastService;
 
@@ -20,6 +22,17 @@ export class SpotifyAuthorizationRestClient extends AbstractRestClient {
         return await axios.get(
           this.SPOTIFY_AUTHORIZATION_ENDPOINT, axiosConfig
         ).then((response: AxiosResponse<SpotifyUserAuthorizationResponse>) => {
+            return response.data;
+        }).catch((error: AxiosError) => {
+            this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
+            throw error;
+        });
+    }
+
+    public async importArtists(): Promise<SpotifyArtistImportResponse> {
+        return await axios.post(
+          this.SPOTIFY_ARTIST_IMPORT_ENDPOINT, axiosConfig
+        ).then((response: AxiosResponse<SpotifyArtistImportResponse>) => {
             return response.data;
         }).catch((error: AxiosError) => {
             this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);

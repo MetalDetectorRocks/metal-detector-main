@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import rocks.metaldetector.service.SlicingService;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.Pagination;
+import rocks.metaldetector.support.SlicingService;
 import rocks.metaldetector.web.api.response.MyArtistsResponse;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class MyArtistsRestController {
                                                         @RequestParam(value = "size", defaultValue = "20") int size) {
     List<ArtistDto> followedArtists = followArtistService.getFollowedArtistsOfCurrentUser();
 
-    int totalPages = followedArtists.size() % size == 0 ? followedArtists.size() / size : followedArtists.size() / size + 1;
+    int totalPages = (int) Math.ceil((double) followedArtists.size() / (double) size);
     Pagination pagination = new Pagination(totalPages, page, size);
     MyArtistsResponse response = new MyArtistsResponse(slicingService.slice(followedArtists, page, size), pagination);
     return ResponseEntity.ok(response);

@@ -5,18 +5,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.spotify.api.search.SpotifyArtist;
+import rocks.metaldetector.spotify.api.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
-import rocks.metaldetector.support.Pagination;
-
-import java.util.stream.Stream;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
@@ -24,7 +18,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistDtoFactory;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistSearchResultContainerFactory;
-import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistSearchResultContainerFactory.withIndivualPagination;
 
 @ExtendWith(MockitoExtension.class)
 class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
@@ -32,23 +25,28 @@ class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
   @Mock
   private SpotifyArtistTransformer artistTransformer;
 
+  @Mock
+  private SpotifyPaginationTransformer paginationTransformer;
+
   @InjectMocks
   private SpotifyArtistSearchResultTransformer underTest;
 
   @AfterEach
   void tearDown() {
-    reset(artistTransformer);
+    reset(artistTransformer, paginationTransformer);
   }
 
-  @ParameterizedTest
-  @MethodSource("paginationProvider")
-  @DisplayName("Should transform Spotify parameters to Pagination")
-  void should_transform_pagination(SpotifyArtistSearchResultContainer resultContainer, Pagination expectedPagination) {
+  @Test
+  @DisplayName("Should call paginationTransformer")
+  void should_call_pagination_transformer() {
+    // given
+    SpotifyArtistSearchResultContainer container = SpotifyArtistSearchResultContainerFactory.createDefault();
+
     // when
-    SpotifyArtistSearchResultDto result = underTest.transform(resultContainer);
+    underTest.transform(container);
 
     // then
-    assertThat(result.getPagination()).isEqualTo(expectedPagination);
+    verify(paginationTransformer, times(1)).transform(container.getArtists());
   }
 
   @Test
@@ -85,14 +83,5 @@ class SpotifyArtistSearchResultTransformerTest implements WithAssertions {
       var resultArtist = result.getSearchResults().get(index);
       assertThat(resultArtist.getName()).isEqualTo(givenArtist.getName());
     }
-  }
-
-  private static Stream<Arguments> paginationProvider() {
-    return Stream.of(
-        Arguments.of(withIndivualPagination(0, 10, 1), new Pagination(1, 1, 10)),
-        Arguments.of(withIndivualPagination(10, 10, 15), new Pagination(2, 2, 10)),
-        Arguments.of(withIndivualPagination(5, 20, 30), new Pagination(2, 1, 20)),
-        Arguments.of(withIndivualPagination(1960, 40, 4000), new Pagination(50, 50, 40))
-    );
   }
 }

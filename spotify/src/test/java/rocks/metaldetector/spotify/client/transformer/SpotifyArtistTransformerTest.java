@@ -8,15 +8,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.spotify.api.search.SpotifyArtist;
-import rocks.metaldetector.spotify.api.search.SpotifyImage;
+import rocks.metaldetector.spotify.api.SpotifyArtist;
+import rocks.metaldetector.spotify.api.SpotifyImage;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyArtistFatory;
+import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyArtistFactory;
 
 @ExtendWith(MockitoExtension.class)
 class SpotifyArtistTransformerTest implements WithAssertions {
@@ -27,7 +27,7 @@ class SpotifyArtistTransformerTest implements WithAssertions {
   @DisplayName("Should transform SpotifyArtist to SpotifyArtistDto")
   void should_transform() {
     // given
-    SpotifyArtist givenArtist = SpotfiyArtistFatory.withArtistName("Slayer");
+    SpotifyArtist givenArtist = SpotfiyArtistFactory.withArtistName("Slayer");
 
     // when
     SpotifyArtistDto result = underTest.transform(givenArtist);
@@ -51,7 +51,7 @@ class SpotifyArtistTransformerTest implements WithAssertions {
   @DisplayName("'imageUrl' is empty if there are no images")
   void should_transform_empty_images(List<SpotifyImage> images) {
     // given
-    SpotifyArtist givenArtist = SpotfiyArtistFatory.withArtistName("Slayer");
+    SpotifyArtist givenArtist = SpotfiyArtistFactory.withArtistName("Slayer");
     givenArtist.setImages(images);
 
     // when
@@ -59,6 +59,20 @@ class SpotifyArtistTransformerTest implements WithAssertions {
 
     // then
     assertThat(result.getImageUrl()).isEmpty();
+  }
+
+  @Test
+  @DisplayName("followers are 0 if no follower object is provided")
+  void test_transform_null_follower() {
+    // given
+    SpotifyArtist givenArtist = SpotfiyArtistFactory.withArtistName("Slayer");
+    givenArtist.setFollowers(null);
+
+    // when
+    var result = underTest.transform(givenArtist);
+
+    // then
+    assertThat(result.getFollower()).isEqualTo(0);
   }
 
   private static Stream<Arguments> imageProvider() {

@@ -1,8 +1,9 @@
 package rocks.metaldetector.spotify.client.transformer;
 
 import org.springframework.stereotype.Service;
-import rocks.metaldetector.spotify.api.search.SpotifyArtist;
-import rocks.metaldetector.spotify.api.search.SpotifyImage;
+import rocks.metaldetector.spotify.api.SpotifyArtist;
+import rocks.metaldetector.spotify.api.SpotifyImage;
+import rocks.metaldetector.spotify.api.search.SpotifyFollowers;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class SpotifyArtistTransformer {
             .uri(spotifyArtist.getUri())
             .genres(spotifyArtist.getGenres())
             .popularity(spotifyArtist.getPopularity())
-            .follower(spotifyArtist.getFollowers().getTotal())
+            .follower(getFollower(spotifyArtist.getFollowers()))
             .build();
   }
 
@@ -26,7 +27,13 @@ public class SpotifyArtistTransformer {
     if (images != null && !images.isEmpty()) {
       return images.get(0).getUrl();
     }
-
     return "";
+  }
+
+  private int getFollower(SpotifyFollowers followers) {
+    if (followers != null) {
+      return followers.getTotal();
+    }
+    return 0;
   }
 }

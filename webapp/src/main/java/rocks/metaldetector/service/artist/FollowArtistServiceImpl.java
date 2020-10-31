@@ -1,7 +1,6 @@
 package rocks.metaldetector.service.artist;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.discogs.facade.DiscogsService;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-@Slf4j
 public class FollowArtistServiceImpl implements FollowArtistService {
 
   private final UserRepository userRepository;
@@ -41,9 +39,9 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   public void follow(String externalArtistId, ArtistSource source) {
     ArtistEntity artist = saveAndFetchArtist(externalArtistId, source);
     FollowActionEntity followAction = FollowActionEntity.builder()
-            .user(currentUser())
-            .artist(artist)
-            .build();
+        .user(currentUser())
+        .artist(artist)
+        .build();
 
     followActionRepository.save(followAction);
   }
@@ -82,9 +80,9 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   private List<ArtistDto> getFollowedArtists(UserEntity user) {
     return followActionRepository.findAllByUser(user).stream()
-            .map(artistTransformer::transform)
-            .sorted(Comparator.comparing(ArtistDto::getArtistName))
-            .collect(Collectors.toUnmodifiableList());
+        .map(artistTransformer::transform)
+        .sorted(Comparator.comparing(ArtistDto::getArtistName))
+        .collect(Collectors.toUnmodifiableList());
   }
 
   private ArtistEntity saveAndFetchArtist(String externalId, ArtistSource source) {
@@ -112,13 +110,13 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   private UserEntity fetchUserEntity(String publicUserId) {
     return userRepository
-            .findByPublicId(publicUserId)
-            .orElseThrow(() -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!"));
+        .findByPublicId(publicUserId)
+        .orElseThrow(() -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!"));
   }
 
   private ArtistEntity fetchArtistEntity(String externalArtistId, ArtistSource source) {
     return artistRepository
-            .findByExternalIdAndSource(externalArtistId, source)
-            .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + externalArtistId + "' (" + source + ") not found!"));
+        .findByExternalIdAndSource(externalArtistId, source)
+        .orElseThrow(() -> new ResourceNotFoundException("Artist with id '" + externalArtistId + "' (" + source + ") not found!"));
   }
 }

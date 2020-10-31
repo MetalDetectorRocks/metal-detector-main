@@ -44,7 +44,6 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.APP_AUTH_REQUEST_VALUE;
 import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.AUTHORIZATION_ENDPOINT;
-import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.AUTHORIZATION_HEADER_PREFIX;
 import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.CODE_REQUEST_KEY;
 import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.GRANT_TYPE_KEY;
 import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientImpl.REDIRECT_URI_KEY;
@@ -55,6 +54,8 @@ import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyAppAut
 
 @ExtendWith(MockitoExtension.class)
 class SpotifyAuthorizationClientImplTest implements WithAssertions {
+
+  private static final String AUTHORIZATION_HEADER_PREFIX = "Basic ";
 
   @Mock
   private RestTemplate restTemplate;
@@ -242,7 +243,7 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
       // given
       var code = "code";
       var host = "host";
-      var expectedRedirectUri = host + "%2Fprofile%2Fspotify-callback";
+      var expectedRedirectUri = host + "/profile/spotify-callback";;
       SpotifyUserAuthorizationResponse responseMock = SpotfiyUserAuthorizationResponseFactory.createDefault();
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
       doReturn(host).when(spotifyProperties).getApplicationHostUrl();
