@@ -38,7 +38,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
     }
 
     protected onRendering(response: MyArtistsResponse): void {
-        this.renderImportButton();
+        this.addEventListener();
 
         if (response.myArtists.length === 0 && response.pagination.currentPage === 1) {
             const message = '<h3 class="h5">Currently you do not follow any artist.</h3>Start a search for your favorite artists right now.';
@@ -112,7 +112,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         this.hostElement.insertAdjacentElement("beforeend", paginationList);
     }
 
-    private renderImportButton(): void {
+    private addEventListener(): void {
         const importButton = document.getElementById("spotify-import-button")! as HTMLButtonElement;
         importButton.addEventListener("click", this.doSpotifyArtistImport.bind(this));
     }
