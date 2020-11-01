@@ -19,12 +19,12 @@ export class ReleasesService {
         this.releasesRestClient = releasesRestClient;
         this.releasesRenderService = releasesRenderService;
         this.urlService = urlService;
-        this.getDocumentElements();
+        this.initDocumentElements();
         this.initFilterValuesFromUrl();
         this.addReleaseFilterEventListener();
     }
 
-    private getDocumentElements(): void {
+    private initDocumentElements(): void {
         this.allArtistsRb = document.getElementById("all-artists-rb") as HTMLInputElement;
         this.followedArtistsRb = document.getElementById("followed-artists-rb") as HTMLInputElement;
     }

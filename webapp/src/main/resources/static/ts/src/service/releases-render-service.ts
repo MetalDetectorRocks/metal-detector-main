@@ -25,7 +25,6 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
     }
 
     protected onRendering(data: ReleasesResponse): void {
-        console.log(data.items);
         if (data.items.length === 0) {
             this.showNoReleasesFoundInfoMessage();
         }
