@@ -2,7 +2,6 @@ package rocks.metaldetector.service.artist;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +15,6 @@ import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
@@ -39,9 +37,6 @@ class ArtistServiceImplTest implements WithAssertions {
   private static final String EXTERNAL_ID = "A";
   private static final String ARTIST_NAME = "A";
   private static final ArtistSource ARTIST_SOURCE = DISCOGS;
-
-  @Mock
-  private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
 
   @Mock
   private ArtistRepository artistRepository;
@@ -67,18 +62,12 @@ class ArtistServiceImplTest implements WithAssertions {
   @Captor
   private ArgumentCaptor<List<ArtistEntity>> argumentCaptor;
 
-  private ArtistEntity artistEntity;
-  private ArtistDto artistDto;
+  private final ArtistEntity artistEntity = new ArtistEntity(EXTERNAL_ID, ARTIST_NAME, null, DISCOGS);
+  private final ArtistDto artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, "Discogs", null, 666);
 
   @AfterEach
   void tearDown() {
-    reset(currentPublicUserIdSupplier, artistRepository, userRepository, discogsService, artistTransformer, spotifyService, searchResponseTransformer);
-  }
-
-  @BeforeEach
-  void setUp() {
-    artistEntity = new ArtistEntity(EXTERNAL_ID, ARTIST_NAME, null, DISCOGS);
-    artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, "Discogs", null, 666);
+    reset(artistRepository, userRepository, discogsService, artistTransformer, spotifyService, searchResponseTransformer);
   }
 
   @Test

@@ -11,23 +11,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.spotify.facade.SpotifyService;
-import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.SpotifyAlbumDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
@@ -39,10 +35,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
   private SpotifyService spotifyService;
 
   @Mock
-  private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
-
-  @Mock
-  private UserRepository userRepository;
+  private CurrentUserSupplier currentUserSupplier;
 
   @Mock
   private FollowArtistService followArtistService;
@@ -53,18 +46,17 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
   @InjectMocks
   private SpotifyArtistImportServiceImpl underTest;
 
-  private UserEntity userEntity = UserEntityFactory.createUser("user", "user@mail.com");
+  private final UserEntity userEntity = UserEntityFactory.createUser("user", "user@mail.com");
 
   @BeforeEach
   void setup() {
-    userEntity = UserEntityFactory.createUser("user", "user@mail.com");
     userEntity.setSpotifyAuthorization(new SpotifyAuthorizationEntity("state"));
-    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+    doReturn(userEntity).when(currentUserSupplier).get();
   }
 
   @AfterEach
   void tearDown() {
-    reset(spotifyService, currentPublicUserIdSupplier, userRepository, followArtistService, artistService);
+    reset(spotifyService, currentUserSupplier, followArtistService, artistService);
   }
 
   @Test
@@ -74,36 +66,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(currentPublicUserIdSupplier).get();
-  }
-
-  @Test
-  @DisplayName("userRepository is called to get current user")
-  void test_user_repository_called() {
-    // given
-    var publicUserId = "publicUserId";
-    doReturn(publicUserId).when(currentPublicUserIdSupplier).get();
-
-    // when
-    underTest.importArtistsFromLikedReleases();
-
-    // then
-    verify(userRepository).findByPublicId(publicUserId);
-  }
-
-  @Test
-  @DisplayName("userRepository throws exception when userId is not found")
-  void test_user_repository_throws_exception() {
-    // given
-    var publicUserId = "publicUserId";
-    doThrow(new ResourceNotFoundException(publicUserId)).when(userRepository).findByPublicId(any());
-
-    // when
-    Throwable throwable = catchThrowable(() -> underTest.importArtistsFromLikedReleases());
-
-    // then
-    assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-    assertThat(throwable).hasMessageContaining(publicUserId);
+    verify(currentUserSupplier).get();
   }
 
   @Test

@@ -4,14 +4,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 
-@Component
-public class CurrentPublicUserIdSupplierImpl implements CurrentPublicUserIdSupplier {
+import java.util.List;
 
-  private static final String ANONYMOUS_USER_NAME = "anonymousUser";
+@Component
+public class CurrentUserSupplierImpl implements CurrentUserSupplier {
+
+  private static final List<Object> ANONYMOUS_USER_NAMES = List.of("anonymousUser", "anonymous");
 
   @Override
-  public String get() {
+  public UserEntity get() {
     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    return principal.equals(ANONYMOUS_USER_NAME) ? null : ((UserEntity) principal).getPublicId();
+    return ANONYMOUS_USER_NAMES.contains(principal) ? null : ((UserEntity) principal);
   }
 }
