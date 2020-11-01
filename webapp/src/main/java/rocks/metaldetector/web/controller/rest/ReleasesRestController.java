@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
+import rocks.metaldetector.service.artist.ArtistDto;
+import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
@@ -19,6 +21,7 @@ import rocks.metaldetector.web.api.request.ReleasesRequest;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -28,6 +31,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class ReleasesRestController {
 
   private final ReleaseService releaseService;
+  private final FollowArtistService followArtistService;
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   @GetMapping(path = Endpoints.Rest.QUERY_ALL_RELEASES,
@@ -44,6 +48,16 @@ public class ReleasesRestController {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
     var pageRequest = new PageRequest(request.getPage(), request.getSize());
     Page<ReleaseDto> releasePage = releaseService.findReleases(emptyList(), timeRange, pageRequest);
+    return ResponseEntity.ok(releasePage);
+  }
+
+  @GetMapping(path = Endpoints.Rest.QUERY_MY_RELEASES,
+          produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  public ResponseEntity<Page<ReleaseDto>> findReleasesOfFollowedArtists(@Valid PaginatedReleasesRequest request) {
+    var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
+    var pageRequest = new PageRequest(request.getPage(), request.getSize());
+    var followedArtists = followArtistService.getFollowedArtistsOfCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
+    Page<ReleaseDto> releasePage = releaseService.findReleases(followedArtists, timeRange, pageRequest);
     return ResponseEntity.ok(releasePage);
   }
 

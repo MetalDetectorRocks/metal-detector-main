@@ -1,6 +1,6 @@
-export abstract class AbstractRestClient {
+export class UrlService {
 
-    protected getPageFromUrl(): string {
+    public getPageFromUrl(): string {
         const url = new URL(window.location.href);
         let page = url.searchParams.get("page") || "1";
         if (Number.isNaN(page) || +page < 1) {
@@ -10,7 +10,7 @@ export abstract class AbstractRestClient {
         return page;
     }
 
-    protected getParameterFromUrl(parameterName: string): string {
+    public getParameterFromUrl(parameterName: string): string {
         const url = new URL(window.location.href);
         return url.searchParams.get(parameterName) || "";
     }

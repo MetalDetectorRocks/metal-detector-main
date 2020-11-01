@@ -1,15 +1,10 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { axiosConfig } from "../config/axios.config";
-import { HomepageResponse } from "../model/homepage-response.model";
-import { AbstractRestClient } from "./abstract-rest-client";
+import axios, {AxiosError, AxiosResponse} from "axios";
+import {axiosConfig} from "../config/axios.config";
+import {HomepageResponse} from "../model/homepage-response.model";
 
-export class HomepageRestClient extends AbstractRestClient {
+export class HomepageRestClient {
 
     private readonly HOMEPAGE_URL = "/rest/v1/home"
-
-    constructor() {
-        super();
-    }
 
     public async fetchHomepage(): Promise<HomepageResponse> {
         return await axios.get(
