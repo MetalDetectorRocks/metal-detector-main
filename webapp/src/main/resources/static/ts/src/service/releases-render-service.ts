@@ -25,16 +25,27 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
     }
 
     protected onRendering(data: ReleasesResponse): void {
-        // ToDo DanielW: show message if no releases are available
-        data.items.forEach(release => {
-            const releaseDivElement = this.renderReleaseCard(release);
-            this.hostElement.insertAdjacentElement("beforeend", releaseDivElement);
-        });
+        console.log(data.items);
+        if (data.items.length === 0) {
+            this.showNoReleasesFoundInfoMessage();
+        }
+        else {
+            data.items.forEach(release => {
+                const releaseDivElement = this.renderReleaseCard(release);
+                this.hostElement.insertAdjacentElement("beforeend", releaseDivElement);
+            });
+        }
 
         const pagination = data.pagination;
         if (pagination.totalPages > 1) {
             this.attachPagination(pagination);
         }
+    }
+
+    private showNoReleasesFoundInfoMessage(): void {
+        const message = `<h3 class="h5">No releases could be found.</h3>Try to follow more artist to see upcoming releases here.`;
+        const infoMessage = this.alertService.renderInfoAlert(message, false);
+        this.hostElement.insertAdjacentElement("afterbegin", infoMessage);
     }
 
     private renderReleaseCard(release: Release): HTMLDivElement {
