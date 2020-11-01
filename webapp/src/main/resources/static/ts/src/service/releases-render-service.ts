@@ -25,6 +25,7 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
     }
 
     protected onRendering(data: ReleasesResponse): void {
+        // ToDo DanielW: show message if no releases are available
         data.items.forEach(release => {
             const releaseDivElement = this.renderReleaseCard(release);
             this.hostElement.insertAdjacentElement("beforeend", releaseDivElement);
