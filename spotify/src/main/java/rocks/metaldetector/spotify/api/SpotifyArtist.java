@@ -1,4 +1,4 @@
-package rocks.metaldetector.spotify.api.search;
+package rocks.metaldetector.spotify.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import rocks.metaldetector.spotify.api.search.SpotifyFollowers;
 
 import java.util.List;
 import java.util.Map;

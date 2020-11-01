@@ -2,17 +2,18 @@ package rocks.metaldetector.spotify.api.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import rocks.metaldetector.spotify.api.SpotifyArtist;
+import rocks.metaldetector.spotify.api.SpotifyPaginatedResult;
 
 import java.util.List;
 
 @Data
-@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@Builder
 @JsonPropertyOrder({
     "href",
     "items",
@@ -22,27 +23,14 @@ import java.util.List;
     "previous",
     "total"
 })
-public class SpotifyArtistSearchResult {
-
-  @JsonProperty("href")
-  private String href;
+public class SpotifyArtistSearchResult extends SpotifyPaginatedResult {
 
   @JsonProperty("items")
   private List<SpotifyArtist> items;
 
-  @JsonProperty("limit")
-  private int limit;
-
-  @JsonProperty("next")
-  private String next;
-
-  @JsonProperty("offset")
-  private int offset;
-
-  @JsonProperty("previous")
-  private String previous;
-
-  @JsonProperty("total")
-  private int total;
-
+  @Builder
+  public SpotifyArtistSearchResult(List<SpotifyArtist> items, String href, String next, String previous, int total, int offset, int limit) {
+    super(href, limit, next, offset, previous, total);
+    this.items = items;
+  }
 }

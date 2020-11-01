@@ -93,7 +93,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet(requestParams);
 
       // then
-      verify(artistSearchService, times(1)).searchSpotifyByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
+      verify(artistSearchService).searchSpotifyByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE));
     }
 
     @Test
@@ -110,7 +110,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet(requestParams);
 
       // then
-      verify(artistSearchService, times(1)).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
+      verify(artistSearchService).searchDiscogsByName(VALID_SEARCH_REQUEST, PageRequest.of(DEFAULT_DISCOGS_PAGE, DEFAULT_DISCOGS_SIZE));
     }
 
     @Test
@@ -215,7 +215,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       followArtistRestAssuredUtils.doPost(url);
 
       // then
-      verify(followArtistService, times(1)).follow(VALID_EXTERNAL_ID, ARTIST_SOURCE);
+      verify(followArtistService).follow(VALID_EXTERNAL_ID, ARTIST_SOURCE);
     }
 
     @Test
@@ -255,7 +255,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       unfollowArtistRestAssuredUtils.doPost(url);
 
       // then
-      verify(followArtistService, times(1)).unfollow(VALID_EXTERNAL_ID, ARTIST_SOURCE);
+      verify(followArtistService).unfollow(VALID_EXTERNAL_ID, ARTIST_SOURCE);
     }
 
     @Test

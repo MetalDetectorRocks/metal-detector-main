@@ -20,7 +20,6 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseEntryDtoFactory;
 import static rocks.metaldetector.testutil.DtoFactory.DiscogsArtistSearchResultDtoFactory;
@@ -95,7 +94,8 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
     underTest.transformSpotify(searchResultDto);
 
     // then
-    verify(artistRepository, times(searchResultDto.getSearchResults().size())).countArtistFollower(searchResultDto.getSearchResults().get(0).getId());
+    verify(artistRepository).countArtistFollower(searchResultDto.getSearchResults().get(0).getId());
+    verify(artistRepository).countArtistFollower(searchResultDto.getSearchResults().get(1).getId());
   }
 
   @Test
@@ -125,7 +125,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
     underTest.transformDiscogs(searchResultDto);
 
     // then
-    verify(artistRepository, times(1)).countArtistFollower(searchResultDto.getSearchResults().get(0).getId());
+    verify(artistRepository).countArtistFollower(searchResultDto.getSearchResults().get(0).getId());
   }
 
   @Test

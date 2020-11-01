@@ -86,7 +86,7 @@ class NotificationServiceTest implements WithAssertions {
     underTest.notifyUser(user.getPublicId());
 
     // then
-    verify(followArtistService, times(1)).getFollowedArtistsOfUser(user.getPublicId());
+    verify(followArtistService).getFollowedArtistsOfUser(user.getPublicId());
   }
 
   @Test
@@ -99,7 +99,7 @@ class NotificationServiceTest implements WithAssertions {
     underTest.notifyUser(user.getPublicId());
 
     // then
-    verify(userService, times(1)).getUserByPublicId(user.getPublicId());
+    verify(userService).getUserByPublicId(user.getPublicId());
   }
 
   @Test
@@ -117,7 +117,7 @@ class NotificationServiceTest implements WithAssertions {
     underTest.notifyUser(user.getPublicId());
 
     // then
-    verify(releaseService, times(1)).findAllReleases(eq(List.of(artistDto.getArtistName())), timeRangeCaptor.capture());
+    verify(releaseService).findAllReleases(eq(List.of(artistDto.getArtistName())), timeRangeCaptor.capture());
     assertThat(timeRangeCaptor.getValue().getDateFrom()).isCloseTo(now, offset);
     assertThat(timeRangeCaptor.getValue().getDateTo()).isCloseTo(now.plusMonths(3), offset);
   }
@@ -148,7 +148,7 @@ class NotificationServiceTest implements WithAssertions {
     underTest.notifyUser(user.getPublicId());
 
     // then
-    verify(emailService, times(1)).sendEmail(any());
+    verify(emailService).sendEmail(any());
   }
 
   @Test
@@ -164,7 +164,7 @@ class NotificationServiceTest implements WithAssertions {
     underTest.notifyUser(user.getPublicId());
 
     // then
-    verify(emailService, times(1)).sendEmail(emailCaptor.capture());
+    verify(emailService).sendEmail(emailCaptor.capture());
 
     AbstractEmail email = emailCaptor.getValue();
     assertThat(email.getRecipient()).isEqualTo(user.getEmail());
@@ -196,7 +196,7 @@ class NotificationServiceTest implements WithAssertions {
     underTest.notifyAllUsers();
 
     // then
-    verify(userService, times(1)).getAllActiveUsers();
+    verify(userService).getAllActiveUsers();
   }
 
   @Test

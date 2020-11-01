@@ -27,7 +27,6 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -109,7 +108,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
     restAssuredUtils.doPost(Map.of("emailOrUsername", EXISTING_EMAIL), ContentType.HTML);
 
     // then
-    verify(userService, times(1)).getUserByEmailOrUsername(EXISTING_EMAIL);
+    verify(userService).getUserByEmailOrUsername(EXISTING_EMAIL);
   }
 
   @Test
@@ -123,7 +122,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
     restAssuredUtils.doPost(Map.of("emailOrUsername", EXISTING_EMAIL), ContentType.HTML);
 
     // then
-    verify(eventPublisher, times(1)).publishEvent(any());
+    verify(eventPublisher).publishEvent(any());
   }
 
   @Test
@@ -203,7 +202,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
     restAssuredUtils.doPost(Map.of("emailOrUsername", NOT_EXISTING_EMAIL), ContentType.HTML);
 
     // then
-    verify(userService, times(1)).getUserByEmailOrUsername(NOT_EXISTING_EMAIL);
+    verify(userService).getUserByEmailOrUsername(NOT_EXISTING_EMAIL);
   }
 
   @Test

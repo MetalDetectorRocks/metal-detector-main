@@ -13,7 +13,6 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.security.LoginAttemptService.FAILED_LOGINS_CACHE;
@@ -50,7 +49,7 @@ class LoginAttemptServiceTest implements WithAssertions {
     underTest.loginFailed("666");
 
     // then
-    verify(cacheManager, times(1)).getCache(FAILED_LOGINS_CACHE);
+    verify(cacheManager).getCache(FAILED_LOGINS_CACHE);
   }
 
   @Test
@@ -60,7 +59,7 @@ class LoginAttemptServiceTest implements WithAssertions {
     underTest.isBlocked("666");
 
     // then
-    verify(cacheManager, times(1)).getCache(FAILED_LOGINS_CACHE);
+    verify(cacheManager).getCache(FAILED_LOGINS_CACHE);
   }
 
   @Test

@@ -21,7 +21,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.discogs.client.DiscogsDtoFactory.DiscogsArtistDtoFactory;
 import static rocks.metaldetector.discogs.client.DiscogsDtoFactory.DiscogsArtistFactory;
@@ -66,7 +65,7 @@ class DiscogsServiceImplTest implements WithAssertions {
       underTest.searchArtistByName(query, page, size);
 
       // then
-      verify(searchClient, times(1)).searchByName(query, page, size);
+      verify(searchClient).searchByName(query, page, size);
     }
 
     @Test
@@ -81,7 +80,7 @@ class DiscogsServiceImplTest implements WithAssertions {
       underTest.searchArtistByName(query, 1, 1);
 
       // then
-      verify(searchResultFilter, times(1)).filterDiscogsSearchResults(eq(searchResult), eq(query));
+      verify(searchResultFilter).filterDiscogsSearchResults(eq(searchResult), eq(query));
     }
 
     @Test
@@ -95,7 +94,7 @@ class DiscogsServiceImplTest implements WithAssertions {
       underTest.searchArtistByName("query", 1, 1);
 
       // then
-      verify(searchResultTransformer, times(1)).transform(eq(searchResult));
+      verify(searchResultTransformer).transform(eq(searchResult));
     }
 
     @Test
@@ -129,7 +128,7 @@ class DiscogsServiceImplTest implements WithAssertions {
       underTest.searchArtistById(artistId);
 
       // then
-      verify(searchClient, times(1)).searchById(artistId);
+      verify(searchClient).searchById(artistId);
     }
 
     @Test
@@ -143,7 +142,7 @@ class DiscogsServiceImplTest implements WithAssertions {
       underTest.searchArtistById("123");
 
       // then
-      verify(artistTransformer, times(1)).transform(eq(searchResult));
+      verify(artistTransformer).transform(eq(searchResult));
     }
 
     @Test

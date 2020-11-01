@@ -6,13 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 @ExtendWith(MockitoExtension.class)
 class SpotifyArtistSearchClientMockTest implements WithAssertions {
 
   private final SpotifyArtistSearchClientMock underTest = new SpotifyArtistSearchClientMock();
 
   @Test
-  @DisplayName("should return mock result")
+  @DisplayName("searchByName: should return mock result")
   void test_searchByName() {
     // when
     var result = underTest.searchByName("token", "query", 1, 10);
@@ -22,10 +24,20 @@ class SpotifyArtistSearchClientMockTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("should return mock result")
+  @DisplayName("searchById: should return mock result")
   void test_searchById() {
     // when
     var result = underTest.searchById("token", "666");
+
+    // then
+    assertThat(result).isNotNull();
+  }
+
+  @Test
+  @DisplayName("searchByIds: should return mock result")
+  void test_searchByIds() {
+    // when
+    var result = underTest.searchByIds("token", List.of("id"));
 
     // then
     assertThat(result).isNotNull();

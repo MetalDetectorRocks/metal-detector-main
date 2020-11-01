@@ -80,7 +80,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       underTest.findAllReleases(artists, timeRange);
 
       // then
-      verify(releaseRequestTransformer, times(1)).transform(artists, timeRange, null);
+      verify(releaseRequestTransformer).transform(artists, timeRange, null);
     }
 
     @Test
@@ -94,7 +94,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       underTest.findAllReleases(null, null);
 
       // then
-      verify(butlerClient, times(1)).queryAllReleases(eq(request));
+      verify(butlerClient).queryAllReleases(eq(request));
     }
 
     @Test
@@ -110,7 +110,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       List<ReleaseDto> releases = underTest.findAllReleases(null, null);
 
       // then
-      verify(releaseResponseTransformer, times(1)).transformToList(response);
+      verify(releaseResponseTransformer).transformToList(response);
       assertThat(releases).isEqualTo(expectedResult);
     }
   }
@@ -132,7 +132,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       underTest.findReleases(artists, timeRange, pageRequest);
 
       // then
-      verify(releaseRequestTransformer, times(1)).transform(artists, timeRange, pageRequest);
+      verify(releaseRequestTransformer).transform(artists, timeRange, pageRequest);
     }
 
     @Test
@@ -146,7 +146,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       underTest.findReleases(null, null, null);
 
       // then
-      verify(butlerClient, times(1)).queryReleases(eq(request));
+      verify(butlerClient).queryReleases(eq(request));
     }
 
     @Test
@@ -162,7 +162,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       Page<ReleaseDto> releases = underTest.findReleases(null, null, null);
 
       // then
-      verify(releaseResponseTransformer, times(1)).transformToPage(response);
+      verify(releaseResponseTransformer).transformToPage(response);
       assertThat(releases).isEqualTo(expectedResult);
     }
   }
@@ -174,7 +174,7 @@ class ReleaseServiceImplTest implements WithAssertions {
     underTest.createImportJob();
 
     // then
-    verify(butlerClient, times(1)).createImportJob();
+    verify(butlerClient).createImportJob();
   }
 
   @Test
@@ -187,7 +187,7 @@ class ReleaseServiceImplTest implements WithAssertions {
     underTest.queryImportJobResults();
 
     // then
-    verify(butlerClient, times(1)).queryImportJobResults();
+    verify(butlerClient).queryImportJobResults();
   }
 
   @Test
@@ -235,6 +235,6 @@ class ReleaseServiceImplTest implements WithAssertions {
     underTest.createRetryCoverDownloadJob();
 
     // then
-    verify(butlerClient, times(1)).createRetryCoverDownloadJob();
+    verify(butlerClient).createRetryCoverDownloadJob();
   }
 }
