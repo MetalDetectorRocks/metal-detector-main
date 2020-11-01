@@ -1,12 +1,11 @@
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {axiosConfig} from "../config/axios.config";
-import {AbstractRestClient} from "./abstract-rest-client";
 import {ToastService} from "../service/toast-service";
 import {UNKNOWN_ERROR_MESSAGE} from "../config/messages.config";
 import {SpotifyUserAuthorizationResponse} from "../model/spotify-user-authorization-response.model";
 import {SpotifyArtistImportResponse} from "../model/spotify-artist-import-response.model";
 
-export class SpotifyRestClient extends AbstractRestClient {
+export class SpotifyRestClient {
 
     private readonly SPOTIFY_AUTHORIZATION_ENDPOINT = "/rest/v1/spotify/auth";
     private readonly SPOTIFY_ARTIST_IMPORT_ENDPOINT = "/rest/v1/spotify/import";
@@ -14,7 +13,6 @@ export class SpotifyRestClient extends AbstractRestClient {
     private readonly toastService: ToastService;
 
     constructor(toastService: ToastService) {
-        super();
         this.toastService = toastService;
     }
 
