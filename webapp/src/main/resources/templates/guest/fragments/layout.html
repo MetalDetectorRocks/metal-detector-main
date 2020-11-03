@@ -13,10 +13,10 @@
 
     <!-- JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script th:src="@{/webjars/jquery/jquery.min.js}" src="#"></script>
-    <script th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
-    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
-    <script th:src="@{/js/common.js}" src="#"></script>
+    <script th:nonce="script-+${random}" th:src="@{/webjars/jquery/jquery.min.js}" src="#"></script>
+    <script th:nonce="script-+${random}" th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
+    <script th:nonce="script-+${random}" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
+    <script th:nonce="script-+${random}" th:src="@{/js/common.js}" src="#"></script>
 </head>
 <body>
     <main role="main">

@@ -6,7 +6,7 @@
       lang="en">
 <head>
     <title>Home</title>
-    <script type="module" th:src="@{/ts/dist/homepage.bundle.js}" src="#"></script>
+    <script th:nonce="script-+${random}" type="module" th:src="@{/ts/dist/homepage.bundle.js}" src="#"></script>
 </head>
 <body>
     <section layout:fragment="content">

@@ -2,6 +2,7 @@ package rocks.metaldetector.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final DataSource dataSource;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final SecurityProperties securityProperties;
+  private final CspNonceFilter cspNonceFilter;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -94,5 +96,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     jdbcTokenRepository.setCreateTableOnStartup(false);
     jdbcTokenRepository.setDataSource(dataSource);
     return jdbcTokenRepository;
+  }
+
+  @Bean
+  public FilterRegistrationBean<CspNonceFilter> nonceFilterFilterRegistrationBean() {
+    FilterRegistrationBean<CspNonceFilter> filterRegistrationBean = new FilterRegistrationBean<>();
+    filterRegistrationBean.setFilter(cspNonceFilter);
+    filterRegistrationBean.addUrlPatterns(Endpoints.Frontend.ALL_FRONTEND_PAGES.toArray(new String[0]));
+    filterRegistrationBean.addUrlPatterns(Endpoints.Guest.ALL_GUEST_INDEX_PAGES.toArray(new String[0]));
+    filterRegistrationBean.addUrlPatterns(Endpoints.Guest.ALL_AUTH_PAGES.toArray(new String[0]));
+    filterRegistrationBean.addUrlPatterns(Endpoints.AntPattern.ADMIN);
+    return filterRegistrationBean;
   }
 }
