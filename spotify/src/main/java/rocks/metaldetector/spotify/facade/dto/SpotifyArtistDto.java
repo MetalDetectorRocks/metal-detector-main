@@ -3,12 +3,14 @@ package rocks.metaldetector.spotify.facade.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(of = "id")
 public class SpotifyArtistDto {
 
   private String id;

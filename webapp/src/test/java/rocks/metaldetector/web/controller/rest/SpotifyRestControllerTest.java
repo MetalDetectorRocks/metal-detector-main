@@ -11,20 +11,25 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import rocks.metaldetector.service.spotify.SpotifyArtistImportService;
+import rocks.metaldetector.service.spotify.SpotifyFollowedArtistsService;
 import rocks.metaldetector.service.spotify.SpotifyUserAuthorizationService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.response.SpotifyArtistImportResponse;
+import rocks.metaldetector.web.api.response.SpotifyFollowedArtistsResponse;
 import rocks.metaldetector.web.api.response.SpotifyUserAuthorizationResponse;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static rocks.metaldetector.web.controller.rest.SpotifyRestController.FETCH_TYPES_PARAM;
 
 @ExtendWith(MockitoExtension.class)
 class SpotifyRestControllerTest implements WithAssertions {
@@ -33,18 +38,20 @@ class SpotifyRestControllerTest implements WithAssertions {
   private SpotifyUserAuthorizationService userAuthorizationService;
 
   @Mock
-  private SpotifyArtistImportService artistImportService;
+  private SpotifyFollowedArtistsService artistImportService;
 
   @InjectMocks
   private SpotifyRestController underTest;
 
   private RestAssuredMockMvcUtils authorizationRestAssuredMockMvcUtils;
   private RestAssuredMockMvcUtils importRestAssuredMockMvcUtils;
+  private RestAssuredMockMvcUtils followedRestAssuredMockMvcUtils;
 
   @BeforeEach
   void setup() {
     authorizationRestAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_AUTHORIZATION);
     importRestAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_ARTIST_IMPORT);
+    followedRestAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS);
     RestAssuredMockMvc.standaloneSetup(underTest,
                                        springSecurity((request, response, chain) -> chain.doFilter(request, response)));
   }
@@ -90,8 +97,8 @@ class SpotifyRestControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " should return 200")
-  void test_get_import_returns_ok() {
+  @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " should return 200")
+  void test_post_import_returns_ok() {
     // when
     var validatableResponse = importRestAssuredMockMvcUtils.doPost();
 
@@ -100,8 +107,8 @@ class SpotifyRestControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " should call SpotifyArtistImportService")
-  void test_get_import_calls_spotify_service() {
+  @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " should call SpotifyFollowedArtistsService")
+  void test_post_import_calls_spotify_service() {
     // when
     importRestAssuredMockMvcUtils.doPost();
 
@@ -110,8 +117,8 @@ class SpotifyRestControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " return the import result")
-  void test_get_import_returns_result() {
+  @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " return the import result")
+  void test_post_import_returns_result() {
     // given
     var expectedResult = List.of(ArtistDtoFactory.createDefault());
     doReturn(expectedResult).when(artistImportService).importArtistsFromLikedReleases();
@@ -121,6 +128,44 @@ class SpotifyRestControllerTest implements WithAssertions {
 
     // then
     var response = validatableResponse.extract().as(SpotifyArtistImportResponse.class);
+    assertThat(response.getArtists()).isEqualTo(expectedResult);
+  }
+
+  @Test
+  @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " should return 200")
+  void test_get_followed_returns_ok() {
+    // when
+    var validatableResponse = followedRestAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, Collections.emptyList()));
+
+    // then
+    validatableResponse.statusCode(HttpStatus.OK.value());
+  }
+
+  @Test
+  @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " should call SpotifyFollowedArtistsService")
+  void test_get_followed_calls_spotify_service() {
+    // given
+    var fetchTypes = List.of("albums","artists");
+
+    // when
+    followedRestAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, fetchTypes));
+
+    // then
+    verify(artistImportService).getNewFollowedArtists(fetchTypes);
+  }
+
+  @Test
+  @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " return the followed artists")
+  void test_get_followed_returns_result() {
+    // given
+    var expectedResult = List.of(ArtistDtoFactory.createDefault());
+    doReturn(expectedResult).when(artistImportService).getNewFollowedArtists(any());
+
+    // when
+    var validatableResponse = followedRestAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, Collections.emptyList()));
+
+    // then
+    var response = validatableResponse.extract().as(SpotifyFollowedArtistsResponse.class);
     assertThat(response.getArtists()).isEqualTo(expectedResult);
   }
 }
