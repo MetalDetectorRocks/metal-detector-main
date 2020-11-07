@@ -437,16 +437,11 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @Test
   @DisplayName("Current user is fetched on follow multiple")
   void test_follow_multiple_should_get_current_user() {
-    // given
-    doReturn(PUBLIC_USER_ID).when(currentPublicUserIdSupplier).get();
-    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(anyString());
-
     // when
     underTest.followSpotifyArtists(Collections.emptyList());
 
     // then
-    verify(currentPublicUserIdSupplier).get();
-    verify(userRepository).findByPublicId(PUBLIC_USER_ID);
+    verify(currentUserSupplier).get();
   }
 
   @Test
@@ -455,7 +450,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     // given
     var artistEntity = ArtistEntityFactory.withExternalId("a");
     var expectedFollowActionEntities = List.of(FollowActionEntity.builder().artist(artistEntity).user(userEntity).build());
-    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+    doReturn(userEntity).when(currentUserSupplier).get();
     doReturn(List.of(artistEntity)).when(artistRepository).findAllByExternalIdIn(any());
 
     // when
