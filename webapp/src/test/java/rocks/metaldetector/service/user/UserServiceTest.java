@@ -28,7 +28,7 @@ import rocks.metaldetector.persistence.domain.token.TokenType;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
-import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
@@ -46,7 +46,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.any;
@@ -92,7 +91,7 @@ class UserServiceTest implements WithAssertions {
   private JwtsSupport jwtsSupport;
 
   @Mock
-  private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
+  private CurrentUserSupplier currentUserSupplier;
 
   @Mock
   private LoginAttemptService loginAttemptService;
@@ -108,7 +107,7 @@ class UserServiceTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentPublicUserIdSupplier, userTransformer, loginAttemptService, request);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request);
   }
 
   @DisplayName("Create user tests")
@@ -502,7 +501,7 @@ class UserServiceTest implements WithAssertions {
     }
   }
 
-  @DisplayName("Udate user tests")
+  @DisplayName("Update user tests")
   @Nested
   class UpdateUserTest {
 
@@ -515,7 +514,7 @@ class UserServiceTest implements WithAssertions {
       userDtoForUpdate.setRole("Administrator");
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
 
-      when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+      when(currentUserSupplier.get()).thenReturn(user);
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
       // return the same user without changing the mail is ok here, we don't want to concentrate on the DTO conversion in this test
       when(userRepository.save(any())).thenReturn(user);
@@ -527,7 +526,7 @@ class UserServiceTest implements WithAssertions {
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
       verify(userRepository).save(userEntityCaptor.capture());
-      verify(currentPublicUserIdSupplier).get();
+      verify(currentUserSupplier).get();
       assertThat(userDto).isNotNull();
       assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
       assertThat(userEntityCaptor.getValue().getUserRoles()).containsExactly(ROLE_ADMINISTRATOR);
@@ -542,7 +541,7 @@ class UserServiceTest implements WithAssertions {
       userDtoForUpdate.setEnabled(false);
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
 
-      when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+      when(currentUserSupplier.get()).thenReturn(user);
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
       // return the same user without changing the mail is ok here, we don't want to concentrate on the DTO conversion in this test
       when(userRepository.save(any())).thenReturn(user);
@@ -554,7 +553,7 @@ class UserServiceTest implements WithAssertions {
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
       verify(userRepository).save(userEntityCaptor.capture());
-      verify(currentPublicUserIdSupplier).get();
+      verify(currentUserSupplier).get();
       assertThat(userDto).isNotNull();
       assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
       assertThat(userEntityCaptor.getValue().isEnabled()).isFalse();
@@ -587,7 +586,7 @@ class UserServiceTest implements WithAssertions {
       user.setPublicId(PUBLIC_ID);
       user.setUserRoles(UserRole.createAdministratorRole());
 
-      when(currentPublicUserIdSupplier.get()).thenReturn(PUBLIC_ID);
+      when(currentUserSupplier.get()).thenReturn(user);
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
 
       // when
@@ -608,7 +607,7 @@ class UserServiceTest implements WithAssertions {
       user.setPublicId(PUBLIC_ID);
       user.setUserRoles(UserRole.createAdministratorRole());
 
-      when(currentPublicUserIdSupplier.get()).thenReturn(PUBLIC_ID);
+      when(currentUserSupplier.get()).thenReturn(user);
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
 
       // when
