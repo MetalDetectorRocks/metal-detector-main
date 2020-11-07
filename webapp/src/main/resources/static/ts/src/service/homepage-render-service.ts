@@ -80,7 +80,6 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
             response.recentlyFollowedArtists.forEach(artist => {
                 const artistDivElement = this.renderArtistCard(artist);
-                console.log(artist.followedSince);
                 const followedSinceElement = artistDivElement.querySelector("#artist-sub-title") as HTMLDivElement;
                 followedSinceElement.innerHTML = `
                     <div class="custom-tooltip">${this.dateFormatService.formatRelative(artist.followedSince)}
