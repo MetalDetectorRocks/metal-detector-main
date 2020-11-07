@@ -122,8 +122,8 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   private List<ArtistEntity> saveAndFetchArtists(List<String> spotifyArtistIds) {
     List<String> newArtistsIds = artistService.findNewArtistIds(spotifyArtistIds);
-    List<SpotifyArtistDto> spotifyArtistDtos = spotifyService.searchArtistsByIds(newArtistsIds);
-    artistService.persistArtists(spotifyArtistDtos);
+    List<SpotifyArtistDto> newSpotifyArtistDtos = spotifyService.searchArtistsByIds(newArtistsIds);
+    artistService.persistArtists(newSpotifyArtistDtos);
     return artistRepository.findAllByExternalIdIn(spotifyArtistIds);
   }
 
