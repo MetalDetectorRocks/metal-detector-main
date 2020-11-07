@@ -14,14 +14,15 @@
     <version>0.0.1</version>
     <name>metal-detector-butler</name>
 
-    <properties>
-        <java.version>15</java.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>

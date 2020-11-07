@@ -13,13 +13,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistDtoTransformer;
 import rocks.metaldetector.service.artist.ArtistService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.spotify.facade.SpotifyService;
-import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.SpotifyAlbumDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
@@ -30,7 +29,6 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -44,7 +42,7 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
   private SpotifyService spotifyService;
 
   @Mock
-  private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
+  private CurrentUserSupplier currentUserSupplier;
 
   @Mock
   private UserRepository userRepository;
@@ -72,7 +70,7 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(spotifyService, currentPublicUserIdSupplier, userRepository, followArtistService, artistService, artistDtoTransformer);
+    reset(spotifyService, currentUserSupplier, userRepository, followArtistService, artistService, artistDtoTransformer);
   }
 
   @Nested
@@ -86,36 +84,7 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
       underTest.importArtistsFromLikedReleases();
 
       // then
-      verify(currentPublicUserIdSupplier).get();
-    }
-
-    @Test
-    @DisplayName("userRepository is called to get current user")
-    void test_user_repository_called() {
-      // given
-      var publicUserId = "publicUserId";
-      doReturn(publicUserId).when(currentPublicUserIdSupplier).get();
-
-      // when
-      underTest.importArtistsFromLikedReleases();
-
-      // then
-      verify(userRepository).findByPublicId(publicUserId);
-    }
-
-    @Test
-    @DisplayName("userRepository throws exception when userId is not found")
-    void test_user_repository_throws_exception() {
-      // given
-      var publicUserId = "publicUserId";
-      doThrow(new ResourceNotFoundException(publicUserId)).when(userRepository).findByPublicId(any());
-
-      // when
-      Throwable throwable = catchThrowable(() -> underTest.importArtistsFromLikedReleases());
-
-      // then
-      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(publicUserId);
+      verify(currentUserSupplier).get();
     }
 
     @Test
@@ -281,36 +250,7 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
       underTest.getNewFollowedArtists(Collections.emptyList());
 
       // then
-      verify(currentPublicUserIdSupplier).get();
-    }
-
-    @Test
-    @DisplayName("userRepository is called to get current user")
-    void test_user_repository_called() {
-      // given
-      var publicUserId = "publicUserId";
-      doReturn(publicUserId).when(currentPublicUserIdSupplier).get();
-
-      // when
-      underTest.getNewFollowedArtists(Collections.emptyList());
-
-      // then
-      verify(userRepository).findByPublicId(publicUserId);
-    }
-
-    @Test
-    @DisplayName("userRepository throws exception when userId is not found")
-    void test_user_repository_throws_exception() {
-      // given
-      var publicUserId = "publicUserId";
-      doThrow(new ResourceNotFoundException(publicUserId)).when(userRepository).findByPublicId(any());
-
-      // when
-      Throwable throwable = catchThrowable(() -> underTest.getNewFollowedArtists(Collections.emptyList()));
-
-      // then
-      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(publicUserId);
+      verify(currentUserSupplier).get();
     }
 
     @Test
