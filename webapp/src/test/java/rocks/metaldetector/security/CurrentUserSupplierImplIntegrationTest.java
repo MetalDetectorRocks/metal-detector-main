@@ -3,7 +3,7 @@ package rocks.metaldetector.security;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithAnonymousUser;
@@ -19,9 +19,6 @@ class CurrentUserSupplierImplIntegrationTest implements WithAssertions, WithInte
   private static final String EMAIL = "user@mail.com";
 
   private final CurrentUserSupplierImpl underTest = new CurrentUserSupplierImpl();
-
-  @Autowired
-  private UserDetailsService userDetailsService;
 
   @Test
   @DisplayName("userEntity is returned")
@@ -47,8 +44,8 @@ class CurrentUserSupplierImplIntegrationTest implements WithAssertions, WithInte
     assertThat(result).isNull();
   }
 
-  @org.springframework.boot.test.context.TestConfiguration
-  static class TestConfiguration {
+  @TestConfiguration
+  static class TestBeanConfiguration {
 
     @Bean
     UserDetailsService userDetailsService() {
