@@ -7,10 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.spotify.facade.dto.SpotifyUserAuthorizationDto;
-import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 
@@ -20,17 +19,14 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
 
   static final int STATE_SIZE = 10;
 
-  private final CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
+  private final CurrentUserSupplier currentUserSupplier;
   private final UserRepository userRepository;
   private final SpotifyService spotifyService;
 
   @Override
   @Transactional
   public String prepareAuthorization() {
-    String publicUserId = currentPublicUserIdSupplier.get();
-    UserEntity currentUser = userRepository.findByPublicId(publicUserId).orElseThrow(
-        () -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
-    );
+    UserEntity currentUser = currentUserSupplier.get();
 
     String state = RandomStringUtils.randomAlphanumeric(STATE_SIZE);
     SpotifyAuthorizationEntity authenticationEntity = new SpotifyAuthorizationEntity(state);
@@ -43,10 +39,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
   @Override
   @Transactional
   public void fetchInitialToken(String spotifyState, String spotifyCode) {
-    String publicUserId = currentPublicUserIdSupplier.get();
-    UserEntity currentUser = userRepository.findByPublicId(publicUserId).orElseThrow(
-        () -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
-    );
+    UserEntity currentUser = currentUserSupplier.get();
     SpotifyAuthorizationEntity authorizationEntity = currentUser.getSpotifyAuthorization();
 
     checkState(authorizationEntity, spotifyState);
@@ -64,10 +57,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
   @Override
   @Transactional
   public String getOrRefreshToken() {
-    String publicUserId = currentPublicUserIdSupplier.get();
-    UserEntity currentUser = userRepository.findByPublicId(publicUserId).orElseThrow(
-        () -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!")
-    );
+    UserEntity currentUser = currentUserSupplier.get();
     SpotifyAuthorizationEntity authorizationEntity = currentUser.getSpotifyAuthorization();
 
     if (authorizationEntity == null || authorizationEntity.getRefreshToken() == null || authorizationEntity.getRefreshToken().isEmpty()) {
