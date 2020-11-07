@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +15,10 @@ import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.service.artist.ArtistSearchService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.support.Endpoints;
+import rocks.metaldetector.web.api.request.FollowSpotifyArtistsRequest;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(Endpoints.Rest.ARTISTS)
@@ -44,6 +48,12 @@ public class ArtistsRestController {
   @PostMapping(path = Endpoints.Rest.FOLLOW + "/{source}/{externalId}")
   public ResponseEntity<Void> handleFollow(@PathVariable String source, @PathVariable String externalId) {
     followArtistService.follow(externalId, ArtistSource.getArtistSourceFromString(source));
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping(path = Endpoints.Rest.FOLLOW + "/spotify")
+  public ResponseEntity<Void> handleFollowSpotifyArtists(@Valid @RequestBody FollowSpotifyArtistsRequest request) {
+    followArtistService.followSpotifyArtists(request.getSpotifyArtistIds());
     return ResponseEntity.ok().build();
   }
 

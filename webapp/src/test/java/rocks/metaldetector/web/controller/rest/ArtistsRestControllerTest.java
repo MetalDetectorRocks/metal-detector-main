@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,10 +24,14 @@ import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
+import rocks.metaldetector.web.api.request.FollowSpotifyArtistsRequest;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -177,11 +184,13 @@ class ArtistsRestControllerTest implements WithAssertions {
 
     private RestAssuredMockMvcUtils followArtistRestAssuredUtils;
     private RestAssuredMockMvcUtils unfollowArtistRestAssuredUtils;
+    private RestAssuredMockMvcUtils followSpotifyArtistsRestAssuredUtils;
 
     @BeforeEach
     void setUp() {
       followArtistRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.FOLLOW);
       unfollowArtistRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.UNFOLLOW);
+      followSpotifyArtistsRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.FOLLOW + "/spotify");
       RestAssuredMockMvc.standaloneSetup(underTest,
                                          springSecurity((request, response, chain) -> chain.doFilter(request, response)),
                                          RestExceptionsHandler.class);
@@ -270,6 +279,50 @@ class ArtistsRestControllerTest implements WithAssertions {
 
       // then
       result.status(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("Should return 200 when following spotify artists")
+    void handle_follow_multiple_return_200() {
+      // given
+      var request = FollowSpotifyArtistsRequest.builder().spotifyArtistIds(List.of("a")).build();
+
+      // when
+      var validatableResponse = followSpotifyArtistsRestAssuredUtils.doPost(request);
+
+      // then
+      validatableResponse.statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("Should call follow artist service when following artists")
+    void handle_follow_multiple_call_follow_artist_service() {
+      // given
+      var request = FollowSpotifyArtistsRequest.builder().spotifyArtistIds(List.of("a")).build();
+
+      // when
+      followSpotifyArtistsRestAssuredUtils.doPost(request);
+
+      // then
+      verify(followArtistService).followSpotifyArtists(request.getSpotifyArtistIds());
+    }
+
+    @ParameterizedTest(name = "request cannot be {0}")
+    @MethodSource("badRequestProvider")
+    @DisplayName("Should return bad request on invalid request")
+    void handle_follow_multiple_bad_request(FollowSpotifyArtistsRequest request) {
+      // when
+      var result = followSpotifyArtistsRestAssuredUtils.doPost(request);
+
+      // then
+      result.status(HttpStatus.BAD_REQUEST);
+    }
+
+    private Stream<Arguments> badRequestProvider() {
+      return Stream.of(
+          Arguments.of(FollowSpotifyArtistsRequest.builder().build()),
+          Arguments.of(FollowSpotifyArtistsRequest.builder().spotifyArtistIds(Collections.emptyList()).build())
+      );
     }
   }
 }
