@@ -4,7 +4,15 @@ import {HomepageResponse} from "../model/homepage-response.model";
 import {AbstractRenderService} from "./abstract-render-service";
 import {Artist} from "../model/artist.model";
 import {Release} from "../model/release.model";
-import {DateFormatService} from "./date-format-service";
+import {DateFormat, DateFormatService} from "./date-format-service";
+
+interface HomepageCard {
+    readonly divElement: HTMLDivElement;
+    readonly coverElement: HTMLImageElement;
+    readonly nameElement: HTMLParagraphElement;
+    readonly subtitleElement: HTMLParagraphElement;
+    readonly footerElement: HTMLDivElement;
+}
 
 export class HomepageRenderService extends AbstractRenderService<HomepageResponse> {
 
@@ -72,8 +80,13 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
             response.recentlyFollowedArtists.forEach(artist => {
                 const artistDivElement = this.renderArtistCard(artist);
+                console.log(artist.followedSince);
                 const followedSinceElement = artistDivElement.querySelector("#artist-sub-title") as HTMLDivElement;
-                followedSinceElement.innerHTML = this.dateFormatService.formatRelative(artist.followedSince);
+                followedSinceElement.innerHTML = `
+                    <div class="custom-tooltip">${this.dateFormatService.formatRelative(artist.followedSince)}
+                        <span class="tooltip-text">${this.dateFormatService.format(artist.followedSince, DateFormat.LONG)}</span>
+                    </div>
+                `;
                 this.attachCard(artistDivElement, recentlyFollowedRowElement);
             });
         }
@@ -108,40 +121,44 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     private renderReleaseCards(releases: Release[], rowElement: HTMLDivElement): void {
         releases.forEach(release => {
             const releaseDivElement = this.renderReleaseCard(release);
-            const releaseDateElement = releaseDivElement.querySelector("#release-date") as HTMLDivElement;
-            releaseDateElement.innerHTML = this.dateFormatService.formatRelative(release.releaseDate);
             this.attachCard(releaseDivElement, rowElement);
         });
     }
 
     private renderReleaseCard(release: Release): HTMLDivElement {
-        const releaseTemplateNode = document.importNode(this.releaseTemplateElement.content, true);
-        const releaseDivElement = releaseTemplateNode.firstElementChild as HTMLDivElement;
-        const releaseCoverElement = releaseDivElement.querySelector("#release-cover") as HTMLImageElement;
-        const artistNameElement = releaseDivElement.querySelector("#release-artist-name") as HTMLParagraphElement;
-        const releaseTitleElement = releaseDivElement.querySelector("#release-title") as HTMLParagraphElement;
+        const homepageCard = this.getHomepageCard();
+        homepageCard.coverElement.src = release.coverUrl;
+        homepageCard.nameElement.textContent = release.artist;
+        homepageCard.subtitleElement.textContent = release.albumTitle;
+        homepageCard.footerElement.innerHTML = `
+            <div class="custom-tooltip">${this.dateFormatService.formatRelative(release.releaseDate)}
+                <span class="tooltip-text">${this.dateFormatService.format(release.releaseDate, DateFormat.LONG)}</span>
+            </div>
+        `;
 
-        releaseCoverElement.src = release.coverUrl;
-        artistNameElement.textContent = release.artist;
-        releaseTitleElement.textContent = release.albumTitle;
-
-        return releaseDivElement;
+        return homepageCard.divElement;
     }
 
     private renderPlaceholderCard(): HTMLDivElement {
-        const artistTemplateNode = document.importNode(this.releaseTemplateElement.content, true);
-        const divElement = artistTemplateNode.firstElementChild as HTMLDivElement;
-        const thumbElement = divElement.querySelector("#release-cover") as HTMLImageElement;
-        const nameElement = divElement.querySelector("#release-artist-name") as HTMLParagraphElement;
-        const subtitleElement = divElement.querySelector("#release-title") as HTMLParagraphElement;
-        const footerElement = divElement.querySelector("#release-date") as HTMLDivElement;
+        const homepageCard = this.getHomepageCard();
+        homepageCard.coverElement.src = "/images/question-mark.jpg";
+        homepageCard.nameElement.textContent = "Nothing here..."
+        homepageCard.subtitleElement.textContent = "Want to see more?";
+        homepageCard.footerElement.innerHTML = "Follow more artists!";
 
-        thumbElement.src = "/images/question-mark.jpg";
-        nameElement.textContent = "Nothing here..."
-        subtitleElement.textContent = "Want to see more?";
-        footerElement.innerHTML = "Follow more artists!";
+        return homepageCard.divElement;
+    }
 
-        return divElement;
+    private getHomepageCard(): HomepageCard {
+        const templateNode = document.importNode(this.releaseTemplateElement.content, true);
+        const divElement = templateNode.firstElementChild as HTMLDivElement;
+        return {
+            divElement: divElement,
+            coverElement: divElement.querySelector("#release-cover") as HTMLImageElement,
+            nameElement: divElement.querySelector("#release-artist-name") as HTMLParagraphElement,
+            subtitleElement: divElement.querySelector("#release-title") as HTMLParagraphElement,
+            footerElement: divElement.querySelector("#release-date") as HTMLDivElement
+        };
     }
 
     private attachCard(divElement: HTMLDivElement, rowElement: HTMLDivElement): void {
