@@ -2,19 +2,14 @@ package rocks.metaldetector.service.spotify;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistService;
 import rocks.metaldetector.service.artist.FollowArtistService;
-import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.SpotifyAlbumDtoFactory;
@@ -35,7 +30,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
   private SpotifyService spotifyService;
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private SpotifyUserAuthorizationService userAuthorizationService;
 
   @Mock
   private FollowArtistService followArtistService;
@@ -46,27 +41,19 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
   @InjectMocks
   private SpotifyArtistImportServiceImpl underTest;
 
-  private final UserEntity userEntity = UserEntityFactory.createUser("user", "user@mail.com");
-
-  @BeforeEach
-  void setup() {
-    userEntity.setSpotifyAuthorization(new SpotifyAuthorizationEntity("state"));
-    doReturn(userEntity).when(currentUserSupplier).get();
-  }
-
   @AfterEach
   void tearDown() {
-    reset(spotifyService, currentUserSupplier, followArtistService, artistService);
+    reset(spotifyService, userAuthorizationService, followArtistService, artistService);
   }
 
   @Test
-  @DisplayName("currentUserSupplier is called")
+  @DisplayName("userAuthorizationService is called")
   void test_current_user_supplier_called() {
     // when
     underTest.importArtistsFromLikedReleases();
 
     // then
-    verify(currentUserSupplier).get();
+    verify(userAuthorizationService).getOrRefreshToken();
   }
 
   @Test
@@ -74,7 +61,7 @@ class SpotifyArtistImportServiceImplTest implements WithAssertions {
   void test_spotify_service_called() {
     // given
     var accessToken = "accessToken";
-    userEntity.getSpotifyAuthorization().setAccessToken(accessToken);
+    doReturn(accessToken).when(userAuthorizationService).getOrRefreshToken();
 
     // when
     underTest.importArtistsFromLikedReleases();

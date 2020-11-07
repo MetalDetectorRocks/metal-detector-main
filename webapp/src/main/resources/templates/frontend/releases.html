@@ -70,14 +70,16 @@
                 <fieldset class="mb-3">
                     <legend>Artists</legend>
                     <div class="form-group">
-                        <div class="custom-control custom-radio">
-                            <input type="radio" id="all-artists-rb" name="releases" class="custom-control-input" checked="">
-                            <label class="custom-control-label" for="all-artists-rb">All artists</label>
-                        </div>
-                        <div class="custom-control custom-radio">
-                            <input type="radio" id="followed-artists-releases-rb" name="releases" class="custom-control-input">
-                            <label class="custom-control-label" for="followed-artists-releases-rb">Only followed artists</label>
-                        </div>
+                        <form id="release-filter-form">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" id="all-artists-rb" name="releases" class="custom-control-input" checked="">
+                                <label class="custom-control-label" for="all-artists-rb">All artists</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input type="radio" id="followed-artists-rb" name="releases" class="custom-control-input">
+                                <label class="custom-control-label" for="followed-artists-rb">Only followed artists</label>
+                            </div>
+                        </form>
                     </div>
                 </fieldset>
                 <fieldset class="mb-3">
@@ -88,7 +90,7 @@
                             <label class="custom-control-label" for="detailed-rb">Detailed</label>
                         </div>
                         <div class="custom-control custom-radio">
-                            <input type="radio" id="compact-rb" name="releases" class="custom-control-input">
+                            <input type="radio" id="compact-rb" name="view" class="custom-control-input">
                             <label class="custom-control-label" for="compact-rb">Compact</label>
                         </div>
                     </div>

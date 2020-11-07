@@ -2,8 +2,6 @@ package rocks.metaldetector.service.spotify;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.ArtistService;
 import rocks.metaldetector.service.artist.FollowArtistService;
@@ -21,15 +19,15 @@ import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY
 public class SpotifyArtistImportServiceImpl implements SpotifyArtistImportService {
 
   private final SpotifyService spotifyService;
-  private final CurrentUserSupplier currentUserSupplier;
   private final FollowArtistService followArtistService;
   private final ArtistService artistService;
+  private final SpotifyUserAuthorizationService userAuthorizationService;
 
   @Override
   public List<ArtistDto> importArtistsFromLikedReleases() {
-    UserEntity currentUser = currentUserSupplier.get();
+    String spotifyAccessToken = userAuthorizationService.getOrRefreshToken();
 
-    List<SpotifyAlbumDto> importedAlbums = spotifyService.fetchLikedAlbums(currentUser.getSpotifyAuthorization().getAccessToken());
+    List<SpotifyAlbumDto> importedAlbums = spotifyService.fetchLikedAlbums(spotifyAccessToken);
     List<String> artistIds = importedAlbums.stream()
         .flatMap(album -> album.getArtists().stream())
         .map(SpotifyArtistDto::getId)

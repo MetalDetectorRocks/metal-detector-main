@@ -1,29 +1,39 @@
 import {axiosConfig} from "../config/axios.config";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {ReleasesResponse} from "../model/releases-response.model";
-import {AbstractRestClient} from "./abstract-rest-client";
 import {DateFormat, DateFormatService} from "../service/date-format-service";
+import {UrlService} from "../service/url-service";
 
-export class ReleasesRestClient extends AbstractRestClient {
+export class ReleasesRestClient {
 
     private readonly RELEASES_URL = "/rest/v1/releases";
+    private readonly MY_RELEASES_URL = "/rest/v1/releases/my";
 
+    private readonly urlService: UrlService;
     private readonly dateFormatService: DateFormatService;
 
-    constructor(dateFormatService: DateFormatService) {
-        super();
+    constructor(urlService: UrlService, dateFormatService: DateFormatService) {
+        this.urlService = urlService;
         this.dateFormatService = dateFormatService;
     }
 
-    public async fetchReleases(): Promise<ReleasesResponse> {
+    public async fetchAllReleases(): Promise<ReleasesResponse> {
+        return await this.fetchReleases(this.RELEASES_URL);
+    }
+
+    public async fetchMyReleases(): Promise<ReleasesResponse> {
+        return await this.fetchReleases(this.MY_RELEASES_URL);
+    }
+
+    private fetchReleases(url: string): Promise<ReleasesResponse> {
         axiosConfig.params = {
-            page: this.getPageFromUrl(),
+            page: this.urlService.getPageFromUrl(),
             size: 30,
             dateFrom: this.dateFormatService.format(new Date().toUTCString(), DateFormat.UTC)
         }
 
-        return await axios.get(
-            this.RELEASES_URL,
+        return axios.get(
+            url,
             axiosConfig
         ).then((response: AxiosResponse<ReleasesResponse>) => {
             return response.data;
