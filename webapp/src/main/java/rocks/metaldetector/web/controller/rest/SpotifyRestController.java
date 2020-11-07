@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.service.artist.ArtistDto;
+import rocks.metaldetector.service.spotify.SpotifyFetchType;
 import rocks.metaldetector.service.spotify.SpotifyFollowedArtistsService;
 import rocks.metaldetector.service.spotify.SpotifyUserAuthorizationService;
 import rocks.metaldetector.support.Endpoints;
@@ -43,7 +44,7 @@ public class SpotifyRestController {
 
   @GetMapping(path = Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<SpotifyFollowedArtistsResponse> getFollowedArtists(@RequestParam(value = FETCH_TYPES_PARAM) @NotEmpty List<String> fetchTypes) {
+  public ResponseEntity<SpotifyFollowedArtistsResponse> getFollowedArtists(@RequestParam(value = FETCH_TYPES_PARAM) @NotEmpty List<SpotifyFetchType> fetchTypes) {
     List<ArtistDto> followedArtists = spotifyFollowedArtistsService.getNewFollowedArtists(fetchTypes);
     return ResponseEntity.ok(new SpotifyFollowedArtistsResponse(followedArtists));
   }

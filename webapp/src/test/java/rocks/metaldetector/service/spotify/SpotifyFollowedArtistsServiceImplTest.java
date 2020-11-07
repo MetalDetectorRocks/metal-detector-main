@@ -2,7 +2,6 @@ package rocks.metaldetector.service.spotify;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,22 +9,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistDtoTransformer;
 import rocks.metaldetector.service.artist.ArtistService;
 import rocks.metaldetector.service.artist.FollowArtistService;
-import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.SpotifyAlbumDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -33,19 +25,13 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
-import static rocks.metaldetector.service.spotify.SpotifyFollowedArtistsServiceImpl.ARTIST_FETCH_TYPE_ALBUM;
+import static rocks.metaldetector.service.spotify.SpotifyFetchType.ALBUMS;
 
 @ExtendWith(MockitoExtension.class)
 class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
 
   @Mock
   private SpotifyService spotifyService;
-
-  @Mock
-  private CurrentUserSupplier currentUserSupplier;
-
-  @Mock
-  private UserRepository userRepository;
 
   @Mock
   private FollowArtistService followArtistService;
@@ -56,21 +42,15 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
   @Mock
   private ArtistDtoTransformer artistDtoTransformer;
 
+  @Mock
+  private SpotifyUserAuthorizationService userAuthorizationService;
+
   @InjectMocks
   private SpotifyFollowedArtistsServiceImpl underTest;
 
-  private UserEntity userEntity = UserEntityFactory.createUser("user", "user@mail.com");
-
-  @BeforeEach
-  void setup() {
-    userEntity = UserEntityFactory.createUser("user", "user@mail.com");
-    userEntity.setSpotifyAuthorization(new SpotifyAuthorizationEntity("state"));
-    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
-  }
-
   @AfterEach
   void tearDown() {
-    reset(spotifyService, currentUserSupplier, userRepository, followArtistService, artistService, artistDtoTransformer);
+    reset(spotifyService, followArtistService, artistService, artistDtoTransformer, userAuthorizationService);
   }
 
   @Nested
@@ -78,13 +58,13 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
   class ArtistImportTest {
 
     @Test
-    @DisplayName("currentUserSupplier is called")
-    void test_current_user_supplier_called() {
+    @DisplayName("userAuthorizationService is called")
+    void test_user_autorization_service_called() {
       // when
       underTest.importArtistsFromLikedReleases();
 
       // then
-      verify(currentUserSupplier).get();
+      verify(userAuthorizationService).getOrRefreshToken();
     }
 
     @Test
@@ -92,7 +72,7 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
     void test_spotify_service_called() {
       // given
       var accessToken = "accessToken";
-      userEntity.getSpotifyAuthorization().setAccessToken(accessToken);
+      doReturn(accessToken).when(userAuthorizationService).getOrRefreshToken();
 
       // when
       underTest.importArtistsFromLikedReleases();
@@ -244,13 +224,13 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
   class GettingFollowedArtistsTest {
 
     @Test
-    @DisplayName("currentUserSupplier is called")
-    void test_current_user_supplier_called() {
+    @DisplayName("userAuthorizationService is called")
+    void test_user_authorization_service_called() {
       // when
-      underTest.getNewFollowedArtists(Collections.emptyList());
+      underTest.getNewFollowedArtists(List.of(ALBUMS));
 
       // then
-      verify(currentUserSupplier).get();
+      verify(userAuthorizationService).getOrRefreshToken();
     }
 
     @Test
@@ -258,10 +238,10 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
     void test_spotify_service_called() {
       // given
       var accessToken = "accessToken";
-      userEntity.getSpotifyAuthorization().setAccessToken(accessToken);
+      doReturn(accessToken).when(userAuthorizationService).getOrRefreshToken();
 
       // when
-      underTest.getNewFollowedArtists(List.of(ARTIST_FETCH_TYPE_ALBUM));
+      underTest.getNewFollowedArtists(List.of(ALBUMS));
 
       // then
       verify(spotifyService).fetchLikedAlbums(accessToken);
@@ -281,7 +261,7 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
       doReturn(artistDto).when(artistDtoTransformer).transformSpotifyArtistDto(any());
 
       // when
-      underTest.getNewFollowedArtists(List.of(ARTIST_FETCH_TYPE_ALBUM));
+      underTest.getNewFollowedArtists(List.of(ALBUMS));
 
       // then
       verify(artistDtoTransformer).transformSpotifyArtistDto(album.getArtists().get(0));
@@ -304,7 +284,7 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
       doReturn(artistDto).when(artistDtoTransformer).transformSpotifyArtistDto(any());
 
       // when
-      underTest.getNewFollowedArtists(List.of(ARTIST_FETCH_TYPE_ALBUM));
+      underTest.getNewFollowedArtists(List.of(ALBUMS));
 
       // then
       verify(artistDtoTransformer).transformSpotifyArtistDto(firstAlbum.getArtists().get(0));
@@ -320,7 +300,7 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
       doReturn(artistDto).when(artistDtoTransformer).transformSpotifyArtistDto(any());
 
       // when
-      underTest.getNewFollowedArtists(List.of(ARTIST_FETCH_TYPE_ALBUM));
+      underTest.getNewFollowedArtists(List.of(ALBUMS));
 
       // then
       verify(followArtistService).isCurrentUserFollowing(artistDto.getExternalId(), SPOTIFY);
@@ -335,7 +315,7 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
       doReturn(artistDto).when(artistDtoTransformer).transformSpotifyArtistDto(any());
 
       // when
-      var result = underTest.getNewFollowedArtists(List.of(ARTIST_FETCH_TYPE_ALBUM));
+      var result = underTest.getNewFollowedArtists(List.of(ALBUMS));
 
       // then
       assertThat(result).isEqualTo(List.of(artistDto));

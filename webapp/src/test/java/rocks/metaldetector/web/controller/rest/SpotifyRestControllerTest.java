@@ -29,6 +29,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static rocks.metaldetector.service.spotify.SpotifyFetchType.ALBUMS;
 import static rocks.metaldetector.web.controller.rest.SpotifyRestController.FETCH_TYPES_PARAM;
 
 @ExtendWith(MockitoExtension.class)
@@ -142,10 +143,20 @@ class SpotifyRestControllerTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " should return 400 for invalid fetch type")
+  void test_get_followed_returns_bad_request() {
+    // when
+    var validatableResponse = followedRestAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, List.of("ARTISTS")));
+
+    // then
+    validatableResponse.statusCode(HttpStatus.BAD_REQUEST.value());
+  }
+
+  @Test
   @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " should call SpotifyFollowedArtistsService")
   void test_get_followed_calls_spotify_service() {
     // given
-    var fetchTypes = List.of("albums","artists");
+    var fetchTypes = List.of(ALBUMS);
 
     // when
     followedRestAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, fetchTypes));

@@ -8,5 +8,5 @@ public interface SpotifyFollowedArtistsService {
 
   List<ArtistDto> importArtistsFromLikedReleases();
 
-  List<ArtistDto> getNewFollowedArtists(List<String> importTypes);
+  List<ArtistDto> getNewFollowedArtists(List<SpotifyFetchType> fetchTypes);
 }

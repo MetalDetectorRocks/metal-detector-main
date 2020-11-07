@@ -16,12 +16,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
+import static rocks.metaldetector.service.spotify.SpotifyFetchType.ALBUMS;
 
 @Service
 @AllArgsConstructor
 public class SpotifyFollowedArtistsServiceImpl implements SpotifyFollowedArtistsService {
-
-  static final String ARTIST_FETCH_TYPE_ALBUM = "album";
 
   private final SpotifyService spotifyService;
   private final FollowArtistService followArtistService;
@@ -50,13 +49,11 @@ public class SpotifyFollowedArtistsServiceImpl implements SpotifyFollowedArtists
   }
 
   @Override
-  public List<ArtistDto> getNewFollowedArtists(List<String> fetchTypes) {
-   Set<ArtistDto> artistDtos = new HashSet<>();
+  public List<ArtistDto> getNewFollowedArtists(List<SpotifyFetchType> fetchTypes) {
+    Set<ArtistDto> artistDtos = new HashSet<>();
 
-    for (String fetchType : fetchTypes) {
-      if (fetchType.equalsIgnoreCase(ARTIST_FETCH_TYPE_ALBUM)) {
-        artistDtos.addAll(getArtistsFromLikedAlbums());
-      }
+    if (fetchTypes.contains(ALBUMS)) {
+      artistDtos.addAll(getArtistsFromLikedAlbums());
     }
 
     return artistDtos.stream()
