@@ -15,17 +15,17 @@
     <name>metal-detector-webapp</name>
 
     <properties>
-        <java.version>15</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
+        <hibernate-validator.version>6.1.6.Final</hibernate-validator.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <material-icons.version>0.3.1</material-icons.version>
         <rest-assured.version>4.2.0</rest-assured.version>
-        <bootstrap.version>4.5.2</bootstrap.version>
+        <bootstrap.version>4.5.3</bootstrap.version>
         <datatables.version>1.10.21</datatables.version>
         <thymeleaf-dialect.version>2.5.1</thymeleaf-dialect.version>
         <apache-commons-lang3.version>3.11</apache-commons-lang3.version>
+        <modelmapper.version>2.3.8</modelmapper.version>
     </properties>
 
     <dependencies>
@@ -101,21 +101,25 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator-core</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
             <version>${bootstrap.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.webjars.npm</groupId>
             <artifactId>material-icons</artifactId>
             <version>${material-icons.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>datatables</artifactId>
             <version>${datatables.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Project Modules -->
@@ -150,6 +154,15 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${apache-commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>${modelmapper.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
         </dependency>
     </dependencies>
 
