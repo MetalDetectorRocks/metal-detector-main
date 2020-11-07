@@ -15,8 +15,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.support.Endpoints;
 
-import java.util.UUID;
-
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
@@ -24,7 +22,7 @@ import static org.mockito.Mockito.when;
 class RedirectionHandlerInterceptorTest implements WithAssertions {
 
   @Mock
-  private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
+  private CurrentUserSupplier currentUserSupplier;
 
   @Mock
   private UserEntity userEntity;
@@ -43,14 +41,14 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(currentPublicUserIdSupplier, userEntity);
+    reset(currentUserSupplier, userEntity);
   }
 
   @Test
   @DisplayName("preHandle() should give false for logged in user")
   void pre_handle_should_return_false() {
     // given
-    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+    when(currentUserSupplier.get()).thenReturn(userEntity);
 
     // when
     boolean result = redirectionHandlerInterceptor.preHandle(request, response, null);
@@ -63,7 +61,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
   @DisplayName("preHandle() should set home page as redirection target")
   void pre_handle_should_set_endpoint() {
     // given
-    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+    when(currentUserSupplier.get()).thenReturn(userEntity);
 
     // when
     redirectionHandlerInterceptor.preHandle(request, response, null);
@@ -76,7 +74,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
   @DisplayName("preHandle() should set http status 307")
   void pre_handle_should_set_http_status() {
     // given
-    when(currentPublicUserIdSupplier.get()).thenReturn(UUID.randomUUID().toString());
+    when(currentUserSupplier.get()).thenReturn(userEntity);
 
     // when
     redirectionHandlerInterceptor.preHandle(request, response, null);
@@ -88,9 +86,6 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
   @Test
   @DisplayName("preHandle() should give true for anonymous user")
   void pre_handle_should_return_true() {
-    // given
-    when(currentPublicUserIdSupplier.get()).thenReturn(null);
-
     // when
     boolean result = redirectionHandlerInterceptor.preHandle(request, response, null);
 

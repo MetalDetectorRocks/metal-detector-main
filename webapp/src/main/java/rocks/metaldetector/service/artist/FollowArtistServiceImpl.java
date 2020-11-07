@@ -12,7 +12,7 @@ import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
@@ -32,14 +32,14 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   private final SpotifyService spotifyService;
   private final DiscogsService discogsService;
   private final ArtistTransformer artistTransformer;
-  private final CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
+  private final CurrentUserSupplier currentUserSupplier;
 
   @Override
   @Transactional
   public void follow(String externalArtistId, ArtistSource source) {
     ArtistEntity artist = saveAndFetchArtist(externalArtistId, source);
     FollowActionEntity followAction = FollowActionEntity.builder()
-        .user(currentUser())
+        .user(currentUserSupplier.get())
         .artist(artist)
         .build();
 
@@ -50,25 +50,25 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   @Transactional
   public void unfollow(String externalArtistId, ArtistSource source) {
     ArtistEntity artistEntity = fetchArtistEntity(externalArtistId, source);
-    followActionRepository.deleteByUserAndArtist(currentUser(), artistEntity);
+    followActionRepository.deleteByUserAndArtist(currentUserSupplier.get(), artistEntity);
   }
 
   @Override
   public boolean isCurrentUserFollowing(String externalArtistId, ArtistSource source) {
-    UserEntity user = currentUser();
     Optional<ArtistEntity> artistOptional = artistRepository.findByExternalIdAndSource(externalArtistId, source);
 
     if (artistOptional.isEmpty()) {
       return false;
     }
 
-    return followActionRepository.existsByUserIdAndArtistId(user.getId(), artistOptional.get().getId());
+    UserEntity currentUser = currentUserSupplier.get();
+    return followActionRepository.existsByUserIdAndArtistId(currentUser.getId(), artistOptional.get().getId());
   }
 
   @Override
   @Transactional
   public List<ArtistDto> getFollowedArtistsOfCurrentUser() {
-    return getFollowedArtists(currentUser());
+    return getFollowedArtists(currentUserSupplier.get());
   }
 
   @Override
@@ -102,10 +102,6 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     };
 
     return artistRepository.save(artistEntity);
-  }
-
-  private UserEntity currentUser() {
-    return fetchUserEntity(currentPublicUserIdSupplier.get());
   }
 
   private UserEntity fetchUserEntity(String publicUserId) {

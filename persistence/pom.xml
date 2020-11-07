@@ -14,10 +14,6 @@
     <version>0.0.1</version>
     <name>metal-detector-persistence</name>
 
-    <properties>
-        <java.version>15</java.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -28,7 +24,6 @@
             <artifactId>postgresql</artifactId>
         </dependency>
 
-        <!-- Project Modules -->
         <dependency>
             <groupId>rocks.metal-detector</groupId>
             <artifactId>metal-detector-support</artifactId>
