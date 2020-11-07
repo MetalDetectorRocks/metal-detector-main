@@ -17,7 +17,7 @@ import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
-import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
   private final JwtsSupport jwtsSupport;
   private final UserTransformer userTransformer;
   private final TokenService tokenService;
-  private final CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
+  private final CurrentUserSupplier currentUserSupplier;
   private final LoginAttemptService loginAttemptService;
   private final HttpServletRequest request;
 
@@ -101,8 +101,9 @@ public class UserServiceImpl implements UserService {
   public UserDto updateUser(String publicId, UserDto userDto) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+    UserEntity currentUser = currentUserSupplier.get();
 
-    if (publicId.equals(currentPublicUserIdSupplier.get())) {
+    if (publicId.equals(currentUser.getPublicId())) {
       if (!userDto.isEnabled()) { throw IllegalUserActionException.createAdminCannotDisableHimselfException(); }
       if (userEntity.isAdministrator() && !UserRole.getRoleFromString(userDto.getRole()).contains(ROLE_ADMINISTRATOR)) { throw IllegalUserActionException.createAdminCannotDiscardHisRoleException(); }
     }
@@ -254,9 +255,10 @@ public class UserServiceImpl implements UserService {
     String xfHeader = request.getHeader("X-Forwarded-For");
     String clientIp;
 
-    if (xfHeader == null){
+    if (xfHeader == null) {
       clientIp = request.getRemoteAddr();
-    } else {
+    }
+    else {
       clientIp = xfHeader.split(",")[0];
     }
 
