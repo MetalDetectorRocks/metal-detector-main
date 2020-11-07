@@ -33,6 +33,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   private final DiscogsService discogsService;
   private final ArtistTransformer artistTransformer;
   private final CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
+  private final ArtistService artistService;
 
   @Override
   @Transactional
@@ -44,6 +45,21 @@ public class FollowArtistServiceImpl implements FollowArtistService {
         .build();
 
     followActionRepository.save(followAction);
+  }
+
+  @Override
+  @Transactional
+  public void followSpotifyArtists(List<String> spotifyArtistIds) {
+    List<ArtistEntity> artistEntities = saveAndFetchArtists(spotifyArtistIds);
+    UserEntity currentUser = currentUser();
+    List<FollowActionEntity> followActionEntities = artistEntities.stream()
+        .map(artistEntity -> FollowActionEntity.builder()
+            .user(currentUser)
+            .artist(artistEntity)
+            .build())
+        .collect(Collectors.toList());
+
+    followActionRepository.saveAll(followActionEntities);
   }
 
   @Override
@@ -102,6 +118,13 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     };
 
     return artistRepository.save(artistEntity);
+  }
+
+  private List<ArtistEntity> saveAndFetchArtists(List<String> spotifyArtistIds) {
+    List<String> newArtistsIds = artistService.findNewArtistIds(spotifyArtistIds);
+    List<SpotifyArtistDto> spotifyArtistDtos = spotifyService.searchArtistsByIds(newArtistsIds);
+    artistService.persistArtists(spotifyArtistDtos);
+    return artistRepository.findAllByExternalIdIn(spotifyArtistIds);
   }
 
   private UserEntity currentUser() {
