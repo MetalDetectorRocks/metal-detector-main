@@ -14,18 +14,15 @@ import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.artist.TopArtist;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.security.CurrentPublicUserIdSupplier;
+import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistEntityFactory;
 import rocks.metaldetector.service.artist.ArtistTransformer;
 import rocks.metaldetector.service.user.UserEntityFactory;
-import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
 import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -33,7 +30,6 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -50,10 +46,7 @@ class ArtistCollectorTest implements WithAssertions {
   private ArtistTransformer artistTransformer;
 
   @Mock
-  private CurrentPublicUserIdSupplier currentPublicUserIdSupplier;
-
-  @Mock
-  private UserRepository userRepository;
+  private CurrentUserSupplier currentUserSupplier;
 
   @Mock
   private FollowActionRepository followActionRepository;
@@ -65,7 +58,7 @@ class ArtistCollectorTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(artistRepository, artistTransformer, currentPublicUserIdSupplier, userRepository, followActionRepository);
+    reset(artistRepository, artistTransformer, currentUserSupplier, followActionRepository);
   }
 
   @Test
@@ -113,53 +106,23 @@ class ArtistCollectorTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("collectRecentlyFollowedArtists: currentPublicUserIdSupplier is called")
+  @DisplayName("collectRecentlyFollowedArtists: currentUserSupplier is called")
   void test_current_user_id_supplier_called() {
     // given
-    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+    doReturn(userEntity).when(currentUserSupplier).get();
 
     // when
     underTest.collectRecentlyFollowedArtists();
 
     // then
-    verify(currentPublicUserIdSupplier).get();
-  }
-
-  @Test
-  @DisplayName("collectRecentlyFollowedArtists: userRepository is called")
-  void test_user_repository_called() {
-    // given
-    var userId = "userId";
-    doReturn(userId).when(currentPublicUserIdSupplier).get();
-    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
-
-    // when
-    underTest.collectRecentlyFollowedArtists();
-
-    // then
-    verify(userRepository).findByPublicId(userId);
-  }
-
-  @Test
-  @DisplayName("collectRecentlyFollowedArtists: userRepository throws exception when publicUserId not found")
-  void test_user_repository_throws_exception() {
-    // given
-    var publicUserId = "publicUserId";
-    doThrow(new ResourceNotFoundException(publicUserId)).when(userRepository).findByPublicId(any());
-
-    // when
-    Throwable throwable = catchThrowable(() -> underTest.collectRecentlyFollowedArtists());
-
-    // then
-    assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-    assertThat(throwable).hasMessageContaining(publicUserId);
+    verify(currentUserSupplier).get();
   }
 
   @Test
   @DisplayName("collectRecentlyFollowedArtists: followActionRepository is called with user")
   void test_follow_action_repository_called() {
     // given
-    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+    doReturn(userEntity).when(currentUserSupplier).get();
 
     // when
     underTest.collectRecentlyFollowedArtists();
@@ -178,7 +141,6 @@ class ArtistCollectorTest implements WithAssertions {
     var userFollowsArtist2 = FollowActionEntity.builder().user(userEntity).artist(artist2).build();
     var followActionEntities = List.of(userFollowsArtist1, userFollowsArtist2);
     followActionEntities.forEach(action -> action.setCreatedDateTime(Date.from(Instant.now())));
-    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
     doReturn(followActionEntities).when(followActionRepository).findAllByUser(any());
 
     // when
@@ -200,7 +162,6 @@ class ArtistCollectorTest implements WithAssertions {
     userFollowsArtist1.setCreatedDateTime(Date.from(Instant.now().minus(1, DAYS)));
     userFollowsArtist2.setCreatedDateTime(Date.from(Instant.now()));
     var followActionEntities = List.of(userFollowsArtist1, userFollowsArtist2);
-    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
     doReturn(followActionEntities).when(followActionRepository).findAllByUser(any());
     InOrder inOrder = inOrder(artistTransformer);
 
@@ -221,7 +182,6 @@ class ArtistCollectorTest implements WithAssertions {
         .mapToObj(value -> FollowActionEntity.builder().user(userEntity).artist(artist).build())
         .peek(action -> action.setCreatedDateTime(Date.from(Instant.now())))
         .collect(Collectors.toList());
-    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
     doReturn(followActionEntities).when(followActionRepository).findAllByUser(any());
 
     // when
@@ -238,7 +198,6 @@ class ArtistCollectorTest implements WithAssertions {
     var artist = ArtistEntityFactory.withExternalId("1");
     var followAction = FollowActionEntity.builder().user(userEntity).artist(artist).build();
     var expectedArtist = ArtistDtoFactory.createDefault();
-    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
     doReturn(List.of(followAction)).when(followActionRepository).findAllByUser(any());
     doReturn(expectedArtist).when(artistTransformer).transform(followAction);
 
