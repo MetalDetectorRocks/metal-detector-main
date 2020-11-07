@@ -20,7 +20,6 @@ import rocks.metaldetector.web.api.response.SpotifyArtistImportResponse;
 import rocks.metaldetector.web.api.response.SpotifyFollowedArtistsResponse;
 import rocks.metaldetector.web.api.response.SpotifyUserAuthorizationResponse;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -133,10 +132,10 @@ class SpotifyRestControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " should return 200")
+  @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " should return 200 for valid fetch type")
   void test_get_followed_returns_ok() {
     // when
-    var validatableResponse = followedRestAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, Collections.emptyList()));
+    var validatableResponse = followedRestAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, List.of(ALBUMS)));
 
     // then
     validatableResponse.statusCode(HttpStatus.OK.value());
@@ -173,7 +172,7 @@ class SpotifyRestControllerTest implements WithAssertions {
     doReturn(expectedResult).when(artistImportService).getNewFollowedArtists(any());
 
     // when
-    var validatableResponse = followedRestAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, Collections.emptyList()));
+    var validatableResponse = followedRestAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, List.of(ALBUMS)));
 
     // then
     var response = validatableResponse.extract().as(SpotifyFollowedArtistsResponse.class);
