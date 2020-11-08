@@ -25,6 +25,7 @@ import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,6 +70,9 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @Mock
   private CurrentUserSupplier currentUserSupplier;
 
+  @Mock
+  private ArtistService artistService;
+
   @InjectMocks
   private FollowArtistServiceImpl underTest;
 
@@ -77,7 +81,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(userRepository, artistRepository, currentUserSupplier, discogsService, artistTransformer, userEntity, spotifyService);
+    reset(userRepository, artistRepository, currentUserSupplier, discogsService, artistTransformer, userEntity, spotifyService, artistService);
   }
 
   @Test
@@ -370,5 +374,89 @@ class FollowArtistServiceImplTest implements WithAssertions {
     assertThat(followedArtists.get(0)).isEqualTo(artistDto3);
     assertThat(followedArtists.get(1)).isEqualTo(artistDto2);
     assertThat(followedArtists.get(2)).isEqualTo(artistDto1);
+  }
+
+  @Test
+  @DisplayName("artistService is called to find new artist ids")
+  void test_artist_service_called_to_find() {
+    // given
+    var artistIds = List.of("a", "b");
+    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+
+    // when
+    underTest.followSpotifyArtists(artistIds);
+
+    // then
+    verify(artistService).findNewArtistIds(artistIds);
+  }
+
+  @Test
+  @DisplayName("spotifyService is called to fetch new artists from Spotify")
+  void test_spotify_service_called() {
+    // given
+    var newArtistIds = List.of("a", "b");
+    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+    doReturn(newArtistIds).when(artistService).findNewArtistIds(any());
+
+    // when
+    underTest.followSpotifyArtists(Collections.emptyList());
+
+    // then
+    verify(spotifyService).searchArtistsByIds(newArtistIds);
+  }
+
+  @Test
+  @DisplayName("artistService is called to persist new artists")
+  void test_artist_service_called_to_persist() {
+    // given
+    var newArtists = List.of(SpotifyArtistDtoFactory.createDefault());
+    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+    doReturn(newArtists).when(spotifyService).searchArtistsByIds(any());
+
+    // when
+    underTest.followSpotifyArtists(Collections.emptyList());
+
+    // then
+    verify(artistService).persistArtists(newArtists);
+  }
+
+  @Test
+  @DisplayName("artistRepository is called to get ArtistEntities")
+  void test_artist_repository_called() {
+    // given
+    var artistIds = List.of("a", "b");
+    doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+
+    // when
+    underTest.followSpotifyArtists(artistIds);
+
+    // then
+    verify(artistRepository).findAllByExternalIdIn(artistIds);
+  }
+
+  @Test
+  @DisplayName("Current user is fetched on follow multiple")
+  void test_follow_multiple_should_get_current_user() {
+    // when
+    underTest.followSpotifyArtists(Collections.emptyList());
+
+    // then
+    verify(currentUserSupplier).get();
+  }
+
+  @Test
+  @DisplayName("followArtistService is called to follow entities")
+  void test_follow_artist_service_called() {
+    // given
+    var artistEntity = ArtistEntityFactory.withExternalId("a");
+    var expectedFollowActionEntities = List.of(FollowActionEntity.builder().artist(artistEntity).user(userEntity).build());
+    doReturn(userEntity).when(currentUserSupplier).get();
+    doReturn(List.of(artistEntity)).when(artistRepository).findAllByExternalIdIn(any());
+
+    // when
+    underTest.followSpotifyArtists(Collections.emptyList());
+
+    // then
+    verify(followActionRepository).saveAll(expectedFollowActionEntities);
   }
 }
