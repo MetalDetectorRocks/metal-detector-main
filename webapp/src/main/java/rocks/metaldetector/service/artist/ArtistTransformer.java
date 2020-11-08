@@ -27,7 +27,7 @@ public class ArtistTransformer {
 
   public ArtistDto transform(FollowActionEntity followAction) {
     ArtistDto artistDto = transform(followAction.getArtist());
-    artistDto.setFollowedSince(followAction.getCreatedDateTime().toLocalDate());
+    artistDto.setFollowedSince(followAction.getCreatedDateTime());
     return artistDto;
   }
 }

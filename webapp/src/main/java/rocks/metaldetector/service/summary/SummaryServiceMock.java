@@ -7,6 +7,7 @@ import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.web.api.response.SummaryResponse;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -15,9 +16,9 @@ public class SummaryServiceMock implements SummaryService {
 
   @Override
   public SummaryResponse createSummaryResponse() {
-    LocalDate now = LocalDate.now();
-    List<ReleaseDto> upcomingReleases = createUpcomingReleases(now);
-    List<ReleaseDto> recentReleases = createRecentReleases(now);
+    LocalDateTime now = LocalDateTime.now();
+    List<ReleaseDto> upcomingReleases = createUpcomingReleases(now.toLocalDate());
+    List<ReleaseDto> recentReleases = createRecentReleases(now.toLocalDate());
     List<ArtistDto> recentlyFollowedArtists = createRecentlyFollowedArtists(now);
 
     return SummaryResponse.builder()
@@ -44,7 +45,7 @@ public class SummaryServiceMock implements SummaryService {
     return List.of(ageOfExcuse, ritualeSatanum, sonsOfNorthernDarkness, freierWilleFreierGeist);
   }
 
-  private List<ArtistDto> createRecentlyFollowedArtists(LocalDate now) {
+  private List<ArtistDto> createRecentlyFollowedArtists(LocalDateTime now) {
     ArtistDto harakiriForTheSky = ArtistDto.builder().artistName("Harakiri For the Sky").thumb("/images/dummy/harakiri-for-the-sky.jpg").followedSince(now.minusDays(3)).follower(666).build();
     ArtistDto marduk = ArtistDto.builder().artistName("Marduk").thumb("/images/dummy/marduk.jpg").followedSince(now.minusDays(7)).follower(666).build();
     ArtistDto abbath = ArtistDto.builder().artistName("Abbath").thumb("/images/dummy/abbath.jpg").followedSince(now.minusDays(15)).follower(666).build();

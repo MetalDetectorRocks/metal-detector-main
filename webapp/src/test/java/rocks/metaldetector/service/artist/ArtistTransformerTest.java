@@ -7,7 +7,6 @@ import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.TopArtist;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.doReturn;
@@ -68,6 +67,6 @@ class ArtistTransformerTest implements WithAssertions {
     assertThat(result.getArtistName()).isEqualTo(artistEntity.getArtistName());
     assertThat(result.getThumb()).isEqualTo(artistEntity.getThumb());
     assertThat(result.getSource()).isEqualTo(artistEntity.getSource().getDisplayName());
-    assertThat(result.getFollowedSince()).isEqualTo(LocalDate.of(2020, 1, 1));
+    assertThat(result.getFollowedSince()).isEqualTo(LocalDateTime.of(2020, 1, 1, 0, 0, 0));
   }
 }

@@ -12,7 +12,7 @@ export class AlertService {
         return this.renderAlert("alert-warning", text, dismissible);
     }
 
-    public renderErorAlert(text: string, dismissible: boolean): HTMLDivElement {
+    public renderErrorAlert(text: string, dismissible: boolean): HTMLDivElement {
         return this.renderAlert("alert-danger", text, dismissible);
     }
 
