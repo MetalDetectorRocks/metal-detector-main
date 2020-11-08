@@ -1,6 +1,6 @@
-import { AlertService } from "./alert-service";
-import { LoadingIndicatorService } from "./loading-indicator-service";
-import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
+import {AlertService} from "./alert-service";
+import {LoadingIndicatorService} from "./loading-indicator-service";
+import {UNKNOWN_ERROR_MESSAGE} from "../config/messages.config";
 
 export abstract class AbstractRenderService<T> {
 
@@ -32,7 +32,7 @@ export abstract class AbstractRenderService<T> {
 
     protected onCatch(): void {
         const message = `<h3 class="h5">${UNKNOWN_ERROR_MESSAGE}</h3>Please try again later.`;
-        const infoMessage = this.alertService.renderErorAlert(message, false);
+        const infoMessage = this.alertService.renderErrorAlert(message, false);
         this.hostElement.insertAdjacentElement("afterbegin", infoMessage);
     }
 }

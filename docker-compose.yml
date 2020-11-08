@@ -16,7 +16,7 @@ services:
         target: /var/lib/postgresql/data
     ports:
       - 5432:5432
-    restart: always
+    restart: on-failure:3
 
   butler-db:
     container_name: butler-db
@@ -33,7 +33,7 @@ services:
         target: /var/lib/postgresql/data
     ports:
       - 5433:5432
-    restart: always
+    restart: on-failure:3
 
   butler-app:
     container_name: butler-app
@@ -48,7 +48,7 @@ services:
       - butler-network
     ports:
       - 8095:8080
-    restart: always
+    restart: on-failure:3
 
 volumes:
   detector-db-volume:
