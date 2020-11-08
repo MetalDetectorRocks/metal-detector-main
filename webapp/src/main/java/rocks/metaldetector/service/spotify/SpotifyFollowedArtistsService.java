@@ -4,7 +4,9 @@ import rocks.metaldetector.service.artist.ArtistDto;
 
 import java.util.List;
 
-public interface SpotifyArtistImportService {
+public interface SpotifyFollowedArtistsService {
 
   List<ArtistDto> importArtistsFromLikedReleases();
+
+  List<ArtistDto> getNewFollowedArtists(List<SpotifyFetchType> fetchTypes);
 }
