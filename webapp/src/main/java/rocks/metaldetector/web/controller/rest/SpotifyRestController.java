@@ -28,8 +28,8 @@ public class SpotifyRestController {
   private final SpotifyUserAuthorizationService userAuthorizationService;
   private final SpotifyFollowedArtistsService spotifyFollowedArtistsService;
 
-  @GetMapping(path = Endpoints.Rest.SPOTIFY_AUTHORIZATION,
-              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  @PostMapping(path = Endpoints.Rest.SPOTIFY_AUTHORIZATION,
+               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<SpotifyUserAuthorizationResponse> prepareUserAuthorization() {
     String authorizationUrl = userAuthorizationService.prepareAuthorization();
     return ResponseEntity.ok().body(new SpotifyUserAuthorizationResponse(authorizationUrl));
