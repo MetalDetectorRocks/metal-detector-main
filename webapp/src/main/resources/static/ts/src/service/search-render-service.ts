@@ -1,14 +1,22 @@
-import { FollowArtistService } from "./follow-artist-service";
-import { LoadingIndicatorService } from "./loading-indicator-service";
-import { PaginationComponent } from "../components/pagination/pagination-component";
-import { AlertService } from "./alert-service";
-import { AbstractRenderService } from "./abstract-render-service";
-import { SearchResponse } from "../model/search-response.model";
-import { Pagination } from "../model/pagination.model";
-import { SearchResponseEntry } from "../model/search-response-entry.model";
-import { FollowState } from "../model/follow-state.model";
+import {FollowArtistService} from "./follow-artist-service";
+import {LoadingIndicatorService} from "./loading-indicator-service";
+import {PaginationComponent} from "../components/pagination/pagination-component";
+import {AlertService} from "./alert-service";
+import {AbstractRenderService} from "./abstract-render-service";
+import {SearchResponse} from "../model/search-response.model";
+import {Pagination} from "../model/pagination.model";
+import {SearchResponseEntry} from "../model/search-response-entry.model";
+import {FollowState} from "../model/follow-state.model";
+
+interface SearchCardSelectorNames {
+    readonly nameSelector: string;
+    readonly thumbSelector: string;
+    readonly followIconSelector: string;
+}
 
 export class SearchRenderService extends AbstractRenderService<SearchResponse> {
+
+    private static readonly MAX_NAME_LENGTH = 50;
 
     private readonly followArtistService: FollowArtistService;
     private readonly paginationComponent: PaginationComponent;
@@ -102,39 +110,27 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     }
 
     private renderTopSearchResult(entry: SearchResponseEntry): HTMLDivElement {
-        const topSearchResultTemplateNode = document.importNode(this.topSearchResultTemplateElement.content, true);
-        const topSearchResultDivElement = topSearchResultTemplateNode.firstElementChild as HTMLDivElement;
-        const thumbElement = topSearchResultDivElement.querySelector("#top-thumb") as HTMLImageElement;
-        const nameElement = topSearchResultDivElement.querySelector("#top-name") as HTMLParagraphElement;
-        const followIconDivElement = topSearchResultDivElement.querySelector("#top-follow-icon") as HTMLDivElement;
-        const followIconElement = followIconDivElement.getElementsByTagName("i").item(0)!;
-        const followInfoElement = topSearchResultDivElement.querySelector("#follow-info") as HTMLParagraphElement;
+        const topSearchResultDivElement = this.renderSearchResult(entry, {
+            nameSelector: "#top-name",
+            thumbSelector: "#top-thumb",
+            followIconSelector: "#top-follow-icon"
+        });
 
-        thumbElement.src = this.determineArtistImageUrl(entry.imageUrl);
-        thumbElement.alt = entry.name;
-        nameElement.textContent = entry.name;
-        followIconDivElement.addEventListener(
-            "click",
-            this.handleFollowIconClick.bind(this, followIconElement, entry)
-        );
-        followIconElement.textContent = entry.followed ? FollowState.FOLLOWING.toString() : FollowState.NOT_FOLLOWING.toString();
+        const followInfoElement = topSearchResultDivElement.querySelector("#follow-info") as HTMLParagraphElement;
         followInfoElement.textContent = this.determineFollowerAmountStatement(entry.metalDetectorFollower);
 
         return topSearchResultDivElement;
     }
 
     private determineFollowerAmountStatement(metalDetectorFollower: number): string {
-
         let followerAmountStatement = "";
 
         if (metalDetectorFollower === 0) {
             followerAmountStatement = "Not followed by any users";
         }
-
         else if (metalDetectorFollower === 1) {
             followerAmountStatement = "Followed by 1 user";
         }
-
         else if (metalDetectorFollower > 1) {
             followerAmountStatement = `Followed by ${metalDetectorFollower} users`;
         }
@@ -159,7 +155,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
                 counter = 0;
             }
 
-            rowWrapper.insertAdjacentElement("beforeend", this.renderSearchResult(entry));
+            rowWrapper.insertAdjacentElement("beforeend", this.renderOtherSearchResult(entry));
             counter++;
         });
 
@@ -167,17 +163,25 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         return searchResultWrapper;
     }
 
-    private renderSearchResult(entry: SearchResponseEntry): HTMLDivElement {
+    private renderOtherSearchResult(entry: SearchResponseEntry): HTMLDivElement {
+        return this.renderSearchResult(entry, {
+            nameSelector: "#other-name",
+            thumbSelector: "#other-thumb",
+            followIconSelector: "#other-follow-icon"
+        });
+    }
+
+    private renderSearchResult(entry: SearchResponseEntry, selectorNames: SearchCardSelectorNames): HTMLDivElement {
         const searchResultTemplateNode = document.importNode(this.searchResultTemplateElement.content, true);
         const searchResultDivElement = searchResultTemplateNode.firstElementChild as HTMLDivElement;
-        const thumbElement = searchResultDivElement.querySelector("#other-thumb") as HTMLImageElement;
-        const nameElement = searchResultDivElement.querySelector("#other-name") as HTMLParagraphElement;
-        const followIconDivElement = searchResultDivElement.querySelector("#other-follow-icon") as HTMLDivElement;
+        const nameElement = searchResultDivElement.querySelector(selectorNames.nameSelector) as HTMLParagraphElement;
+        const thumbElement = searchResultDivElement.querySelector(selectorNames.thumbSelector) as HTMLImageElement;
+        const followIconDivElement = searchResultDivElement.querySelector(selectorNames.followIconSelector) as HTMLDivElement;
         const followIconElement = followIconDivElement.getElementsByTagName("i").item(0)!;
 
         thumbElement.src = this.determineArtistImageUrl(entry.imageUrl);
         thumbElement.alt = entry.name;
-        nameElement.textContent = entry.name;
+        nameElement.textContent = this.shorten(entry.name);
         followIconDivElement.addEventListener(
             "click",
             this.handleFollowIconClick.bind(this, followIconElement, entry)
@@ -206,5 +210,13 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
 
     private getQueryFromUrl(): string {
         return new URL(window.location.href).searchParams.get("query") || ""
+    }
+
+    private shorten(value: string) : string {
+        if (value.length > SearchRenderService.MAX_NAME_LENGTH) {
+            return value.trim().substring(0, SearchRenderService.MAX_NAME_LENGTH).trimRight().concat("...");
+        }
+
+        return value;
     }
 }
