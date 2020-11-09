@@ -3,7 +3,7 @@ version: '3.7'
 services: 
   detector-db:
     container_name: detector-db
-    image: postgres:alpine
+    image: postgres:12-alpine
     environment:
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: metal-detector
@@ -20,7 +20,7 @@ services:
 
   butler-db:
     container_name: butler-db
-    image: postgres:alpine
+    image: postgres:12-alpine
     environment:
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: metal-release-butler
