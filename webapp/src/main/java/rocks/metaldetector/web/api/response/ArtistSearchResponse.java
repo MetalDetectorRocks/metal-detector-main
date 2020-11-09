@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public class ArtistSearchResponse {
 
+  private String query;
   private Pagination pagination;
   private List<ArtistSearchResponseEntryDto> searchResults;
 

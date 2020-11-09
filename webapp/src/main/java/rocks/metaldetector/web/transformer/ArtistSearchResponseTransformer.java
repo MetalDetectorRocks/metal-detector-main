@@ -22,8 +22,9 @@ public class ArtistSearchResponseTransformer {
 
   private final ArtistRepository artistRepository;
 
-  public ArtistSearchResponse transformSpotify(SpotifyArtistSearchResultDto spotifySearchResult) {
+  public ArtistSearchResponse transformSpotify(String query, SpotifyArtistSearchResultDto spotifySearchResult) {
     return ArtistSearchResponse.builder()
+        .query(query)
         .pagination(spotifySearchResult.getPagination())
         .searchResults(transformSpotifySearchResults(spotifySearchResult.getSearchResults()))
         .build();
@@ -47,8 +48,9 @@ public class ArtistSearchResponseTransformer {
         .build();
   }
 
-  public ArtistSearchResponse transformDiscogs(DiscogsArtistSearchResultDto discogsSearchResult) {
+  public ArtistSearchResponse transformDiscogs(String query, DiscogsArtistSearchResultDto discogsSearchResult) {
     return ArtistSearchResponse.builder()
+        .query(query)
         .pagination(discogsSearchResult.getPagination())
         .searchResults(transformDiscogsSearchResults(discogsSearchResult.getSearchResults()))
         .build();
