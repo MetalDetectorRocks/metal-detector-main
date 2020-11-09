@@ -12,20 +12,20 @@ import rocks.metaldetector.support.Endpoints;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping(Endpoints.Frontend.PROFILE)
-public class ProfileController {
+@RequestMapping(Endpoints.Frontend.SETTINGS)
+public class SettingsController {
 
   private final SpotifyUserAuthorizationService spotifyUserAuthorizationService;
 
   @GetMapping
-  public ModelAndView showProfile() {
-    return new ModelAndView(ViewNames.Frontend.PROFILE);
+  public ModelAndView showSettings() {
+    return new ModelAndView(ViewNames.Frontend.SETTINGS);
   }
 
   @GetMapping(path = Endpoints.Frontend.SPOTIFY_CALLBACK)
-  public ModelAndView showProfile(@RequestParam(value = "code") String code,
-                                  @RequestParam(value = "state") String state) {
+  public ModelAndView handleSpotifyCallback(@RequestParam(value = "code") String code,
+                                            @RequestParam(value = "state") String state) {
     spotifyUserAuthorizationService.fetchInitialToken(state, code);
-    return new ModelAndView(ViewNames.Frontend.PROFILE);
+    return new ModelAndView(ViewNames.Frontend.SETTINGS);
   }
 }

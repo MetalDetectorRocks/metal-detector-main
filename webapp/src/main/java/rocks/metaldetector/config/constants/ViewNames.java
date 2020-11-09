@@ -20,15 +20,18 @@ public class ViewNames {
   }
 
   public static class Frontend {
-    public static final String HOME        = "frontend/home";
-    public static final String SEARCH      = "frontend/search";
-    public static final String SETTINGS    = "frontend/settings";
-    public static final String PROFILE     = "frontend/profile";
-    public static final String RELEASES    = "frontend/releases";
-    public static final String BLOG        = "frontend/blog";
-    public static final String MY_ARTISTS  = "frontend/my-artists";
-    public static final String IMPRINT     = "frontend/imprint";
-    public static final String STATUS      = "frontend/status";
+    public static final String HOME                    = "frontend/home";
+    public static final String SEARCH                  = "frontend/search";
+    public static final String SETTINGS                = "frontend/settings";
+    public static final String PROFILE                 = "frontend/profile";
+    public static final String RELEASES                = "frontend/releases";
+    public static final String BLOG                    = "frontend/blog";
+    public static final String MY_ARTISTS              = "frontend/my-artists";
+    public static final String IMPRINT                 = "frontend/imprint";
+    public static final String ACCOUNT_DETAILS         = "frontend/account-details";
+    public static final String SPOTIFY_SYNCHRONIZATION = "frontend/spotify-synchronization";
+    public static final String NOTIFICATION_SETTINGS   = "frontend/notification-settings";
+    public static final String STATUS                  = "frontend/status";
   }
 
   public static class AdminArea {

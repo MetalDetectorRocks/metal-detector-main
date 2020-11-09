@@ -7,7 +7,7 @@ module.exports = {
         myartists: "./src/bundles/my-artists.ts",
         releases: "./src/bundles/releases.ts",
         homepage: "./src/bundles/homepage.ts",
-        profile: "./src/bundles/profile.ts"
+        settings: "./src/bundles/settings.ts"
     },
     watch: true,
     output: {
