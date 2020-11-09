@@ -38,7 +38,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     }
 
     protected onRendering(searchResponse: SearchResponse): void {
-        const query = new URL(window.location.href).searchParams.get("query") || "";
+        const query = searchResponse.query || "";
         const currentPage = searchResponse.pagination.currentPage;
         const totalPages = searchResponse.pagination.totalPages;
         const itemsOnThisPage = searchResponse.searchResults.length;

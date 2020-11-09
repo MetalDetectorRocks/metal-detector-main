@@ -47,12 +47,13 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
     Pagination expectedPagination = new Pagination(1, 1, 10);
 
     // when
-    ArtistSearchResponse result = underTest.transformSpotify(searchResultDto);
+    ArtistSearchResponse result = underTest.transformSpotify("the query", searchResultDto);
 
     // then
     assertThat(result.getPagination().getCurrentPage()).isEqualTo(expectedPagination.getCurrentPage());
     assertThat(result.getPagination().getItemsPerPage()).isEqualTo(expectedPagination.getItemsPerPage());
-    assertThat(result.getPagination().getTotalPages()).isEqualTo(expectedPagination.getTotalPages());  }
+    assertThat(result.getPagination().getTotalPages()).isEqualTo(expectedPagination.getTotalPages());
+  }
 
   @Test
   @DisplayName("Spotify search result is transformed")
@@ -63,7 +64,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
                                                                        ArtistSearchResponseEntryDtoFactory.spotifyWithArtistName("B"));
 
     // when
-    ArtistSearchResponse result = underTest.transformSpotify(searchResultDto);
+    ArtistSearchResponse result = underTest.transformSpotify("query", searchResultDto);
 
     // then
     assertThat(result.getSearchResults().size()).isEqualTo(expectedSearchResults.size());
@@ -84,6 +85,20 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("query is transformed for spotify result")
+  void test_query_transformed_spotify() {
+    // given
+    var query = "query";
+    SpotifyArtistSearchResultDto searchResultDto = SpotifyArtistSearchResultDtoFactory.createDefault();
+
+    // when
+    var result = underTest.transformSpotify(query, searchResultDto);
+
+    // then
+    assertThat(result.getQuery()).isEqualTo(query);
+  }
+
+  @Test
   @DisplayName("artistRepository is called for every spotify search result")
   void test_artist_repository_is_called_for_spotify_results() {
     // given
@@ -91,7 +106,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
     doReturn(1).when(artistRepository).countArtistFollower(anyString());
 
     // when
-    underTest.transformSpotify(searchResultDto);
+    underTest.transformSpotify("query", searchResultDto);
 
     // then
     verify(artistRepository).countArtistFollower(searchResultDto.getSearchResults().get(0).getId());
@@ -107,7 +122,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
     doReturn(expectedFollowers).when(artistRepository).countArtistFollower(anyString());
 
     // when
-    var result = underTest.transformSpotify(searchResultDto);
+    var result = underTest.transformSpotify("query", searchResultDto);
 
     // then
     assertThat(result.getSearchResults().get(0).getMetalDetectorFollower()).isEqualTo(expectedFollowers);
@@ -122,7 +137,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
     doReturn(1).when(artistRepository).countArtistFollower(anyString());
 
     // when
-    underTest.transformDiscogs(searchResultDto);
+    underTest.transformDiscogs("query", searchResultDto);
 
     // then
     verify(artistRepository).countArtistFollower(searchResultDto.getSearchResults().get(0).getId());
@@ -137,7 +152,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
     doReturn(expectedFollowers).when(artistRepository).countArtistFollower(anyString());
 
     // when
-    var result = underTest.transformDiscogs(searchResultDto);
+    var result = underTest.transformDiscogs("query", searchResultDto);
 
     // then
     assertThat(result.getSearchResults().get(0).getMetalDetectorFollower()).isEqualTo(expectedFollowers);
@@ -151,7 +166,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
     Pagination expectedPagination = new Pagination(1, 1, 10);
 
     // when
-    ArtistSearchResponse result = underTest.transformDiscogs(searchResultDto);
+    ArtistSearchResponse result = underTest.transformDiscogs("query", searchResultDto);
 
     // then
     assertThat(result.getPagination().getCurrentPage()).isEqualTo(expectedPagination.getCurrentPage());
@@ -168,7 +183,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
                                                                        ArtistSearchResponseEntryDtoFactory.discogsWithArtistName("B"));
 
     // when
-    ArtistSearchResponse result = underTest.transformDiscogs(searchResultDto);
+    ArtistSearchResponse result = underTest.transformDiscogs("query", searchResultDto);
 
     // then
     assertThat(result.getSearchResults().size()).isEqualTo(expectedSearchResults.size());
@@ -185,5 +200,19 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
       assertThat(resultEntry.getSource()).isEqualTo(expectedResultEntry.getSource());
       assertThat(resultEntry.isFollowed()).isEqualTo(expectedResultEntry.isFollowed());
     }
+  }
+
+  @Test
+  @DisplayName("query is transformed for discogs result")
+  void test_query_transformed_discogs() {
+    // given
+    var query = "query";
+    DiscogsArtistSearchResultDto searchResultDto = DiscogsArtistSearchResultDtoFactory.createMultiple();
+
+    // when
+    var result = underTest.transformDiscogs(query, searchResultDto);
+
+    // then
+    assertThat(result.getQuery()).isEqualTo(query);
   }
 }

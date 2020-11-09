@@ -2,6 +2,7 @@ package rocks.metaldetector.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final DataSource dataSource;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final SecurityProperties securityProperties;
+  private final SearchQuerySanitizingFilter searchQuerySanitizingFilter;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -94,5 +96,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     jdbcTokenRepository.setCreateTableOnStartup(false);
     jdbcTokenRepository.setDataSource(dataSource);
     return jdbcTokenRepository;
+  }
+
+  @Bean
+  public FilterRegistrationBean<SearchQuerySanitizingFilter> filterFilterRegistrationBean() {
+    FilterRegistrationBean<SearchQuerySanitizingFilter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
+    filterFilterRegistrationBean.setFilter(searchQuerySanitizingFilter);
+    filterFilterRegistrationBean.addUrlPatterns(Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH);
+    return filterFilterRegistrationBean;
   }
 }
