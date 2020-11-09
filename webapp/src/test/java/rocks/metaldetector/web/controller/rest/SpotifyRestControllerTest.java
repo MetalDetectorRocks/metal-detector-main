@@ -62,34 +62,34 @@ class SpotifyRestControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should return 200")
-  void test_get_authorization_returns_ok() {
+  @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should return 200")
+  void test_post_authorization_returns_ok() {
     // when
-    var validatableResponse = authorizationRestAssuredMockMvcUtils.doGet();
+    var validatableResponse = authorizationRestAssuredMockMvcUtils.doPost();
 
     // then
     validatableResponse.statusCode(HttpStatus.OK.value());
   }
 
   @Test
-  @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should call SpotifyUserAuthorizationServiceService")
-  void test_get_authorization_calls_spotify_service() {
+  @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should call SpotifyUserAuthorizationServiceService")
+  void test_post_authorization_calls_spotify_service() {
     // when
-    authorizationRestAssuredMockMvcUtils.doGet();
+    authorizationRestAssuredMockMvcUtils.doPost();
 
     // then
     verify(userAuthorizationService).prepareAuthorization();
   }
 
   @Test
-  @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should return expected url")
-  void test_get_authorization_returns_url() {
+  @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should return expected url")
+  void test_post_authorization_returns_url() {
     // given
     var expectedUrl = "i'm an url";
     doReturn(expectedUrl).when(userAuthorizationService).prepareAuthorization();
 
     // when
-    var validatableResponse = authorizationRestAssuredMockMvcUtils.doGet();
+    var validatableResponse = authorizationRestAssuredMockMvcUtils.doPost();
 
     // then
     var response = validatableResponse.extract().as(SpotifyUserAuthorizationResponse.class);

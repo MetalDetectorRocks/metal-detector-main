@@ -17,7 +17,7 @@ export class SpotifyRestClient {
     }
 
     public async getAuthorizationUrl(): Promise<SpotifyUserAuthorizationResponse> {
-        return await axios.get(
+        return await axios.post(
           this.SPOTIFY_AUTHORIZATION_ENDPOINT, axiosConfig
         ).then((response: AxiosResponse<SpotifyUserAuthorizationResponse>) => {
             return response.data;
