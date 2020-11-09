@@ -146,3 +146,17 @@ footer .list-inline-item {
 .page-link {
     color: #adafae;
 }
+
+.custom-form-control {
+    background-color: #282828;
+    color: #adafae !important;
+    border-color: #404040;
+}
+
+.custom-form-control:focus {
+    background-color: #282828;
+}
+
+.custom-form-control::placeholder {
+    color: #808080;
+}

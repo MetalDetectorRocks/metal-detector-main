@@ -1,9 +1,9 @@
-import {ProfileRenderService} from "../service/profile-render-service";
+import {SettingsRenderService} from "../service/settings-render-service";
 import {ToastService} from "../service/toast-service";
 import {SpotifyRestClient} from "../clients/spotify-rest-client";
 
 const toastService = new ToastService();
 const spotifyAuthorizationRestClient = new SpotifyRestClient(toastService);
-const profileRenderService = new ProfileRenderService(spotifyAuthorizationRestClient);
+const settingsRenderService = new SettingsRenderService(spotifyAuthorizationRestClient);
 
-profileRenderService.render();
+settingsRenderService.render();
