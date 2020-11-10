@@ -34,7 +34,6 @@ public class Endpoints {
     public static final String BLOG                      = "/blog";
     public static final String IMPRINT                   = "/imprint";
     public static final String STATUS                    = "/status";
-    public static final String SETTINGS                  = "/settings";
     public static final String ACCOUNT_DETAILS           = "/settings/account-details";
     public static final String SPOTIFY_SYNCHRONIZATION   = "/settings/spotify-synchronization";
     public static final String NOTIFICATION_SETTINGS     = "/settings/notification-settings";
