@@ -1,3 +1,16 @@
+/* Color variables */
+:root {
+    --dark-background-color: #181818;
+    --grey-border-color: #404040;
+    --blue-menu-item-color: #1d7097;
+    --dark-field-background-color: #212121;
+    --light-font-color: #adafae;
+    --light-font-color-highlight: #fcfcfc;
+    --light-font-color-muted: #5c5c5c;
+    --hyperlink-font-color: #555;
+    --hyperlink-font-color-highlight: #777;
+}
+
 /* General Styling */
 html {
     height: 100%;
@@ -28,7 +41,7 @@ h1, h2 {
 }
 
 p, legend {
-    color: #adafae !important;
+    color: var(--light-font-color) !important;
 }
 
 .container {
@@ -42,7 +55,7 @@ footer {
 }
 
 footer .container {
-    border-top: 1px solid #404040;
+    border-top: 1px solid var(--grey-border-color);
 }
 
 footer .list-inline-item {
@@ -51,13 +64,13 @@ footer .list-inline-item {
 
 /* Cards */
 .card {
-    border: 1px solid #404040;
+    border: 1px solid var(--grey-border-color);
 }
 
 .vertical-card-img {
     height: 18rem;
     object-fit: cover;
-    border-bottom: 1px solid #404040;
+    border-bottom: 1px solid var(--grey-border-color);
 }
 
 /* Search Results */
@@ -65,28 +78,28 @@ footer .list-inline-item {
     height: 8rem;
     width: 8rem;
     object-fit: cover;
-    border-right: 1px solid #404040;
+    border-right: 1px solid var(--grey-border-color);
 }
 
 .search-card-img {
     height: 6rem;
     width: 6rem;
     object-fit: cover;
-    border-bottom: 1px solid #404040;
+    border-bottom: 1px solid var(--grey-border-color);
 }
 
 .custom-border-bottom {
-    border-bottom: 1px solid #404040;
+    border-bottom: 1px solid var(--grey-border-color);
 }
 
 /* Following */
 .follow-icon {
-    color: #adafae;
+    color: var(--light-font-color);
     cursor: pointer;
 }
 
 .follow-icon:hover {
-    color: #FCFCFC;
+    color: var(--light-font-color-highlight);
 }
 
 /* Releases */
@@ -94,7 +107,7 @@ footer .list-inline-item {
     height: 20rem;
     width: 20rem;
     object-fit: cover;
-    border-right: 1px solid #404040;
+    border-right: 1px solid var(--grey-border-color);
 }
 
 #release-filter .custom-control {
@@ -102,18 +115,18 @@ footer .list-inline-item {
 }
 
 .custom-border-left {
-    border-left: 2px solid #404040;
+    border-left: 2px solid var(--grey-border-color);
 }
 
 /* Other */
 .hyperlink {
-    color: #555;
+    color: var(--hyperlink-font-color);
     text-decoration: none;
     background-color: transparent
 }
 
 .hyperlink:hover {
-    color: #777777;
+    color: var(--hyperlink-font-color-highlight);
     text-decoration: none;
 }
 
@@ -126,7 +139,7 @@ footer .list-inline-item {
     outline: none;
     background: linear-gradient(to bottom,rgb(45,45,45) 0%,rgb(40,40,40) 100%);
     border: 0;
-    color: #cccccc;
+    color: var(--light-font-color);
     cursor: pointer;
     border-radius: 10px;
     padding-top: 5px;
@@ -138,25 +151,42 @@ footer .list-inline-item {
     right: 16px;
 }
 
+/* Form Controls */
+.custom-form-control {
+    background-color: var(--dark-field-background-color);
+    color: var(--light-font-color) !important;
+    border-color: var(--grey-border-color);
+}
+
+.custom-form-control:focus {
+    background-color: var(--dark-field-background-color);
+}
+
+.custom-form-control::placeholder {
+    color: var(--light-font-color);
+}
+
 /* Overrides */
 .alert-light {
-    border: 1px solid #404040;
+    border: 1px solid var(--grey-border-color);
 }
 
 .page-link {
     color: #adafae;
 }
 
-.custom-form-control {
-    background-color: #282828;
-    color: #adafae !important;
-    border-color: #404040;
+.list-group-item {
+    border: 1px solid var(--grey-border-color);
+    background-color: var(--dark-field-background-color);
 }
 
-.custom-form-control:focus {
-    background-color: #282828;
+.list-group-item.active {
+    background-color: var(--dark-field-background-color);
+    border: 1px solid var(--grey-border-color);
+    color: var(--blue-menu-item-color);
 }
 
-.custom-form-control::placeholder {
-    color: #808080;
+.list-group-item:hover {
+    color: var(--blue-menu-item-color);
+    background-color: var(--dark-field-background-color);
 }
