@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html layout:decorate="~{frontend/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Account Details</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <div class="row">
+            <div th:replace="frontend/fragments/settings-menu :: settings-menu"></div>
+            <div class="col-8">
+                <h2 class="h5 mt-3">Change email address</h2>
+                <hr class="border-secondary"/>
+                <form>
+                    <div class="form-group col-5 px-0">
+                        <label for="email-address">Email address</label>
+                        <input type="email" class="form-control custom-form-control" id="email-address" placeholder="name@example.com">
+                    </div>
+                    <button type="submit" class="btn btn-secondary mt-2">Update email address</button>
+                </form>
+
+                <h2 class="h5 mt-5">Change password</h2>
+                <hr class="border-secondary"/>
+                <form>
+                    <div class="form-group col-5 px-0">
+                        <label for="old-password">Old password</label>
+                        <input type="password" class="form-control custom-form-control" id="old-password">
+                    </div>
+                    <div class="form-group col-5 px-0">
+                        <label for="new-password">New password</label>
+                        <input type="password" class="form-control custom-form-control" id="new-password">
+                    </div>
+                    <div class="form-group col-5 px-0">
+                        <label for="confirm-password">Confirm password</label>
+                        <input type="password" class="form-control custom-form-control" id="confirm-password">
+                    </div>
+                    <p class="text-muted">Make sure your new password has at least 8 characters.</p>
+                    <button type="submit" class="btn btn-secondary">Update password</button>
+                </form>
+
+                <h2 class="h5 mt-5">Delete account</h2>
+                <hr class="border-secondary"/>
+                <p>Let your account go to hell, motherfucker!</p>
+                <button type="button" class="btn btn-danger">Delete account</button>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

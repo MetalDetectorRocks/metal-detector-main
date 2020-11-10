@@ -361,7 +361,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       var host = "host";
       var clientId = "clientId";
       var baseUrl = "baseUrl";
-      var encodedRedirectUrl = host + "/profile/spotify-callback";
+      var encodedRedirectUrl = host + "/settings/spotify-synchronization/spotify-callback";
       var encodedScopes = "user-library-read+user-follow-read";
       var expectedUrl = baseUrl + "/authorize" + "?client_id=" + clientId + "&response_type=code" +
                         "&redirect_uri=" + encodedRedirectUrl + "&scope=" + encodedScopes + "&state=";

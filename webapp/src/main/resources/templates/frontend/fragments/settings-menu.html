@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings Menu</title>
+</head>
+<body>
+    <div class="list-group col-4" th:fragment="settings-menu">
+        <a class="list-group-item list-group-item-action"
+           th:classappend="${#request.requestURI == '/settings/account-details' ? 'active' : ''}"
+           href="#" th:href="@{/settings/account-details}">
+            Account details
+        </a>
+
+        <a class="list-group-item list-group-item-action"
+           th:classappend="${#request.requestURI == '/settings/spotify-synchronization' ? 'active' : ''}"
+           href="#" th:href="@{/settings/spotify-synchronization}">
+            Spotify synchronization
+        </a>
+
+        <a class="list-group-item list-group-item-action"
+           th:classappend="${#request.requestURI == '/settings/notification-settings' ? 'active' : ''}"
+           href="#" th:href="@{/settings/notification-settings}">
+            Notification settings
+        </a>
+    </div>
+</body>
+</html>

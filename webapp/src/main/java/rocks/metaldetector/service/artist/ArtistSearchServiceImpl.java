@@ -25,7 +25,7 @@ public class ArtistSearchServiceImpl implements ArtistSearchService {
     @Transactional
     public ArtistSearchResponse searchDiscogsByName(String artistQueryString, Pageable pageable) {
         DiscogsArtistSearchResultDto result = discogsService.searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
-        ArtistSearchResponse searchResponse = responseTransformer.transformDiscogs(result);
+        ArtistSearchResponse searchResponse = responseTransformer.transformDiscogs(artistQueryString, result);
         searchResponse.getSearchResults().forEach(artist -> artist.setFollowed(
                 followArtistService.isCurrentUserFollowing(artist.getId(), ArtistSource.DISCOGS))
         );
@@ -36,7 +36,7 @@ public class ArtistSearchServiceImpl implements ArtistSearchService {
     @Transactional
     public ArtistSearchResponse searchSpotifyByName(String artistQueryString, Pageable pageable) {
         SpotifyArtistSearchResultDto result = spotifyService.searchArtistByName(artistQueryString, pageable.getPageNumber(), pageable.getPageSize());
-        ArtistSearchResponse searchResponse = responseTransformer.transformSpotify(result);
+        ArtistSearchResponse searchResponse = responseTransformer.transformSpotify(artistQueryString, result);
         searchResponse.getSearchResults().forEach(artist -> artist.setFollowed(
                 followArtistService.isCurrentUserFollowing(artist.getId(), ArtistSource.SPOTIFY))
         );

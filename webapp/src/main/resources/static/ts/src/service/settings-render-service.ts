@@ -1,6 +1,6 @@
 import {SpotifyRestClient} from "../clients/spotify-rest-client";
 
-export class ProfileRenderService {
+export class SettingsRenderService {
 
     private readonly spotifyRestClient: SpotifyRestClient;
 

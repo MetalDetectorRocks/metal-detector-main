@@ -31,7 +31,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
   private MockHttpServletResponse response;
 
   @InjectMocks
-  private RedirectionHandlerInterceptor redirectionHandlerInterceptor;
+  private RedirectionHandlerInterceptor underTest;
 
   @BeforeEach
   void setup() {
@@ -51,7 +51,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
     when(currentUserSupplier.get()).thenReturn(userEntity);
 
     // when
-    boolean result = redirectionHandlerInterceptor.preHandle(request, response, null);
+    boolean result = underTest.preHandle(request, response, null);
 
     // then
     assertThat(result).isFalse();
@@ -64,7 +64,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
     when(currentUserSupplier.get()).thenReturn(userEntity);
 
     // when
-    redirectionHandlerInterceptor.preHandle(request, response, null);
+    underTest.preHandle(request, response, null);
 
     // then
     assertThat(response.getHeader("Location")).isEqualTo(Endpoints.Frontend.HOME);
@@ -77,7 +77,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
     when(currentUserSupplier.get()).thenReturn(userEntity);
 
     // when
-    redirectionHandlerInterceptor.preHandle(request, response, null);
+    underTest.preHandle(request, response, null);
 
     // then
     assertThat(response.getStatus()).isEqualTo(HttpStatus.TEMPORARY_REDIRECT.value());
@@ -87,7 +87,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
   @DisplayName("preHandle() should give true for anonymous user")
   void pre_handle_should_return_true() {
     // when
-    boolean result = redirectionHandlerInterceptor.preHandle(request, response, null);
+    boolean result = underTest.preHandle(request, response, null);
 
     // then
     assertThat(result).isTrue();

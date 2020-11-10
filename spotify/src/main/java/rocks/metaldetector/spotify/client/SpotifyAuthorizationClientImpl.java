@@ -64,7 +64,7 @@ public class SpotifyAuthorizationClientImpl implements SpotifyAuthorizationClien
     MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
     request.add(GRANT_TYPE_KEY, USER_AUTH_REQUEST_VALUE);
     request.add(CODE_REQUEST_KEY, code);
-    request.add(REDIRECT_URI_KEY, spotifyProperties.getApplicationHostUrl() + Endpoints.Frontend.PROFILE + Endpoints.Frontend.SPOTIFY_CALLBACK);
+    request.add(REDIRECT_URI_KEY, spotifyProperties.getApplicationHostUrl() + Endpoints.Frontend.SPOTIFY_SYNCHRONIZATION + Endpoints.Frontend.SPOTIFY_CALLBACK);
 
     return callAuthorizationEndpoint(request);
   }
