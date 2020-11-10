@@ -80,7 +80,7 @@ public class SpotifyServiceImpl implements SpotifyService {
   public String getSpotifyAuthorizationUrl() {
     String endpoint = String.format(USER_AUTHORIZATION_ENDPOINT,
                                     spotifyProperties.getClientId(),
-                                    spotifyProperties.getApplicationHostUrl() + Endpoints.Frontend.SETTINGS + Endpoints.Frontend.SPOTIFY_CALLBACK,
+                                    spotifyProperties.getApplicationHostUrl() + Endpoints.Frontend.SPOTIFY_SYNCHRONIZATION + Endpoints.Frontend.SPOTIFY_CALLBACK,
                                     URLEncoder.encode(String.join(" ", REQUIRED_SCOPES), Charset.defaultCharset()));
     return spotifyProperties.getAuthenticationBaseUrl() + endpoint;
   }
