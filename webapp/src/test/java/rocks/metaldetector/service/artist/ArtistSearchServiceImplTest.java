@@ -60,7 +60,7 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             var artistQueryString = "the query";
             var pageable = PageRequest.of(1, 10);
             doReturn(DtoFactory.DiscogsArtistSearchResultDtoFactory.createDefault()).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
-            doReturn(DtoFactory.ArtistSearchResponseFactory.discogs()).when(searchResponseTransformer).transformDiscogs(any());
+            doReturn(DtoFactory.ArtistSearchResponseFactory.discogs()).when(searchResponseTransformer).transformDiscogs(any(), any());
 
             // when
             underTest.searchDiscogsByName(artistQueryString, pageable);
@@ -74,14 +74,15 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
         void should_call_result_transformer() {
             // given
             var expectedSearchResults = DtoFactory.DiscogsArtistSearchResultDtoFactory.createDefault();
+            var query = "the query";
             doReturn(expectedSearchResults).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
-            doReturn(DtoFactory.ArtistSearchResponseFactory.discogs()).when(searchResponseTransformer).transformDiscogs(any());
+            doReturn(DtoFactory.ArtistSearchResponseFactory.discogs()).when(searchResponseTransformer).transformDiscogs(any(), any());
 
             // when
-            underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
+            underTest.searchDiscogsByName(query, PageRequest.of(1, 10));
 
             // then
-            verify(searchResponseTransformer).transformDiscogs(expectedSearchResults);
+            verify(searchResponseTransformer).transformDiscogs(query, expectedSearchResults);
         }
 
         @Test
@@ -90,7 +91,7 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             // given
             var expectedSearchResult = DtoFactory.ArtistSearchResponseFactory.discogs();
             doReturn(DtoFactory.DiscogsArtistSearchResultDtoFactory.createDefault()).when(discogsService).searchArtistByName(any(), anyInt(), anyInt());
-            doReturn(expectedSearchResult).when(searchResponseTransformer).transformDiscogs(any());
+            doReturn(expectedSearchResult).when(searchResponseTransformer).transformDiscogs(any(), any());
 
             // when
             ArtistSearchResponse result = underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
@@ -105,7 +106,7 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             // given
             var discogssearchresults = DtoFactory.ArtistSearchResponseFactory.discogs();
             discogssearchresults.setSearchResults(createListOfSearchResultEntries(List.of("1", "2", "3")));
-            doReturn(discogssearchresults).when(searchResponseTransformer).transformDiscogs(any());
+            doReturn(discogssearchresults).when(searchResponseTransformer).transformDiscogs(any(), any());
 
             // when
             underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
@@ -123,7 +124,7 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             var discogssearchresults = DtoFactory.ArtistSearchResponseFactory.discogs();
             discogssearchresults.setSearchResults(createListOfSearchResultEntries(List.of("1", "2", "3")));
             doReturn(true, false, true).when(followArtistService).isCurrentUserFollowing(any(), any());
-            doReturn(discogssearchresults).when(searchResponseTransformer).transformDiscogs(any());
+            doReturn(discogssearchresults).when(searchResponseTransformer).transformDiscogs(any(), any());
 
             // when
             var searchResults = underTest.searchDiscogsByName("the query", PageRequest.of(1, 10));
@@ -154,7 +155,7 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             var artistQueryString = "the query";
             var pageable = PageRequest.of(1, 10);
             doReturn(DtoFactory.SpotifyArtistSearchResultDtoFactory.createDefault()).when(spotifyService).searchArtistByName(any(), anyInt(), anyInt());
-            doReturn(DtoFactory.ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any());
+            doReturn(DtoFactory.ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any(), any());
 
             // when
             underTest.searchSpotifyByName(artistQueryString, pageable);
@@ -168,14 +169,15 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
         void should_call_result_transformer() {
             // given
             var expectedSearchResults = DtoFactory.SpotifyArtistSearchResultDtoFactory.createDefault();
+            var query = "the query";
             doReturn(expectedSearchResults).when(spotifyService).searchArtistByName(any(), anyInt(), anyInt());
-            doReturn(DtoFactory.ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any());
+            doReturn(DtoFactory.ArtistSearchResponseFactory.spotify()).when(searchResponseTransformer).transformSpotify(any(), any());
 
             // when
-            underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
+            underTest.searchSpotifyByName(query, PageRequest.of(1, 10));
 
             // then
-            verify(searchResponseTransformer).transformSpotify(expectedSearchResults);
+            verify(searchResponseTransformer).transformSpotify(query, expectedSearchResults);
         }
 
         @Test
@@ -184,7 +186,7 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             // given
             var expectedSearchResult = DtoFactory.ArtistSearchResponseFactory.spotify();
             doReturn(DtoFactory.SpotifyArtistSearchResultDtoFactory.createDefault()).when(spotifyService).searchArtistByName(any(), anyInt(), anyInt());
-            doReturn(expectedSearchResult).when(searchResponseTransformer).transformSpotify(any());
+            doReturn(expectedSearchResult).when(searchResponseTransformer).transformSpotify(any(), any());
 
             // when
             ArtistSearchResponse result = underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
@@ -199,7 +201,7 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             // given
             var spotifySearchResults = DtoFactory.ArtistSearchResponseFactory.spotify();
             spotifySearchResults.setSearchResults(createListOfSearchResultEntries(List.of("1", "2", "3")));
-            doReturn(spotifySearchResults).when(searchResponseTransformer).transformSpotify(any());
+            doReturn(spotifySearchResults).when(searchResponseTransformer).transformSpotify(any(), any());
 
             // when
             underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));
@@ -217,7 +219,7 @@ public class ArtistSearchServiceImplTest implements WithAssertions {
             var spotifySearchResults = DtoFactory.ArtistSearchResponseFactory.spotify();
             spotifySearchResults.setSearchResults(createListOfSearchResultEntries(List.of("1", "2", "3")));
             doReturn(true, false, true).when(followArtistService).isCurrentUserFollowing(any(), any());
-            doReturn(spotifySearchResults).when(searchResponseTransformer).transformSpotify(any());
+            doReturn(spotifySearchResults).when(searchResponseTransformer).transformSpotify(any(), any());
 
             // when
             var searchResults = underTest.searchSpotifyByName("the query", PageRequest.of(1, 10));

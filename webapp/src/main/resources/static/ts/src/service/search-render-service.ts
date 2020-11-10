@@ -38,7 +38,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     }
 
     protected onRendering(searchResponse: SearchResponse): void {
-        const query = new URL(window.location.href).searchParams.get("query") || "";
+        const query = searchResponse.query || "";
         const currentPage = searchResponse.pagination.currentPage;
         const totalPages = searchResponse.pagination.totalPages;
         const itemsOnThisPage = searchResponse.searchResults.length;
@@ -110,7 +110,8 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     }
 
     private renderTopSearchResult(entry: SearchResponseEntry): HTMLDivElement {
-        const topSearchResultDivElement = this.renderSearchResult(entry, {
+        const node = document.importNode(this.topSearchResultTemplateElement.content, true);
+        const topSearchResultDivElement = this.renderSearchResult(entry, node, {
             nameSelector: "#top-name",
             thumbSelector: "#top-thumb",
             followIconSelector: "#top-follow-icon"
@@ -164,16 +165,16 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     }
 
     private renderOtherSearchResult(entry: SearchResponseEntry): HTMLDivElement {
-        return this.renderSearchResult(entry, {
+        const node = document.importNode(this.searchResultTemplateElement.content, true);
+        return this.renderSearchResult(entry, node, {
             nameSelector: "#other-name",
             thumbSelector: "#other-thumb",
             followIconSelector: "#other-follow-icon"
         });
     }
 
-    private renderSearchResult(entry: SearchResponseEntry, selectorNames: SearchCardSelectorNames): HTMLDivElement {
-        const searchResultTemplateNode = document.importNode(this.searchResultTemplateElement.content, true);
-        const searchResultDivElement = searchResultTemplateNode.firstElementChild as HTMLDivElement;
+    private renderSearchResult(entry: SearchResponseEntry, node: DocumentFragment, selectorNames: SearchCardSelectorNames): HTMLDivElement {
+        const searchResultDivElement = node.firstElementChild as HTMLDivElement;
         const nameElement = searchResultDivElement.querySelector(selectorNames.nameSelector) as HTMLParagraphElement;
         const thumbElement = searchResultDivElement.querySelector(selectorNames.thumbSelector) as HTMLImageElement;
         const followIconDivElement = searchResultDivElement.querySelector(selectorNames.followIconSelector) as HTMLDivElement;
