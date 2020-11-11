@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.service.artist.ArtistDto;
@@ -12,10 +13,12 @@ import rocks.metaldetector.service.spotify.SpotifyFetchType;
 import rocks.metaldetector.service.spotify.SpotifyFollowedArtistsService;
 import rocks.metaldetector.service.spotify.SpotifyUserAuthorizationService;
 import rocks.metaldetector.support.Endpoints;
+import rocks.metaldetector.web.api.request.SpotifyAuthorizationRequest;
 import rocks.metaldetector.web.api.response.SpotifyArtistImportResponse;
 import rocks.metaldetector.web.api.response.SpotifyFollowedArtistsResponse;
 import rocks.metaldetector.web.api.response.SpotifyUserAuthorizationResponse;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
@@ -40,6 +43,13 @@ public class SpotifyRestController {
   public ResponseEntity<SpotifyArtistImportResponse> importArtists() {
     List<ArtistDto> artists = spotifyFollowedArtistsService.importArtistsFromLikedReleases();
     return ResponseEntity.ok(new SpotifyArtistImportResponse(artists));
+  }
+
+  @PostMapping(path = Endpoints.Rest.SPOTIFY_AUTHORIZATION_CALLBACK,
+      consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  public ResponseEntity<Void> fetchInitialToken(@Valid @RequestBody SpotifyAuthorizationRequest spotifyAuthorizationRequest) {
+    userAuthorizationService.fetchInitialToken(spotifyAuthorizationRequest.getState(), spotifyAuthorizationRequest.getCode());
+    return ResponseEntity.ok().build();
   }
 
   @GetMapping(path = Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS,
