@@ -4,6 +4,6 @@ import {SpotifyRestClient} from "../clients/spotify-rest-client";
 
 const toastService = new ToastService();
 const spotifyAuthorizationRestClient = new SpotifyRestClient(toastService);
-const settingsRenderService = new SettingsRenderService(spotifyAuthorizationRestClient);
+const settingsRenderService = new SettingsRenderService(toastService, spotifyAuthorizationRestClient);
 
 settingsRenderService.render();
