@@ -25,6 +25,7 @@ import rocks.metaldetector.butler.api.ButlerImportJob;
 import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
+import rocks.metaldetector.butler.api.ButlerUpdateReleaseStateRequest;
 import rocks.metaldetector.butler.config.ButlerConfig;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
@@ -39,6 +40,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.springframework.http.HttpMethod.PUT;
 import static rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportResponseFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,6 +57,9 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
 
   @Captor
   private ArgumentCaptor<HttpEntity<ButlerReleasesRequest>> argumentCaptorReleases;
+
+  @Captor
+  private ArgumentCaptor<HttpEntity<ButlerUpdateReleaseStateRequest>> argumentCaptorReleaseUpdate;
 
   @AfterEach
   void tearDown() {
@@ -424,6 +429,94 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
 
       // when
       Throwable throwable = catchThrowable(() -> underTest.queryImportJobResults());
+
+      // then
+      assertThat(throwable).isInstanceOf(ExternalServiceException.class);
+    }
+
+    private Stream<Arguments> httpStatusCodeProvider() {
+      return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
+    }
+  }
+
+  @DisplayName("Test updating a release")
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @Nested
+  class UpdateReleaseTest {
+
+    @Test
+    @DisplayName("update release url is called")
+    void test_update_release_url_called() {
+      // given
+      var url = "url";
+      doReturn(url).when(butlerConfig).getUpdateReleaseStateUrl();
+      doReturn(ResponseEntity.ok().build()).when(restTemplate).exchange(anyString(), any(), any(), eq(Void.class));
+
+      // when
+      underTest.updateReleaseState(1L, "state");
+
+      // then
+      verify(restTemplate).exchange(eq(url), any(), any(), eq(Void.class));
+    }
+
+    @Test
+    @DisplayName("PUT is made")
+    void test_put_is_made() {
+      // given
+      doReturn("url").when(butlerConfig).getUpdateReleaseStateUrl();
+      doReturn(ResponseEntity.ok().build()).when(restTemplate).exchange(anyString(), any(), any(), eq(Void.class));
+
+      // when
+      underTest.updateReleaseState(1L, "state");
+
+      // then
+      verify(restTemplate).exchange(anyString(), eq(PUT), any(), eq(Void.class));
+    }
+
+    @Test
+    @DisplayName("httpEntity contains body")
+    void test_http_entity_contains_body() {
+      // given
+      var releaseId = 1L;
+      var state = "OK";
+      doReturn("url").when(butlerConfig).getUpdateReleaseStateUrl();
+      doReturn(ResponseEntity.ok().build()).when(restTemplate).exchange(anyString(), any(), any(), eq(Void.class));
+
+      // when
+      underTest.updateReleaseState(releaseId, state);
+
+      // then
+      verify(restTemplate).exchange(anyString(), any(), argumentCaptorReleaseUpdate.capture(), eq(Void.class));
+      ButlerUpdateReleaseStateRequest body = argumentCaptorReleaseUpdate.getValue().getBody();
+      assertThat(body).isNotNull();
+      assertThat(body.getReleaseId()).isEqualTo(releaseId);
+      assertThat(body.getState()).isEqualTo(state);
+    }
+
+    @Test
+    @DisplayName("return type is void")
+    void test_return_type_void() {
+      // given
+      doReturn("url").when(butlerConfig).getUpdateReleaseStateUrl();
+      doReturn(ResponseEntity.ok().build()).when(restTemplate).exchange(anyString(), any(), any(), eq(Void.class));
+
+      // when
+      underTest.updateReleaseState(1L, "state");
+
+      // then
+      verify(restTemplate).exchange(anyString(), any(), any(), eq(Void.class));
+    }
+
+    @ParameterizedTest(name = "If the status is {0}, an ExternalServiceException is thrown")
+    @MethodSource("httpStatusCodeProvider")
+    @DisplayName("If the status code is not OK on update release, an ExternalServiceException is thrown")
+    void test_update_exception_if_status_is_not_ok(HttpStatus httpStatus) {
+      // given
+      doReturn("url").when(butlerConfig).getUpdateReleaseStateUrl();
+      doReturn(ResponseEntity.status(httpStatus).build()).when(restTemplate).exchange(anyString(), any(), any(), eq(Void.class));
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.updateReleaseState(1L, "state"));
 
       // then
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);

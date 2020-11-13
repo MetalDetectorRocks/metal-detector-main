@@ -21,7 +21,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer.STATE_NOT_SET;
 
 @ExtendWith(MockitoExtension.class)
 class ButlerReleaseResponseTransformerTest implements WithAssertions {
@@ -112,6 +111,6 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
     // then
     verify(enumPrettyPrinter).prettyPrintEnumValue(eq(release.getType()));
     verify(enumPrettyPrinter).prettyPrintEnumValue(eq(release.getSource()));
-    verify(enumPrettyPrinter).prettyPrintEnumValue(eq(STATE_NOT_SET));
+    verify(enumPrettyPrinter).prettyPrintEnumValue(eq(release.getState()));
   }
 }

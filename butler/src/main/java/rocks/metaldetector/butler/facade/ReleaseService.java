@@ -19,4 +19,6 @@ public interface ReleaseService {
   void createRetryCoverDownloadJob();
 
   List<ImportJobResultDto> queryImportJobResults();
+
+  void updateReleaseState(long releaseId, String state);
 }

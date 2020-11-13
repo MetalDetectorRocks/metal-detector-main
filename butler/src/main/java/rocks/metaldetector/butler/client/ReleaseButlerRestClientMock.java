@@ -68,4 +68,8 @@ public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
         new ButlerImportJob(684, 105, LocalDateTime.of(2020, 7, 7, 21, 14, 6), LocalDateTime.of(2020, 7, 7, 21, 19, 46), "Metal Achives")
     );
   }
+
+  @Override
+  public void updateReleaseState(long releaseId, String state) {
+  }
 }

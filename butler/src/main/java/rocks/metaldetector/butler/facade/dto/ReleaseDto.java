@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public class ReleaseDto {
 
+  private long id;
   private String artist;
   private List<String> additionalArtists;
   private String albumTitle;

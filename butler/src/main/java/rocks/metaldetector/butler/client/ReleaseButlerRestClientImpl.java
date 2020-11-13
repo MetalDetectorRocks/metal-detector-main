@@ -13,12 +13,15 @@ import rocks.metaldetector.butler.api.ButlerImportJob;
 import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
+import rocks.metaldetector.butler.api.ButlerUpdateReleaseStateRequest;
 import rocks.metaldetector.butler.config.ButlerConfig;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
+
+import static org.springframework.http.HttpMethod.PUT;
 
 @Service
 @Slf4j
@@ -34,9 +37,9 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
     HttpEntity<ButlerReleasesRequest> requestEntity = createQueryHttpEntity(request);
 
     ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(
-            butlerConfig.getUnpaginatedReleasesUrl(),
-            requestEntity,
-            ButlerReleasesResponse.class
+        butlerConfig.getUnpaginatedReleasesUrl(),
+        requestEntity,
+        ButlerReleasesResponse.class
     );
 
     return handleReleaseResponseEntity(request, responseEntity);
@@ -46,9 +49,9 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {
     HttpEntity<ButlerReleasesRequest> requestEntity = createQueryHttpEntity(request);
     ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(
-            butlerConfig.getReleasesUrl(),
-            requestEntity,
-            ButlerReleasesResponse.class
+        butlerConfig.getReleasesUrl(),
+        requestEntity,
+        ButlerReleasesResponse.class
     );
 
     return handleReleaseResponseEntity(request, responseEntity);
@@ -84,8 +87,8 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   @Override
   public List<ButlerImportJob> queryImportJobResults() {
     ResponseEntity<ButlerImportResponse> responseEntity = releaseButlerRestTemplate.getForEntity(
-            butlerConfig.getImportUrl(),
-            ButlerImportResponse.class
+        butlerConfig.getImportUrl(),
+        ButlerImportResponse.class
     );
 
     ButlerImportResponse response = responseEntity.getBody();
@@ -95,6 +98,20 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
     }
 
     return response.getImportJobs();
+  }
+
+  @Override
+  public void updateReleaseState(long releaseId, String state) {
+    ButlerUpdateReleaseStateRequest request = ButlerUpdateReleaseStateRequest.builder().releaseId(releaseId).state(state.toUpperCase()).build();
+    HttpEntity<ButlerUpdateReleaseStateRequest> httpEntity = new HttpEntity<>(request);
+    ResponseEntity<Void> responseEntity = releaseButlerRestTemplate.exchange(butlerConfig.getUpdateReleaseStateUrl(),
+                                                                             PUT,
+                                                                             httpEntity,
+                                                                             Void.class);
+    var shouldNotHappen = !responseEntity.getStatusCode().is2xxSuccessful();
+    if (shouldNotHappen) {
+      throw new ExternalServiceException("Could not update release state (Response code: " + responseEntity.getStatusCode() + ")");
+    }
   }
 
   private HttpEntity<ButlerReleasesRequest> createQueryHttpEntity(ButlerReleasesRequest request) {

@@ -33,6 +33,7 @@ import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseRequestFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
+import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
 
 import java.time.LocalDate;
@@ -435,7 +436,7 @@ class ReleasesRestControllerTest implements WithAssertions {
   }
 
   @Nested
-  @DisplayName("Tests for querying import job results")
+  @DisplayName("Tests querying import job results")
   class QueryImportJobResultsTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
@@ -472,6 +473,42 @@ class ReleasesRestControllerTest implements WithAssertions {
       validatableResponse.statusCode(OK.value());
       var result = validatableResponse.extract().body().jsonPath().getList(".", ImportJobResultDto.class);
       assertThat(result).isEqualTo(importJobResultDto);
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests updating a release")
+  class UpdateReleaseTest {
+
+    private RestAssuredMockMvcUtils restAssuredUtils;
+
+    @BeforeEach
+    void setUp() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.UPDATE_RELEASE_STATE);
+    }
+
+    @Test
+    @DisplayName("Should call release service")
+    void should_call_release_service() {
+      // given
+      var releaseId = 1L;
+      var state = "state";
+
+      // when
+      restAssuredUtils.doPut(ReleaseUpdateRequest.builder().releaseId(releaseId).state(state).build());
+
+      // then
+      verify(releasesService).updateReleaseState(releaseId, state);
+    }
+
+    @Test
+    @DisplayName("Should return OK")
+    void should_return_status_ok() {
+      // when
+      ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doPut(ReleaseUpdateRequest.builder().releaseId(1L).state("state").build());
+
+      // then
+      validatableResponse.statusCode(OK.value());
     }
   }
 }

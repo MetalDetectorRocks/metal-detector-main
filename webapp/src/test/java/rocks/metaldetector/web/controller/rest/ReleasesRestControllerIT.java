@@ -10,16 +10,19 @@ import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseRequestFactory;
+import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static rocks.metaldetector.support.Endpoints.Rest.COVER_JOB;
 import static rocks.metaldetector.support.Endpoints.Rest.IMPORT_JOB;
 import static rocks.metaldetector.support.Endpoints.Rest.QUERY_ALL_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.QUERY_MY_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.QUERY_RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.UPDATE_RELEASE_STATE;
 import static rocks.metaldetector.testutil.DtoFactory.PaginatedReleaseRequestFactory;
 
 @WebMvcTest(controllers = ReleasesRestController.class)
@@ -90,6 +93,16 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
                           .contentType(APPLICATION_JSON))
           .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("Administrator is allowed to PUT on endpoint " + UPDATE_RELEASE_STATE + "'")
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void user_not_is_allowed_to_update_release_state() throws Exception {
+      mockMvc.perform(put(UPDATE_RELEASE_STATE)
+                          .content(objectMapper.writeValueAsString(ReleaseUpdateRequest.builder().releaseId(1L).state("state").build()))
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isOk());
+    }
   }
 
   @Nested
@@ -150,6 +163,16 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
       mockMvc.perform(post(COVER_JOB)
               .contentType(APPLICATION_JSON))
               .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("User is not allowed to PUT on endpoint " + UPDATE_RELEASE_STATE + "'")
+    @WithMockUser(roles = "USER")
+    void user_not_is_allowed_to_update_release_state() throws Exception {
+      mockMvc.perform(put(UPDATE_RELEASE_STATE)
+                        .content(objectMapper.writeValueAsString(ReleaseUpdateRequest.builder().releaseId(1L).state("state").build()))
+                        .contentType(APPLICATION_JSON))
+          .andExpect(status().isForbidden());
     }
   }
 }
