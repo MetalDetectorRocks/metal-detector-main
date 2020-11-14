@@ -19,7 +19,7 @@ public class SpotifySynchronizationController {
   }
 
   @GetMapping(path = Endpoints.Frontend.SPOTIFY_CALLBACK)
-  public ModelAndView showSettingsCallback() {
+  public ModelAndView handleSpotifyCallback() {
     return new ModelAndView(ViewNames.Frontend.SPOTIFY_SYNCHRONIZATION);
   }
 }

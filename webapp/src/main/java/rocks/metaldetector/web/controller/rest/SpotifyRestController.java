@@ -45,10 +45,10 @@ public class SpotifyRestController {
     return ResponseEntity.ok(new SpotifyArtistImportResponse(artists));
   }
 
-  @PostMapping(path = Endpoints.Rest.SPOTIFY_AUTHORIZATION_CALLBACK,
-      consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<Void> fetchInitialToken(@Valid @RequestBody SpotifyAuthorizationRequest spotifyAuthorizationRequest) {
-    userAuthorizationService.fetchInitialToken(spotifyAuthorizationRequest.getState(), spotifyAuthorizationRequest.getCode());
+  @PostMapping(path = Endpoints.Rest.SPOTIFY_AUTHORIZATION_PERSIST,
+               consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  public ResponseEntity<Void> persistInitialToken(@Valid @RequestBody SpotifyAuthorizationRequest spotifyAuthorizationRequest) {
+    userAuthorizationService.persistInitialToken(spotifyAuthorizationRequest.getState(), spotifyAuthorizationRequest.getCode());
     return ResponseEntity.ok().build();
   }
 
