@@ -8,7 +8,7 @@ import {SpotifyArtistImportResponse} from "../model/spotify-artist-import-respon
 export class SpotifyRestClient {
 
     private readonly SPOTIFY_AUTHORIZATION_ENDPOINT = "/rest/v1/spotify/auth";
-    private readonly SPOTIFY_AUTHORIZATION_CALLBACK_ENDPOINT = "/rest/v1/spotify/auth/callback";
+    private readonly SPOTIFY_AUTHORIZATION_PERSIST_ENDPOINT = "/rest/v1/spotify/auth/persist";
     private readonly SPOTIFY_ARTIST_IMPORT_ENDPOINT = "/rest/v1/spotify/import";
 
     private readonly toastService: ToastService;
@@ -17,7 +17,7 @@ export class SpotifyRestClient {
         this.toastService = toastService;
     }
 
-    public async getAuthorizationUrl(): Promise<SpotifyUserAuthorizationResponse> {
+    public async createAuthorizationUrl(): Promise<SpotifyUserAuthorizationResponse> {
         return await axios.post(
           this.SPOTIFY_AUTHORIZATION_ENDPOINT, axiosConfig
         ).then((response: AxiosResponse<SpotifyUserAuthorizationResponse>) => {
@@ -45,7 +45,7 @@ export class SpotifyRestClient {
             state: state
         };
         return await axios.post(
-          this.SPOTIFY_AUTHORIZATION_CALLBACK_ENDPOINT, axiosConfig
+          this.SPOTIFY_AUTHORIZATION_PERSIST_ENDPOINT, axiosConfig
         ).then(() => {
             return;
         }).catch((error: AxiosError) => {

@@ -227,11 +227,11 @@ class SpotifyRestControllerTest implements WithAssertions {
 
     @BeforeEach
     void setup() {
-      restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_AUTHORIZATION_CALLBACK);
+      restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_AUTHORIZATION_PERSIST);
     }
 
     @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION_CALLBACK + " should return 200")
+    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION_PERSIST + " should return 200")
     void test_post_authorization_returns_ok() {
       // given
       var request = SpotifyAuthorizationRequest.builder().code("code").state("state").build();
@@ -244,7 +244,7 @@ class SpotifyRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION_CALLBACK + " should call SpotifyUserAuthorizationServiceService")
+    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION_PERSIST + " should call SpotifyUserAuthorizationServiceService")
     void test_post_authorization_calls_spotify_service() {
       // given
       var request = SpotifyAuthorizationRequest.builder().code("code").state("state").build();
@@ -253,12 +253,12 @@ class SpotifyRestControllerTest implements WithAssertions {
       restAssuredMockMvcUtils.doPost(request);
 
       // then
-      verify(userAuthorizationService).fetchInitialToken(request.getState(), request.getCode());
+      verify(userAuthorizationService).persistInitialToken(request.getState(), request.getCode());
     }
 
     @ParameterizedTest
     @MethodSource("badRequestProvider")
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION_CALLBACK + " should return bad request")
+    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION_PERSIST + " should return bad request")
     void test_post_authorization_returns_url(String code, String state) {
       // given
       var request = SpotifyAuthorizationRequest.builder().code(code).state(state).build();
