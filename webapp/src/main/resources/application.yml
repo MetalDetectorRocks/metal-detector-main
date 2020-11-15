@@ -75,4 +75,3 @@ metal-release-butler:
   import-url: ${metal-release-butler.host}/rest/v1/releases/import
   retry-cover-download-url: ${metal-release-butler.host}/rest/v1/releases/cover-reload
   access-token: ${BUTLER_ACCESS_TOKEN}
-  update-release-state-url: ${metal-release-butler.host}/rest/v1/release/update

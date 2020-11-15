@@ -12,13 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonPropertyOrder({
-    "releaseId",
     "state"
 })
 public class ButlerUpdateReleaseStateRequest {
-
-  @JsonProperty("releaseId")
-  private long releaseId;
 
   @JsonProperty("state")
   private String state;

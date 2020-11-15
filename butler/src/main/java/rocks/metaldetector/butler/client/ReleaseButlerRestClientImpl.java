@@ -20,6 +20,7 @@ import rocks.metaldetector.support.exceptions.ExternalServiceException;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpMethod.PUT;
 
@@ -28,6 +29,8 @@ import static org.springframework.http.HttpMethod.PUT;
 @Profile({"default", "preview", "prod"})
 @AllArgsConstructor
 public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
+
+  static final String UPDATE_ENDPOINT_PATH_PARAM = "/{releaseId}";
 
   private final RestTemplate releaseButlerRestTemplate;
   private final ButlerConfig butlerConfig;
@@ -102,12 +105,13 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
 
   @Override
   public void updateReleaseState(long releaseId, String state) {
-    ButlerUpdateReleaseStateRequest request = ButlerUpdateReleaseStateRequest.builder().releaseId(releaseId).state(state.toUpperCase()).build();
+    ButlerUpdateReleaseStateRequest request = ButlerUpdateReleaseStateRequest.builder().state(state.toUpperCase()).build();
     HttpEntity<ButlerUpdateReleaseStateRequest> httpEntity = new HttpEntity<>(request);
-    ResponseEntity<Void> responseEntity = releaseButlerRestTemplate.exchange(butlerConfig.getUpdateReleaseStateUrl(),
+    ResponseEntity<Void> responseEntity = releaseButlerRestTemplate.exchange(butlerConfig.getReleasesUrl() + UPDATE_ENDPOINT_PATH_PARAM,
                                                                              PUT,
                                                                              httpEntity,
-                                                                             Void.class);
+                                                                             Void.class,
+                                                                             Map.of("releaseId", releaseId));
     var shouldNotHappen = !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
       throw new ExternalServiceException("Could not update release state (Response code: " + responseEntity.getStatusCode() + ")");
