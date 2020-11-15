@@ -102,13 +102,17 @@ public class RestAssuredMockMvcUtils {
           .then();
   }
 
-  public ValidatableMockMvcResponse doPut(Object request) {
+  public ValidatableMockMvcResponse doPut(String pathParam, Object request) {
     return given()
-            .accept(ContentType.JSON)
-            .contentType(ContentType.JSON)
-            .body(request)
-          .when()
-            .put(requestUri)
+        .accept(ContentType.JSON)
+        .contentType(ContentType.JSON)
+        .body(request)
+        .when()
+        .put(requestUri + pathParam)
         .then();
+  }
+
+  public ValidatableMockMvcResponse doPut(Object request) {
+    return doPut("", request);
   }
 }

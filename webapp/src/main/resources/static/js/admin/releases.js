@@ -121,8 +121,9 @@ function resetUpdateReleaseForm() {
  * Updates a release's state
  */
 function updateRelease() {
+  const pathParam = $("#release-id").val();
   $.post({
-    url: '/rest/v1/release/update',
+    url: '/rest/v1/releases/' + pathParam,
     data: createUpdateReleaseRequest(),
     type: 'PUT',
     headers: {
@@ -130,7 +131,7 @@ function updateRelease() {
     },
     success: onUpdateReleaseSuccess,
     error: function (errorResponse) {
-      onUpdateError(errorResponse, '#update-release-validation-area')
+      onError(errorResponse, '#update-release-validation-area')
     }
   });
 }
@@ -141,7 +142,6 @@ function updateRelease() {
  */
 function createUpdateReleaseRequest() {
   return JSON.stringify({
-    releaseId: $("#release-id").val(),
     state: $("#release-state").val()
   });
 }
@@ -158,4 +158,28 @@ function onUpdateReleaseSuccess() {
 
   resetUpdateReleaseForm();
   $('#update-release-dialog').modal('hide');
+}
+
+/**
+ * Error callback.
+ * @param errorResponse     The json response
+ * @param validationAreaId  ID of the area to display errors (create/update)
+ */
+function onError(errorResponse, validationAreaId) {
+  resetValidationArea(validationAreaId);
+  const validationMessageArea = $(validationAreaId);
+  validationMessageArea.addClass("alert alert-danger");
+
+  if (errorResponse.status === 400) { // BAD REQUEST
+    validationMessageArea.append("The following errors occurred during server-side validation:");
+    const errorsList = $('<ul>', {class: "errors mb-0"}).append(
+      errorResponse.responseJSON.messages.map(message =>
+        $("<li>").text(message)
+      )
+    );
+    validationMessageArea.append(errorsList);
+  }
+  else {
+    validationMessageArea.append("An unexpected error has occurred. Please try again at a later time.");
+  }
 }

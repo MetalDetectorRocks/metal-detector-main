@@ -81,14 +81,14 @@ class ReleasesRestControllerTest implements WithAssertions {
 
   @Nested
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  @DisplayName("Tests for endpoint '" + Endpoints.Rest.QUERY_ALL_RELEASES + "'")
+  @DisplayName("Tests for endpoint '" + Endpoints.Rest.ALL_RELEASES + "'")
   class QueryAllReleasesTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.QUERY_ALL_RELEASES);
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ALL_RELEASES);
     }
 
     @Test
@@ -157,14 +157,14 @@ class ReleasesRestControllerTest implements WithAssertions {
 
   @Nested
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  @DisplayName("Tests for endpoint '" + Endpoints.Rest.QUERY_RELEASES + "'")
+  @DisplayName("Tests for endpoint '" + Endpoints.Rest.RELEASES + "'")
   class QueryReleasesTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.QUERY_RELEASES);
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.RELEASES);
     }
 
     @Test
@@ -248,14 +248,14 @@ class ReleasesRestControllerTest implements WithAssertions {
 
   @Nested
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  @DisplayName("Tests for endpoint '" + Endpoints.Rest.QUERY_MY_RELEASES + "'")
+  @DisplayName("Tests for endpoint '" + Endpoints.Rest.MY_RELEASES + "'")
   class QueryMyReleasesTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.QUERY_MY_RELEASES);
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.MY_RELEASES);
     }
 
     @Test
@@ -484,7 +484,7 @@ class ReleasesRestControllerTest implements WithAssertions {
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.UPDATE_RELEASE_STATE);
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.RELEASES);
     }
 
     @Test
@@ -495,7 +495,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       var state = "state";
 
       // when
-      restAssuredUtils.doPut(ReleaseUpdateRequest.builder().releaseId(releaseId).state(state).build());
+      restAssuredUtils.doPut("/1", ReleaseUpdateRequest.builder().state(state).build());
 
       // then
       verify(releasesService).updateReleaseState(releaseId, state);
@@ -505,7 +505,7 @@ class ReleasesRestControllerTest implements WithAssertions {
     @DisplayName("Should return OK")
     void should_return_status_ok() {
       // when
-      ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doPut(ReleaseUpdateRequest.builder().releaseId(1L).state("state").build());
+      ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doPut("/1", ReleaseUpdateRequest.builder().state("state").build());
 
       // then
       validatableResponse.statusCode(OK.value());

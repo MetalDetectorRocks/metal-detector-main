@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +38,7 @@ public class ReleasesRestController {
   private final FollowArtistService followArtistService;
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-  @GetMapping(path = Endpoints.Rest.QUERY_ALL_RELEASES,
+  @GetMapping(path = Endpoints.Rest.ALL_RELEASES,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<List<ReleaseDto>> findAllReleases(@Valid ReleasesRequest request) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
@@ -45,7 +46,7 @@ public class ReleasesRestController {
     return ResponseEntity.ok(releaseDtos);
   }
 
-  @GetMapping(path = Endpoints.Rest.QUERY_RELEASES,
+  @GetMapping(path = Endpoints.Rest.RELEASES,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<Page<ReleaseDto>> findReleases(@Valid PaginatedReleasesRequest request) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
@@ -54,7 +55,7 @@ public class ReleasesRestController {
     return ResponseEntity.ok(releasePage);
   }
 
-  @GetMapping(path = Endpoints.Rest.QUERY_MY_RELEASES,
+  @GetMapping(path = Endpoints.Rest.MY_RELEASES,
           produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<Page<ReleaseDto>> findReleasesOfFollowedArtists(@Valid PaginatedReleasesRequest request) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
@@ -87,9 +88,9 @@ public class ReleasesRestController {
   }
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-  @PutMapping(path = Endpoints.Rest.UPDATE_RELEASE_STATE)
-  public ResponseEntity<Void> updateReleaseState(@Valid @RequestBody ReleaseUpdateRequest request) {
-    releaseService.updateReleaseState(request.getReleaseId(), request.getState());
+  @PutMapping(path = Endpoints.Rest.RELEASES + "/{releaseId}")
+  public ResponseEntity<Void> updateReleaseState(@Valid @RequestBody ReleaseUpdateRequest request, @PathVariable("releaseId") long releaseId) {
+    releaseService.updateReleaseState(releaseId, request.getState());
     return ResponseEntity.ok().build();
   }
 }
