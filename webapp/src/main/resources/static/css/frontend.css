@@ -2,13 +2,16 @@
 :root {
     --dark-background-color: #181818;
     --grey-border-color: #404040;
+    --grey-border-color-highlight: #5a5a5a;
     --blue-menu-item-color: #1d7097;
     --dark-field-background-color: #212121;
     --light-font-color: #adafae;
     --light-font-color-highlight: #fcfcfc;
     --light-font-color-muted: #5c5c5c;
-    --hyperlink-font-color: #555;
-    --hyperlink-font-color-highlight: #777;
+    --light-hyperlink-font-color: var(--blue-menu-item-color);
+    --light-hyperlink-font-color-highlight: #2a90c1;
+    --dark-hyperlink-font-color: #555;
+    --dark-hyperlink-font-color-highlight: #777;
 }
 
 /* General Styling */
@@ -46,6 +49,11 @@ p, legend {
 
 .container {
     max-width: 1280px;
+}
+
+.img-inactive {
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
 }
 
 /* Footer */
@@ -118,15 +126,42 @@ footer .list-inline-item {
     border-left: 2px solid var(--grey-border-color);
 }
 
+/* Spotify Synchronization */
+.spotify-synchro-img {
+    height: 7rem;
+    width: 7rem;
+    object-fit: cover;
+    border-bottom: 1px solid var(--grey-border-color);
+}
+
+.spotify-synchro-card:hover {
+    border-color: var(--grey-border-color-highlight);
+}
+
+.spotify-synchro-checkbox {
+    margin-top: 2.2rem;
+}
+
 /* Other */
-.hyperlink {
-    color: var(--hyperlink-font-color);
+.dark-hyperlink {
+    color: var(--dark-hyperlink-font-color);
     text-decoration: none;
     background-color: transparent
 }
 
-.hyperlink:hover {
-    color: var(--hyperlink-font-color-highlight);
+.dark-hyperlink:hover {
+    color: var(--dark-hyperlink-font-color-highlight);
+    text-decoration: none;
+}
+
+.light-hyperlink {
+    color: var(--light-hyperlink-font-color);
+    text-decoration: none;
+    background-color: transparent
+}
+
+.light-hyperlink:hover {
+    color: var(--light-hyperlink-font-color-highlight);
     text-decoration: none;
 }
 
