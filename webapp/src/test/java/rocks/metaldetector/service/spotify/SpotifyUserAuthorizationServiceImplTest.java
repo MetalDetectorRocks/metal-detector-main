@@ -139,7 +139,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     @DisplayName("currentUserSupplier is called")
     void test_user_id_supplier_called() {
       // when
-      underTest.fetchInitialToken("state", "code");
+      underTest.persistInitialToken("state", "code");
 
       // then
       verify(currentUserSupplier).get();
@@ -153,7 +153,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       doReturn(userEntityWithoutAuth).when(currentUserSupplier).get();
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.fetchInitialToken("state", "code"));
+      Throwable throwable = catchThrowable(() -> underTest.persistInitialToken("state", "code"));
 
       // then
       assertThat(throwable).isInstanceOf(IllegalStateException.class);
@@ -171,7 +171,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       doReturn(null).when(authorizationMock).getState();
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.fetchInitialToken("state", "code"));
+      Throwable throwable = catchThrowable(() -> underTest.persistInitialToken("state", "code"));
 
       // then
       assertThat(throwable).isInstanceOf(IllegalStateException.class);
@@ -188,7 +188,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       doReturn(userEntity).when(currentUserSupplier).get();
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.fetchInitialToken("state", "code"));
+      Throwable throwable = catchThrowable(() -> underTest.persistInitialToken("state", "code"));
 
       // then
       assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
@@ -202,7 +202,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       var code = "code";
 
       // when
-      underTest.fetchInitialToken("state", code);
+      underTest.persistInitialToken("state", code);
 
       // then
       verify(spotifyService).getAccessToken(code);
@@ -223,7 +223,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       ArgumentCaptor<UserEntity> argumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
 
       // when
-      underTest.fetchInitialToken("state", "code");
+      underTest.persistInitialToken("state", "code");
 
       // then
       verify(userRepository).save(argumentCaptor.capture());
