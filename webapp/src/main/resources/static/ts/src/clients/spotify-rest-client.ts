@@ -8,6 +8,7 @@ import {SpotifyArtistImportResponse} from "../model/spotify-artist-import-respon
 export class SpotifyRestClient {
 
     private readonly SPOTIFY_AUTHORIZATION_ENDPOINT = "/rest/v1/spotify/auth";
+    private readonly SPOTIFY_AUTHORIZATION_PERSIST_ENDPOINT = "/rest/v1/spotify/auth/persist";
     private readonly SPOTIFY_ARTIST_IMPORT_ENDPOINT = "/rest/v1/spotify/import";
 
     private readonly toastService: ToastService;
@@ -16,8 +17,8 @@ export class SpotifyRestClient {
         this.toastService = toastService;
     }
 
-    public async getAuthorizationUrl(): Promise<SpotifyUserAuthorizationResponse> {
-        return await axios.get(
+    public async createAuthorizationUrl(): Promise<SpotifyUserAuthorizationResponse> {
+        return await axios.post(
           this.SPOTIFY_AUTHORIZATION_ENDPOINT, axiosConfig
         ).then((response: AxiosResponse<SpotifyUserAuthorizationResponse>) => {
             return response.data;
@@ -32,6 +33,21 @@ export class SpotifyRestClient {
           this.SPOTIFY_ARTIST_IMPORT_ENDPOINT, axiosConfig
         ).then((response: AxiosResponse<SpotifyArtistImportResponse>) => {
             return response.data;
+        }).catch((error: AxiosError) => {
+            this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
+            throw error;
+        });
+    }
+
+    public async fetchInitialToken(state: string, code: string): Promise<void> {
+        axiosConfig.data = {
+            code: code,
+            state: state
+        };
+        return await axios.post(
+          this.SPOTIFY_AUTHORIZATION_PERSIST_ENDPOINT, axiosConfig
+        ).then(() => {
+            return;
         }).catch((error: AxiosError) => {
             this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
             throw error;

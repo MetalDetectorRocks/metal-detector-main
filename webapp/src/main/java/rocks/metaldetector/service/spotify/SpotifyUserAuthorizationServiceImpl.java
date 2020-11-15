@@ -38,7 +38,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
 
   @Override
   @Transactional
-  public void fetchInitialToken(String spotifyState, String spotifyCode) {
+  public void persistInitialToken(String spotifyState, String spotifyCode) {
     UserEntity currentUser = currentUserSupplier.get();
     SpotifyAuthorizationEntity authorizationEntity = currentUser.getSpotifyAuthorization();
 
