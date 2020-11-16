@@ -70,7 +70,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         const artistDivElement = artistTemplateNode.firstElementChild as HTMLDivElement;
         const artistThumbElement = artistDivElement.querySelector("#thumb") as HTMLImageElement;
         const followIconElement = artistDivElement.querySelector("#follow-icon") as HTMLDivElement;
-        const followIcon = followIconElement.getElementsByTagName("i").item(0)!;
+        const followIcon = followIconElement.getElementsByTagName("img").item(0) as HTMLImageElement;
         const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
         const followedSinceElement = artistDivElement.querySelector("#followed-since") as HTMLDivElement;
 
@@ -99,7 +99,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         return `<i class="material-icons">favorite</i> on ${followedSinceString}`;
     }
 
-    private handleFollowIconClick(followIconElement: HTMLElement, artist: Artist): void {
+    private handleFollowIconClick(followIconElement: HTMLImageElement, artist: Artist): void {
         this.followArtistService.handleFollowIconClick(followIconElement, {
             externalId: artist.externalId,
             artistName: artist.artistName,
