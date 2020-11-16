@@ -178,7 +178,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         const nameElement = searchResultDivElement.querySelector(selectorNames.nameSelector) as HTMLParagraphElement;
         const thumbElement = searchResultDivElement.querySelector(selectorNames.thumbSelector) as HTMLImageElement;
         const followIconDivElement = searchResultDivElement.querySelector(selectorNames.followIconSelector) as HTMLDivElement;
-        const followIconElement = followIconDivElement.getElementsByTagName("i").item(0)!;
+        const followIconElement = followIconDivElement.getElementsByTagName("img").item(0)!;
 
         thumbElement.src = this.determineArtistImageUrl(entry.imageUrl);
         thumbElement.alt = entry.name;
@@ -187,12 +187,12 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
             "click",
             this.handleFollowIconClick.bind(this, followIconElement, entry)
         );
-        followIconElement.textContent = entry.followed ? FollowState.FOLLOWING.toString() : FollowState.NOT_FOLLOWING.toString();
+        followIconElement.src = entry.followed ? FollowState.FOLLOWING.toString() : FollowState.NOT_FOLLOWING.toString();
 
         return searchResultDivElement;
     }
 
-    private handleFollowIconClick(followIconElement: HTMLElement, entry: SearchResponseEntry) {
+    private handleFollowIconClick(followIconElement: HTMLImageElement, entry: SearchResponseEntry) {
         this.followArtistService.handleFollowIconClick(followIconElement, {
             externalId: entry.id,
             artistName: entry.name,
