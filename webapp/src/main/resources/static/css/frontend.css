@@ -114,6 +114,11 @@ footer .list-inline-item {
     opacity: 0.5;
 }
 
+.followed-since-icon {
+    opacity: 0.5;
+    margin-bottom: 0.15rem;
+}
+
 /* Releases */
 .release-cover-img {
     height: 20rem;

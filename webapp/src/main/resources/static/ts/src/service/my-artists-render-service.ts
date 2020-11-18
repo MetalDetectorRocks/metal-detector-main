@@ -96,7 +96,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
 
     private createFollowedSinceString(followedSince: string): string {
         const followedSinceString = this.dateFormatService.format(followedSince, DateFormat.LONG)
-        return `<i class="material-icons">favorite</i> on ${followedSinceString}`;
+        return `<img class="followed-since-icon" src="/images/pommesgabel.svg" alt="followed" width=16> on ${followedSinceString}`;
     }
 
     private handleFollowIconClick(followIconElement: HTMLImageElement, artist: Artist): void {
