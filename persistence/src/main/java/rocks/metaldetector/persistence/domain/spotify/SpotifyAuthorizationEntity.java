@@ -6,11 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import rocks.metaldetector.persistence.domain.BaseEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Data
@@ -39,10 +41,13 @@ public class SpotifyAuthorizationEntity extends BaseEntity {
   @Column(name = "expires_in")
   private Integer expiresIn;
 
-  @OneToOne(mappedBy = "spotifyAuthorization")
+  @OneToOne(targetEntity = UserEntity.class)
+  @JoinColumn(nullable = false, name = "users_id")
+  @NonNull
   private UserEntity user;
 
-  public SpotifyAuthorizationEntity(String state) {
+  public SpotifyAuthorizationEntity(UserEntity user, String state) {
     this.state = state;
+    this.user = user;
   }
 }
