@@ -1,6 +1,6 @@
 export enum FollowState {
 
-    FOLLOWING = "favorite",
-    NOT_FOLLOWING = "favorite_border"
+    FOLLOWING = "/images/pommesgabel.svg",
+    NOT_FOLLOWING = "/images/pommesgabel-inactive-black.svg"
 
 }
