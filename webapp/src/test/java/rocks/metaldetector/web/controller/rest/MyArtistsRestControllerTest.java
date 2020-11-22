@@ -30,7 +30,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ExtendWith(MockitoExtension.class)
 class MyArtistsRestControllerTest implements WithAssertions {
@@ -52,8 +51,7 @@ class MyArtistsRestControllerTest implements WithAssertions {
   @BeforeEach
   void setUp() {
     restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.MY_ARTISTS);
-    RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)));
+    RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @AfterEach

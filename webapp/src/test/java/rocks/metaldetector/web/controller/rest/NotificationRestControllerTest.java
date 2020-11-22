@@ -17,7 +17,6 @@ import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationRestControllerTest implements WithAssertions {
@@ -33,8 +32,7 @@ class NotificationRestControllerTest implements WithAssertions {
   @BeforeEach
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.NOTIFY);
-    RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)));
+    RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @AfterEach

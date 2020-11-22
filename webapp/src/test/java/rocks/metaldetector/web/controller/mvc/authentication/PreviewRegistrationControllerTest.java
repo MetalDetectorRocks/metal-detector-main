@@ -11,23 +11,19 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(MockitoExtension.class)
 class PreviewRegistrationControllerTest implements WithAssertions {
 
-  private PreviewRegistrationController underTest = new PreviewRegistrationController();
+  private final PreviewRegistrationController underTest = new PreviewRegistrationController();
   private RestAssuredMockMvcUtils restAssuredUtils;
 
   @BeforeEach
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.REGISTER);
-    RestAssuredMockMvc.standaloneSetup(
-            underTest,
-            springSecurity((request, response, chain) -> chain.doFilter(request, response))
-    );
+    RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @Test
@@ -38,7 +34,7 @@ class PreviewRegistrationControllerTest implements WithAssertions {
 
     // then
     validatableResponse
-            .assertThat(status().isOk())
-            .assertThat(view().name(ViewNames.Guest.DISABLED_REGISTER));
+        .assertThat(status().isOk())
+        .assertThat(view().name(ViewNames.Guest.DISABLED_REGISTER));
   }
 }

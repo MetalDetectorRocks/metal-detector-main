@@ -40,7 +40,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -69,9 +68,7 @@ class ResetPasswordControllerTest implements WithAssertions {
   @BeforeEach
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.RESET_PASSWORD);
-    RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                       RestExceptionsHandler.class);
+    RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
     objectMapper = new ObjectMapper();
     objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
   }
@@ -222,7 +219,8 @@ class ResetPasswordControllerTest implements WithAssertions {
   @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with invalid change password request should fail")
   void reset_password_with_invalid_request_should_fail(ChangePasswordRequest request) {
     // when
-    var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);
+    var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {
+    }), ContentType.HTML);
 
     // then
     validatableResponse
@@ -237,7 +235,8 @@ class ResetPasswordControllerTest implements WithAssertions {
   @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with invalid change password request should not call anything")
   void reset_password_with_invalid_request_should_not_call_service_services(ChangePasswordRequest request) {
     // when
-    restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);
+    restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {
+    }), ContentType.HTML);
 
     // then
     verifyNoInteractions(tokenService, userService);

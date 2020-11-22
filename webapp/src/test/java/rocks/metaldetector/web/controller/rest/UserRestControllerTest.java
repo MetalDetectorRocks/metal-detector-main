@@ -45,7 +45,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ExtendWith(MockitoExtension.class)
 class UserRestControllerTest implements WithAssertions {
@@ -66,9 +65,7 @@ class UserRestControllerTest implements WithAssertions {
   @BeforeEach
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS);
-    RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                       RestExceptionsHandler.class);
+    RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
   }
 
   @AfterEach

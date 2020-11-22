@@ -48,7 +48,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -87,9 +86,7 @@ class RegistrationControllerTest implements WithAssertions {
   @BeforeEach
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.REGISTER);
-    RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                       RestExceptionsHandler.class);
+    RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
 
     objectMapper = new ObjectMapper();
     objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -99,7 +96,6 @@ class RegistrationControllerTest implements WithAssertions {
     paramValues.put(PARAM_EMAIL, "john.d@example.com");
     paramValues.put(PARAM_PASSWORD, "valid-password");
     paramValues.put(PARAM_VERIFY_PASSWORD, "valid-password");
-
   }
 
   @AfterEach
@@ -225,7 +221,8 @@ class RegistrationControllerTest implements WithAssertions {
     @DisplayName("Register a new user account with an invalid request dto should fail")
     void register_new_user_account_with_invalid_request_dto_should_fail(RegisterUserRequest request, int expectedErrorCount, String[] incorrectFieldNames) {
       // when
-      var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);
+      var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {
+      }), ContentType.HTML);
 
       // then
       validatableResponse
