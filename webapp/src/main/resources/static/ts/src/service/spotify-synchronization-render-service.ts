@@ -2,6 +2,7 @@ import {SpotifyRestClient} from "../clients/spotify-rest-client";
 import {ToastService} from "./toast-service";
 import {UrlService} from "./url-service";
 import {LoadingIndicatorService} from "./loading-indicator-service";
+import {SpotifyArtist} from "../model/spotify-artist.model";
 
 export class SpotifySynchronizationRenderService {
 
@@ -12,6 +13,7 @@ export class SpotifySynchronizationRenderService {
     private readonly loadingIndicatorService: LoadingIndicatorService;
     private readonly toastService: ToastService;
     private readonly urlService: UrlService;
+    private readonly artistContainerElement: HTMLDivElement;
 
     constructor(spotifyRestClient: SpotifyRestClient, loadingIndicatorService: LoadingIndicatorService,
                 toastService: ToastService, urlService: UrlService) {
@@ -19,6 +21,7 @@ export class SpotifySynchronizationRenderService {
         this.loadingIndicatorService = loadingIndicatorService;
         this.toastService = toastService;
         this.urlService = urlService;
+        this.artistContainerElement = document.getElementById("artists-container") as HTMLDivElement;
     }
 
     public init(): void {
@@ -73,8 +76,29 @@ export class SpotifySynchronizationRenderService {
     }
 
     private synchronizeSpotifyArtists(): void {
-        const importResponse = this.spotifyRestClient.importArtists();
-        console.log(importResponse);
-        // importResponse.then(response => this.toastService.createInfoToast("Successfully imported " + response.artists.length + " artists!"));
+        const followedArtists = this.spotifyRestClient.fetchFollowedArtists();
+        followedArtists.then(response => {
+            console.log(response.artists);
+            response.artists.forEach(artist => {
+                const artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
+                const artistTemplateNode = document.importNode(artistTemplateElement.content, true);
+                const artistDivElement = artistTemplateNode.firstElementChild as HTMLDivElement;
+                const artistThumbElement = artistDivElement.querySelector("#thumb") as HTMLImageElement;
+                const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
+                const artistInfoElement = artistDivElement.querySelector("#artist-info") as HTMLParagraphElement;
+
+                artistThumbElement.src = artist.imageUrl;
+                artistNameElement.textContent = artist.name;
+                artistInfoElement.innerHTML = this.buildArtistInfoText(artist);
+                this.artistContainerElement.insertAdjacentElement("beforeend", artistDivElement);
+            });
+        });
+    }
+
+    private buildArtistInfoText(artist: SpotifyArtist): string {
+        const followerCount = new Intl.NumberFormat("en-us", { minimumFractionDigits: 0 }).format(artist.follower);
+        const follower = `${followerCount} followers on Spotify`;
+        const genres = artist.genres.slice(0, 3).join(", ");
+        return `${genres}<br />${follower}`;
     }
 }

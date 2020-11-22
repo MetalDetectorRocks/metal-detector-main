@@ -29,6 +29,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static rocks.metaldetector.service.spotify.SpotifyFetchType.ALBUMS;
+import static rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
 import static rocks.metaldetector.web.controller.rest.SpotifySynchronizationRestController.FETCH_TYPES_PARAM;
 
 @ExtendWith(MockitoExtension.class)
@@ -148,7 +149,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " return the followed artists")
     void test_get_followed_returns_result() {
       // given
-      var expectedResult = List.of(ArtistDtoFactory.createDefault());
+      var expectedResult = List.of(SpotifyArtistDtoFactory.createDefault());
       doReturn(expectedResult).when(artistImportService).getNewFollowedArtists(any());
 
       // when

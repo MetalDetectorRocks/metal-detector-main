@@ -3,13 +3,14 @@ import {axiosConfig} from "../config/axios.config";
 import {ToastService} from "../service/toast-service";
 import {UNKNOWN_ERROR_MESSAGE} from "../config/messages.config";
 import {SpotifyUserAuthorizationResponse} from "../model/spotify-user-authorization-response.model";
-import {SpotifyArtistImportResponse} from "../model/spotify-artist-import-response.model";
+import {SpotifyFollowedArtistResponse} from "../model/spotify-followed-artist-response.model";
 import {SpotifyUserAuthorizationExistsResponse} from "../model/spotify-user-authorization-exist-response.model";
 
 export class SpotifyRestClient {
 
     private readonly SPOTIFY_AUTHORIZATION_ENDPOINT = "/rest/v1/spotify/auth";
     private readonly SPOTIFY_ARTIST_IMPORT_ENDPOINT = "/rest/v1/spotify/import";
+    private readonly SPOTIFY_FOLLOWED_ARTISTS_ENDPOINT = "/rest/v1/spotify/followed-artists";
 
     private readonly toastService: ToastService;
 
@@ -54,10 +55,13 @@ export class SpotifyRestClient {
         });
     }
 
-    public async importArtists(): Promise<SpotifyArtistImportResponse> {
-        return await axios.post(
-          this.SPOTIFY_ARTIST_IMPORT_ENDPOINT, axiosConfig
-        ).then((response: AxiosResponse<SpotifyArtistImportResponse>) => {
+    public async fetchFollowedArtists(): Promise<SpotifyFollowedArtistResponse> {
+        axiosConfig.params = {
+            fetchTypes: "ALBUMS"
+        }
+        return await axios.get(
+          this.SPOTIFY_FOLLOWED_ARTISTS_ENDPOINT, axiosConfig
+        ).then((response: AxiosResponse<SpotifyFollowedArtistResponse>) => {
             return response.data;
         }).catch((error: AxiosError) => {
             this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
