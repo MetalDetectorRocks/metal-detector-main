@@ -1,6 +1,6 @@
-import { ArtistsRestClient } from "../clients/artists-rest-client";
-import { ToastService } from "./toast-service";
-import { FollowState } from "../model/follow-state.model";
+import {ArtistsRestClient} from "../clients/artists-rest-client";
+import {ToastService} from "./toast-service";
+import {FollowState} from "../model/follow-state.model";
 
 export interface FollowArtistInfo {
 
@@ -19,10 +19,10 @@ export class FollowArtistService {
         this.toastService = toastService;
     }
 
-    public handleFollowIconClick(followIconElement: HTMLElement, info: FollowArtistInfo): void {
-        const currentFollowState = followIconElement.textContent;
+    public handleFollowIconClick(followIconElement: HTMLImageElement, info: FollowArtistInfo): void {
+        const currentFollowState = followIconElement.src;
 
-        if (currentFollowState === FollowState.FOLLOWING.toString()) {
+        if (currentFollowState.endsWith(FollowState.FOLLOWING.toString())) {
             this.unfollowArtist(followIconElement, info);
         }
         else {
@@ -30,23 +30,23 @@ export class FollowArtistService {
         }
     }
 
-    public followArtist(followIconElement: HTMLElement, info: FollowArtistInfo): void {
+    public followArtist(followIconElement: HTMLImageElement, info: FollowArtistInfo): void {
         this.artistRestClient
             .followArtist(info.externalId, info.source)
             .then(() => {
                 const toastText = `You are now following "${info.artistName}"`;
                 this.toastService.createInfoToast(toastText);
-                followIconElement.textContent = FollowState.FOLLOWING.toString();
+                followIconElement.src = FollowState.FOLLOWING.toString();
             });
     }
 
-    public unfollowArtist(followIconElement: HTMLElement, info: FollowArtistInfo): void {
+    public unfollowArtist(followIconElement: HTMLImageElement, info: FollowArtistInfo): void {
         this.artistRestClient
             .unfollowArtist(info.externalId, info.source)
             .then(() => {
                 const toastText = `You no longer follow "${info.artistName}"`;
                 this.toastService.createInfoToast(toastText);
-                followIconElement.textContent = FollowState.NOT_FOLLOWING.toString();
+                followIconElement.src = FollowState.NOT_FOLLOWING.toString();
             });
     }
 }
