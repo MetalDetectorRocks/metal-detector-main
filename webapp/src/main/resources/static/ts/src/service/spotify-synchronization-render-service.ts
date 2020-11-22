@@ -76,6 +76,9 @@ export class SpotifySynchronizationRenderService {
     }
 
     private synchronizeSpotifyArtists(): void {
+        // ToDo DanielW:
+        //  - show loading indicator
+        //  - prevent multiple fetches
         const followedArtists = this.spotifyRestClient.fetchFollowedArtists();
         followedArtists.then(response => {
             console.log(response.artists);
