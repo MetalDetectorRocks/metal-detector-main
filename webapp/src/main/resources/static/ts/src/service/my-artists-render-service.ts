@@ -70,7 +70,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         const artistDivElement = artistTemplateNode.firstElementChild as HTMLDivElement;
         const artistThumbElement = artistDivElement.querySelector("#thumb") as HTMLImageElement;
         const followIconElement = artistDivElement.querySelector("#follow-icon") as HTMLDivElement;
-        const followIcon = followIconElement.getElementsByTagName("i").item(0)!;
+        const followIcon = followIconElement.getElementsByTagName("img").item(0) as HTMLImageElement;
         const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
         const followedSinceElement = artistDivElement.querySelector("#followed-since") as HTMLDivElement;
 
@@ -96,10 +96,10 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
 
     private createFollowedSinceString(followedSince: string): string {
         const followedSinceString = this.dateFormatService.format(followedSince, DateFormat.LONG)
-        return `<i class="material-icons">favorite</i> on ${followedSinceString}`;
+        return `<img class="followed-since-icon" src="/images/pommesgabel.svg" alt="followed" width=16> on ${followedSinceString}`;
     }
 
-    private handleFollowIconClick(followIconElement: HTMLElement, artist: Artist): void {
+    private handleFollowIconClick(followIconElement: HTMLImageElement, artist: Artist): void {
         this.followArtistService.handleFollowIconClick(followIconElement, {
             externalId: artist.externalId,
             artistName: artist.artistName,
