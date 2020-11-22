@@ -26,6 +26,7 @@ import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.Pagination;
+import rocks.metaldetector.support.Sorting;
 import rocks.metaldetector.support.TimeRange;
 
 import java.time.LocalDate;
@@ -126,7 +127,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       // given
       Iterable<String> artists = List.of("A", "B", "C");
       TimeRange timeRange = new TimeRange(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31));
-      PageRequest pageRequest = new PageRequest(10, 1);
+      PageRequest pageRequest = new PageRequest(10, 1, new Sorting());
 
       // when
       underTest.findReleases(artists, timeRange, pageRequest);

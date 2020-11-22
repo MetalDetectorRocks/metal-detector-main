@@ -181,6 +181,24 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     }
 
     @Test
+    @DisplayName("Sorting parameter is set if provided")
+    void test_sorting_parameter_set() {
+      // given
+      var butlerUrl = "releases-url";
+      doReturn(butlerUrl).when(butlerConfig).getReleasesUrl();
+      ButlerReleasesRequest request = new ButlerReleasesRequest();
+      request.setSorting("sortingParameter");
+      ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
+      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
+
+      // when
+      underTest.queryReleases(request);
+
+      // then
+      verify(restTemplate).postForEntity(eq(butlerUrl + "?" + request.getSorting()), any(), eq(ButlerReleasesResponse.class));
+    }
+
+    @Test
     @DisplayName("The provided ButlerReleasesRequest is packed into a HttpEntity and sent as POST body")
     void test_releases_http_entity() {
       // given

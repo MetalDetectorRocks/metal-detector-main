@@ -17,6 +17,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortHandlerMethodArgumentResolver;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
@@ -26,6 +30,7 @@ import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.Pagination;
+import rocks.metaldetector.support.Sorting;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.testutil.DtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ImportJobResultDtoFactory;
@@ -34,6 +39,7 @@ import rocks.metaldetector.testutil.DtoFactory.ReleaseRequestFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
+import rocks.metaldetector.web.transformer.SortingTransformer;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -51,7 +57,6 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static rocks.metaldetector.testutil.DtoFactory.PaginatedReleaseRequestFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,19 +68,22 @@ class ReleasesRestControllerTest implements WithAssertions {
   @Mock
   private FollowArtistService followArtistService;
 
+  @Mock
+  private SortingTransformer sortingTransformer;
+
   @InjectMocks
   private ReleasesRestController underTest;
 
   @BeforeEach
   void setUp() {
-    RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                       RestExceptionsHandler.class);
+    StandaloneMockMvcBuilder mockMvcBuilder = MockMvcBuilders.standaloneSetup(underTest, RestExceptionsHandler.class)
+        .setCustomArgumentResolvers(new SortHandlerMethodArgumentResolver());
+    RestAssuredMockMvc.standaloneSetup(mockMvcBuilder);
   }
 
   @AfterEach
   void tearDown() {
-    reset(releasesService, followArtistService);
+    reset(releasesService, followArtistService, sortingTransformer);
   }
 
   @Nested
@@ -141,7 +149,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       var validTo = LocalDate.now().plusDays(10);
 
       return Stream.of(
-              Arguments.of(new ReleasesRequest(validFrom.plusDays(20), validTo))
+          Arguments.of(new ReleasesRequest(validFrom.plusDays(20), validTo))
       );
     }
 
@@ -177,10 +185,48 @@ class ReleasesRestControllerTest implements WithAssertions {
 
       // then
       verify(releasesService).findReleases(
-              Collections.emptyList(),
-              new TimeRange(request.getDateFrom(), request.getDateTo()),
-              new PageRequest(request.getPage(), request.getSize())
+          Collections.emptyList(),
+          new TimeRange(request.getDateFrom(), request.getDateTo()),
+          new PageRequest(request.getPage(), request.getSize(), null)
       );
+    }
+
+    @Test
+    @DisplayName("SortingTransformer is called with given Sort")
+    void should_call_sorting_transformer() {
+      // given
+      Map<String, Object> requestMap = Map.of("sort", "artist,ASC");
+
+      // when
+      restAssuredUtils.doGet(requestMap);
+
+      // then
+      verify(sortingTransformer).transform(Sort.by(Sort.Direction.ASC, "artist"));
+    }
+
+    @Test
+    @DisplayName("SortingTransformer is called with default Sort if none is given")
+    void should_call_sorting_transformer_with_default() {
+      // when
+      restAssuredUtils.doGet();
+
+      // then
+      verify(sortingTransformer).transform(Sort.by(Sort.Direction.ASC, "releaseDate", "artist", "albumTitle"));
+    }
+
+    @Test
+    @DisplayName("Sorting is passed to release service")
+    void should_call_release_service_with_sorting() {
+      // given
+      var sorting = new Sorting(List.of(new Sorting.Order(Sorting.Direction.ASC, "artist")));
+      var expectedPageRequest = new PageRequest(1, 40, sorting);
+      doReturn(sorting).when(sortingTransformer).transform(any());
+
+      // when
+      restAssuredUtils.doGet();
+
+      // then
+      verify(releasesService).findReleases(any(), any(), eq(expectedPageRequest));
     }
 
     @Test
@@ -197,8 +243,8 @@ class ReleasesRestControllerTest implements WithAssertions {
 
       // then
       validatableResponse
-              .contentType(ContentType.JSON)
-              .statusCode(OK.value());
+          .contentType(ContentType.JSON)
+          .statusCode(OK.value());
 
       var jsonPath = validatableResponse.extract().jsonPath();
       var paginationResult = jsonPath.getObject("pagination", Pagination.class);
@@ -216,8 +262,8 @@ class ReleasesRestControllerTest implements WithAssertions {
 
       // then
       validatableResponse
-              .contentType(ContentType.JSON)
-              .statusCode(BAD_REQUEST.value());
+          .contentType(ContentType.JSON)
+          .statusCode(BAD_REQUEST.value());
     }
 
     private Stream<Arguments> requestProvider() {
@@ -227,10 +273,10 @@ class ReleasesRestControllerTest implements WithAssertions {
       var validTo = LocalDate.now().plusDays(10);
 
       return Stream.of(
-              Arguments.of(new PaginatedReleasesRequest(0, validSize, validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, 0, validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, 51, validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validFrom.plusDays(20), validTo))
+          Arguments.of(new PaginatedReleasesRequest(0, validSize, validFrom, validTo)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, 0, validFrom, validTo)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, 51, validFrom, validTo)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validFrom.plusDays(20), validTo))
       );
     }
 
@@ -281,10 +327,48 @@ class ReleasesRestControllerTest implements WithAssertions {
 
       // then
       verify(releasesService).findReleases(
-              Collections.emptyList(),
-              new TimeRange(request.getDateFrom(), request.getDateTo()),
-              new PageRequest(request.getPage(), request.getSize())
+          Collections.emptyList(),
+          new TimeRange(request.getDateFrom(), request.getDateTo()),
+          new PageRequest(request.getPage(), request.getSize(), null)
       );
+    }
+
+    @Test
+    @DisplayName("SortingTransformer is called with given Sort")
+    void should_call_sorting_transformer() {
+      // given
+      Map<String, Object> requestMap = Map.of("sort", "artist,ASC");
+
+      // when
+      restAssuredUtils.doGet(requestMap);
+
+      // then
+      verify(sortingTransformer).transform(Sort.by(Sort.Direction.ASC, "artist"));
+    }
+
+    @Test
+    @DisplayName("SortingTransformer is called with default Sort if none is given")
+    void should_call_sorting_transformer_with_default() {
+      // when
+      restAssuredUtils.doGet();
+
+      // then
+      verify(sortingTransformer).transform(Sort.by(Sort.Direction.ASC, "releaseDate", "artist", "albumTitle"));
+    }
+
+    @Test
+    @DisplayName("Sorting is passed to release service")
+    void should_call_release_service_with_sorting() {
+      // given
+      var sorting = new Sorting(List.of(new Sorting.Order(Sorting.Direction.ASC, "artist")));
+      var expectedPageRequest = new PageRequest(1, 40, sorting);
+      doReturn(sorting).when(sortingTransformer).transform(any());
+
+      // when
+      restAssuredUtils.doGet();
+
+      // then
+      verify(releasesService).findReleases(any(), any(), eq(expectedPageRequest));
     }
 
     @Test
@@ -302,9 +386,9 @@ class ReleasesRestControllerTest implements WithAssertions {
 
       // then
       verify(releasesService).findReleases(
-              eq(List.of(artist1.getArtistName(), artist2.getArtistName(), artist3.getArtistName())),
-              any(),
-              any()
+          eq(List.of(artist1.getArtistName(), artist2.getArtistName(), artist3.getArtistName())),
+          any(),
+          any()
       );
     }
 
@@ -322,8 +406,8 @@ class ReleasesRestControllerTest implements WithAssertions {
 
       // then
       validatableResponse
-              .contentType(ContentType.JSON)
-              .statusCode(OK.value());
+          .contentType(ContentType.JSON)
+          .statusCode(OK.value());
 
       var jsonPath = validatableResponse.extract().jsonPath();
       var paginationResult = jsonPath.getObject("pagination", Pagination.class);
@@ -341,8 +425,8 @@ class ReleasesRestControllerTest implements WithAssertions {
 
       // then
       validatableResponse
-              .contentType(ContentType.JSON)
-              .statusCode(BAD_REQUEST.value());
+          .contentType(ContentType.JSON)
+          .statusCode(BAD_REQUEST.value());
     }
 
     private Stream<Arguments> requestProvider() {
@@ -352,10 +436,10 @@ class ReleasesRestControllerTest implements WithAssertions {
       var validTo = LocalDate.now().plusDays(10);
 
       return Stream.of(
-              Arguments.of(new PaginatedReleasesRequest(0, validSize, validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, 0, validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, 51, validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validFrom.plusDays(20), validTo))
+          Arguments.of(new PaginatedReleasesRequest(0, validSize, validFrom, validTo)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, 0, validFrom, validTo)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, 51, validFrom, validTo)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validFrom.plusDays(20), validTo))
       );
     }
 
@@ -460,8 +544,8 @@ class ReleasesRestControllerTest implements WithAssertions {
     void should_return_status_created() {
       // given
       var importJobResultDto = List.of(
-              ImportJobResultDtoFactory.createDefault(),
-              ImportJobResultDtoFactory.createDefault()
+          ImportJobResultDtoFactory.createDefault(),
+          ImportJobResultDtoFactory.createDefault()
       );
       doReturn(importJobResultDto).when(releasesService).queryImportJobResults();
 

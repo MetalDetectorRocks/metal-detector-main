@@ -13,5 +13,6 @@ public class PageRequest {
 
   private int page;
   private int size;
+  private Sorting sorting;
 
 }

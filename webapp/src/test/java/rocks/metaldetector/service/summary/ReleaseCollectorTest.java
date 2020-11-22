@@ -11,16 +11,14 @@ import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.Pagination;
+import rocks.metaldetector.support.Sorting;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -29,6 +27,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.TIME_RANGE_MONTHS;
+import static rocks.metaldetector.support.Sorting.Direction.ASC;
+import static rocks.metaldetector.support.Sorting.Direction.DESC;
 
 @ExtendWith(MockitoExtension.class)
 class ReleaseCollectorTest implements WithAssertions {
@@ -81,10 +81,11 @@ class ReleaseCollectorTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("collecting upcoming releases calls releaseService with correct page request")
+  @DisplayName("collecting upcoming releases calls releaseService with correct page request and sorting")
   void test_upcoming_releases_calls_release_service_with_page_request() {
     // given
-    var expectedPageRequest = new PageRequest(1, RESULT_LIMIT);
+    var sorting = new Sorting(ASC, List.of("releaseDate", "artist", "albumTitle"));
+    var expectedPageRequest = new PageRequest(1, RESULT_LIMIT, sorting);
     var artists = List.of(ArtistDtoFactory.withName("A"));
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
 
@@ -152,10 +153,14 @@ class ReleaseCollectorTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("collecting recent releases calls releaseService with correct page request")
+  @DisplayName("collecting recent releases calls releaseService with correct page request and sorting")
   void test_recent_releases_calls_release_service_with_page_request() {
     // given
-    var expectedPageRequest = new PageRequest(1, RESULT_LIMIT);
+    var sortingOrders = List.of(new Sorting.Order(DESC, "releaseDate"),
+                                new Sorting.Order(ASC, "artist"),
+                                new Sorting.Order(ASC, "albumTitle"));
+    var expectedSorting = new Sorting(sortingOrders);
+    var expectedPageRequest = new PageRequest(1, RESULT_LIMIT, expectedSorting);
     var artists = List.of(ArtistDtoFactory.withName("A"));
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
 
@@ -164,30 +169,5 @@ class ReleaseCollectorTest implements WithAssertions {
 
     // then
     verify(releaseService).findReleases(any(), any(), eq(expectedPageRequest));
-  }
-
-  @Test
-  @DisplayName("collecting recent releases returns list of releases, sorted by descending release date")
-  void test_recent_returns_releases() {
-    // given
-    var artists = List.of(ArtistDtoFactory.withName("A"));
-    var today = LocalDate.now();
-    var tenDayseAgo = today.minusDays(10);
-    var twentyDaysAgo = today.minusDays(20);
-    var releases = Stream.of(
-            ReleaseDtoFactory.withReleaseDate(twentyDaysAgo),
-            ReleaseDtoFactory.withReleaseDate(today),
-            ReleaseDtoFactory.withReleaseDate(tenDayseAgo))
-            .collect(Collectors.toList());
-    doReturn(new Page<>(new ArrayList<>(releases), new Pagination())).when(releaseService).findReleases(any(), any(), any());
-
-    // when
-    var result = underTest.collectRecentReleases(artists);
-
-    // then
-    assertThat(result).hasSize(releases.size());
-    assertThat(result.get(0)).isEqualTo(releases.get(1));
-    assertThat(result.get(1)).isEqualTo(releases.get(2));
-    assertThat(result.get(2)).isEqualTo(releases.get(0));
   }
 }
