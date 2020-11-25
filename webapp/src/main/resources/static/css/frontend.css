@@ -75,6 +75,12 @@ footer .list-inline-item {
     border: 1px solid var(--grey-border-color);
 }
 
+.card:hover > .follow-icon-my-artists {
+    opacity: 1;
+    -webkit-transition: all 0.3s ease-in;
+    transition: all 0.3s ease-in;
+}
+
 .vertical-card-img {
     height: 18rem;
     object-fit: cover;
@@ -101,13 +107,24 @@ footer .list-inline-item {
 }
 
 /* Following */
-.follow-icon {
-    color: var(--light-font-color);
+.follow-icon-my-artists {
+    cursor: pointer;
+    opacity: 0;
+    -webkit-transition: all 0.5s ease-out;
+    transition: all 0.5s ease-out;
+}
+
+.follow-icon-search {
     cursor: pointer;
 }
 
-.follow-icon:hover {
-    color: var(--light-font-color-highlight);
+.follow-icon-search:hover, .follow-icon-my-artists:hover {
+    opacity: 0.5;
+}
+
+.followed-since-icon {
+    opacity: 0.5;
+    margin-bottom: 0.15rem;
 }
 
 /* Releases */
