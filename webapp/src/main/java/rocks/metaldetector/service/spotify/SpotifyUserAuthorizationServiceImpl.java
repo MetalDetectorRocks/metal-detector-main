@@ -87,7 +87,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
     UserEntity currentUser = currentUserSupplier.get();
     Optional<SpotifyAuthorizationEntity> authorizationEntityOptional = spotifyAuthorizationRepository.findByUserId(currentUser.getId());
     return authorizationEntityOptional.orElseThrow(
-            () -> new IllegalStateException("no authorization entity exists but it should be!")
+            () -> new IllegalStateException("no authorization entity exists although it should!")
     );
   }
 

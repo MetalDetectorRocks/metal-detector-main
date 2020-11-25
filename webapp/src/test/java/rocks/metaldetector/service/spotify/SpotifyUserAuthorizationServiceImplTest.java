@@ -111,7 +111,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
 
     @ParameterizedTest(name = "should return false for <{0}>")
     @MethodSource("incompleteAuthorizationEntityProvider")
-    @DisplayName("should return false if access token and refresh token not exist")
+    @DisplayName("should return false if access token or refresh token don't exist")
     void should_return_false(SpotifyAuthorizationEntity authorizationEntity) {
       // given
       doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUserId(anyLong());

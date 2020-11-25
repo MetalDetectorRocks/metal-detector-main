@@ -81,7 +81,6 @@ export class SpotifySynchronizationRenderService {
         //  - prevent multiple fetches
         const followedArtists = this.spotifyRestClient.fetchFollowedArtists();
         followedArtists.then(response => {
-            console.log(response.artists);
             response.artists.forEach(artist => {
                 const artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
                 const artistTemplateNode = document.importNode(artistTemplateElement.content, true);
