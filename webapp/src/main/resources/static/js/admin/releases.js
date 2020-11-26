@@ -77,7 +77,9 @@ function clearReleasesTable() {
  */
 function showUpdateReleaseForm() {
   let data = releaseTable.row(this).data();
+
   $('#update-release-dialog').modal('show');
+  $('#current-row-index').text(releaseTable.row(this).index());
 
   // master data
   $('#release-id').val(data.id);
@@ -122,7 +124,7 @@ function resetUpdateReleaseForm() {
  */
 function updateRelease() {
   const pathParam = $("#release-id").val();
-  $.post({
+  $.ajax({
     url: '/rest/v1/releases/' + pathParam,
     data: createUpdateReleaseRequest(),
     type: 'PUT',
@@ -150,14 +152,11 @@ function createUpdateReleaseRequest() {
  * Success callback for updating a release's state.
  */
 function onUpdateReleaseSuccess() {
-  releaseTable.rows().every(function (rowIndex) {
-    if (releaseTable.cell(rowIndex, 7).data() === parseInt($("#release-id").val())) {
-      releaseTable.cell(rowIndex, 6).data($('#release-state').val());
-    }
-  }).draw();
+  const currentRowIndex = parseInt($('#current-row-index').text());
+  releaseTable.cell(currentRowIndex, 6).data($("#release-state").val()).draw();
 
   resetUpdateReleaseForm();
-  $('#update-release-dialog').modal('hide');
+  $('#update-release-dialog').modal("hide");
 }
 
 /**

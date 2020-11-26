@@ -71,5 +71,6 @@ public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
 
   @Override
   public void updateReleaseState(long releaseId, String state) {
+    log.info("Release state successfully updated!");
   }
 }
