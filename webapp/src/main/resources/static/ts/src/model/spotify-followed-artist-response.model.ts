@@ -1,6 +1,6 @@
 import {SpotifyArtist} from "./spotify-artist.model";
 
-export interface SpotifyFollowedArtistResponse {
+export interface SpotifyFollowedArtistsResponse {
 
     readonly artists: SpotifyArtist[];
 
