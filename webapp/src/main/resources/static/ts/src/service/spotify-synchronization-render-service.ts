@@ -8,12 +8,14 @@ export class SpotifySynchronizationRenderService {
 
     private static readonly SPOTIFY_CALLBACK_PATH_NAME = "spotify-callback";
     private static readonly BUTTON_BAR_DIV_NAME = "button-bar";
-    private static readonly ARTISTS_HOST_ID = "artists-container";
+    private static readonly ARTISTS_SELECTION_BAR_ID = "artists-selection-bar";
+    private static readonly ARTISTS_CONTAINER_ID = "artists-container";
 
     private readonly spotifyRestClient: SpotifyRestClient;
     private readonly loadingIndicatorService: LoadingIndicatorService;
     private readonly toastService: ToastService;
     private readonly urlService: UrlService;
+    private readonly artistSelectionElement: HTMLDivElement;
     private readonly artistContainerElement: HTMLDivElement;
 
     constructor(spotifyRestClient: SpotifyRestClient, loadingIndicatorService: LoadingIndicatorService,
@@ -22,7 +24,8 @@ export class SpotifySynchronizationRenderService {
         this.loadingIndicatorService = loadingIndicatorService;
         this.toastService = toastService;
         this.urlService = urlService;
-        this.artistContainerElement = document.getElementById(SpotifySynchronizationRenderService.ARTISTS_HOST_ID) as HTMLDivElement;
+        this.artistSelectionElement = document.getElementById(SpotifySynchronizationRenderService.ARTISTS_SELECTION_BAR_ID) as HTMLDivElement;
+        this.artistContainerElement = document.getElementById(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID) as HTMLDivElement;
     }
 
     public init(): void {
@@ -77,9 +80,7 @@ export class SpotifySynchronizationRenderService {
     }
 
     private fetchSpotifyArtists(): void {
-        // ToDo DanielW:
-        //  - show select all / deselect all
-        this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_HOST_ID);
+        this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID);
         this.artistContainerElement.innerHTML = "";
         const followedArtists = this.spotifyRestClient.fetchFollowedArtists();
         followedArtists.then(response => {
@@ -97,7 +98,8 @@ export class SpotifySynchronizationRenderService {
                 this.artistContainerElement.insertAdjacentElement("beforeend", artistDivElement);
             });
         }).finally(() => {
-            this.loadingIndicatorService.hideLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_HOST_ID);
+            this.artistSelectionElement.classList.remove("invisible");
+            this.loadingIndicatorService.hideLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID);
         });
     }
 
