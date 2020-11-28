@@ -12,7 +12,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -53,11 +52,11 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
   @Mock
   private UserEntity userMock;
 
-  @InjectMocks
   private SpotifyUserAuthorizationServiceImpl underTest;
 
   @BeforeEach
   void setup() {
+    underTest = new SpotifyUserAuthorizationServiceImpl(currentUserSupplier, authorizationRepository, spotifyService);
     doReturn(userMock).when(currentUserSupplier).get();
   }
 
