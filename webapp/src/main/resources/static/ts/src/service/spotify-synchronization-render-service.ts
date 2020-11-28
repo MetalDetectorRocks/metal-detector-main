@@ -8,6 +8,7 @@ export class SpotifySynchronizationRenderService {
 
     private static readonly SPOTIFY_CALLBACK_PATH_NAME = "spotify-callback";
     private static readonly BUTTON_BAR_DIV_NAME = "button-bar";
+    private static readonly ARTISTS_HOST_ID = "artists-container";
 
     private readonly spotifyRestClient: SpotifyRestClient;
     private readonly loadingIndicatorService: LoadingIndicatorService;
@@ -21,7 +22,7 @@ export class SpotifySynchronizationRenderService {
         this.loadingIndicatorService = loadingIndicatorService;
         this.toastService = toastService;
         this.urlService = urlService;
-        this.artistContainerElement = document.getElementById("artists-container") as HTMLDivElement;
+        this.artistContainerElement = document.getElementById(SpotifySynchronizationRenderService.ARTISTS_HOST_ID) as HTMLDivElement;
     }
 
     public init(): void {
@@ -52,13 +53,13 @@ export class SpotifySynchronizationRenderService {
                 spotifyConnectedButton.className = "btn btn-outline-success btn-lg mr-2 disabled";
                 spotifyConnectedButton.insertAdjacentHTML("afterbegin", `<span class="material-icons">check_circle</span> Connected with Spotify`);
 
-                const synchronizeArtistsButton = document.createElement("button");
-                synchronizeArtistsButton.className = "btn btn-outline-success btn-lg";
-                synchronizeArtistsButton.insertAdjacentHTML("afterbegin", `<span class="material-icons">sync</span> Synchronize artists`);
-                synchronizeArtistsButton.addEventListener("click", this.synchronizeSpotifyArtists.bind(this));
+                const fetchArtistsButton = document.createElement("button");
+                fetchArtistsButton.className = "btn btn-outline-success btn-lg";
+                fetchArtistsButton.insertAdjacentHTML("afterbegin", `<span class="material-icons">sync</span> Fetch artists`);
+                fetchArtistsButton.addEventListener("click", this.fetchSpotifyArtists.bind(this));
 
                 buttonBar.insertAdjacentElement("beforeend", spotifyConnectedButton);
-                buttonBar.insertAdjacentElement("beforeend", synchronizeArtistsButton);
+                buttonBar.insertAdjacentElement("beforeend", fetchArtistsButton);
            }
            else {
                const spotifyConnectButton = document.createElement("button");
@@ -75,10 +76,10 @@ export class SpotifySynchronizationRenderService {
         authorizationResponse.then(response => window.location.href = response.authorizationUrl);
     }
 
-    private synchronizeSpotifyArtists(): void {
+    private fetchSpotifyArtists(): void {
         // ToDo DanielW:
-        //  - show loading indicator
-        //  - prevent multiple fetches
+        //  - show select all / deselect all
+        this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_HOST_ID);
         const followedArtists = this.spotifyRestClient.fetchFollowedArtists();
         followedArtists.then(response => {
             response.artists.forEach(artist => {
@@ -94,6 +95,8 @@ export class SpotifySynchronizationRenderService {
                 artistInfoElement.innerHTML = this.buildArtistInfoText(artist);
                 this.artistContainerElement.insertAdjacentElement("beforeend", artistDivElement);
             });
+        }).finally(() => {
+            this.loadingIndicatorService.hideLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_HOST_ID);
         });
     }
 
