@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.service.artist.ArtistDtoTransformer;
 import rocks.metaldetector.service.artist.ArtistService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.spotify.facade.SpotifyService;
@@ -20,10 +19,10 @@ import rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 import static rocks.metaldetector.service.spotify.SpotifyFetchType.ALBUMS;
 
@@ -40,9 +39,6 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
   private ArtistService artistService;
 
   @Mock
-  private ArtistDtoTransformer artistDtoTransformer;
-
-  @Mock
   private SpotifyUserAuthorizationService userAuthorizationService;
 
   @InjectMocks
@@ -50,7 +46,7 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(spotifyService, followArtistService, artistService, artistDtoTransformer, userAuthorizationService);
+    reset(spotifyService, followArtistService, artistService, userAuthorizationService);
   }
 
   @Nested
@@ -59,7 +55,7 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
 
     @Test
     @DisplayName("userAuthorizationService is called")
-    void test_user_autorization_service_called() {
+    void test_user_authorization_service_called() {
       // when
       underTest.importArtistsFromLikedReleases();
 
@@ -190,21 +186,6 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("followArtistService is called to follow new artistDtos")
-    void test_follow_artist_service_called_to_follow() {
-      // given
-      var artistDtos = List.of(ArtistDtoFactory.withName("A"), ArtistDtoFactory.withName("B"));
-      doReturn(artistDtos).when(artistService).findAllArtistsByExternalIds(any());
-
-      // when
-      underTest.importArtistsFromLikedReleases();
-
-      // then
-      verify(followArtistService).follow(artistDtos.get(0).getExternalId(), SPOTIFY);
-      verify(followArtistService).follow(artistDtos.get(1).getExternalId(), SPOTIFY);
-    }
-
-    @Test
     @DisplayName("artistDtos are returned")
     void test_artist_dtos_are_returned() {
       // given
@@ -248,77 +229,57 @@ class SpotifyFollowedArtistsServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("artistDtoTransformer is called for every artist of an album")
-    void test_artist_service_called_with_all_artists() {
-      // given
-      var album = SpotifyAlbumDtoFactory.withTwoArtist();
-      var id1 = "id1";
-      var id2 = "id2";
-      var artistDto = ArtistDtoFactory.withName("a");
-      album.getArtists().get(0).setId(id1);
-      album.getArtists().get(1).setId(id2);
-      doReturn(List.of(album)).when(spotifyService).fetchLikedAlbums(any());
-      doReturn(artistDto).when(artistDtoTransformer).transformSpotifyArtistDto(any());
-
-      // when
-      underTest.getNewFollowedArtists(List.of(ALBUMS));
-
-      // then
-      verify(artistDtoTransformer).transformSpotifyArtistDto(album.getArtists().get(0));
-      verify(artistDtoTransformer).transformSpotifyArtistDto(album.getArtists().get(1));
-    }
-
-    @Test
-    @DisplayName("duplicates are eliminated when calling artistService")
+    @DisplayName("duplicates are eliminated from liked albums before the spotify service is called")
     void test_no_duplicates_when_calling_artist_service() {
       // given
       var firstAlbum = SpotifyAlbumDtoFactory.createDefault();
       var secondAlbum = SpotifyAlbumDtoFactory.createDefault();
       var id = "id";
-      var artistDto = ArtistDtoFactory.withName("a");
 
       firstAlbum.getArtists().get(0).setId(id);
       secondAlbum.getArtists().get(0).setId(id);
       var albumDtos = List.of(firstAlbum, secondAlbum);
       doReturn(albumDtos).when(spotifyService).fetchLikedAlbums(any());
-      doReturn(artistDto).when(artistDtoTransformer).transformSpotifyArtistDto(any());
 
       // when
       underTest.getNewFollowedArtists(List.of(ALBUMS));
 
       // then
-      verify(artistDtoTransformer).transformSpotifyArtistDto(firstAlbum.getArtists().get(0));
-      verifyNoMoreInteractions(artistDtoTransformer);
+      verify(spotifyService).searchArtistsByIds(List.of(firstAlbum.getArtists().get(0).getId()));
     }
 
     @Test
-    @DisplayName("followArtistService is called to check for already followed artistDtos")
+    @DisplayName("followArtistService is called for each artist")
     void test_follow_artist_service_called_to_check_followed() {
       // given
-      var artistDto = ArtistDtoFactory.withName("a");
+      var spotifyArtist1 = SpotifyArtistDtoFactory.withArtistName("Slayer");
+      var spotifyArtist2 = SpotifyArtistDtoFactory.withArtistName("Metallica");
       doReturn(List.of(SpotifyAlbumDtoFactory.createDefault())).when(spotifyService).fetchLikedAlbums(any());
-      doReturn(artistDto).when(artistDtoTransformer).transformSpotifyArtistDto(any());
+      doReturn(List.of(spotifyArtist1, spotifyArtist2)).when(spotifyService).searchArtistsByIds(anyList());
 
       // when
       underTest.getNewFollowedArtists(List.of(ALBUMS));
 
       // then
-      verify(followArtistService).isCurrentUserFollowing(artistDto.getExternalId(), SPOTIFY);
+      verify(followArtistService).isCurrentUserFollowing(spotifyArtist1.getId(), SPOTIFY);
+      verify(followArtistService).isCurrentUserFollowing(spotifyArtist2.getId(), SPOTIFY);
     }
 
     @Test
-    @DisplayName("artistDtos are returned")
-    void test_artist_dtos_are_returned() {
+    @DisplayName("Spotify artists are returned in alphabetically order")
+    void test_spotify_artist_are_returned() {
       // given
-      var artistDto = ArtistDtoFactory.withName("a");
+      var spotifyArtist1 = SpotifyArtistDtoFactory.withArtistName("B");
+      var spotifyArtist2 = SpotifyArtistDtoFactory.withArtistName("C");
+      var spotifyArtist3 = SpotifyArtistDtoFactory.withArtistName("A");
       doReturn(List.of(SpotifyAlbumDtoFactory.createDefault())).when(spotifyService).fetchLikedAlbums(any());
-      doReturn(artistDto).when(artistDtoTransformer).transformSpotifyArtistDto(any());
+      doReturn(List.of(spotifyArtist1, spotifyArtist2, spotifyArtist3)).when(spotifyService).searchArtistsByIds(anyList());
 
       // when
       var result = underTest.getNewFollowedArtists(List.of(ALBUMS));
 
       // then
-      assertThat(result).isEqualTo(List.of(artistDto));
+      assertThat(result).isEqualTo(List.of(spotifyArtist3, spotifyArtist1, spotifyArtist2));
     }
   }
 }
