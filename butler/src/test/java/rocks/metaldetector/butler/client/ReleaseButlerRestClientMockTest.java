@@ -104,4 +104,11 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
     // then
     assertThat(responses).hasSize(4);
   }
+
+  @Test
+  @DisplayName("Should do nothing on update release")
+  void should_do_nothing_on_update_release() {
+    // when
+    underTest.updateReleaseState(1L, "state");
+  }
 }

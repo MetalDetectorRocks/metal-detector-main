@@ -21,7 +21,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer.STATE_NOT_SET;
 
 @ExtendWith(MockitoExtension.class)
 class ButlerReleaseResponseTransformerTest implements WithAssertions {
@@ -92,8 +91,8 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
     assertThat(releaseDto.getEstimatedReleaseDate()).isEqualTo(release.getEstimatedReleaseDate());
     assertThat(releaseDto.getGenre()).isEqualTo(release.getGenre());
     assertThat(releaseDto.getType()).isEqualTo(WordUtils.capitalizeFully(release.getType()));
-    assertThat(releaseDto.getMetalArchivesArtistUrl()).isEqualTo(release.getMetalArchivesArtistUrl());
-    assertThat(releaseDto.getMetalArchivesAlbumUrl()).isEqualTo(release.getMetalArchivesAlbumUrl());
+    assertThat(releaseDto.getArtistDetailsUrl()).isEqualTo(release.getArtistDetailsUrl());
+    assertThat(releaseDto.getReleaseDetailsUrl()).isEqualTo(release.getReleaseDetailsUrl());
     assertThat(releaseDto.getSource()).isEqualTo(WordUtils.capitalizeFully(release.getSource()));
     assertThat(releaseDto.getState()).isEqualTo(WordUtils.capitalizeFully(release.getState()));
     assertThat(releaseDto.getCoverUrl()).isEqualTo(release.getCoverUrl());
@@ -112,6 +111,6 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
     // then
     verify(enumPrettyPrinter).prettyPrintEnumValue(eq(release.getType()));
     verify(enumPrettyPrinter).prettyPrintEnumValue(eq(release.getSource()));
-    verify(enumPrettyPrinter).prettyPrintEnumValue(eq(STATE_NOT_SET));
+    verify(enumPrettyPrinter).prettyPrintEnumValue(eq(release.getState()));
   }
 }

@@ -26,6 +26,14 @@
                 <div class="tab-pane fade show active mt-3 ml-2" id="nav-master-data" role="tabpanel" aria-labelledby="nav-home-tab">
                     <form method="post" action="#" id="update-release-form">
                         <fieldset>
+                             <!-- Id -->
+                            <div class="form-group row" hidden>
+                                <label for="release-id" class="col-sm-4 col-form-label">Id</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="release-id" readonly class="form-control-plaintext"/>
+                                </div>
+                            </div>
+
                             <!-- Artist -->
                             <div class="form-group row">
                                 <label for="artist" class="col-sm-4 col-form-label">Artist</label>
@@ -68,15 +76,22 @@
 
                             <!-- Status -->
                             <div class="form-group row">
-                                <label for="update-status" class="col-sm-4 col-form-label">Status</label>
+                                <label for="release-state" class="col-sm-4 col-form-label">State</label>
                                 <div class="col-sm-6">
-                                    <select class="form-control" id="update-status">
+                                    <select class="form-control" id="release-state">
                                         <option>Ok</option>
-                                        <option>Not set</option>
                                         <option>Demo</option>
-                                        <option>Needs improvement</option>
-                                        <option>Archived</option>
+                                        <option>Faulty</option>
+                                        <option>Duplicate</option>
                                     </select>
+                                </div>
+                            </div>
+
+                            <!-- Current Row -->
+                            <div class="form-group row" hidden>
+                                <label for="current-row-index" class="col-sm-4 col-form-label">Id</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="current-row-index" readonly class="form-control-plaintext"/>
                                 </div>
                             </div>
                         </fieldset>
@@ -101,19 +116,19 @@
                         </div>
                     </div>
 
-                    <!-- MetalArchives Artist Url -->
+                    <!-- Artist Details Url-->
                     <div class="form-group row">
-                        <label for="metal-archives-artist-url" class="col-sm-4 col-form-label">MetalArchives Artist Url</label>
+                        <label for="artist-details-url" class="col-sm-4 col-form-label">Artist Details Url</label>
                         <div class="col-sm-8">
-                            <p readonly class="form-control-plaintext"><a id="metal-archives-artist-url" target="_blank"></a></p>
+                            <p readonly class="form-control-plaintext"><a id="artist-details-url" target="_blank"></a></p>
                         </div>
                     </div>
 
-                    <!-- MetalArchives Album Url -->
+                    <!-- Release Details Url-->
                     <div class="form-group row">
-                        <label for="metal-archives-album-url" class="col-sm-4 col-form-label">MetalArchives Album Url</label>
+                        <label for="release-details-url" class="col-sm-4 col-form-label">Release Details Url</label>
                         <div class="col-sm-8">
-                            <p readonly class="form-control-plaintext"><a id="metal-archives-album-url" target="_blank"></a></p>
+                            <p readonly class="form-control-plaintext"><a id="release-details-url" target="_blank"></a></p>
                         </div>
                     </div>
 

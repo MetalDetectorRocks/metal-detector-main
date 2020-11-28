@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @JsonPropertyOrder({
+    "id",
     "artist",
     "additionalArtists",
     "albumTitle",
@@ -29,6 +30,9 @@ import java.util.List;
 })
 @NoArgsConstructor
 public class ButlerRelease {
+
+  @JsonProperty("id")
+  private long id;
 
   @JsonProperty("artist")
   private String artist;
@@ -51,11 +55,11 @@ public class ButlerRelease {
   @JsonProperty("type")
   private String type;
 
-  @JsonProperty("metalArchivesArtistUrl")
-  private String metalArchivesArtistUrl;
+  @JsonProperty("artistDetailsUrl")
+  private String artistDetailsUrl;
 
-  @JsonProperty("metalArchivesAlbumUrl")
-  private String metalArchivesAlbumUrl;
+  @JsonProperty("releaseDetailsUrl")
+  private String releaseDetailsUrl;
 
   @JsonProperty("source")
   private String source;

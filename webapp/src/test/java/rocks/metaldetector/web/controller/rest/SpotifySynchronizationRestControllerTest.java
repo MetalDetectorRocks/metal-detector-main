@@ -7,27 +7,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.service.spotify.SpotifyFollowedArtistsService;
-import rocks.metaldetector.service.spotify.SpotifyUserAuthorizationService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
-import rocks.metaldetector.web.api.request.SpotifyAuthorizationRequest;
 import rocks.metaldetector.web.api.response.SpotifyArtistImportResponse;
 import rocks.metaldetector.web.api.response.SpotifyFollowedArtistsResponse;
-import rocks.metaldetector.web.api.response.SpotifyUserAuthorizationResponse;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -37,19 +29,17 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static rocks.metaldetector.service.spotify.SpotifyFetchType.ALBUMS;
-import static rocks.metaldetector.web.controller.rest.SpotifyRestController.FETCH_TYPES_PARAM;
+import static rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
+import static rocks.metaldetector.web.controller.rest.SpotifySynchronizationRestController.FETCH_TYPES_PARAM;
 
 @ExtendWith(MockitoExtension.class)
-class SpotifyRestControllerTest implements WithAssertions {
-
-  @Mock
-  private SpotifyUserAuthorizationService userAuthorizationService;
+class SpotifySynchronizationRestControllerTest implements WithAssertions {
 
   @Mock
   private SpotifyFollowedArtistsService artistImportService;
 
   @InjectMocks
-  private SpotifyRestController underTest;
+  private SpotifySynchronizationRestController underTest;
 
   @BeforeEach
   void setup() {
@@ -59,54 +49,7 @@ class SpotifyRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(userAuthorizationService, artistImportService);
-  }
-
-  @Nested
-  @DisplayName("Tests for prepare authorization endpoint")
-  class PrepareAuthorizationTest {
-
-    private RestAssuredMockMvcUtils restAssuredMockMvcUtils;
-
-    @BeforeEach
-    void setup() {
-      restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_AUTHORIZATION);
-    }
-
-    @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should return 200")
-    void test_post_authorization_returns_ok() {
-      // when
-      var validatableResponse = restAssuredMockMvcUtils.doPost();
-
-      // then
-      validatableResponse.statusCode(OK.value());
-    }
-
-    @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should call SpotifyUserAuthorizationServiceService")
-    void test_post_authorization_calls_spotify_service() {
-      // when
-      restAssuredMockMvcUtils.doPost();
-
-      // then
-      verify(userAuthorizationService).prepareAuthorization();
-    }
-
-    @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should return expected url")
-    void test_post_authorization_returns_url() {
-      // given
-      var expectedUrl = "i'm an url";
-      doReturn(expectedUrl).when(userAuthorizationService).prepareAuthorization();
-
-      // when
-      var validatableResponse = restAssuredMockMvcUtils.doPost();
-
-      // then
-      var response = validatableResponse.extract().as(SpotifyUserAuthorizationResponse.class);
-      assertThat(response.getAuthorizationUrl()).isEqualTo(expectedUrl);
-    }
+    reset(artistImportService);
   }
 
   @Nested
@@ -206,7 +149,7 @@ class SpotifyRestControllerTest implements WithAssertions {
     @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " return the followed artists")
     void test_get_followed_returns_result() {
       // given
-      var expectedResult = List.of(ArtistDtoFactory.createDefault());
+      var expectedResult = List.of(SpotifyArtistDtoFactory.createDefault());
       doReturn(expectedResult).when(artistImportService).getNewFollowedArtists(any());
 
       // when
@@ -215,66 +158,6 @@ class SpotifyRestControllerTest implements WithAssertions {
       // then
       var response = validatableResponse.extract().as(SpotifyFollowedArtistsResponse.class);
       assertThat(response.getArtists()).isEqualTo(expectedResult);
-    }
-  }
-
-  @Nested
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  @DisplayName("Tests for callback endpoint")
-  class CallbackTest {
-
-    private RestAssuredMockMvcUtils restAssuredMockMvcUtils;
-
-    @BeforeEach
-    void setup() {
-      restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_AUTHORIZATION_PERSIST);
-    }
-
-    @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION_PERSIST + " should return 200")
-    void test_post_authorization_returns_ok() {
-      // given
-      var request = SpotifyAuthorizationRequest.builder().code("code").state("state").build();
-
-      // when
-      var validatableResponse = restAssuredMockMvcUtils.doPost(request);
-
-      // then
-      validatableResponse.statusCode(OK.value());
-    }
-
-    @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION_PERSIST + " should call SpotifyUserAuthorizationServiceService")
-    void test_post_authorization_calls_spotify_service() {
-      // given
-      var request = SpotifyAuthorizationRequest.builder().code("code").state("state").build();
-
-      // when
-      restAssuredMockMvcUtils.doPost(request);
-
-      // then
-      verify(userAuthorizationService).persistInitialToken(request.getState(), request.getCode());
-    }
-
-    @ParameterizedTest
-    @MethodSource("badRequestProvider")
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION_PERSIST + " should return bad request")
-    void test_post_authorization_returns_url(String code, String state) {
-      // given
-      var request = SpotifyAuthorizationRequest.builder().code(code).state(state).build();
-
-      // when
-      var validatableResponse = restAssuredMockMvcUtils.doPost(request);
-
-      // then
-      validatableResponse.statusCode(BAD_REQUEST.value());
-    }
-
-    private Stream<Arguments> badRequestProvider() {
-      return Stream.of(
-          Arguments.of((Object) null, (Object) null),
-          Arguments.of("", "")
-      );
     }
   }
 }

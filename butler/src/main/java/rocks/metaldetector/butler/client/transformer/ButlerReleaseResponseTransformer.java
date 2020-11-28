@@ -19,8 +19,6 @@ public class ButlerReleaseResponseTransformer {
 
   private final EnumPrettyPrinter enumPrettyPrinter;
 
-  static final String STATE_NOT_SET = "NOT_SET";
-
   public Page<ReleaseDto> transformToPage(ButlerReleasesResponse response) {
     ButlerPagination butlerPagination = response.getPagination();
     Pagination pagination = new Pagination(butlerPagination.getTotalPages(), butlerPagination.getCurrentPage(), butlerPagination.getSize());
@@ -33,6 +31,7 @@ public class ButlerReleaseResponseTransformer {
 
   private ReleaseDto transformRelease(ButlerRelease release) {
     return ReleaseDto.builder()
+            .id(release.getId())
             .artist(release.getArtist())
             .albumTitle(release.getAlbumTitle())
             .additionalArtists(release.getAdditionalArtists())
@@ -40,10 +39,10 @@ public class ButlerReleaseResponseTransformer {
             .estimatedReleaseDate(release.getEstimatedReleaseDate())
             .genre(release.getGenre())
             .type(enumPrettyPrinter.prettyPrintEnumValue(release.getType()))
-            .metalArchivesArtistUrl(release.getMetalArchivesArtistUrl())
-            .metalArchivesAlbumUrl(release.getMetalArchivesAlbumUrl())
+            .artistDetailsUrl(release.getArtistDetailsUrl())
+            .releaseDetailsUrl(release.getReleaseDetailsUrl())
             .source(enumPrettyPrinter.prettyPrintEnumValue(release.getSource()))
-            .state(enumPrettyPrinter.prettyPrintEnumValue(STATE_NOT_SET))
+            .state(enumPrettyPrinter.prettyPrintEnumValue(release.getState()))
             .coverUrl(release.getCoverUrl())
             .build();
   }
