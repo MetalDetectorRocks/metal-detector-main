@@ -80,6 +80,7 @@ export class SpotifySynchronizationRenderService {
         // ToDo DanielW:
         //  - show select all / deselect all
         this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_HOST_ID);
+        this.artistContainerElement.innerHTML = "";
         const followedArtists = this.spotifyRestClient.fetchFollowedArtists();
         followedArtists.then(response => {
             response.artists.forEach(artist => {
