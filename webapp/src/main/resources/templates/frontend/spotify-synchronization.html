@@ -36,12 +36,25 @@
                     <button class="btn btn-outline-success btn-lg" id="connect-with-spotify-button">
                         <span class="material-icons">power</span> Connect with Spotify
                     </button>
+
                     <button class="btn btn-outline-success btn-lg mr-2 invisible disabled" id="connected-with-spotify-button">
                         <span class="material-icons">check_circle</span> Connected with Spotify
                     </button>
-                    <button class="btn btn-outline-success mr-2 btn-lg invisible" id="fetch-artists-button">
-                        <span class="material-icons">get_app</span> Fetch artists
-                    </button>
+
+                    <!-- ToDo DanielW: Style the menu popup -->
+                    <div class="btn-group" role="group" aria-label="Fetch artists from Spotify">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-success mr-2 btn-lg dropdown-toggle invisible" id="fetch-artists-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="material-icons">get_app</span> Fetch artists
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="fetch-artists-button">
+                                <a class="dropdown-item" href="#" id="fetch-from-liked-artists">From liked artists</a>
+                                <a class="dropdown-item" href="#" id="fetch-from-liked-releases">From liked releases</a>
+                                <a class="dropdown-item" href="#" id="fetch-from-both">From both</a>
+                            </div>
+                        </div>
+                    </div>
+
                     <button class="btn btn-outline-success btn-lg mr-2 invisible disabled" id="synchronize-artists-button">
                         <span class="material-icons">sync</span> Synchronize artists
                     </button>
