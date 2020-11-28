@@ -15,8 +15,10 @@ export class SpotifySynchronizationRenderService {
     private readonly loadingIndicatorService: LoadingIndicatorService;
     private readonly toastService: ToastService;
     private readonly urlService: UrlService;
+
     private readonly artistSelectionElement: HTMLDivElement;
     private readonly artistContainerElement: HTMLDivElement;
+    private synchronizeArtistsButton?: HTMLButtonElement;
 
     constructor(spotifyRestClient: SpotifyRestClient, loadingIndicatorService: LoadingIndicatorService,
                 toastService: ToastService, urlService: UrlService) {
@@ -57,12 +59,18 @@ export class SpotifySynchronizationRenderService {
                 spotifyConnectedButton.insertAdjacentHTML("afterbegin", `<span class="material-icons">check_circle</span> Connected with Spotify`);
 
                 const fetchArtistsButton = document.createElement("button");
-                fetchArtistsButton.className = "btn btn-outline-success btn-lg";
-                fetchArtistsButton.insertAdjacentHTML("afterbegin", `<span class="material-icons">sync</span> Fetch artists`);
+                fetchArtistsButton.className = "btn btn-outline-success mr-2 btn-lg";
+                fetchArtistsButton.insertAdjacentHTML("afterbegin", `<span class="material-icons">get_app</span> Fetch artists`);
                 fetchArtistsButton.addEventListener("click", this.fetchSpotifyArtists.bind(this));
+
+                this.synchronizeArtistsButton = document.createElement("button");
+                this.synchronizeArtistsButton.className = "btn btn-outline-success btn-lg mr-2 disabled";
+                this.synchronizeArtistsButton.insertAdjacentHTML("afterbegin", `<span class="material-icons">sync</span> Synchronize artists`);
+                this.synchronizeArtistsButton.addEventListener("click", this.synchronizeArtists.bind(this));
 
                 buttonBar.insertAdjacentElement("beforeend", spotifyConnectedButton);
                 buttonBar.insertAdjacentElement("beforeend", fetchArtistsButton);
+                buttonBar.insertAdjacentElement("beforeend", this.synchronizeArtistsButton);
            }
            else {
                const spotifyConnectButton = document.createElement("button");
@@ -99,6 +107,7 @@ export class SpotifySynchronizationRenderService {
             });
         }).finally(() => {
             this.artistSelectionElement.classList.remove("invisible");
+            this.synchronizeArtistsButton?.classList.remove("disabled");
             this.loadingIndicatorService.hideLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID);
         });
     }
@@ -108,5 +117,9 @@ export class SpotifySynchronizationRenderService {
         const follower = `${followerCount} followers on Spotify`;
         const genres = artist.genres.slice(0, 3).join(", ");
         return `${genres}<br />${follower}`;
+    }
+
+    private synchronizeArtists(): void {
+
     }
 }
