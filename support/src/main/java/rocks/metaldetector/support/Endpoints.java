@@ -48,9 +48,9 @@ public class Endpoints {
     public static final String SPOTIFY_AUTHORIZATION          = "/rest/v1/spotify/auth";
     public static final String SPOTIFY_ARTIST_IMPORT          = "/rest/v1/spotify/import";
     public static final String SPOTIFY_FOLLOWED_ARTISTS       = "/rest/v1/spotify/followed-artists";
-    public static final String QUERY_ALL_RELEASES             = "/rest/v1/releases/all";
-    public static final String QUERY_MY_RELEASES              = "/rest/v1/releases/my";
-    public static final String QUERY_RELEASES                 = "/rest/v1/releases";
+    public static final String ALL_RELEASES                   = "/rest/v1/releases/all";
+    public static final String MY_RELEASES                    = "/rest/v1/releases/my";
+    public static final String RELEASES                       = "/rest/v1/releases";
     public static final String IMPORT_JOB                     = "/rest/v1/releases/import";
     public static final String COVER_JOB                      = "/rest/v1/releases/cover-reload";
     public static final String SEARCH                         = "/search";

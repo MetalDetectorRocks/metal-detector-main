@@ -18,4 +18,6 @@ public interface ReleaseButlerRestClient {
 
   List<ButlerImportJob> queryImportJobResults();
 
+  void updateReleaseState(long releaseId, String state);
+
 }

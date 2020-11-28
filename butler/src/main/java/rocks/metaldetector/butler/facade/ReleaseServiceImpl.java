@@ -56,4 +56,9 @@ public class ReleaseServiceImpl implements ReleaseService {
     List<ButlerImportJob> importJobResponses = butlerClient.queryImportJobResults();
     return importJobResponses.stream().map(importJobResponseTransformer::transform).collect(Collectors.toList());
   }
+
+  @Override
+  public void updateReleaseState(long releaseId, String state) {
+    butlerClient.updateReleaseState(releaseId, state);
+  }
 }
