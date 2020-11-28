@@ -5,13 +5,14 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
+import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.spotify.facade.dto.SpotifyUserAuthorizationDto;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -20,18 +21,26 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
   static final int STATE_SIZE = 10;
 
   private final CurrentUserSupplier currentUserSupplier;
-  private final UserRepository userRepository;
+  private final SpotifyAuthorizationRepository spotifyAuthorizationRepository;
   private final SpotifyService spotifyService;
+
+  @Override
+  @Transactional(readOnly = true)
+  public boolean exists() {
+    UserEntity currentUser = currentUserSupplier.get();
+    Optional<SpotifyAuthorizationEntity> authorizationEntity = spotifyAuthorizationRepository.findByUserId(currentUser.getId());
+    return authorizationEntity.isPresent()
+            && authorizationEntity.get().getAccessToken() != null
+            && authorizationEntity.get().getRefreshToken() != null;
+  }
 
   @Override
   @Transactional
   public String prepareAuthorization() {
     UserEntity currentUser = currentUserSupplier.get();
-
     String state = RandomStringUtils.randomAlphanumeric(STATE_SIZE);
-    SpotifyAuthorizationEntity authenticationEntity = new SpotifyAuthorizationEntity(state);
-    currentUser.setSpotifyAuthorization(authenticationEntity);
-    userRepository.save(currentUser);
+    SpotifyAuthorizationEntity authenticationEntity = new SpotifyAuthorizationEntity(currentUser, state);
+    spotifyAuthorizationRepository.save(authenticationEntity);
 
     return spotifyService.getSpotifyAuthorizationUrl() + state;
   }
@@ -39,9 +48,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
   @Override
   @Transactional
   public void persistInitialToken(String spotifyState, String spotifyCode) {
-    UserEntity currentUser = currentUserSupplier.get();
-    SpotifyAuthorizationEntity authorizationEntity = currentUser.getSpotifyAuthorization();
-
+    SpotifyAuthorizationEntity authorizationEntity = findAuthorizationEntityFromCurrentUser();
     checkState(authorizationEntity, spotifyState);
 
     SpotifyUserAuthorizationDto authorizationDto = spotifyService.getAccessToken(spotifyCode);
@@ -51,16 +58,14 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
     authorizationEntity.setTokenType(authorizationDto.getTokenType());
     authorizationEntity.setExpiresIn(authorizationDto.getExpiresIn());
 
-    userRepository.save(currentUser);
+    spotifyAuthorizationRepository.save(authorizationEntity);
   }
 
   @Override
   @Transactional
   public String getOrRefreshToken() {
-    UserEntity currentUser = currentUserSupplier.get();
-    SpotifyAuthorizationEntity authorizationEntity = currentUser.getSpotifyAuthorization();
-
-    if (authorizationEntity == null || authorizationEntity.getRefreshToken() == null || authorizationEntity.getRefreshToken().isEmpty()) {
+    SpotifyAuthorizationEntity authorizationEntity = findAuthorizationEntityFromCurrentUser();
+    if (authorizationEntity.getRefreshToken() == null || authorizationEntity.getRefreshToken().isEmpty()) {
       throw new IllegalStateException("refresh token is empty");
     }
 
@@ -73,14 +78,21 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
     authorizationEntity.setScope(refreshedToken.getScope());
     authorizationEntity.setTokenType(refreshedToken.getTokenType());
     authorizationEntity.setExpiresIn(refreshedToken.getExpiresIn());
-
-    userRepository.save(currentUser);
+    spotifyAuthorizationRepository.save(authorizationEntity);
 
     return refreshedToken.getAccessToken();
   }
 
+  private SpotifyAuthorizationEntity findAuthorizationEntityFromCurrentUser() {
+    UserEntity currentUser = currentUserSupplier.get();
+    Optional<SpotifyAuthorizationEntity> authorizationEntityOptional = spotifyAuthorizationRepository.findByUserId(currentUser.getId());
+    return authorizationEntityOptional.orElseThrow(
+            () -> new IllegalStateException("no authorization entity exists although it should!")
+    );
+  }
+
   private void checkState(SpotifyAuthorizationEntity authorizationEntity, String providedState) {
-    if (authorizationEntity == null || authorizationEntity.getState() == null) {
+    if (authorizationEntity.getState() == null) {
       throw new IllegalStateException("snh: spotify authorization entity or state is null");
     }
 

@@ -62,6 +62,34 @@ class SpotifyArtistTransformerTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("should fully capitalize the genres")
+  void should_fully_capitalize_the_genres() {
+    // given
+    SpotifyArtist givenArtist = SpotfiyArtistFactory.withArtistName("Slayer");
+    givenArtist.setGenres(List.of("black metal", "atmospheric black metal"));
+
+    // when
+    SpotifyArtistDto result = underTest.transform(givenArtist);
+
+    // then
+    assertThat(result.getGenres()).containsExactly("Black Metal", "Atmospheric Black Metal");
+  }
+
+  @Test
+  @DisplayName("should return empty list if genres are nul")
+  void should_return_empty_list_if_genres_are_nul() {
+    // given
+    SpotifyArtist givenArtist = SpotfiyArtistFactory.withArtistName("Slayer");
+    givenArtist.setGenres(null);
+
+    // when
+    SpotifyArtistDto result = underTest.transform(givenArtist);
+
+    // then
+    assertThat(result.getGenres()).isEmpty();
+  }
+
+  @Test
   @DisplayName("followers are 0 if no follower object is provided")
   void test_transform_null_follower() {
     // given
