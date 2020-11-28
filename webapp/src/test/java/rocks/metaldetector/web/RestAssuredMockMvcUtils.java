@@ -29,11 +29,11 @@ public class RestAssuredMockMvcUtils {
 
   public ValidatableMockMvcResponse doGet(MediaType mediaType) {
     return given()
-        .config(NO_SECURITY_CONFIG)
-        .accept(mediaType)
-        .when()
-        .get(requestUri)
-        .then();
+            .config(NO_SECURITY_CONFIG)
+            .accept(mediaType)
+          .when()
+            .get(requestUri)
+          .then();
   }
 
   public ValidatableMockMvcResponse doGet(Map<String, Object> params) {
@@ -46,84 +46,88 @@ public class RestAssuredMockMvcUtils {
 
   public ValidatableMockMvcResponse doGet(String pathSegment, Map<String, Object> params) {
     return given()
-        .config(NO_SECURITY_CONFIG)
-        .accept(ContentType.JSON)
-        .params(params)
-        .when()
-        .get(requestUri + pathSegment)
-        .then();
+            .config(NO_SECURITY_CONFIG)
+            .accept(ContentType.JSON)
+            .params(params)
+          .when()
+            .get(requestUri + pathSegment)
+          .then();
   }
 
   public ValidatableMockMvcResponse doGetWithAttributes(Map<String, Object> attributes) {
     return given()
-        .config(NO_SECURITY_CONFIG)
-        .accept(ContentType.JSON)
-        .attributes(attributes)
-        .when()
-        .get(requestUri)
-        .then();
+            .config(NO_SECURITY_CONFIG)
+            .accept(ContentType.JSON)
+            .attributes(attributes)
+          .when()
+            .get(requestUri)
+          .then();
   }
 
   public ValidatableMockMvcResponse doPost() {
     return given()
-        .config(NO_SECURITY_CONFIG)
-        .contentType(ContentType.JSON)
-        .accept(ContentType.JSON)
-        .when()
-        .post(requestUri)
-        .then();
+            .config(NO_SECURITY_CONFIG)
+            .contentType(ContentType.JSON)
+            .accept(ContentType.JSON)
+          .when()
+            .post(requestUri)
+          .then();
   }
 
   public ValidatableMockMvcResponse doPost(String pathSegment) {
     return given()
-        .config(NO_SECURITY_CONFIG)
-        .contentType(ContentType.JSON)
-        .accept(ContentType.JSON)
-        .when()
-        .post(requestUri + pathSegment)
-        .then();
+            .config(NO_SECURITY_CONFIG)
+            .contentType(ContentType.JSON)
+            .accept(ContentType.JSON)
+          .when()
+            .post(requestUri + pathSegment)
+          .then();
   }
 
   public ValidatableMockMvcResponse doPost(String pathSegment, Map<String, Object> requestParams) {
     return given()
-        .config(NO_SECURITY_CONFIG)
-        .contentType(ContentType.JSON)
-        .accept(ContentType.JSON)
-        .params(requestParams)
-        .when()
-        .post(requestUri + pathSegment)
-        .then();
+            .config(NO_SECURITY_CONFIG)
+            .contentType(ContentType.JSON)
+            .accept(ContentType.JSON)
+            .params(requestParams)
+          .when()
+            .post(requestUri + pathSegment)
+          .then();
   }
 
   public ValidatableMockMvcResponse doPost(Object request) {
     return given()
-        .config(NO_SECURITY_CONFIG)
-        .accept(ContentType.JSON)
-        .contentType(ContentType.JSON)
-        .body(request)
-        .when()
-        .post(requestUri)
-        .then();
+            .config(NO_SECURITY_CONFIG)
+            .accept(ContentType.JSON)
+            .contentType(ContentType.JSON)
+            .body(request)
+          .when()
+            .post(requestUri)
+          .then();
   }
 
   public ValidatableMockMvcResponse doPost(Map<String, String> params, ContentType contentType) {
     return given()
-        .config(NO_SECURITY_CONFIG)
-        .accept(contentType)
-        .formParams(params)
-        .when()
-        .post(requestUri)
-        .then();
+            .config(NO_SECURITY_CONFIG)
+            .accept(contentType)
+            .formParams(params)
+          .when()
+            .post(requestUri)
+          .then();
+  }
+
+  public ValidatableMockMvcResponse doPut(String pathParam, Object request) {
+    return given()
+            .config(NO_SECURITY_CONFIG)
+            .accept(ContentType.JSON)
+            .contentType(ContentType.JSON)
+            .body(request)
+          .when()
+            .put(requestUri + pathParam)
+          .then();
   }
 
   public ValidatableMockMvcResponse doPut(Object request) {
-    return given()
-        .config(NO_SECURITY_CONFIG)
-        .accept(ContentType.JSON)
-        .contentType(ContentType.JSON)
-        .body(request)
-        .when()
-        .put(requestUri)
-        .then();
+    return doPut("", request);
   }
 }

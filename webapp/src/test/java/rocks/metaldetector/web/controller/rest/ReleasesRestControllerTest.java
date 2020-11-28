@@ -38,6 +38,7 @@ import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseRequestFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
+import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
 import rocks.metaldetector.web.transformer.SortingTransformer;
 
@@ -88,14 +89,14 @@ class ReleasesRestControllerTest implements WithAssertions {
 
   @Nested
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  @DisplayName("Tests for endpoint '" + Endpoints.Rest.QUERY_ALL_RELEASES + "'")
+  @DisplayName("Tests for endpoint '" + Endpoints.Rest.ALL_RELEASES + "'")
   class QueryAllReleasesTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.QUERY_ALL_RELEASES);
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ALL_RELEASES);
     }
 
     @Test
@@ -164,14 +165,14 @@ class ReleasesRestControllerTest implements WithAssertions {
 
   @Nested
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  @DisplayName("Tests for endpoint '" + Endpoints.Rest.QUERY_RELEASES + "'")
+  @DisplayName("Tests for endpoint '" + Endpoints.Rest.RELEASES + "'")
   class QueryReleasesTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.QUERY_RELEASES);
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.RELEASES);
     }
 
     @Test
@@ -293,14 +294,14 @@ class ReleasesRestControllerTest implements WithAssertions {
 
   @Nested
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  @DisplayName("Tests for endpoint '" + Endpoints.Rest.QUERY_MY_RELEASES + "'")
+  @DisplayName("Tests for endpoint '" + Endpoints.Rest.MY_RELEASES + "'")
   class QueryMyReleasesTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.QUERY_MY_RELEASES);
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.MY_RELEASES);
     }
 
     @Test
@@ -519,7 +520,7 @@ class ReleasesRestControllerTest implements WithAssertions {
   }
 
   @Nested
-  @DisplayName("Tests for querying import job results")
+  @DisplayName("Tests querying import job results")
   class QueryImportJobResultsTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
@@ -556,6 +557,42 @@ class ReleasesRestControllerTest implements WithAssertions {
       validatableResponse.statusCode(OK.value());
       var result = validatableResponse.extract().body().jsonPath().getList(".", ImportJobResultDto.class);
       assertThat(result).isEqualTo(importJobResultDto);
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests updating a release")
+  class UpdateReleaseTest {
+
+    private RestAssuredMockMvcUtils restAssuredUtils;
+
+    @BeforeEach
+    void setUp() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.RELEASES);
+    }
+
+    @Test
+    @DisplayName("Should call release service")
+    void should_call_release_service() {
+      // given
+      var releaseId = 1L;
+      var state = "state";
+
+      // when
+      restAssuredUtils.doPut("/1", ReleaseUpdateRequest.builder().state(state).build());
+
+      // then
+      verify(releasesService).updateReleaseState(releaseId, state);
+    }
+
+    @Test
+    @DisplayName("Should return OK")
+    void should_return_status_ok() {
+      // when
+      ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doPut("/1", ReleaseUpdateRequest.builder().state("state").build());
+
+      // then
+      validatableResponse.statusCode(OK.value());
     }
   }
 }

@@ -4,10 +4,10 @@ module.exports = {
     mode: "development",
     entry: {
         search: "./src/bundles/search.ts",
-        myartists: "./src/bundles/my-artists.ts",
+        my_artists: "./src/bundles/my-artists.ts",
         releases: "./src/bundles/releases.ts",
         homepage: "./src/bundles/homepage.ts",
-        settings: "./src/bundles/settings.ts"
+        spotify_synchronization: "./src/bundles/spotify-synchronization.ts"
     },
     watch: true,
     output: {

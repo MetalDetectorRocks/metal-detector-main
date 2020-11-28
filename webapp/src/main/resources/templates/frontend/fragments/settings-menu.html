@@ -13,7 +13,8 @@
         </a>
 
         <a class="list-group-item list-group-item-action"
-           th:classappend="${#request.requestURI == '/settings/spotify-synchronization' ? 'active' : ''}"
+           th:classappend="${#request.requestURI == '/settings/spotify-synchronization' ||
+                             #request.requestURI == '/settings/spotify-synchronization/spotify-callback' ? 'active' : ''}"
            href="#" th:href="@{/settings/spotify-synchronization}">
             Spotify synchronization
         </a>

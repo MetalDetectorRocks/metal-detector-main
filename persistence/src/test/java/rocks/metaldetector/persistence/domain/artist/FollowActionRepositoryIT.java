@@ -17,7 +17,7 @@ import java.util.List;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 
-class FollowActionRepositoryTest extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
+class FollowActionRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
 
   @Autowired
   private FollowActionRepository underTest;

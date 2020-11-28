@@ -224,8 +224,8 @@ class ReleaseServiceImplTest implements WithAssertions {
 
     // then
     assertThat(response).isEqualTo(List.of(
-            ImportJobResultDtoFactory.createDefault(),
-            ImportJobResultDtoFactory.createDefault()
+        ImportJobResultDtoFactory.createDefault(),
+        ImportJobResultDtoFactory.createDefault()
     ));
   }
 
@@ -237,5 +237,19 @@ class ReleaseServiceImplTest implements WithAssertions {
 
     // then
     verify(butlerClient).createRetryCoverDownloadJob();
+  }
+
+  @Test
+  @DisplayName("Updating a release should call butler client")
+  void update_release_should_call_butler_client() {
+    // given
+    var releaseId = 1L;
+    var state = "state";
+
+    // when
+    underTest.updateReleaseState(releaseId, state);
+
+    // then
+    verify(butlerClient).updateReleaseState(releaseId, state);
   }
 }
