@@ -56,7 +56,7 @@ public class ReleasesRestController {
   }
 
   @GetMapping(path = Endpoints.Rest.MY_RELEASES,
-          produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<Page<ReleaseDto>> findReleasesOfFollowedArtists(@Valid PaginatedReleasesRequest request) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
     var pageRequest = new PageRequest(request.getPage(), request.getSize());

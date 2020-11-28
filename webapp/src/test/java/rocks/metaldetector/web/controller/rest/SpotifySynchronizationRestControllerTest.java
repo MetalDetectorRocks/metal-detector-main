@@ -53,18 +53,18 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
   }
 
   @Nested
-  @DisplayName("Tests for import endpoint")
-  class ImportTest {
+  @DisplayName("Tests for synchronization endpoint")
+  class SynchronizationTest {
 
     private RestAssuredMockMvcUtils restAssuredMockMvcUtils;
 
     @BeforeEach
     void setup() {
-      restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_ARTIST_IMPORT);
+      restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION);
     }
 
     @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " should return 200")
+    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " should return 200")
     void test_post_import_returns_ok() {
       // when
       var validatableResponse = restAssuredMockMvcUtils.doPost();
@@ -74,7 +74,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " should call SpotifyFollowedArtistsService")
+    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " should call SpotifyFollowedArtistsService")
     void test_post_import_calls_spotify_service() {
       // when
       restAssuredMockMvcUtils.doPost();
@@ -84,7 +84,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " return the import result")
+    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " return the import result")
     void test_post_import_returns_result() {
       // given
       var expectedResult = List.of(ArtistDtoFactory.createDefault());
@@ -133,7 +133,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " should call SpotifyFollowedArtistsService")
+    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " should call SpotifyFollowedArtistsService")
     void test_get_followed_calls_spotify_service() {
       // given
       var fetchTypes = List.of(ALBUMS);
