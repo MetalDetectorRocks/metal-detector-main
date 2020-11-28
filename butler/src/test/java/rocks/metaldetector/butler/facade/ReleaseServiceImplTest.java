@@ -2,12 +2,12 @@ package rocks.metaldetector.butler.facade;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleaseRequestFactory;
@@ -56,8 +56,12 @@ class ReleaseServiceImplTest implements WithAssertions {
   @Mock
   private ButlerImportJobTransformer importJobResponseTransformer;
 
-  @InjectMocks
   private ReleaseServiceImpl underTest;
+
+  @BeforeEach
+  void setup() {
+    underTest = new ReleaseServiceImpl(butlerClient, releaseRequestTransformer, releaseResponseTransformer, importJobResponseTransformer);
+  }
 
   @AfterEach
   void tearDown() {

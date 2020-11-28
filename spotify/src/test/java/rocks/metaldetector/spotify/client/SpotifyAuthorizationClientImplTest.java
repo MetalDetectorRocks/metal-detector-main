@@ -3,6 +3,7 @@ package rocks.metaldetector.spotify.client;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
@@ -62,11 +62,15 @@ class SpotifyAuthorizationClientImplTest implements WithAssertions {
   @Mock
   private SpotifyProperties spotifyProperties;
 
-  @InjectMocks
   private SpotifyAuthorizationClientImpl underTest;
 
   @Captor
   private ArgumentCaptor<HttpEntity<MultiValueMap<String, String>>> argumentCaptor;
+
+  @BeforeEach
+  void setup() {
+    underTest = new SpotifyAuthorizationClientImpl(restTemplate, spotifyProperties);
+  }
 
   @AfterEach
   void tearDown() {

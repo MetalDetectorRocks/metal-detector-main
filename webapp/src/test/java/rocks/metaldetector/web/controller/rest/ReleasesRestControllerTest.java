@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.facade.ReleaseService;
@@ -64,11 +63,11 @@ class ReleasesRestControllerTest implements WithAssertions {
   @Mock
   private FollowArtistService followArtistService;
 
-  @InjectMocks
   private ReleasesRestController underTest;
 
   @BeforeEach
   void setUp() {
+    underTest = new ReleasesRestController(releasesService, followArtistService);
     RestAssuredMockMvc.standaloneSetup(underTest,
                                        springSecurity((request, response, chain) -> chain.doFilter(request, response)),
                                        RestExceptionsHandler.class);
