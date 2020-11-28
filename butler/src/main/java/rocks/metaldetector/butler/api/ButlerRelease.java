@@ -55,11 +55,11 @@ public class ButlerRelease {
   @JsonProperty("type")
   private String type;
 
-  @JsonProperty("metalArchivesArtistUrl")
-  private String metalArchivesArtistUrl;
+  @JsonProperty("artistDetailsUrl")
+  private String artistDetailsUrl;
 
-  @JsonProperty("metalArchivesAlbumUrl")
-  private String metalArchivesAlbumUrl;
+  @JsonProperty("releaseDetailsUrl")
+  private String releaseDetailsUrl;
 
   @JsonProperty("source")
   private String source;

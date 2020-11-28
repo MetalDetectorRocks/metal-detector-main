@@ -20,8 +20,8 @@ public class ReleaseDto {
   private String estimatedReleaseDate;
   private String genre;
   private String type;
-  private String metalArchivesArtistUrl;
-  private String metalArchivesAlbumUrl;
+  private String artistDetailsUrl;
+  private String releaseDetailsUrl;
   private String source;
   private String state;
   private String coverUrl;

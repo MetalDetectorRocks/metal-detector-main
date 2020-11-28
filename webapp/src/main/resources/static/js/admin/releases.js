@@ -103,12 +103,12 @@ function showUpdateReleaseForm() {
   $('#type').text(data.type);
   $('#source').text(data.source);
 
-  const artistUrl = $('#metal-archives-artist-url');
-  artistUrl.text(data.metalArchivesArtistUrl);
-  artistUrl.attr("href", data.metalArchivesArtistUrl);
-  const albumUrl = $('#metal-archives-album-url');
-  albumUrl.text(data.metalArchivesAlbumUrl);
-  albumUrl.attr("href", data.metalArchivesAlbumUrl);
+  const artistUrl = $('#artist-details-url');
+  artistUrl.text(data.artistDetailsUrl);
+  artistUrl.attr("href", data.artistDetailsUrl);
+  const albumUrl = $('#release-details-url');
+  albumUrl.text(data.releaseDetailsUrl);
+  albumUrl.attr("href", data.releaseDetailsUrl);
 }
 
 /**

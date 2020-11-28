@@ -91,8 +91,8 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
     assertThat(releaseDto.getEstimatedReleaseDate()).isEqualTo(release.getEstimatedReleaseDate());
     assertThat(releaseDto.getGenre()).isEqualTo(release.getGenre());
     assertThat(releaseDto.getType()).isEqualTo(WordUtils.capitalizeFully(release.getType()));
-    assertThat(releaseDto.getMetalArchivesArtistUrl()).isEqualTo(release.getMetalArchivesArtistUrl());
-    assertThat(releaseDto.getMetalArchivesAlbumUrl()).isEqualTo(release.getMetalArchivesAlbumUrl());
+    assertThat(releaseDto.getArtistDetailsUrl()).isEqualTo(release.getArtistDetailsUrl());
+    assertThat(releaseDto.getReleaseDetailsUrl()).isEqualTo(release.getReleaseDetailsUrl());
     assertThat(releaseDto.getSource()).isEqualTo(WordUtils.capitalizeFully(release.getSource()));
     assertThat(releaseDto.getState()).isEqualTo(WordUtils.capitalizeFully(release.getState()));
     assertThat(releaseDto.getCoverUrl()).isEqualTo(release.getCoverUrl());
