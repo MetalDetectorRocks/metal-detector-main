@@ -246,3 +246,12 @@ footer .list-inline-item {
     color: var(--blue-menu-item-color);
     background-color: var(--dark-field-background-color);
 }
+
+.dropdown-menu {
+    font-size: 1rem;
+    border: 1px solid var(--grey-border-color);
+}
+
+.dropdown-item:hover {
+    background-color: var(--blue-menu-item-color);
+}
