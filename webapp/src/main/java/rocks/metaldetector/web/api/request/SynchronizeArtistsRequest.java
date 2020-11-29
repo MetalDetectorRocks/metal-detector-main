@@ -7,25 +7,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Map;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SpotifyAuthorizationRequest {
+public class SynchronizeArtistsRequest {
 
-  @NotEmpty
-  private String state;
-
-  @NotEmpty
-  private String code;
+  @NotNull
+  private List<String> artistIds;
 
   @JsonProperty("data")
   @ArtifactForFramework
-  private void unpackNested(Map<String, String> data) {
-    this.state = data.get("state");
-    this.code = data.get("code");
+  private void unpackNested(Map<String, Object> data) {
+    //noinspection unchecked: Cast is safe here
+    this.artistIds = (List<String>) data.get("artistIds");
   }
 }

@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
@@ -72,11 +71,11 @@ class ReleasesRestControllerTest implements WithAssertions {
   @Mock
   private SortingTransformer sortingTransformer;
 
-  @InjectMocks
   private ReleasesRestController underTest;
 
   @BeforeEach
   void setUp() {
+    underTest = new ReleasesRestController(releasesService, followArtistService, sortingTransformer);
     StandaloneMockMvcBuilder mockMvcBuilder = MockMvcBuilders.standaloneSetup(underTest, RestExceptionsHandler.class)
         .setCustomArgumentResolvers(new SortHandlerMethodArgumentResolver());
     RestAssuredMockMvc.standaloneSetup(mockMvcBuilder);

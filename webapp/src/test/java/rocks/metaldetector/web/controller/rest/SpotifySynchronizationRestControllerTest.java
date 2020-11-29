@@ -13,11 +13,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.service.spotify.SpotifyFollowedArtistsService;
 import rocks.metaldetector.support.Endpoints;
-import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
+import rocks.metaldetector.web.api.request.SynchronizeArtistsRequest;
 import rocks.metaldetector.web.api.response.SpotifyArtistImportResponse;
 import rocks.metaldetector.web.api.response.SpotifyFollowedArtistsResponse;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -51,49 +52,41 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
   }
 
   @Nested
-  @DisplayName("Tests for import endpoint")
-  class ImportTest {
+  @DisplayName("Tests for synchronization endpoint")
+  class SynchronizationTest {
 
     private RestAssuredMockMvcUtils restAssuredMockMvcUtils;
 
     @BeforeEach
     void setup() {
-      restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_ARTIST_IMPORT);
+      restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION);
     }
 
     @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " should return 200")
+    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " should return 200")
     void test_post_import_returns_ok() {
+      // given
+      var request = SynchronizeArtistsRequest.builder().artistIds(Collections.emptyList()).build();
+
       // when
-      var validatableResponse = restAssuredMockMvcUtils.doPost();
+      var validatableResponse = restAssuredMockMvcUtils.doPost(request);
 
       // then
       validatableResponse.statusCode(OK.value());
     }
 
     @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " should call SpotifyFollowedArtistsService")
-    void test_post_import_calls_spotify_service() {
-      // when
-      restAssuredMockMvcUtils.doPost();
-
-      // then
-      verify(artistImportService).importArtistsFromLikedReleases();
-    }
-
-    @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " return the import result")
+    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " return the import result")
     void test_post_import_returns_result() {
       // given
-      var expectedResult = List.of(ArtistDtoFactory.createDefault());
-      doReturn(expectedResult).when(artistImportService).importArtistsFromLikedReleases();
+      var request = SynchronizeArtistsRequest.builder().artistIds(Collections.emptyList()).build();
 
       // when
-      var validatableResponse = restAssuredMockMvcUtils.doPost();
+      var validatableResponse = restAssuredMockMvcUtils.doPost(request);
 
       // then
       var response = validatableResponse.extract().as(SpotifyArtistImportResponse.class);
-      assertThat(response.getArtists()).isEqualTo(expectedResult);
+      assertThat(response.getArtists()).isEmpty();
     }
   }
 
@@ -130,7 +123,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_ARTIST_IMPORT + " should call SpotifyFollowedArtistsService")
+    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " should call SpotifyFollowedArtistsService")
     void test_get_followed_calls_spotify_service() {
       // given
       var fetchTypes = List.of(ALBUMS);

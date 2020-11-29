@@ -65,7 +65,7 @@ public class ReleasesRestController {
   }
 
   @GetMapping(path = Endpoints.Rest.MY_RELEASES,
-          produces = {APPLICATION_XML_VALUE, APPLICATION_JSON_VALUE})
+              produces = {APPLICATION_XML_VALUE, APPLICATION_JSON_VALUE})
   public ResponseEntity<Page<ReleaseDto>> findReleasesOfFollowedArtists(@Valid PaginatedReleasesRequest request,
                                                                         @SortDefault(sort = {"releaseDate", "artist", "albumTitle"}, direction=ASC) Sort sort) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());

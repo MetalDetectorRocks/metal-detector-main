@@ -18,7 +18,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -77,7 +76,6 @@ class RegistrationControllerTest implements WithAssertions {
   @Spy
   private ModelMapper modelMapper;
 
-  @InjectMocks
   private RegistrationController underTest;
 
   private RestAssuredMockMvcUtils restAssuredUtils;
@@ -85,6 +83,7 @@ class RegistrationControllerTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
+    underTest = new RegistrationController(eventPublisher, userService, tokenService, modelMapper);
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.REGISTER);
     RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
 

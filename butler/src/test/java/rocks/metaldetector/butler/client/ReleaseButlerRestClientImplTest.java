@@ -2,6 +2,7 @@ package rocks.metaldetector.butler.client;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
@@ -55,7 +55,6 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   @Mock
   private ButlerConfig butlerConfig;
 
-  @InjectMocks
   private ReleaseButlerRestClientImpl underTest;
 
   @Captor
@@ -63,6 +62,11 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
 
   @Captor
   private ArgumentCaptor<HttpEntity<ButlerUpdateReleaseStateRequest>> argumentCaptorReleaseUpdate;
+
+  @BeforeEach
+  void setup() {
+    underTest = new ReleaseButlerRestClientImpl(restTemplate, butlerConfig);
+  }
 
   @AfterEach
   void tearDown() {
