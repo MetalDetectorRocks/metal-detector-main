@@ -11,12 +11,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.service.spotify.SpotifyFollowedArtistsService;
+import rocks.metaldetector.service.spotify.SpotifySynchronizationService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.SynchronizeArtistsRequest;
-import rocks.metaldetector.web.api.response.SpotifyArtistImportResponse;
-import rocks.metaldetector.web.api.response.SpotifyFollowedArtistsResponse;
+import rocks.metaldetector.web.api.response.SpotifyArtistSynchronizationResponse;
+import rocks.metaldetector.web.api.response.SpotifyFetchArtistsResponse;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +37,7 @@ import static rocks.metaldetector.web.controller.rest.SpotifySynchronizationRest
 class SpotifySynchronizationRestControllerTest implements WithAssertions {
 
   @Mock
-  private SpotifyFollowedArtistsService artistImportService;
+  private SpotifySynchronizationService spotifySynchronizationService;
 
   @InjectMocks
   private SpotifySynchronizationRestController underTest;
@@ -50,7 +50,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(artistImportService);
+    reset(spotifySynchronizationService);
   }
 
   @Nested
@@ -66,7 +66,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
 
     @Test
     @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " should return 200")
-    void test_post_import_returns_ok() {
+    void test_returns_ok() {
       // given
       var request = SynchronizeArtistsRequest.builder().artistIds(Collections.emptyList()).build();
 
@@ -78,23 +78,51 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " return the import result")
-    void test_post_import_returns_result() {
+    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " should return 400 for invalid request")
+    void test_returns_bad_request() {
+      // when
+      var request = new SynchronizeArtistsRequest();
+
+      // when
+      var validatableResponse = restAssuredMockMvcUtils.doPost(request);
+
+      // then
+      validatableResponse.statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " calls SpotifySynchronizationService")
+    void test_calls_spotify_service() {
       // given
+      var request = SynchronizeArtistsRequest.builder().artistIds(Collections.emptyList()).build();
+
+      // when
+      restAssuredMockMvcUtils.doPost(request);
+
+      // then
+      verify(spotifySynchronizationService).synchronizeArtists(request.getArtistIds());
+    }
+
+    @Test
+    @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " return the import result")
+    void test_returns_result() {
+      // given
+      var artistCount = 666;
+      doReturn(artistCount).when(spotifySynchronizationService).synchronizeArtists(any());
       var request = SynchronizeArtistsRequest.builder().artistIds(Collections.emptyList()).build();
 
       // when
       var validatableResponse = restAssuredMockMvcUtils.doPost(request);
 
       // then
-      var response = validatableResponse.extract().as(SpotifyArtistImportResponse.class);
-      assertThat(response.getArtists()).isEmpty();
+      var response = validatableResponse.extract().as(SpotifyArtistSynchronizationResponse.class);
+      assertThat(response.getArtistsCount()).isEqualTo(artistCount);
     }
   }
 
   @Nested
-  @DisplayName("Tests for getting followed artists")
-  class GetFollowedTest {
+  @DisplayName("Tests for getting not followed artists from spotify")
+  class FetchNotFollowedSpotifyArtistsTest {
 
     private RestAssuredMockMvcUtils restAssuredMockMvcUtils;
 
@@ -107,7 +135,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
 
     @Test
     @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " should return 200 for valid fetch type")
-    void test_get_followed_returns_ok() {
+    void test_returns_ok() {
       // when
       var validatableResponse = restAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, List.of(ALBUMS)));
 
@@ -117,7 +145,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
 
     @Test
     @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " should return 400 for invalid fetch type")
-    void test_get_followed_returns_bad_request() {
+    void test_returns_bad_request() {
       // when
       var validatableResponse = restAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, List.of("ARTISTS")));
 
@@ -126,8 +154,8 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " should call SpotifyFollowedArtistsService")
-    void test_get_followed_calls_spotify_service() {
+    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " should call SpotifyFollowedArtistsService")
+    void test_calls_spotify_service() {
       // given
       var fetchTypes = List.of(ALBUMS);
 
@@ -135,21 +163,21 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
       restAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, fetchTypes));
 
       // then
-      verify(artistImportService).getNewFollowedArtists(fetchTypes);
+      verify(spotifySynchronizationService).fetchNotFollowedArtists(fetchTypes);
     }
 
     @Test
     @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " return the followed artists")
-    void test_get_followed_returns_result() {
+    void test_returns_result() {
       // given
       var expectedResult = List.of(SpotifyArtistDtoFactory.createDefault());
-      doReturn(expectedResult).when(artistImportService).getNewFollowedArtists(any());
+      doReturn(expectedResult).when(spotifySynchronizationService).fetchNotFollowedArtists(any());
 
       // when
       var validatableResponse = restAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, List.of(ALBUMS)));
 
       // then
-      var response = validatableResponse.extract().as(SpotifyFollowedArtistsResponse.class);
+      var response = validatableResponse.extract().as(SpotifyFetchArtistsResponse.class);
       assertThat(response.getArtists()).isEqualTo(expectedResult);
     }
   }

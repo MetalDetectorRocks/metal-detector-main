@@ -2,8 +2,6 @@ package rocks.metaldetector.service.spotify;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import rocks.metaldetector.service.artist.ArtistDto;
-import rocks.metaldetector.service.artist.ArtistService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.spotify.facade.dto.SpotifyAlbumDto;
@@ -20,34 +18,19 @@ import static rocks.metaldetector.service.spotify.SpotifyFetchType.ALBUMS;
 
 @Service
 @AllArgsConstructor
-public class SpotifyFollowedArtistsServiceImpl implements SpotifyFollowedArtistsService {
+public class SpotifySynchronizationServiceImpl implements SpotifySynchronizationService {
 
   private final SpotifyService spotifyService;
   private final FollowArtistService followArtistService;
-  private final ArtistService artistService;
   private final SpotifyUserAuthorizationService userAuthorizationService;
 
   @Override
-  public List<ArtistDto> importArtistsFromLikedReleases() {
-    String spotifyAccessToken = userAuthorizationService.getOrRefreshToken();
-
-    List<SpotifyAlbumDto> importedAlbums = spotifyService.fetchLikedAlbums(spotifyAccessToken);
-    List<String> artistIds = importedAlbums.stream()
-        .flatMap(album -> album.getArtists().stream())
-        .map(SpotifyArtistDto::getId)
-        .distinct()
-        .collect(Collectors.toList());
-
-    List<String> newArtistsIds = artistService.findNewArtistIds(artistIds);
-    persistNewArtists(newArtistsIds);
-
-    return artistService.findAllArtistsByExternalIds(artistIds).stream()
-        .filter(artist -> !followArtistService.isCurrentUserFollowing(artist.getExternalId(), SPOTIFY))
-        .collect(Collectors.toList());
+  public int synchronizeArtists(List<String> artistsIds) {
+    return followArtistService.followSpotifyArtists(artistsIds);
   }
 
   @Override
-  public List<SpotifyArtistDto> getNewFollowedArtists(List<SpotifyFetchType> fetchTypes) {
+  public List<SpotifyArtistDto> fetchNotFollowedArtists(List<SpotifyFetchType> fetchTypes) {
     Set<SpotifyArtistDto> artistDtos = new HashSet<>();
 
     if (fetchTypes.contains(ALBUMS)) {
@@ -58,11 +41,6 @@ public class SpotifyFollowedArtistsServiceImpl implements SpotifyFollowedArtists
         .filter(artist -> !followArtistService.isCurrentUserFollowing(artist.getId(), SPOTIFY))
         .sorted(Comparator.comparing(SpotifyArtistDto::getName))
         .collect(Collectors.toList());
-  }
-
-  private void persistNewArtists(List<String> newArtistsIds) {
-    List<SpotifyArtistDto> spotifyArtistDtos = spotifyService.searchArtistsByIds(newArtistsIds);
-    artistService.persistArtists(spotifyArtistDtos);
   }
 
   private List<SpotifyArtistDto> getArtistsFromLikedAlbums() {

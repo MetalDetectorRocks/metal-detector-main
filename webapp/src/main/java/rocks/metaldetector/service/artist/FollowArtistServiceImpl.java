@@ -49,17 +49,18 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   @Override
   @Transactional
-  public void followSpotifyArtists(List<String> spotifyArtistIds) {
-    List<ArtistEntity> artistEntities = saveAndFetchArtists(spotifyArtistIds);
+  public int followSpotifyArtists(List<String> spotifyArtistIds) {
+    saveSpotifyArtists(spotifyArtistIds);
+    List<ArtistEntity> artistEntitiesToFollow = artistRepository.findAllByExternalIdIn(spotifyArtistIds);
     UserEntity currentUser = currentUserSupplier.get();
-    List<FollowActionEntity> followActionEntities = artistEntities.stream()
+    List<FollowActionEntity> followActionEntities = artistEntitiesToFollow.stream()
         .map(artistEntity -> FollowActionEntity.builder()
             .user(currentUser)
             .artist(artistEntity)
             .build())
         .collect(Collectors.toList());
 
-    followActionRepository.saveAll(followActionEntities);
+    return followActionRepository.saveAll(followActionEntities).size();
   }
 
   @Override
@@ -120,11 +121,10 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     return artistRepository.save(artistEntity);
   }
 
-  private List<ArtistEntity> saveAndFetchArtists(List<String> spotifyArtistIds) {
+  private void saveSpotifyArtists(List<String> spotifyArtistIds) {
     List<String> newArtistsIds = artistService.findNewArtistIds(spotifyArtistIds);
     List<SpotifyArtistDto> newSpotifyArtistDtos = spotifyService.searchArtistsByIds(newArtistsIds);
-    artistService.persistArtists(newSpotifyArtistDtos);
-    return artistRepository.findAllByExternalIdIn(spotifyArtistIds);
+    artistService.persistSpotifyArtists(newSpotifyArtistDtos);
   }
 
   private UserEntity fetchUserEntity(String publicUserId) {
