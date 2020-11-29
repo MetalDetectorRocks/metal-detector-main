@@ -3,6 +3,7 @@ package rocks.metaldetector.service.user;
 import org.assertj.core.api.WithAssertions;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -102,8 +102,13 @@ class UserServiceTest implements WithAssertions {
   @Spy
   private UserTransformer userTransformer;
 
-  @InjectMocks
-  private UserServiceImpl userService;
+  private UserServiceImpl underTest;
+
+  @BeforeEach
+  void setup() {
+    underTest = new UserServiceImpl(userRepository, passwordEncoder, tokenRepository, jwtsSupport, userTransformer,
+                                    tokenService, currentUserSupplier, loginAttemptService, request);
+  }
 
   @AfterEach
   void tearDown() {
@@ -124,7 +129,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.save(any(UserEntity.class))).thenReturn(expectedUserEntity);
 
       // when
-      UserDto createdUserDto = userService.createUser(givenUserDto);
+      UserDto createdUserDto = underTest.createUser(givenUserDto);
 
       // then
       assertThat(createdUserDto).isEqualTo(userTransformer.transform(expectedUserEntity));
@@ -139,7 +144,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.save(any(UserEntity.class))).thenReturn(UserEntityFactory.createUser(USERNAME, EMAIL));
 
       // when
-      userService.createUser(givenUserDto);
+      underTest.createUser(givenUserDto);
 
       // then
       verify(userRepository).save(userEntityCaptor.capture());
@@ -159,7 +164,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.save(any(UserEntity.class))).thenReturn(UserEntityFactory.createUser(USERNAME, EMAIL));
 
       // when
-      userService.createUser(userDto);
+      underTest.createUser(userDto);
 
       // then
       verify(userRepository, times(2)).existsByEmail(anyString());
@@ -184,7 +189,7 @@ class UserServiceTest implements WithAssertions {
       });
 
       // when
-      Throwable throwable = catchThrowable(() -> userService.createUser(userDto));
+      Throwable throwable = catchThrowable(() -> underTest.createUser(userDto));
 
       // then
       assertThat(throwable).isInstanceOf(UserAlreadyExistsException.class);
@@ -216,7 +221,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.save(any(UserEntity.class))).thenReturn(expectedUserEntity);
 
       // when
-      UserDto createdUserDto = userService.createAdministrator(givenUserDto);
+      UserDto createdUserDto = underTest.createAdministrator(givenUserDto);
 
       // then
       assertThat(createdUserDto).isEqualTo(userTransformer.transform(expectedUserEntity));
@@ -230,7 +235,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.save(any(UserEntity.class))).thenReturn(UserEntityFactory.createUser(USERNAME, EMAIL));
 
       // when
-      userService.createAdministrator(userDto);
+      underTest.createAdministrator(userDto);
 
       // then
       verify(userRepository, times(2)).existsByEmail(anyString());
@@ -246,7 +251,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.save(any(UserEntity.class))).thenReturn(UserEntityFactory.createUser(USERNAME, EMAIL));
 
       // when
-      userService.createAdministrator(givenUserDto);
+      underTest.createAdministrator(givenUserDto);
 
       // then
       verify(userRepository).save(userEntityCaptor.capture());
@@ -272,7 +277,7 @@ class UserServiceTest implements WithAssertions {
       when(userTransformer.transform(user)).thenReturn(UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL));
 
       // when
-      UserDto userDto = userService.getUserByPublicId(PUBLIC_ID);
+      UserDto userDto = underTest.getUserByPublicId(PUBLIC_ID);
 
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
@@ -287,7 +292,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.empty());
 
       // when
-      Throwable throwable = catchThrowable(() -> userService.getUserByPublicId(PUBLIC_ID));
+      Throwable throwable = catchThrowable(() -> underTest.getUserByPublicId(PUBLIC_ID));
 
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
@@ -306,7 +311,7 @@ class UserServiceTest implements WithAssertions {
       when(request.getHeader(anyString())).thenReturn("666");
 
       // when
-      Optional<UserDto> userDto = userService.getUserByEmailOrUsername(EMAIL);
+      Optional<UserDto> userDto = underTest.getUserByEmailOrUsername(EMAIL);
 
       // then
       verify(userRepository).findByEmail(EMAIL);
@@ -327,7 +332,7 @@ class UserServiceTest implements WithAssertions {
       when(request.getHeader(anyString())).thenReturn("666");
 
       // when
-      Optional<UserDto> userDto = userService.getUserByEmailOrUsername(USERNAME);
+      Optional<UserDto> userDto = underTest.getUserByEmailOrUsername(USERNAME);
 
       // then
       verify(userRepository).findByEmail(USERNAME);
@@ -347,7 +352,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findByUsername(NOT_EXISTING)).thenReturn(Optional.empty());
 
       // when
-      Optional<UserDto> userDto = userService.getUserByEmailOrUsername(NOT_EXISTING);
+      Optional<UserDto> userDto = underTest.getUserByEmailOrUsername(NOT_EXISTING);
 
       // then
       verify(userRepository).findByEmail(NOT_EXISTING);
@@ -363,7 +368,7 @@ class UserServiceTest implements WithAssertions {
       when(loginAttemptService.isBlocked(anyString())).thenReturn(true);
 
       // when
-      Throwable throwable = catchThrowable(() -> userService.getUserByEmailOrUsername(USERNAME));
+      Throwable throwable = catchThrowable(() -> underTest.getUserByEmailOrUsername(USERNAME));
 
       // then
       assertThat(throwable).isInstanceOf(LockedException.class);
@@ -384,7 +389,7 @@ class UserServiceTest implements WithAssertions {
       when(userTransformer.transform(user2)).thenReturn(userDto2);
 
       // when
-      List<UserDto> userDtoList = userService.getAllUsers();
+      List<UserDto> userDtoList = underTest.getAllUsers();
 
       // then
       assertThat(userDtoList).hasSize(2);
@@ -399,7 +404,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findAll()).thenReturn(Collections.emptyList());
 
       // when
-      userService.getAllUsers();
+      underTest.getAllUsers();
 
       // then
       verify(userRepository).findAll();
@@ -421,7 +426,7 @@ class UserServiceTest implements WithAssertions {
       when(userTransformer.transform(user2)).thenReturn(userDto2);
 
       // when
-      List<UserDto> userDtoList = userService.getAllActiveUsers();
+      List<UserDto> userDtoList = underTest.getAllActiveUsers();
 
       // then
       assertThat(userDtoList).hasSize(1);
@@ -435,7 +440,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findAll()).thenReturn(Collections.emptyList());
 
       // when
-      userService.getAllActiveUsers();
+      underTest.getAllActiveUsers();
 
       // then
       verify(userRepository).findAll();
@@ -454,7 +459,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findAll()).thenReturn(List.of(user1, user2, user3, user4, user5, user6));
 
       // when
-      List<UserDto> userDtoList = userService.getAllUsers();
+      List<UserDto> userDtoList = underTest.getAllUsers();
 
       // then
       assertThat(userDtoList).hasSize(6);
@@ -489,7 +494,7 @@ class UserServiceTest implements WithAssertions {
       when(userTransformer.transform(user2)).thenReturn(userDto2);
 
       // when
-      List<UserDto> userDtoList = userService.getAllUsers(PAGE, LIMIT);
+      List<UserDto> userDtoList = underTest.getAllUsers(PAGE, LIMIT);
 
       // then
       assertThat(userDtoList).hasSize(2);
@@ -521,7 +526,7 @@ class UserServiceTest implements WithAssertions {
       when(userTransformer.transform(user)).thenReturn(UserDtoFactory.createDefault());
 
       // when
-      UserDto userDto = userService.updateUser(PUBLIC_ID, userDtoForUpdate);
+      UserDto userDto = underTest.updateUser(PUBLIC_ID, userDtoForUpdate);
 
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
@@ -548,7 +553,7 @@ class UserServiceTest implements WithAssertions {
       when(userTransformer.transform(user)).thenReturn(UserDtoFactory.createDefault());
 
       // when
-      UserDto userDto = userService.updateUser(PUBLIC_ID, userDtoForUpdate);
+      UserDto userDto = underTest.updateUser(PUBLIC_ID, userDtoForUpdate);
 
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
@@ -568,7 +573,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.empty());
 
       // when
-      Throwable throwable = catchThrowable(() -> userService.updateUser(PUBLIC_ID, userDtoForUpdate));
+      Throwable throwable = catchThrowable(() -> underTest.updateUser(PUBLIC_ID, userDtoForUpdate));
 
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
@@ -590,7 +595,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
 
       // when
-      Throwable throwable = catchThrowable(() -> userService.updateUser(PUBLIC_ID, userDtoForUpdate));
+      Throwable throwable = catchThrowable(() -> underTest.updateUser(PUBLIC_ID, userDtoForUpdate));
 
       // then
       assertThat(throwable).isInstanceOf(IllegalUserActionException.class);
@@ -611,7 +616,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
 
       // when
-      Throwable throwable = catchThrowable(() -> userService.updateUser(PUBLIC_ID, userDtoForUpdate));
+      Throwable throwable = catchThrowable(() -> underTest.updateUser(PUBLIC_ID, userDtoForUpdate));
 
       // then
       assertThat(throwable).isInstanceOf(IllegalUserActionException.class);
@@ -629,7 +634,7 @@ class UserServiceTest implements WithAssertions {
       when(passwordEncoder.encode(NEW_PLAIN_PASSWORD)).thenReturn(NEW_ENCRYPTED_PASSWORD);
 
       // when
-      userService.changePassword(TOKEN, NEW_PLAIN_PASSWORD);
+      underTest.changePassword(TOKEN, NEW_PLAIN_PASSWORD);
 
       // then
       verify(userRepository).save(userEntityCaptor.capture());
@@ -646,7 +651,7 @@ class UserServiceTest implements WithAssertions {
       when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.empty());
 
       // when
-      Throwable throwable = catchThrowable(() -> userService.changePassword(TOKEN, NEW_PLAIN_PASSWORD));
+      Throwable throwable = catchThrowable(() -> underTest.changePassword(TOKEN, NEW_PLAIN_PASSWORD));
 
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
@@ -662,7 +667,7 @@ class UserServiceTest implements WithAssertions {
 
       // when
       Thread.sleep(1); // wait 1ms so that the token can expire
-      Throwable throwable = catchThrowable(() -> userService.changePassword(TOKEN, NEW_PLAIN_PASSWORD));
+      Throwable throwable = catchThrowable(() -> underTest.changePassword(TOKEN, NEW_PLAIN_PASSWORD));
 
       // then
       assertThat(throwable).isInstanceOf(TokenExpiredException.class);
@@ -682,7 +687,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
 
       // when
-      userService.deleteUser(PUBLIC_ID);
+      underTest.deleteUser(PUBLIC_ID);
 
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
@@ -696,7 +701,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.empty());
 
       // when
-      Throwable throwable = catchThrowable(() -> userService.deleteUser(PUBLIC_ID));
+      Throwable throwable = catchThrowable(() -> underTest.deleteUser(PUBLIC_ID));
 
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
@@ -719,7 +724,7 @@ class UserServiceTest implements WithAssertions {
       when(request.getHeader(anyString())).thenReturn("666");
 
       // when
-      UserDetails userDetails = userService.loadUserByUsername(USERNAME);
+      UserDetails userDetails = underTest.loadUserByUsername(USERNAME);
 
       // then
       verify(userRepository).findByEmail(USERNAME);
@@ -738,7 +743,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.empty());
 
       // when
-      Throwable throwable = catchThrowable(() -> userService.loadUserByUsername(USERNAME));
+      Throwable throwable = catchThrowable(() -> underTest.loadUserByUsername(USERNAME));
 
       // then
       verify(userRepository).findByEmail(USERNAME);
@@ -763,7 +768,7 @@ class UserServiceTest implements WithAssertions {
       when(tokenRepository.findEmailVerificationToken(TOKEN_STRING)).thenReturn(Optional.of(tokenEntity));
 
       // when
-      userService.verifyEmailToken(TOKEN_STRING);
+      underTest.verifyEmailToken(TOKEN_STRING);
 
       // then
       verify(userRepository).save(userEntityCaptor.capture());
@@ -779,7 +784,7 @@ class UserServiceTest implements WithAssertions {
       when(tokenRepository.findEmailVerificationToken(TOKEN_STRING)).thenReturn(Optional.empty());
 
       // when
-      Throwable throwable = catchThrowable(() -> userService.verifyEmailToken(TOKEN_STRING));
+      Throwable throwable = catchThrowable(() -> underTest.verifyEmailToken(TOKEN_STRING));
 
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
@@ -795,7 +800,7 @@ class UserServiceTest implements WithAssertions {
 
       // when
       Thread.sleep(1); // wait 1ms so that the token can expire
-      Throwable throwable = catchThrowable(() -> userService.verifyEmailToken(TOKEN));
+      Throwable throwable = catchThrowable(() -> underTest.verifyEmailToken(TOKEN));
 
       // then
       assertThat(throwable).isInstanceOf(TokenExpiredException.class);
@@ -817,7 +822,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.save(any())).thenReturn(userEntity);
 
       // when
-      userService.persistSuccessfulLogin(userEntity.getPublicId());
+      underTest.persistSuccessfulLogin(userEntity.getPublicId());
 
       // then
       verify(userRepository).save(userEntityCaptor.capture());
@@ -834,7 +839,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findByPublicId(any())).thenReturn(Optional.of(userEntity));
 
       // when
-      userService.persistSuccessfulLogin(userEntity.getPublicId());
+      underTest.persistSuccessfulLogin(userEntity.getPublicId());
 
       // then
       verify(userRepository).findByPublicId(userEntity.getPublicId());
@@ -848,7 +853,7 @@ class UserServiceTest implements WithAssertions {
       when(userRepository.findByPublicId(anyString())).thenReturn(Optional.empty());
 
       // when
-      userService.persistSuccessfulLogin(notExistingId);
+      underTest.persistSuccessfulLogin(notExistingId);
 
       // then
       verify(userRepository).findByPublicId(notExistingId);
