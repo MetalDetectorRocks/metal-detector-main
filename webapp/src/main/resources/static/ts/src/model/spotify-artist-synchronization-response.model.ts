@@ -1,6 +1,6 @@
 import {Artist} from "./artist.model";
 
-export interface SpotifySynchronizeArtistsResponse {
+export interface SpotifyArtistSynchronizationResponse {
 
     readonly artists: Artist[];
 
