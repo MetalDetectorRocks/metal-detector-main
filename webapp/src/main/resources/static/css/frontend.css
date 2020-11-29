@@ -144,6 +144,10 @@ footer .list-inline-item {
 }
 
 /* Spotify Synchronization */
+#artists-container {
+    min-height: 15rem;
+}
+
 .spotify-synchro-img {
     height: 7rem;
     width: 7rem;
