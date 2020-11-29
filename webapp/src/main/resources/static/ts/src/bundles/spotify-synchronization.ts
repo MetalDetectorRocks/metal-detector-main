@@ -8,6 +8,6 @@ const toastService = new ToastService();
 const loadingIndicatorService = new LoadingIndicatorService();
 const spotifyRestClient = new SpotifyRestClient(toastService);
 const urlService = new UrlService();
-const settingsRenderService = new SpotifySynchronizationRenderService(spotifyRestClient, loadingIndicatorService, toastService, urlService);
+const spotifySynchronizationRenderService = new SpotifySynchronizationRenderService(spotifyRestClient, loadingIndicatorService, toastService, urlService);
 
-settingsRenderService.init();
+spotifySynchronizationRenderService.init();

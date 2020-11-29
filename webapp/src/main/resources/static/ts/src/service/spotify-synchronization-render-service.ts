@@ -44,7 +44,7 @@ export class SpotifySynchronizationRenderService {
     private addEventListener(): void {
         this.connectWithSpotifyButton.addEventListener("click", this.connectWithSpotify.bind(this));
         this.synchronizeArtistsButton.addEventListener("click", this.synchronizeArtists.bind(this));
-        document.getElementById("fetch-from-liked-releases")!.addEventListener("click", this.fetchSpotifyArtists.bind(this));
+        document.getElementById("fetch-from-saved-releases")!.addEventListener("click", this.fetchSpotifyArtists.bind(this));
         document.getElementById("select-all-link")!.addEventListener("click", this.selectOrDeselectAllArtists.bind(this, true));
         document.getElementById("deselect-all-link")!.addEventListener("click", this.selectOrDeselectAllArtists.bind(this, false));
     }
