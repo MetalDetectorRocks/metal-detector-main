@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require('webpack');
 
 module.exports = {
     mode: "development",
@@ -9,7 +10,11 @@ module.exports = {
         homepage: "./src/bundles/homepage.ts",
         spotify_synchronization: "./src/bundles/spotify-synchronization.ts"
     },
-    watch: true,
+    watchOptions: {
+        aggregateTimeout: 200,
+        poll: 1000,
+        ignored: 'node_modules/**'
+    },
     output: {
         filename: "[name].bundle.js",
         path: path.resolve(__dirname, "dist"),
