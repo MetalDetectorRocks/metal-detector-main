@@ -128,13 +128,13 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
 
     @BeforeEach
     void setup() {
-      restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS);
+      restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_NOT_FOLLOWED_ARTISTS);
       RestAssuredMockMvc.standaloneSetup(underTest,
                                          springSecurity((request, response, chain) -> chain.doFilter(request, response)));
     }
 
     @Test
-    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " should return 200 for valid fetch type")
+    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_NOT_FOLLOWED_ARTISTS + " should return 200 for valid fetch type")
     void test_returns_ok() {
       // when
       var validatableResponse = restAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, List.of(ALBUMS)));
@@ -144,7 +144,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " should return 400 for invalid fetch type")
+    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_NOT_FOLLOWED_ARTISTS + " should return 400 for invalid fetch type")
     void test_returns_bad_request() {
       // when
       var validatableResponse = restAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, List.of("ARTISTS")));
@@ -154,7 +154,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " should call SpotifyFollowedArtistsService")
+    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_NOT_FOLLOWED_ARTISTS + " should call SpotifyFollowedArtistsService")
     void test_calls_spotify_service() {
       // given
       var fetchTypes = List.of(ALBUMS);
@@ -167,7 +167,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS + " return the followed artists")
+    @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_NOT_FOLLOWED_ARTISTS + " return the followed artists")
     void test_returns_result() {
       // given
       var expectedResult = List.of(SpotifyArtistDtoFactory.createDefault());

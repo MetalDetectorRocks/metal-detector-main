@@ -3,6 +3,7 @@
     --dark-background-color: #181818;
     --grey-border-color: #404040;
     --grey-border-color-highlight: #5a5a5a;
+    --grey-hover-color: #323232;
     --blue-menu-item-color: #1d7097;
     --dark-field-background-color: #212121;
     --light-font-color: #adafae;
@@ -252,6 +253,11 @@ footer .list-inline-item {
     border: 1px solid var(--grey-border-color);
 }
 
+.dropdown-item {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
 .dropdown-item:hover {
-    background-color: var(--blue-menu-item-color);
+    background-color: var(--grey-hover-color);
 }

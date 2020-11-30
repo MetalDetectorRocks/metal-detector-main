@@ -35,7 +35,7 @@ public class SpotifySynchronizationRestController {
     return ResponseEntity.ok(new SpotifyArtistSynchronizationResponse(artistsCount));
   }
 
-  @GetMapping(path = Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS,
+  @GetMapping(path = Endpoints.Rest.SPOTIFY_NOT_FOLLOWED_ARTISTS,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<SpotifyFetchArtistsResponse> fetchNotFollowedSpotifyArtists(@RequestParam(value = FETCH_TYPES_PARAM) @NotEmpty List<SpotifyFetchType> fetchTypes) {
     List<SpotifyArtistDto> followedArtists = spotifySynchronizationService.fetchNotFollowedArtists(fetchTypes);

@@ -4,10 +4,10 @@ import {UrlService} from "./url-service";
 import {LoadingIndicatorService} from "./loading-indicator-service";
 import {SpotifyArtist} from "../model/spotify-artist.model";
 import {AlertService} from "./alert-service";
+import {Endpoints} from "../config/endpoints";
 
 export class SpotifySynchronizationRenderService {
 
-    private static readonly SPOTIFY_CALLBACK_PATH_NAME = "spotify-callback";
     private static readonly BUTTON_BAR_DIV_NAME = "button-bar";
     private static readonly ARTISTS_SELECTION_BAR_ID = "artists-selection-bar";
     private static readonly ARTISTS_CONTAINER_ID = "artists-container";
@@ -47,25 +47,23 @@ export class SpotifySynchronizationRenderService {
     private addEventListener(): void {
         this.connectWithSpotifyButton.addEventListener("click", this.onConnectWithSpotifyClicked.bind(this));
         this.synchronizeArtistsButton.addEventListener("click", this.onSynchronizeArtistsClicked.bind(this));
-        document.getElementById("fetch-from-saved-releases")!.addEventListener("click", this.onFetchSpotifyArtistsClicked.bind(this));
+        document.getElementById("fetch-from-saved-albums")!.addEventListener("click", this.onFetchSpotifyArtistsClicked.bind(this));
         document.getElementById("select-all-link")!.addEventListener("click", this.onSelectOrDeselectAllArtistsClicked.bind(this, true));
         document.getElementById("deselect-all-link")!.addEventListener("click", this.onSelectOrDeselectAllArtistsClicked.bind(this, false));
     }
 
     public init(): void {
-        this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.BUTTON_BAR_DIV_NAME);
         const path = this.urlService.getPathFromUrl();
-        if (path.endsWith(SpotifySynchronizationRenderService.SPOTIFY_CALLBACK_PATH_NAME)) {
+        if (path.endsWith(Endpoints.SPOTIFY_CALLBACK)) {
+            this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.BUTTON_BAR_DIV_NAME);
             const state = this.urlService.getParameterFromUrl("state")
             const code = this.urlService.getParameterFromUrl("code")
             this.spotifyRestClient.fetchInitialToken(state, code)
                 .then(() => this.toastService.createInfoToast("Successfully connected with Spotify!"))
-                .then(() => this.initButtonBar())
-                .finally(() => this.loadingIndicatorService.hideLoadingIndicator(SpotifySynchronizationRenderService.BUTTON_BAR_DIV_NAME));
+                .then(() => window.location.href = Endpoints.SPOTIFY_SYNCHRONIZATION)
         }
         else {
             this.initButtonBar();
-            this.loadingIndicatorService.hideLoadingIndicator(SpotifySynchronizationRenderService.BUTTON_BAR_DIV_NAME);
         }
     }
 
@@ -89,8 +87,8 @@ export class SpotifySynchronizationRenderService {
     private onFetchSpotifyArtistsClicked(): void {
         this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID);
         this.clearArtistsContainer();
-        const followedArtists = this.spotifyRestClient.fetchFollowedArtists();
-        followedArtists.then(response => {
+        const notFollowedArtists = this.spotifyRestClient.fetchNotFollowedArtists();
+        notFollowedArtists.then(response => {
             response.artists.forEach(artist => {
                 const artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
                 const artistTemplateNode = document.importNode(artistTemplateElement.content, true);
