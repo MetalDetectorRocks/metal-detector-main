@@ -13,7 +13,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
@@ -32,6 +31,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -147,9 +147,25 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("spotifyAuthorizationRepository is called to save authorization entity")
+    @DisplayName("spotifyUserAuthorizationRepository is called")
+    void spotify_user_authorization_repository_is_called() {
+      // given
+      Long userId = 666L;
+      doReturn(userId).when(userMock).getId();
+      doReturn(userMock).when(currentUserSupplier).get();
+
+      // when
+      underTest.prepareAuthorization();
+
+      // then
+      verify(authorizationRepository).findByUserId(userId);
+    }
+
+    @Test
+    @DisplayName("spotifyAuthorizationRepository is called to save authorization entity if no entity already exists")
     void test_authorization_repository_is_called() {
       // given
+      doReturn(Optional.empty()).when(authorizationRepository).findByUserId(anyLong());
       ArgumentCaptor<SpotifyAuthorizationEntity> argumentCaptor = ArgumentCaptor.forClass(SpotifyAuthorizationEntity.class);
 
       // when
@@ -162,6 +178,23 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       assertThat(authorizationEntity.getState()).isNotNull();
       assertThat(authorizationEntity.getState()).hasSize(STATE_SIZE);
       assertThat(authorizationEntity.getUser()).isEqualTo(userMock);
+    }
+
+    @Test
+    @DisplayName("state from existing authorization entity is used")
+    void test_state_from_existing_authorization_entity_is_used() {
+      // given
+      var existingState = "spotify-state";
+      SpotifyAuthorizationEntity authorizationMock = mock(SpotifyAuthorizationEntity.class);
+      doReturn(existingState).when(authorizationMock).getState();
+      doReturn(Optional.of(authorizationMock)).when(authorizationRepository).findByUserId(anyLong());
+
+      // when
+      var result = underTest.prepareAuthorization();
+
+      // then
+      verify(authorizationMock).getState();
+      assertThat(result).endsWith(existingState);
     }
 
     @Test
@@ -250,7 +283,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     @DisplayName("Exception is thrown when state is null")
     void test_state_null() {
       // given
-      var authorizationMock = Mockito.mock(SpotifyAuthorizationEntity.class);
+      var authorizationMock = mock(SpotifyAuthorizationEntity.class);
       doReturn(null).when(authorizationMock).getState();
       doReturn(Optional.of(authorizationMock)).when(authorizationRepository).findByUserId(anyLong());
 
@@ -266,7 +299,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     @DisplayName("Exception is thrown when state does not match")
     void test_state_not_matching() {
       // given
-      var authorizationMock = Mockito.mock(SpotifyAuthorizationEntity.class);
+      var authorizationMock = mock(SpotifyAuthorizationEntity.class);
       doReturn("unknown-state").when(authorizationMock).getState();
       doReturn(Optional.of(authorizationMock)).when(authorizationRepository).findByUserId(anyLong());
 
