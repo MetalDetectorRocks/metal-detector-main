@@ -1,16 +1,20 @@
-import moment from "moment";
+import relativeTime from "dayjs/plugin/relativeTime";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import dayjs from "dayjs";
 
 export class DateFormatService {
 
     constructor() {
+        dayjs.extend(relativeTime);
+        dayjs.extend(advancedFormat);
     }
 
     public formatRelative(dateStr: string): string {
-        return moment(dateStr).fromNow();
+        return dayjs(dateStr).fromNow();
     }
 
     public format(dateStr: string, dateFormat: DateFormat): string {
-        return moment(dateStr).format(dateFormat);
+        return dayjs(dateStr).format(dateFormat);
     }
 }
 
