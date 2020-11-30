@@ -60,10 +60,8 @@ export class SpotifySynchronizationRenderService {
             const code = this.urlService.getParameterFromUrl("code")
             this.spotifyRestClient.fetchInitialToken(state, code)
                 .then(() => this.toastService.createInfoToast("Successfully connected with Spotify!"))
-                .then(() => {
-                    this.initButtonBar();
-                    this.loadingIndicatorService.hideLoadingIndicator(SpotifySynchronizationRenderService.BUTTON_BAR_DIV_NAME);
-                });
+                .then(() => this.initButtonBar())
+                .finally(() => this.loadingIndicatorService.hideLoadingIndicator(SpotifySynchronizationRenderService.BUTTON_BAR_DIV_NAME));
         }
         else {
             this.initButtonBar();
