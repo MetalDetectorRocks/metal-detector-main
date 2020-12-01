@@ -3,7 +3,6 @@ package rocks.metaldetector.web.controller.rest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +23,7 @@ import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
-import rocks.metaldetector.web.transformer.SortingTransformer;
+import rocks.metaldetector.web.transformer.DetectorSortTransformer;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -42,7 +41,7 @@ public class ReleasesRestController {
 
   private final ReleaseService releaseService;
   private final FollowArtistService followArtistService;
-  private final SortingTransformer sortingTransformer;
+  private final DetectorSortTransformer sortTransformer;
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   @GetMapping(path = Endpoints.Rest.ALL_RELEASES,
@@ -58,7 +57,7 @@ public class ReleasesRestController {
   public ResponseEntity<Page<ReleaseDto>> findReleases(@Valid PaginatedReleasesRequest request,
                                                        @SortDefault(sort = {"releaseDate", "artist", "albumTitle"}, direction=ASC) Sort sort) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
-    var sorting = sortingTransformer.transform(sort);
+    var sorting = sortTransformer.transform(sort);
     var pageRequest = new PageRequest(request.getPage(), request.getSize(), sorting);
     Page<ReleaseDto> releasePage = releaseService.findReleases(emptyList(), timeRange, pageRequest);
     return ResponseEntity.ok(releasePage);
@@ -69,7 +68,7 @@ public class ReleasesRestController {
   public ResponseEntity<Page<ReleaseDto>> findReleasesOfFollowedArtists(@Valid PaginatedReleasesRequest request,
                                                                         @SortDefault(sort = {"releaseDate", "artist", "albumTitle"}, direction=ASC) Sort sort) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
-    var sorting = sortingTransformer.transform(sort);
+    var sorting = sortTransformer.transform(sort);
     var pageRequest = new PageRequest(request.getPage(), request.getSize(), sorting);
     var followedArtists = followArtistService.getFollowedArtistsOfCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
     Page<ReleaseDto> releasePage = releaseService.findReleases(followedArtists, timeRange, pageRequest);

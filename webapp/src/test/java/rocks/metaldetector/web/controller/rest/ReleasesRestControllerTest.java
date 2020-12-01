@@ -39,7 +39,7 @@ import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
-import rocks.metaldetector.web.transformer.SortingTransformer;
+import rocks.metaldetector.web.transformer.DetectorSortTransformer;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -69,13 +69,13 @@ class ReleasesRestControllerTest implements WithAssertions {
   private FollowArtistService followArtistService;
 
   @Mock
-  private SortingTransformer sortingTransformer;
+  private DetectorSortTransformer sortTransformer;
 
   private ReleasesRestController underTest;
 
   @BeforeEach
   void setUp() {
-    underTest = new ReleasesRestController(releasesService, followArtistService, sortingTransformer);
+    underTest = new ReleasesRestController(releasesService, followArtistService, sortTransformer);
     StandaloneMockMvcBuilder mockMvcBuilder = MockMvcBuilders.standaloneSetup(underTest, RestExceptionsHandler.class)
         .setCustomArgumentResolvers(new SortHandlerMethodArgumentResolver());
     RestAssuredMockMvc.standaloneSetup(mockMvcBuilder);
@@ -83,7 +83,7 @@ class ReleasesRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(releasesService, followArtistService, sortingTransformer);
+    reset(releasesService, followArtistService, sortTransformer);
   }
 
   @Nested
@@ -201,7 +201,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet(requestMap);
 
       // then
-      verify(sortingTransformer).transform(Sort.by(Sort.Direction.ASC, "artist"));
+      verify(sortTransformer).transform(Sort.by(Sort.Direction.ASC, "artist"));
     }
 
     @Test
@@ -211,7 +211,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet();
 
       // then
-      verify(sortingTransformer).transform(Sort.by(Sort.Direction.ASC, "releaseDate", "artist", "albumTitle"));
+      verify(sortTransformer).transform(Sort.by(Sort.Direction.ASC, "releaseDate", "artist", "albumTitle"));
     }
 
     @Test
@@ -220,7 +220,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       // given
       var sorting = new DetectorSort(List.of(new DetectorSort.Order(DetectorSort.Direction.ASC, "artist")));
       var expectedPageRequest = new PageRequest(1, 40, sorting);
-      doReturn(sorting).when(sortingTransformer).transform(any());
+      doReturn(sorting).when(sortTransformer).transform(any());
 
       // when
       restAssuredUtils.doGet();
@@ -343,7 +343,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet(requestMap);
 
       // then
-      verify(sortingTransformer).transform(Sort.by(Sort.Direction.ASC, "artist"));
+      verify(sortTransformer).transform(Sort.by(Sort.Direction.ASC, "artist"));
     }
 
     @Test
@@ -353,7 +353,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet();
 
       // then
-      verify(sortingTransformer).transform(Sort.by(Sort.Direction.ASC, "releaseDate", "artist", "albumTitle"));
+      verify(sortTransformer).transform(Sort.by(Sort.Direction.ASC, "releaseDate", "artist", "albumTitle"));
     }
 
     @Test
@@ -362,7 +362,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       // given
       var sorting = new DetectorSort(List.of(new DetectorSort.Order(DetectorSort.Direction.ASC, "artist")));
       var expectedPageRequest = new PageRequest(1, 40, sorting);
-      doReturn(sorting).when(sortingTransformer).transform(any());
+      doReturn(sorting).when(sortTransformer).transform(any());
 
       // when
       restAssuredUtils.doGet();

@@ -12,7 +12,7 @@ import static rocks.metaldetector.support.DetectorSort.Direction.ASC;
 import static rocks.metaldetector.support.DetectorSort.Direction.DESC;
 
 @Component
-public class SortingTransformer {
+public class DetectorSortTransformer {
 
   public DetectorSort transform(Sort sort) {
     return new DetectorSort(transformOrders(sort.get()));

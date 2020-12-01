@@ -13,7 +13,7 @@ import static rocks.metaldetector.support.DetectorSort.Direction.DESC;
 
 class DetectorSortTransformerTest implements WithAssertions {
 
-  private final SortingTransformer underTest = new SortingTransformer();
+  private final DetectorSortTransformer underTest = new DetectorSortTransformer();
 
   @Test
   @DisplayName("Sort is transformed to DetectorSort")
