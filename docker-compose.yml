@@ -46,6 +46,13 @@ services:
       ROCKS_METALDETECTOR_AUTHENTICATION_ENABLED: 'false'
     networks:
       - butler-network
+    volumes:
+      - type: volume
+        source: butler-image-volume
+        target: /app/images
+      - type: volume
+        source: butler-logs-volume
+        target: /app/logs
     ports:
       - 8095:8080
     restart: on-failure:3
