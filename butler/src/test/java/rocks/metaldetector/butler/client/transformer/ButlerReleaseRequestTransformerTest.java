@@ -7,16 +7,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
+import rocks.metaldetector.support.DetectorSort;
 import rocks.metaldetector.support.PageRequest;
-import rocks.metaldetector.support.Sorting;
 import rocks.metaldetector.support.TimeRange;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static rocks.metaldetector.support.Sorting.Direction.ASC;
-import static rocks.metaldetector.support.Sorting.Direction.DESC;
+import static rocks.metaldetector.support.DetectorSort.Direction.ASC;
+import static rocks.metaldetector.support.DetectorSort.Direction.DESC;
 
 class ButlerReleaseRequestTransformerTest implements WithAssertions {
 
@@ -61,10 +61,10 @@ class ButlerReleaseRequestTransformerTest implements WithAssertions {
   @ParameterizedTest
   @MethodSource("sortingProvider")
   @DisplayName("sorting is transformed")
-  void test_sorting_is_transformed(Sorting sorting, String expectedSortingString) {
+  void test_sorting_is_transformed(DetectorSort sort, String expectedSortingString) {
     // given
     TimeRange timeRange = new TimeRange(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 1));
-    PageRequest pageRequest = new PageRequest(1, 10, sorting);
+    PageRequest pageRequest = new PageRequest(1, 10, sort);
 
     // when
     var result = underTest.transform(null, timeRange, pageRequest);
@@ -75,10 +75,10 @@ class ButlerReleaseRequestTransformerTest implements WithAssertions {
 
   private static Stream<Arguments> sortingProvider() {
     return Stream.of(
-        Arguments.of(new Sorting(ASC, List.of("artist", "releaseDate")), "sort=artist,ASC&sort=releaseDate,ASC"),
-        Arguments.of(new Sorting(List.of(new Sorting.Order(DESC, "albumTitle"),
-                                         new Sorting.Order(ASC, "artist"),
-                                         new Sorting.Order(ASC, "releaseDate"))), "sort=albumTitle,DESC&sort=artist,ASC&sort=releaseDate,ASC")
+        Arguments.of(new DetectorSort(ASC, List.of("artist", "releaseDate")), "sort=artist,ASC&sort=releaseDate,ASC"),
+        Arguments.of(new DetectorSort(List.of(new DetectorSort.Order(DESC, "albumTitle"),
+                                              new DetectorSort.Order(ASC, "artist"),
+                                              new DetectorSort.Order(ASC, "releaseDate"))), "sort=albumTitle,DESC&sort=artist,ASC&sort=releaseDate,ASC")
     );
   }
 }

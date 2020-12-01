@@ -220,8 +220,7 @@ class RegistrationControllerTest implements WithAssertions {
     @DisplayName("Register a new user account with an invalid request dto should fail")
     void register_new_user_account_with_invalid_request_dto_should_fail(RegisterUserRequest request, int expectedErrorCount, String[] incorrectFieldNames) {
       // when
-      var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {
-      }), ContentType.HTML);
+      var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);
 
       // then
       validatableResponse

@@ -8,10 +8,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.facade.ReleaseService;
+import rocks.metaldetector.support.DetectorSort;
 import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.Pagination;
-import rocks.metaldetector.support.Sorting;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
@@ -27,8 +27,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.TIME_RANGE_MONTHS;
-import static rocks.metaldetector.support.Sorting.Direction.ASC;
-import static rocks.metaldetector.support.Sorting.Direction.DESC;
+import static rocks.metaldetector.support.DetectorSort.Direction.ASC;
+import static rocks.metaldetector.support.DetectorSort.Direction.DESC;
 
 @ExtendWith(MockitoExtension.class)
 class ReleaseCollectorTest implements WithAssertions {
@@ -84,7 +84,7 @@ class ReleaseCollectorTest implements WithAssertions {
   @DisplayName("collecting upcoming releases calls releaseService with correct page request and sorting")
   void test_upcoming_releases_calls_release_service_with_page_request() {
     // given
-    var sorting = new Sorting(ASC, List.of("releaseDate", "artist", "albumTitle"));
+    var sorting = new DetectorSort(ASC, List.of("releaseDate", "artist", "albumTitle"));
     var expectedPageRequest = new PageRequest(1, RESULT_LIMIT, sorting);
     var artists = List.of(ArtistDtoFactory.withName("A"));
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
@@ -156,10 +156,10 @@ class ReleaseCollectorTest implements WithAssertions {
   @DisplayName("collecting recent releases calls releaseService with correct page request and sorting")
   void test_recent_releases_calls_release_service_with_page_request() {
     // given
-    var sortingOrders = List.of(new Sorting.Order(DESC, "releaseDate"),
-                                new Sorting.Order(ASC, "artist"),
-                                new Sorting.Order(ASC, "albumTitle"));
-    var expectedSorting = new Sorting(sortingOrders);
+    var sortingOrders = List.of(new DetectorSort.Order(DESC, "releaseDate"),
+                                new DetectorSort.Order(ASC, "artist"),
+                                new DetectorSort.Order(ASC, "albumTitle"));
+    var expectedSorting = new DetectorSort(sortingOrders);
     var expectedPageRequest = new PageRequest(1, RESULT_LIMIT, expectedSorting);
     var artists = List.of(ArtistDtoFactory.withName("A"));
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());

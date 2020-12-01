@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Sorting {
+public class DetectorSort {
 
   private List<Order> orders;
 
-  public Sorting(Direction direction, List<String> properties) {
+  public DetectorSort(Direction direction, List<String> properties) {
     this.orders = properties.stream()
         .map(property -> new Order(direction, property))
         .collect(Collectors.toList());

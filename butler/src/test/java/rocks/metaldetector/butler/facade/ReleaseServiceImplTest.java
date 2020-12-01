@@ -23,10 +23,10 @@ import rocks.metaldetector.butler.client.transformer.ButlerReleaseRequestTransfo
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
+import rocks.metaldetector.support.DetectorSort;
 import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.Pagination;
-import rocks.metaldetector.support.Sorting;
 import rocks.metaldetector.support.TimeRange;
 
 import java.time.LocalDate;
@@ -131,7 +131,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       // given
       Iterable<String> artists = List.of("A", "B", "C");
       TimeRange timeRange = new TimeRange(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31));
-      PageRequest pageRequest = new PageRequest(10, 1, new Sorting());
+      PageRequest pageRequest = new PageRequest(10, 1, new DetectorSort());
 
       // when
       underTest.findReleases(artists, timeRange, pageRequest);

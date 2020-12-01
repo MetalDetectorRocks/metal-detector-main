@@ -219,8 +219,7 @@ class ResetPasswordControllerTest implements WithAssertions {
   @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with invalid change password request should fail")
   void reset_password_with_invalid_request_should_fail(ChangePasswordRequest request) {
     // when
-    var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {
-    }), ContentType.HTML);
+    var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);
 
     // then
     validatableResponse
@@ -235,8 +234,7 @@ class ResetPasswordControllerTest implements WithAssertions {
   @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with invalid change password request should not call anything")
   void reset_password_with_invalid_request_should_not_call_service_services(ChangePasswordRequest request) {
     // when
-    restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {
-    }), ContentType.HTML);
+    restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);
 
     // then
     verifyNoInteractions(tokenService, userService);

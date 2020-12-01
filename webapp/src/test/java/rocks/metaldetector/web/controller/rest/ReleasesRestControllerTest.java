@@ -25,11 +25,11 @@ import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
+import rocks.metaldetector.support.DetectorSort;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.Pagination;
-import rocks.metaldetector.support.Sorting;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.testutil.DtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ImportJobResultDtoFactory;
@@ -218,7 +218,7 @@ class ReleasesRestControllerTest implements WithAssertions {
     @DisplayName("Sorting is passed to release service")
     void should_call_release_service_with_sorting() {
       // given
-      var sorting = new Sorting(List.of(new Sorting.Order(Sorting.Direction.ASC, "artist")));
+      var sorting = new DetectorSort(List.of(new DetectorSort.Order(DetectorSort.Direction.ASC, "artist")));
       var expectedPageRequest = new PageRequest(1, 40, sorting);
       doReturn(sorting).when(sortingTransformer).transform(any());
 
@@ -360,7 +360,7 @@ class ReleasesRestControllerTest implements WithAssertions {
     @DisplayName("Sorting is passed to release service")
     void should_call_release_service_with_sorting() {
       // given
-      var sorting = new Sorting(List.of(new Sorting.Order(Sorting.Direction.ASC, "artist")));
+      var sorting = new DetectorSort(List.of(new DetectorSort.Order(DetectorSort.Direction.ASC, "artist")));
       var expectedPageRequest = new PageRequest(1, 40, sorting);
       doReturn(sorting).when(sortingTransformer).transform(any());
 
