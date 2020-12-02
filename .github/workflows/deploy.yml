@@ -59,6 +59,7 @@ jobs:
 
       - name: Push image to Heroku Registry
         run: |
+          docker pull metaldetector/metal-detector
           docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
           docker tag metaldetector/metal-detector registry.heroku.com/${{ secrets.HEROKU_PREVIEW_APP_NAME }}/web
           docker push registry.heroku.com/${{ secrets.HEROKU_PREVIEW_APP_NAME }}/web
