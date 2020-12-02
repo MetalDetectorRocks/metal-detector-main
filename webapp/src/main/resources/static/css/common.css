@@ -184,3 +184,10 @@
   from {bottom: 30px; opacity: 1;}
   to {bottom: 0; opacity: 0;}
 }
+
+/* Sticky */
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
