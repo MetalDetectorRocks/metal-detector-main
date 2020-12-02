@@ -8,18 +8,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.spotify.SpotifyFetchType;
-import rocks.metaldetector.service.spotify.SpotifyFollowedArtistsService;
+import rocks.metaldetector.service.spotify.SpotifySynchronizationService;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.api.request.SynchronizeArtistsRequest;
-import rocks.metaldetector.web.api.response.SpotifyArtistImportResponse;
-import rocks.metaldetector.web.api.response.SpotifyFollowedArtistsResponse;
+import rocks.metaldetector.web.api.response.SpotifyArtistSynchronizationResponse;
+import rocks.metaldetector.web.api.response.SpotifyFetchArtistsResponse;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -28,19 +26,19 @@ public class SpotifySynchronizationRestController {
 
   static final String FETCH_TYPES_PARAM = "fetchTypes";
 
-  private final SpotifyFollowedArtistsService spotifyFollowedArtistsService;
+  private final SpotifySynchronizationService spotifySynchronizationService;
 
   @PostMapping(path = Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION,
                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<SpotifyArtistImportResponse> synchronizeArtists(@Valid @RequestBody SynchronizeArtistsRequest request) {
-    List<ArtistDto> artists = Collections.emptyList(); // ToDo DanielW: Synchronize artists
-    return ResponseEntity.ok(new SpotifyArtistImportResponse(artists));
+  public ResponseEntity<SpotifyArtistSynchronizationResponse> synchronizeArtists(@Valid @RequestBody SynchronizeArtistsRequest request) {
+    int artistsCount = spotifySynchronizationService.synchronizeArtists(request.getArtistIds());
+    return ResponseEntity.ok(new SpotifyArtistSynchronizationResponse(artistsCount));
   }
 
-  @GetMapping(path = Endpoints.Rest.SPOTIFY_FOLLOWED_ARTISTS,
+  @GetMapping(path = Endpoints.Rest.SPOTIFY_SAVED_ARTISTS,
               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-  public ResponseEntity<SpotifyFollowedArtistsResponse> getFollowedArtists(@RequestParam(value = FETCH_TYPES_PARAM) @NotEmpty List<SpotifyFetchType> fetchTypes) {
-    List<SpotifyArtistDto> followedArtists = spotifyFollowedArtistsService.getNewFollowedArtists(fetchTypes);
-    return ResponseEntity.ok(new SpotifyFollowedArtistsResponse(followedArtists));
+  public ResponseEntity<SpotifyFetchArtistsResponse> fetchSavedSpotifyArtists(@RequestParam(value = FETCH_TYPES_PARAM) @NotEmpty List<SpotifyFetchType> fetchTypes) {
+    List<SpotifyArtistDto> savedArtists = spotifySynchronizationService.fetchSavedArtists(fetchTypes);
+    return ResponseEntity.ok(new SpotifyFetchArtistsResponse(savedArtists));
   }
 }

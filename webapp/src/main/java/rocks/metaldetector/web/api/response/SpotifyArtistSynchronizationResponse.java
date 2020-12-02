@@ -4,15 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
-
-import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SpotifyFollowedArtistsResponse {
+public class SpotifyArtistSynchronizationResponse {
 
-  private List<SpotifyArtistDto> artists;
+  private int artistsCount;
 }

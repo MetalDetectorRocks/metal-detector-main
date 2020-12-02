@@ -40,7 +40,7 @@ public class ArtistServiceImpl implements ArtistService {
   }
 
   @Override
-  public void persistArtists(List<SpotifyArtistDto> spotifyArtistDtos) {
+  public void persistSpotifyArtists(List<SpotifyArtistDto> spotifyArtistDtos) {
     List<ArtistEntity> artistEntities = spotifyArtistDtos.stream()
         .map(artistDto -> new ArtistEntity(artistDto.getId(), artistDto.getName(), artistDto.getImageUrl(), SPOTIFY))
         .collect(Collectors.toList());

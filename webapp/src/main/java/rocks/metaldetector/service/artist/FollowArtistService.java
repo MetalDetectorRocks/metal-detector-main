@@ -8,7 +8,7 @@ public interface FollowArtistService {
 
   void follow(String externalArtistId, ArtistSource source);
 
-  void followSpotifyArtists(List<String> spotifyArtistIds);
+  int followSpotifyArtists(List<String> spotifyArtistIds);
 
   void unfollow(String externalArtistId, ArtistSource source);
 

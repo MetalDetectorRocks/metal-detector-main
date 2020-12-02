@@ -41,16 +41,15 @@
                         <span class="material-icons">check_circle</span> Connected with Spotify
                     </button>
 
-                    <!-- ToDo DanielW: Style the menu popup -->
                     <div class="btn-group" role="group" aria-label="Fetch artists from Spotify">
                         <div class="btn-group" role="group">
                             <button type="button" class="btn btn-outline-success mr-2 btn-lg dropdown-toggle invisible" id="fetch-artists-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="material-icons">get_app</span> Fetch artists
                             </button>
                             <div class="dropdown-menu" aria-labelledby="fetch-artists-button">
-                                <a class="dropdown-item" href="#" id="fetch-from-liked-artists">From liked artists</a>
-                                <a class="dropdown-item" href="#" id="fetch-from-liked-releases">From liked releases</a>
-                                <a class="dropdown-item" href="#" id="fetch-from-both">From both</a>
+                                <div class="dropdown-item pointer" id="fetch-from-saved-artists">From saved artists</div>
+                                <div class="dropdown-item pointer" id="fetch-from-saved-albums">From saved albums</div>
+                                <div class="dropdown-item pointer" id="fetch-from-both">From both</div>
                             </div>
                         </div>
                     </div>
