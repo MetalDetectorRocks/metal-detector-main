@@ -15,7 +15,6 @@ public class ButlerReleaseRequestTransformer {
             .artists(artists)
             .dateFrom(timeRange.getDateFrom())
             .dateTo(timeRange.getDateTo())
-            .sorting(pageRequest != null ? pageRequest.getSort() != null ? pageRequest.getSort().toString() : "" : "")
             .build();
   }
 }

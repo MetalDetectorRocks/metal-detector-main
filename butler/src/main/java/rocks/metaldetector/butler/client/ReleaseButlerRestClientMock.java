@@ -35,7 +35,7 @@ public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
   }
 
   @Override
-  public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {
+  public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request, String sort) {
     return loadReleasesFromFile();
   }
 

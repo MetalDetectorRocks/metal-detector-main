@@ -131,7 +131,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       // given
       Iterable<String> artists = List.of("A", "B", "C");
       TimeRange timeRange = new TimeRange(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31));
-      PageRequest pageRequest = new PageRequest(10, 1, new DetectorSort());
+      PageRequest pageRequest = new PageRequest(10, 1, null);
 
       // when
       underTest.findReleases(artists, timeRange, pageRequest);
@@ -141,8 +141,8 @@ class ReleaseServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should pass transformed arguments to butler client")
-    void Should_call_butler_client() {
+    @DisplayName("Should pass transformed request to butler client")
+    void should_call_butler_client_with_request() {
       // given
       ButlerReleasesRequest request = ButlerReleaseRequestFactory.createDefault();
       when(releaseRequestTransformer.transform(any(), any(), any())).thenReturn(request);
@@ -151,7 +151,21 @@ class ReleaseServiceImplTest implements WithAssertions {
       underTest.findReleases(null, null, null);
 
       // then
-      verify(butlerClient).queryReleases(eq(request));
+      verify(butlerClient).queryReleases(eq(request), any());
+    }
+
+    @Test
+    @DisplayName("Should pass transformed sort parameter to butler client")
+    void should_call_butler_client_with_sort() {
+      // given
+      PageRequest pageRequest = new PageRequest(0, 0, new DetectorSort(DetectorSort.Direction.ASC, List.of("artist")));
+      var expectedSorting = "sort=artist,ASC";
+
+      // when
+      underTest.findReleases(null, null, pageRequest);
+
+      // then
+      verify(butlerClient).queryReleases(any(), eq(expectedSorting));
     }
 
     @Test
@@ -160,7 +174,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       // given
       ButlerReleasesResponse response = ButlerReleasesResponseFactory.createDefault();
       Page<ReleaseDto> expectedResult = new Page<>(List.of(ReleaseDtoFactory.createDefault()), new Pagination());
-      when(butlerClient.queryReleases(any())).thenReturn(response);
+      when(butlerClient.queryReleases(any(), any())).thenReturn(response);
       when(releaseResponseTransformer.transformToPage(response)).thenReturn(expectedResult);
 
       // when

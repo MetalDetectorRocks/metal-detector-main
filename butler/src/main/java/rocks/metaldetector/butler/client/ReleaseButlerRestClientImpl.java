@@ -49,9 +49,9 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   }
 
   @Override
-  public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request) {
+  public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request, String sort) {
     HttpEntity<ButlerReleasesRequest> requestEntity = createQueryHttpEntity(request);
-    String sortingParameter = buildSortingParameter(request);
+    String sortingParameter = buildSortingParameter(sort);
     ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(
         butlerConfig.getReleasesUrl() + sortingParameter,
         requestEntity,
@@ -127,9 +127,9 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
     return new HttpEntity<>(request, headers);
   }
 
-  private String buildSortingParameter(ButlerReleasesRequest request) {
-    if (request != null && request.getSorting() != null && !request.getSorting().isBlank()) {
-      return "?" + request.getSorting();
+  private String buildSortingParameter(String sort) {
+    if (sort != null && !sort.isEmpty()) {
+      return "?" + sort;
     }
     return "";
   }

@@ -37,6 +37,4 @@ public class ButlerReleasesRequest {
   @JsonProperty("artists")
   private Iterable<String> artists;
 
-  private String sorting;
-
 }

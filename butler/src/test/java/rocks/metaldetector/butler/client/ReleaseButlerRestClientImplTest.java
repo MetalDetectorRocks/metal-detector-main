@@ -186,7 +186,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
       // when
-      underTest.queryReleases(request);
+      underTest.queryReleases(request, null);
 
       // then
       verify(restTemplate).postForEntity(eq(butlerUrl), any(), eq(ButlerReleasesResponse.class));
@@ -197,17 +197,17 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
     void test_sorting_parameter_set() {
       // given
       var butlerUrl = "releases-url";
+      var sort = "sort";
       doReturn(butlerUrl).when(butlerConfig).getReleasesUrl();
       ButlerReleasesRequest request = new ButlerReleasesRequest();
-      request.setSorting("sortingParameter");
       ButlerReleasesResponse responseMock = ButlerReleasesResponseFactory.createDefault();
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
       // when
-      underTest.queryReleases(request);
+      underTest.queryReleases(request, sort);
 
       // then
-      verify(restTemplate).postForEntity(eq(butlerUrl + "?" + request.getSorting()), any(), eq(ButlerReleasesResponse.class));
+      verify(restTemplate).postForEntity(eq(butlerUrl + "?" + sort), any(), eq(ButlerReleasesResponse.class));
     }
 
     @Test
@@ -220,7 +220,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
       // when
-      underTest.queryReleases(request);
+      underTest.queryReleases(request, "sort");
 
       // then
       verify(restTemplate).postForEntity(anyString(), argumentCaptorReleases.capture(), any());
@@ -242,7 +242,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
       // when
-      ButlerReleasesResponse response = underTest.queryReleases(request);
+      ButlerReleasesResponse response = underTest.queryReleases(request, "sort");
 
       // then
       assertThat(response).isEqualTo(responseMock);
@@ -257,7 +257,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       doReturn(ResponseEntity.ok(null)).when(restTemplate).postForEntity(anyString(), any(), any());
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.queryReleases(request));
+      Throwable throwable = catchThrowable(() -> underTest.queryReleases(request, "sort"));
 
       // then
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
@@ -274,7 +274,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       doReturn(ResponseEntity.status(httpStatus).body(responseMock)).when(restTemplate).postForEntity(anyString(), any(), any());
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.queryReleases(request));
+      Throwable throwable = catchThrowable(() -> underTest.queryReleases(request, "sort"));
 
       // then
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);

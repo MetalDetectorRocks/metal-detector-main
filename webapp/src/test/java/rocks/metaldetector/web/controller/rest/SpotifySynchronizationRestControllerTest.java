@@ -127,7 +127,6 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     @BeforeEach
     void setup() {
       restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_SAVED_ARTISTS);
-      RestAssuredMockMvc.standaloneSetup(underTest);
     }
 
     @Test
