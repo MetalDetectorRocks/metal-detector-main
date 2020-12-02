@@ -48,6 +48,12 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
+          repository: metaldetector/metal-detector
+          tags: ${{ steps.version.outputs.version }},latest
+          build-args: |
+            BUILD_DATE=${{ steps.version.outputs.version }}
+            VCS_REF=${{ github.ref }}
+          push: true
           tags: |
             metaldetector/metal-detector:${{ steps.version.outputs.version }}
             metaldetector/metal-detector:latest
