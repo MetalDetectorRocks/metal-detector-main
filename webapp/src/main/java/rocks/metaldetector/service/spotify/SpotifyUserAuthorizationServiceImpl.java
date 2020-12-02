@@ -38,9 +38,17 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
   @Transactional
   public String prepareAuthorization() {
     UserEntity currentUser = currentUserSupplier.get();
-    String state = RandomStringUtils.randomAlphanumeric(STATE_SIZE);
-    SpotifyAuthorizationEntity authenticationEntity = new SpotifyAuthorizationEntity(currentUser, state);
-    spotifyAuthorizationRepository.save(authenticationEntity);
+    Optional<SpotifyAuthorizationEntity> authorizationEntity = spotifyAuthorizationRepository.findByUserId(currentUser.getId());
+
+    String state;
+    if (authorizationEntity.isEmpty()) {
+      state = RandomStringUtils.randomAlphanumeric(STATE_SIZE);
+      SpotifyAuthorizationEntity authenticationEntity = new SpotifyAuthorizationEntity(currentUser, state);
+      spotifyAuthorizationRepository.save(authenticationEntity);
+    }
+    else {
+      state = authorizationEntity.get().getState();
+    }
 
     return spotifyService.getSpotifyAuthorizationUrl() + state;
   }

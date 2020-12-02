@@ -47,7 +47,7 @@ public class Endpoints {
     public static final String MY_ARTISTS                     = "/rest/v1/my-artists";
     public static final String SPOTIFY_AUTHORIZATION          = "/rest/v1/spotify/auth";
     public static final String SPOTIFY_ARTIST_SYNCHRONIZATION = "/rest/v1/spotify/synchronize";
-    public static final String SPOTIFY_FOLLOWED_ARTISTS       = "/rest/v1/spotify/followed-artists";
+    public static final String SPOTIFY_SAVED_ARTISTS          = "/rest/v1/spotify/saved-artists";
     public static final String ALL_RELEASES                   = "/rest/v1/releases/all";
     public static final String MY_RELEASES                    = "/rest/v1/releases/my";
     public static final String RELEASES                       = "/rest/v1/releases";

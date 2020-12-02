@@ -3,10 +3,11 @@ import {ToastService} from "./toast-service";
 import {UrlService} from "./url-service";
 import {LoadingIndicatorService} from "./loading-indicator-service";
 import {SpotifyArtist} from "../model/spotify-artist.model";
+import {AlertService} from "./alert-service";
+import {Endpoints} from "../config/endpoints";
 
 export class SpotifySynchronizationRenderService {
 
-    private static readonly SPOTIFY_CALLBACK_PATH_NAME = "spotify-callback";
     private static readonly BUTTON_BAR_DIV_NAME = "button-bar";
     private static readonly ARTISTS_SELECTION_BAR_ID = "artists-selection-bar";
     private static readonly ARTISTS_CONTAINER_ID = "artists-container";
@@ -15,6 +16,7 @@ export class SpotifySynchronizationRenderService {
     private readonly loadingIndicatorService: LoadingIndicatorService;
     private readonly toastService: ToastService;
     private readonly urlService: UrlService;
+    private readonly alertService: AlertService;
 
     private readonly artistSelectionElement: HTMLDivElement;
     private readonly artistContainerElement: HTMLDivElement;
@@ -25,11 +27,12 @@ export class SpotifySynchronizationRenderService {
     private readonly synchronizeArtistsButton: HTMLButtonElement;
 
     constructor(spotifyRestClient: SpotifyRestClient, loadingIndicatorService: LoadingIndicatorService,
-                toastService: ToastService, urlService: UrlService) {
+                toastService: ToastService, urlService: UrlService, alertService: AlertService) {
         this.spotifyRestClient = spotifyRestClient;
         this.loadingIndicatorService = loadingIndicatorService;
         this.toastService = toastService;
         this.urlService = urlService;
+        this.alertService = alertService;
 
         this.connectWithSpotifyButton = document.getElementById("connect-with-spotify-button") as HTMLButtonElement;
         this.connectedWithSpotifyButton = document.getElementById("connected-with-spotify-button") as HTMLButtonElement;
@@ -42,29 +45,25 @@ export class SpotifySynchronizationRenderService {
     }
 
     private addEventListener(): void {
-        this.connectWithSpotifyButton.addEventListener("click", this.connectWithSpotify.bind(this));
-        this.synchronizeArtistsButton.addEventListener("click", this.synchronizeArtists.bind(this));
-        document.getElementById("fetch-from-liked-releases")!.addEventListener("click", this.fetchSpotifyArtists.bind(this));
-        document.getElementById("select-all-link")!.addEventListener("click", this.selectOrDeselectAllArtists.bind(this, true));
-        document.getElementById("deselect-all-link")!.addEventListener("click", this.selectOrDeselectAllArtists.bind(this, false));
+        this.connectWithSpotifyButton.addEventListener("click", this.onConnectWithSpotifyClicked.bind(this));
+        this.synchronizeArtistsButton.addEventListener("click", this.onSynchronizeArtistsClicked.bind(this));
+        document.getElementById("fetch-from-saved-albums")!.addEventListener("click", this.onFetchSpotifyArtistsClicked.bind(this));
+        document.getElementById("select-all-link")!.addEventListener("click", this.onSelectOrDeselectAllArtistsClicked.bind(this, true));
+        document.getElementById("deselect-all-link")!.addEventListener("click", this.onSelectOrDeselectAllArtistsClicked.bind(this, false));
     }
 
     public init(): void {
-        this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.BUTTON_BAR_DIV_NAME);
         const path = this.urlService.getPathFromUrl();
-        if (path.endsWith(SpotifySynchronizationRenderService.SPOTIFY_CALLBACK_PATH_NAME)) {
+        if (path.endsWith(Endpoints.SPOTIFY_CALLBACK)) {
+            this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.BUTTON_BAR_DIV_NAME);
             const state = this.urlService.getParameterFromUrl("state")
             const code = this.urlService.getParameterFromUrl("code")
             this.spotifyRestClient.fetchInitialToken(state, code)
                 .then(() => this.toastService.createInfoToast("Successfully connected with Spotify!"))
-                .then(() => {
-                    this.initButtonBar();
-                    this.loadingIndicatorService.hideLoadingIndicator(SpotifySynchronizationRenderService.BUTTON_BAR_DIV_NAME);
-                });
+                .then(() => window.location.href = Endpoints.SPOTIFY_SYNCHRONIZATION)
         }
         else {
             this.initButtonBar();
-            this.loadingIndicatorService.hideLoadingIndicator(SpotifySynchronizationRenderService.BUTTON_BAR_DIV_NAME);
         }
     }
 
@@ -80,16 +79,16 @@ export class SpotifySynchronizationRenderService {
         });
     }
 
-    private connectWithSpotify(): void {
+    private onConnectWithSpotifyClicked(): void {
         const authorizationResponse = this.spotifyRestClient.createAuthorizationUrl()
         authorizationResponse.then(response => window.location.href = response.authorizationUrl);
     }
 
-    private fetchSpotifyArtists(): void {
+    private onFetchSpotifyArtistsClicked(): void {
         this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID);
-        this.artistContainerElement.innerHTML = "";
-        const followedArtists = this.spotifyRestClient.fetchFollowedArtists();
-        followedArtists.then(response => {
+        this.clearArtistsContainer();
+        const savedArtists = this.spotifyRestClient.fetchSavedArtists();
+        savedArtists.then(response => {
             response.artists.forEach(artist => {
                 const artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
                 const artistTemplateNode = document.importNode(artistTemplateElement.content, true);
@@ -119,6 +118,13 @@ export class SpotifySynchronizationRenderService {
         return `${genres}<br />${follower}`;
     }
 
+    private onSynchronizeArtistsClicked(): void {
+        const disabled = this.synchronizeArtistsButton.classList.contains("disabled");
+        if (!disabled) {
+            this.synchronizeArtists();
+        }
+    }
+
     private synchronizeArtists(): void {
         const artistCards = this.artistContainerElement.getElementsByClassName("spotify-synchro-card");
         const selectedArtistIds: string[] = [];
@@ -130,8 +136,19 @@ export class SpotifySynchronizationRenderService {
             }
         });
 
-        const response = this.spotifyRestClient.synchronizeArtists(selectedArtistIds);
-        // ToDo DanielW: Handle result after synchronization
+        this.clearArtistsContainer();
+        this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID);
+        this.spotifyRestClient.synchronizeArtists(selectedArtistIds).then(response => {
+            const successIcon = '<span class="material-icons">check_circle</span>';
+            const successMessage = `${successIcon} You are now following ${response.artistsCount} new artists on Metal Detector and ` +
+                `will be notified as soon as these artists announce a new release.`;
+            const successMessageElement = this.alertService.renderSuccessAlert(successMessage, true);
+            this.artistContainerElement.insertAdjacentElement("beforeend", successMessageElement);
+        }).finally(() => {
+            this.loadingIndicatorService.hideLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID);
+            this.artistSelectionElement.classList.add("invisible");
+            this.synchronizeArtistsButton?.classList.add("disabled");
+        });
     }
 
     private onArtistClicked(artistDivElement: HTMLDivElement): void {
@@ -139,7 +156,7 @@ export class SpotifySynchronizationRenderService {
         this.handleSelection(artistDivElement, artistCheckbox, artistCheckbox.innerText !== "check_box");
     }
 
-    private selectOrDeselectAllArtists(shouldSelect: boolean): void {
+    private onSelectOrDeselectAllArtistsClicked(shouldSelect: boolean): void {
         const artistCards = this.artistContainerElement.getElementsByClassName("spotify-synchro-card");
         Array.from(artistCards).forEach(artistCard => {
             const artistCheckbox = artistCard.querySelector("#artist-check-box") as HTMLSpanElement;
@@ -157,5 +174,9 @@ export class SpotifySynchronizationRenderService {
         shouldSelect ? artistThumbElement.classList.remove("img-inactive") : artistThumbElement.classList.add("img-inactive");
         shouldSelect ? artistNameElement.classList.remove("text-muted") : artistNameElement.classList.add("text-muted");
         shouldSelect ? artistInfoElement.classList.remove("text-muted") : artistInfoElement.classList.add("text-muted");
+    }
+
+    private clearArtistsContainer(): void {
+        this.artistContainerElement.innerHTML = "";
     }
 }

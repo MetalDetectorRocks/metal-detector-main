@@ -378,7 +378,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
   @Test
   @DisplayName("artistService is called to find new artist ids")
-  void test_artist_service_called_to_find() {
+  void test_artist_service_called_to_find_new_artists() {
     // given
     var artistIds = List.of("a", "b");
     doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
@@ -406,7 +406,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("artistService is called to persist new artists")
+  @DisplayName("artistService is called with result from spotifyService to persist new artists")
   void test_artist_service_called_to_persist() {
     // given
     var newArtists = List.of(SpotifyArtistDtoFactory.createDefault());
@@ -417,7 +417,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.followSpotifyArtists(Collections.emptyList());
 
     // then
-    verify(artistService).persistArtists(newArtists);
+    verify(artistService).persistSpotifyArtists(newArtists);
   }
 
   @Test
@@ -435,8 +435,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Current user is fetched on follow multiple")
-  void test_follow_multiple_should_get_current_user() {
+  @DisplayName("Current user is fetched on follow multiple spotify artist")
+  void test_follow_multiple_spotify_artists_should_get_current_user() {
     // when
     underTest.followSpotifyArtists(Collections.emptyList());
 
@@ -445,8 +445,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("followArtistService is called to follow entities")
-  void test_follow_artist_service_called() {
+  @DisplayName("followActionRepository is called to save follow entities")
+  void test_action_repository_is_called() {
     // given
     var artistEntity = ArtistEntityFactory.withExternalId("a");
     var expectedFollowActionEntities = List.of(FollowActionEntity.builder().artist(artistEntity).user(userEntity).build());
