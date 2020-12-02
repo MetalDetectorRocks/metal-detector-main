@@ -2,11 +2,14 @@ FROM openjdk:15-slim-buster
 
 ENV TZ=Europe/Berlin
 
-RUN mkdir /app
+RUN mkdir /app && mkdir /app/logs
 WORKDIR /app
 
 RUN useradd --no-log-init --no-create-home --shell /bin/false service_user
+RUN chown -cR service_user:service_user /app
 USER service_user
+
+VOLUME ["/app/logs/"]
 
 # Arguments
 ARG SOURCE_JAR_FILE="webapp/target/*.jar"
