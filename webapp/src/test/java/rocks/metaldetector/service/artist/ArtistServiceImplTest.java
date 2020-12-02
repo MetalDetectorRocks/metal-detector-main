@@ -203,7 +203,7 @@ class ArtistServiceImplTest implements WithAssertions {
     var expectedEntities = List.of(ArtistEntityFactory.withExternalId("a"), ArtistEntityFactory.withExternalId("b"));
 
     // when
-    underTest.persistArtists(spotifyDtos);
+    underTest.persistSpotifyArtists(spotifyDtos);
 
     // then
     verify(artistRepository).saveAll(argumentCaptor.capture());

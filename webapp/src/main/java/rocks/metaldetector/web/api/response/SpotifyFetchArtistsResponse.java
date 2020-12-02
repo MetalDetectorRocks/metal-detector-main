@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import rocks.metaldetector.service.artist.ArtistDto;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SpotifyArtistImportResponse {
+public class SpotifyFetchArtistsResponse {
 
-  private List<ArtistDto> artists;
+  private List<SpotifyArtistDto> artists;
 }

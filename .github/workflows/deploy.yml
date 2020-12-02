@@ -2,7 +2,7 @@ name: Build and deploy docker container image
 
 on:
   push:
-    branches: 
+    branches:
       - master
 
 jobs:
@@ -32,17 +32,34 @@ jobs:
       - name: Build with Maven
         run: mvn -B clean verify --file pom.xml
 
-      - name: Publish to DockerHub
-        uses: docker/build-push-action@v1
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password:  ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: metaldetector/metal-detector
-          tags: ${{ steps.version.outputs.version }},latest
-          build_args: BUILD_DATE=${{ steps.version.outputs.version }},VCS_REF=${{ github.ref }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Publish to DockerHub
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./
+          file: ./Dockerfile
+          tags: |
+            metaldetector/metal-detector:${{ steps.version.outputs.version }}
+            metaldetector/metal-detector:latest
+          build-args: |
+            BUILD_DATE=${{ steps.version.outputs.version }}
+            VCS_REF=${{ github.ref }}
 
       - name: Push image to Heroku Registry
         run: |
+          docker pull metaldetector/metal-detector
           docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
           docker tag metaldetector/metal-detector registry.heroku.com/${{ secrets.HEROKU_PREVIEW_APP_NAME }}/web
           docker push registry.heroku.com/${{ secrets.HEROKU_PREVIEW_APP_NAME }}/web
