@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require('webpack');
 const CleanPlugin = require("clean-webpack-plugin");
 
 module.exports = {
@@ -14,7 +15,6 @@ module.exports = {
         filename: "[name].bundle.js",
         path: path.resolve(__dirname, "dist"),
     },
-    devtool: "none",
     module: {
         rules: [
             {
