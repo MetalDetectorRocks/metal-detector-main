@@ -8,5 +8,5 @@ public interface SpotifySynchronizationService {
 
   int synchronizeArtists(List<String> artistIds);
 
-  List<SpotifyArtistDto> fetchNotFollowedArtists(List<SpotifyFetchType> fetchTypes);
+  List<SpotifyArtistDto> fetchSavedArtists(List<SpotifyFetchType> fetchTypes);
 }

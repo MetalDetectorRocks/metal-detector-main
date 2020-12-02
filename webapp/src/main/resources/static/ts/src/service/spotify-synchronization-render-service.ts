@@ -87,8 +87,8 @@ export class SpotifySynchronizationRenderService {
     private onFetchSpotifyArtistsClicked(): void {
         this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID);
         this.clearArtistsContainer();
-        const notFollowedArtists = this.spotifyRestClient.fetchNotFollowedArtists();
-        notFollowedArtists.then(response => {
+        const savedArtists = this.spotifyRestClient.fetchSavedArtists();
+        savedArtists.then(response => {
             response.artists.forEach(artist => {
                 const artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
                 const artistTemplateNode = document.importNode(artistTemplateElement.content, true);

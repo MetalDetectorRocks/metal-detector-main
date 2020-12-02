@@ -78,14 +78,14 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
   }
 
   @Nested
-  @DisplayName("Tests for getting followed artists")
-  class FetchNotFollowedArtistsTest {
+  @DisplayName("Tests for getting saved artists")
+  class FetchSavedArtistsTest {
 
     @Test
     @DisplayName("userAuthorizationService is called")
     void test_user_authorization_service_called() {
       // when
-      underTest.fetchNotFollowedArtists(List.of(ALBUMS));
+      underTest.fetchSavedArtists(List.of(ALBUMS));
 
       // then
       verify(userAuthorizationService).getOrRefreshToken();
@@ -99,7 +99,7 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
       doReturn(accessToken).when(userAuthorizationService).getOrRefreshToken();
 
       // when
-      underTest.fetchNotFollowedArtists(List.of(ALBUMS));
+      underTest.fetchSavedArtists(List.of(ALBUMS));
 
       // then
       verify(spotifyService).fetchLikedAlbums(accessToken);
@@ -119,7 +119,7 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
       doReturn(albumDtos).when(spotifyService).fetchLikedAlbums(any());
 
       // when
-      underTest.fetchNotFollowedArtists(List.of(ALBUMS));
+      underTest.fetchSavedArtists(List.of(ALBUMS));
 
       // then
       verify(spotifyService).searchArtistsByIds(List.of(firstAlbum.getArtists().get(0).getId()));
@@ -135,7 +135,7 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
       doReturn(List.of(spotifyArtist1, spotifyArtist2)).when(spotifyService).searchArtistsByIds(anyList());
 
       // when
-      underTest.fetchNotFollowedArtists(List.of(ALBUMS));
+      underTest.fetchSavedArtists(List.of(ALBUMS));
 
       // then
       verify(followArtistService).isCurrentUserFollowing(spotifyArtist1.getId(), SPOTIFY);
@@ -153,7 +153,7 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
       doReturn(List.of(spotifyArtist1, spotifyArtist2, spotifyArtist3)).when(spotifyService).searchArtistsByIds(anyList());
 
       // when
-      var result = underTest.fetchNotFollowedArtists(List.of(ALBUMS));
+      var result = underTest.fetchSavedArtists(List.of(ALBUMS));
 
       // then
       assertThat(result).isEqualTo(List.of(spotifyArtist3, spotifyArtist1, spotifyArtist2));

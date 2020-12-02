@@ -30,14 +30,14 @@ public class SpotifySynchronizationServiceImpl implements SpotifySynchronization
   }
 
   @Override
-  public List<SpotifyArtistDto> fetchNotFollowedArtists(List<SpotifyFetchType> fetchTypes) {
-    Set<SpotifyArtistDto> artistDtos = new HashSet<>();
+  public List<SpotifyArtistDto> fetchSavedArtists(List<SpotifyFetchType> fetchTypes) {
+    Set<SpotifyArtistDto> savedArtists = new HashSet<>();
 
     if (fetchTypes.contains(ALBUMS)) {
-      artistDtos.addAll(getArtistsFromLikedAlbums());
+      savedArtists.addAll(getArtistsFromLikedAlbums());
     }
 
-    return artistDtos.stream()
+    return savedArtists.stream()
         .filter(artist -> !followArtistService.isCurrentUserFollowing(artist.getId(), SPOTIFY))
         .sorted(Comparator.comparing(SpotifyArtistDto::getName))
         .collect(Collectors.toList());

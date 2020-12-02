@@ -11,7 +11,7 @@ export class SpotifyRestClient {
 
     private readonly SPOTIFY_AUTHORIZATION_ENDPOINT = "/rest/v1/spotify/auth";
     private readonly SPOTIFY_SYNCHRONIZE_ARTISTS_ENDPOINT = "/rest/v1/spotify/synchronize";
-    private readonly SPOTIFY_FOLLOWED_ARTISTS_ENDPOINT = "/rest/v1/spotify/not-followed-artists";
+    private readonly SPOTIFY_SAVED_ARTISTS_ENDPOINT = "/rest/v1/spotify/saved-artists";
 
     private readonly toastService: ToastService;
 
@@ -56,12 +56,12 @@ export class SpotifyRestClient {
         });
     }
 
-    public async fetchNotFollowedArtists(): Promise<SpotifyFetchArtistsResponse> {
+    public async fetchSavedArtists(): Promise<SpotifyFetchArtistsResponse> {
         axiosConfig.params = {
             fetchTypes: "ALBUMS"
         }
         return await axios.get(
-          this.SPOTIFY_FOLLOWED_ARTISTS_ENDPOINT, axiosConfig
+          this.SPOTIFY_SAVED_ARTISTS_ENDPOINT, axiosConfig
         ).then((response: AxiosResponse<SpotifyFetchArtistsResponse>) => {
             return response.data;
         }).catch((error: AxiosError) => {
