@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.api.ButlerPagination;
 import rocks.metaldetector.butler.api.ButlerRelease;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
+import rocks.metaldetector.butler.config.ButlerConfig;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.support.EnumPrettyPrinter;
 import rocks.metaldetector.support.Page;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class ButlerReleaseResponseTransformer {
 
   private final EnumPrettyPrinter enumPrettyPrinter;
+  private final ButlerConfig butlerConfig;
 
   public Page<ReleaseDto> transformToPage(ButlerReleasesResponse response) {
     ButlerPagination butlerPagination = response.getPagination();
@@ -43,7 +45,15 @@ public class ButlerReleaseResponseTransformer {
             .releaseDetailsUrl(release.getReleaseDetailsUrl())
             .source(enumPrettyPrinter.prettyPrintEnumValue(release.getSource()))
             .state(enumPrettyPrinter.prettyPrintEnumValue(release.getState()))
-            .coverUrl(release.getCoverUrl())
+            .coverUrl(transformCoverUrl(release.getCoverUrl()))
             .build();
+  }
+
+  private String transformCoverUrl(String coverUrl) {
+    if (coverUrl != null && coverUrl.startsWith("/rest/v")) {
+      return butlerConfig.getHost().concat(coverUrl);
+    }
+
+    return coverUrl;
   }
 }
