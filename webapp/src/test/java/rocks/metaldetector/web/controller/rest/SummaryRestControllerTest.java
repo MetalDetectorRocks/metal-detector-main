@@ -21,7 +21,6 @@ import java.util.List;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,8 +37,7 @@ class SummaryRestControllerTest implements WithAssertions {
   @BeforeEach
   void setUp() {
     restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.HOME);
-    RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)));
+    RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @AfterEach

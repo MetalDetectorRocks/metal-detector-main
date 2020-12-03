@@ -37,7 +37,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseFactory;
 import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFAULT_DISCOGS_PAGE;
@@ -80,9 +79,7 @@ class ArtistsRestControllerTest implements WithAssertions {
     @BeforeEach
     void setUp() {
       restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH);
-      RestAssuredMockMvc.standaloneSetup(underTest,
-                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                         RestExceptionsHandler.class);
+      RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
     }
 
     @AfterEach
@@ -194,9 +191,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       followArtistRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.FOLLOW);
       unfollowArtistRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.UNFOLLOW);
       followSpotifyArtistsRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.FOLLOW + "/spotify");
-      RestAssuredMockMvc.standaloneSetup(underTest,
-                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                         RestExceptionsHandler.class);
+      RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
     }
 
     @AfterEach

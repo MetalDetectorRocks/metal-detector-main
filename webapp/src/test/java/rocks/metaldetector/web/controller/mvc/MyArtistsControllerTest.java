@@ -11,7 +11,6 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -27,8 +26,7 @@ class MyArtistsControllerTest {
   @BeforeEach
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Frontend.MY_ARTISTS);
-    RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)));
+    RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @Test

@@ -15,7 +15,6 @@ import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import static org.mockito.Mockito.reset;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -34,8 +33,7 @@ class LoginControllerTest {
   @BeforeEach
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.LOGIN);
-    RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)));
+    RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @AfterEach

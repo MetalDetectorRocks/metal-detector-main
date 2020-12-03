@@ -16,8 +16,6 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-
 @ExtendWith(MockitoExtension.class)
 class AdminUserControllerTest implements WithAssertions {
 
@@ -29,8 +27,7 @@ class AdminUserControllerTest implements WithAssertions {
   @BeforeEach
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.AdminArea.USERS);
-    RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)));
+    RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @Test

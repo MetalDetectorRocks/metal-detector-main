@@ -11,6 +11,7 @@ import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseRequestFactory;
 import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
+import rocks.metaldetector.web.transformer.DetectorSortTransformer;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,6 +33,9 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
 
   @MockBean
   private FollowArtistService followArtistService;
+
+  @MockBean
+  private DetectorSortTransformer sortTransformer;
 
   @Nested
   @DisplayName("Administrator is allowed to send requests to all endpoints")

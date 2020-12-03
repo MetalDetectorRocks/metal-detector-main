@@ -37,7 +37,8 @@ public class ReleaseServiceImpl implements ReleaseService {
   @Override
   public Page<ReleaseDto> findReleases(Iterable<String> artists, TimeRange timeRange, PageRequest pageRequest) {
     ButlerReleasesRequest request = queryRequestTransformer.transform(artists, timeRange, pageRequest);
-    ButlerReleasesResponse response = butlerClient.queryReleases(request);
+    String sortString = (pageRequest != null && pageRequest.getSort() != null) ? pageRequest.getSort().toString() : null;
+    ButlerReleasesResponse response = butlerClient.queryReleases(request, sortString);
     return queryResponseTransformer.transformToPage(response);
   }
 
