@@ -47,7 +47,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -86,9 +85,7 @@ class RegistrationControllerTest implements WithAssertions {
   void setup() {
     underTest = new RegistrationController(eventPublisher, userService, tokenService, modelMapper);
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.REGISTER);
-    RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)),
-                                       RestExceptionsHandler.class);
+    RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
 
     objectMapper = new ObjectMapper();
     objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -98,7 +95,6 @@ class RegistrationControllerTest implements WithAssertions {
     paramValues.put(PARAM_EMAIL, "john.d@example.com");
     paramValues.put(PARAM_PASSWORD, "valid-password");
     paramValues.put(PARAM_VERIFY_PASSWORD, "valid-password");
-
   }
 
   @AfterEach

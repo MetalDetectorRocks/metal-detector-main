@@ -10,7 +10,7 @@ public interface ReleaseButlerRestClient {
 
   ButlerReleasesResponse queryAllReleases(ButlerReleasesRequest request);
 
-  ButlerReleasesResponse queryReleases(ButlerReleasesRequest request);
+  ButlerReleasesResponse queryReleases(ButlerReleasesRequest request, String sort);
 
   void createImportJob();
 
