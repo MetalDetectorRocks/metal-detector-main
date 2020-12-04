@@ -62,10 +62,10 @@ public class ReleaseButlerRestClientMock implements ReleaseButlerRestClient {
   @Override
   public List<ButlerImportJob> queryImportJobResults() {
     return List.of(
-        new ButlerImportJob(650, 630, LocalDateTime.of(2020, 7, 28, 13, 37, 16), LocalDateTime.of(2020, 7, 28, 13, 39, 51), "Metal Achives"),
-        new ButlerImportJob(640, 110, LocalDateTime.of(2020, 7, 21, 15, 1, 13), LocalDateTime.of(2020, 7, 21, 15, 4, 45), "Metal Achives"),
-        new ButlerImportJob(645, 90, LocalDateTime.of(2020, 7, 14, 9, 16, 24), LocalDateTime.of(2020, 7, 14, 9, 19, 27), "Metal Achives"),
-        new ButlerImportJob(684, 105, LocalDateTime.of(2020, 7, 7, 21, 14, 6), LocalDateTime.of(2020, 7, 7, 21, 19, 46), "Metal Achives")
+        new ButlerImportJob(650, 630, LocalDateTime.of(2020, 7, 28, 13, 37, 16), LocalDateTime.of(2020, 7, 28, 13, 39, 51), "Successful", "Metal Achives"),
+        new ButlerImportJob(640, 110, LocalDateTime.of(2020, 7, 21, 15, 1, 13), LocalDateTime.of(2020, 7, 21, 15, 4, 45),"Successful",  "Metal Achives"),
+        new ButlerImportJob(645, 90, LocalDateTime.of(2020, 7, 14, 9, 16, 24), LocalDateTime.of(2020, 7, 14, 9, 19, 27), "Successful", "Metal Achives"),
+        new ButlerImportJob(684, 105, LocalDateTime.of(2020, 7, 7, 21, 14, 6), LocalDateTime.of(2020, 7, 7, 21, 19, 46), "Successful", "Metal Achives")
     );
   }
 
