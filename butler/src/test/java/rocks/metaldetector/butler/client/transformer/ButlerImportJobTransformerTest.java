@@ -8,24 +8,17 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.api.ButlerImportJob;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
-import rocks.metaldetector.support.EnumPrettyPrinter;
 
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportJobFactory;
 
 @ExtendWith(MockitoExtension.class)
 class ButlerImportJobTransformerTest implements WithAssertions {
-
-  @Spy
-  private EnumPrettyPrinter enumPrettyPrinter;
 
   @InjectMocks
   private ButlerImportJobTransformer underTest;
@@ -44,29 +37,8 @@ class ButlerImportJobTransformerTest implements WithAssertions {
     assertThat(result.getTotalCountRequested()).isEqualTo(importJob.getTotalCountRequested());
     assertThat(result.getStartTime()).isEqualTo(importJob.getStartTime());
     assertThat(result.getEndTime()).isEqualTo(importJob.getEndTime());
+    assertThat(result.getState()).isEqualTo(importJob.getState());
     assertThat(result.getSource()).isEqualTo(importJob.getSource());
-  }
-
-  @ParameterizedTest(name = "'finished' is <{1}> when 'endTime' is <{0}>")
-  @MethodSource("finishTestDataProvider")
-  @DisplayName("'finished' is set depending on 'endTime'")
-  void should_transform_finish(LocalDateTime endTime, boolean expectedResult) {
-    // given
-    ButlerImportJob importJob = ButlerImportJobFactory.createDefault();
-    importJob.setEndTime(endTime);
-
-    // when
-    ImportJobResultDto result = underTest.transform(importJob);
-
-    // then
-    assertThat(result.isFinished()).isEqualTo(expectedResult);
-  }
-
-  private static Stream<Arguments> finishTestDataProvider() {
-    return Stream.of(
-            Arguments.of(LocalDateTime.now(), true),
-            Arguments.of(null, false)
-    );
   }
 
   @ParameterizedTest(name = "'duration' is <{2}> when 'startTime' is <{0}> and 'endTime' is <{1}>")
@@ -92,18 +64,5 @@ class ButlerImportJobTransformerTest implements WithAssertions {
             Arguments.of(null, LocalDateTime.now(), 0),
             Arguments.of(null, null, 0)
     );
-  }
-
-  @Test
-  @DisplayName("Should use enum pretty printer to transform enum values")
-  void should_use_enum_pretty_printer() {
-    // given
-    ButlerImportJob importJob = ButlerImportJobFactory.createDefault();
-
-    // when
-    underTest.transform(importJob);
-
-    // then
-    verify(enumPrettyPrinter).prettyPrintEnumValue(eq(importJob.getSource()));
   }
 }

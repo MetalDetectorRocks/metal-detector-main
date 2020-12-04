@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
     "totalCountImported",
     "startTime",
     "endTime",
+    "state",
     "source"
 })
 @NoArgsConstructor
@@ -33,6 +34,9 @@ public class ButlerImportJob {
 
   @JsonProperty("endTime")
   private LocalDateTime endTime;
+
+  @JsonProperty("state")
+  private String state;
 
   @JsonProperty("source")
   private String source;
