@@ -26,6 +26,8 @@ export class ReleasesRestClient {
     }
 
     private fetchReleases(url: string): Promise<ReleasesResponse> {
+        const parameters = this.urlService.getParametersFromUrl("sort");
+        const sortParameter = parameters.length > 0 ? "?sort=" + parameters[0] + "&sort=" + parameters[1] + "&sort=" + parameters[2] : "";
         axiosConfig.params = {
             page: this.urlService.getPageFromUrl(),
             size: 30,
@@ -33,7 +35,7 @@ export class ReleasesRestClient {
         }
 
         return axios.get(
-            url,
+            url + sortParameter,
             axiosConfig
         ).then((response: AxiosResponse<ReleasesResponse>) => {
             return response.data;
