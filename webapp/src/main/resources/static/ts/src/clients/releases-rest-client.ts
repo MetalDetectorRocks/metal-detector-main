@@ -27,16 +27,17 @@ export class ReleasesRestClient {
 
     private fetchReleases(url: string): Promise<ReleasesResponse> {
         const parameters = this.urlService.getParametersFromUrl("sort");
-        const sortParameter = parameters.length > 0 ? "?sort=" + parameters[0] + "&sort=" + parameters[1] + "&sort=" + parameters[2] : "";
+        const sortParameter = parameters.length > 0 ? [parameters[0], parameters[1], parameters[2]] : [];
         axiosConfig.params = {
             page: this.urlService.getPageFromUrl(),
             size: 30,
-            dateFrom: this.dateFormatService.format(new Date().toUTCString(), DateFormat.UTC)
+            dateFrom: this.dateFormatService.format(new Date().toUTCString(), DateFormat.UTC),
+            sort: sortParameter
         }
 
         return axios.get(
-            url + sortParameter,
-            axiosConfig
+          url,
+          axiosConfig
         ).then((response: AxiosResponse<ReleasesResponse>) => {
             return response.data;
         }).catch((error: AxiosError) => {
