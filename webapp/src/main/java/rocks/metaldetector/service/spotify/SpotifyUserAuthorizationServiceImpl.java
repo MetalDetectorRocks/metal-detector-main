@@ -59,12 +59,13 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
     SpotifyAuthorizationEntity authorizationEntity = findAuthorizationEntityFromCurrentUser();
     checkState(authorizationEntity, spotifyState);
 
+    LocalDateTime now = LocalDateTime.now();
     SpotifyUserAuthorizationDto authorizationDto = spotifyService.getAccessToken(spotifyCode);
     authorizationEntity.setAccessToken(authorizationDto.getAccessToken());
     authorizationEntity.setRefreshToken(authorizationDto.getRefreshToken());
     authorizationEntity.setScope(authorizationDto.getScope());
     authorizationEntity.setTokenType(authorizationDto.getTokenType());
-    authorizationEntity.setExpiresIn(authorizationDto.getExpiresIn());
+    authorizationEntity.setExpiresAt(now.plusSeconds(authorizationDto.getExpiresIn()));
 
     spotifyAuthorizationRepository.save(authorizationEntity);
   }
@@ -76,8 +77,9 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
     if (authorizationEntity.getRefreshToken() == null || authorizationEntity.getRefreshToken().isEmpty()) {
       throw new IllegalStateException("refresh token is empty");
     }
+    LocalDateTime now = LocalDateTime.now();
 
-    if (authorizationEntity.getCreatedDateTime().plusSeconds(authorizationEntity.getExpiresIn()).isAfter(LocalDateTime.now())) {
+    if (authorizationEntity.getExpiresAt().isAfter(now)) {
       return authorizationEntity.getAccessToken();
     }
 
@@ -85,7 +87,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
     authorizationEntity.setAccessToken(refreshedToken.getAccessToken());
     authorizationEntity.setScope(refreshedToken.getScope());
     authorizationEntity.setTokenType(refreshedToken.getTokenType());
-    authorizationEntity.setExpiresIn(refreshedToken.getExpiresIn());
+    authorizationEntity.setExpiresAt(now.plusSeconds(refreshedToken.getExpiresIn()));
     spotifyAuthorizationRepository.save(authorizationEntity);
 
     return refreshedToken.getAccessToken();

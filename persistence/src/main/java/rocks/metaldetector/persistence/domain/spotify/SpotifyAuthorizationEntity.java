@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
@@ -38,8 +39,8 @@ public class SpotifyAuthorizationEntity extends BaseEntity {
   @Column(name = "token_type")
   private String tokenType;
 
-  @Column(name = "expires_in")
-  private Integer expiresIn;
+  @Column(name = "expires_at")
+  private LocalDateTime expiresAt;
 
   @OneToOne(targetEntity = UserEntity.class)
   @JoinColumn(nullable = false, name = "users_id")
