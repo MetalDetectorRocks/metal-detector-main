@@ -28,7 +28,7 @@ function getImportJobs() {
       {"data": "durationInSeconds"},
       {"data": "totalCountRequested"},
       {"data": "totalCountImported"},
-      {"data": "finished"}
+      {"data": "state"}
     ],
     "autoWidth": false, // fixes window resizing issue
     "order": [[ 1, "desc" ]],
@@ -47,12 +47,11 @@ function getImportJobs() {
       },
       {
         "targets": [6],
-        "render": function (isFinished) {
-          if (isFinished) {
-            return '<span class="badge badge-success">Done</span>';
-          }
-          else {
-            return '<span class="badge badge-primary">Importing</span>';
+        "render": function (state) {
+          switch (state) {
+            case "Running": return '<span class="badge badge-primary">Running</span>';
+            case "Successful": return '<span class="badge badge-success">Successful</span>';
+            case "Error": return '<span class="badge badge-danger">Error</span>';
           }
         }
       }

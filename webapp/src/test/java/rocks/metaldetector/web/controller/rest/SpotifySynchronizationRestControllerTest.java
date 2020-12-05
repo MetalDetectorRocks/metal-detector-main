@@ -28,7 +28,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static rocks.metaldetector.service.spotify.SpotifyFetchType.ALBUMS;
 import static rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
 import static rocks.metaldetector.web.controller.rest.SpotifySynchronizationRestController.FETCH_TYPES_PARAM;
@@ -44,8 +43,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    RestAssuredMockMvc.standaloneSetup(underTest,
-                                       springSecurity((request, response, chain) -> chain.doFilter(request, response)));
+    RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @AfterEach
@@ -129,8 +127,6 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     @BeforeEach
     void setup() {
       restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_SAVED_ARTISTS);
-      RestAssuredMockMvc.standaloneSetup(underTest,
-                                         springSecurity((request, response, chain) -> chain.doFilter(request, response)));
     }
 
     @Test

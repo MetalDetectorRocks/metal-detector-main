@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.api.ButlerImportJob;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
-import rocks.metaldetector.support.EnumPrettyPrinter;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -13,8 +12,6 @@ import java.time.temporal.ChronoUnit;
 @AllArgsConstructor
 public class ButlerImportJobTransformer {
 
-  private final EnumPrettyPrinter enumPrettyPrinter;
-
   public ImportJobResultDto transform(ButlerImportJob response) {
     return ImportJobResultDto.builder()
         .totalCountImported(response.getTotalCountImported())
@@ -22,8 +19,8 @@ public class ButlerImportJobTransformer {
         .startTime(response.getStartTime())
         .endTime(response.getEndTime())
         .durationInSeconds(calculateDuration(response.getStartTime(), response.getEndTime()))
-        .finished(response.getEndTime() != null)
-        .source(enumPrettyPrinter.prettyPrintEnumValue(response.getSource()))
+        .state(response.getState())
+        .source(response.getSource())
         .build();
   }
 

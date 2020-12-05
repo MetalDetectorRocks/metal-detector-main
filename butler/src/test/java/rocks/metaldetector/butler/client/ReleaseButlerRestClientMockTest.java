@@ -73,7 +73,7 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
   }
 
   private static Stream<Arguments> queryMethodProvider() {
-    Function<ReleaseButlerRestClientMock, ButlerReleasesResponse> queryReleases = underTest -> underTest.queryReleases(null);
+    Function<ReleaseButlerRestClientMock, ButlerReleasesResponse> queryReleases = underTest -> underTest.queryReleases(null, null);
     Function<ReleaseButlerRestClientMock, ButlerReleasesResponse> queryAllReleases = underTest -> underTest.queryAllReleases(null);
     return Stream.of(
             Arguments.of(queryReleases),

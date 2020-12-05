@@ -59,8 +59,16 @@ services:
 
 volumes:
   detector-db-volume:
+    name: detector-db
   butler-db-volume:
+    name: butler-db
+  butler-image-volume:
+    name: butler-images
+  butler-logs-volume:
+    name: butler-logs
 
 networks:
   detector-network:
+    name: detector-network
   butler-network:
+    name: butler-network
