@@ -38,6 +38,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static rocks.metaldetector.service.spotify.SpotifyUserAuthorizationServiceImpl.GRACE_PERIOD_SECONDS;
 import static rocks.metaldetector.service.spotify.SpotifyUserAuthorizationServiceImpl.STATE_SIZE;
 
 @ExtendWith(MockitoExtension.class)
@@ -353,7 +354,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       SpotifyAuthorizationEntity updatedAuthorization = argumentCaptor.getValue();
       assertThat(updatedAuthorization.getAccessToken()).isEqualTo(authorizationDto.getAccessToken());
       assertThat(updatedAuthorization.getRefreshToken()).isEqualTo(authorizationDto.getRefreshToken());
-      assertThat(updatedAuthorization.getExpiresAt()).isEqualTo(now.plusSeconds(authorizationDto.getExpiresIn()));
+      assertThat(updatedAuthorization.getExpiresAt()).isEqualTo(now.plusSeconds(authorizationDto.getExpiresIn() - GRACE_PERIOD_SECONDS));
       assertThat(updatedAuthorization.getScope()).isEqualTo(authorizationDto.getScope());
       assertThat(updatedAuthorization.getTokenType()).isEqualTo(authorizationDto.getTokenType());
     }
@@ -495,7 +496,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       var updatedAuthorizationEntity = argumentCaptor.getValue();
       assertThat(updatedAuthorizationEntity.getAccessToken()).isEqualTo(authorizationDto.getAccessToken());
       assertThat(updatedAuthorizationEntity.getScope()).isEqualTo(authorizationDto.getScope());
-      assertThat(updatedAuthorizationEntity.getExpiresAt()).isEqualTo(now.plusSeconds(authorizationDto.getExpiresIn()));
+      assertThat(updatedAuthorizationEntity.getExpiresAt()).isEqualTo(now.plusSeconds(authorizationDto.getExpiresIn() - GRACE_PERIOD_SECONDS));
       assertThat(updatedAuthorizationEntity.getTokenType()).isEqualTo(authorizationDto.getTokenType());
     }
 
