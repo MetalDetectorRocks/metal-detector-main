@@ -19,6 +19,7 @@ import java.util.Optional;
 public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthorizationService {
 
   static final int STATE_SIZE = 10;
+  static final int GRACE_PERIOD_SECONDS = 60;
 
   private final CurrentUserSupplier currentUserSupplier;
   private final SpotifyAuthorizationRepository spotifyAuthorizationRepository;
@@ -65,7 +66,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
     authorizationEntity.setRefreshToken(authorizationDto.getRefreshToken());
     authorizationEntity.setScope(authorizationDto.getScope());
     authorizationEntity.setTokenType(authorizationDto.getTokenType());
-    authorizationEntity.setExpiresAt(now.plusSeconds(authorizationDto.getExpiresIn()));
+    authorizationEntity.setExpiresAt(now.plusSeconds(authorizationDto.getExpiresIn() - GRACE_PERIOD_SECONDS));
 
     spotifyAuthorizationRepository.save(authorizationEntity);
   }
@@ -87,7 +88,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
     authorizationEntity.setAccessToken(refreshedToken.getAccessToken());
     authorizationEntity.setScope(refreshedToken.getScope());
     authorizationEntity.setTokenType(refreshedToken.getTokenType());
-    authorizationEntity.setExpiresAt(now.plusSeconds(refreshedToken.getExpiresIn()));
+    authorizationEntity.setExpiresAt(now.plusSeconds(refreshedToken.getExpiresIn() - GRACE_PERIOD_SECONDS));
     spotifyAuthorizationRepository.save(authorizationEntity);
 
     return refreshedToken.getAccessToken();
