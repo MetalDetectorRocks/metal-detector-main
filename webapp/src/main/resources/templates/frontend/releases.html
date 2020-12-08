@@ -69,6 +69,30 @@
                         </div>
                     </fieldset>
                     <fieldset class="mb-3">
+                        <legend>Sort</legend>
+                        <div class="form-group row">
+                            <label for="sort-property-selector" class="col-sm-3 col-form-label">by</label>
+                            <div class="col-sm-6">
+                                <select class="form-control sorting-form-control" id="sort-property-selector">
+                                    <option>Release date</option>
+                                    <option>Announcement date</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <form id="sorting-form">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="sort-asc-rb" name="releases" class="custom-control-input" checked="">
+                                    <label class="custom-control-label" for="sort-asc-rb">Earliest first</label>
+                                </div>
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="sort-desc-rb" name="releases" class="custom-control-input">
+                                    <label class="custom-control-label" for="sort-desc-rb">Latest first</label>
+                                </div>
+                            </form>
+                        </div>
+                    </fieldset>
+                    <fieldset class="mb-3">
                         <legend>Artists</legend>
                         <div class="form-group">
                             <form id="release-filter-form">

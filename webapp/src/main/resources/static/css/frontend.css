@@ -223,6 +223,11 @@ footer .list-inline-item {
     color: var(--light-font-color);
 }
 
+.sorting-form-control {
+    float: right;
+    width: auto;
+}
+
 /* Overrides */
 .alert-light {
     border: 1px solid var(--grey-border-color);
