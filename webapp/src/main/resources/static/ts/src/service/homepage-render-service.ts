@@ -4,7 +4,7 @@ import {HomepageResponse} from "../model/homepage-response.model";
 import {AbstractRenderService} from "./abstract-render-service";
 import {Artist} from "../model/artist.model";
 import {Release} from "../model/release.model";
-import {DateFormat, DateFormatService} from "./date-format-service";
+import {DateFormat, DateService} from "./date-service";
 
 interface HomepageCard {
     readonly divElement: HTMLDivElement;
@@ -16,13 +16,13 @@ interface HomepageCard {
 
 export class HomepageRenderService extends AbstractRenderService<HomepageResponse> {
 
-    private readonly dateFormatService: DateFormatService;
+    private readonly dateFormatService: DateService;
     private readonly artistTemplateElement: HTMLTemplateElement;
     private readonly releaseTemplateElement: HTMLTemplateElement;
     private readonly MAX_CARDS_PER_ROW: number = 4;
     private readonly MIN_CARDS_PER_ROW: number = this.MAX_CARDS_PER_ROW - 1;
 
-    constructor(alertService: AlertService, loadingIndicatorService: LoadingIndicatorService, dateService: DateFormatService) {
+    constructor(alertService: AlertService, loadingIndicatorService: LoadingIndicatorService, dateService: DateService) {
         super(alertService, loadingIndicatorService);
         this.dateFormatService = dateService;
         this.artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;

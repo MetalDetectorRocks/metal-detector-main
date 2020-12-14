@@ -5,15 +5,15 @@ import {AlertService} from "./alert-service";
 import {LoadingIndicatorService} from "./loading-indicator-service";
 import {Pagination} from "../model/pagination.model";
 import {Release} from "../model/release.model";
-import {DateFormat, DateFormatService} from "./date-format-service";
+import {DateFormat, DateService} from "./date-service";
 
 export class ReleasesRenderService extends AbstractRenderService<ReleasesResponse> {
 
-    private readonly dateFormatService: DateFormatService;
+    private readonly dateFormatService: DateService;
     private readonly paginationComponent: PaginationComponent;
     private readonly releaseTemplateElement: HTMLTemplateElement;
 
-    constructor(dateService: DateFormatService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
+    constructor(dateService: DateService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
         super(alertService, loadingIndicatorService);
         this.dateFormatService = dateService;
         this.paginationComponent = new PaginationComponent();
