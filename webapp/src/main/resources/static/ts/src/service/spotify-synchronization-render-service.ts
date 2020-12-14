@@ -88,7 +88,9 @@ export class SpotifySynchronizationRenderService {
         this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID);
         this.clearArtistsContainer();
         const savedArtists = this.spotifyRestClient.fetchSavedArtists();
+        let savedArtistsAvailable = false;
         savedArtists.then(response => {
+            savedArtistsAvailable = response.artists.length > 0;
             response.artists.forEach(artist => {
                 const artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
                 const artistTemplateNode = document.importNode(artistTemplateElement.content, true);
@@ -105,8 +107,16 @@ export class SpotifySynchronizationRenderService {
                 this.artistContainerElement.insertAdjacentElement("beforeend", artistDivElement);
             });
         }).finally(() => {
-            this.artistSelectionElement.classList.remove("invisible");
-            this.synchronizeArtistsButton?.classList.remove("disabled");
+            if (savedArtistsAvailable) {
+                this.artistSelectionElement.classList.remove("invisible");
+                this.synchronizeArtistsButton?.classList.remove("disabled");
+            }
+            else {
+                const infoIcon = '<span class="material-icons">info</span>';
+                const infoMessage = `${infoIcon} You already follow all the artists on Metal Detector that you also follow on Spotify.`;
+                const infoMessageElement = this.alertService.renderInfoAlert(infoMessage, true);
+                this.artistContainerElement.insertAdjacentElement("beforeend", infoMessageElement);
+            }
             this.loadingIndicatorService.hideLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID);
         });
     }
