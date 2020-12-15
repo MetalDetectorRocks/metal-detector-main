@@ -7,15 +7,15 @@
     <title>Import</title>
     <link th:href="@{/css/datatables.custom.css}" href="#" rel="stylesheet" />
     <link th:href="@{/webjars/datatables/css/dataTables.bootstrap4.min.css}" href="#" rel="stylesheet" type="text/css" />
-    <script th:nonce="script-+${random}" th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}" src="#"></script>
-    <script th:nonce="script-+${random}" th:src="@{/webjars/datatables/js/dataTables.bootstrap4.min.js}" src="#"></script>
-    <script th:nonce="script-+${random}" th:src="@{/js/admin/import.js}" src="#"></script>
+    <script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}" src="#"></script>
+    <script th:src="@{/webjars/datatables/js/dataTables.bootstrap4.min.js}" src="#"></script>
+    <script th:src="@{/js/admin/import.js}" src="#"></script>
 </head>
 <body>
     <section layout:fragment="content">
         <h1 class="h2 text-dark">Import</h1>
-        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="import-button" onclick="createImportReleasesJob()">Create Import Job</button>
-        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="retry-cover-download-button" onclick="createRetryCoverDownloadJob()">Create Retry Cover Download Job</button>
+        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="import-button">Create Import Job</button>
+        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="retry-cover-download-button">Create Retry Cover Download Job</button>
         <table id="import-job-table" class="table table-striped table-hover mt-3 clickable-table">
             <thead>
             <tr>

@@ -5,7 +5,7 @@
       lang="en">
 <head>
     <title>Spotify Synchronization</title>
-    <script th:nonce="script-+${random}" type="module" th:src="@{/ts/dist/spotify_synchronization.bundle.js}" src="#"></script>
+    <script th:nonce="${random}" type="module" th:src="@{/ts/dist/spotify_synchronization.bundle.js}" src="#"></script>
 </head>
 <body>
     <section layout:fragment="content">

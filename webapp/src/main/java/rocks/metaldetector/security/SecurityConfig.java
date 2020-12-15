@@ -59,6 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(Endpoints.AntPattern.ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
         .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
         .antMatchers(Endpoints.AntPattern.AUTH_PAGES).permitAll()
+        .antMatchers(Endpoints.Rest.CSP_VIOLATION_REPORT).permitAll()
         .anyRequest().authenticated()
       .and()
       .formLogin()
@@ -106,7 +107,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     filterRegistrationBean.addUrlPatterns(Endpoints.Frontend.ALL_FRONTEND_PAGES.toArray(new String[0]));
     filterRegistrationBean.addUrlPatterns(Endpoints.Guest.ALL_GUEST_INDEX_PAGES.toArray(new String[0]));
     filterRegistrationBean.addUrlPatterns(Endpoints.Guest.ALL_AUTH_PAGES.toArray(new String[0]));
-    filterRegistrationBean.addUrlPatterns(Endpoints.AntPattern.ADMIN);
     return filterRegistrationBean;
   }
 

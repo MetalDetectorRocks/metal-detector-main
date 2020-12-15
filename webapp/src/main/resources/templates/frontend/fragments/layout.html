@@ -12,24 +12,24 @@
   <sec:csrfMetaTags></sec:csrfMetaTags>
 
   <!-- CSS -->
-  <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/cyborg/bootstrap.min.css" rel="stylesheet" integrity="sha384-l7xaoY0cJM4h9xh1RfazbgJVUZvdtyLWPueWNtLAphf/UbBgOVzqbOTogxPwYLHM" crossorigin="anonymous">
-  <link th:href="@{/webjars/datatables/css/dataTables.bootstrap4.min.css}" href="#" rel="stylesheet" type="text/css" />
-  <link th:href="@{/css/frontend.css}" href="#" rel="stylesheet" />
-  <link th:href="@{/css/frontend.navbar.css}" href="#" rel="stylesheet" />
-  <link th:href="@{/css/common.css}" href="#" rel="stylesheet" />
+  <link th:nonce="${random}" href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/cyborg/bootstrap.min.css" rel="stylesheet" integrity="sha384-l7xaoY0cJM4h9xh1RfazbgJVUZvdtyLWPueWNtLAphf/UbBgOVzqbOTogxPwYLHM" crossorigin="anonymous">
+  <link th:nonce="${random}" th:href="@{/webjars/datatables/css/dataTables.bootstrap4.min.css}" href="#" rel="stylesheet" type="text/css" />
+  <link th:nonce="${random}" th:href="@{/css/frontend.css}" href="#" rel="stylesheet" />
+  <link th:nonce="${random}" th:href="@{/css/frontend.navbar.css}" href="#" rel="stylesheet" />
+  <link th:nonce="${random}" th:href="@{/css/common.css}" href="#" rel="stylesheet" />
 
   <!-- Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap" rel="stylesheet">
+  <link th:nonce="${random}" href="https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap" rel="stylesheet">
 
   <!-- JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script th:nonce="script-+${random}" th:src="@{/webjars/jquery/jquery.min.js}" src="#"></script>
-  <script th:nonce="script-+${random}" th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
-  <script th:nonce="script-+${random}" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
-  <script th:nonce="script-+${random}" th:src="@{/js/common.js}" src="#"></script>
+  <script th:nonce="${random}" th:src="@{/webjars/jquery/jquery.min.js}" src="#"></script>
+  <script th:nonce="${random}" th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
+  <script th:nonce="${random}" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
+  <script th:nonce="${random}" th:src="@{/js/common.js}" src="#"></script>
 
   <!-- Material Icons -->
-  <link th:href="@{/webjars/material-icons/iconfont/material-icons.css}" href="/webjars/material-icons/0.3.1/iconfont/material-icons.css" rel="stylesheet">
+  <link th:nonce="${random}" th:href="@{/webjars/material-icons/iconfont/material-icons.css}" href="/webjars/material-icons/0.3.1/iconfont/material-icons.css" rel="stylesheet">
 </head>
   <body>
     <header>
@@ -96,12 +96,12 @@
       </div>
     </footer>
 
-    <button onclick="scrollToTop()" class="scroll-to-top" id="backToTopButton">
+    <button class="scroll-to-top" id="back-to-top-button">
       <span class="material-icons">keyboard_arrow_up</span>
     </button>
     <div id="toast-wrapper"></div>
 
-    <script th:nonce="script-+${random}">
+    <script th:nonce="${random}">
         $(document).ready( function() {
             registerLogoutListener();
         });

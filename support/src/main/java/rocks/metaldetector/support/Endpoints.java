@@ -58,6 +58,7 @@ public class Endpoints {
     public static final String RELEASES                       = "/rest/v1/releases";
     public static final String IMPORT_JOB                     = "/rest/v1/releases/import";
     public static final String COVER_JOB                      = "/rest/v1/releases/cover-reload";
+    public static final String CSP_VIOLATION_REPORT           = "/rest/v1/csp-violation-report";
     public static final String SEARCH                         = "/search";
     public static final String FOLLOW                         = "/follow";
     public static final String UNFOLLOW                       = "/unfollow";
