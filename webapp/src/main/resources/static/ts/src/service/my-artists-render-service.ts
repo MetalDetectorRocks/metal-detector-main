@@ -13,15 +13,15 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
     private readonly MAX_CARDS_PER_ROW = 4;
 
     private readonly followArtistService: FollowArtistService;
-    private readonly dateFormatService: DateService;
+    private readonly dateService: DateService;
     private readonly paginationComponent: PaginationComponent;
     private readonly artistTemplateElement: HTMLTemplateElement;
     private rowElement?: HTMLDivElement;
 
-    constructor(followArtistService: FollowArtistService, dateFormatService: DateService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
+    constructor(followArtistService: FollowArtistService, dateService: DateService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
         super(alertService, loadingIndicatorService);
         this.followArtistService = followArtistService;
-        this.dateFormatService = dateFormatService;
+        this.dateService = dateService;
         this.paginationComponent = new PaginationComponent();
         this.artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
     }
@@ -86,7 +86,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
     }
 
     private createFollowedSinceString(followedSince: string): string {
-        const followedSinceString = this.dateFormatService.format(followedSince, DateFormat.LONG)
+        const followedSinceString = this.dateService.format(followedSince, DateFormat.LONG)
         return `<img class="followed-since-icon" src="/images/pommesgabel.svg" alt="followed" width=26> on ${followedSinceString}`;
     }
 

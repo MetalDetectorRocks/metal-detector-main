@@ -6,9 +6,9 @@ import {DateService} from "../service/date-service";
 
 const alertService = new AlertService();
 const loadingIndicatorService = new LoadingIndicatorService();
-const dateFormatService = new DateService();
+const dateService = new DateService();
 const homepageRestClient = new HomepageRestClient();
-const homepageRenderService = new HomepageRenderService(alertService, loadingIndicatorService, dateFormatService);
+const homepageRenderService = new HomepageRenderService(alertService, loadingIndicatorService, dateService);
 
 const response = homepageRestClient.fetchHomepage();
 homepageRenderService.render(response);

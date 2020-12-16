@@ -13,8 +13,8 @@ const alertService = new AlertService();
 const loadingIndicatorService = new LoadingIndicatorService();
 const artistsRestClient = new ArtistsRestClient(urlService, toastService);
 const followArtistService = new FollowArtistService(artistsRestClient, toastService);
-const dateFormatService = new DateService();
-const myArtistsRenderService = new MyArtistsRenderService(followArtistService, dateFormatService, alertService, loadingIndicatorService);
+const dateService = new DateService();
+const myArtistsRenderService = new MyArtistsRenderService(followArtistService, dateService, alertService, loadingIndicatorService);
 
 const response = artistsRestClient.fetchMyArtists();
 myArtistsRenderService.render(response);

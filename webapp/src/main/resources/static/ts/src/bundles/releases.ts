@@ -9,9 +9,9 @@ import {UrlService} from "../service/url-service";
 const loadingIndicatorService = new LoadingIndicatorService();
 const alertService = new AlertService();
 const urlService = new UrlService();
-const dateFormatService = new DateService();
-const releasesRestClient = new ReleasesRestClient(urlService, dateFormatService);
-const releasesRenderService = new ReleasesRenderService(dateFormatService, alertService, loadingIndicatorService);
+const dateService = new DateService();
+const releasesRestClient = new ReleasesRestClient(urlService, dateService);
+const releasesRenderService = new ReleasesRenderService(dateService, alertService, loadingIndicatorService);
 const releasesService = new ReleasesService(releasesRestClient, releasesRenderService, urlService);
 
 releasesService.fetchReleases();
