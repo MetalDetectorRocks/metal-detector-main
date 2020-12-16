@@ -10,11 +10,11 @@ export class ReleasesRestClient {
     private readonly MY_RELEASES_URL = "/rest/v1/releases/my";
 
     private readonly urlService: UrlService;
-    private readonly dateFormatService: DateService;
+    private readonly dateService: DateService;
 
-    constructor(urlService: UrlService, dateFormatService: DateService) {
+    constructor(urlService: UrlService, dateService: DateService) {
         this.urlService = urlService;
-        this.dateFormatService = dateFormatService;
+        this.dateService = dateService;
     }
 
     public async fetchAllReleases(): Promise<ReleasesResponse> {
@@ -31,7 +31,7 @@ export class ReleasesRestClient {
         axiosConfig.params = {
             page: this.urlService.getPageFromUrl(),
             size: 30,
-            dateFrom: this.dateFormatService.yesterday(),
+            dateFrom: this.dateService.yesterday(),
             sort: sortParameter
         }
 

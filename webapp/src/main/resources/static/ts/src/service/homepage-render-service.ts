@@ -16,7 +16,7 @@ interface HomepageCard {
 
 export class HomepageRenderService extends AbstractRenderService<HomepageResponse> {
 
-    private readonly dateFormatService: DateService;
+    private readonly dateService: DateService;
     private readonly artistTemplateElement: HTMLTemplateElement;
     private readonly releaseTemplateElement: HTMLTemplateElement;
     private readonly MAX_CARDS_PER_ROW: number = 4;
@@ -24,7 +24,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
     constructor(alertService: AlertService, loadingIndicatorService: LoadingIndicatorService, dateService: DateService) {
         super(alertService, loadingIndicatorService);
-        this.dateFormatService = dateService;
+        this.dateService = dateService;
         this.artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
         this.releaseTemplateElement = document.getElementById("release-card")! as HTMLTemplateElement;
     }
@@ -82,8 +82,8 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
                 const artistDivElement = this.renderArtistCard(artist);
                 const followedSinceElement = artistDivElement.querySelector("#artist-sub-title") as HTMLDivElement;
                 followedSinceElement.innerHTML = `
-                    <div class="custom-tooltip">${this.dateFormatService.formatRelative(artist.followedSince)}
-                        <span class="tooltip-text">${this.dateFormatService.format(artist.followedSince, DateFormat.LONG)}</span>
+                    <div class="custom-tooltip">${this.dateService.formatRelative(artist.followedSince)}
+                        <span class="tooltip-text">${this.dateService.format(artist.followedSince, DateFormat.LONG)}</span>
                     </div>
                 `;
                 this.attachCard(artistDivElement, recentlyFollowedRowElement);
@@ -130,8 +130,8 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         homepageCard.nameElement.textContent = release.artist;
         homepageCard.subtitleElement.textContent = release.albumTitle;
         homepageCard.footerElement.innerHTML = `
-            <div class="custom-tooltip">${this.dateFormatService.formatRelative(release.releaseDate)}
-                <span class="tooltip-text">${this.dateFormatService.format(release.releaseDate, DateFormat.LONG)}</span>
+            <div class="custom-tooltip">${this.dateService.formatRelative(release.releaseDate)}
+                <span class="tooltip-text">${this.dateService.format(release.releaseDate, DateFormat.LONG)}</span>
             </div>
         `;
 
