@@ -56,6 +56,7 @@ jobs:
           build-args: |
             BUILD_DATE=${{ steps.version.outputs.version }}
             VCS_REF=${{ github.ref }}
+            HEALTH_CHECK_ENDPOINT=${{ secrets.HEALTH_CHECK_ENDPOINT }}
 
       - name: Push image to Heroku Registry
         run: |

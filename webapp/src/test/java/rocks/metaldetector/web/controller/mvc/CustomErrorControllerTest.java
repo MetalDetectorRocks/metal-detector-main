@@ -37,8 +37,9 @@ class CustomErrorControllerTest {
   @DisplayName("Return 404 if no controller for the requested URI was found")
   void test_error_404_status() {
     // when
-    var validatableResponse = restAssuredUtils.doGetWithAttributes(Map.of(RequestDispatcher.ERROR_STATUS_CODE, HttpStatus.NOT_FOUND.value(),
-                                                                          RequestDispatcher.ERROR_REQUEST_URI, "/not-existing"));
+    var validatableResponse = restAssuredUtils.doGetWithAttributes(
+            Map.of(RequestDispatcher.ERROR_STATUS_CODE, HttpStatus.NOT_FOUND.value(), RequestDispatcher.ERROR_REQUEST_URI, "/not-existing")
+    );
 
     // then
     validatableResponse.assertThat(status().isNotFound());

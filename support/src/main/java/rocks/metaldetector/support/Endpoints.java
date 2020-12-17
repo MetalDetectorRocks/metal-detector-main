@@ -82,6 +82,7 @@ public class Endpoints {
   public static class AntPattern {
     public static final String   ADMIN                     = "/admin/**";
     public static final String   REST_ENDPOINTS            = "/rest/**";
+    public static final String   ACTUATOR_ENDPOINTS        = "/actuator/**";
            static final String[] INDEX                     = {"/", "/index", "/index/"};
     public static final String[] LOGIN                     = {"/login", "/login/"};
            static final String[] REGISTER                  = {"/register", "/register/"};

@@ -28,6 +28,7 @@
         <modelmapper.version>2.3.8</modelmapper.version>
         <jsoup.version>1.13.1</jsoup.version>
         <servlet-api.version>4.0.1</servlet-api.version>
+        <micrometer.version>1.6.2</micrometer.version>
     </properties>
 
     <dependencies>
@@ -44,6 +45,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <!-- Thymeleaf -->
@@ -177,6 +182,12 @@
             <version>${servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.security.NonceSupplier;
@@ -44,5 +45,8 @@ public abstract class BaseWebMvcTestWithSecurity implements WithSecurityConfig {
 
   @MockBean
   protected NonceSupplier nonceSupplier;
+
+  @MockBean
+  protected HttpSecurity httpSecurity;
 
 }
