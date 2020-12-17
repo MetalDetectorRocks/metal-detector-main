@@ -5,6 +5,10 @@ let importJobTable;
  */
 $(document).ready(function () {
   importJobTable = getImportJobs();
+  const importButton = document.getElementById("import-button");
+  importButton.onclick = function () {createImportReleasesJob()};
+  const retryCoverDownloadButton = document.getElementById("retry-cover-download-button");
+  retryCoverDownloadButton.onclick = function () {createRetryCoverDownloadJob()};
 });
 
 /**
