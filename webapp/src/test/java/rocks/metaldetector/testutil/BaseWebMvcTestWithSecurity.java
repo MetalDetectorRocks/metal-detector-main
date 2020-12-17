@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
@@ -39,6 +40,9 @@ public abstract class BaseWebMvcTestWithSecurity implements WithSecurityConfig {
   protected ModelMapper mapper;
 
   @MockBean
-  SecurityProperties securityProperties;
+  protected SecurityProperties securityProperties;
+
+  @MockBean
+  protected HttpSecurity httpSecurity;
 
 }

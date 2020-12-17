@@ -30,8 +30,14 @@ import rocks.metaldetector.support.SecurityProperties;
 import javax.sql.DataSource;
 import java.time.Duration;
 
-@EnableWebSecurity
+import static rocks.metaldetector.support.Endpoints.AntPattern.ACTUATOR_ENDPOINTS;
+import static rocks.metaldetector.support.Endpoints.AntPattern.ADMIN;
+import static rocks.metaldetector.support.Endpoints.AntPattern.AUTH_PAGES;
+import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
+import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
+
 @Configuration
+@EnableWebSecurity
 @ConditionalOnProperty(
         name = "rocks.metaldetector.security.enabled",
         havingValue = "true",
@@ -52,12 +58,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http
       .requiresChannel().requestMatchers(request -> request.getHeader("X-Forwarded-Proto") != null).requiresSecure()
       .and()
-      .csrf().ignoringAntMatchers(Endpoints.AntPattern.REST_ENDPOINTS)
+      .csrf().ignoringAntMatchers(REST_ENDPOINTS, ACTUATOR_ENDPOINTS)
       .and()
       .authorizeRequests()
-        .antMatchers(Endpoints.AntPattern.ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
-        .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
-        .antMatchers(Endpoints.AntPattern.AUTH_PAGES).permitAll()
+        .antMatchers(ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
+        .antMatchers(RESOURCES).permitAll()
+        .antMatchers(AUTH_PAGES).permitAll()
+        .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
         .anyRequest().authenticated()
       .and()
       .formLogin()
@@ -82,7 +89,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .exceptionHandling()
         .accessDeniedHandler(new CustomAccessDeniedHandler(() -> SecurityContextHolder.getContext().getAuthentication()))
         .defaultAuthenticationEntryPointFor(new LoginUrlAuthenticationEntryPoint(Endpoints.Guest.LOGIN), new AntPathRequestMatcher(Endpoints.Guest.SLASH_INDEX))
-        .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher(Endpoints.AntPattern.REST_ENDPOINTS));
+        .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher(REST_ENDPOINTS));
   }
 
   @Override

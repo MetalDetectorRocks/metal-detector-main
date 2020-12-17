@@ -4,7 +4,7 @@ application:
 spring:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
   thymeleaf:
     cache: true
   mail:
@@ -30,6 +30,11 @@ server:
   tomcat:
     accesslog:
       enabled: false
+
+management:
+  endpoints:
+    web:
+      base-path: ${ACTUAOTR_BASE_PATH}
 
 metal-release-butler:
   host: https://metal-release-butler-prod.herokuapp.com
