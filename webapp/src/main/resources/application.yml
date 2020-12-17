@@ -57,6 +57,13 @@ server:
 logging:
   config: classpath:config/logging/logback-spring.xml
 
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health, info, metrics, prometheus
+
 discogs:
   access-token: ${DISCOGS_ACCESS_TOKEN}
   rest-base-url: https://api.discogs.com
