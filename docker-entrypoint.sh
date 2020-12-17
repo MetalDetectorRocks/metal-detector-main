@@ -16,7 +16,6 @@ file_env() {
 	fi
 
 	export "$var"="$val"
-
 	unset "$fileVar"
 }
 
