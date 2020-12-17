@@ -27,18 +27,23 @@ public class Endpoints {
   }
 
   public static class Frontend {
-    public static final String HOME                      = "/home";
-    public static final String ARTISTS                   = "/artists/search";
-    public static final String RELEASES                  = "/releases";
-    public static final String MY_ARTISTS                = "/my-artists";
-    public static final String BLOG                      = "/blog";
-    public static final String IMPRINT                   = "/imprint";
-    public static final String STATUS                    = "/status";
-    public static final String ACCOUNT_DETAILS           = "/settings/account-details";
-    public static final String SPOTIFY_SYNCHRONIZATION   = "/settings/spotify-synchronization";
-    public static final String NOTIFICATION_SETTINGS     = "/settings/notification-settings";
-    public static final String TEST                      = "/only-for-testing";
-    public static final String SPOTIFY_CALLBACK          = "/spotify-callback";
+    public static final String HOME                       = "/home";
+    public static final String ARTISTS                    = "/artists/search";
+    public static final String SETTINGS                   = "/settings";
+    public static final String PROFILE                    = "/profile";
+    public static final String RELEASES                   = "/releases";
+    public static final String MY_ARTISTS                 = "/my-artists";
+    public static final String BLOG                       = "/blog";
+    public static final String IMPRINT                    = "/imprint";
+    public static final String STATUS                     = "/status";
+    public static final String ACCOUNT_DETAILS            = "/settings/account-details";
+    public static final String SPOTIFY_SYNCHRONIZATION    = "/settings/spotify-synchronization";
+    public static final String NOTIFICATION_SETTINGS      = "/settings/notification-settings";
+    public static final String TEST                       = "/only-for-testing";
+    public static final String SPOTIFY_CALLBACK           = "/spotify-callback";
+    public static final List<String> ALL_FRONTEND_PAGES   = List.of(HOME, ARTISTS, SETTINGS, PROFILE, RELEASES, MY_ARTISTS,
+                                                                    BLOG, IMPRINT, STATUS, TEST, SPOTIFY_CALLBACK,ACCOUNT_DETAILS,
+                                                                    SPOTIFY_SYNCHRONIZATION,NOTIFICATION_SETTINGS);
   }
 
   public static class Rest {
@@ -53,6 +58,7 @@ public class Endpoints {
     public static final String RELEASES                       = "/rest/v1/releases";
     public static final String IMPORT_JOB                     = "/rest/v1/releases/import";
     public static final String COVER_JOB                      = "/rest/v1/releases/cover-reload";
+    public static final String CSP_VIOLATION_REPORT           = "/rest/v1/csp-violation-report";
     public static final String SEARCH                         = "/search";
     public static final String FOLLOW                         = "/follow";
     public static final String UNFOLLOW                       = "/unfollow";

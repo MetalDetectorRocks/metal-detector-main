@@ -10,13 +10,17 @@ function registerLogoutListener() {
  */
 $(document).ready(function () {
     window.onscroll = function() {onScrollFunction()};
+    const backToTopButton = document.getElementById("back-to-top-button");
+    if (backToTopButton) {
+        backToTopButton.onclick = function () {scrollToTop()};
+    }
 });
 
 /**
  * Function called on scrolling
  */
 function onScrollFunction() {
-    const backToTopButton = $("#backToTopButton");
+    const backToTopButton = $('#back-to-top-button');
     if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
         backToTopButton.fadeIn();
     } else {
@@ -28,7 +32,7 @@ function onScrollFunction() {
  * Animates scrolling back to the top
  */
 function scrollToTop() {
-    $('#backToTopButton').click(function () {
+    $('#back-to-top-button').click(function () {
         $('body,html').animate({
             scrollTop: 0
         }, 800);

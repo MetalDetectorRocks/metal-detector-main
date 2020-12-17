@@ -46,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final SecurityProperties securityProperties;
   private final SearchQuerySanitizingFilter searchQuerySanitizingFilter;
+  private final CspNonceFilter cspNonceFilter;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -58,6 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(Endpoints.AntPattern.ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
         .antMatchers(Endpoints.AntPattern.RESOURCES).permitAll()
         .antMatchers(Endpoints.AntPattern.AUTH_PAGES).permitAll()
+        .antMatchers(Endpoints.Rest.CSP_VIOLATION_REPORT).permitAll()
         .anyRequest().authenticated()
       .and()
       .formLogin()
@@ -99,7 +101,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public FilterRegistrationBean<SearchQuerySanitizingFilter> filterFilterRegistrationBean() {
+  public FilterRegistrationBean<CspNonceFilter> nonceFilterFilterRegistrationBean() {
+    FilterRegistrationBean<CspNonceFilter> filterRegistrationBean = new FilterRegistrationBean<>();
+    filterRegistrationBean.setFilter(cspNonceFilter);
+    filterRegistrationBean.addUrlPatterns(Endpoints.Frontend.ALL_FRONTEND_PAGES.toArray(new String[0]));
+    filterRegistrationBean.addUrlPatterns(Endpoints.Guest.ALL_GUEST_INDEX_PAGES.toArray(new String[0]));
+    filterRegistrationBean.addUrlPatterns(Endpoints.Guest.ALL_AUTH_PAGES.toArray(new String[0]));
+    return filterRegistrationBean;
+  }
+
+  @Bean
+  public FilterRegistrationBean<SearchQuerySanitizingFilter> sanitizingFilterFilterRegistrationBean() {
     FilterRegistrationBean<SearchQuerySanitizingFilter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
     filterFilterRegistrationBean.setFilter(searchQuerySanitizingFilter);
     filterFilterRegistrationBean.addUrlPatterns(Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH);

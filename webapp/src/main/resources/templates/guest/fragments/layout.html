@@ -8,15 +8,15 @@
     <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
     <!-- CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/cyborg/bootstrap.min.css" rel="stylesheet" integrity="sha384-l7xaoY0cJM4h9xh1RfazbgJVUZvdtyLWPueWNtLAphf/UbBgOVzqbOTogxPwYLHM" crossorigin="anonymous">
-    <link th:href="@{/css/guest.css}" href="#" rel="stylesheet" type="text/css" />
+    <link th:nonce="${random}" href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/cyborg/bootstrap.min.css" rel="stylesheet" integrity="sha384-l7xaoY0cJM4h9xh1RfazbgJVUZvdtyLWPueWNtLAphf/UbBgOVzqbOTogxPwYLHM" crossorigin="anonymous">
+    <link th:nonce="${random}" th:href="@{/css/guest.css}" href="#" rel="stylesheet" type="text/css" />
 
     <!-- JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script th:src="@{/webjars/jquery/jquery.min.js}" src="#"></script>
-    <script th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
-    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
-    <script th:src="@{/js/common.js}" src="#"></script>
+    <script th:nonce="${random}" th:src="@{/webjars/jquery/jquery.min.js}" src="#"></script>
+    <script th:nonce="${random}" th:src="@{/webjars/popper.js/umd/popper.min.js}" src="#"></script>
+    <script th:nonce="${random}" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" src="#"></script>
+    <script th:nonce="${random}" th:src="@{/js/common.js}" src="#"></script>
 </head>
 <body>
     <main role="main">
