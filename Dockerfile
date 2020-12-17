@@ -27,5 +27,7 @@ LABEL org.label-schema.vcs-url="https://github.com/MetalDetectorRocks/metal-dete
 LABEL org.label-schema.vcs-ref=$VCS_REF
 
 COPY $SOURCE_JAR_FILE app.jar
+COPY docker-entrypoint.sh /app
 
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 CMD ["java", "-Djava.security.egd=file:/dev/./urandom", "-Xmx256m", "-jar", "app.jar"]

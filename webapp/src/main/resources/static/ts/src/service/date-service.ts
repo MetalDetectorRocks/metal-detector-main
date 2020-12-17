@@ -2,7 +2,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import dayjs from "dayjs";
 
-export class DateFormatService {
+export class DateService {
 
     constructor() {
         dayjs.extend(relativeTime);
@@ -15,6 +15,11 @@ export class DateFormatService {
 
     public format(dateStr: string, dateFormat: DateFormat): string {
         return dayjs(dateStr).format(dateFormat);
+    }
+
+    public yesterday(): string {
+        const yesterdayAsDayJs = dayjs().subtract(1, "day");
+        return this.format(yesterdayAsDayJs.toString(), DateFormat.UTC);
     }
 }
 

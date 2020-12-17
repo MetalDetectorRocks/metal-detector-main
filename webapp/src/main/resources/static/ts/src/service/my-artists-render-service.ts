@@ -6,22 +6,22 @@ import {Pagination} from "../model/pagination.model";
 import {LoadingIndicatorService} from "./loading-indicator-service";
 import {PaginationComponent} from "../components/pagination/pagination-component";
 import {AbstractRenderService} from "./abstract-render-service";
-import {DateFormat, DateFormatService} from "./date-format-service";
+import {DateFormat, DateService} from "./date-service";
 
 export class MyArtistsRenderService extends AbstractRenderService<MyArtistsResponse> {
 
     private readonly MAX_CARDS_PER_ROW = 4;
 
     private readonly followArtistService: FollowArtistService;
-    private readonly dateFormatService: DateFormatService;
+    private readonly dateService: DateService;
     private readonly paginationComponent: PaginationComponent;
     private readonly artistTemplateElement: HTMLTemplateElement;
     private rowElement?: HTMLDivElement;
 
-    constructor(followArtistService: FollowArtistService, dateFormatService: DateFormatService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
+    constructor(followArtistService: FollowArtistService, dateService: DateService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
         super(alertService, loadingIndicatorService);
         this.followArtistService = followArtistService;
-        this.dateFormatService = dateFormatService;
+        this.dateService = dateService;
         this.paginationComponent = new PaginationComponent();
         this.artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
     }
@@ -86,7 +86,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
     }
 
     private createFollowedSinceString(followedSince: string): string {
-        const followedSinceString = this.dateFormatService.format(followedSince, DateFormat.LONG)
+        const followedSinceString = this.dateService.format(followedSince, DateFormat.LONG)
         return `<img class="followed-since-icon" src="/images/pommesgabel.svg" alt="followed" width=26> on ${followedSinceString}`;
     }
 

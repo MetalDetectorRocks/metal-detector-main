@@ -5,17 +5,17 @@ import {AlertService} from "./alert-service";
 import {LoadingIndicatorService} from "./loading-indicator-service";
 import {Pagination} from "../model/pagination.model";
 import {Release} from "../model/release.model";
-import {DateFormat, DateFormatService} from "./date-format-service";
+import {DateFormat, DateService} from "./date-service";
 
 export class ReleasesRenderService extends AbstractRenderService<ReleasesResponse> {
 
-    private readonly dateFormatService: DateFormatService;
+    private readonly dateService: DateService;
     private readonly paginationComponent: PaginationComponent;
     private readonly releaseTemplateElement: HTMLTemplateElement;
 
-    constructor(dateService: DateFormatService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
+    constructor(dateService: DateService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
         super(alertService, loadingIndicatorService);
-        this.dateFormatService = dateService;
+        this.dateService = dateService;
         this.paginationComponent = new PaginationComponent();
         this.releaseTemplateElement = document.getElementById("detailed-release-card") as HTMLTemplateElement;
     }
@@ -65,7 +65,7 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
             : additionalArtistsElement.textContent = release.additionalArtists.join(", ");
 
         releaseDateElement.textContent = release.releaseDate?.length > 0
-            ? this.dateFormatService.format(release.releaseDate, DateFormat.LONG)
+            ? this.dateService.format(release.releaseDate, DateFormat.LONG)
             : release.estimatedReleaseDate;
 
         releaseTypeElement.textContent = release.type || "n/a";

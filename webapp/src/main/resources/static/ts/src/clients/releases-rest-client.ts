@@ -1,7 +1,7 @@
 import {axiosConfig} from "../config/axios.config";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {ReleasesResponse} from "../model/releases-response.model";
-import {DateFormat, DateFormatService} from "../service/date-format-service";
+import {DateService} from "../service/date-service";
 import {UrlService} from "../service/url-service";
 
 export class ReleasesRestClient {
@@ -10,11 +10,11 @@ export class ReleasesRestClient {
     private readonly MY_RELEASES_URL = "/rest/v1/releases/my";
 
     private readonly urlService: UrlService;
-    private readonly dateFormatService: DateFormatService;
+    private readonly dateService: DateService;
 
-    constructor(urlService: UrlService, dateFormatService: DateFormatService) {
+    constructor(urlService: UrlService, dateService: DateService) {
         this.urlService = urlService;
-        this.dateFormatService = dateFormatService;
+        this.dateService = dateService;
     }
 
     public async fetchAllReleases(): Promise<ReleasesResponse> {
@@ -31,7 +31,7 @@ export class ReleasesRestClient {
         axiosConfig.params = {
             page: this.urlService.getPageFromUrl(),
             size: 30,
-            dateFrom: this.dateFormatService.format(new Date().toUTCString(), DateFormat.UTC),
+            dateFrom: this.dateService.yesterday(),
             sort: sortParameter
         }
 
