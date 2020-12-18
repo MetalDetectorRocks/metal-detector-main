@@ -33,7 +33,6 @@ import static java.util.Collections.emptyList;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 
 @RestController
 @AllArgsConstructor
@@ -45,7 +44,7 @@ public class ReleasesRestController {
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   @GetMapping(path = Endpoints.Rest.ALL_RELEASES,
-              produces = {APPLICATION_XML_VALUE, APPLICATION_JSON_VALUE})
+              produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<List<ReleaseDto>> findAllReleases(@Valid ReleasesRequest request) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
     List<ReleaseDto> releaseDtos = releaseService.findAllReleases(emptyList(), timeRange);
@@ -53,7 +52,7 @@ public class ReleasesRestController {
   }
 
   @GetMapping(path = Endpoints.Rest.RELEASES,
-              produces = {APPLICATION_XML_VALUE, APPLICATION_JSON_VALUE})
+              produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<Page<ReleaseDto>> findReleases(@Valid PaginatedReleasesRequest request,
                                                        @SortDefault(sort = {"releaseDate", "artist", "albumTitle"}, direction=ASC) Sort sort) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
@@ -64,7 +63,7 @@ public class ReleasesRestController {
   }
 
   @GetMapping(path = Endpoints.Rest.MY_RELEASES,
-              produces = {APPLICATION_XML_VALUE, APPLICATION_JSON_VALUE})
+              produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<Page<ReleaseDto>> findReleasesOfFollowedArtists(@Valid PaginatedReleasesRequest request,
                                                                         @SortDefault(sort = {"releaseDate", "artist", "albumTitle"}, direction=ASC) Sort sort) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
@@ -84,7 +83,7 @@ public class ReleasesRestController {
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   @GetMapping(path = Endpoints.Rest.IMPORT_JOB,
-              produces = {APPLICATION_XML_VALUE, APPLICATION_JSON_VALUE})
+              produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<List<ImportJobResultDto>> getImportJobResults() {
     List<ImportJobResultDto> response = releaseService.queryImportJobResults();
     return ResponseEntity.ok(response);
@@ -99,7 +98,7 @@ public class ReleasesRestController {
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   @PutMapping(path = Endpoints.Rest.RELEASES + "/{releaseId}",
-              consumes = {APPLICATION_XML_VALUE, APPLICATION_JSON_VALUE})
+              consumes = APPLICATION_JSON_VALUE)
   public ResponseEntity<Void> updateReleaseState(@Valid @RequestBody ReleaseUpdateRequest request, @PathVariable("releaseId") long releaseId) {
     releaseService.updateReleaseState(releaseId, request.getState());
     return ResponseEntity.ok().build();
