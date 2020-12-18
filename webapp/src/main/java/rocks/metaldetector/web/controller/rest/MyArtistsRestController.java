@@ -1,7 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +15,8 @@ import rocks.metaldetector.web.api.response.MyArtistsResponse;
 
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequestMapping(Endpoints.Rest.MY_ARTISTS)
 @AllArgsConstructor
@@ -24,7 +25,7 @@ public class MyArtistsRestController {
   private final FollowArtistService followArtistService;
   private final SlicingService slicingService;
 
-  @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  @GetMapping(produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<MyArtistsResponse> getMyArtists(@RequestParam(value = "page", defaultValue = "1") int page,
                                                         @RequestParam(value = "size", defaultValue = "20") int size) {
     List<ArtistDto> followedArtists = followArtistService.getFollowedArtistsOfCurrentUser();
