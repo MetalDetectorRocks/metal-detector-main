@@ -47,7 +47,9 @@ export class SpotifySynchronizationRenderService {
     private addEventListener(): void {
         this.connectWithSpotifyButton.addEventListener("click", this.onConnectWithSpotifyClicked.bind(this));
         this.synchronizeArtistsButton.addEventListener("click", this.onSynchronizeArtistsClicked.bind(this));
-        document.getElementById("fetch-from-saved-albums")!.addEventListener("click", this.onFetchSpotifyArtistsClicked.bind(this));
+        document.getElementById("fetch-from-saved-albums")!.addEventListener("click", this.onFetchSpotifyArtistsFromAlbumsClicked.bind(this));
+        document.getElementById("fetch-from-saved-artists")!.addEventListener("click", this.onFetchSpotifyArtistsFromArtistsClicked.bind(this));
+        document.getElementById("fetch-from-both")!.addEventListener("click", this.onFetchSpotifyArtistsFromBothClicked.bind(this));
         document.getElementById("select-all-link")!.addEventListener("click", this.onSelectOrDeselectAllArtistsClicked.bind(this, true));
         document.getElementById("deselect-all-link")!.addEventListener("click", this.onSelectOrDeselectAllArtistsClicked.bind(this, false));
     }
@@ -84,10 +86,22 @@ export class SpotifySynchronizationRenderService {
         authorizationResponse.then(response => window.location.href = response.authorizationUrl);
     }
 
-    private onFetchSpotifyArtistsClicked(): void {
+    private onFetchSpotifyArtistsFromAlbumsClicked(): void {
+        this.fetchArtists(["ALBUMS"])
+    }
+
+    private onFetchSpotifyArtistsFromArtistsClicked(): void {
+        this.fetchArtists(["ARTISTS"])
+    }
+
+    private onFetchSpotifyArtistsFromBothClicked(): void {
+        this.fetchArtists(["ALBUMS", "ARTISTS"])
+    }
+
+    private fetchArtists(fetchTypes: string[]): void {
         this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID);
         this.clearArtistsContainer();
-        const savedArtists = this.spotifyRestClient.fetchSavedArtists();
+        const savedArtists = this.spotifyRestClient.fetchSavedArtists(fetchTypes);
         let savedArtistsAvailable = false;
         savedArtists.then(response => {
             savedArtistsAvailable = response.artists.length > 0;

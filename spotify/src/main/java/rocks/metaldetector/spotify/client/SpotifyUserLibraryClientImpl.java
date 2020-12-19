@@ -9,7 +9,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.spotify.api.imports.SpotfiyAlbumImportResult;
+import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResult;
+import rocks.metaldetector.spotify.api.imports.SpotifyArtistImportResult;
+import rocks.metaldetector.spotify.api.imports.SpotifyArtistImportResultContainer;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
@@ -30,31 +32,57 @@ public class SpotifyUserLibraryClientImpl implements SpotifyUserLibraryClient {
   static final String LIMIT_PARAMETER_NAME = "limit";
   static final String GET_MY_ALBUMS_ENDPOINT = "/v1/me/albums?limit={" + LIMIT_PARAMETER_NAME + "}&" +
                                                "offset={" + OFFSET_PARAMETER_NAME + "}";
+  static final String GET_FOLLOWED_ARTISTS_ENDPOINT = "/v1/me/following?type=artist&" +
+                                                      "limit={" + LIMIT_PARAMETER_NAME + "}&" +
+                                                      "offset={" + OFFSET_PARAMETER_NAME + "}";
 
   private final RestTemplate spotifyRestTemplate;
   private final SpotifyProperties spotifyProperties;
 
   @Override
-  public SpotfiyAlbumImportResult fetchLikedAlbums(String token, int offset) {
+  public SpotifyAlbumImportResult fetchLikedAlbums(String token, int offset) {
     if (token == null || token.isEmpty()) {
       throw new IllegalArgumentException("token must not be empty");
     }
 
     HttpEntity<Object> httpEntity = createHttpEntity(token);
-    ResponseEntity<SpotfiyAlbumImportResult> responseEntity = spotifyRestTemplate.exchange(
+    ResponseEntity<SpotifyAlbumImportResult> responseEntity = spotifyRestTemplate.exchange(
         spotifyProperties.getRestBaseUrl() + GET_MY_ALBUMS_ENDPOINT,
         GET,
         httpEntity,
-        SpotfiyAlbumImportResult.class,
+        SpotifyAlbumImportResult.class,
         Map.of(OFFSET_PARAMETER_NAME, offset,
                LIMIT_PARAMETER_NAME, LIMIT));
 
-    SpotfiyAlbumImportResult result = responseEntity.getBody();
+    SpotifyAlbumImportResult result = responseEntity.getBody();
     var shouldNotHappen = result == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
       throw new ExternalServiceException("Could not get albums from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
     }
     return result;
+  }
+
+  @Override
+  public SpotifyArtistImportResult fetchFollowedArtists(String token, int offset) {
+    if (token == null || token.isEmpty()) {
+      throw new IllegalArgumentException("token must not be empty");
+    }
+
+    HttpEntity<Object> httpEntity = createHttpEntity(token);
+    ResponseEntity<SpotifyArtistImportResultContainer> responseEntity = spotifyRestTemplate.exchange(
+        spotifyProperties.getRestBaseUrl() + GET_FOLLOWED_ARTISTS_ENDPOINT,
+        GET,
+        httpEntity,
+        SpotifyArtistImportResultContainer.class,
+        Map.of(OFFSET_PARAMETER_NAME, offset,
+               LIMIT_PARAMETER_NAME, LIMIT));
+
+    SpotifyArtistImportResultContainer result = responseEntity.getBody();
+    var shouldNotHappen = result == null || !responseEntity.getStatusCode().is2xxSuccessful();
+    if (shouldNotHappen) {
+      throw new ExternalServiceException("Could not get artists from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
+    }
+    return result.getArtists();
   }
 
   private HttpEntity<Object> createHttpEntity(String token) {

@@ -22,4 +22,6 @@ public interface SpotifyService {
   SpotifyUserAuthorizationDto refreshToken(String refreshToken);
 
   List<SpotifyAlbumDto> fetchLikedAlbums(String token);
+
+  List<SpotifyArtistDto> fetchFollowedArtists(String token);
 }
