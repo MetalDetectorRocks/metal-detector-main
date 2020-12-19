@@ -1,6 +1,7 @@
 package rocks.metaldetector.service.user;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
+import rocks.metaldetector.service.notification.NotificationConfigDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,8 @@ public interface UserService extends UserDetailsService {
   Optional<UserDto> getUserByEmailOrUsername(String emailOrUsername);
 
   UserDto updateUser(String publicId, UserDto userDto);
+
+  UserDto updateCurrentUserNotificationConfig(NotificationConfigDto notificationConfig);
 
   void deleteUser(String publicId);
 

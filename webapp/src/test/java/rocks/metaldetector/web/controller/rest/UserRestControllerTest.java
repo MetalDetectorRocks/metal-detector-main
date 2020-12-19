@@ -21,6 +21,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
+import rocks.metaldetector.service.notification.NotificationConfigDto;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.Endpoints;
@@ -29,6 +30,7 @@ import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
+import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.ErrorResponse;
 import rocks.metaldetector.web.api.response.UserResponse;
@@ -40,10 +42,13 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith(MockitoExtension.class)
 class UserRestControllerTest implements WithAssertions {
@@ -89,7 +94,7 @@ class UserRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse response = restAssuredUtils.doGet();
 
       // then
-      response.statusCode(HttpStatus.OK.value());
+      response.statusCode(OK.value());
 
       List<UserResponse> userList = response.extract().body().jsonPath().getList(".", UserResponse.class);
       assertThat(userList).hasSize(3);
@@ -108,7 +113,7 @@ class UserRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse response = restAssuredUtils.doGet();
 
       // then
-      response.statusCode(HttpStatus.OK.value());
+      response.statusCode(OK.value());
 
       List<UserResponse> userList = response.extract().body().jsonPath().getList(".", UserResponse.class);
       assertThat(userList).isEmpty();
@@ -143,7 +148,7 @@ class UserRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse response = restAssuredUtils.doGet("/dummy-user-id");
 
       // then
-      response.statusCode(HttpStatus.OK.value());
+      response.statusCode(OK.value());
 
       UserResponse user = response.extract().as(UserResponse.class);
       assertThat(user).isEqualTo(modelMapper.map(dto, UserResponse.class));
@@ -239,7 +244,7 @@ class UserRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse response = restAssuredUtils.doPost(request);
 
       // then
-      response.statusCode(HttpStatus.BAD_REQUEST.value());
+      response.statusCode(BAD_REQUEST.value());
 
       ErrorResponse errorResponse = response.extract().as(ErrorResponse.class);
       System.out.println(errorResponse);
@@ -277,6 +282,13 @@ class UserRestControllerTest implements WithAssertions {
   @DisplayName("Update user tests")
   class UpdateUserTest {
 
+    private RestAssuredMockMvcUtils restAssuredUpdateNotificationConfigUtils;
+
+    @BeforeEach
+    void setup() {
+      restAssuredUpdateNotificationConfigUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS + Endpoints.Rest.NOTIFICATION_CONFIG);
+    }
+
     @Test
     @DisplayName("Should return 200 if updating user is successful")
     void should_return_200() {
@@ -292,7 +304,7 @@ class UserRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse response = restAssuredUtils.doPut(updateUserRequest);
 
       // then
-      response.statusCode(HttpStatus.OK.value());
+      response.statusCode(OK.value());
 
       UserResponse user = response.extract().as(UserResponse.class);
       assertThat(user.getRole()).isEqualTo(NEW_ROLE);
@@ -301,20 +313,107 @@ class UserRestControllerTest implements WithAssertions {
     }
 
     @ParameterizedTest
-    @MethodSource("inputProvider")
+    @MethodSource("badRequestInputProvider")
     @DisplayName("Should return 400 for faulty requests")
     void should_return_400(String userId, String role, boolean enabled) {
       // given
       UpdateUserRequest updateUserRequest = new UpdateUserRequest(userId, role, enabled);
 
       // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doPost(updateUserRequest);
+      ValidatableMockMvcResponse response = restAssuredUtils.doPut(updateUserRequest);
 
       // then
-      response.statusCode(HttpStatus.BAD_REQUEST.value());
+      response.statusCode(BAD_REQUEST.value());
     }
 
-    private Stream<Arguments> inputProvider() {
+    @Test
+    @DisplayName("updateNotificationConfig: Should return 200")
+    void test_should_return_200() {
+      // given
+      var updateNotificationConfigRequest = UpdateNotificationConfigRequest.builder().frequency(1).build();
+      doReturn(UserDtoFactory.createDefault()).when(userService).updateCurrentUserNotificationConfig(any());
+
+      // when
+      var response = restAssuredUpdateNotificationConfigUtils.doPut(updateNotificationConfigRequest);
+
+      // then
+      response.statusCode(OK.value());
+    }
+
+    @Test
+    @DisplayName("updateNotificationConfig: Should return 400 for faulty requests")
+    void test_should_return_400() {
+      // given
+      var badRequest = UpdateNotificationConfigRequest.builder().frequency(-1).build();
+
+      // when
+      var response = restAssuredUpdateNotificationConfigUtils.doPut(badRequest);
+
+      // then
+      response.statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    @DisplayName("updateNotificationConfig: should call mapper for request")
+    void test_should_call_mapper_request() {
+      // given
+      var updateNotificationConfigRequest = UpdateNotificationConfigRequest.builder().frequency(1).build();
+      doReturn(UserDtoFactory.createDefault()).when(userService).updateCurrentUserNotificationConfig(any());
+
+      // when
+      restAssuredUpdateNotificationConfigUtils.doPut(updateNotificationConfigRequest);
+
+      // then
+      verify(modelMapper).map(updateNotificationConfigRequest, NotificationConfigDto.class);
+    }
+
+    @Test
+    @DisplayName("updateNotificationConfig: should call userService")
+    void test_should_call_user_service() {
+      // given
+      var notificationConfig = NotificationConfigDto.builder().frequency(1).build();
+      doReturn(UserDtoFactory.createDefault()).when(userService).updateCurrentUserNotificationConfig(any());
+      doReturn(notificationConfig).when(modelMapper).map(any(), eq(NotificationConfigDto.class));
+
+      // when
+      restAssuredUpdateNotificationConfigUtils.doPut(new UpdateNotificationConfigRequest());
+
+      // then
+      verify(userService).updateCurrentUserNotificationConfig(notificationConfig);
+    }
+
+    @Test
+    @DisplayName("updateNotificationConfig: should call mapper for updated user")
+    void test_should_call_mapper_user() {
+      // given
+      var user = UserDtoFactory.createDefault();
+      doReturn(user).when(userService).updateCurrentUserNotificationConfig(any());
+
+      // when
+      restAssuredUpdateNotificationConfigUtils.doPut(new UpdateNotificationConfigRequest());
+
+      // then
+      verify(modelMapper).map(user, UserResponse.class);
+    }
+
+    @Test
+    @DisplayName("updateNotificationConfig: should return response")
+    void test_should_return_response() {
+      // given
+      var expectedResponse = new UserResponse();
+      doReturn(UserDtoFactory.createDefault()).when(userService).updateCurrentUserNotificationConfig(any());
+      doReturn(null).when(modelMapper).map(any(), eq(NotificationConfigDto.class));
+      doReturn(expectedResponse).when(modelMapper).map(any(), eq(UserResponse.class));
+
+      // when
+      var result = restAssuredUpdateNotificationConfigUtils.doPut(new UpdateNotificationConfigRequest());
+
+      // then
+      var userResponse = result.extract().as(UserResponse.class);
+      assertThat(userResponse).isEqualTo(expectedResponse);
+    }
+
+    private Stream<Arguments> badRequestInputProvider() {
       return Stream.of(
           Arguments.of("", "", false),
           Arguments.of("id", "", false),

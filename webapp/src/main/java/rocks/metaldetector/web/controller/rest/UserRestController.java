@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import rocks.metaldetector.service.notification.NotificationConfigDto;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
+import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.UserResponse;
 
@@ -28,13 +31,13 @@ import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 @RestController
 @RequestMapping(USERS)
 @AllArgsConstructor
-@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 public class UserRestController {
 
   private final UserService userService;
   private final ModelMapper mapper;
 
   @GetMapping(produces = APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   public ResponseEntity<List<UserResponse>> getAllUsers() {
     List<UserResponse> response = userService.getAllUsers().stream()
             .map(userDto -> mapper.map(userDto, UserResponse.class))
@@ -45,6 +48,7 @@ public class UserRestController {
 
   @GetMapping(path = "/{id}",
               produces = APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   public ResponseEntity<UserResponse> getUser(@PathVariable(name = "id") String publicUserId) {
     UserDto userDto = userService.getUserByPublicId(publicUserId);
     UserResponse response = mapper.map(userDto, UserResponse.class);
@@ -54,6 +58,7 @@ public class UserRestController {
 
   @PostMapping(consumes = APPLICATION_JSON_VALUE,
                produces = APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   public ResponseEntity<UserResponse> createUser(@Valid @RequestBody RegisterUserRequest request) {
     UserDto userDto = mapper.map(request, UserDto.class);
     UserDto createdUserDto = userService.createAdministrator(userDto);
@@ -64,9 +69,21 @@ public class UserRestController {
 
   @PutMapping(consumes = APPLICATION_JSON_VALUE,
               produces = APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest request) {
     UserDto userDto = mapper.map(request, UserDto.class);
     UserDto updatedUserDto = userService.updateUser(request.getPublicUserId(), userDto);
+    UserResponse response = mapper.map(updatedUserDto, UserResponse.class);
+
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @PutMapping(path = Endpoints.Rest.NOTIFICATION_CONFIG,
+              consumes = APPLICATION_JSON_VALUE,
+              produces = APPLICATION_JSON_VALUE)
+  public ResponseEntity<UserResponse> updateCurrentUserNotificationConfig(@Valid @RequestBody UpdateNotificationConfigRequest request) {
+    NotificationConfigDto notificationConfigDto = mapper.map(request, NotificationConfigDto.class);
+    UserDto updatedUserDto = userService.updateCurrentUserNotificationConfig(notificationConfigDto);
     UserResponse response = mapper.map(updatedUserDto, UserResponse.class);
 
     return ResponseEntity.status(HttpStatus.OK).body(response);
