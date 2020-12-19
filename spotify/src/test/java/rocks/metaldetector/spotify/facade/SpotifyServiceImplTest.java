@@ -9,8 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.spotify.api.imports.SpotfiyAlbumImportResult;
+import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResult;
 import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResultItem;
+import rocks.metaldetector.spotify.api.imports.SpotifyArtistImportResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistsContainer;
 import rocks.metaldetector.spotify.client.SpotifyArtistSearchClient;
@@ -25,6 +26,7 @@ import rocks.metaldetector.spotify.client.transformer.SpotifyArtistTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyUserAuthorizationTransformer;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.spotify.facade.dto.SpotifyAlbumDto;
+import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.support.SlicingService;
 
@@ -490,7 +492,7 @@ class SpotifyServiceImplTest implements WithAssertions {
     void test_import_client_called_with_token() {
       // given
       var token = "token";
-      var mockResult = SpotfiyAlbumImportResult.builder().items(Collections.emptyList()).build();
+      var mockResult = SpotifyAlbumImportResult.builder().items(Collections.emptyList()).build();
       doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), anyInt());
 
       // when
@@ -504,7 +506,7 @@ class SpotifyServiceImplTest implements WithAssertions {
     @DisplayName("importClient is called with offset increasing by limit taken from result until total is reached")
     void test_offset_increasing() {
       // given
-      var mockResult = SpotfiyAlbumImportResult.builder().items(Collections.emptyList()).total(30).limit(10).build();
+      var mockResult = SpotifyAlbumImportResult.builder().items(Collections.emptyList()).total(30).limit(10).build();
       doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), eq(0));
       doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), eq(10));
       doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), eq(20));
@@ -525,7 +527,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       var firstAlbum = SpotifyAlbumImportResultItem.builder().album(SpotifyAlbumFactory.withName("firstAlbum")).build();
       var secondAlbum = SpotifyAlbumImportResultItem.builder().album(SpotifyAlbumFactory.withName("secondAlbum")).build();
       var resultItems = List.of(firstAlbum, secondAlbum);
-      var mockResult = SpotfiyAlbumImportResult.builder().items(resultItems).build();
+      var mockResult = SpotifyAlbumImportResult.builder().items(resultItems).build();
       doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), anyInt());
 
       // when
@@ -541,7 +543,7 @@ class SpotifyServiceImplTest implements WithAssertions {
     void test_transformed_albums_returned() {
       // given
       var album = SpotifyAlbumImportResultItem.builder().album(SpotifyAlbumFactory.withName("firstAlbum")).build();
-      var mockResult = SpotfiyAlbumImportResult.builder().items(List.of(album)).build();
+      var mockResult = SpotifyAlbumImportResult.builder().items(List.of(album)).build();
       var spotifyAlbumDto = SpotifyAlbumDto.builder().build();
       doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), anyInt());
       doReturn(spotifyAlbumDto).when(albumTransformer).transform(any());
@@ -551,6 +553,79 @@ class SpotifyServiceImplTest implements WithAssertions {
 
       // then
       assertThat(result).containsExactly(spotifyAlbumDto);
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests for method fetchFollowedArtists()")
+  class FetchFollowedArtistsTest {
+
+    @Test
+    @DisplayName("importClient is called with token")
+    void test_import_client_called_with_token() {
+      // given
+      var token = "token";
+      var mockResult = SpotifyArtistImportResult.builder().items(Collections.emptyList()).build();
+      doReturn(mockResult).when(importClient).fetchFollowedArtists(any(), anyInt());
+
+      // when
+      underTest.fetchFollowedArtists(token);
+
+      // then
+      verify(importClient).fetchFollowedArtists(eq(token), anyInt());
+    }
+
+    @Test
+    @DisplayName("importClient is called with offset increasing by limit taken from result until total is reached")
+    void test_offset_increasing() {
+      // given
+      var mockResult = SpotifyArtistImportResult.builder().items(Collections.emptyList()).total(30).limit(10).build();
+      doReturn(mockResult).when(importClient).fetchFollowedArtists(any(), eq(0));
+      doReturn(mockResult).when(importClient).fetchFollowedArtists(any(), eq(10));
+      doReturn(mockResult).when(importClient).fetchFollowedArtists(any(), eq(20));
+
+      // when
+      underTest.fetchFollowedArtists("token");
+
+      // then
+      verify(importClient).fetchFollowedArtists(any(), eq(0));
+      verify(importClient).fetchFollowedArtists(any(), eq(10));
+      verify(importClient).fetchFollowedArtists(any(), eq(20));
+    }
+
+    @Test
+    @DisplayName("artistTransformer is called for every artist returned")
+    void test_artist_transformer_called() {
+      // given
+      var firstArtist = SpotfiyArtistFactory.withArtistName("a");
+      var secondArtist = SpotfiyArtistFactory.withArtistName("b");
+      var resultItems = List.of(firstArtist, secondArtist);
+      var mockResult = SpotifyArtistImportResult.builder().items(resultItems).build();
+      doReturn(mockResult).when(importClient).fetchFollowedArtists(any(), anyInt());
+
+      // when
+      underTest.fetchFollowedArtists("token");
+
+      // then
+      verify(artistTransformer).transform(firstArtist);
+      verify(artistTransformer).transform(secondArtist);
+    }
+
+    @Test
+    @DisplayName("transformed artists are returned")
+    void test_transformed_artists_returned() {
+      // given
+      var artist = SpotfiyArtistFactory.withArtistName("a");
+      var mockResult = SpotifyArtistImportResult.builder().items(List.of(artist)).build();
+      var spotifyArtistDto = SpotifyArtistDto.builder().build();
+      doReturn(mockResult).when(importClient).fetchFollowedArtists(any(), anyInt());
+      doReturn(spotifyArtistDto).when(artistTransformer).transform(any());
+
+      // when
+      var result = underTest.fetchFollowedArtists("token");
+
+      // then
+      assertThat(result).containsExactly(spotifyArtistDto);
     }
   }
 }

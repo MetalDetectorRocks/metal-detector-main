@@ -10,9 +10,19 @@ class SpotifyUserLibraryClientMockTest implements WithAssertions {
 
   @Test
   @DisplayName("mock is not null")
-  void test_result_not_null() {
+  void test_albums_result_not_null() {
     // when
     var result = underTest.fetchLikedAlbums("token", 666);
+
+    // then
+    assertThat(result).isNotNull();
+  }
+
+  @Test
+  @DisplayName("mock is not null")
+  void test_artists_result_not_null() {
+    // when
+    var result = underTest.fetchFollowedArtists("token", 666);
 
     // then
     assertThat(result).isNotNull();

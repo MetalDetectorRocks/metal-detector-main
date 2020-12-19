@@ -24,6 +24,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 import static rocks.metaldetector.service.spotify.SpotifyFetchType.ALBUMS;
+import static rocks.metaldetector.service.spotify.SpotifyFetchType.ARTISTS;
 
 @ExtendWith(MockitoExtension.class)
 class SpotifySynchronizationServiceImplTest implements WithAssertions {
@@ -82,7 +83,7 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
   class FetchSavedArtistsTest {
 
     @Test
-    @DisplayName("userAuthorizationService is called")
+    @DisplayName("ALBUMS: userAuthorizationService is called")
     void test_user_authorization_service_called() {
       // when
       underTest.fetchSavedArtists(List.of(ALBUMS));
@@ -92,7 +93,7 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("spotifyService is called with access token for import")
+    @DisplayName("ALBUMS: spotifyService is called with access token for import")
     void test_spotify_service_called() {
       // given
       var accessToken = "accessToken";
@@ -106,7 +107,7 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("duplicates are eliminated from liked albums before the spotify service is called")
+    @DisplayName("ALBUMS: duplicates are eliminated from liked albums before the spotify service is called")
     void test_no_duplicates_when_calling_artist_service() {
       // given
       var firstAlbum = SpotifyAlbumDtoFactory.createDefault();
@@ -123,6 +124,64 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
 
       // then
       verify(spotifyService).searchArtistsByIds(List.of(firstAlbum.getArtists().get(0).getId()));
+    }
+
+    @Test
+    @DisplayName("ARTISTS: authorizationService is called when getting followed artists")
+    void test__called_followed_artists() {
+      // when
+      underTest.fetchSavedArtists(List.of(ARTISTS));
+
+      // then
+      verify(userAuthorizationService).getOrRefreshToken();
+    }
+
+    @Test
+    @DisplayName("ARTISTS: spotifyService is called to get followed artists")
+    void test_spotify_service_called_followed_artists() {
+      // given
+      var token = "token";
+      doReturn(token).when(userAuthorizationService).getOrRefreshToken();
+
+      // when
+      underTest.fetchSavedArtists(List.of(ARTISTS));
+
+      // then
+      verify(spotifyService).fetchFollowedArtists(token);
+    }
+
+    @Test
+    @DisplayName("results from both sources are returned")
+    void test_both_sources() {
+      // given
+      var artistA = SpotifyArtistDtoFactory.withArtistName("a");
+      var artistB = SpotifyArtistDtoFactory.withArtistName("b");
+      doReturn(false).when(followArtistService).isCurrentUserFollowing(any(), any());
+      doReturn(List.of(artistA)).when(spotifyService).fetchFollowedArtists(any());
+      doReturn(List.of(artistB)).when(spotifyService).searchArtistsByIds(any());
+
+      // when
+      var result = underTest.fetchSavedArtists(List.of(ARTISTS, ALBUMS));
+
+      // then
+      assertThat(result).containsExactly(artistA, artistB);
+    }
+
+    @Test
+    @DisplayName("duplicates are removed over both sources")
+    void test_duplicates_removed() {
+      // given
+      var artistA = SpotifyArtistDtoFactory.withArtistName("a");
+      var artistADuplicate = SpotifyArtistDtoFactory.withArtistName("a");
+      doReturn(false).when(followArtistService).isCurrentUserFollowing(any(), any());
+      doReturn(List.of(artistADuplicate)).when(spotifyService).fetchFollowedArtists(any());
+      doReturn(List.of(artistA)).when(spotifyService).searchArtistsByIds(any());
+
+      // when
+      var result = underTest.fetchSavedArtists(List.of(ARTISTS, ALBUMS));
+
+      // then
+      assertThat(result).containsExactly(artistA);
     }
 
     @Test
