@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import rocks.metaldetector.service.notification.NotificationConfigDto;
 
 import java.time.LocalDateTime;
 
@@ -24,5 +25,6 @@ public class UserDto {
   private LocalDateTime createdDateTime;
   private LocalDateTime lastModifiedDateTime;
   private String lastModifiedBy;
+  private NotificationConfigDto notificationConfig;
 
 }

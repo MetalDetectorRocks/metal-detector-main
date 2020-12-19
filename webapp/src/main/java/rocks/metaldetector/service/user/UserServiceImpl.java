@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.comparator.BooleanComparator;
+import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
@@ -22,6 +23,8 @@ import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
+import rocks.metaldetector.service.notification.NotificationConfigDto;
+import rocks.metaldetector.service.notification.NotificationConfigDtoTransformer;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
@@ -46,6 +49,7 @@ public class UserServiceImpl implements UserService {
   private final TokenRepository tokenRepository;
   private final JwtsSupport jwtsSupport;
   private final UserTransformer userTransformer;
+  private final NotificationConfigDtoTransformer notificationConfigTransformer;
   private final TokenService tokenService;
   private final CurrentUserSupplier currentUserSupplier;
   private final LoginAttemptService loginAttemptService;
@@ -112,6 +116,18 @@ public class UserServiceImpl implements UserService {
     userEntity.setEnabled(userDto.isEnabled());
 
     UserEntity updatedUserEntity = userRepository.save(userEntity);
+
+    return userTransformer.transform(updatedUserEntity);
+  }
+
+  @Override
+  @Transactional
+  public UserDto updateCurrentUserNotificationConfig(NotificationConfigDto notificationConfig) {
+    UserEntity currentUser = currentUserSupplier.get();
+    NotificationConfigEntity notificationConfigEntity = notificationConfigTransformer.transform(notificationConfig);
+    currentUser.setNotificationConfig(notificationConfigEntity);
+
+    UserEntity updatedUserEntity = userRepository.save(currentUser);
 
     return userTransformer.transform(updatedUserEntity);
   }

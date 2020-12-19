@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
+import rocks.metaldetector.service.notification.NotificationConfigDto;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserTransformer;
 
@@ -38,6 +39,7 @@ class UserTransformerTest implements WithAssertions {
     entity.setCreatedDateTime(new Date());
     entity.setLastModifiedBy("Modifier");
     entity.setLastModifiedDateTime(new Date());
+    NotificationConfigDto expectedNotificationConfig = NotificationConfigDto.builder().frequency(4).build();
     UserDto expected = UserDto.builder()
         .publicId(entity.getPublicId())
         .username(USERNAME)
@@ -50,6 +52,7 @@ class UserTransformerTest implements WithAssertions {
         .createdDateTime(entity.getCreatedDateTime())
         .lastModifiedBy(entity.getLastModifiedBy())
         .lastModifiedDateTime(entity.getLastModifiedDateTime())
+        .notificationConfig(expectedNotificationConfig)
         .build();
 
     // when

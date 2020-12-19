@@ -22,6 +22,7 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.token.TokenType;
@@ -33,6 +34,8 @@ import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
+import rocks.metaldetector.service.notification.NotificationConfigDto;
+import rocks.metaldetector.service.notification.NotificationConfigDtoTransformer;
 import rocks.metaldetector.service.token.TokenFactory;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.support.JwtsSupport;
@@ -51,6 +54,7 @@ import java.util.stream.Stream;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -64,7 +68,7 @@ import static rocks.metaldetector.service.user.UserErrorMessages.USER_NOT_FOUND;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest implements WithAssertions {
+class UserServiceImplTest implements WithAssertions {
 
   private static final String USERNAME = "JohnD";
   private static final String EMAIL = "john.doe@example.com";
@@ -102,17 +106,20 @@ class UserServiceTest implements WithAssertions {
   @Spy
   private UserTransformer userTransformer;
 
+  @Spy
+  private NotificationConfigDtoTransformer notificationTransformer;
+
   private UserServiceImpl underTest;
 
   @BeforeEach
   void setup() {
     underTest = new UserServiceImpl(userRepository, passwordEncoder, tokenRepository, jwtsSupport, userTransformer,
-                                    tokenService, currentUserSupplier, loginAttemptService, request);
+                                    notificationTransformer, tokenService, currentUserSupplier, loginAttemptService, request);
   }
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request, notificationTransformer);
   }
 
   @DisplayName("Create user tests")
@@ -672,6 +679,92 @@ class UserServiceTest implements WithAssertions {
       // then
       assertThat(throwable).isInstanceOf(TokenExpiredException.class);
       assertThat(throwable).hasMessageContaining(UserErrorMessages.TOKEN_EXPIRED.toDisplayString());
+    }
+
+    @Test
+    @DisplayName("updateNotificationConfig: currentUserSupplier is called")
+    void test_notification_config_update_calls_current_user_supplier() {
+      // given
+      UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(null).when(notificationTransformer).transform(any());
+      doReturn(null).when(userTransformer).transform(any());
+
+      // when
+      underTest.updateCurrentUserNotificationConfig(new NotificationConfigDto());
+
+      // then
+      verify(currentUserSupplier).get();
+    }
+
+    @Test
+    @DisplayName("updateNotificationConfig: notificationConfigTransformer is called")
+    void test_notification_config_update_calls_notification_config_trafo() {
+      // given
+      var notificationConfig = NotificationConfigDto.builder().frequency(10).build();
+      UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(null).when(notificationTransformer).transform(any());
+      doReturn(null).when(userTransformer).transform(any());
+
+      // when
+      underTest.updateCurrentUserNotificationConfig(notificationConfig);
+
+      // then
+      verify(notificationTransformer).transform(notificationConfig);
+    }
+
+    @Test
+    @DisplayName("updateNotificationConfig: updated user is saved")
+    void test_notification_config_update_saves_user() {
+      // given
+      ArgumentCaptor<UserEntity> argumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
+      var notificationConfigEntity = NotificationConfigEntity.builder().frequency(10)
+          .notificationAtAnnouncementDate(true)
+          .notificationAtReleaseDate(true).build();
+      UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(notificationConfigEntity).when(notificationTransformer).transform(any());
+      doReturn(null).when(userTransformer).transform(any());
+
+      // when
+      underTest.updateCurrentUserNotificationConfig(new NotificationConfigDto());
+
+      // then
+      verify(userRepository).save(argumentCaptor.capture());
+      var updatedUser = argumentCaptor.getValue();
+      assertThat(updatedUser.getNotificationConfig()).isEqualTo(notificationConfigEntity);
+    }
+
+    @Test
+    @DisplayName("updateNotificationConfig: updated user is transformed")
+    void test_notification_config_update_calls_user_trafo() {
+      // given
+      UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(userRepository).save(any());
+
+      // when
+      underTest.updateCurrentUserNotificationConfig(new NotificationConfigDto());
+
+      // then
+      verify(userTransformer).transform(user);
+    }
+
+    @Test
+    @DisplayName("updateNotificationConfig: updated user is returned")
+    void test_notification_config_update_returns_updated_user() {
+      // given
+      UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
+      UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(userDto).when(userTransformer).transform(any());
+
+      // when
+      var result = underTest.updateCurrentUserNotificationConfig(new NotificationConfigDto());
+
+      // then
+      assertThat(result).isEqualTo(userDto);
     }
   }
 
