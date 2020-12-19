@@ -17,7 +17,7 @@ import java.io.IOException;
 public class CspNonceFilter implements Filter {
 
   static final String CSP_HEADER_NAME = "Content-Security-Policy";
-  static final String CSP_POLICY = "object-src 'none'; script-src 'nonce-%s' 'strict-dynamic'; style-src https://fonts.googleapis.com 'nonce-%s'; base-uri 'none'; report-uri" + Endpoints.Rest.CSP_VIOLATION_REPORT + "; report-to" + Endpoints.Rest.CSP_VIOLATION_REPORT +";";
+  static final String CSP_POLICY = "object-src 'none'; script-src 'nonce-%s' 'strict-dynamic'; style-src https://fonts.googleapis.com 'nonce-%s'; base-uri 'none'; report-uri " + Endpoints.Rest.CSP_VIOLATION_REPORT + "; report-to " + Endpoints.Rest.CSP_VIOLATION_REPORT +";";
   static final String ATTRIBUTE_NAME = "random";
 
   private final NonceSupplier nonceSupplier;
