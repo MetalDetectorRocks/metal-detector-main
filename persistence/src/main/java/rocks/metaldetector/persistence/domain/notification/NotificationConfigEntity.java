@@ -27,9 +27,12 @@ public class NotificationConfigEntity extends BaseEntity {
   @OneToOne(mappedBy = "notificationConfig")
   private UserEntity user;
 
-  @Column(name = "frequency", columnDefinition = "integer default 4")
+  @Column(name = "notify", columnDefinition = "boolean default false")
+  private Boolean notify = false;
+
+  @Column(name = "frequencyInWeeks", columnDefinition = "integer default 4")
   @NonNull
-  private Integer frequency = 4;
+  private Integer frequencyInWeeks = 4;
 
   @Column(name = "notificationAtReleaseDate", columnDefinition = "boolean default false")
   @NonNull

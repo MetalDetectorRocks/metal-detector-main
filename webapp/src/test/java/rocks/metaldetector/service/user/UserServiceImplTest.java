@@ -701,7 +701,7 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("updateNotificationConfig: notificationConfigTransformer is called")
     void test_notification_config_update_calls_notification_config_trafo() {
       // given
-      var notificationConfig = NotificationConfigDto.builder().frequency(10).build();
+      var notificationConfig = NotificationConfigDto.builder().frequencyInWeeks(10).build();
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
       doReturn(user).when(currentUserSupplier).get();
       doReturn(null).when(notificationTransformer).transform(any());
@@ -719,7 +719,7 @@ class UserServiceImplTest implements WithAssertions {
     void test_notification_config_update_saves_user() {
       // given
       ArgumentCaptor<UserEntity> argumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
-      var notificationConfigEntity = NotificationConfigEntity.builder().frequency(10)
+      var notificationConfigEntity = NotificationConfigEntity.builder().frequencyInWeeks(10)
           .notificationAtAnnouncementDate(true)
           .notificationAtReleaseDate(true).build();
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);

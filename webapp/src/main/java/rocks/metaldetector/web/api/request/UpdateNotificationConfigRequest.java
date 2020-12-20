@@ -17,5 +17,6 @@ public class UpdateNotificationConfigRequest {
   private int frequency;
   private boolean notificationAtReleaseDate;
   private boolean notificationAtAnnouncementDate;
+  private boolean notify;
 
 }

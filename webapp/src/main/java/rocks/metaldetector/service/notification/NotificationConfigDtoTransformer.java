@@ -8,9 +8,10 @@ public class NotificationConfigDtoTransformer {
 
   public NotificationConfigEntity transform(NotificationConfigDto notificationConfigDto) {
     return NotificationConfigEntity.builder()
+        .notify(notificationConfigDto.isNotify())
         .notificationAtReleaseDate(notificationConfigDto.isNotificationAtReleaseDate())
         .notificationAtAnnouncementDate(notificationConfigDto.isNotificationAtAnnouncementDate())
-        .frequency(notificationConfigDto.getFrequency())
+        .frequencyInWeeks(notificationConfigDto.getFrequencyInWeeks())
         .build();
   }
 }

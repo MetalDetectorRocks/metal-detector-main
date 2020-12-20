@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class NotificationConfigDto {
 
-  private int frequency;
+  private boolean notify;
+  private int frequencyInWeeks;
   private boolean notificationAtReleaseDate;
   private boolean notificationAtAnnouncementDate;
 }
