@@ -28,7 +28,6 @@
         <modelmapper.version>2.3.8</modelmapper.version>
         <jsoup.version>1.13.1</jsoup.version>
         <servlet-api.version>4.0.1</servlet-api.version>
-        <micrometer.version>1.6.2</micrometer.version>
     </properties>
 
     <dependencies>
@@ -185,6 +184,10 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
         </dependency>
 
     </dependencies>
