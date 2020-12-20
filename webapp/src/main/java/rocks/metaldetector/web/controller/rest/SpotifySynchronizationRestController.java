@@ -1,7 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +19,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @AllArgsConstructor
 public class SpotifySynchronizationRestController {
@@ -29,14 +30,14 @@ public class SpotifySynchronizationRestController {
   private final SpotifySynchronizationService spotifySynchronizationService;
 
   @PostMapping(path = Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION,
-               produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+               produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<SpotifyArtistSynchronizationResponse> synchronizeArtists(@Valid @RequestBody SynchronizeArtistsRequest request) {
     int artistsCount = spotifySynchronizationService.synchronizeArtists(request.getArtistIds());
     return ResponseEntity.ok(new SpotifyArtistSynchronizationResponse(artistsCount));
   }
 
   @GetMapping(path = Endpoints.Rest.SPOTIFY_SAVED_ARTISTS,
-              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+              produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<SpotifyFetchArtistsResponse> fetchSavedSpotifyArtists(@RequestParam(value = FETCH_TYPES_PARAM) @NotEmpty List<SpotifyFetchType> fetchTypes) {
     List<SpotifyArtistDto> savedArtists = spotifySynchronizationService.fetchSavedArtists(fetchTypes);
     return ResponseEntity.ok(new SpotifyFetchArtistsResponse(savedArtists));

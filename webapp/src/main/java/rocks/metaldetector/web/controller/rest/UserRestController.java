@@ -46,7 +46,8 @@ public class UserRestController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
+  @GetMapping(path = "/{id}",
+              produces = APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   public ResponseEntity<UserResponse> getUser(@PathVariable(name = "id") String publicUserId) {
     UserDto userDto = userService.getUserByPublicId(publicUserId);

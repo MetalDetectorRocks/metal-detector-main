@@ -2,7 +2,6 @@ package rocks.metaldetector.web.controller.rest;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +15,8 @@ import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequestMapping(Endpoints.Rest.ARTISTS)
 @AllArgsConstructor
@@ -28,7 +29,7 @@ public class ArtistsRestController {
   private final FollowArtistService followArtistService;
 
   @GetMapping(path = Endpoints.Rest.SEARCH,
-              produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+              produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<ArtistSearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
                                                                @RequestParam(value = "page", defaultValue = "1") int page,
                                                                @RequestParam(value = "size", defaultValue = "40") int size) {
