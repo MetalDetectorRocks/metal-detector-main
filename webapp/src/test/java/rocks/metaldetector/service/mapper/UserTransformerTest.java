@@ -39,7 +39,7 @@ class UserTransformerTest implements WithAssertions {
     entity.setCreatedDateTime(new Date());
     entity.setLastModifiedBy("Modifier");
     entity.setLastModifiedDateTime(new Date());
-    NotificationConfigDto expectedNotificationConfig = NotificationConfigDto.builder().frequency(4).build();
+    NotificationConfigDto expectedNotificationConfig = NotificationConfigDto.builder().frequencyInWeeks(4).build();
     UserDto expected = UserDto.builder()
         .publicId(entity.getPublicId())
         .username(USERNAME)

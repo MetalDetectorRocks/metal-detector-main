@@ -371,7 +371,7 @@ class UserRestControllerTest implements WithAssertions {
     @DisplayName("updateNotificationConfig: should call userService")
     void test_should_call_user_service() {
       // given
-      var notificationConfig = NotificationConfigDto.builder().frequency(1).build();
+      var notificationConfig = NotificationConfigDto.builder().frequencyInWeeks(1).build();
       doReturn(UserDtoFactory.createDefault()).when(userService).updateCurrentUserNotificationConfig(any());
       doReturn(notificationConfig).when(modelMapper).map(any(), eq(NotificationConfigDto.class));
 

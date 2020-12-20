@@ -12,16 +12,18 @@ class NotificationConfigDtoTransformerTest implements WithAssertions {
   @DisplayName("dto is transformed to entity")
   void test_transform() {
     // given
-    var notificationConfigDto = NotificationConfigDto.builder().frequency(4)
+    var notificationConfigDto = NotificationConfigDto.builder().frequencyInWeeks(4)
         .notificationAtAnnouncementDate(true)
         .notificationAtReleaseDate(true)
+        .notify(true)
         .build();
 
     // when
     var result = underTest.transform(notificationConfigDto);
 
     // then
-    assertThat(result.getFrequency()).isEqualTo(notificationConfigDto.getFrequency());
+    assertThat(result.getNotify()).isEqualTo(notificationConfigDto.isNotify());
+    assertThat(result.getFrequencyInWeeks()).isEqualTo(notificationConfigDto.getFrequencyInWeeks());
     assertThat(result.getNotificationAtAnnouncementDate()).isEqualTo(notificationConfigDto.isNotificationAtAnnouncementDate());
     assertThat(result.getNotificationAtReleaseDate()).isEqualTo(notificationConfigDto.isNotificationAtReleaseDate());
   }
