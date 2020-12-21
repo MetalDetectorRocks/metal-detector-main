@@ -5,10 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.spotify.api.SpotifyArtist;
-import rocks.metaldetector.spotify.api.imports.SpotfiyAlbumImportResult;
 import rocks.metaldetector.spotify.api.imports.SpotfiyTrackImportResult;
 import rocks.metaldetector.spotify.api.imports.SpotifyAlbum;
+import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResult;
 import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResultItem;
+import rocks.metaldetector.spotify.api.imports.SpotifyArtistImportResult;
 import rocks.metaldetector.spotify.api.imports.SpotifyTrack;
 
 import java.time.LocalDateTime;
@@ -21,8 +22,8 @@ import java.util.List;
 public class SpotifyUserLibraryClientMock implements SpotifyUserLibraryClient {
 
   @Override
-  public SpotfiyAlbumImportResult fetchLikedAlbums(String token, int offset) {
-    return SpotfiyAlbumImportResult.builder()
+  public SpotifyAlbumImportResult fetchLikedAlbums(String token, int offset) {
+    return SpotifyAlbumImportResult.builder()
         .href("https://api.spotify.com/v1/search?query=Opeth&type=artist&offset=0&limit=20")
         .items(List.of(createARomanceWithViolence()))
         .limit(20)
@@ -30,6 +31,13 @@ public class SpotifyUserLibraryClientMock implements SpotifyUserLibraryClient {
         .previous(null)
         .offset(0)
         .total(1)
+        .build();
+  }
+
+  @Override
+  public SpotifyArtistImportResult fetchFollowedArtists(String token, int offset) {
+    return SpotifyArtistImportResult.builder()
+        .items(List.of(createWayfarer()))
         .build();
   }
 

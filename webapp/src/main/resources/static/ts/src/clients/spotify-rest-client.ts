@@ -56,9 +56,9 @@ export class SpotifyRestClient {
         });
     }
 
-    public async fetchSavedArtists(): Promise<SpotifyFetchArtistsResponse> {
+    public async fetchSavedArtists(fetchTypes: string[]): Promise<SpotifyFetchArtistsResponse> {
         axiosConfig.params = {
-            fetchTypes: "ALBUMS"
+            fetchTypes: fetchTypes
         }
         return await axios.get(
           this.SPOTIFY_SAVED_ARTISTS_ENDPOINT, axiosConfig

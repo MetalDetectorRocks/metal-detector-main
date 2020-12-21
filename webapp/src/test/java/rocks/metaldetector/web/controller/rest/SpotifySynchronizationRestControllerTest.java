@@ -143,7 +143,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     @DisplayName("GET on " + Endpoints.Rest.SPOTIFY_SAVED_ARTISTS + " should return 400 for invalid fetch type")
     void test_returns_bad_request() {
       // when
-      var validatableResponse = restAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, List.of("ARTISTS")));
+      var validatableResponse = restAssuredMockMvcUtils.doGet(Map.of(FETCH_TYPES_PARAM, List.of("UNKNOWN")));
 
       // then
       validatableResponse.statusCode(BAD_REQUEST.value());

@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 import static rocks.metaldetector.service.spotify.SpotifyFetchType.ALBUMS;
+import static rocks.metaldetector.service.spotify.SpotifyFetchType.ARTISTS;
 
 @Service
 @AllArgsConstructor
@@ -36,11 +37,18 @@ public class SpotifySynchronizationServiceImpl implements SpotifySynchronization
     if (fetchTypes.contains(ALBUMS)) {
       savedArtists.addAll(getArtistsFromLikedAlbums());
     }
+    if (fetchTypes.contains(ARTISTS)) {
+      savedArtists.addAll(getFollowedArtists());
+    }
 
     return savedArtists.stream()
         .filter(artist -> !followArtistService.isCurrentUserFollowing(artist.getId(), SPOTIFY))
         .sorted(Comparator.comparing(SpotifyArtistDto::getName))
         .collect(Collectors.toList());
+  }
+
+  private List<SpotifyArtistDto> getFollowedArtists() {
+    return spotifyService.fetchFollowedArtists(userAuthorizationService.getOrRefreshToken());
   }
 
   private List<SpotifyArtistDto> getArtistsFromLikedAlbums() {

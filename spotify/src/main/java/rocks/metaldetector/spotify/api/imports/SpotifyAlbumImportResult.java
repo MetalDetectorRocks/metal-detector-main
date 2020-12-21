@@ -22,13 +22,13 @@ import java.util.List;
     "previous",
     "total"
 })
-public class SpotfiyAlbumImportResult extends SpotifyPaginatedResult {
+public class SpotifyAlbumImportResult extends SpotifyPaginatedResult {
 
   @JsonProperty("items")
   private List<SpotifyAlbumImportResultItem> items;
 
   @Builder
-  public SpotfiyAlbumImportResult(List<SpotifyAlbumImportResultItem> items, String href, String next, String previous, int total, int offset, int limit) {
+  public SpotifyAlbumImportResult(List<SpotifyAlbumImportResultItem> items, String href, String next, String previous, int total, int offset, int limit) {
     super(href, limit, next, offset, previous, total);
     this.items = items;
   }

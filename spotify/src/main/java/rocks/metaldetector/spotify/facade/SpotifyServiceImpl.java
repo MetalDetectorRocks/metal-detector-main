@@ -4,8 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.spotify.api.SpotifyArtist;
 import rocks.metaldetector.spotify.api.authorization.SpotifyUserAuthorizationResponse;
-import rocks.metaldetector.spotify.api.imports.SpotfiyAlbumImportResult;
+import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResult;
 import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResultItem;
+import rocks.metaldetector.spotify.api.imports.SpotifyArtistImportResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistsContainer;
 import rocks.metaldetector.spotify.client.SpotifyArtistSearchClient;
@@ -95,7 +96,7 @@ public class SpotifyServiceImpl implements SpotifyService {
   public List<SpotifyAlbumDto> fetchLikedAlbums(String token) {
     int offset = 0;
     List<SpotifyAlbumImportResultItem> resultItems = new ArrayList<>();
-    SpotfiyAlbumImportResult importResult;
+    SpotifyAlbumImportResult importResult;
     do {
       importResult = importClient.fetchLikedAlbums(token, offset);
       resultItems.addAll(importResult.getItems());
@@ -106,6 +107,23 @@ public class SpotifyServiceImpl implements SpotifyService {
     return resultItems.stream()
         .map(SpotifyAlbumImportResultItem::getAlbum)
         .map(albumTransformer::transform)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<SpotifyArtistDto> fetchFollowedArtists(String token) {
+    int offset = 0;
+    List<SpotifyArtist> resultItems = new ArrayList<>();
+    SpotifyArtistImportResult importResult;
+    do {
+      importResult = importClient.fetchFollowedArtists(token, offset);
+      resultItems.addAll(importResult.getItems());
+      offset += importResult.getLimit();
+    }
+    while (offset < importResult.getTotal());
+
+    return resultItems.stream()
+        .map(artistTransformer::transform)
         .collect(Collectors.toList());
   }
 
