@@ -32,17 +32,17 @@ public class NotificationConfigEntity extends BaseEntity {
   @Builder.Default
   private Boolean notify = false;
 
-  @Column(name = "frequencyInWeeks", nullable = false, columnDefinition = "integer default 4")
+  @Column(name = "frequency_in_weeks", nullable = false, columnDefinition = "integer default 4")
   @Setter
   @Builder.Default
   private Integer frequencyInWeeks = 4;
 
-  @Column(name = "notificationAtReleaseDate", nullable = false, columnDefinition = "boolean default false")
+  @Column(name = "notification_at_release_date", nullable = false, columnDefinition = "boolean default false")
   @Setter
   @Builder.Default
   private Boolean notificationAtReleaseDate = false;
 
-  @Column(name = "notificationAtAnnouncementDate", nullable = false, columnDefinition = "boolean default false")
+  @Column(name = "notification_at_announcement_date", nullable = false, columnDefinition = "boolean default false")
   @Setter
   @Builder.Default
   private Boolean notificationAtAnnouncementDate = false;
