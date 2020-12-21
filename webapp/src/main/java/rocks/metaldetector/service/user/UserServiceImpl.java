@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.comparator.BooleanComparator;
+import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
+import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
@@ -46,6 +48,7 @@ public class UserServiceImpl implements UserService {
   private final TokenRepository tokenRepository;
   private final JwtsSupport jwtsSupport;
   private final UserTransformer userTransformer;
+  private final NotificationConfigRepository notificationConfigRepository;
   private final TokenService tokenService;
   private final CurrentUserSupplier currentUserSupplier;
   private final LoginAttemptService loginAttemptService;
@@ -76,6 +79,12 @@ public class UserServiceImpl implements UserService {
         .build();
 
     UserEntity savedUserEntity = userRepository.save(userEntity);
+
+    // create user's notification config
+    NotificationConfigEntity notificationConfigEntity = NotificationConfigEntity.builder()
+        .user(savedUserEntity)
+        .build();
+    notificationConfigRepository.save(notificationConfigEntity);
 
     return userTransformer.transform(savedUserEntity);
   }
@@ -121,7 +130,11 @@ public class UserServiceImpl implements UserService {
   public void deleteUser(String publicId) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+    NotificationConfigEntity notificationConfig = notificationConfigRepository.findByUserId(userEntity.getId())
+        .orElseThrow(() -> new ResourceNotFoundException("Notification config for user '" + userEntity.getPublicId() + "' not found"));
+
     userRepository.delete(userEntity);
+    notificationConfigRepository.delete(notificationConfig);
   }
 
   @Override

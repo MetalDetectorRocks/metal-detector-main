@@ -22,6 +22,8 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
+import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.token.TokenType;
@@ -51,6 +53,8 @@ import java.util.stream.Stream;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -64,13 +68,14 @@ import static rocks.metaldetector.service.user.UserErrorMessages.USER_NOT_FOUND;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest implements WithAssertions {
+class UserServiceImplTest implements WithAssertions {
 
   private static final String USERNAME = "JohnD";
   private static final String EMAIL = "john.doe@example.com";
   private static final String DUPLICATE_USERNAME = "Duplicate";
   private static final String DUPLICATE_EMAIL = "duplicate@example.com";
   private static final String PUBLIC_ID = "public-id";
+  private static final int DEFAULT_NOTIFICATION_FREQUENCY = 4;
   private final String TOKEN = "user-token";
   private final String NEW_PLAIN_PASSWORD = "new-plain-password";
   private final String NEW_ENCRYPTED_PASSWORD = "encryption".repeat(6); // an encrypted password must be 60 characters long
@@ -102,17 +107,20 @@ class UserServiceTest implements WithAssertions {
   @Spy
   private UserTransformer userTransformer;
 
+  @Mock
+  private NotificationConfigRepository notificationConfigRepository;
+
   private UserServiceImpl underTest;
 
   @BeforeEach
   void setup() {
     underTest = new UserServiceImpl(userRepository, passwordEncoder, tokenRepository, jwtsSupport, userTransformer,
-                                    tokenService, currentUserSupplier, loginAttemptService, request);
+                                    notificationConfigRepository, tokenService, currentUserSupplier, loginAttemptService, request);
   }
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request, notificationConfigRepository);
   }
 
   @DisplayName("Create user tests")
@@ -196,6 +204,29 @@ class UserServiceTest implements WithAssertions {
       assertThat(((UserAlreadyExistsException) throwable).getReason()).isEqualTo(reason);
       verify(userRepository, atMost(2)).existsByEmail(anyString());
       verify(userRepository, atMost(2)).existsByUsername(anyString());
+    }
+
+    @Test
+    @DisplayName("default notification config is created for new user")
+    void test_notification_config_created() {
+      // given
+      ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
+      UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      UserEntity userEntity = UserEntityFactory.createUser(USERNAME, EMAIL);
+      doReturn(userEntity).when(userRepository).save(any());
+
+      // when
+      underTest.createUser(userDto);
+
+      // then
+      verify(notificationConfigRepository).save(argumentCaptor.capture());
+      NotificationConfigEntity notificationConfigEntity = argumentCaptor.getValue();
+      assertThat(notificationConfigEntity).isNotNull();
+      assertThat(notificationConfigEntity.getNotify()).isFalse();
+      assertThat(notificationConfigEntity.getNotificationAtReleaseDate()).isFalse();
+      assertThat(notificationConfigEntity.getNotificationAtAnnouncementDate()).isFalse();
+      assertThat(notificationConfigEntity.getFrequencyInWeeks()).isEqualTo(DEFAULT_NOTIFICATION_FREQUENCY);
+      assertThat(notificationConfigEntity.getUser()).isEqualTo(userEntity);
     }
 
     private Stream<Arguments> userDtoProvider() {
@@ -684,7 +715,8 @@ class UserServiceTest implements WithAssertions {
     void delete_user_for_existing_user() {
       // given
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
-      when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
+      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
+      doReturn(Optional.of(NotificationConfigEntity.builder().user(user).build())).when(notificationConfigRepository).findByUserId(any());
 
       // when
       underTest.deleteUser(PUBLIC_ID);
@@ -707,6 +739,43 @@ class UserServiceTest implements WithAssertions {
       verify(userRepository).findByPublicId(PUBLIC_ID);
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
       assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
+    }
+
+    @Test
+    @DisplayName("Deleting an existing user should delete the notification config")
+    void delete_notification_config_for_existing_user() {
+      // given
+      var user = mock(UserEntity.class);
+      var notificationConfig = NotificationConfigEntity.builder().user(user).build();
+      var userId = 666L;
+      doReturn(userId).when(user).getId();
+      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
+      doReturn(Optional.of(notificationConfig)).when(notificationConfigRepository).findByUserId(any());
+
+      // when
+      underTest.deleteUser(PUBLIC_ID);
+
+      // then
+      verify(notificationConfigRepository).findByUserId(userId);
+      verify(notificationConfigRepository).delete(notificationConfig);
+    }
+
+    @Test
+    @DisplayName("Deleting a not existing notification config should throw exception")
+    void delete_not_existing_notification_config() {
+      // given
+      var user = mock(UserEntity.class);
+      var publicUserId = "abc123";
+      doReturn(publicUserId).when(user).getPublicId();
+      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
+      doReturn(Optional.empty()).when(notificationConfigRepository).findByUserId(any());
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.deleteUser(PUBLIC_ID));
+
+      // then
+      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
+      assertThat(throwable).hasMessageContaining(publicUserId);
     }
   }
 
