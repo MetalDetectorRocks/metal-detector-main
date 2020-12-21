@@ -64,8 +64,8 @@ public class Endpoints {
     public static final String FOLLOW                         = "/follow";
     public static final String UNFOLLOW                       = "/unfollow";
 
-    public static final String USERS                = "/rest/v1/users";
-    public static final String NOTIFY               = "/rest/v1/notify";
+    public static final String USERS      = "/rest/v1/users";
+    public static final String NOTIFY     = "/rest/v1/notify";
 
     public static final String TEST       = "/rest/v1/only-for-testing";
   }

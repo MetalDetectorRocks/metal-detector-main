@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import rocks.metaldetector.service.notification.NotificationConfigDto;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
+import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.UserResponse;
 
@@ -70,6 +73,17 @@ public class UserRestController {
   public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest request) {
     UserDto userDto = mapper.map(request, UserDto.class);
     UserDto updatedUserDto = userService.updateUser(request.getPublicUserId(), userDto);
+    UserResponse response = mapper.map(updatedUserDto, UserResponse.class);
+
+    return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @PutMapping(path = Endpoints.Rest.NOTIFICATION_CONFIG,
+              consumes = APPLICATION_JSON_VALUE,
+              produces = APPLICATION_JSON_VALUE)
+  public ResponseEntity<UserResponse> updateCurrentUserNotificationConfig(@Valid @RequestBody UpdateNotificationConfigRequest request) {
+    NotificationConfigDto notificationConfigDto = mapper.map(request, NotificationConfigDto.class);
+    UserDto updatedUserDto = userService.updateCurrentUserNotificationConfig(notificationConfigDto);
     UserResponse response = mapper.map(updatedUserDto, UserResponse.class);
 
     return ResponseEntity.status(HttpStatus.OK).body(response);

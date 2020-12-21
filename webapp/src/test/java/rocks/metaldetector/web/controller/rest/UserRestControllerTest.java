@@ -279,13 +279,6 @@ class UserRestControllerTest implements WithAssertions {
   @DisplayName("Update user tests")
   class UpdateUserTest {
 
-    private RestAssuredMockMvcUtils restAssuredUpdateNotificationConfigUtils;
-
-    @BeforeEach
-    void setup() {
-      restAssuredUpdateNotificationConfigUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS + Endpoints.Rest.NOTIFICATION_CONFIG);
-    }
-
     @Test
     @DisplayName("Should return 200 if updating user is successful")
     void should_return_200() {
@@ -310,7 +303,7 @@ class UserRestControllerTest implements WithAssertions {
     }
 
     @ParameterizedTest
-    @MethodSource("badRequestInputProvider")
+    @MethodSource("inputProvider")
     @DisplayName("Should return 400 for faulty requests")
     void should_return_400(String userId, String role, boolean enabled) {
       // given
@@ -323,7 +316,7 @@ class UserRestControllerTest implements WithAssertions {
       response.statusCode(BAD_REQUEST.value());
     }
 
-    private Stream<Arguments> badRequestInputProvider() {
+    private Stream<Arguments> inputProvider() {
       return Stream.of(
           Arguments.of("", "", false),
           Arguments.of("id", "", false),
