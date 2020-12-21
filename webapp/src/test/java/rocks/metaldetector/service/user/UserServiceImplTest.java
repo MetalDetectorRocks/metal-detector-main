@@ -54,6 +54,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -737,6 +738,43 @@ class UserServiceImplTest implements WithAssertions {
       verify(userRepository).findByPublicId(PUBLIC_ID);
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
       assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
+    }
+
+    @Test
+    @DisplayName("Deleting an existing user should delete the notification config")
+    void delete_notification_config_for_existing_user() {
+      // given
+      var user = mock(UserEntity.class);
+      var notificationConfig = NotificationConfigEntity.builder().user(user).build();
+      var userId = 666L;
+      doReturn(userId).when(user).getId();
+      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
+      doReturn(Optional.of(notificationConfig)).when(notificationConfigRepository).findByUserId(any());
+
+      // when
+      underTest.deleteUser(PUBLIC_ID);
+
+      // then
+      verify(notificationConfigRepository).findByUserId(userId);
+      verify(notificationConfigRepository).delete(notificationConfig);
+    }
+
+    @Test
+    @DisplayName("Deleting a not existing notification config should throw exception")
+    void delete_not_existing_notification_config() {
+      // given
+      var user = mock(UserEntity.class);
+      var publicUserId = "abc123";
+      doReturn(publicUserId).when(user).getPublicId();
+      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
+      doReturn(Optional.empty()).when(notificationConfigRepository).findByUserId(any());
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.deleteUser(PUBLIC_ID));
+
+      // then
+      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
+      assertThat(throwable).hasMessageContaining(publicUserId);
     }
   }
 

@@ -130,7 +130,11 @@ public class UserServiceImpl implements UserService {
   public void deleteUser(String publicId) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+    NotificationConfigEntity notificationConfig = notificationConfigRepository.findByUserId(userEntity.getId())
+        .orElseThrow(() -> new ResourceNotFoundException("Notification config for user '" + userEntity.getPublicId() + "' not found"));
+
     userRepository.delete(userEntity);
+    notificationConfigRepository.delete(notificationConfig);
   }
 
   @Override
