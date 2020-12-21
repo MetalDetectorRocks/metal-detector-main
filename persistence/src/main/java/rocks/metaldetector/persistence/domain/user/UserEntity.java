@@ -10,18 +10,14 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import rocks.metaldetector.persistence.domain.BaseEntity;
-import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -72,10 +68,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
   @Column(name = "last_login")
   private LocalDateTime lastLogin;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "notification_config", referencedColumnName = "id")
-  private NotificationConfigEntity notificationConfig;
-
   @Builder
   public UserEntity(@NonNull String username, @NonNull String email, @NonNull String password,
                     @NonNull Set<UserRole> userRoles, boolean enabled) {
@@ -84,7 +76,6 @@ public class UserEntity extends BaseEntity implements UserDetails {
     this.password = password;
     this.userRoles = userRoles;
     this.enabled = enabled;
-    this.notificationConfig = new NotificationConfigEntity();
   }
 
   public void setPublicId(String newPublicId) {
@@ -167,9 +158,5 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
   public void setLastLogin(LocalDateTime lastLogin) {
     this.lastLogin = lastLogin;
-  }
-
-  public void setNotificationConfig(NotificationConfigEntity notificationConfig) {
-    this.notificationConfig = notificationConfig;
   }
 }
