@@ -28,7 +28,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ExtendWith(MockitoExtension.class)
 class SpotifyAuthorizationRestControllerTest implements WithAssertions {
@@ -41,8 +40,7 @@ class SpotifyAuthorizationRestControllerTest implements WithAssertions {
   @BeforeEach
   void setup() {
     underTest = new SpotifyAuthorizationRestController(userAuthorizationService);
-    RestAssuredMockMvc.standaloneSetup(underTest,
-            springSecurity((request, response, chain) -> chain.doFilter(request, response)));
+    RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @AfterEach

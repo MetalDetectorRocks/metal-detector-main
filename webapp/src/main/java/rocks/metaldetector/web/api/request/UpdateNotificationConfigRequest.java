@@ -14,7 +14,7 @@ import javax.validation.constraints.Min;
 public class UpdateNotificationConfigRequest {
 
   @Min(0L)
-  private int frequency;
+  private int frequencyInWeeks;
   private boolean notificationAtReleaseDate;
   private boolean notificationAtAnnouncementDate;
   private boolean notify;

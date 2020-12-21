@@ -21,7 +21,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
-import rocks.metaldetector.service.notification.NotificationConfigDto;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.Endpoints;
@@ -30,7 +29,6 @@ import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
-import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.ErrorResponse;
 import rocks.metaldetector.web.api.response.UserResponse;
@@ -42,7 +40,6 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -324,93 +321,6 @@ class UserRestControllerTest implements WithAssertions {
 
       // then
       response.statusCode(BAD_REQUEST.value());
-    }
-
-    @Test
-    @DisplayName("updateNotificationConfig: Should return 200")
-    void test_should_return_200() {
-      // given
-      var updateNotificationConfigRequest = UpdateNotificationConfigRequest.builder().frequency(1).build();
-      doReturn(UserDtoFactory.createDefault()).when(userService).updateCurrentUserNotificationConfig(any());
-
-      // when
-      var response = restAssuredUpdateNotificationConfigUtils.doPut(updateNotificationConfigRequest);
-
-      // then
-      response.statusCode(OK.value());
-    }
-
-    @Test
-    @DisplayName("updateNotificationConfig: Should return 400 for faulty requests")
-    void test_should_return_400() {
-      // given
-      var badRequest = UpdateNotificationConfigRequest.builder().frequency(-1).build();
-
-      // when
-      var response = restAssuredUpdateNotificationConfigUtils.doPut(badRequest);
-
-      // then
-      response.statusCode(BAD_REQUEST.value());
-    }
-
-    @Test
-    @DisplayName("updateNotificationConfig: should call mapper for request")
-    void test_should_call_mapper_request() {
-      // given
-      var updateNotificationConfigRequest = UpdateNotificationConfigRequest.builder().frequency(1).build();
-      doReturn(UserDtoFactory.createDefault()).when(userService).updateCurrentUserNotificationConfig(any());
-
-      // when
-      restAssuredUpdateNotificationConfigUtils.doPut(updateNotificationConfigRequest);
-
-      // then
-      verify(modelMapper).map(updateNotificationConfigRequest, NotificationConfigDto.class);
-    }
-
-    @Test
-    @DisplayName("updateNotificationConfig: should call userService")
-    void test_should_call_user_service() {
-      // given
-      var notificationConfig = NotificationConfigDto.builder().frequencyInWeeks(1).build();
-      doReturn(UserDtoFactory.createDefault()).when(userService).updateCurrentUserNotificationConfig(any());
-      doReturn(notificationConfig).when(modelMapper).map(any(), eq(NotificationConfigDto.class));
-
-      // when
-      restAssuredUpdateNotificationConfigUtils.doPut(new UpdateNotificationConfigRequest());
-
-      // then
-      verify(userService).updateCurrentUserNotificationConfig(notificationConfig);
-    }
-
-    @Test
-    @DisplayName("updateNotificationConfig: should call mapper for updated user")
-    void test_should_call_mapper_user() {
-      // given
-      var user = UserDtoFactory.createDefault();
-      doReturn(user).when(userService).updateCurrentUserNotificationConfig(any());
-
-      // when
-      restAssuredUpdateNotificationConfigUtils.doPut(new UpdateNotificationConfigRequest());
-
-      // then
-      verify(modelMapper).map(user, UserResponse.class);
-    }
-
-    @Test
-    @DisplayName("updateNotificationConfig: should return response")
-    void test_should_return_response() {
-      // given
-      var expectedResponse = new UserResponse();
-      doReturn(UserDtoFactory.createDefault()).when(userService).updateCurrentUserNotificationConfig(any());
-      doReturn(null).when(modelMapper).map(any(), eq(NotificationConfigDto.class));
-      doReturn(expectedResponse).when(modelMapper).map(any(), eq(UserResponse.class));
-
-      // when
-      var result = restAssuredUpdateNotificationConfigUtils.doPut(new UpdateNotificationConfigRequest());
-
-      // then
-      var userResponse = result.extract().as(UserResponse.class);
-      assertThat(userResponse).isEqualTo(expectedResponse);
     }
 
     private Stream<Arguments> badRequestInputProvider() {
