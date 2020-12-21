@@ -3,6 +3,7 @@ package rocks.metaldetector.persistence.config.bootstrap;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY
 
 @Component
 @AllArgsConstructor
+@Profile({"default", "mockmode"})
 public class DefaultDatabaseInitializer implements ApplicationRunner {
 
   @PersistenceContext
@@ -52,40 +54,40 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
 
   private void createUser() {
     UserEntity johnDoe = UserEntity.builder()
-        .username("JohnD")
-        .email("john.doe@example.com")
-        .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
-        .enabled(true)
-        .userRoles(UserRole.createUserRole())
-        .build();
+            .username("JohnD")
+            .email("john.doe@example.com")
+            .password("$2a$10$2IevDskxEeSmy7Sy41Xl7.u22hTcw3saxQghS.bWaIx3NQrzKTvxK")
+            .enabled(true)
+            .userRoles(UserRole.createUserRole())
+            .build();
 
     NotificationConfigEntity notificationConfigJohnDoe = NotificationConfigEntity.builder()
-        .user(johnDoe)
-        .build();
+            .user(johnDoe)
+            .build();
 
     UserEntity mariaThompson = UserEntity.builder()
-        .username("MariaT")
-        .email("maria.thompson@example.com")
-        .password("$2a$10$fiWhbakTv3lFCiz6weDJXO/qZuzUL.uLJFOkQuquOnRGIJaoJGKpS")
-        .enabled(true)
-        .userRoles(UserRole.createUserRole())
-        .build();
+            .username("MariaT")
+            .email("maria.thompson@example.com")
+            .password("$2a$10$fiWhbakTv3lFCiz6weDJXO/qZuzUL.uLJFOkQuquOnRGIJaoJGKpS")
+            .enabled(true)
+            .userRoles(UserRole.createUserRole())
+            .build();
 
     NotificationConfigEntity notificationConfigMariaThompson = NotificationConfigEntity.builder()
-        .user(mariaThompson)
-        .build();
+            .user(mariaThompson)
+            .build();
 
     UserEntity mikeMiller = UserEntity.builder()
-        .username("MikeM")
-        .email("mike.miller@example.com")
-        .password("$2a$10$ymg5PpCHQ.bp7RTynUzxzeLGfHN2.0K6y0q7NLlZ/d01zkhN1cb8W")
-        .enabled(false)
-        .userRoles(UserRole.createUserRole())
-        .build();
+            .username("MikeM")
+            .email("mike.miller@example.com")
+            .password("$2a$10$ymg5PpCHQ.bp7RTynUzxzeLGfHN2.0K6y0q7NLlZ/d01zkhN1cb8W")
+            .enabled(false)
+            .userRoles(UserRole.createUserRole())
+            .build();
 
     NotificationConfigEntity notificationConfigMikeMiller = NotificationConfigEntity.builder()
-        .user(mikeMiller)
-        .build();
+            .user(mikeMiller)
+            .build();
 
     entityManager.persist(johnDoe);
     entityManager.persist(mariaThompson);
@@ -98,15 +100,15 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
 
   private void createAdministrator() {
     UserEntity administrator = UserEntity.builder()
-        .username("Administrator")
-        .email("administrator@example.com")
-        .password("$2a$10$SHReFWSMijakmT6GTC/EN.kLY4RYvqfcLsjDibRMEMeYCqPPbcNE6")
-        .enabled(true)
-        .userRoles(UserRole.createAdministratorRole())
-        .build();
+            .username("Administrator")
+            .email("administrator@example.com")
+            .password("$2a$10$SHReFWSMijakmT6GTC/EN.kLY4RYvqfcLsjDibRMEMeYCqPPbcNE6")
+            .enabled(true)
+            .userRoles(UserRole.createAdministratorRole())
+            .build();
     NotificationConfigEntity notificationConfig = NotificationConfigEntity.builder()
-        .user(administrator)
-        .build();
+            .user(administrator)
+            .build();
 
     entityManager.persist(administrator);
     entityManager.persist(notificationConfig);
@@ -150,3 +152,4 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
     entityManager.persist(mayhemFollowAction);
   }
 }
+
