@@ -715,7 +715,8 @@ class UserServiceImplTest implements WithAssertions {
     void delete_user_for_existing_user() {
       // given
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
-      when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
+      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
+      doReturn(Optional.of(NotificationConfigEntity.builder().user(user).build())).when(notificationConfigRepository).findByUserId(any());
 
       // when
       underTest.deleteUser(PUBLIC_ID);
