@@ -44,6 +44,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith(MockitoExtension.class)
 class UserRestControllerTest implements WithAssertions {
@@ -89,7 +91,7 @@ class UserRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse response = restAssuredUtils.doGet();
 
       // then
-      response.statusCode(HttpStatus.OK.value());
+      response.statusCode(OK.value());
 
       List<UserResponse> userList = response.extract().body().jsonPath().getList(".", UserResponse.class);
       assertThat(userList).hasSize(3);
@@ -108,7 +110,7 @@ class UserRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse response = restAssuredUtils.doGet();
 
       // then
-      response.statusCode(HttpStatus.OK.value());
+      response.statusCode(OK.value());
 
       List<UserResponse> userList = response.extract().body().jsonPath().getList(".", UserResponse.class);
       assertThat(userList).isEmpty();
@@ -143,7 +145,7 @@ class UserRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse response = restAssuredUtils.doGet("/dummy-user-id");
 
       // then
-      response.statusCode(HttpStatus.OK.value());
+      response.statusCode(OK.value());
 
       UserResponse user = response.extract().as(UserResponse.class);
       assertThat(user).isEqualTo(modelMapper.map(dto, UserResponse.class));
@@ -239,7 +241,7 @@ class UserRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse response = restAssuredUtils.doPost(request);
 
       // then
-      response.statusCode(HttpStatus.BAD_REQUEST.value());
+      response.statusCode(BAD_REQUEST.value());
 
       ErrorResponse errorResponse = response.extract().as(ErrorResponse.class);
       System.out.println(errorResponse);
@@ -292,7 +294,7 @@ class UserRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse response = restAssuredUtils.doPut(updateUserRequest);
 
       // then
-      response.statusCode(HttpStatus.OK.value());
+      response.statusCode(OK.value());
 
       UserResponse user = response.extract().as(UserResponse.class);
       assertThat(user.getRole()).isEqualTo(NEW_ROLE);
@@ -308,10 +310,10 @@ class UserRestControllerTest implements WithAssertions {
       UpdateUserRequest updateUserRequest = new UpdateUserRequest(userId, role, enabled);
 
       // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doPost(updateUserRequest);
+      ValidatableMockMvcResponse response = restAssuredUtils.doPut(updateUserRequest);
 
       // then
-      response.statusCode(HttpStatus.BAD_REQUEST.value());
+      response.statusCode(BAD_REQUEST.value());
     }
 
     private Stream<Arguments> inputProvider() {
