@@ -30,6 +30,19 @@ create table users (
     username varchar(50) not null constraint uk_r43af9ap4edm43mmtq01oddj6 unique
 );
 
+create table notification_configs (
+    id bigserial not null constraint notification_configs_pkey primary key,
+    created_by varchar(255),
+    created_date timestamp,
+    last_modified_by varchar(255),
+    last_modified_date timestamp,
+    frequency_in_weeks integer default 4 not null,
+    notification_at_announcement_date boolean default false not null,
+    notification_at_release_date boolean default false not null,
+    notify boolean default false not null,
+    users_id bigint not null constraint fknvsxg05jtmj5fkf915kfy83em references users
+);
+
 create table follow_actions (
     id bigserial not null constraint follow_actions_pkey primary key,
     created_by varchar(255),
