@@ -1,0 +1,127 @@
+buildscript {
+  ext {
+    apacheCommonsTextVersion = "1.9"
+    h2Version = "1.4.200"
+    jacksonVersion = "2.12.0"
+    jacocoVersion = "0.8.6"
+    jaxbApiVersion = "2.3.1"
+    junitVersion = "5.7.0"
+    mockitoVersion = "3.6.28"
+    springBootVersion = "2.3.7.RELEASE"
+    lombokVersion = "1.18.16"
+    springSecurityVersion = "5.2.6.RELEASE"
+  }
+}
+
+plugins {
+  id "java"
+  id "org.springframework.boot" version "2.3.7.RELEASE"
+  id "io.spring.dependency-management" version "1.0.10.RELEASE"
+}
+
+ext {
+  dependencyVersions = ["org.junit.jupiter:junit-jupiter:$junitVersion",
+                        "org.junit.jupiter:junit-jupiter-api:$junitVersion",
+                        "org.slf4j:slf4j-api:1.7.30",
+                        "org.mockito:mockito-core:$mockitoVersion",
+                        "org.junit:junit-bom:$junitVersion",
+                        "junit:junit:4.13.1",
+                        "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3",
+                        "jakarta.activation:jakarta.activation-api:1.2.2",
+                        "org.jboss.logging:jboss-logging:3.4.1.Final",
+                        "net.bytebuddy:byte-buddy:1.10.18",
+                        "org.javassist:javassist:3.27.0-GA",
+                        "org.webjars:jquery:3.5.1"]
+  dependencyGroupVersions = ["org.springframework"           : "5.2.12.RELEASE",
+                             "org.springframework.security"  : springSecurityVersion,
+                             "com.fasterxml.jackson.core"    : jacksonVersion,
+                             "com.fasterxml.jackson.datatype": jacksonVersion,
+                             "com.fasterxml.jackson.module"  : jacksonVersion]
+}
+
+ext['mockito.version'] = mockitoVersion
+ext['jackson.version'] = jacksonVersion
+
+allprojects {
+  group = "rocks.metaldetector"
+
+  repositories {
+    mavenCentral()
+  }
+
+  configurations {
+    all {
+      resolutionStrategy {
+        failOnVersionConflict()
+        force dependencyVersions
+        eachDependency { DependencyResolveDetails details ->
+          def forcedVersion = dependencyGroupVersions[details.requested.group]
+          if (forcedVersion) {
+            details.useVersion forcedVersion
+          }
+        }
+        cacheDynamicVersionsFor 0, "seconds"
+      }
+    }
+  }
+}
+
+springBoot {
+  mainClassName = 'rocks.metaldetector.MetalDetectorApplication'
+}
+
+subprojects {
+  apply plugin: "java"
+  apply plugin: "java-library"
+  apply plugin: "io.spring.dependency-management"
+  apply plugin: "jacoco"
+
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+
+  tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+  }
+
+  dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-cache:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-configuration-processor:$springBootVersion"
+
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
+    implementation "org.projectlombok:lombok:$lombokVersion"
+
+    runtimeOnly "org.springframework.boot:spring-boot-devtools:$springBootVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion" exclude group: 'junit', module: 'junit'
+    testImplementation "org.springframework.security:spring-security-test:$springSecurityVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+    testImplementation "org.junit.vintage:junit-vintage-engine:$junitVersion"
+    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
+    testImplementation "com.h2database:h2:$h2Version"
+  }
+
+  dependencyManagement {
+    dependencies {
+      dependency "org.apache.commons:commons-text:$apacheCommonsTextVersion"
+    }
+  }
+
+  test {
+    useJUnitPlatform()
+  }
+
+  jacocoTestReport {
+    reports {
+      xml.enabled true
+      html.enabled false
+    }
+  }
+
+  wrapper {
+    gradleVersion = "6.7.1"
+    distributionType = Wrapper.DistributionType.ALL
+  }
+}

@@ -1,0 +1,12 @@
+ext {
+  httpClientVersion = "4.5.13"
+  jsonwebtokenVersion = "0.9.1"
+}
+
+dependencies {
+  implementation "org.apache.commons:commons-text"
+  implementation "org.apache.httpcomponents:httpclient:$httpClientVersion"
+  api "io.jsonwebtoken:jjwt:$jsonwebtokenVersion"
+}
+
+description = "support"

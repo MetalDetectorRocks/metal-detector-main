@@ -26,7 +26,7 @@ public class CspNonceFilter implements Filter {
   public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
     String nonce = nonceSupplier.get();
     servletRequest.setAttribute(ATTRIBUTE_NAME, nonce);
-    ((HttpServletResponse) servletResponse).setHeader(CSP_HEADER_NAME, CSP_POLICY.formatted(nonce, nonce));
+    ((HttpServletResponse) servletResponse).setHeader(CSP_HEADER_NAME, String.format(CSP_POLICY, nonce, nonce));
     filterChain.doFilter(servletRequest, servletResponse);
   }
 }

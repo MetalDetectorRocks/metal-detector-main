@@ -1,0 +1,69 @@
+plugins {
+  id("org.springframework.boot")
+}
+
+ext {
+  hibernateValidatorVersion = "6.1.6.Final"
+  validationApiVersion = "2.0.1.Final"
+  materialIconsVersion = "0.3.1"
+  restAssuredVersion = "4.2.0"
+  bootstrapVersion = "4.5.3"
+  datatablesVersion = "1.10.21"
+  ehcacheVersion = "3.9.0"
+  thymeleafDialectVersion = "2.5.1"
+  thymeleafExtrasVersion = "3.0.4.RELEASE"
+  apacheCommonsLang3Version = "3.11"
+  commonsCodecVersion = "1.15"
+  modelmapperVersion = "2.3.8"
+  jsoupVersion = "1.13.1"
+  servletApiVersion = "4.0.1"
+  webjarsLocatorVersion = "0.46"
+  micrometerVersion = "1.6.2"
+  flywayVersion = "6.4.4"
+}
+
+bootJar {
+  archiveClassifier.set("boot")
+  enabled = true
+}
+
+jar {
+  enabled = false
+}
+
+dependencies {
+  implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+  implementation "org.springframework.boot:spring-boot-starter-mail:$springBootVersion"
+  implementation "org.springframework.boot:spring-boot-starter-actuator:$springBootVersion"
+  implementation "org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion"
+
+  implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity5:$thymeleafExtrasVersion"
+  implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:$thymeleafDialectVersion"
+  implementation "org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion"
+  implementation "javax.validation:validation-api:$validationApiVersion"
+  implementation "org.apache.commons:commons-lang3:$apacheCommonsLang3Version"
+  implementation "commons-codec:commons-codec:$commonsCodecVersion"
+  implementation "org.modelmapper:modelmapper:$modelmapperVersion"
+  implementation "org.ehcache:ehcache:$ehcacheVersion"
+  implementation "org.jsoup:jsoup:$jsoupVersion"
+
+  runtimeOnly "org.webjars:webjars-locator-core:$webjarsLocatorVersion"
+  runtimeOnly "org.webjars:bootstrap:$bootstrapVersion"
+  runtimeOnly "org.webjars.npm:material-icons:$materialIconsVersion"
+  runtimeOnly "org.webjars:datatables:$datatablesVersion"
+  runtimeOnly "org.flywaydb:flyway-core:$flywayVersion"
+  runtimeOnly "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
+
+  implementation project(":support")
+  implementation project(":spotify")
+  implementation project(":discogs")
+  implementation project(":butler")
+  implementation project(":persistence")
+
+  testImplementation "io.rest-assured:rest-assured:$restAssuredVersion"
+  testImplementation "io.rest-assured:json-path:$restAssuredVersion"
+  testImplementation "io.rest-assured:xml-path:$restAssuredVersion"
+  testImplementation "io.rest-assured:spring-mock-mvc:$restAssuredVersion"
+}
+
+description = "webapp"

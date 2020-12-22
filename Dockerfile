@@ -1,4 +1,4 @@
-FROM openjdk:15-slim-buster
+FROM openjdk:11-stretch
 
 ENV TZ=Europe/Berlin
 
@@ -16,7 +16,7 @@ USER service_user
 VOLUME ["/app/logs/"]
 
 # Arguments
-ARG SOURCE_JAR_FILE="webapp/target/*.jar"
+ARG SOURCE_JAR_FILE="webapp/build/libs/*.jar"
 ARG BUILD_DATE
 ARG VCS_REF
 

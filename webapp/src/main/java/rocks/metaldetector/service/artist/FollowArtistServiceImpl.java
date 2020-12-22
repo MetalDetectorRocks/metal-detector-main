@@ -107,16 +107,22 @@ public class FollowArtistServiceImpl implements FollowArtistService {
       return fetchArtistEntity(externalId, source);
     }
 
-    ArtistEntity artistEntity = switch (source) {
-      case DISCOGS -> {
+    ArtistEntity artistEntity;
+
+    switch (source) {
+      case DISCOGS: {
         DiscogsArtistDto artist = discogsService.searchArtistById(externalId);
-        yield new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl(), source);
+        artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl(), source);
+        break;
       }
-      case SPOTIFY -> {
+      case SPOTIFY: {
         SpotifyArtistDto artist = spotifyService.searchArtistById(externalId);
-        yield new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl(), source);
+        artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl(), source);
+        break;
       }
-    };
+      default:
+        throw new IllegalArgumentException("Source '" + source + "' not found");
+    }
 
     return artistRepository.save(artistEntity);
   }

@@ -2,6 +2,7 @@ package rocks.metaldetector.persistence.domain.token;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -10,9 +11,9 @@ import java.util.Optional;
 public interface TokenRepository extends JpaRepository<TokenEntity, Long> {
 
   @Query(value = "SELECT * FROM tokens WHERE TOKEN_TYPE = 'EMAIL_VERIFICATION' AND TOKEN_STRING = :tokenString", nativeQuery = true)
-  Optional<TokenEntity> findEmailVerificationToken(String tokenString);
+  Optional<TokenEntity> findEmailVerificationToken(@Param("tokenString") String tokenString);
 
   @Query(value = "SELECT * FROM tokens WHERE TOKEN_TYPE = 'PASSWORD_RESET' AND TOKEN_STRING = :tokenString", nativeQuery = true)
-  Optional<TokenEntity> findResetPasswordToken(String tokenString);
+  Optional<TokenEntity> findResetPasswordToken(@Param("tokenString") String tokenString);
 
 }

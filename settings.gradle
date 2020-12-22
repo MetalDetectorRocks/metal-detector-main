@@ -1,0 +1,7 @@
+rootProject.name = "metal-detector"
+include(":butler")
+include(":discogs")
+include(":spotify")
+include(":persistence")
+include(":support")
+include(":webapp")
