@@ -70,9 +70,9 @@ public class WebConfig {
   @Bean
   public RestTemplate restTemplate() {
     return new RestTemplateBuilder()
-            .requestFactory(this::clientHttpRequestFactory)
-            .errorHandler(new CustomClientErrorHandler())
-            .messageConverters(List.of(jackson2HttpMessageConverter(), stringHttpMessageConverter()))
-            .build();
+        .requestFactory(this::clientHttpRequestFactory)
+        .errorHandler(new CustomClientErrorHandler())
+        .messageConverters(List.of(jackson2HttpMessageConverter(), stringHttpMessageConverter()))
+        .build();
   }
 }

@@ -7,9 +7,9 @@
 # ignore docker .secrets folder
 .secrets/
 
-# ignore all stuff in target and build folder
-target/
+# ignore all stuff in .gradle and build folder
 build/
+.gradle/
 
 # ignore IntelliJ IDEA files
 .idea/

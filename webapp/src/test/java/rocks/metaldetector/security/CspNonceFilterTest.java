@@ -86,6 +86,6 @@ class CspNonceFilterTest implements WithAssertions {
     underTest.doFilter(request, response, filterChain);
 
     // then
-    assertThat(response.getHeader(CSP_HEADER_NAME)).isNotNull().isEqualTo(CSP_POLICY.formatted(NONCE, NONCE));
+    assertThat(response.getHeader(CSP_HEADER_NAME)).isNotNull().isEqualTo(String.format(CSP_POLICY, NONCE, NONCE));
   }
 }
