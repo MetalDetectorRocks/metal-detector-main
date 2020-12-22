@@ -71,10 +71,11 @@ function createImportReleasesJob() {
   $.ajax({
     method: "POST",
     url: "/rest/v1/releases/import",
-    success: function(){
+    success: function() {
+      $("#confirm-import-dialog").modal("hide");
       createToast("Import job successfully created!");
     },
-    error: function(err){
+    error: function(err) {
       createToast("Error creating the import job: " + err);
     }
   });
@@ -88,10 +89,11 @@ function createRetryCoverDownloadJob() {
   $.ajax({
     method: "POST",
     url: "/rest/v1/releases/cover-reload",
-    success: function(){
+    success: function() {
+      $("#confirm-cover-retry-dialog").modal("hide");
       createToast("Job for retrying cover downloads successfully created!");
     },
-    error: function(err){
+    error: function(err) {
       createToast("Error creating the cover download job: " + err);
     }
   });
