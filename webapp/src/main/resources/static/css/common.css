@@ -53,6 +53,12 @@
   border: 1px solid #246;
 }
 
+#toast.success {
+  color: black;
+  background-color: #77B300;
+  border: 1px solid #2f3e0f;
+}
+
 #toast.error {
   background-color: rgba(85, 6, 6, 0.50);
   border: 1px solid #ea1717;
