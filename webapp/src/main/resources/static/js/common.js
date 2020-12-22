@@ -47,7 +47,7 @@ function scrollToTop() {
 function createToast(text) {
     const toast = $("<div>");
     toast.attr("id", "toast");
-    toast.addClass("show");
+    toast.addClass("show success");
     toast.text(text);
     setTimeout(function() {
             toast.removeClass("show");
