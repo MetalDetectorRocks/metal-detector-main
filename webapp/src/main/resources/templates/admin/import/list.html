@@ -14,8 +14,13 @@
 <body>
     <section layout:fragment="content">
         <h1 class="h2 text-dark">Import</h1>
-        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="import-button">Create Import Job</button>
-        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="retry-cover-download-button">Create Retry Cover Download Job</button>
+        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" data-toggle="modal" data-target="#confirm-import-dialog">
+            Create Import Job
+        </button>
+        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" data-toggle="modal" data-target="#confirm-cover-retry-dialog">
+            Create Retry Cover Download Job
+        </button>
+
         <table id="import-job-table" class="table table-striped table-hover mt-3 clickable-table">
             <thead>
             <tr>
@@ -31,6 +36,14 @@
             <tbody id="import-job-data">
             </tbody>
         </table>
+
+        <!-- Confirm Dialogs -->
+        <div id="confirm-import-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div th:replace="admin/import/confirm-import :: dialog"></div>
+        </div>
+        <div id="confirm-cover-retry-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div th:replace="admin/import/confirm-cover-retry :: dialog"></div>
+        </div>
     </section>
 </body>
 </html>
