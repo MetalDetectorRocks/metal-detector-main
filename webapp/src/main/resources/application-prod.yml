@@ -23,7 +23,7 @@ spring:
             enable: true
 
 server:
-  port: ${PORT}
+  port: 8080
   error:
     whitelabel:
       enabled: false
@@ -37,4 +37,4 @@ management:
       base-path: ${ACTUATOR_BASE_PATH}
 
 metal-release-butler:
-  host: https://metal-release-butler-prod.herokuapp.com
+  host: http://butler-app:8080
