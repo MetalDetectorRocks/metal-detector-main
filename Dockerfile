@@ -2,11 +2,15 @@ FROM openjdk:15-slim-buster
 
 ENV TZ=Europe/Berlin
 
+RUN apt-get update && apt-get install -y \
+  curl \
+  && rm -rf /var/lib/apt/lists/*
+
 RUN mkdir /app && mkdir /app/logs
 WORKDIR /app
 
-RUN useradd --no-log-init --no-create-home --shell /bin/false service_user
-RUN chown -cR service_user:service_user /app
+RUN useradd --no-log-init --no-create-home --shell /bin/false service_user \
+  && chown -cR service_user:service_user /app
 USER service_user
 
 VOLUME ["/app/logs/"]
@@ -27,7 +31,7 @@ LABEL org.label-schema.url="https://metal-detector.rocks"
 LABEL org.label-schema.vcs-url="https://github.com/MetalDetectorRocks/metal-detector-main"
 LABEL org.label-schema.vcs-ref=$VCS_REF
 
-#HEALTHCHECK --start-period=10s --interval=10s --timeout=5s --retries=3 CMD curl --fail $HEALTH_CHECK_ENDPOINT || exit 1
+HEALTHCHECK --start-period=10s --interval=10s --timeout=5s --retries=3 CMD curl --fail http://localhost:8080/$HEALTH_CHECK_ENDPOINT || exit 1
 
 COPY $SOURCE_JAR_FILE app.jar
 COPY docker-entrypoint.sh /app
