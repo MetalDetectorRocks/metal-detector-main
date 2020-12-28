@@ -23,7 +23,7 @@ spring:
             enable: true
 
 server:
-  port: ${PORT}
+  port: 8080
   error:
     whitelabel:
       enabled: false
