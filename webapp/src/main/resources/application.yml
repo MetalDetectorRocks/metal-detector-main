@@ -33,7 +33,7 @@ spring:
       config: classpath:config/cache/ehcache.xml
   mail:
     properties:
-      from: no-reply@metal-detector.rocks
+      from: notifications@metal-detector.rocks
   thymeleaf:
     enabled: true
     prefix: classpath:/templates/
@@ -64,7 +64,7 @@ management:
     web:
       base-path: /actuator
       exposure:
-        include: health, info, metrics, prometheus
+        include: health, info, metrics, prometheus, flyway
 
 discogs:
   access-token: ${DISCOGS_ACCESS_TOKEN}

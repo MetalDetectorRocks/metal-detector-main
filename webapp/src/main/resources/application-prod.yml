@@ -34,7 +34,10 @@ server:
 management:
   endpoints:
     web:
-      base-path: ${ACTUATOR_BASE_PATH}
+      path-mapping.info: ${ACTUATOR_INFO_PATH}
+      path-mapping.metrics: ${ACTUATOR_METRICS_PATH}
+      path-mapping.prometheus: ${ACTUATOR_PROMETHEUS_PATH}
+      path-mapping.flyway: ${ACTUATOR_FLYWAY_PATH}
 
 metal-release-butler:
   host: http://butler-app:8080
