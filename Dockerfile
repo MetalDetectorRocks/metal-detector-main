@@ -30,7 +30,7 @@ LABEL org.label-schema.url="https://metal-detector.rocks"
 LABEL org.label-schema.vcs-url="https://github.com/MetalDetectorRocks/metal-detector-main"
 LABEL org.label-schema.vcs-ref=$VCS_REF
 
-HEALTHCHECK --start-period=30s --interval=10s --timeout=5s --retries=3 CMD curl --fail http://localhost:8080/actuator/health || exit 1
+HEALTHCHECK --start-period=40s --interval=10s --timeout=5s --retries=3 CMD curl --fail http://localhost:8080/actuator/health || exit 1
 
 COPY $SOURCE_JAR_FILE app.jar
 COPY docker-entrypoint.sh /app
