@@ -9,7 +9,7 @@ import rocks.metaldetector.spotify.api.imports.SpotfiyTrackImportResult;
 import rocks.metaldetector.spotify.api.imports.SpotifyAlbum;
 import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResult;
 import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResultItem;
-import rocks.metaldetector.spotify.api.imports.SpotifyArtistImportResult;
+import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPage;
 import rocks.metaldetector.spotify.api.imports.SpotifyTrack;
 
 import java.time.LocalDateTime;
@@ -35,8 +35,8 @@ public class SpotifyUserLibraryClientMock implements SpotifyUserLibraryClient {
   }
 
   @Override
-  public SpotifyArtistImportResult fetchFollowedArtists(String token, int offset) {
-    return SpotifyArtistImportResult.builder()
+  public SpotifyFollowedArtistsPage fetchFollowedArtists(String token, String nextPage) {
+    return SpotifyFollowedArtistsPage.builder()
         .items(List.of(createWayfarer()))
         .build();
   }
