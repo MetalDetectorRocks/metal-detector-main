@@ -81,7 +81,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
     final String EXPECTED_VERIFICATION_URL = mailProperties.getApplicationHostUrl() + Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + TOKEN;
     ArgumentCaptor<Context> contextCaptor = ArgumentCaptor.forClass(Context.class);
     ArgumentCaptor<String> templateNameCaptor = ArgumentCaptor.forClass(String.class);
-    AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", TOKEN);
+    AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", "username", TOKEN);
 
     // when
     underTest.sendEmail(email);
@@ -96,7 +96,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
   @DisplayName("Should set email data")
   void should_set_email_data() throws Exception {
     // given
-    AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", "token");
+    AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", "username", "token");
     String emailAsHtml = "<h1>Test</h1>";
     String fromEmail = "from@example.de";
     String fromName = "Example";
@@ -121,7 +121,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
   @DisplayName("Should send mime message via emailSender")
   void should_send_message() {
     // given
-    AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", "token");
+    AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", "username", "token");
     MimeMessage mimeMessageMock = mock(MimeMessage.class);
     doReturn(mimeMessageMock).when(emailSender).createMimeMessage();
 

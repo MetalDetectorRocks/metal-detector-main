@@ -38,7 +38,8 @@ class RegistrationCompleteListenerTest implements WithAssertions {
     // given
     final String EMAIL = "john.doe@example.com";
     final String TOKEN = "1234-56789";
-    UserDto userDto = UserDto.builder().publicId("public-id").email(EMAIL).build();
+    final String USERNAME = "JohnD";
+    UserDto userDto = UserDto.builder().publicId("public-id").email(EMAIL).username(USERNAME).build();
     OnRegistrationCompleteEvent event = new OnRegistrationCompleteEvent("source", userDto);
     when(tokenService.createEmailVerificationToken(userDto.getPublicId())).thenReturn(TOKEN);
 
@@ -51,9 +52,11 @@ class RegistrationCompleteListenerTest implements WithAssertions {
 
     AbstractEmail email = emailCaptor.getValue();
     String verificationUrl = (String) email.getEnhancedViewModel("dummy-base-url").get("verificationUrl");
+    String username = (String) email.getEnhancedViewModel("dummy-base-url").get("username");
     assertThat(email.getRecipient()).isEqualTo(EMAIL);
     assertThat(email.getSubject()).isEqualTo("One last step to complete your registration!");
     assertThat(email.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.REGISTRATION_VERIFICATION);
     assertThat(verificationUrl).endsWith(TOKEN);
+    assertThat(username).isEqualTo(USERNAME);
   }
 }
