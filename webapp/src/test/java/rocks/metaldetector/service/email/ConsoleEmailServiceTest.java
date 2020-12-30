@@ -68,8 +68,8 @@ class ConsoleEmailServiceTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Sending an email to Console should interact with MailConfig as expected")
-  void send_email_should_use_mail_config() {
+  @DisplayName("Sending an email to Console should interact with MailProperties as expected")
+  void send_email_should_use_mail_properties() {
     // given
     AbstractEmail email = new NewReleasesEmail("john.doe@example.com", "JohnDoe", Collections.emptyList());
 
