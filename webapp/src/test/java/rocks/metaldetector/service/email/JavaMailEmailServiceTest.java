@@ -51,6 +51,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
   @BeforeEach
   void setUp() {
     underTest.setExecutor(new CurrentThreadExecutor());
+    underTest.setMessageHelperSupplier(messageHelperSupplier);
     doReturn(mimeMessageHelperMock).when(messageHelperSupplier).apply(any());
   }
 

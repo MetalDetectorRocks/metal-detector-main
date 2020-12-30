@@ -1,6 +1,5 @@
 package rocks.metaldetector.service.email;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mail.MailException;
@@ -12,7 +11,6 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.ISpringTemplateEngine;
 import rocks.metaldetector.config.misc.MailProperties;
 
-import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
@@ -26,7 +24,6 @@ import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE
 @Service
 @Slf4j
 @Profile({"preview", "prod"})
-@AllArgsConstructor
 public class JavaMailEmailService implements EmailService {
 
   private final JavaMailSender emailSender;
@@ -35,8 +32,10 @@ public class JavaMailEmailService implements EmailService {
   private MimeMessageHelperSupplier messageHelperSupplier;
   private Executor executor;
 
-  @PostConstruct
-  private void init() {
+  public JavaMailEmailService(JavaMailSender emailSender, ISpringTemplateEngine templateEngine, MailProperties mailProperties) {
+    this.emailSender = emailSender;
+    this.templateEngine = templateEngine;
+    this.mailProperties = mailProperties;
     this.executor = Executors.newSingleThreadExecutor();
     this.messageHelperSupplier = new MimeMessageHelperSupplier();
   }
@@ -82,6 +81,10 @@ public class JavaMailEmailService implements EmailService {
 
   void setExecutor(Executor executor) {
     this.executor = executor;
+  }
+
+  void setMessageHelperSupplier(MimeMessageHelperSupplier messageHelperSupplier) {
+    this.messageHelperSupplier = messageHelperSupplier;
   }
 }
 
