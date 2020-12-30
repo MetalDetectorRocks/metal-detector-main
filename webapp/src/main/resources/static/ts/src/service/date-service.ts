@@ -13,6 +13,19 @@ export class DateService {
         return dayjs(dateStr).fromNow();
     }
 
+    public formatRelativeInDays(dateStr: string): string {
+        const relativeTime = dayjs(dateStr).fromNow();
+        if (relativeTime.startsWith("in") && !relativeTime.endsWith("days")) {
+            return "tomorrow";
+        }
+        else if (!relativeTime.startsWith("in") && !relativeTime.endsWith("days ago")) {
+            return "today";
+        }
+        else {
+            return relativeTime;
+        }
+    }
+
     public format(dateStr: string, dateFormat: DateFormat): string {
         return dayjs(dateStr).format(dateFormat);
     }
