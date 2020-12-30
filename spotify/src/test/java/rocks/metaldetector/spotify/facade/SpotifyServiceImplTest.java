@@ -9,9 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResult;
-import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResultItem;
 import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPage;
+import rocks.metaldetector.spotify.api.imports.SpotifySavedAlbumsPage;
+import rocks.metaldetector.spotify.api.imports.SpotifySavedAlbumsPageItem;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistsContainer;
 import rocks.metaldetector.spotify.client.SpotifyArtistSearchClient;
@@ -492,7 +492,7 @@ class SpotifyServiceImplTest implements WithAssertions {
     void test_import_client_called_with_token() {
       // given
       var token = "token";
-      var mockResult = SpotifyAlbumImportResult.builder().items(Collections.emptyList()).build();
+      var mockResult = SpotifySavedAlbumsPage.builder().items(Collections.emptyList()).build();
       doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), anyInt());
 
       // when
@@ -506,7 +506,7 @@ class SpotifyServiceImplTest implements WithAssertions {
     @DisplayName("importClient is called with offset increasing by limit taken from result until total is reached")
     void test_offset_increasing() {
       // given
-      var mockResult = SpotifyAlbumImportResult.builder().items(Collections.emptyList()).total(30).limit(10).build();
+      var mockResult = SpotifySavedAlbumsPage.builder().items(Collections.emptyList()).total(30).limit(10).build();
       doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), eq(0));
       doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), eq(10));
       doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), eq(20));
@@ -524,10 +524,10 @@ class SpotifyServiceImplTest implements WithAssertions {
     @DisplayName("albumTransformer is called for every album returned")
     void test_album_transformer_called() {
       // given
-      var firstAlbum = SpotifyAlbumImportResultItem.builder().album(SpotifyAlbumFactory.withName("firstAlbum")).build();
-      var secondAlbum = SpotifyAlbumImportResultItem.builder().album(SpotifyAlbumFactory.withName("secondAlbum")).build();
+      var firstAlbum = SpotifySavedAlbumsPageItem.builder().album(SpotifyAlbumFactory.withName("firstAlbum")).build();
+      var secondAlbum = SpotifySavedAlbumsPageItem.builder().album(SpotifyAlbumFactory.withName("secondAlbum")).build();
       var resultItems = List.of(firstAlbum, secondAlbum);
-      var mockResult = SpotifyAlbumImportResult.builder().items(resultItems).build();
+      var mockResult = SpotifySavedAlbumsPage.builder().items(resultItems).build();
       doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), anyInt());
 
       // when
@@ -542,8 +542,8 @@ class SpotifyServiceImplTest implements WithAssertions {
     @DisplayName("transformed albums are returned")
     void test_transformed_albums_returned() {
       // given
-      var album = SpotifyAlbumImportResultItem.builder().album(SpotifyAlbumFactory.withName("firstAlbum")).build();
-      var mockResult = SpotifyAlbumImportResult.builder().items(List.of(album)).build();
+      var album = SpotifySavedAlbumsPageItem.builder().album(SpotifyAlbumFactory.withName("firstAlbum")).build();
+      var mockResult = SpotifySavedAlbumsPage.builder().items(List.of(album)).build();
       var spotifyAlbumDto = SpotifyAlbumDto.builder().build();
       doReturn(mockResult).when(importClient).fetchLikedAlbums(any(), anyInt());
       doReturn(spotifyAlbumDto).when(albumTransformer).transform(any());

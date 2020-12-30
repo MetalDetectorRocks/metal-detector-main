@@ -9,9 +9,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResult;
 import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPage;
 import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPageContainer;
+import rocks.metaldetector.spotify.api.imports.SpotifySavedAlbumsPage;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
@@ -38,22 +38,22 @@ public class SpotifyUserLibraryClientImpl implements SpotifyUserLibraryClient {
   private final SpotifyProperties spotifyProperties;
 
   @Override
-  public SpotifyAlbumImportResult fetchLikedAlbums(String token, int offset) {
+  public SpotifySavedAlbumsPage fetchLikedAlbums(String token, int offset) {
     if (token == null || token.isEmpty()) {
       throw new IllegalArgumentException("token must not be empty");
     }
 
     HttpEntity<Object> httpEntity = createHttpEntity(token);
-    ResponseEntity<SpotifyAlbumImportResult> responseEntity = spotifyRestTemplate.exchange(
+    ResponseEntity<SpotifySavedAlbumsPage> responseEntity = spotifyRestTemplate.exchange(
         spotifyProperties.getRestBaseUrl() + MY_ALBUMS_ENDPOINT,
         GET,
         httpEntity,
-        SpotifyAlbumImportResult.class,
+        SpotifySavedAlbumsPage.class,
         Map.of(OFFSET_PARAMETER_NAME, offset,
                LIMIT_PARAMETER_NAME, LIMIT)
     );
 
-    SpotifyAlbumImportResult result = responseEntity.getBody();
+    SpotifySavedAlbumsPage result = responseEntity.getBody();
     var shouldNotHappen = result == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
       throw new ExternalServiceException("Could not get albums from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
