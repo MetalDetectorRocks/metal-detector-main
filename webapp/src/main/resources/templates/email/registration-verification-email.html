@@ -1,16 +1,24 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html layout:decorate="~{email/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Please verify your email address</title>
+    <title>Please confirm your email address</title>
 </head>
 <body>
-<!--ToDo DanielW: Set username-->
-    <p>
-        Hi <span th:text="${username}">username</span>
-    </p>
-    <p>
-        To complete registration process and be able to login please click on the following link: <a href='#' th:href="@{${verificationUrl}}">Final step to complete your registration!</a>
-    </p>
+    <section layout:fragment="content">
+        <p>
+            Hi <span th:text="${username}">username</span>
+        </p>
+        <p>
+            You have created a Metal Detector account. To complete registration process and be able to login, you have to confirm your email
+            address. Please click on the button below.
+        </p>
+        <div class="text-center">
+            <a href='#' th:href="@{${verificationUrl}}" class="button">Confirm your email address</a>
+            <p class="hint">This link will expire in 10 days.</p>
+        </div>
+    </section>
 </body>
 </html>
