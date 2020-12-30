@@ -15,9 +15,13 @@ import rocks.metaldetector.config.misc.MailProperties;
 import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED;
 
 @Service
 @Slf4j
@@ -28,11 +32,13 @@ public class JavaMailEmailService implements EmailService {
   private final JavaMailSender emailSender;
   private final ISpringTemplateEngine templateEngine;
   private final MailProperties mailProperties;
+  private MimeMessageHelperSupplier messageHelperSupplier;
   private Executor executor;
 
   @PostConstruct
   private void init() {
     this.executor = Executors.newSingleThreadExecutor();
+    this.messageHelperSupplier = new MimeMessageHelperSupplier();
   }
 
   @Async
@@ -60,15 +66,15 @@ public class JavaMailEmailService implements EmailService {
     String html = templateEngine.process(email.getTemplateName(), context);
 
     try {
-      MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+      MimeMessageHelper helper = messageHelperSupplier.apply(mimeMessage);
       helper.setTo(email.getRecipient());
       helper.setText(html, true);
       helper.setSubject(email.getSubject());
-      helper.setFrom(mailProperties.getFromEmail());
+      helper.setFrom(mailProperties.getFromEmail(), mailProperties.getFromName());
       helper.setReplyTo(mailProperties.getFromEmail());
     }
-    catch (MessagingException me) {
-      log.error("Unable to create email", me);
+    catch (MessagingException | UnsupportedEncodingException e) {
+      log.error("Unable to create email", e);
     }
 
     return mimeMessage;
@@ -76,5 +82,20 @@ public class JavaMailEmailService implements EmailService {
 
   void setExecutor(Executor executor) {
     this.executor = executor;
+  }
+}
+
+@Slf4j
+class MimeMessageHelperSupplier implements Function<MimeMessage, MimeMessageHelper> {
+
+  @Override
+  public MimeMessageHelper apply(MimeMessage mimeMessage) {
+    try {
+      return new MimeMessageHelper(mimeMessage, MULTIPART_MODE_MIXED_RELATED, UTF_8.name());
+    }
+    catch (MessagingException me) {
+      log.error("unable to create mime message helper", me);
+      throw new RuntimeException("snh: unable to create mime message helper");
+    }
   }
 }
