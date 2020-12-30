@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @JsonPropertyOrder({
     "artists"
 })
-public class SpotifyArtistImportResultContainer {
+public class SpotifyFollowedArtistsPageContainer {
 
   @JsonProperty("artists")
-  private SpotifyArtistImportResult artists;
+  private SpotifyFollowedArtistsPage artistsPage;
 }

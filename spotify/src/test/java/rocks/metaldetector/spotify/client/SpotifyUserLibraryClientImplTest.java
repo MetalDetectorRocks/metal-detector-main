@@ -23,8 +23,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResult;
-import rocks.metaldetector.spotify.api.imports.SpotifyArtistImportResult;
-import rocks.metaldetector.spotify.api.imports.SpotifyArtistImportResultContainer;
+import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPage;
+import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPageContainer;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
@@ -42,10 +42,10 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
-import static rocks.metaldetector.spotify.client.SpotifyUserLibraryClientImpl.GET_FOLLOWED_ARTISTS_ENDPOINT;
-import static rocks.metaldetector.spotify.client.SpotifyUserLibraryClientImpl.GET_MY_ALBUMS_ENDPOINT;
+import static rocks.metaldetector.spotify.client.SpotifyUserLibraryClientImpl.FOLLOWED_ARTISTS_FIRST_PAGE_ENDPOINT;
 import static rocks.metaldetector.spotify.client.SpotifyUserLibraryClientImpl.LIMIT;
 import static rocks.metaldetector.spotify.client.SpotifyUserLibraryClientImpl.LIMIT_PARAMETER_NAME;
+import static rocks.metaldetector.spotify.client.SpotifyUserLibraryClientImpl.MY_ALBUMS_ENDPOINT;
 import static rocks.metaldetector.spotify.client.SpotifyUserLibraryClientImpl.OFFSET_PARAMETER_NAME;
 
 @ExtendWith(MockitoExtension.class)
@@ -105,7 +105,7 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
       underTest.fetchLikedAlbums("token", 666);
 
       // then
-      verify(restTemplate).exchange(eq(baseUrl + GET_MY_ALBUMS_ENDPOINT), any(), any(), ArgumentMatchers.<Class<SpotifyAlbumImportResult>>any(), anyMap());
+      verify(restTemplate).exchange(eq(baseUrl + MY_ALBUMS_ENDPOINT), any(), any(), ArgumentMatchers.<Class<SpotifyAlbumImportResult>>any(), anyMap());
     }
 
     @Test
@@ -259,35 +259,49 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     @DisplayName("exception is thrown on faulty token")
     void test_exception_on_empty_token(String token) {
       // when
-      Throwable throwable = catchThrowable(() -> underTest.fetchFollowedArtists(token, 666));
+      Throwable throwable = catchThrowable(() -> underTest.fetchFollowedArtists(token, "666"));
 
       // then
       assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("correct url is called")
-    void test_correct_url_called() {
+    @DisplayName("should call first page endpoint if parameter for nextPage is null")
+    void should_call_first_page_endpoint() {
       // given
       var baseUrl = "url";
       doReturn(baseUrl).when(spotifyProperties).getRestBaseUrl();
-      doReturn(ResponseEntity.ok(new SpotifyArtistImportResultContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyAlbumImportResult>>any(), anyMap());
+      doReturn(ResponseEntity.ok(new SpotifyFollowedArtistsPageContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyAlbumImportResult>>any(), anyMap());
 
       // when
-      underTest.fetchFollowedArtists("token", 666);
+      underTest.fetchFollowedArtists("token", null);
 
       // then
-      verify(restTemplate).exchange(eq(baseUrl + GET_FOLLOWED_ARTISTS_ENDPOINT), any(), any(), ArgumentMatchers.<Class<SpotifyAlbumImportResult>>any(), anyMap());
+      verify(restTemplate).exchange(eq(baseUrl + FOLLOWED_ARTISTS_FIRST_PAGE_ENDPOINT), any(), any(), ArgumentMatchers.<Class<SpotifyAlbumImportResult>>any(), anyMap());
     }
 
     @Test
-    @DisplayName("spotifyProperties are called to get base url")
-    void test_spotify_properties_called() {
+    @DisplayName("should call nextPage endpoint if parameter for nextPage is not null")
+    void should_call_next_page() {
       // given
-      doReturn(ResponseEntity.ok(new SpotifyArtistImportResultContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      var nextPage = "next-page";
+      doReturn(ResponseEntity.ok(new SpotifyFollowedArtistsPageContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyAlbumImportResult>>any(), anyMap());
 
       // when
-      underTest.fetchFollowedArtists("token", 666);
+      underTest.fetchFollowedArtists("token", nextPage);
+
+      // then
+      verify(restTemplate).exchange(eq(nextPage), any(), any(), ArgumentMatchers.<Class<SpotifyAlbumImportResult>>any(), anyMap());
+    }
+
+    @Test
+    @DisplayName("spotifyProperties are called to get base url if nextPage is null")
+    void test_spotify_properties_called() {
+      // given
+      doReturn(ResponseEntity.ok(new SpotifyFollowedArtistsPageContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+
+      // when
+      underTest.fetchFollowedArtists("token", null);
 
       // then
       verify(spotifyProperties).getRestBaseUrl();
@@ -297,10 +311,10 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     @DisplayName("get call is made")
     void test_get_call_made() {
       // given
-      doReturn(ResponseEntity.ok(new SpotifyArtistImportResultContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyAlbumImportResult>>any(), anyMap());
+      doReturn(ResponseEntity.ok(new SpotifyFollowedArtistsPageContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyAlbumImportResult>>any(), anyMap());
 
       // when
-      underTest.fetchFollowedArtists("token", 666);
+      underTest.fetchFollowedArtists("token", "666");
 
       // then
       verify(restTemplate).exchange(any(), eq(GET), any(), ArgumentMatchers.<Class<SpotifyAlbumImportResult>>any(), anyMap());
@@ -310,10 +324,10 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     @DisplayName("correct standard headers are set")
     void test_correct_standard_headers() {
       // given
-      doReturn(ResponseEntity.ok(new SpotifyArtistImportResultContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      doReturn(ResponseEntity.ok(new SpotifyFollowedArtistsPageContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
       // when
-      underTest.fetchFollowedArtists("token", 666);
+      underTest.fetchFollowedArtists("token", "666");
 
       // then
       verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
@@ -328,10 +342,10 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     void test_correct_authorization_header() {
       // given
       var token = "token";
-      doReturn(ResponseEntity.ok(new SpotifyArtistImportResultContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      doReturn(ResponseEntity.ok(new SpotifyFollowedArtistsPageContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
       // when
-      underTest.fetchFollowedArtists(token, 666);
+      underTest.fetchFollowedArtists(token, "666");
       // then
       verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
       HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
@@ -343,30 +357,28 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     @DisplayName("correct response type is requested")
     void test_correct_response_type() {
       // given
-      doReturn(ResponseEntity.ok(new SpotifyArtistImportResultContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      doReturn(ResponseEntity.ok(new SpotifyFollowedArtistsPageContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
       // when
-      underTest.fetchFollowedArtists("token", 666);
+      underTest.fetchFollowedArtists("token", "666");
 
       // then
-      verify(restTemplate).exchange(any(), any(), any(), eq(SpotifyArtistImportResultContainer.class), anyMap());
+      verify(restTemplate).exchange(any(), any(), any(), eq(SpotifyFollowedArtistsPageContainer.class), anyMap());
     }
 
     @Test
     @DisplayName("url parameters are set")
     void test_url_parameters() {
       // given
-      var offset = 666;
-      doReturn(ResponseEntity.ok(new SpotifyArtistImportResultContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      doReturn(ResponseEntity.ok(new SpotifyFollowedArtistsPageContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
       // when
-      underTest.fetchFollowedArtists("token", offset);
+      underTest.fetchFollowedArtists("token", "666");
 
       // then
       verify(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
       Map<String, Object> urlParameter = urlParameterCaptor.getValue();
       assertThat(urlParameter.get(LIMIT_PARAMETER_NAME)).isEqualTo(LIMIT);
-      assertThat(urlParameter.get(OFFSET_PARAMETER_NAME)).isEqualTo(offset);
     }
 
     @Test
@@ -376,7 +388,7 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
       doReturn(ResponseEntity.ok(null)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.fetchFollowedArtists("token", 666));
+      Throwable throwable = catchThrowable(() -> underTest.fetchFollowedArtists("token", "666"));
 
       // then
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
@@ -387,9 +399,9 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     @DisplayName("If the status code is not OK an ExternalServiceException is thrown")
     void test_status_code_not_ok(HttpStatus httpStatus) {
       // given
-      doReturn(ResponseEntity.status(httpStatus).body(new SpotifyArtistImportResultContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
+      doReturn(ResponseEntity.status(httpStatus).body(new SpotifyFollowedArtistsPageContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
-      Throwable throwable = catchThrowable(() -> underTest.fetchFollowedArtists("token", 666));
+      Throwable throwable = catchThrowable(() -> underTest.fetchFollowedArtists("token", "666"));
 
       // then
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
@@ -399,14 +411,14 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
     @DisplayName("result is returned")
     void test_result_returned() {
       // given
-      var expectedResult = SpotifyArtistImportResultContainer.builder().artists(new SpotifyArtistImportResult()).build();
+      var expectedResult = SpotifyFollowedArtistsPageContainer.builder().artistsPage(new SpotifyFollowedArtistsPage()).build();
       doReturn(ResponseEntity.ok(expectedResult)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
 
       // when
-      var result = underTest.fetchFollowedArtists("token", 666);
+      var result = underTest.fetchFollowedArtists("token", "666");
 
       // then
-      assertThat(result).isEqualTo(expectedResult.getArtists());
+      assertThat(result).isEqualTo(expectedResult.getArtistsPage());
     }
 
     private Stream<Arguments> emptyTokenProvider() {
