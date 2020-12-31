@@ -14,11 +14,13 @@ public class MailProperties {
   private final String applicationHostUrl;
   private final int applicationPort;
   private final String fromEmail;
+  private final String fromName;
 
   public MailProperties(ApplicationProperties applicationProperties,
                         @Value("${spring.mail.properties.from}") String fromEmail) {
     this.fromEmail = fromEmail;
     this.applicationHostUrl = applicationProperties.getHost();
     this.applicationPort = applicationProperties.getPort();
+    this.fromName = applicationProperties.getName();
   }
 }
