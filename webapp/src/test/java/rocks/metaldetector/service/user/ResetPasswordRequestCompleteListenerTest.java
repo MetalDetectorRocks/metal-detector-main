@@ -38,7 +38,8 @@ class ResetPasswordRequestCompleteListenerTest implements WithAssertions {
     // given
     final String EMAIL = "john.doe@example.com";
     final String TOKEN = "1234-56789";
-    UserDto userDto = UserDto.builder().publicId("public-id").email(EMAIL).build();
+    final String USERNAME = "JohnD";
+    UserDto userDto = UserDto.builder().publicId("public-id").email(EMAIL).username(USERNAME).build();
     OnResetPasswordRequestCompleteEvent event = new OnResetPasswordRequestCompleteEvent("source", userDto);
     when(tokenService.createResetPasswordToken(userDto.getPublicId())).thenReturn(TOKEN);
 
@@ -51,9 +52,11 @@ class ResetPasswordRequestCompleteListenerTest implements WithAssertions {
 
     AbstractEmail email = emailCaptor.getValue();
     String resetPasswordUrl = (String) email.getEnhancedViewModel("dummy-base-url").get("resetPasswordUrl");
+    String username = (String) email.getEnhancedViewModel("dummy-base-url").get("username");
     assertThat(email.getRecipient()).isEqualTo(EMAIL);
     assertThat(email.getSubject()).isEqualTo("Your password reset request");
     assertThat(email.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.FORGOT_PASSWORD);
     assertThat(resetPasswordUrl).endsWith(TOKEN);
+    assertThat(username).isEqualTo(USERNAME);
   }
 }

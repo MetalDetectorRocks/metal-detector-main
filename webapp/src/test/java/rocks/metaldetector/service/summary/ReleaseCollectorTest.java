@@ -68,8 +68,8 @@ class ReleaseCollectorTest implements WithAssertions {
   @DisplayName("collecting upcoming releases calls releaseService with correct time range")
   void test_upcoming_releases_calls_release_service_with_time_range() {
     // given
-    var now = LocalDate.now();
-    var expectedTimeRange = new TimeRange(now, now.plusMonths(TIME_RANGE_MONTHS));
+    var tomorrow = LocalDate.now().plusDays(1);
+    var expectedTimeRange = new TimeRange(tomorrow, tomorrow.plusMonths(TIME_RANGE_MONTHS));
     var artists = List.of(ArtistDtoFactory.withName("A"));
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
 

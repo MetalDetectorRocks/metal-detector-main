@@ -27,8 +27,8 @@ public class ReleaseCollector {
   private final ReleaseService releaseService;
 
   public List<ReleaseDto> collectUpcomingReleases(List<ArtistDto> artists) {
-    LocalDate now = LocalDate.now();
-    TimeRange timeRange = new TimeRange(now, now.plusMonths(TIME_RANGE_MONTHS));
+    LocalDate tomorrow = LocalDate.now().plusDays(1);
+    TimeRange timeRange = new TimeRange(tomorrow, tomorrow.plusMonths(TIME_RANGE_MONTHS));
     DetectorSort sort = new DetectorSort(ASC, List.of("releaseDate", "artist", "albumTitle"));
     return collectReleases(artists, timeRange, sort);
   }
