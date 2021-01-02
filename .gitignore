@@ -4,11 +4,9 @@
 # ignore all stuff in .private folder
 .private/
 
-# ignore docker .secrets folder
-.secrets/
-
 # ignore all stuff in .gradle and build folder
 build/
+out/
 .gradle/
 
 # ignore IntelliJ IDEA files
@@ -25,4 +23,7 @@ build/
 # docker env file
 src/main/docker/env.txt
 
-node_modules
+# node
+node_modules/
+node/
+dist/
