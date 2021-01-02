@@ -27,7 +27,7 @@ import java.util.Map;
     "external_urls",
     "followers"
 })
-@ToString(of = {"id"})
+@ToString(of = {"name"})
 public class SpotifyArtist {
 
   @JsonProperty("id")

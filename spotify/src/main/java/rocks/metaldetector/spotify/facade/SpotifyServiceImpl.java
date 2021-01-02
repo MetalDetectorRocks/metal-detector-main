@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.spotify.api.SpotifyArtist;
 import rocks.metaldetector.spotify.api.authorization.SpotifyUserAuthorizationResponse;
-import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResult;
-import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResultItem;
-import rocks.metaldetector.spotify.api.imports.SpotifyArtistImportResult;
+import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPage;
+import rocks.metaldetector.spotify.api.imports.SpotifySavedAlbumsPage;
+import rocks.metaldetector.spotify.api.imports.SpotifySavedAlbumsPageItem;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistsContainer;
 import rocks.metaldetector.spotify.client.SpotifyArtistSearchClient;
@@ -95,8 +95,8 @@ public class SpotifyServiceImpl implements SpotifyService {
   @Override
   public List<SpotifyAlbumDto> fetchLikedAlbums(String token) {
     int offset = 0;
-    List<SpotifyAlbumImportResultItem> resultItems = new ArrayList<>();
-    SpotifyAlbumImportResult importResult;
+    List<SpotifySavedAlbumsPageItem> resultItems = new ArrayList<>();
+    SpotifySavedAlbumsPage importResult;
     do {
       importResult = importClient.fetchLikedAlbums(token, offset);
       resultItems.addAll(importResult.getItems());
@@ -105,22 +105,22 @@ public class SpotifyServiceImpl implements SpotifyService {
     while (offset < importResult.getTotal());
 
     return resultItems.stream()
-        .map(SpotifyAlbumImportResultItem::getAlbum)
+        .map(SpotifySavedAlbumsPageItem::getAlbum)
         .map(albumTransformer::transform)
         .collect(Collectors.toList());
   }
 
   @Override
   public List<SpotifyArtistDto> fetchFollowedArtists(String token) {
-    int offset = 0;
+    String nextPage = null;
     List<SpotifyArtist> resultItems = new ArrayList<>();
-    SpotifyArtistImportResult importResult;
+    SpotifyFollowedArtistsPage importResult;
     do {
-      importResult = importClient.fetchFollowedArtists(token, offset);
+      importResult = importClient.fetchFollowedArtists(token, nextPage);
       resultItems.addAll(importResult.getItems());
-      offset += importResult.getLimit();
+      nextPage = importResult.getNext();
     }
-    while (offset < importResult.getTotal());
+    while (nextPage != null);
 
     return resultItems.stream()
         .map(artistTransformer::transform)

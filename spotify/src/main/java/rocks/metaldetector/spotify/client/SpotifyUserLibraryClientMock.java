@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.spotify.api.SpotifyArtist;
 import rocks.metaldetector.spotify.api.imports.SpotfiyTrackImportResult;
 import rocks.metaldetector.spotify.api.imports.SpotifyAlbum;
-import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResult;
-import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResultItem;
-import rocks.metaldetector.spotify.api.imports.SpotifyArtistImportResult;
+import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPage;
+import rocks.metaldetector.spotify.api.imports.SpotifySavedAlbumsPage;
+import rocks.metaldetector.spotify.api.imports.SpotifySavedAlbumsPageItem;
 import rocks.metaldetector.spotify.api.imports.SpotifyTrack;
 
 import java.time.LocalDateTime;
@@ -22,8 +22,8 @@ import java.util.List;
 public class SpotifyUserLibraryClientMock implements SpotifyUserLibraryClient {
 
   @Override
-  public SpotifyAlbumImportResult fetchLikedAlbums(String token, int offset) {
-    return SpotifyAlbumImportResult.builder()
+  public SpotifySavedAlbumsPage fetchLikedAlbums(String token, int offset) {
+    return SpotifySavedAlbumsPage.builder()
         .href("https://api.spotify.com/v1/search?query=Opeth&type=artist&offset=0&limit=20")
         .items(List.of(createARomanceWithViolence()))
         .limit(20)
@@ -35,14 +35,14 @@ public class SpotifyUserLibraryClientMock implements SpotifyUserLibraryClient {
   }
 
   @Override
-  public SpotifyArtistImportResult fetchFollowedArtists(String token, int offset) {
-    return SpotifyArtistImportResult.builder()
+  public SpotifyFollowedArtistsPage fetchFollowedArtists(String token, String nextPage) {
+    return SpotifyFollowedArtistsPage.builder()
         .items(List.of(createWayfarer()))
         .build();
   }
 
-  private SpotifyAlbumImportResultItem createARomanceWithViolence() {
-    return SpotifyAlbumImportResultItem.builder()
+  private SpotifySavedAlbumsPageItem createARomanceWithViolence() {
+    return SpotifySavedAlbumsPageItem.builder()
         .addedAt(LocalDateTime.now())
         .album(SpotifyAlbum.builder()
                    .albumType("album")

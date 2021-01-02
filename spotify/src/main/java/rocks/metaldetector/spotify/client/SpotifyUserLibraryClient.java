@@ -1,11 +1,11 @@
 package rocks.metaldetector.spotify.client;
 
-import rocks.metaldetector.spotify.api.imports.SpotifyAlbumImportResult;
-import rocks.metaldetector.spotify.api.imports.SpotifyArtistImportResult;
+import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPage;
+import rocks.metaldetector.spotify.api.imports.SpotifySavedAlbumsPage;
 
 public interface SpotifyUserLibraryClient {
 
-  SpotifyAlbumImportResult fetchLikedAlbums(String token, int offset);
+  SpotifySavedAlbumsPage fetchLikedAlbums(String token, int offset);
 
-  SpotifyArtistImportResult fetchFollowedArtists(String token, int offset);
+  SpotifyFollowedArtistsPage fetchFollowedArtists(String token, String nextPage);
 }

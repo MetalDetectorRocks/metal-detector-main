@@ -130,7 +130,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         homepageCard.nameElement.textContent = release.artist;
         homepageCard.subtitleElement.textContent = release.albumTitle;
         homepageCard.footerElement.innerHTML = `
-            <div class="custom-tooltip">${this.dateService.formatRelative(release.releaseDate)}
+            <div class="custom-tooltip">${this.dateService.formatRelativeInDays(release.releaseDate)}
                 <span class="tooltip-text">${this.dateService.format(release.releaseDate, DateFormat.LONG)}</span>
             </div>
         `;

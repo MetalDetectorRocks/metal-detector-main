@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
     "added_at",
     "album"
 })
-public class SpotifyAlbumImportResultItem {
+public class SpotifySavedAlbumsPageItem {
 
   @JsonProperty("added_at")
   private LocalDateTime addedAt;
