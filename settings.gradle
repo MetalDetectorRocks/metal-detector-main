@@ -1,3 +1,11 @@
+pluginManagement {
+  plugins {
+    id "org.springframework.boot" version "2.3.7.RELEASE"
+    id "io.spring.dependency-management" version "1.0.10.RELEASE"
+    id "org.siouan.frontend-jdk11" version "4.0.1"
+  }
+}
+
 rootProject.name = "metal-detector"
 include(":butler")
 include(":discogs")
