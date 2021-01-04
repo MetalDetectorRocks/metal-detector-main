@@ -1,4 +1,4 @@
-FROM openjdk:11-stretch
+FROM openjdk:11-slim-buster
 
 ENV TZ=Europe/Berlin
 
