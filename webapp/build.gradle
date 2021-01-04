@@ -2,26 +2,6 @@ plugins {
   id "org.springframework.boot"
 }
 
-ext {
-  hibernateValidatorVersion = "6.1.6.Final"
-  validationApiVersion = "2.0.1.Final"
-  materialIconsVersion = "0.3.1"
-  restAssuredVersion = "4.2.0"
-  bootstrapVersion = "4.5.3"
-  datatablesVersion = "1.10.21"
-  ehcacheVersion = "3.9.0"
-  thymeleafDialectVersion = "2.5.1"
-  thymeleafExtrasVersion = "3.0.4.RELEASE"
-  apacheCommonsLang3Version = "3.11"
-  commonsCodecVersion = "1.15"
-  modelmapperVersion = "2.3.8"
-  jsoupVersion = "1.13.1"
-  servletApiVersion = "4.0.1"
-  webjarsLocatorVersion = "0.46"
-  micrometerVersion = "1.6.2"
-  flywayVersion = "6.4.4"
-}
-
 bootJar {
   archiveClassifier.set("boot")
   enabled = true
