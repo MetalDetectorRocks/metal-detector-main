@@ -33,6 +33,7 @@ dependencies {
   runtimeOnly "org.webjars:datatables:$datatablesVersion"
   runtimeOnly "org.flywaydb:flyway-core:$flywayVersion"
   runtimeOnly "io.micrometer:micrometer-registry-prometheus:$micrometerVersion"
+  runtimeOnly "javax.cache:cache-api:$cacheApiVersion"
 
   implementation project(":support")
   implementation project(":spotify")
