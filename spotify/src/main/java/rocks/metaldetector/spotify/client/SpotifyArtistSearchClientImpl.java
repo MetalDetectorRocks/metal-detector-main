@@ -15,7 +15,6 @@ import rocks.metaldetector.spotify.api.search.SpotifyArtistsContainer;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +49,6 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
     }
 
     HttpEntity<Object> httpEntity = createQueryHttpEntity(authorizationToken);
-    String urlEncodedQuery = URLEncoder.encode(artistQueryString, Charset.defaultCharset());
     int offset = pageSize * (pageNumber - 1);
 
     ResponseEntity<SpotifyArtistSearchResultContainer> responseEntity = spotifyRestTemplate.exchange(
@@ -58,7 +56,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
         GET,
         httpEntity,
         SpotifyArtistSearchResultContainer.class,
-        Map.of(QUERY_PARAMETER_NAME, urlEncodedQuery,
+        Map.of(QUERY_PARAMETER_NAME, artistQueryString,
                OFFSET_PARAMETER_NAME, offset,
                LIMIT_PARAMETER_NAME, pageSize)
     );
@@ -68,6 +66,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
     if (shouldNotHappen) {
       throw new ExternalServiceException("Could not get search results for query '" + artistQueryString + "' (Response code: " + responseEntity.getStatusCode() + ")");
     }
+
 
     return resultContainer;
   }

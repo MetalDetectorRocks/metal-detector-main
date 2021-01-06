@@ -27,6 +27,7 @@ public class SpotifyModuleConfig {
     return new RestTemplateBuilder()
         .requestFactory(() -> clientHttpRequestFactory)
         .errorHandler(new CustomClientErrorHandler())
+        .interceptors(new SpotifyRequestInterceptor())
         .messageConverters(List.of(jackson2HttpMessageConverter, stringHttpMessageConverter, formHttpMessageConverter))
         .build();
   }
