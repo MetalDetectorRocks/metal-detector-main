@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -39,6 +40,7 @@ public class RegistrationController {
   private final UserService userService;
   private final TokenService tokenService;
   private final ModelMapper modelMapper;
+  private final Environment environment;
 
   @ModelAttribute(FORM_DTO)
   @ArtifactForFramework
@@ -54,7 +56,8 @@ public class RegistrationController {
   @PostMapping(Endpoints.Guest.REGISTER)
   public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult) {
     // show registration form if there are validation errors
-    if (bindingResult.hasErrors()) {
+    String registrationCode = environment.getProperty("REGISTRATION_CODE");
+    if (bindingResult.hasErrors() || !registerUserRequest.getRegistrationCode().equals(registrationCode)) {
       return new ModelAndView(ViewNames.Guest.REGISTER, HttpStatus.BAD_REQUEST);
     }
 
