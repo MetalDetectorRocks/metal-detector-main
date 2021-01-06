@@ -1,7 +1,6 @@
 package rocks.metaldetector.service.notification;
 
 import lombok.AllArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
@@ -35,7 +34,7 @@ public class NotificationServiceImpl implements NotificationService {
   private final CurrentUserSupplier currentUserSupplier;
 
   @Override
-  @Scheduled(cron = "0 0 4 * * SUN")
+//  @Scheduled(cron = "0 0 4 * * SUN")
   public void notifyAllUsers() {
     userService.getAllActiveUsers().forEach(user -> notifyUser(user.getPublicId()));
   }
