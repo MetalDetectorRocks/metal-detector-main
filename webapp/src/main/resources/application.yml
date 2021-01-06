@@ -10,7 +10,8 @@ spring:
     url: ${DATASOURCE_URL}
     driver-class-name: org.postgresql.Driver
     hikari:
-      max-lifetime: 1200000
+      max-lifetime: 600000
+      connection-test-query: SELECT 1
     platform: postgres
     initialization-mode: always
   flyway:

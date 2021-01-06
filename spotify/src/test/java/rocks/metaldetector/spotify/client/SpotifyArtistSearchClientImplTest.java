@@ -47,7 +47,6 @@ import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.G
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.ID_PARAMETER_NAME;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.LIMIT_PARAMETER_NAME;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.OFFSET_PARAMETER_NAME;
-import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.QUERY_PARAMETER_NAME;
 import static rocks.metaldetector.spotify.client.SpotifyArtistSearchClientImpl.SEARCH_ENDPOINT;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyArtistFactory;
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotifyArtistSearchResultContainerFactory;
@@ -179,24 +178,6 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
 
       // then
       verify(restTemplate).exchange(any(), any(), any(), eq(SpotifyArtistSearchResultContainer.class), anyMap());
-    }
-
-    @Test
-    @DisplayName("query is url-encoded")
-    void test_encoded_query() {
-      // given
-      var query = "i'm a query";
-      var expectedQuery = "i%27m+a+query";
-      SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
-      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
-
-      // when
-      underTest.searchByName("token", query, 1, 10);
-
-      // then
-      verify(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), urlParameterCaptor.capture());
-      Map<String, Object> urlParameter = urlParameterCaptor.getValue();
-      assertThat(urlParameter.get(QUERY_PARAMETER_NAME)).isEqualTo(expectedQuery);
     }
 
     @ParameterizedTest(name = "for pageNumber = {0} and pageSize = {1} offset is = {2}")
