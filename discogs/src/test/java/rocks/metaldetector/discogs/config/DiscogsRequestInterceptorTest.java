@@ -53,7 +53,7 @@ class DiscogsRequestInterceptorTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("should set user agent with value from ButlerConfig")
+  @DisplayName("should set user agent with value from DiscogsConfig")
   void user_agent_header_is_set() throws IOException {
     // given
     var userAgent = "User Agent";
@@ -68,7 +68,7 @@ class DiscogsRequestInterceptorTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("should set authorization header with token from ButlerConfig")
+  @DisplayName("should set authorization header with token from DiscogsConfig")
   void authorization_header_is_set() throws IOException {
     // given
     var token = "discogs token";
