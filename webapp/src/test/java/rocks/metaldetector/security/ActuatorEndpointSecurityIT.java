@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 
@@ -19,7 +20,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = {"management.health.mail.enabled=false"})
+@SpringBootTest
+@TestPropertySource(properties = {
+    "management.health.mail.enabled=false",
+    "spring.cache.type=none"
+})
 @AutoConfigureMockMvc
 public class ActuatorEndpointSecurityIT implements WithIntegrationTestConfig {
 
