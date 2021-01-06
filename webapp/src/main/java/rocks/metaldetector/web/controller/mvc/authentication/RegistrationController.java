@@ -31,7 +31,7 @@ import java.util.Map;
 
 @Controller
 @AllArgsConstructor
-@Profile("default")
+@Profile("!preview")
 public class RegistrationController {
 
   static final String FORM_DTO = "registerUserRequest";
@@ -57,7 +57,7 @@ public class RegistrationController {
   public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult) {
     // show registration form if there are validation errors
     String registrationCode = environment.getProperty("REGISTRATION_CODE");
-    if (bindingResult.hasErrors() || !registerUserRequest.getRegistrationCode().equals(registrationCode)) {
+    if (bindingResult.hasErrors() || !registerUserRequest.getRegistrationCode().equalsIgnoreCase(registrationCode)) {
       return new ModelAndView(ViewNames.Guest.REGISTER, HttpStatus.BAD_REQUEST);
     }
 
