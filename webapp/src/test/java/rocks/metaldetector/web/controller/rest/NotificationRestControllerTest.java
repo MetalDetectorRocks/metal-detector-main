@@ -57,6 +57,6 @@ class NotificationRestControllerTest implements WithAssertions {
     restAssuredUtils.doPost();
 
     // then
-    verify(notificationService).notifyAllUsers();
+    verify(notificationService).notifyOnFrequency();
   }
 }
