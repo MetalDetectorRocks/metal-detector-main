@@ -35,7 +35,7 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Override
 //  @Scheduled(cron = "0 0 4 * * SUN")
-  @Transactional(readOnly = true)
+  @Transactional
   public void notifyAllUsers() {
     notificationConfigRepository.findAll().stream()
         .filter(config -> config.getUser().isEnabled() &&
