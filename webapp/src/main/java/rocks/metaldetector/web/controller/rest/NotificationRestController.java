@@ -4,20 +4,28 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.service.notification.NotificationService;
 import rocks.metaldetector.support.Endpoints;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping(Endpoints.Rest.NOTIFY)
 @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 public class NotificationRestController {
 
   private final NotificationService notificationService;
 
-  @PostMapping(path = Endpoints.Rest.NOTIFY)
+  @PostMapping(path = Endpoints.Rest.FREQUENCY)
   public ResponseEntity<Void> notifyOnFrequency() {
     notificationService.notifyOnFrequency();
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping(path = Endpoints.Rest.RELEASE_DATE)
+  public ResponseEntity<Void> notifyOnReleaseDate() {
+    notificationService.notifyOnReleaseDate();
     return ResponseEntity.ok().build();
   }
 }

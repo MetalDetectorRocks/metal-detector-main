@@ -13,6 +13,7 @@ import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.ReleasesEmail;
+import rocks.metaldetector.service.email.TodaysReleasesEmail;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
@@ -47,6 +48,20 @@ public class NotificationServiceImpl implements NotificationService {
         .filter(config -> config.getUser().isEnabled() &&
                           config.getNotify())
         .forEach(notificationConfig -> frequencyNotification(notificationConfig, getReleaseContainerForConfig(releaseContainer, notificationConfig)));
+  }
+
+  @Override
+//  @Scheduled(cron = "0 0 7 * * *")
+  @Transactional(readOnly = true)
+  public void notifyOnReleaseDate() {
+    var now = LocalDate.now();
+    List<ReleaseDto> todaysReleases = releaseService.findAllReleases(Collections.emptyList(), new TimeRange(now, now));
+
+    notificationConfigRepository.findAll().stream()
+        .filter(config -> config.getUser().isEnabled() &&
+                          config.getNotify() &&
+                          config.getNotificationAtReleaseDate())
+        .forEach(notificationConfig -> releaseDateNotification(notificationConfig, todaysReleases));
   }
 
   @Override
@@ -93,6 +108,21 @@ public class NotificationServiceImpl implements NotificationService {
           notificationConfigEntity.setLastNotificationDate(now);
           notificationConfigRepository.save(notificationConfigEntity);
         }
+      }
+    }
+  }
+
+  private void releaseDateNotification(NotificationConfigEntity notificationConfigEntity, List<ReleaseDto> releases) {
+    UserEntity user = notificationConfigEntity.getUser();
+    List<String> followedArtistsNames = followArtistService.getFollowedArtistsOfUser(user.getPublicId()).stream()
+        .map(ArtistDto::getArtistName).collect(Collectors.toList());
+
+    if (!followedArtistsNames.isEmpty()) {
+      var now = LocalDate.now();
+      List<ReleaseDto> todaysReleases = releases.stream().filter(release -> followedArtistsNames.contains(release.getArtist())).collect(Collectors.toList());
+
+      if (!todaysReleases.isEmpty()) {
+        emailService.sendEmail(new TodaysReleasesEmail(user.getEmail(), user.getUsername(), todaysReleases));
       }
     }
   }
