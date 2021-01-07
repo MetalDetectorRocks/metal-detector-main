@@ -5,18 +5,20 @@ import rocks.metaldetector.config.constants.ViewNames;
 
 import java.util.List;
 
-public final class NewReleasesEmail extends AbstractEmail {
+public final class ReleasesEmail extends AbstractEmail {
 
-  public static final String SUBJECT = "Your new releases";
+  public static final String SUBJECT = "Your releases";
 
   private final String recipient;
   private final String username;
-  private final List<ReleaseDto> newReleases;
+  private final List<ReleaseDto> upcomingReleases;
+  private final List<ReleaseDto> recentReleases;
 
-  public NewReleasesEmail(String recipient, String username, List<ReleaseDto> newReleases) {
+  public ReleasesEmail(String recipient, String username, List<ReleaseDto> upcomingReleases, List<ReleaseDto> recentReleases) {
     this.recipient = recipient;
     this.username = username;
-    this.newReleases = newReleases;
+    this.upcomingReleases = upcomingReleases;
+    this.recentReleases = recentReleases;
   }
 
   @Override
@@ -42,8 +44,13 @@ public final class NewReleasesEmail extends AbstractEmail {
                           .build());
 
     addViewModelEntry(ViewModelEntry.builder()
-                          .name("newReleases")
-                          .value(newReleases)
+                          .name("upcomingReleases")
+                          .value(upcomingReleases)
+                          .build());
+
+    addViewModelEntry(ViewModelEntry.builder()
+                          .name("recentReleases")
+                          .value(recentReleases)
                           .build());
   }
 }
