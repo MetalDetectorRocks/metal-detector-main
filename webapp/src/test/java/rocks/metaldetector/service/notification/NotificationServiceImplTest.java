@@ -22,9 +22,7 @@ import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.email.AbstractEmail;
 import rocks.metaldetector.service.email.EmailService;
-import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserEntityFactory;
-import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
@@ -37,7 +35,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -46,16 +43,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static rocks.metaldetector.service.email.NewReleasesEmail.SUBJECT;
+import static rocks.metaldetector.service.email.ReleasesEmail.SUBJECT;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceImplTest implements WithAssertions {
 
   @Mock
   private ReleaseService releaseService;
-
-  @Mock
-  private UserService userService;
 
   @Mock
   private EmailService emailService;
@@ -81,73 +75,64 @@ class NotificationServiceImplTest implements WithAssertions {
   @Captor
   private ArgumentCaptor<AbstractEmail> emailCaptor;
 
-  @Mock
-  private UserDto user;
+  @Captor
+  private ArgumentCaptor<NotificationConfigEntity> notificationConfigCaptor;
+
+  private UserEntity userEntity;
+
+  private NotificationConfigEntity notificationConfigEntity;
 
   @BeforeEach
   void setup() {
-    when(user.getPublicId()).thenReturn("userId");
+    userEntity = UserEntityFactory.createUser("user", "user@user.de");
+    notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).notify(true).build();
+    doReturn(List.of(notificationConfigEntity)).when(notificationConfigRepository).findAll();
   }
 
   @AfterEach
   void tearDown() {
-    reset(releaseService, userService, emailService, followArtistService, user, notificationConfigRepository, notificationConfigTransformer, currentUserSupplier);
+    reset(releaseService, emailService, followArtistService, notificationConfigRepository, notificationConfigTransformer, currentUserSupplier);
   }
 
   @Test
   @DisplayName("FollowArtistService is called on notification")
   void follow_artist_service_is_called() {
-    // given
-    when(userService.getUserByPublicId(anyString())).thenReturn(user);
-
     // when
-    underTest.notifyUser(user.getPublicId());
+    underTest.notifyAllUsers();
 
     // then
-    verify(followArtistService).getFollowedArtistsOfUser(user.getPublicId());
+    verify(followArtistService).getFollowedArtistsOfUser(userEntity.getPublicId());
   }
 
   @Test
-  @DisplayName("UserService is called with correct id on notification")
-  void notify_calls_user_service() {
-    // given
-    when(userService.getUserByPublicId(anyString())).thenReturn(user);
-
-    // when
-    underTest.notifyUser(user.getPublicId());
-
-    // then
-    verify(userService).getUserByPublicId(user.getPublicId());
-  }
-
-  @Test
-  @DisplayName("ReleasesService is called on notification")
+  @DisplayName("ReleasesService is called for upcoming releases")
   void notify_calls_releases_service() {
     // given
     var artistDto = ArtistDtoFactory.createDefault();
     LocalDate now = LocalDate.now();
     TemporalUnitLessThanOffset offset = new TemporalUnitLessThanOffset(1, ChronoUnit.DAYS);
     when(releaseService.findAllReleases(any(), any())).thenReturn(Collections.emptyList());
-    when(userService.getUserByPublicId(anyString())).thenReturn(user);
     when(followArtistService.getFollowedArtistsOfUser(any())).thenReturn(List.of(artistDto));
 
     // when
-    underTest.notifyUser(user.getPublicId());
+    underTest.notifyAllUsers();
 
     // then
-    verify(releaseService).findAllReleases(eq(List.of(artistDto.getArtistName())), timeRangeCaptor.capture());
-    assertThat(timeRangeCaptor.getValue().getDateFrom()).isCloseTo(now, offset);
-    assertThat(timeRangeCaptor.getValue().getDateTo()).isCloseTo(now.plusMonths(3), offset);
+    verify(releaseService, times(2)).findAllReleases(eq(List.of(artistDto.getArtistName())), timeRangeCaptor.capture());
+    List<TimeRange> capturedRanges = timeRangeCaptor.getAllValues(); 
+
+    assertThat(capturedRanges.get(0).getDateFrom()).isCloseTo(now, offset);
+    assertThat(capturedRanges.get(0).getDateTo()).isCloseTo(now.plusWeeks(notificationConfigEntity.getFrequencyInWeeks()), offset);
+
+    assertThat(capturedRanges.get(1).getDateFrom()).isCloseTo(now.minusWeeks(notificationConfigEntity.getFrequencyInWeeks()), offset);
+    assertThat(capturedRanges.get(1).getDateTo()).isCloseTo(now.minusDays(1), offset);
   }
 
   @Test
   @DisplayName("ReleasesService is not called if no artists exist")
   void notify_does_not_call_releases_service() {
-    // given
-    when(userService.getUserByPublicId(anyString())).thenReturn(user);
-
     // when
-    underTest.notifyUser(user.getPublicId());
+    underTest.notifyAllUsers();
 
     // then
     verifyNoInteractions(releaseService);
@@ -158,12 +143,11 @@ class NotificationServiceImplTest implements WithAssertions {
   void notify_calls_email_service() {
     // given
     var releaseDtos = List.of(ReleaseDtoFactory.createDefault());
-    when(userService.getUserByPublicId(any())).thenReturn(user);
     when(releaseService.findAllReleases(any(), any())).thenReturn(releaseDtos);
     when(followArtistService.getFollowedArtistsOfUser(any())).thenReturn(List.of(ArtistDtoFactory.createDefault()));
 
     // when
-    underTest.notifyUser(user.getPublicId());
+    underTest.notifyAllUsers();
 
     // then
     verify(emailService).sendEmail(any());
@@ -174,56 +158,56 @@ class NotificationServiceImplTest implements WithAssertions {
   void notify_sends_correct_email() {
     // given
     var releaseDtos = List.of(ReleaseDtoFactory.createDefault());
-    when(userService.getUserByPublicId(any())).thenReturn(user);
     when(releaseService.findAllReleases(any(), any())).thenReturn(releaseDtos);
     when(followArtistService.getFollowedArtistsOfUser(any())).thenReturn(List.of(ArtistDtoFactory.createDefault()));
 
     // when
-    underTest.notifyUser(user.getPublicId());
+    underTest.notifyAllUsers();
 
     // then
     verify(emailService).sendEmail(emailCaptor.capture());
 
     AbstractEmail email = emailCaptor.getValue();
-    assertThat(email.getRecipient()).isEqualTo(user.getEmail());
+    assertThat(email.getRecipient()).isEqualTo(userEntity.getEmail());
     assertThat(email.getSubject()).isEqualTo(SUBJECT);
     assertThat(email.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.NEW_RELEASES);
 
-    List<ReleaseDto> releases = (List<ReleaseDto>) email.getEnhancedViewModel("dummy-base-url").get("newReleases");
-    assertThat(releases).isEqualTo(releaseDtos);
+    List<ReleaseDto> upcomingReleases = (List<ReleaseDto>) email.getEnhancedViewModel("dummy-base-url").get("upcomingReleases");
+    List<ReleaseDto> recentReleases = (List<ReleaseDto>) email.getEnhancedViewModel("dummy-base-url").get("recentReleases");
+    assertThat(upcomingReleases).isEqualTo(releaseDtos);
+    assertThat(recentReleases).isEqualTo(releaseDtos);
   }
 
   @Test
   @DisplayName("EmailService not called if no releases exist")
   void notify_does_not_call_email_service() {
     // given
-    when(userService.getUserByPublicId(any())).thenReturn(user);
     when(releaseService.findAllReleases(any(), any())).thenReturn(Collections.emptyList());
 
     // when
-    underTest.notifyUser(user.getPublicId());
+    underTest.notifyAllUsers();
 
     // then
     verifyNoInteractions(emailService);
   }
 
   @Test
-  @DisplayName("UserService is called on notification for all to get active users")
+  @DisplayName("NotificationConfigRepository is called on notification for all to get configs")
   void notify_all_calls_user_service() {
     // when
     underTest.notifyAllUsers();
 
     // then
-    verify(userService).getAllActiveUsers();
+    verify(notificationConfigRepository).findAll();
   }
 
   @Test
   @DisplayName("All services are called times the number of active users on notification for all users")
   void notify_all_calls_all_services_for_each_user() {
     // given
-    var userList = List.of(user, user);
-    when(userService.getAllActiveUsers()).thenReturn(userList);
-    when(userService.getUserByPublicId(any())).thenReturn(user);
+    var userEntity2 = UserEntityFactory.createUser("user", "user@user.de");
+    var notificationConfigEntity2 = NotificationConfigEntity.builder().user(userEntity2).notify(true).build();
+    doReturn(List.of(notificationConfigEntity, notificationConfigEntity2)).when(notificationConfigRepository).findAll();
     when(releaseService.findAllReleases(any(), any())).thenReturn(List.of(ReleaseDtoFactory.createDefault()));
     when(followArtistService.getFollowedArtistsOfUser(any())).thenReturn(List.of(ArtistDtoFactory.createDefault()));
 
@@ -231,10 +215,88 @@ class NotificationServiceImplTest implements WithAssertions {
     underTest.notifyAllUsers();
 
     // then
-    verify(userService, times(userList.size())).getUserByPublicId(any());
-    verify(releaseService, times(userList.size())).findAllReleases(any(), any());
-    verify(emailService, times(userList.size())).sendEmail(any());
-    verify(followArtistService, times(userList.size())).getFollowedArtistsOfUser(any());
+    verify(releaseService, times(4)).findAllReleases(any(), any());
+    verify(emailService, times(2)).sendEmail(any());
+    verify(followArtistService, times(2)).getFollowedArtistsOfUser(any());
+  }
+
+  @Test
+  @DisplayName("If notifications are deactivated, nothing is called")
+  void test_notification_deactivated() {
+    // given
+    notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).build();
+    doReturn(List.of(notificationConfigEntity)).when(notificationConfigRepository).findAll();
+
+    // when
+    underTest.notifyAllUsers();
+
+    // then
+    verifyNoInteractions(followArtistService);
+  }
+
+  @Test
+  @DisplayName("Nothing is called if notification has already been sent depending on frequency")
+  void test_notification_frequency_not_sent() {
+    // given
+    var now = LocalDate.now();
+    var lastNotification = now.minusWeeks(2);
+    notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).lastNotificationDate(lastNotification).notify(true).build();
+    doReturn(List.of(notificationConfigEntity)).when(notificationConfigRepository).findAll();
+
+    // when
+    underTest.notifyAllUsers();
+
+    // then
+    verifyNoInteractions(followArtistService);
+  }
+
+  @Test
+  @DisplayName("Notifications are sent if notification has not been sent depending on frequency")
+  void test_notification_frequency_sent() {
+    // given
+    var now = LocalDate.now();
+    var lastNotification = now.minusWeeks(4);
+    notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).lastNotificationDate(lastNotification).notify(true).build();
+    doReturn(List.of(notificationConfigEntity)).when(notificationConfigRepository).findAll();
+
+    // when
+    underTest.notifyAllUsers();
+
+    // then
+    verify(followArtistService).getFollowedArtistsOfUser(any());
+  }
+
+  @Test
+  @DisplayName("NotificationConfigEntity is updated when email is sent")
+  void notify_all_updates_notification_config() {
+    // given
+    when(releaseService.findAllReleases(any(), any())).thenReturn(List.of(ReleaseDtoFactory.createDefault()));
+    when(followArtistService.getFollowedArtistsOfUser(any())).thenReturn(List.of(ArtistDtoFactory.createDefault()));
+    TemporalUnitLessThanOffset offset = new TemporalUnitLessThanOffset(1, ChronoUnit.DAYS);
+
+    // when
+    underTest.notifyAllUsers();
+
+    // then
+    verify(notificationConfigRepository).save(notificationConfigCaptor.capture());
+    NotificationConfigEntity updatedNotificationConfig = notificationConfigCaptor.getValue();
+
+    assertThat(updatedNotificationConfig.getLastNotificationDate()).isCloseTo(LocalDate.now(), offset);
+  }
+
+  @Test
+  @DisplayName("Inactive users are not notified")
+  void test_inactive_users_not_notified() {
+    // given
+    userEntity.setEnabled(false);
+    notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).notify(true).build();
+    doReturn(List.of(notificationConfigEntity)).when(notificationConfigRepository).findAll();
+
+    // when
+    underTest.notifyAllUsers();
+
+    // then
+    verifyNoInteractions(followArtistService);
   }
 
   @Test

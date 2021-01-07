@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
@@ -46,5 +47,9 @@ public class NotificationConfigEntity extends BaseEntity {
   @Setter
   @Builder.Default
   private Boolean notificationAtAnnouncementDate = false;
+
+  @Column(name = "last_notification_date")
+  @Setter
+  private LocalDate lastNotificationDate;
 
 }
