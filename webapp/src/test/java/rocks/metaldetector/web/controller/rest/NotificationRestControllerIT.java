@@ -11,7 +11,9 @@ import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static rocks.metaldetector.support.Endpoints.Rest.FREQUENCY;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFY;
+import static rocks.metaldetector.support.Endpoints.Rest.RELEASE_DATE;
 
 @WebMvcTest(controllers = NotificationRestController.class)
 public class NotificationRestControllerIT extends BaseWebMvcTestWithSecurity {
@@ -24,11 +26,19 @@ public class NotificationRestControllerIT extends BaseWebMvcTestWithSecurity {
   class AdministratorRoleTest {
 
     @Test
-    @DisplayName("Administrator is allowed to POST on endpoint " + NOTIFY + "'")
+    @DisplayName("Administrator is allowed to POST on endpoint " + NOTIFY + FREQUENCY + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
-    void admin_is_allowed_to_notify_all_users() throws Exception {
-      mockMvc.perform(post(NOTIFY))
+    void admin_is_allowed_to_notify_on_frequency() throws Exception {
+      mockMvc.perform(post(NOTIFY + FREQUENCY))
               .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Administrator is allowed to POST on endpoint " + NOTIFY + RELEASE_DATE + "'")
+    @WithMockUser(roles = "ADMINISTRATOR")
+    void admin_is_allowed_to_notify_on_release_date() throws Exception {
+      mockMvc.perform(post(NOTIFY + RELEASE_DATE))
+          .andExpect(status().isOk());
     }
   }
 
@@ -37,11 +47,19 @@ public class NotificationRestControllerIT extends BaseWebMvcTestWithSecurity {
   class UserRoleTest {
 
     @Test
-    @DisplayName("User is not allowed to POST on endpoint " + NOTIFY + "'")
+    @DisplayName("User is not allowed to POST on endpoint " + NOTIFY + RELEASE_DATE + "'")
     @WithMockUser(roles = "USER")
-    void user_is_not_allowed_to_notify_all_users() throws Exception {
-      mockMvc.perform(post(NOTIFY))
+    void user_is_not_allowed_to_notify_on_frequency() throws Exception {
+      mockMvc.perform(post(NOTIFY + FREQUENCY))
               .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("User is not allowed to POST on endpoint " + NOTIFY + RELEASE_DATE + "'")
+    @WithMockUser(roles = "USER")
+    void user_is_not_allowed_to_notify_on_release_date() throws Exception {
+      mockMvc.perform(post(NOTIFY + RELEASE_DATE))
+          .andExpect(status().isForbidden());
     }
   }
 }
