@@ -16,8 +16,8 @@ public class NotificationRestController {
   private final NotificationService notificationService;
 
   @PostMapping(path = Endpoints.Rest.NOTIFY)
-  public ResponseEntity<Void> notifyAllUsers() {
-    notificationService.notifyAllUsers();
+  public ResponseEntity<Void> notifyOnFrequency() {
+    notificationService.notifyOnFrequency();
     return ResponseEntity.ok().build();
   }
 }

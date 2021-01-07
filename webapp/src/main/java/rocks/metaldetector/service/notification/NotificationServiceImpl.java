@@ -17,6 +17,8 @@ import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,8 @@ import static java.time.temporal.ChronoUnit.WEEKS;
 @Service
 @AllArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
+
+  static final List<Integer> SUPPORTED_FREQUENCIES = List.of(2, 4);
 
   private final ReleaseService releaseService;
   private final EmailService emailService;
@@ -36,14 +40,17 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
 //  @Scheduled(cron = "0 0 4 * * SUN")
   @Transactional
-  public void notifyAllUsers() {
+  public void notifyOnFrequency() {
+    List<ReleaseContainer> releaseContainer = createReleaseContainer();
+
     notificationConfigRepository.findAll().stream()
         .filter(config -> config.getUser().isEnabled() &&
                           config.getNotify())
-        .forEach(this::notify);
+        .forEach(notificationConfig -> frequencyNotification(notificationConfig, getReleaseContainerForConfig(releaseContainer, notificationConfig)));
   }
 
   @Override
+  @Transactional(readOnly = true)
   public NotificationConfigDto getCurrentUserNotificationConfig() {
     UserEntity currentUser = currentUserSupplier.get();
     NotificationConfigEntity notificationConfigEntity = notificationConfigRepository.findByUserId(currentUser.getId())
@@ -52,6 +59,7 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   @Override
+  @Transactional
   public void updateCurrentUserNotificationConfig(NotificationConfigDto notificationConfigDto) {
     UserEntity currentUser = currentUserSupplier.get();
     NotificationConfigEntity notificationConfigEntity = notificationConfigRepository.findByUserId(currentUser.getId())
@@ -65,7 +73,7 @@ public class NotificationServiceImpl implements NotificationService {
     notificationConfigRepository.save(notificationConfigEntity);
   }
 
-  private void notify(NotificationConfigEntity notificationConfigEntity) {
+  private void frequencyNotification(NotificationConfigEntity notificationConfigEntity, ReleaseContainer releaseContainer) {
     var now = LocalDate.now();
     boolean shouldNotify = notificationConfigEntity.getLastNotificationDate() == null ||
                            WEEKS.between(notificationConfigEntity.getLastNotificationDate(), now) >= notificationConfigEntity.getFrequencyInWeeks();
@@ -76,8 +84,8 @@ public class NotificationServiceImpl implements NotificationService {
           .map(ArtistDto::getArtistName).collect(Collectors.toList());
 
       if (!followedArtistsNames.isEmpty()) {
-        List<ReleaseDto> upcomingReleases = releaseService.findAllReleases(followedArtistsNames, new TimeRange(now, now.plusWeeks(notificationConfigEntity.getFrequencyInWeeks())));
-        List<ReleaseDto> recentReleases = releaseService.findAllReleases(followedArtistsNames, new TimeRange(now.minusWeeks(notificationConfigEntity.getFrequencyInWeeks()), now.minusDays(1)));
+        List<ReleaseDto> upcomingReleases = releaseContainer.upcomingReleases.stream().filter(release -> followedArtistsNames.contains(release.getArtist())).collect(Collectors.toList());
+        List<ReleaseDto> recentReleases = releaseContainer.recentReleases.stream().filter(release -> followedArtistsNames.contains(release.getArtist())).collect(Collectors.toList());
 
         if (!(upcomingReleases.isEmpty() && recentReleases.isEmpty())) {
           emailService.sendEmail(new ReleasesEmail(user.getEmail(), user.getUsername(), upcomingReleases, recentReleases));
@@ -87,5 +95,33 @@ public class NotificationServiceImpl implements NotificationService {
         }
       }
     }
+  }
+
+  private List<ReleaseContainer> createReleaseContainer() {
+    var now = LocalDate.now();
+    List<ReleaseContainer> releaseContainers = new ArrayList<>();
+
+    for (int frequency : SUPPORTED_FREQUENCIES) {
+      List<ReleaseDto> upcomingReleases = releaseService.findAllReleases(Collections.emptyList(), new TimeRange(now, now.plusWeeks(frequency)));
+      List<ReleaseDto> recentReleases = releaseService.findAllReleases(Collections.emptyList(), new TimeRange(now.minusWeeks(frequency), now.minusDays(1)));
+      releaseContainers.add(new ReleaseContainer(frequency, upcomingReleases, recentReleases));
+    }
+
+    return releaseContainers;
+  }
+
+  private ReleaseContainer getReleaseContainerForConfig(List<ReleaseContainer> releaseContainer, NotificationConfigEntity notificationConfig) {
+    return releaseContainer.stream()
+        .filter(container -> container.numberOfWeeks == notificationConfig.getFrequencyInWeeks())
+        .collect(Collectors.toList())
+        .get(0);
+  }
+
+  @AllArgsConstructor
+  private static class ReleaseContainer {
+
+    private final int numberOfWeeks;
+    private final List<ReleaseDto> upcomingReleases;
+    private final List<ReleaseDto> recentReleases;
   }
 }
