@@ -73,6 +73,7 @@ public class ButlerDtoFactory {
               .artist("A")
               .albumTitle("Heavy Release")
               .releaseDate(LocalDate.now().plusDays(10))
+              .announcementDate(LocalDate.now())
               .genre("G")
               .type("demo")
               .artistDetailsUrl("url")
