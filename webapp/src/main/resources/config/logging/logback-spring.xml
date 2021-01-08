@@ -6,7 +6,7 @@
     <property name="LOGS" value=".logs" />
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <Pattern>%blue(%d{ISO8601}) [%red(%thread)] %yellow(%-5level) %green(%logger{40}) - %msg %n%throwable</Pattern>
+            <Pattern>%cyan(%d{ISO8601}) [%magenta(%thread)] %yellow(%-5level) %green(%logger{40}) - %msg %n%throwable</Pattern>
         </encoder>
     </appender>
 
