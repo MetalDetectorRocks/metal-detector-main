@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html layout:decorate="~{guest/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Privacy Policy</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div th:replace="privacy-policy-content :: content"></div>
+</section>
+</body>
+</html>
