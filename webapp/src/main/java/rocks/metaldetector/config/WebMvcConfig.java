@@ -24,10 +24,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
-    // Guest paged
-    registry.addViewController(Endpoints.Guest.IMPRINT).setViewName(ViewNames.Guest.IMPRINT);
-    registry.addViewController(Endpoints.Guest.PRIVACY_POLICY).setViewName(ViewNames.Guest.PRIVACY_POLICY);
-
     // Frontend pages
     registry.addViewController(Endpoints.Frontend.BLOG).setViewName(ViewNames.Frontend.BLOG);
     registry.addViewController(Endpoints.Frontend.RELEASES).setViewName(ViewNames.Frontend.RELEASES);
