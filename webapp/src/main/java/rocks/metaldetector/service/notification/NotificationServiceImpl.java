@@ -17,9 +17,10 @@ import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.WEEKS;
@@ -41,12 +42,12 @@ public class NotificationServiceImpl implements NotificationService {
 //  @Scheduled(cron = "0 0 4 * * SUN")
   @Transactional
   public void notifyOnFrequency() {
-    List<ReleaseContainer> releaseContainer = createReleaseContainer();
+    Map<Integer, ReleaseContainer> releaseContainer = createReleaseContainer();
 
     notificationConfigRepository.findAll().stream()
         .filter(config -> config.getUser().isEnabled() &&
                           config.getNotify())
-        .forEach(notificationConfig -> frequencyNotification(notificationConfig, getReleaseContainerForConfig(releaseContainer, notificationConfig)));
+        .forEach(config -> frequencyNotification(config, releaseContainer.get(config.getFrequencyInWeeks())));
   }
 
   @Override
@@ -97,30 +98,22 @@ public class NotificationServiceImpl implements NotificationService {
     }
   }
 
-  private List<ReleaseContainer> createReleaseContainer() {
+  private Map<Integer, ReleaseContainer> createReleaseContainer() {
     var now = LocalDate.now();
-    List<ReleaseContainer> releaseContainers = new ArrayList<>();
+    Map<Integer, ReleaseContainer> releaseContainers = new HashMap<>();
 
     for (int frequency : SUPPORTED_FREQUENCIES) {
       List<ReleaseDto> upcomingReleases = releaseService.findAllReleases(Collections.emptyList(), new TimeRange(now, now.plusWeeks(frequency)));
       List<ReleaseDto> recentReleases = releaseService.findAllReleases(Collections.emptyList(), new TimeRange(now.minusWeeks(frequency), now.minusDays(1)));
-      releaseContainers.add(new ReleaseContainer(frequency, upcomingReleases, recentReleases));
+      releaseContainers.put(frequency, new ReleaseContainer(upcomingReleases, recentReleases));
     }
 
     return releaseContainers;
   }
 
-  private ReleaseContainer getReleaseContainerForConfig(List<ReleaseContainer> releaseContainer, NotificationConfigEntity notificationConfig) {
-    return releaseContainer.stream()
-        .filter(container -> container.numberOfWeeks == notificationConfig.getFrequencyInWeeks())
-        .collect(Collectors.toList())
-        .get(0);
-  }
-
   @AllArgsConstructor
   private static class ReleaseContainer {
 
-    private final int numberOfWeeks;
     private final List<ReleaseDto> upcomingReleases;
     private final List<ReleaseDto> recentReleases;
   }
