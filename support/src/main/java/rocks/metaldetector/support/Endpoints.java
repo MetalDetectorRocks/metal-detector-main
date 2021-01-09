@@ -13,7 +13,9 @@ public class Endpoints {
     public static final String        EMPTY_INDEX            = "";
     public static final String        SLASH_INDEX            = "/";
     public static final String        LOGOUT                 = "/logout";
-    public static final List<String>  ALL_GUEST_INDEX_PAGES  = List.of(INDEX, EMPTY_INDEX, SLASH_INDEX);
+    public static final String        IMPRINT                = "/guest/imprint";
+    public static final String        PRIVACY_POLICY         = "/guest/privacy-policy";
+    public static final List<String>  ALL_GUEST_INDEX_PAGES  = List.of(INDEX, EMPTY_INDEX, SLASH_INDEX, IMPRINT, PRIVACY_POLICY);
 
     // Authentication
     public static final String       LOGIN                     = "/login";
@@ -35,6 +37,7 @@ public class Endpoints {
     public static final String MY_ARTISTS                 = "/my-artists";
     public static final String BLOG                       = "/blog";
     public static final String IMPRINT                    = "/imprint";
+    public static final String PRIVACY_POLICY             = "/privacy-policy";
     public static final String STATUS                     = "/status";
     public static final String ACCOUNT_DETAILS            = "/settings/account-details";
     public static final String SPOTIFY_SYNCHRONIZATION    = "/settings/spotify-synchronization";
@@ -42,7 +45,7 @@ public class Endpoints {
     public static final String TEST                       = "/only-for-testing";
     public static final String SPOTIFY_CALLBACK           = "/spotify-callback";
     public static final List<String> ALL_FRONTEND_PAGES   = List.of(HOME, ARTISTS, SETTINGS, PROFILE, RELEASES, MY_ARTISTS,
-                                                                    BLOG, IMPRINT, STATUS, TEST, SPOTIFY_CALLBACK,ACCOUNT_DETAILS,
+                                                                    BLOG, IMPRINT, PRIVACY_POLICY, STATUS, TEST, SPOTIFY_CALLBACK,ACCOUNT_DETAILS,
                                                                     SPOTIFY_SYNCHRONIZATION,NOTIFICATION_SETTINGS);
   }
 
@@ -91,10 +94,11 @@ public class Endpoints {
            static final String[] RESEND_VERIFICATION_TOKEN = {"/resend-verification-token", "/resend-verification-token/"};
            static final String[] FORGOT_PASSWORD           = {"/forgot-password", "/forgot-password/"};
            static final String[] RESET_PASSWORD            = {"/reset-password", "/reset-password/"};
+           static final String[] GUEST                     = {"/guest/**"};
     public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**", "/webjars/**"};
 
-    public static final String[] AUTH_PAGES = Stream.of(INDEX, LOGIN, REGISTER, REGISTRATION_VERIFICATION,
-            RESEND_VERIFICATION_TOKEN, FORGOT_PASSWORD, RESET_PASSWORD).flatMap(Stream::of).toArray(String[]::new);
+    public static final String[] GUEST_PAGES = Stream.of(INDEX, LOGIN, REGISTER, REGISTRATION_VERIFICATION,
+            RESEND_VERIFICATION_TOKEN, FORGOT_PASSWORD, RESET_PASSWORD, GUEST).flatMap(Stream::of).toArray(String[]::new);
   }
 
 }
