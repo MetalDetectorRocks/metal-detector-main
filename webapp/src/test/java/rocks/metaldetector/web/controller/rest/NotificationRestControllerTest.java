@@ -57,32 +57,6 @@ class NotificationRestControllerTest implements WithAssertions {
     restAssuredUtils.doPost();
 
     // then
-    verify(notificationService).notifyAllUsers();
-  }
-
-  @Test
-  @DisplayName("Notify user responds with OK")
-  void notify_user_responds_ok() {
-    // given
-    var userId = "123456";
-
-    // when
-    var response = restAssuredUtils.doPost("/" + userId);
-
-    // then
-    response.statusCode(HttpStatus.OK.value());
-  }
-
-  @Test
-  @DisplayName("Notify user calls notification service")
-  void notify_user_calls_notification_service() {
-    // given
-    var userId = "123456";
-
-    // when
-    restAssuredUtils.doPost("/" + userId);
-
-    // then
-    verify(notificationService).notifyUser(userId);
+    verify(notificationService).notifyOnFrequency();
   }
 }

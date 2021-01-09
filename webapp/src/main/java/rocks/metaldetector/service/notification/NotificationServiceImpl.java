@@ -2,6 +2,7 @@ package rocks.metaldetector.service.notification;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
@@ -11,22 +12,26 @@ import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.email.EmailService;
-import rocks.metaldetector.service.email.NewReleasesEmail;
-import rocks.metaldetector.service.user.UserDto;
-import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.service.email.ReleasesEmail;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.time.temporal.ChronoUnit.WEEKS;
 
 @Service
 @AllArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
+  static final List<Integer> SUPPORTED_FREQUENCIES = List.of(2, 4);
+
   private final ReleaseService releaseService;
-  private final UserService userService;
   private final EmailService emailService;
   private final FollowArtistService followArtistService;
   private final NotificationConfigRepository notificationConfigRepository;
@@ -35,27 +40,18 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Override
 //  @Scheduled(cron = "0 0 4 * * SUN")
-  public void notifyAllUsers() {
-    userService.getAllActiveUsers().forEach(user -> notifyUser(user.getPublicId()));
+  @Transactional
+  public void notifyOnFrequency() {
+    Map<Integer, ReleaseContainer> releaseContainer = createReleaseContainer();
+
+    notificationConfigRepository.findAll().stream()
+        .filter(config -> config.getUser().isEnabled() &&
+                          config.getNotify())
+        .forEach(config -> frequencyNotification(config, releaseContainer.get(config.getFrequencyInWeeks())));
   }
 
   @Override
-  public void notifyUser(String publicUserId) {
-    UserDto user = userService.getUserByPublicId(publicUserId);
-    List<String> followedArtistsNames = followArtistService.getFollowedArtistsOfUser(publicUserId).stream()
-        .map(ArtistDto::getArtistName).collect(Collectors.toList());
-
-    if (!followedArtistsNames.isEmpty()) {
-      var now = LocalDate.now();
-      List<ReleaseDto> newReleases = releaseService.findAllReleases(followedArtistsNames, new TimeRange(now, now.plusMonths(3)));
-
-      if (!newReleases.isEmpty()) {
-        emailService.sendEmail(new NewReleasesEmail(user.getEmail(), user.getUsername(), newReleases));
-      }
-    }
-  }
-
-  @Override
+  @Transactional(readOnly = true)
   public NotificationConfigDto getCurrentUserNotificationConfig() {
     UserEntity currentUser = currentUserSupplier.get();
     NotificationConfigEntity notificationConfigEntity = notificationConfigRepository.findByUserId(currentUser.getId())
@@ -64,6 +60,7 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   @Override
+  @Transactional
   public void updateCurrentUserNotificationConfig(NotificationConfigDto notificationConfigDto) {
     UserEntity currentUser = currentUserSupplier.get();
     NotificationConfigEntity notificationConfigEntity = notificationConfigRepository.findByUserId(currentUser.getId())
@@ -75,5 +72,49 @@ public class NotificationServiceImpl implements NotificationService {
     notificationConfigEntity.setNotify(notificationConfigDto.isNotify());
 
     notificationConfigRepository.save(notificationConfigEntity);
+  }
+
+  private void frequencyNotification(NotificationConfigEntity notificationConfigEntity, ReleaseContainer releaseContainer) {
+    var now = LocalDate.now();
+    boolean shouldNotify = notificationConfigEntity.getLastNotificationDate() == null ||
+                           WEEKS.between(notificationConfigEntity.getLastNotificationDate(), now) >= notificationConfigEntity.getFrequencyInWeeks();
+
+    if (shouldNotify) {
+      UserEntity user = notificationConfigEntity.getUser();
+      List<String> followedArtistsNames = followArtistService.getFollowedArtistsOfUser(user.getPublicId()).stream()
+          .map(ArtistDto::getArtistName).collect(Collectors.toList());
+
+      if (!followedArtistsNames.isEmpty()) {
+        List<ReleaseDto> upcomingReleases = releaseContainer.upcomingReleases.stream().filter(release -> followedArtistsNames.contains(release.getArtist())).collect(Collectors.toList());
+        List<ReleaseDto> recentReleases = releaseContainer.recentReleases.stream().filter(release -> followedArtistsNames.contains(release.getArtist())).collect(Collectors.toList());
+
+        if (!(upcomingReleases.isEmpty() && recentReleases.isEmpty())) {
+          emailService.sendEmail(new ReleasesEmail(user.getEmail(), user.getUsername(), upcomingReleases, recentReleases));
+
+          notificationConfigEntity.setLastNotificationDate(now);
+          notificationConfigRepository.save(notificationConfigEntity);
+        }
+      }
+    }
+  }
+
+  private Map<Integer, ReleaseContainer> createReleaseContainer() {
+    var now = LocalDate.now();
+    Map<Integer, ReleaseContainer> releaseContainers = new HashMap<>();
+
+    for (int frequency : SUPPORTED_FREQUENCIES) {
+      List<ReleaseDto> upcomingReleases = releaseService.findAllReleases(Collections.emptyList(), new TimeRange(now, now.plusWeeks(frequency)));
+      List<ReleaseDto> recentReleases = releaseService.findAllReleases(Collections.emptyList(), new TimeRange(now.minusWeeks(frequency), now.minusDays(1)));
+      releaseContainers.put(frequency, new ReleaseContainer(upcomingReleases, recentReleases));
+    }
+
+    return releaseContainers;
+  }
+
+  @AllArgsConstructor
+  private static class ReleaseContainer {
+
+    private final List<ReleaseDto> upcomingReleases;
+    private final List<ReleaseDto> recentReleases;
   }
 }

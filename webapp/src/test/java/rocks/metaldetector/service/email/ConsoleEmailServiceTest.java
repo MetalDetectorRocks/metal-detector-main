@@ -55,7 +55,7 @@ class ConsoleEmailServiceTest implements WithAssertions {
     List<ReleaseDto> releases = List.of(ReleaseDtoFactory.createDefault());
     ArgumentCaptor<Context> contextCaptor = ArgumentCaptor.forClass(Context.class);
     ArgumentCaptor<String> templateNameCaptor = ArgumentCaptor.forClass(String.class);
-    AbstractEmail email = new NewReleasesEmail("john.doe@example.com", "JohnDoe", releases);
+    AbstractEmail email = new ReleasesEmail("john.doe@example.com", "JohnDoe", releases, releases);
 
     // when
     emailService.sendEmail(email);
@@ -64,14 +64,15 @@ class ConsoleEmailServiceTest implements WithAssertions {
     verify(templateEngine).process(templateNameCaptor.capture(), contextCaptor.capture());
 
     assertThat(templateNameCaptor.getValue()).isEqualTo(email.getTemplateName());
-    assertThat(contextCaptor.getValue().getVariable("newReleases")).isEqualTo(releases);
+    assertThat(contextCaptor.getValue().getVariable("upcomingReleases")).isEqualTo(releases);
+    assertThat(contextCaptor.getValue().getVariable("recentReleases")).isEqualTo(releases);
   }
 
   @Test
   @DisplayName("Sending an email to Console should interact with MailProperties as expected")
   void send_email_should_use_mail_properties() {
     // given
-    AbstractEmail email = new NewReleasesEmail("john.doe@example.com", "JohnDoe", Collections.emptyList());
+    AbstractEmail email = new ReleasesEmail("john.doe@example.com", "JohnDoe", Collections.emptyList(), Collections.emptyList());
 
     // when
     emailService.sendEmail(email);
