@@ -211,7 +211,7 @@ public class DtoFactory {
   public static class ReleaseDtoFactory {
 
     public static ReleaseDto createDefault() {
-      return withArtistName("Evil Artist");
+      return withArtistName("A");
     }
 
     public static ReleaseDto withArtistName(String artistName) {
@@ -219,14 +219,6 @@ public class DtoFactory {
           .artist(artistName)
           .albumTitle("Heavy Release")
           .releaseDate(LocalDate.now().plusDays(10))
-          .build();
-    }
-
-    public static ReleaseDto withReleaseDate(LocalDate releaseDate) {
-      return ReleaseDto.builder()
-          .artist("Evil Artist")
-          .albumTitle("Heavy Release")
-          .releaseDate(releaseDate)
           .build();
     }
   }

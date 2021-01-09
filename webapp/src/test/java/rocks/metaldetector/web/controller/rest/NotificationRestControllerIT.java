@@ -9,7 +9,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import rocks.metaldetector.service.notification.NotificationService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFY;
@@ -25,16 +24,6 @@ public class NotificationRestControllerIT extends BaseWebMvcTestWithSecurity {
   class AdministratorRoleTest {
 
     @Test
-    @DisplayName("Administrator is allowed to POST on endpoint " + NOTIFY + "/{publicUserId}'")
-    @WithMockUser(roles = "ADMINISTRATOR")
-    void admin_is_allowed_to_notify_specified_user() throws Exception {
-      mockMvc.perform(post(NOTIFY)
-              .param("publicUserId", "user-id")
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isOk());
-    }
-
-    @Test
     @DisplayName("Administrator is allowed to POST on endpoint " + NOTIFY + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_notify_all_users() throws Exception {
@@ -46,16 +35,6 @@ public class NotificationRestControllerIT extends BaseWebMvcTestWithSecurity {
   @Nested
   @DisplayName("Users is not allowed to send requests to notification endpoints")
   class UserRoleTest {
-
-    @Test
-    @DisplayName("User is not allowed to POST on endpoint " + NOTIFY + "/{publicUserId}'")
-    @WithMockUser(roles = "USER")
-    void user_is_not_allowed_to_notify_specified_user() throws Exception {
-      mockMvc.perform(post(NOTIFY)
-              .param("publicUserId", "user-id")
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isForbidden());
-    }
 
     @Test
     @DisplayName("User is not allowed to POST on endpoint " + NOTIFY + "'")
