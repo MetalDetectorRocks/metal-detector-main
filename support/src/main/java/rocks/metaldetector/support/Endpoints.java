@@ -87,19 +87,18 @@ public class Endpoints {
     public static final String   ADMIN                     = "/admin/**";
     public static final String   REST_ENDPOINTS            = "/rest/**";
     public static final String   ACTUATOR_ENDPOINTS        = "/actuator/**";
-    static final String[] INDEX                     = {"/", "/index", "/index/"};
     public static final String[] LOGIN                     = {"/login", "/login/"};
-    static final String[] REGISTER                  = {"/register", "/register/"};
-    static final String[] REGISTRATION_VERIFICATION = {"/registration-verification", "/registration-verification/"};
-    static final String[] RESEND_VERIFICATION_TOKEN = {"/resend-verification-token", "/resend-verification-token/"};
-    static final String[] FORGOT_PASSWORD           = {"/forgot-password", "/forgot-password/"};
-    static final String[] RESET_PASSWORD            = {"/reset-password", "/reset-password/"};
-    static final String[] GUEST_IMPRINT             = {"/guest/imprint", "/guest/imprint/"};
-    static final String[] GUEST_PRIVACY_POLICY      = {"/guest/privacy-policy", "/guest/privacy-policy/"};
+           static final String[] INDEX                     = {"/", "/index", "/index/"};
+           static final String[] REGISTER                  = {"/register", "/register/"};
+           static final String[] REGISTRATION_VERIFICATION = {"/registration-verification", "/registration-verification/"};
+           static final String[] RESEND_VERIFICATION_TOKEN = {"/resend-verification-token", "/resend-verification-token/"};
+           static final String[] FORGOT_PASSWORD           = {"/forgot-password", "/forgot-password/"};
+           static final String[] RESET_PASSWORD            = {"/reset-password", "/reset-password/"};
+           static final String[] GUEST_IMPRINT             = {"/guest/imprint", "/guest/imprint/"};
+           static final String[] GUEST_PRIVACY_POLICY      = {"/guest/privacy-policy", "/guest/privacy-policy/"};
     public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**", "/webjars/**"};
 
     public static final String[] GUEST_PAGES = Stream.of(INDEX, LOGIN, REGISTER, REGISTRATION_VERIFICATION,
             RESEND_VERIFICATION_TOKEN, FORGOT_PASSWORD, RESET_PASSWORD, GUEST_IMPRINT, GUEST_PRIVACY_POLICY).flatMap(Stream::of).toArray(String[]::new);
   }
-
 }
