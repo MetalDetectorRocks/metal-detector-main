@@ -24,7 +24,7 @@
             <span>Thank you for your registration. You will shortly receive an email with a verification link. After confirmation of your registration you can login.</span>
         </div>
 
-        <!-- Username-->
+        <!-- Username -->
         <div class="form-label-group">
             <input type="text" id="username" class="form-control" name="username"
                    th:class="${#fields.hasErrors('username')}? 'form-control is-invalid' : 'form-control'"
@@ -70,6 +70,18 @@
                    required>
             <div class="invalid-feedback" th:errors="*{verifyPlainPassword}">Verify password error</div>
             <label for="verifyPlainPassword">Verify Password</label>
+        </div>
+
+        <!-- Registration Code -->
+        <div class="form-label-group">
+            <input type="text" id="registrationCode" class="form-control" name="registrationCode"
+                   th:class="${#fields.hasErrors('username')}? 'form-control is-invalid' : 'form-control'"
+                   th:field="*{registrationCode}"
+                   placeholder=""
+                   autocomplete="registration-code"
+                   required>
+            <div class="invalid-feedback" th:errors="*{registrationCode}">Registration code error</div>
+            <label for="registrationCode">Registration Code</label>
         </div>
 
         <!-- Register -->

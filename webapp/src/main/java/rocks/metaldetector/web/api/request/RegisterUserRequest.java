@@ -34,4 +34,7 @@ public class RegisterUserRequest {
   @Size(min=8, message="Password length must be at least 8 characters")
   private String verifyPlainPassword;
 
+  @NotBlank
+  private String registrationCode;
+
 }
