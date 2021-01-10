@@ -4,6 +4,18 @@
   line-height: 1;
   vertical-align: middle;
   border-radius: 3em;
+  object-fit: cover;
+  border: 1px solid white;
+}
+
+.avatar-s {
+  width: 3rem;
+  height: 3rem;
+}
+
+.avatar-xs {
+  width: 2rem;
+  height: 2rem;
 }
 
 .clickable-table {

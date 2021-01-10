@@ -164,6 +164,22 @@ footer .list-inline-item {
     margin-top: 2.2rem;
 }
 
+/* Blog */
+.blog-card {
+    min-height: 33.5rem;
+}
+
+.blog-intro-text {
+    min-height: 5.5rem;
+}
+
+.blog-card-img {
+    height: 15rem;
+    object-fit: cover;
+    width: 100%;
+    border-bottom: 1px solid var(--grey-border-color);
+}
+
 /* Other */
 .dark-hyperlink {
     color: var(--dark-hyperlink-font-color);
