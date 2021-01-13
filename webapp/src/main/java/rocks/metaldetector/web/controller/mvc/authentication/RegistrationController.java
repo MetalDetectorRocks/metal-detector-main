@@ -1,7 +1,6 @@
 package rocks.metaldetector.web.controller.mvc.authentication;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
@@ -33,7 +32,6 @@ import java.util.Map;
 @Controller
 @AllArgsConstructor
 @Profile("!preview")
-@Slf4j
 public class RegistrationController {
 
   static final String FORM_DTO = "registerUserRequest";
@@ -59,7 +57,6 @@ public class RegistrationController {
   public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult) {
     // show registration form if there are validation errors
     String registrationCode = environment.getProperty("REGISTRATION_CODE");
-    log.info("Registration code env: '" + registrationCode + "' registration code input: '" + registerUserRequest.getRegistrationCode() + "'");
     if (bindingResult.hasErrors() || !registerUserRequest.getRegistrationCode().equalsIgnoreCase(registrationCode)) {
       return new ModelAndView(ViewNames.Guest.REGISTER, HttpStatus.BAD_REQUEST);
     }
