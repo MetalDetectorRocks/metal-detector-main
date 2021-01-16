@@ -28,6 +28,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     registry.addViewController(Endpoints.Frontend.BLOG).setViewName(ViewNames.Frontend.BLOG);
     registry.addViewController(Endpoints.Frontend.RELEASES).setViewName(ViewNames.Frontend.RELEASES);
     registry.addViewController(Endpoints.Frontend.IMPRINT).setViewName(ViewNames.Frontend.IMPRINT);
+    registry.addViewController(Endpoints.Frontend.PRIVACY_POLICY).setViewName(ViewNames.Frontend.PRIVACY_POLICY);
     registry.addViewController(Endpoints.Frontend.ACCOUNT_DETAILS).setViewName(ViewNames.Frontend.ACCOUNT_DETAILS);
     registry.addViewController(Endpoints.Frontend.SPOTIFY_SYNCHRONIZATION).setViewName(ViewNames.Frontend.SPOTIFY_SYNCHRONIZATION);
     registry.addViewController(Endpoints.Frontend.NOTIFICATION_SETTINGS).setViewName(ViewNames.Frontend.NOTIFICATION_SETTINGS);
@@ -49,7 +50,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(redirectionHandlerInterceptor).addPathPatterns(Endpoints.AntPattern.AUTH_PAGES);
+    registry.addInterceptor(redirectionHandlerInterceptor).addPathPatterns(Endpoints.AntPattern.GUEST_PAGES);
   }
 
   @Bean
