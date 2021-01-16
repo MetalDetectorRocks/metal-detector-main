@@ -130,4 +130,13 @@ public class RestAssuredMockMvcUtils {
   public ValidatableMockMvcResponse doPut(Object request) {
     return doPut("", request);
   }
+
+  public ValidatableMockMvcResponse doDelete() {
+    return given()
+            .config(NO_SECURITY_CONFIG)
+            .contentType(ContentType.JSON)
+          .when()
+            .delete(requestUri)
+          .then();
+  }
 }
