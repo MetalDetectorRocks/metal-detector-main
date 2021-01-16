@@ -401,7 +401,7 @@ class UserRestControllerTest implements WithAssertions {
 
     @BeforeEach
     void setup() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS + Endpoints.Rest.CURRENT);
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS + Endpoints.Rest.CURRENT + Endpoints.Rest.EMAIL);
       userDto = UserDtoFactory.createUser("user", UserRole.ROLE_USER, true);
       doReturn(userDto).when(userService).updateCurrentEmail(any());
     }
