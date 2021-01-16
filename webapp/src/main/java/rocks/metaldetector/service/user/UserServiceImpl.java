@@ -127,6 +127,15 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
+  public UserDto updateCurrentEmail(String emailAddress) {
+    UserEntity currentUser = currentUserSupplier.get();
+    currentUser.setEmail(emailAddress);
+    UserEntity updatedUser = userRepository.save(currentUser);
+    return userTransformer.transform(updatedUser);
+  }
+
+  @Override
+  @Transactional
   public void deleteUser(String publicId) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));

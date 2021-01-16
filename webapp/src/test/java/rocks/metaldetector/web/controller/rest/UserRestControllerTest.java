@@ -19,9 +19,13 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.UserRole;
+import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.user.UserDto;
+import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
@@ -29,6 +33,7 @@ import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
+import rocks.metaldetector.web.api.request.UpdateEmailRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.ErrorResponse;
 import rocks.metaldetector.web.api.response.UserResponse;
@@ -40,6 +45,7 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -55,6 +61,9 @@ class UserRestControllerTest implements WithAssertions {
   @Mock
   private UserService userService;
 
+  @Mock
+  private CurrentUserSupplier currentUserSupplier;
+
   @Spy
   private ModelMapper modelMapper;
 
@@ -64,7 +73,7 @@ class UserRestControllerTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    underTest = new UserRestController(userService, modelMapper);
+    underTest = new UserRestController(userService, modelMapper, currentUserSupplier);
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS);
     RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
   }
@@ -175,6 +184,63 @@ class UserRestControllerTest implements WithAssertions {
 
       // then
       response.statusCode(HttpStatus.NOT_FOUND.value());
+    }
+  }
+
+  @DisplayName("Get current user tests")
+  @Nested
+  class GetCurrentUserTest {
+
+    private RestAssuredMockMvcUtils restAssuredUtils;
+
+    @BeforeEach
+    void setup() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS + Endpoints.Rest.CURRENT);
+    }
+
+    @Test
+    @DisplayName("Should return the current user")
+    void should_return_current_user() {
+      // given
+      UserEntity currentUser = UserEntityFactory.createUser("user", "mail@mail.mail");
+      doReturn(currentUser).when(currentUserSupplier).get();
+
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doGet();
+
+      // then
+      response.statusCode(OK.value());
+
+      UserResponse user = response.extract().as(UserResponse.class);
+      assertThat(user).isEqualTo(modelMapper.map(currentUser, UserResponse.class));
+    }
+
+    @Test
+    @DisplayName("Should use CurrentUserSupplier to return the current user")
+    void should_use_current_user_supplier() {
+      // given
+      UserEntity currentUser = UserEntityFactory.createUser("user", "mail@mail.mail");
+      doReturn(currentUser).when(currentUserSupplier).get();
+
+      // when
+      restAssuredUtils.doGet();
+
+      // then
+      verify(currentUserSupplier).get();
+    }
+
+    @Test
+    @DisplayName("Should use ModelMapper to transform entity")
+    void should_use_model_mapper() {
+      // given
+      UserEntity currentUser = UserEntityFactory.createUser("user", "mail@mail.mail");
+      doReturn(currentUser).when(currentUserSupplier).get();
+
+      // when
+      restAssuredUtils.doGet();
+
+      // then
+      verify(modelMapper).map(currentUser, UserResponse.class);
     }
   }
 
@@ -321,6 +387,96 @@ class UserRestControllerTest implements WithAssertions {
           Arguments.of("", "", false),
           Arguments.of("id", "", false),
           Arguments.of("", "role", false)
+      );
+    }
+  }
+
+  @Nested
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @DisplayName("Update current user's email address tests")
+  class UpdateCurrentEmailAddressTest {
+
+    private RestAssuredMockMvcUtils restAssuredUtils;
+    private UserDto userDto;
+
+    @BeforeEach
+    void setup() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS + Endpoints.Rest.CURRENT);
+      userDto = UserDtoFactory.createUser("user", UserRole.ROLE_USER, true);
+      doReturn(userDto).when(userService).updateCurrentEmail(any());
+    }
+
+    @Test
+    @DisplayName("Should return 200 if updating user is successful")
+    void should_return_200() {
+      // given
+      var request = new UpdateEmailRequest("mail@mail.com");
+
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doPut(request);
+
+      // then
+      response.statusCode(OK.value());
+    }
+
+    @Test
+    @DisplayName("Should return updated dto if updating user is successful")
+    void should_return_update_dto() {
+      // given
+      var request = new UpdateEmailRequest("mail@mail.com");
+      userDto.setEmail(request.getEmailAddress());
+      doReturn(userDto).when(userService).updateCurrentEmail(any());
+
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doPut(request);
+
+      // then
+      UserResponse user = response.extract().as(UserResponse.class);
+      assertThat(user.getEmail()).isEqualTo(request.getEmailAddress());
+    }
+
+    @Test
+    @DisplayName("Should call userService")
+    void should_call_user_service() {
+      // given
+      var request = new UpdateEmailRequest("mail@mail.mail");
+
+      // when
+      restAssuredUtils.doPut(request);
+
+      // then
+      verify(userService).updateCurrentEmail(request.getEmailAddress());
+    }
+
+    @Test
+    @DisplayName("Should call modelMapper")
+    void should_call_model_mapper() {
+      // given
+      var request = new UpdateEmailRequest("mail@mail.mail");
+
+      // when
+      restAssuredUtils.doPut(request);
+
+      // then
+      verify(modelMapper).map(userDto, UserResponse.class);
+    }
+
+    @ParameterizedTest
+    @MethodSource("inputProvider")
+    @DisplayName("Should return 400 for faulty requests")
+    void should_return_400(UpdateEmailRequest request) {
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doPut(request);
+
+      // then
+      response.statusCode(BAD_REQUEST.value());
+    }
+
+    private Stream<Arguments> inputProvider() {
+      return Stream.of(
+          Arguments.of(new UpdateEmailRequest("")),
+          Arguments.of(new UpdateEmailRequest("mailAddress")),
+          Arguments.of(new UpdateEmailRequest(null))
       );
     }
   }

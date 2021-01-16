@@ -704,6 +704,70 @@ class UserServiceImplTest implements WithAssertions {
       assertThat(throwable).isInstanceOf(TokenExpiredException.class);
       assertThat(throwable).hasMessageContaining(UserErrorMessages.TOKEN_EXPIRED.toDisplayString());
     }
+
+    @Test
+    @DisplayName("Updating the current user's email address calls currentUserSupplier")
+    void test_updating_email_call_current_user_supplier() {
+      // given
+      doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
+      doReturn(null).when(userTransformer).transform(any());
+
+      // when
+      underTest.updateCurrentEmail("email");
+
+      // then
+      verify(currentUserSupplier).get();
+    }
+
+    @Test
+    @DisplayName("New email address is set on current user")
+    void test_new_email_set() {
+      // given
+      ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
+      doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
+      doReturn(null).when(userTransformer).transform(any());
+      var newEmail = "newEmail";
+
+      // when
+      underTest.updateCurrentEmail(newEmail);
+
+      // then
+      verify(userRepository).save(userEntityCaptor.capture());
+      UserEntity savedUser = userEntityCaptor.getValue();
+      assertThat(savedUser.getEmail()).isEqualTo(newEmail);
+    }
+
+    @Test
+    @DisplayName("Updated user is transformed")
+    void test_updated_user_is_transformed() {
+      // given
+      var user = UserEntityFactory.createUser("user", "email");
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(userRepository).save(any());
+      doReturn(null).when(userTransformer).transform(any());
+
+      // when
+      underTest.updateCurrentEmail("email");
+
+      // then
+      verify(userTransformer).transform(user);
+    }
+
+    @Test
+    @DisplayName("Updated user is returned")
+    void test_updated_user_is_returned() {
+      // given
+      var user = UserEntityFactory.createUser("user", "email");
+      var userDto = UserDtoFactory.createDefault();
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(userDto).when(userTransformer).transform(any());
+
+      // when
+      var result = underTest.updateCurrentEmail("email");
+
+      // then
+      assertThat(result).isEqualTo(userDto);
+    }
   }
 
   @DisplayName("Delete user tests")
