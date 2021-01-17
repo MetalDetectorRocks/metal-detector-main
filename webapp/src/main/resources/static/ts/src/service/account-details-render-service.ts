@@ -27,7 +27,7 @@ export class AccountDetailsRenderService {
     private onUpdateEmailAddressClicked(): void {
         const inputElement = document.getElementById("email-address")! as HTMLInputElement;
         this.accountDetailsRestClient.updateEmailAddress(inputElement.value)
-          .then(response => inputElement.value = response.email)
+          .then(response => inputElement.value = response)
           .then(() => this.toastService.createInfoToast("Successfully updated email address!"));
     }
 }

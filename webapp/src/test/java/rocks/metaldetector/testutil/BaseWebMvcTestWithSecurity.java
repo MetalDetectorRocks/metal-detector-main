@@ -9,7 +9,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.security.NonceSupplier;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
 import rocks.metaldetector.service.user.UserService;
@@ -49,8 +48,5 @@ public abstract class BaseWebMvcTestWithSecurity implements WithSecurityConfig {
 
   @MockBean
   protected HttpSecurity httpSecurity;
-
-  @MockBean
-  protected CurrentUserSupplier currentUserSupplier;
 
 }

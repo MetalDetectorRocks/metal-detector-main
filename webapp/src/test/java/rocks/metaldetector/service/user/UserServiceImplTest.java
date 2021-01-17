@@ -16,8 +16,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -503,37 +501,51 @@ class UserServiceImplTest implements WithAssertions {
       assertDtoIsCorrect(userDtoList.get(5), "a1", ROLE_USER, false);
     }
 
+    @Test
+    @DisplayName("currentUserSupplier is called")
+    void test_get_current_user_calls_supplier() {
+      // given
+      doReturn(UserEntityFactory.createUser("user", "mail@mail.de")).when(currentUserSupplier).get();
+
+      // when
+      underTest.getCurrentUser();
+
+      // then
+      verify(currentUserSupplier).get();
+    }
+
+    @Test
+    @DisplayName("current user supplier is transformed")
+    void test_get_current_user_is_transformed() {
+      // given
+      var user = UserEntityFactory.createUser("user", "mail@mail.de");
+      doReturn(user).when(currentUserSupplier).get();
+
+      // when
+      underTest.getCurrentUser();
+
+      // then
+      verify(userTransformer).transform(user);
+    }
+
+    @Test
+    @DisplayName("current user dto is returned")
+    void test_get_current_user_dto_returned() {
+      // given
+      var user = UserDtoFactory.createDefault();
+      doReturn(user).when(userTransformer).transform(any());
+
+      // when
+      var result = underTest.getCurrentUser();
+
+      // then
+      assertThat(result).isEqualTo(user);
+    }
+
     private void assertDtoIsCorrect(UserDto userDto, String userName, UserRole role, boolean enabled) {
       assertThat(userDto.getUsername()).isEqualTo(userName);
       assertThat(userDto.getRole()).isEqualTo(role.getDisplayName());
       assertThat(userDto.isEnabled()).isEqualTo(enabled);
-    }
-
-    @Test
-    @DisplayName("Requesting all users with page and limit should return a sub list")
-    void get_all_users_with_pagination() {
-      // given
-      int PAGE = 1;
-      int LIMIT = 2;
-      UserEntity user1 = UserEntityFactory.createUser("a", "a@example.com");
-      UserEntity user2 = UserEntityFactory.createUser("b", "b@example.com");
-      UserDto userDto1 = UserDtoFactory.withUsernameAndEmail("a", "a@example.com");
-      UserDto userDto2 = UserDtoFactory.withUsernameAndEmail("b", "b@example.com");
-      PageImpl<UserEntity> page = new PageImpl<>(List.of(user1, user2), PageRequest.of(PAGE, LIMIT), 4);
-      when(userRepository.findAll(PageRequest.of(PAGE, LIMIT))).thenReturn(page);
-      when(userTransformer.transform(user1)).thenReturn(userDto1);
-      when(userTransformer.transform(user2)).thenReturn(userDto2);
-
-      // when
-      List<UserDto> userDtoList = underTest.getAllUsers(PAGE, LIMIT);
-
-      // then
-      assertThat(userDtoList).hasSize(2);
-      assertThat(userDtoList.get(0).getUsername()).isEqualTo(user1.getUsername());
-      assertThat(userDtoList.get(0).getEmail()).isEqualTo(user1.getEmail());
-      assertThat(userDtoList.get(1).getUsername()).isEqualTo(user2.getUsername());
-      assertThat(userDtoList.get(1).getEmail()).isEqualTo(user2.getEmail());
-      verify(userRepository).findAll(PageRequest.of(PAGE, LIMIT));
     }
   }
 
@@ -888,7 +900,7 @@ class UserServiceImplTest implements WithAssertions {
 
   @DisplayName("Verify user tests")
   @Nested
-  class VerfiyUserTest {
+  class VerifyUserTest {
 
     @Test
     @DisplayName("Verifying the registration with an existing and not expired token should work")

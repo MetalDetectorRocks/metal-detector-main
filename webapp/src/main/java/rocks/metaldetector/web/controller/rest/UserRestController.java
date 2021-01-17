@@ -12,12 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
-import rocks.metaldetector.web.api.request.UpdateEmailRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.UserResponse;
 
@@ -26,21 +23,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static rocks.metaldetector.support.Endpoints.Rest.CURRENT;
-import static rocks.metaldetector.support.Endpoints.Rest.EMAIL;
 import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 
 @RestController
 @RequestMapping(USERS)
 @AllArgsConstructor
+@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 public class UserRestController {
 
   private final UserService userService;
   private final ModelMapper mapper;
-  private final CurrentUserSupplier currentUserSupplier;
 
   @GetMapping(produces = APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   public ResponseEntity<List<UserResponse>> getAllUsers() {
     List<UserResponse> response = userService.getAllUsers().stream()
             .map(userDto -> mapper.map(userDto, UserResponse.class))
@@ -51,7 +45,6 @@ public class UserRestController {
 
   @GetMapping(path = "/{id}",
               produces = APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   public ResponseEntity<UserResponse> getUser(@PathVariable(name = "id") String publicUserId) {
     UserDto userDto = userService.getUserByPublicId(publicUserId);
     UserResponse response = mapper.map(userDto, UserResponse.class);
@@ -59,18 +52,8 @@ public class UserRestController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping(path = CURRENT,
-              produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<UserResponse> getCurrentUser() {
-    UserEntity currentUser = currentUserSupplier.get();
-    UserResponse response = mapper.map(currentUser, UserResponse.class);
-
-    return ResponseEntity.ok(response);
-  }
-
   @PostMapping(consumes = APPLICATION_JSON_VALUE,
                produces = APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   public ResponseEntity<UserResponse> createUser(@Valid @RequestBody RegisterUserRequest request) {
     UserDto userDto = mapper.map(request, UserDto.class);
     UserDto createdUserDto = userService.createAdministrator(userDto);
@@ -81,20 +64,9 @@ public class UserRestController {
 
   @PutMapping(consumes = APPLICATION_JSON_VALUE,
               produces = APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest request) {
     UserDto userDto = mapper.map(request, UserDto.class);
     UserDto updatedUserDto = userService.updateUser(request.getPublicUserId(), userDto);
-    UserResponse response = mapper.map(updatedUserDto, UserResponse.class);
-
-    return ResponseEntity.status(HttpStatus.OK).body(response);
-  }
-
-  @PutMapping(path = CURRENT + EMAIL,
-              consumes = APPLICATION_JSON_VALUE,
-              produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<UserResponse> updateCurrentEmail(@Valid @RequestBody UpdateEmailRequest request) {
-    UserDto updatedUserDto = userService.updateCurrentEmail(request.getEmailAddress());
     UserResponse response = mapper.map(updatedUserDto, UserResponse.class);
 
     return ResponseEntity.status(HttpStatus.OK).body(response);
