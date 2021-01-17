@@ -10,5 +10,5 @@ public interface SpotifyUserAuthorizationService {
 
   String getOrRefreshToken();
 
-  void deleteCurrentUserSpotifyAuthorization();
+  void deleteAuthorization();
 }

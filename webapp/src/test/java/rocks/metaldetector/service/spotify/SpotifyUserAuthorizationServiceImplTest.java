@@ -537,7 +537,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     @DisplayName("currentUserSupplier is called on deletion")
     void test_current_user_supplier_called() {
       // when
-      underTest.deleteCurrentUserSpotifyAuthorization();
+      underTest.deleteAuthorization();
 
       // then
       verify(currentUserSupplier).get();
@@ -551,7 +551,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       doReturn(userId).when(userMock).getId();
 
       // when
-      underTest.deleteCurrentUserSpotifyAuthorization();
+      underTest.deleteAuthorization();
 
       // then
       verify(authorizationRepository).findByUserId(userId);
@@ -565,7 +565,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUserId(any());
 
       // when
-      underTest.deleteCurrentUserSpotifyAuthorization();
+      underTest.deleteAuthorization();
 
       // then
       verify(authorizationRepository).delete(authorizationEntity);
@@ -578,7 +578,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       doReturn(Optional.empty()).when(authorizationRepository).findByUserId(any());
 
       // when
-      underTest.deleteCurrentUserSpotifyAuthorization();
+      underTest.deleteAuthorization();
 
       // then
       verifyNoMoreInteractions(authorizationRepository);

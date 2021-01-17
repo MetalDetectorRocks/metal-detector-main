@@ -229,7 +229,7 @@ class SpotifyAuthorizationRestControllerTest implements WithAssertions {
       restAssuredMockMvcUtils.doDelete();
 
       // then
-      verify(userAuthorizationService).deleteCurrentUserSpotifyAuthorization();
+      verify(userAuthorizationService).deleteAuthorization();
     }
   }
 }

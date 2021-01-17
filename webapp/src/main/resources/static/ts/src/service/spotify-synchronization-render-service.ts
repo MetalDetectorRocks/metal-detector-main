@@ -22,7 +22,6 @@ export class SpotifySynchronizationRenderService {
     private readonly artistContainerElement: HTMLDivElement;
 
     private readonly connectWithSpotifyButton: HTMLButtonElement;
-    private readonly connectedWithSpotifyButton: HTMLButtonElement;
     private readonly fetchArtistsButton: HTMLButtonElement;
     private readonly synchronizeArtistsButton: HTMLButtonElement;
     private readonly disconnectSpotifyButton: HTMLButtonElement;
@@ -36,10 +35,9 @@ export class SpotifySynchronizationRenderService {
         this.alertService = alertService;
 
         this.connectWithSpotifyButton = document.getElementById("connect-with-spotify-button") as HTMLButtonElement;
-        this.connectedWithSpotifyButton = document.getElementById("connected-with-spotify-button") as HTMLButtonElement;
+        this.disconnectSpotifyButton = document.getElementById("disconnect-spotify-button") as HTMLButtonElement;
         this.fetchArtistsButton = document.getElementById("fetch-artists-button") as HTMLButtonElement;
         this.synchronizeArtistsButton = document.getElementById("synchronize-artists-button") as HTMLButtonElement;
-        this.disconnectSpotifyButton = document.getElementById("disconnect-spotify-button") as HTMLButtonElement;
         this.artistSelectionElement = document.getElementById(SpotifySynchronizationRenderService.ARTISTS_SELECTION_BAR_ID) as HTMLDivElement;
         this.artistContainerElement = document.getElementById(SpotifySynchronizationRenderService.ARTISTS_CONTAINER_ID) as HTMLDivElement;
 
@@ -48,8 +46,8 @@ export class SpotifySynchronizationRenderService {
 
     private addEventListener(): void {
         this.connectWithSpotifyButton.addEventListener("click", this.onConnectWithSpotifyClicked.bind(this));
-        this.synchronizeArtistsButton.addEventListener("click", this.onSynchronizeArtistsClicked.bind(this));
         this.disconnectSpotifyButton.addEventListener("click", this.onDisconnectSpotifyClicked.bind(this));
+        this.synchronizeArtistsButton.addEventListener("click", this.onSynchronizeArtistsClicked.bind(this));
         document.getElementById("fetch-from-saved-albums")!.addEventListener("click", this.onFetchSpotifyArtistsFromAlbumsClicked.bind(this));
         document.getElementById("fetch-from-saved-artists")!.addEventListener("click", this.onFetchSpotifyArtistsFromArtistsClicked.bind(this));
         document.getElementById("fetch-from-both")!.addEventListener("click", this.onFetchSpotifyArtistsFromBothClicked.bind(this));
@@ -77,7 +75,7 @@ export class SpotifySynchronizationRenderService {
         response.then(response => {
             if (response.exists) {
                 document.getElementById("button-bar")!.removeChild(this.connectWithSpotifyButton);
-                [this.connectedWithSpotifyButton, this.fetchArtistsButton, this.synchronizeArtistsButton, this.disconnectSpotifyButton].forEach(button => {
+                [this.disconnectSpotifyButton, this.fetchArtistsButton, this.synchronizeArtistsButton].forEach(button => {
                     button.classList.remove("invisible");
                 });
             }
@@ -98,8 +96,8 @@ export class SpotifySynchronizationRenderService {
     }
 
     private deactivateButtonBar(): void {
-        document.getElementById("button-bar")!.replaceChild(this.connectWithSpotifyButton, this.connectedWithSpotifyButton);
-        [this.connectedWithSpotifyButton, this.fetchArtistsButton, this.synchronizeArtistsButton, this.disconnectSpotifyButton].forEach(button => {
+        document.getElementById("button-bar")!.replaceChild(this.connectWithSpotifyButton, this.disconnectSpotifyButton);
+        [this.disconnectSpotifyButton, this.fetchArtistsButton, this.synchronizeArtistsButton].forEach(button => {
             button.classList.add("invisible");
         });
     }

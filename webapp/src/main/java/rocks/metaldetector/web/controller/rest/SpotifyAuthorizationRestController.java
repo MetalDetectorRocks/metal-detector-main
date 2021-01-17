@@ -46,7 +46,7 @@ public class SpotifyAuthorizationRestController {
 
   @DeleteMapping
   public ResponseEntity<Void> deleteCurrentUserSpotifyAuthorization() {
-    userAuthorizationService.deleteCurrentUserSpotifyAuthorization();
+    userAuthorizationService.deleteAuthorization();
     return ResponseEntity.ok().build();
   }
 }
