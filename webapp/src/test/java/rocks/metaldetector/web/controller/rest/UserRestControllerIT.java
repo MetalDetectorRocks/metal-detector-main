@@ -8,15 +8,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UpdateUserRequestFactory;
-import rocks.metaldetector.web.api.request.UpdateEmailRequest;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static rocks.metaldetector.support.Endpoints.Rest.CURRENT;
-import static rocks.metaldetector.support.Endpoints.Rest.EMAIL;
 import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 
 @WebMvcTest(controllers = UserRestController.class)
@@ -40,24 +37,6 @@ class UserRestControllerIT extends BaseWebMvcTestWithSecurity {
     void admin_can_get_specified_user() throws Exception {
       mockMvc.perform(get(USERS + "/{id}", "123"))
              .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("Administrators can GET on endpoint " + USERS + CURRENT)
-    @WithMockUser(roles = "ADMINISTRATOR")
-    void admin_can_get_current_user() throws Exception {
-      mockMvc.perform(get(USERS + CURRENT))
-          .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("Administrators can PUT on endpoint " + USERS + CURRENT + EMAIL)
-    @WithMockUser(roles = "ADMINISTRATOR")
-    void users_can_put_current_users_email() throws Exception {
-      mockMvc.perform(put(USERS + CURRENT + EMAIL)
-                          .content(objectMapper.writeValueAsString(UpdateEmailRequest.builder().emailAddress("mail@test.com").build()))
-                          .contentType(APPLICATION_JSON))
-          .andExpect(status().isOk());
     }
 
     @Test
@@ -99,24 +78,6 @@ class UserRestControllerIT extends BaseWebMvcTestWithSecurity {
     void users_can_get_specified_user() throws Exception {
       mockMvc.perform(get(USERS + "/{id}", "123"))
              .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @DisplayName("Users can GET on endpoint " + USERS + CURRENT)
-    @WithMockUser(roles = "USER")
-    void users_can_get_current_user() throws Exception {
-      mockMvc.perform(get(USERS + CURRENT))
-          .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("Users can PUT on endpoint " + USERS + CURRENT + EMAIL)
-    @WithMockUser(roles = "USER")
-    void users_can_put_current_users_email() throws Exception {
-      mockMvc.perform(put(USERS + CURRENT + EMAIL)
-                  .content(objectMapper.writeValueAsString(UpdateEmailRequest.builder().emailAddress("mail@test.com").build()))
-                  .contentType(APPLICATION_JSON))
-          .andExpect(status().isOk());
     }
 
     @Test
