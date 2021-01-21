@@ -1,6 +1,6 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import advancedFormat from "dayjs/plugin/advancedFormat";
-import dayjs from "dayjs";
+import dayjs, {UnitType} from "dayjs";
 
 export class DateService {
 
@@ -16,7 +16,7 @@ export class DateService {
     public formatRelativeInDays(dateStr: string): string {
         const relativeTime = dayjs(dateStr).fromNow();
         if (relativeTime.startsWith("in") && !relativeTime.endsWith("days")) {
-            return "tomorrow";
+            return this.diffFromNow(dateStr, "hour") < 24 ? "tomorrow" : "in 2 days";
         }
         else if (!relativeTime.startsWith("in") && !relativeTime.endsWith("days ago")) {
             return "today";
@@ -33,6 +33,12 @@ export class DateService {
     public yesterday(): string {
         const yesterdayAsDayJs = dayjs().subtract(1, "day");
         return this.format(yesterdayAsDayJs.toString(), DateFormat.UTC);
+    }
+
+    private diffFromNow(dateStr: string, unit: UnitType): number {
+        const date = dayjs(dateStr);
+        const now = dayjs();
+        return now.diff(date, unit);
     }
 }
 
