@@ -65,6 +65,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         const releases = response.recentReleases.concat(response.upcomingReleases)
           .splice(0, this.MAX_CARDS_PER_ROW);
 
+        console.log(releases);
         if (releases.length) {
             this.insertHeadingElement("Releases");
             const releasesRow = this.insertRowElement();
