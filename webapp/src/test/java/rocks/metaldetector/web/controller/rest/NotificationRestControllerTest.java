@@ -12,11 +12,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.service.notification.NotificationService;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_FREQUENCY;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE_DATE;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationRestControllerTest implements WithAssertions {
@@ -32,8 +33,8 @@ class NotificationRestControllerTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    frequencyRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.NOTIFY + Endpoints.Rest.FREQUENCY);
-    releaseDateRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.NOTIFY + Endpoints.Rest.RELEASE_DATE);
+    frequencyRestAssuredUtils = new RestAssuredMockMvcUtils(NOTIFICATION_ON_FREQUENCY);
+    releaseDateRestAssuredUtils = new RestAssuredMockMvcUtils(NOTIFICATION_ON_RELEASE_DATE);
     RestAssuredMockMvc.standaloneSetup(underTest);
   }
 

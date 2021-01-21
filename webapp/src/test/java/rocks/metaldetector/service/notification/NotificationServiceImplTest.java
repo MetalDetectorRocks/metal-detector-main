@@ -216,7 +216,7 @@ class NotificationServiceImplTest implements WithAssertions {
 
     @Test
     @DisplayName("Mail- and FollowArtistService are called times the number of active users on notification for all users")
-    void notify_all_calls_all_services_for_each_user() {
+    void notify_all_calls_services_for_each_user() {
       // given
       var userEntity2 = UserEntityFactory.createUser("user", "user@user.de");
       var notificationConfigEntity2 = NotificationConfigEntity.builder().user(userEntity2).notify(true).build();
@@ -430,7 +430,7 @@ class NotificationServiceImplTest implements WithAssertions {
 
     @Test
     @DisplayName("NotificationConfigRepository is called on notification for all to get configs")
-    void notify_all_calls_user_service() {
+    void notify_calls_notification_config_repository() {
       // when
       underTest.notifyOnReleaseDate();
 
@@ -439,8 +439,8 @@ class NotificationServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Mail- and FollowArtistServices are called times the number of active users on notification for all users")
-    void notify_all_calls_all_services_for_each_user() {
+    @DisplayName("Mail- and FollowArtistServices are called times the number of active users")
+    void notify_calls_services_for_each_user() {
       // given
       var userEntity2 = UserEntityFactory.createUser("user", "user@user.de");
       var notificationConfigEntity2 = NotificationConfigEntity.builder().user(userEntity2).notify(true).notificationAtReleaseDate(true).build();
