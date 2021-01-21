@@ -131,12 +131,23 @@ public class RestAssuredMockMvcUtils {
     return doPut("", request);
   }
 
-  public ValidatableMockMvcResponse doDelete() {
+  public ValidatableMockMvcResponse doPatch(Object request) {
     return given()
             .config(NO_SECURITY_CONFIG)
+            .accept(ContentType.JSON)
             .contentType(ContentType.JSON)
-          .when()
-            .delete(requestUri)
-          .then();
+            .body(request)
+        .when()
+            .patch(requestUri)
+        .then();
+  }
+
+  public ValidatableMockMvcResponse doDelete() {
+    return given()
+        .config(NO_SECURITY_CONFIG)
+        .contentType(ContentType.JSON)
+        .when()
+        .delete(requestUri)
+        .then();
   }
 }

@@ -3,8 +3,6 @@ package rocks.metaldetector.service.user;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -127,6 +125,19 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
+  public UserDto updateCurrentEmail(String emailAddress) {
+    if (userRepository.existsByEmail(emailAddress)) {
+      throw new IllegalArgumentException("emailAddress already in use");
+    }
+
+    UserEntity currentUser = currentUserSupplier.get();
+    currentUser.setEmail(emailAddress);
+    UserEntity updatedUser = userRepository.save(currentUser);
+    return userTransformer.transform(updatedUser);
+  }
+
+  @Override
+  @Transactional
   public void deleteUser(String publicId) {
     UserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
@@ -159,13 +170,9 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<UserDto> getAllUsers(int page, int limit) {
-    Pageable pageable = PageRequest.of(page, limit);
-
-    return userRepository.findAll(pageable)
-        .stream()
-        .map(userTransformer::transform)
-        .collect(Collectors.toList());
+  public UserDto getCurrentUser() {
+    UserEntity currentUser = currentUserSupplier.get();
+    return userTransformer.transform(currentUser);
   }
 
   @Override
