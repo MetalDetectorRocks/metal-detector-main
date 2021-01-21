@@ -7,7 +7,7 @@ import java.util.List;
 
 public final class TodaysReleasesEmail extends AbstractEmail {
 
-  public static final String SUBJECT = "Your releases";
+  public static final String SUBJECT = "Today's releases";
 
   private final String recipient;
   private final String username;

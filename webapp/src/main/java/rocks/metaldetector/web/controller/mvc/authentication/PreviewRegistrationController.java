@@ -10,7 +10,7 @@ import rocks.metaldetector.support.Endpoints;
 
 @Controller
 @AllArgsConstructor
-@Profile("!default")
+@Profile("preview")
 public class PreviewRegistrationController {
 
   @GetMapping(Endpoints.Guest.REGISTER)

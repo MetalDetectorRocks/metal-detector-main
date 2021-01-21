@@ -9,4 +9,6 @@ public interface SpotifyUserAuthorizationService {
   void persistInitialToken(String state, String code);
 
   String getOrRefreshToken();
+
+  void deleteAuthorization();
 }

@@ -71,7 +71,7 @@ class UserRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(userService);
+    reset(userService, modelMapper);
   }
 
   @DisplayName("Get all users tests")
@@ -269,7 +269,7 @@ class UserRestControllerTest implements WithAssertions {
           Arguments.of(RegisterUserRequestFactory.withPassword(null, null), 2),
 
           // all null
-          Arguments.of(RegisterUserRequest.builder().build(), 4)
+          Arguments.of(RegisterUserRequest.builder().build(), 5)
       );
     }
   }

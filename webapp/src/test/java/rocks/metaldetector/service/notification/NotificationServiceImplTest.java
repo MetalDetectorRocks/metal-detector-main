@@ -206,8 +206,8 @@ class NotificationServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("NotificationConfigRepository is called on notification for all to get configs")
-    void notify_all_calls_user_service() {
+    @DisplayName("NotificationConfigRepository is called on notification to get configs")
+    void notify_calls_user_service() {
       // when
       underTest.notifyOnFrequency();
 
@@ -217,7 +217,7 @@ class NotificationServiceImplTest implements WithAssertions {
 
     @Test
     @DisplayName("Mail- and FollowArtistService are called times the number of active users on notification for all users")
-    void notify_all_calls_all_services_for_each_user() {
+    void notify_calls_services_for_each_user() {
       // given
       var userEntity2 = UserEntityFactory.createUser("user", "user@user.de");
       var notificationConfigEntity2 = NotificationConfigEntity.builder().user(userEntity2).notify(true).build();
@@ -281,7 +281,7 @@ class NotificationServiceImplTest implements WithAssertions {
 
     @Test
     @DisplayName("NotificationConfigEntity is updated when email is sent")
-    void notify_all_updates_notification_config() {
+    void notify_updates_notification_config() {
       // given
       when(releaseService.findAllReleases(any(), any())).thenReturn(List.of(ReleaseDtoFactory.createDefault()));
       when(followArtistService.getFollowedArtistsOfUser(any())).thenReturn(List.of(ArtistDtoFactory.createDefault()));
@@ -430,8 +430,8 @@ class NotificationServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("NotificationConfigRepository is called on notification for all to get configs")
-    void notify_all_calls_user_service() {
+    @DisplayName("NotificationConfigRepository is called on notification to get configs")
+    void notify_calls_user_service() {
       // when
       underTest.notifyOnReleaseDate();
 
@@ -440,8 +440,8 @@ class NotificationServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Mail- and FollowArtistServices are called times the number of active users on notification for all users")
-    void notify_all_calls_all_services_for_each_user() {
+    @DisplayName("Mail- and FollowArtistServices are called times the number of active users")
+    void notify_calls_services_for_each_user() {
       // given
       var userEntity2 = UserEntityFactory.createUser("user", "user@user.de");
       var notificationConfigEntity2 = NotificationConfigEntity.builder().user(userEntity2).notify(true).notificationAtReleaseDate(true).build();
@@ -632,8 +632,8 @@ class NotificationServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("NotificationConfigRepository is called on notification for all to get configs")
-    void notify_all_calls_user_service() {
+    @DisplayName("NotificationConfigRepository is called on notification to get configs")
+    void notify_calls_user_service() {
       // when
       underTest.notifyOnAnnouncementDate();
 
@@ -642,8 +642,8 @@ class NotificationServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Mail- and FollowArtistServices are called times the number of active users on notification for all users")
-    void notify_all_calls_all_services_for_each_user() {
+    @DisplayName("Mail- and FollowArtistServices are called times the number of active users on notification")
+    void notify_calls_services_for_each_user() {
       // given
       var userEntity2 = UserEntityFactory.createUser("user", "user@user.de");
       var notificationConfigEntity2 = NotificationConfigEntity.builder().user(userEntity2).notify(true).notificationAtAnnouncementDate(true).build();

@@ -23,6 +23,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.env.Environment;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
@@ -43,9 +44,11 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -59,10 +62,11 @@ class RegistrationControllerTest implements WithAssertions {
   private static final String PARAM_EMAIL = "email";
   private static final String PARAM_PASSWORD = "plainPassword";
   private static final String PARAM_VERIFY_PASSWORD = "verifyPlainPassword";
+  private static final String PARAM_REGISTRATION_CODE = "registrationCode";
   private static final String NOT_EXISTING_TOKEN = "not_existing_token";
   private static final String EXPIRED_TOKEN = "expired_token";
 
-  private Map<String, String> paramValues = new HashMap<>();
+  private final Map<String, String> paramValues = new HashMap<>();
 
   @Mock
   private UserService userService;
@@ -72,6 +76,9 @@ class RegistrationControllerTest implements WithAssertions {
 
   @Mock
   private ApplicationEventPublisher eventPublisher;
+
+  @Mock
+  private Environment environment;
 
   @Spy
   private ModelMapper modelMapper;
@@ -83,7 +90,7 @@ class RegistrationControllerTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    underTest = new RegistrationController(eventPublisher, userService, tokenService, modelMapper);
+    underTest = new RegistrationController(eventPublisher, userService, tokenService, modelMapper, environment);
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.REGISTER);
     RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
 
@@ -95,12 +102,13 @@ class RegistrationControllerTest implements WithAssertions {
     paramValues.put(PARAM_EMAIL, "john.d@example.com");
     paramValues.put(PARAM_PASSWORD, "valid-password");
     paramValues.put(PARAM_VERIFY_PASSWORD, "valid-password");
+    paramValues.put(PARAM_REGISTRATION_CODE, "registrationCode");
   }
 
   @AfterEach
   void tearDown() {
     paramValues.clear();
-    reset(userService, tokenService, eventPublisher, modelMapper);
+    reset(userService, tokenService, eventPublisher, modelMapper, environment);
   }
 
   @Test
@@ -120,6 +128,11 @@ class RegistrationControllerTest implements WithAssertions {
   @TestInstance(Lifecycle.PER_CLASS)
   @DisplayName("Testing registration of a new user account")
   class RegisterNewUserAccountTest {
+
+    @BeforeEach
+    private void setup() {
+      doReturn(PARAM_REGISTRATION_CODE).when(environment).getProperty(any());
+    }
 
     @Test
     @DisplayName("Register a new user account with a valid request should be ok")
@@ -215,6 +228,35 @@ class RegistrationControllerTest implements WithAssertions {
       assertThat(eventCaptor.getValue().getUserDto()).isEqualTo(userDto);
     }
 
+    @Test
+    @DisplayName("Register a new user account with an invalid registration code should fail")
+    void test_invalid_registration_code() {
+      // given
+      var request = RegisterUserRequestFactory.withRegistrationCode("invalidRegistrationCode");
+
+      // when
+      var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);
+
+      // then
+      validatableResponse
+          .assertThat(status().isBadRequest())
+          .assertThat(view().name(ViewNames.Guest.REGISTER));
+      verifyNoInteractions(userService);
+    }
+
+    @Test
+    @DisplayName("Register a new user calls environment for registration code to verify")
+    void test_environment_called() {
+      // given
+      var request = RegisterUserRequestFactory.withRegistrationCode("invalidRegistrationCode");
+
+      // when
+      restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);
+
+      // then
+      verify(environment).getProperty("REGISTRATION_CODE");
+    }
+
     @ParameterizedTest(name = "[{index}]: {0}")
     @MethodSource("registerUserRequestProvider")
     @DisplayName("Register a new user account with an invalid request dto should fail")
@@ -228,6 +270,7 @@ class RegistrationControllerTest implements WithAssertions {
           .assertThat(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, incorrectFieldNames))
           .assertThat(status().isBadRequest())
           .assertThat(view().name(ViewNames.Guest.REGISTER));
+      verifyNoInteractions(userService);
     }
 
     private Stream<Arguments> registerUserRequestProvider() {
@@ -248,7 +291,12 @@ class RegistrationControllerTest implements WithAssertions {
           Arguments.of(RegisterUserRequestFactory.withPassword("secret-password", "other-secret-password"), 1, new String[] {}),
           Arguments.of(RegisterUserRequestFactory.withPassword("secret", "secret"), 2, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD}),
           Arguments.of(RegisterUserRequestFactory.withPassword("", ""), 4, new String[] {PARAM_PASSWORD, PARAM_VERIFY_PASSWORD}),
-          Arguments.of(RegisterUserRequestFactory.withPassword(null, null), 2, new String[] {PARAM_VERIFY_PASSWORD})
+          Arguments.of(RegisterUserRequestFactory.withPassword(null, null), 2, new String[] {PARAM_VERIFY_PASSWORD}),
+
+          // invalid registration code
+          Arguments.of(RegisterUserRequestFactory.withRegistrationCode(""), 1, new String[] {PARAM_REGISTRATION_CODE}),
+          Arguments.of(RegisterUserRequestFactory.withRegistrationCode("   "), 1, new String[] {PARAM_REGISTRATION_CODE}),
+          Arguments.of(RegisterUserRequestFactory.withRegistrationCode(null), 1, new String[] {PARAM_REGISTRATION_CODE})
       );
     }
 
