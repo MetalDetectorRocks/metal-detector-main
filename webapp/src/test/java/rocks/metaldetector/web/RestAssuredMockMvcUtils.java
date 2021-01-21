@@ -141,4 +141,13 @@ public class RestAssuredMockMvcUtils {
             .patch(requestUri)
         .then();
   }
+
+  public ValidatableMockMvcResponse doDelete() {
+    return given()
+        .config(NO_SECURITY_CONFIG)
+        .contentType(ContentType.JSON)
+        .when()
+        .delete(requestUri)
+        .then();
+  }
 }

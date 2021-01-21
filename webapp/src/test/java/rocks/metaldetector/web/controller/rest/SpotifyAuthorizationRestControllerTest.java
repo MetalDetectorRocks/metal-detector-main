@@ -155,7 +155,7 @@ class SpotifyAuthorizationRestControllerTest implements WithAssertions {
 
     @Test
     @DisplayName("PUT on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should return 200")
-    void test_post_authorization_returns_ok() {
+    void test_put_authorization_returns_ok() {
       // given
       var request = SpotifyAuthorizationRequest.builder().code("code").state("state").build();
 
@@ -168,7 +168,7 @@ class SpotifyAuthorizationRestControllerTest implements WithAssertions {
 
     @Test
     @DisplayName("PUT on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should call SpotifyUserAuthorizationServiceService")
-    void test_post_authorization_calls_spotify_service() {
+    void test_put_authorization_calls_spotify_service() {
       // given
       var request = SpotifyAuthorizationRequest.builder().code("code").state("state").build();
 
@@ -182,7 +182,7 @@ class SpotifyAuthorizationRestControllerTest implements WithAssertions {
     @ParameterizedTest
     @MethodSource("badRequestProvider")
     @DisplayName("PUT on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should return bad request")
-    void test_post_authorization_returns_url(String code, String state) {
+    void test_put_authorization_returns_url(String code, String state) {
       // given
       var request = SpotifyAuthorizationRequest.builder().code(code).state(state).build();
 
@@ -198,6 +198,38 @@ class SpotifyAuthorizationRestControllerTest implements WithAssertions {
               Arguments.of((Object) null, (Object) null),
               Arguments.of("", "")
       );
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests for deleting authorization")
+  class DeleteAuthorizationTest {
+
+    private RestAssuredMockMvcUtils restAssuredMockMvcUtils;
+
+    @BeforeEach
+    void setup() {
+      restAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.SPOTIFY_AUTHORIZATION);
+    }
+
+    @Test
+    @DisplayName("DELETE on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should return 200")
+    void test_delete_authorization_returns_ok() {
+      // when
+      var validatableResponse = restAssuredMockMvcUtils.doDelete();
+
+      // then
+      validatableResponse.statusCode(OK.value());
+    }
+
+    @Test
+    @DisplayName("DELETE on " + Endpoints.Rest.SPOTIFY_AUTHORIZATION + " should call SpotifyUserAuthorizationServiceService")
+    void test_delete_authorization_calls_spotify_service() {
+      // when
+      restAssuredMockMvcUtils.doDelete();
+
+      // then
+      verify(userAuthorizationService).deleteAuthorization();
     }
   }
 }
