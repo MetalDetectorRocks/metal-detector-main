@@ -35,6 +35,10 @@ export class DateService {
         return this.format(yesterdayAsDayJs.toString(), DateFormat.UTC);
     }
 
+    public compare(dateStr1: string, dateStr2: string): number {
+        return dayjs(dateStr1).isBefore(dateStr2) ? -1 : dayjs(dateStr1).isBefore(dateStr2) ? 1 : 0;
+    }
+
     private diffFromNow(dateStr: string, unit: UnitType): number {
         const date = dayjs(dateStr);
         const now = dayjs();
