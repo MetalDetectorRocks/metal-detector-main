@@ -17,13 +17,15 @@ public interface UserService extends UserDetailsService {
 
   UserDto updateUser(String publicId, UserDto userDto);
 
+  UserDto updateCurrentEmail(String emailAddress);
+
   void deleteUser(String publicId);
 
   List<UserDto> getAllUsers();
 
   List<UserDto> getAllActiveUsers();
 
-  List<UserDto> getAllUsers(int page, int limit);
+  UserDto getCurrentUser();
 
   void verifyEmailToken(String tokenString);
 
