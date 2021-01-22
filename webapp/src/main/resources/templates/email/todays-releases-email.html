@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html layout:decorate="~{email/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Today's metal album releases</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <p>
+        Hi <span th:text="${username}">username</span>
+    </p>
+    <p>
+        Here are your favorite band's releases coming out today:
+    </p>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Artist</th>
+            <th scope="col">Album Title</th>
+            <th scope="col">Release Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="release: ${todaysReleases}">
+            <td th:text="${release.artist}"></td>
+            <td th:text="${release.albumTitle}"></td>
+            <td th:text="${release.releaseDate}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Cheers!</p>
+</section>
+</body>
+</html>
