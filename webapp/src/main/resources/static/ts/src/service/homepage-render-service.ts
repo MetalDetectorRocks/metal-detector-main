@@ -62,7 +62,8 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     }
 
     private renderReleaseRow(response: HomepageResponse): void {
-        const releases = response.recentReleases.concat(response.upcomingReleases)
+        const recentReleases = response.recentReleases.sort((r1, r2) => this.dateService.compare(r1.releaseDate, r2.releaseDate));
+        const releases = recentReleases.concat(response.upcomingReleases)
           .splice(0, this.MAX_CARDS_PER_ROW);
 
         if (releases.length) {
