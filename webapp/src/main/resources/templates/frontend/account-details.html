@@ -5,6 +5,7 @@
       lang="en">
 <head>
     <title>Account Details</title>
+    <script th:nonce="${random}" type="module" th:src="@{/ts/dist/account_details.bundle.js}" src="#"></script>
 </head>
 <body>
     <section layout:fragment="content">
@@ -17,13 +18,11 @@
                 </div>
                 <h2 class="h5 mt-3">Change email address</h2>
                 <hr class="border-secondary"/>
-                <form>
-                    <div class="form-group col-5 px-0">
-                        <label for="email-address">Email address</label>
-                        <input type="email" class="form-control custom-form-control" id="email-address" placeholder="name@example.com">
-                    </div>
-                    <button type="submit" class="btn btn-secondary mt-2">Update email address</button>
-                </form>
+                <div class="form-group col-5 px-0">
+                    <label for="email-address">Email address</label>
+                    <input type="email" class="form-control custom-form-control" id="email-address" name="emailAddress">
+                </div>
+                <button id="update-email-address" class="btn btn-secondary mt-2">Update email address</button>
 
                 <h2 class="h5 mt-5">Change password</h2>
                 <hr class="border-secondary"/>

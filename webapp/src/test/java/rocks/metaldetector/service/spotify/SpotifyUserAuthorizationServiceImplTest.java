@@ -38,6 +38,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static rocks.metaldetector.service.spotify.SpotifyUserAuthorizationServiceImpl.GRACE_PERIOD_SECONDS;
 import static rocks.metaldetector.service.spotify.SpotifyUserAuthorizationServiceImpl.STATE_SIZE;
 
@@ -525,6 +526,62 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
           Arguments.of(SpotifyAuthorizationEntity.builder().user(user).build()),
           Arguments.of(SpotifyAuthorizationEntity.builder().user(user).refreshToken("").build())
       );
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests for deleting spotify authorization")
+  class DeleteSpotifyAuthorizationTest {
+
+    @Test
+    @DisplayName("currentUserSupplier is called on deletion")
+    void test_current_user_supplier_called() {
+      // when
+      underTest.deleteAuthorization();
+
+      // then
+      verify(currentUserSupplier).get();
+    }
+
+    @Test
+    @DisplayName("spotifyAuthorizationRepository is called to get user's entity")
+    void test_spotify_repository_called() {
+      // given
+      var userId = 1L;
+      doReturn(userId).when(userMock).getId();
+
+      // when
+      underTest.deleteAuthorization();
+
+      // then
+      verify(authorizationRepository).findByUserId(userId);
+    }
+
+    @Test
+    @DisplayName("if present entity is deleted")
+    void test_entity_deleted_if_present() {
+      // given
+      var authorizationEntity = SpotifyAuthorizationEntity.builder().user(userMock).build();
+      doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUserId(any());
+
+      // when
+      underTest.deleteAuthorization();
+
+      // then
+      verify(authorizationRepository).delete(authorizationEntity);
+    }
+
+    @Test
+    @DisplayName("if entity is not present repository is not called again")
+    void test_entity_not_present() {
+      // given
+      doReturn(Optional.empty()).when(authorizationRepository).findByUserId(any());
+
+      // when
+      underTest.deleteAuthorization();
+
+      // then
+      verifyNoMoreInteractions(authorizationRepository);
     }
   }
 }
