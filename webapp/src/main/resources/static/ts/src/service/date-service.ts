@@ -36,7 +36,7 @@ export class DateService {
     }
 
     public compare(dateStr1: string, dateStr2: string): number {
-        return dayjs(dateStr1).isBefore(dateStr2) ? -1 : dayjs(dateStr1).isBefore(dateStr2) ? 1 : 0;
+        return dayjs(dateStr1).isBefore(dateStr2) ? -1 : dayjs(dateStr2).isBefore(dateStr1) ? 1 : 0;
     }
 
     private diffFromNow(dateStr: string, unit: UnitType): number {
