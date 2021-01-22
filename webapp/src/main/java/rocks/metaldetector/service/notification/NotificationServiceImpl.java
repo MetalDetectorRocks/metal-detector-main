@@ -1,7 +1,6 @@
 package rocks.metaldetector.service.notification;
 
 import lombok.AllArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.butler.facade.ReleaseService;
@@ -53,7 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   @Override
-  @Scheduled(cron = "0 0 7 * * *")
+//  @Scheduled(cron = "0 0 7 * * *")
   @Transactional(readOnly = true)
   public void notifyOnReleaseDate() {
     var now = LocalDate.now();
