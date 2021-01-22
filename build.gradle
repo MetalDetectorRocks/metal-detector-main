@@ -25,8 +25,8 @@ buildscript {
     postgresqlVersion = "42.2.18"
     restAssuredVersion = "4.2.0"
     servletApiVersion = "4.0.1"
-    springBootVersion = "2.3.7.RELEASE"
-    springSecurityVersion = "5.2.6.RELEASE"
+    springBootVersion = "2.4.2"
+    springSecurityVersion = "5.4.2"
     thymeleafDialectVersion = "2.5.1"
     thymeleafExtrasVersion = "3.0.4.RELEASE"
     validationApiVersion = "2.0.1.Final"
@@ -54,7 +54,7 @@ ext {
                         "net.bytebuddy:byte-buddy:1.10.18",
                         "org.javassist:javassist:3.27.0-GA",
                         "org.webjars:jquery:3.5.1"]
-  dependencyGroupVersions = ["org.springframework"           : "5.2.12.RELEASE",
+  dependencyGroupVersions = ["org.springframework"           : "5.3.3",
                              "org.springframework.security"  : springSecurityVersion,
                              "com.fasterxml.jackson.core"    : jacksonVersion,
                              "com.fasterxml.jackson.datatype": jacksonVersion,
