@@ -12,11 +12,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.service.notification.NotificationService;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_FREQUENCY;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE_DATE;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationRestControllerTest implements WithAssertions {
@@ -27,11 +28,13 @@ class NotificationRestControllerTest implements WithAssertions {
   @InjectMocks
   private NotificationRestController underTest;
 
-  private RestAssuredMockMvcUtils restAssuredUtils;
+  private RestAssuredMockMvcUtils frequencyRestAssuredUtils;
+  private RestAssuredMockMvcUtils releaseDateRestAssuredUtils;
 
   @BeforeEach
   void setup() {
-    restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.NOTIFY);
+    frequencyRestAssuredUtils = new RestAssuredMockMvcUtils(NOTIFICATION_ON_FREQUENCY);
+    releaseDateRestAssuredUtils = new RestAssuredMockMvcUtils(NOTIFICATION_ON_RELEASE_DATE);
     RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
@@ -41,22 +44,42 @@ class NotificationRestControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Notify all responds with OK")
-  void notify_all_responds_ok() {
+  @DisplayName("Notify on frequency responds with OK")
+  void notify_frequency_responds_ok() {
     // when
-    var response = restAssuredUtils.doPost();
+    var response = frequencyRestAssuredUtils.doPost();
 
     // then
     response.statusCode(HttpStatus.OK.value());
   }
 
   @Test
-  @DisplayName("Notify all calls notification service")
-  void notify_all_calls_notification_service() {
+  @DisplayName("Notify on frequency calls notification service")
+  void notify_frequency_calls_notification_service() {
     // when
-    restAssuredUtils.doPost();
+    frequencyRestAssuredUtils.doPost();
 
     // then
     verify(notificationService).notifyOnFrequency();
+  }
+
+  @Test
+  @DisplayName("Notify on release date responds with OK")
+  void notify_on_release_date_responds_ok() {
+    // when
+    var response = releaseDateRestAssuredUtils.doPost();
+
+    // then
+    response.statusCode(HttpStatus.OK.value());
+  }
+
+  @Test
+  @DisplayName("Notify on release date calls notification service")
+  void notify_on_release_date_calls_notification_service() {
+    // when
+    releaseDateRestAssuredUtils.doPost();
+
+    // then
+    verify(notificationService).notifyOnReleaseDate();
   }
 }
