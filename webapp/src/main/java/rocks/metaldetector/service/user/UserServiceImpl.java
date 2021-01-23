@@ -206,7 +206,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void changePassword(String tokenString, String newPassword) {
+  public void changePasswordFromMail(String tokenString, String newPassword) {
     // 1. get claims to check signature of token
     jwtsSupport.getClaims(tokenString);
 
@@ -239,6 +239,18 @@ public class UserServiceImpl implements UserService {
       userEntity.setLastLogin(LocalDateTime.now());
 
       userRepository.save(userEntity);
+    }
+  }
+
+  @Override
+  public void updateCurrentPassword(String oldPlainPassword, String newPlainPassword) {
+    UserEntity currentUser = currentUserSupplier.get();
+    if (passwordEncoder.matches(oldPlainPassword, currentUser.getPassword())) {
+      currentUser.setPassword(passwordEncoder.encode(newPlainPassword));
+      userRepository.save(currentUser);
+    }
+    else {
+      throw new IllegalArgumentException("Old password does not match");
     }
   }
 

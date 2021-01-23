@@ -8,6 +8,7 @@ export class AccountDetailsRestClient {
 
     private readonly CURRENT_USER_ENDPOINT = "/rest/v1/me";
     private readonly CURRENT_USER_EMAIL_ENDPOINT = "/rest/v1/me/email"
+    private readonly CURRENT_USER_PASSWORD_ENDPOINT = "/rest/v1/me/password"
 
     private readonly toastService: ToastService;
 
@@ -36,6 +37,21 @@ export class AccountDetailsRestClient {
             return response.data;
         }).catch((error: AxiosError) => {
             this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
+            throw error;
+        })
+    }
+
+    public async updatePassword(oldPassword: string, newPassword: string, confirmPassword: string): Promise<void> {
+        axiosConfig.data = {
+            oldPlainPassword: oldPassword,
+            newPlainPassword: newPassword,
+            verifyNewPlainPassword: confirmPassword
+        }
+        return await axios.patch(
+          this.CURRENT_USER_PASSWORD_ENDPOINT, axiosConfig
+        ).then(() => {
+            return;
+        }).catch((error: AxiosError) => {
             throw error;
         })
     }
