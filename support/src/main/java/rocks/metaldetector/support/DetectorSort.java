@@ -1,7 +1,9 @@
 package rocks.metaldetector.support;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+@EqualsAndHashCode
 public class DetectorSort {
 
   @Getter
