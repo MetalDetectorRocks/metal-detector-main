@@ -10,7 +10,7 @@ module.exports = {
         releases: "./src/bundles/releases.ts",
         homepage: "./src/bundles/homepage.ts",
         spotify_synchronization: "./src/bundles/spotify-synchronization.ts",
-        account_details: ".src/bundles/account-details.ts"
+        account_details: "./src/bundles/account-details.ts"
     },
     output: {
         filename: "[name].bundle.js",
