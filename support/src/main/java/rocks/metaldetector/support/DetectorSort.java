@@ -1,44 +1,24 @@
 package rocks.metaldetector.support;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class DetectorSort {
 
-  private List<Order> orders;
+  @Getter
+  private final String field;
+  @Getter
+  private final Direction direction;
 
-  public DetectorSort(Direction direction, List<String> properties) {
-    this.orders = properties.stream()
-        .map(property -> new Order(direction, property))
-        .collect(Collectors.toList());
-  }
-
-  @Data
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class Order {
-
-    private Direction direction;
-    private String property;
-
+  public DetectorSort(String field, String direction) {
+    if (field == null || field.isBlank()) {
+      throw new IllegalArgumentException("field must not be null or empty");
+    }
+    this.field = field;
+    this.direction = direction == null || direction.isBlank() ? Direction.ASC : Direction.valueOf(direction.toUpperCase());
   }
 
   public enum Direction {
     ASC,
     DESC
-  }
-
-  @Override
-  public String toString() {
-    return orders.stream()
-        .map(order -> "sort=" + order.getProperty() + "," + order.getDirection())
-        .collect(Collectors.joining("&"));
   }
 }
