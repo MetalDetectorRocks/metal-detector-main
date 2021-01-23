@@ -15,7 +15,7 @@ public class ButlerSortTransformer {
 
   private static final String DEFAULT_SORTING = "&sort=artist,ASC&sort=albumTitle,ASC";
 
-  public String transformSortParams(DetectorSort sort) {
+  public String transform(DetectorSort sort) {
     String sortParam = String.format("sort=%s,%s", FIELD_MAPPING.getOrDefault(sort.getField(), sort.getField()), sort.getDirection());
     return sortParam.concat(DEFAULT_SORTING);
   }

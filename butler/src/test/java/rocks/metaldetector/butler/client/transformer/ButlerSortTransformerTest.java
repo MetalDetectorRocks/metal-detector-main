@@ -21,7 +21,7 @@ class ButlerSortTransformerTest implements WithAssertions {
     var detectorSort = new DetectorSort(givenField, givenDirection);
 
     // when
-    var result = underTest.transformSortParams(detectorSort);
+    var result = underTest.transform(detectorSort);
 
     // then
     assertThat(result).isEqualTo(expected);
