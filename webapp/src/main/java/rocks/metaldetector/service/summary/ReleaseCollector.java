@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.TIME_RANGE_MONTHS;
+import static rocks.metaldetector.support.DetectorSort.Direction.ASC;
+import static rocks.metaldetector.support.DetectorSort.Direction.DESC;
 
 @Component
 @AllArgsConstructor
@@ -27,14 +29,14 @@ public class ReleaseCollector {
   public List<ReleaseDto> collectUpcomingReleases(List<ArtistDto> artists) {
     LocalDate tomorrow = LocalDate.now().plusDays(1);
     TimeRange timeRange = new TimeRange(tomorrow, tomorrow.plusMonths(TIME_RANGE_MONTHS));
-    DetectorSort sort = new DetectorSort("releaseDate", "asc"); // ToDo DanielW: use constructor with Direction
+    DetectorSort sort = new DetectorSort("releaseDate", ASC);
     return collectReleases(artists, timeRange, sort);
   }
 
   public List<ReleaseDto> collectRecentReleases(List<ArtistDto> artists) {
     LocalDate now = LocalDate.now();
     TimeRange timeRange = new TimeRange(now.minusMonths(TIME_RANGE_MONTHS), now);
-    DetectorSort sort = new DetectorSort("releaseDate", "desc"); // ToDo DanielW: use constructor with Direction
+    DetectorSort sort = new DetectorSort("releaseDate", DESC);
     return collectReleases(artists, timeRange, sort);
   }
 

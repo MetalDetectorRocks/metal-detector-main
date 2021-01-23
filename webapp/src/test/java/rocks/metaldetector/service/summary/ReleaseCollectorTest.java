@@ -27,6 +27,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.TIME_RANGE_MONTHS;
+import static rocks.metaldetector.support.DetectorSort.Direction.ASC;
+import static rocks.metaldetector.support.DetectorSort.Direction.DESC;
 
 @ExtendWith(MockitoExtension.class)
 class ReleaseCollectorTest implements WithAssertions {
@@ -82,7 +84,7 @@ class ReleaseCollectorTest implements WithAssertions {
   @DisplayName("collecting upcoming releases calls releaseService with correct page request and sorting")
   void test_upcoming_releases_calls_release_service_with_page_request() {
     // given
-    var sorting = new DetectorSort("releaseDate", "asc"); // ToDo DanielW: Constructor with Direction
+    var sorting = new DetectorSort("releaseDate", ASC);
     var expectedPageRequest = new PageRequest(1, RESULT_LIMIT, sorting);
     var artists = List.of(ArtistDtoFactory.withName("A"));
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
@@ -154,7 +156,7 @@ class ReleaseCollectorTest implements WithAssertions {
   @DisplayName("collecting recent releases calls releaseService with correct page request and sorting")
   void test_recent_releases_calls_release_service_with_page_request() {
     // given
-    var expectedSorting = new DetectorSort("releaseDate", "desc"); // ToDo DanielW: Constructor with Direction
+    var expectedSorting = new DetectorSort("releaseDate", DESC);
     var expectedPageRequest = new PageRequest(1, RESULT_LIMIT, expectedSorting);
     var artists = List.of(ArtistDtoFactory.withName("A"));
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
