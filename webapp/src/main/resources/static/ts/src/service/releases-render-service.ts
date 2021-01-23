@@ -54,6 +54,7 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
         const releaseTitleElement = releaseDivElement.querySelector("#release-title") as HTMLParagraphElement;
         const additionalArtistsElement = releaseDivElement.querySelector("#additional-artists") as HTMLDivElement;
         const releaseDateElement = releaseDivElement.querySelector("#release-date") as HTMLElement;
+        const announcementDateElement = releaseDivElement.querySelector("#announcement-date") as HTMLElement;
         const releaseTypeElement = releaseDivElement.querySelector("#release-type") as HTMLElement;
         const releaseGenreElement = releaseDivElement.querySelector("#release-genre") as HTMLElement;
 
@@ -67,6 +68,8 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
         releaseDateElement.textContent = release.releaseDate?.length > 0
             ? this.dateService.format(release.releaseDate, DateFormat.LONG)
             : release.estimatedReleaseDate;
+
+        announcementDateElement.textContent = this.dateService.format(release.announcementDate, DateFormat.LONG);
 
         releaseTypeElement.textContent = release.type || "n/a";
         releaseGenreElement.textContent = release.genre || "n/a";
