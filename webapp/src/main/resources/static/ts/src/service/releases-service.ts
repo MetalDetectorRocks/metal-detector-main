@@ -9,6 +9,7 @@ export class ReleasesService {
     private static readonly MY_RELEASES_PARAM_VALUE = "my";
 
     private static readonly SORT_BY_RELEASE_DATE_OPTION_VALUE = "Release date";
+    private static readonly SORT_BY_ANNOUNCEMENT_DATE_OPTION_VALUE = "Announcement date";
     private static readonly SORT_BY_PARAM_NAME = "sort";
     private static readonly SORT_BY_RELEASE_DATE_PARAM_VALUE = "release_date";
     private static readonly SORT_BY_ANNOUNCEMENT_PARAM_VALUE = "announcement_date";
@@ -52,7 +53,9 @@ export class ReleasesService {
 
         this.followedArtistsRb.checked = releasesParamValue === ReleasesService.MY_RELEASES_PARAM_VALUE;
         this.allArtistsRb.checked = !this.followedArtistsRb.checked;
-        this.sortPropertySelector.name = sortParamValue.length === 0 ? ReleasesService.SORT_BY_RELEASE_DATE_PARAM_VALUE : sortParamValue;
+        this.sortPropertySelector.value = sortParamValue.length === 0 || sortParamValue === ReleasesService.SORT_BY_RELEASE_DATE_PARAM_VALUE
+            ? ReleasesService.SORT_BY_RELEASE_DATE_OPTION_VALUE
+            : ReleasesService.SORT_BY_ANNOUNCEMENT_DATE_OPTION_VALUE;
         this.sortDescRb.checked = directionParamValue === ReleasesService.SORT_DIRECTION_DESC_PARAM_VALUE;
         this.sortAscRb.checked = !this.sortDescRb.checked;
     }
