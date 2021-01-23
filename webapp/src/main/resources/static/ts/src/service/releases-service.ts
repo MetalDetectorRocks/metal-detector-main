@@ -4,10 +4,17 @@ import {UrlService} from "./url-service";
 
 export class ReleasesService {
 
-    private static readonly RELEASES_FILTER_NAME = "releases";
-    private static readonly ALL_RELEASES_IDENTIFIER = "all";
-    private static readonly MY_RELEASES_IDENTIFIER = "my";
-    private static readonly SORT_PARAMETER = (parameter: string, direction: string) => `sort=${parameter},${direction}&sort=artist,ASC&sort=albumTitle,ASC`;
+    private static readonly RELEASES_PARAM_NAME = "releases";
+    private static readonly ALL_RELEASES_PARAM_VALUE = "all";
+    private static readonly MY_RELEASES_PARAM_VALUE = "my";
+
+    private static readonly SORT_BY_RELEASE_DATE_OPTION_VALUE = "Release date";
+    private static readonly SORT_BY_PARAM_NAME = "sort";
+    private static readonly SORT_BY_RELEASE_DATE_PARAM_VALUE = "release_date";
+    private static readonly SORT_BY_ANNOUNCEMENT_PARAM_VALUE = "announcement_date";
+    private static readonly SORT_DIRECTION_PARAM_NAME = "direction";
+    private static readonly SORT_DIRECTION_ASC_PARAM_VALUE = "asc";
+    private static readonly SORT_DIRECTION_DESC_PARAM_VALUE = "desc";
 
     private readonly releasesRestClient: ReleasesRestClient;
     private readonly releasesRenderService: ReleasesRenderService;
@@ -39,24 +46,15 @@ export class ReleasesService {
     }
 
     private initFilterValuesFromUrl(): void {
-        const releasesFilter = this.urlService.getParameterFromUrl("releases");
-        const parameters = this.urlService.getParametersFromUrl("sort");
-        let sortSelector;
-        let sortAsc;
+        const releasesParamValue = this.urlService.getParameterFromUrl("releases");
+        const sortParamValue = this.urlService.getParameterFromUrl("sort");
+        const directionParamValue = this.urlService.getParameterFromUrl("direction");
 
-        if (parameters.length > 0) {
-            sortSelector = parameters[0].split(",")[0] == "releaseDate" ? "Release date" : "Announcement date";
-            sortAsc = parameters[0].split(",")[1] === "ASC"
-        } else {
-            sortSelector = "Release date";
-            sortAsc = true
-        }
-
-        this.allArtistsRb.checked = releasesFilter !== ReleasesService.MY_RELEASES_IDENTIFIER;
-        this.followedArtistsRb.checked = releasesFilter === ReleasesService.MY_RELEASES_IDENTIFIER;
-        this.sortPropertySelector.value = sortSelector;
-        this.sortAscRb.checked = sortAsc;
-        this.sortDescRb.checked = !sortAsc;
+        this.followedArtistsRb.checked = releasesParamValue === ReleasesService.MY_RELEASES_PARAM_VALUE;
+        this.allArtistsRb.checked = !this.followedArtistsRb.checked;
+        this.sortPropertySelector.name = sortParamValue.length === 0 ? ReleasesService.SORT_BY_RELEASE_DATE_PARAM_VALUE : sortParamValue;
+        this.sortDescRb.checked = directionParamValue === ReleasesService.SORT_DIRECTION_DESC_PARAM_VALUE;
+        this.sortAscRb.checked = !this.sortDescRb.checked;
     }
 
     public fetchReleases(): void {
@@ -77,7 +75,7 @@ export class ReleasesService {
         const releaseFilterForm = document.getElementById("release-filter-form") as HTMLFormElement;
         const releaseFilterOptions = releaseFilterForm.elements.namedItem("releases") as RadioNodeList;
         releaseFilterOptions.forEach(option => {
-            option.addEventListener("change", this.onValueChange.bind(this));
+            option.addEventListener("change", this.onAnyValueChange.bind(this));
         });
     }
 
@@ -85,26 +83,25 @@ export class ReleasesService {
         const releaseFilterForm = document.getElementById("sorting-form") as HTMLFormElement;
         const releaseFilterOptions = releaseFilterForm.elements.namedItem("releases") as RadioNodeList;
         releaseFilterOptions.forEach(option => {
-            option.addEventListener("change", this.onValueChange.bind(this));
+            option.addEventListener("change", this.onAnyValueChange.bind(this));
         });
     }
 
     private addSortPropertyEventListener(): void {
         const sortPropertySelector = document.getElementById("sort-property-selector") as HTMLSelectElement;
-        sortPropertySelector.addEventListener("change", this.onValueChange.bind(this));
+        sortPropertySelector.addEventListener("change", this.onAnyValueChange.bind(this));
     }
 
-    private onValueChange(): void {
-        const releasesFilterValue = this.allArtistsRb.checked ? ReleasesService.ALL_RELEASES_IDENTIFIER : ReleasesService.MY_RELEASES_IDENTIFIER;
-        const sortProperty = this.sortPropertySelector.value == "Release date" ? "releaseDate" : "createdDateTime";
-        let sortingValue;
+    private onAnyValueChange(): void {
+        const releasesFilterValue = this.allArtistsRb.checked ? ReleasesService.ALL_RELEASES_PARAM_VALUE : ReleasesService.MY_RELEASES_PARAM_VALUE;
+        const sortBy = this.sortPropertySelector.value === ReleasesService.SORT_BY_RELEASE_DATE_OPTION_VALUE ? ReleasesService.SORT_BY_RELEASE_DATE_PARAM_VALUE : ReleasesService.SORT_BY_ANNOUNCEMENT_PARAM_VALUE;
+        const sortDirection = this.sortAscRb.checked ? ReleasesService.SORT_DIRECTION_ASC_PARAM_VALUE : ReleasesService.SORT_DIRECTION_DESC_PARAM_VALUE;
 
-        if (this.sortAscRb.checked) {
-            sortingValue = ReleasesService.SORT_PARAMETER(sortProperty, "ASC");
-        } else {
-            sortingValue = ReleasesService.SORT_PARAMETER(sortProperty, "DESC");
-        }
-
-        window.location.href = `?page=1&${ReleasesService.RELEASES_FILTER_NAME}=${releasesFilterValue}&${sortingValue}`;
+        const urlSearchParams = new URLSearchParams();
+        urlSearchParams.set("page", "1");
+        urlSearchParams.set(ReleasesService.RELEASES_PARAM_NAME, releasesFilterValue);
+        urlSearchParams.set(ReleasesService.SORT_BY_PARAM_NAME, sortBy);
+        urlSearchParams.set(ReleasesService.SORT_DIRECTION_PARAM_NAME, sortDirection);
+        window.location.href = "?" + urlSearchParams.toString();
     }
 }
