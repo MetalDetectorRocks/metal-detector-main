@@ -42,6 +42,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportJobFactory;
+import static rocks.metaldetector.support.DetectorSort.Direction.ASC;
 
 @ExtendWith(MockitoExtension.class)
 class ReleaseServiceImplTest implements WithAssertions {
@@ -176,7 +177,7 @@ class ReleaseServiceImplTest implements WithAssertions {
     void should_call_butler_client_with_sort() {
       // given
       var transformedSortParam = "sort";
-      PageRequest pageRequest = new PageRequest(0, 0, new DetectorSort("artist", "asc")); // ToDo DanielW: Constructor with Direction
+      PageRequest pageRequest = new PageRequest(0, 0, new DetectorSort("artist", ASC));
       when(sortTransformer.transform(any())).thenReturn(transformedSortParam);
 
       // when
