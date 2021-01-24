@@ -38,6 +38,7 @@ public class ButlerReleaseResponseTransformer {
             .albumTitle(release.getAlbumTitle())
             .additionalArtists(release.getAdditionalArtists())
             .releaseDate(release.getReleaseDate())
+            .announcementDate(release.getAnnouncementDate())
             .estimatedReleaseDate(release.getEstimatedReleaseDate())
             .genre(release.getGenre())
             .type(enumPrettyPrinter.prettyPrintEnumValue(release.getType()))

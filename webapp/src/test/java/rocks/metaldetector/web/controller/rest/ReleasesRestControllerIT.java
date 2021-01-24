@@ -9,9 +9,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
-import rocks.metaldetector.testutil.DtoFactory.ReleaseRequestFactory;
 import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
-import rocks.metaldetector.web.transformer.DetectorSortTransformer;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -23,7 +21,6 @@ import static rocks.metaldetector.support.Endpoints.Rest.COVER_JOB;
 import static rocks.metaldetector.support.Endpoints.Rest.IMPORT_JOB;
 import static rocks.metaldetector.support.Endpoints.Rest.MY_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
-import static rocks.metaldetector.testutil.DtoFactory.PaginatedReleaseRequestFactory;
 
 @WebMvcTest(controllers = ReleasesRestController.class)
 public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
@@ -34,9 +31,6 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
   @MockBean
   private FollowArtistService followArtistService;
 
-  @MockBean
-  private DetectorSortTransformer sortTransformer;
-
   @Nested
   @DisplayName("Administrator is allowed to send requests to all endpoints")
   class AdministratorRoleTest {
@@ -46,7 +40,6 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_query_all_releases() throws Exception {
       mockMvc.perform(get(ALL_RELEASES)
-              .content(objectMapper.writeValueAsString(ReleaseRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON))
               .andExpect(status().isOk());
     }
@@ -55,8 +48,7 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
     @DisplayName("Administrator is allowed to GET on endpoint " + RELEASES + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_query_releases() throws Exception {
-      mockMvc.perform(get(RELEASES)
-              .content(objectMapper.writeValueAsString(PaginatedReleaseRequestFactory.createDefault()))
+      mockMvc.perform(get(RELEASES).param("sort", "fieldName")
               .contentType(APPLICATION_JSON))
               .andExpect(status().isOk());
     }
@@ -65,8 +57,7 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
     @DisplayName("Administrator is allowed to GET on endpoint " + MY_RELEASES + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_query_my_releases() throws Exception {
-      mockMvc.perform(get(MY_RELEASES)
-              .content(objectMapper.writeValueAsString(PaginatedReleaseRequestFactory.createDefault()))
+      mockMvc.perform(get(MY_RELEASES).param("sort", "fieldName")
               .contentType(APPLICATION_JSON))
               .andExpect(status().isOk());
     }
@@ -117,7 +108,6 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
     @WithMockUser(roles = "USER")
     void user_is_not_allowed_to_query_all_releases() throws Exception {
       mockMvc.perform(get(ALL_RELEASES)
-              .content(objectMapper.writeValueAsString(PaginatedReleaseRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON))
               .andExpect(status().isForbidden());
     }
@@ -126,8 +116,7 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
     @DisplayName("User is allowed to GET on endpoint " + RELEASES + "'")
     @WithMockUser(roles = "USER")
     void user_is_allowed_to_query_releases() throws Exception {
-      mockMvc.perform(get(RELEASES)
-              .content(objectMapper.writeValueAsString(PaginatedReleaseRequestFactory.createDefault()))
+      mockMvc.perform(get(RELEASES).param("sort", "fieldName")
               .contentType(APPLICATION_JSON))
               .andExpect(status().isOk());
     }
@@ -136,8 +125,7 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
     @DisplayName("User is allowed to GET on endpoint " + MY_RELEASES + "'")
     @WithMockUser(roles = "USER")
     void user_is_allowed_to_query_my_releases() throws Exception {
-      mockMvc.perform(get(MY_RELEASES)
-              .content(objectMapper.writeValueAsString(PaginatedReleaseRequestFactory.createDefault()))
+      mockMvc.perform(get(MY_RELEASES).param("sort", "fieldName")
               .contentType(APPLICATION_JSON))
               .andExpect(status().isOk());
     }

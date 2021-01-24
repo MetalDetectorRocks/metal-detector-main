@@ -9,6 +9,7 @@ import rocks.metaldetector.butler.client.ReleaseButlerRestClient;
 import rocks.metaldetector.butler.client.transformer.ButlerImportJobTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseRequestTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer;
+import rocks.metaldetector.butler.client.transformer.ButlerSortTransformer;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.support.Page;
@@ -24,6 +25,7 @@ public class ReleaseServiceImpl implements ReleaseService {
 
   private final ReleaseButlerRestClient butlerClient;
   private final ButlerReleaseRequestTransformer queryRequestTransformer;
+  private final ButlerSortTransformer sortTransformer;
   private final ButlerReleaseResponseTransformer queryResponseTransformer;
   private final ButlerImportJobTransformer importJobResponseTransformer;
 
@@ -37,7 +39,7 @@ public class ReleaseServiceImpl implements ReleaseService {
   @Override
   public Page<ReleaseDto> findReleases(Iterable<String> artists, TimeRange timeRange, PageRequest pageRequest) {
     ButlerReleasesRequest request = queryRequestTransformer.transform(artists, timeRange, pageRequest);
-    String sortString = (pageRequest != null && pageRequest.getSort() != null) ? pageRequest.getSort().toString() : null;
+    String sortString = sortTransformer.transform(pageRequest.getSort());
     ButlerReleasesResponse response = butlerClient.queryReleases(request, sortString);
     return queryResponseTransformer.transformToPage(response);
   }

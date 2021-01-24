@@ -15,11 +15,6 @@ export class UrlService {
         return url.searchParams.get(parameterName) || "";
     }
 
-    public getParametersFromUrl(parameterName: string): string[] {
-        const url = new URL(window.location.href);
-        return url.searchParams.getAll(parameterName) || "";
-    }
-
     public getPathFromUrl(): string {
         const url = new URL(window.location.href);
         return url.pathname || "";

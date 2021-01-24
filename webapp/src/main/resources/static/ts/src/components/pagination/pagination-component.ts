@@ -1,21 +1,22 @@
-import { Pagination } from "../../model/pagination.model";
+import {Pagination} from "../../model/pagination.model";
 
 export interface PaginationComponentProps {
 
-    readonly hrefTextPrefix?: string,
+    readonly additionalUrlParameter?: Array<[string, string]>,
     readonly prevText?: string,
     readonly nextText?: string
 }
 
 export class PaginationComponent {
 
-    private readonly href: string;
+    private readonly urlParams: URLSearchParams;
     private readonly prevText: string;
     private readonly nextText: string;
     private paginationList?: HTMLUListElement;
 
     constructor(props?: PaginationComponentProps) {
-        this.href = props?.hrefTextPrefix ? `?${props.hrefTextPrefix}&page=` : "?page=";
+        this.urlParams = new URLSearchParams(window.location.search);
+        props?.additionalUrlParameter?.forEach(urlParam => this.urlParams.append(urlParam[0], urlParam[1]));
         this.prevText = props?.prevText || "&laquo;";
         this.nextText = props?.nextText || "&raquo;";
     }
@@ -97,7 +98,8 @@ export class PaginationComponent {
             pageItem.classList.add("active");
         }
         else {
-            pageLink.href = this.href + page
+            this.urlParams.set("page", page.toString());
+            pageLink.href = `?${this.urlParams.toString()}`;
         }
 
         pageItem.insertAdjacentElement("afterbegin", pageLink);
@@ -117,7 +119,8 @@ export class PaginationComponent {
         prevLink.innerHTML = this.prevText;
         if (currentPage > 1 && currentPage <= totalPages) {
             const previousPage = currentPage - 1;
-            prevLink.href = this.href + previousPage;
+            this.urlParams.set("page", previousPage.toString());
+            prevLink.href = `?${this.urlParams.toString()}`;
         }
 
         prevItem.insertAdjacentElement("afterbegin", prevLink);
@@ -137,7 +140,8 @@ export class PaginationComponent {
         nextLink.innerHTML = this.nextText;
         if (currentPage >= 1 && currentPage < totalPages) {
             const nextPage = currentPage + 1;
-            nextLink.href = this.href + nextPage;
+            this.urlParams.set("page", nextPage.toString());
+            nextLink.href = `?${this.urlParams.toString()}`;
         }
 
         nextItem.insertAdjacentElement("afterbegin", nextLink);
