@@ -9,7 +9,6 @@ buildscript {
     ehcacheVersion = "3.9.0"
     flywayVersion = "6.4.4"
     h2Version = "1.4.200"
-    hibernateValidatorVersion = "6.1.6.Final"
     httpClientVersion = "4.5.13"
     mockitoVersion = "3.7.7"
     jacksonVersion = "2.12.1"
@@ -29,7 +28,6 @@ buildscript {
     springSecurityVersion = "5.4.2"
     thymeleafDialectVersion = "2.5.2"
     thymeleafExtrasVersion = "3.0.4.RELEASE"
-    validationApiVersion = "2.0.1.Final"
     webjarsLocatorVersion = "0.46"
   }
 }
