@@ -19,6 +19,7 @@ import java.util.List;
     "additionalArtists",
     "albumTitle",
     "releaseDate",
+    "announcementDate",
     "estimatedReleaseDate",
     "genre",
     "type",
@@ -45,6 +46,9 @@ public class ButlerRelease {
 
   @JsonProperty("releaseDate")
   private LocalDate releaseDate;
+
+  @JsonProperty("announcementDate")
+  private LocalDate announcementDate;
 
   @JsonProperty("estimatedReleaseDate")
   private String estimatedReleaseDate;
