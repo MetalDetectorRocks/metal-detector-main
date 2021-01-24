@@ -26,9 +26,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     constructor(followArtistService: FollowArtistService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
         super(alertService, loadingIndicatorService);
         this.followArtistService = followArtistService;
-        this.paginationComponent = new PaginationComponent({
-            hrefTextPrefix: `query=${this.getQueryFromUrl()}`
-        });
+        this.paginationComponent = new PaginationComponent();
         this.topSearchResultTemplateElement = document.getElementById("top-search-result") as HTMLTemplateElement;
         this.searchResultTemplateElement = document.getElementById("search-result") as HTMLTemplateElement;
     }

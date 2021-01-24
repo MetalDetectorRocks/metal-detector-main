@@ -84,7 +84,7 @@ class ReleaseCollectorTest implements WithAssertions {
   @DisplayName("collecting upcoming releases calls releaseService with correct page request and sorting")
   void test_upcoming_releases_calls_release_service_with_page_request() {
     // given
-    var sorting = new DetectorSort(ASC, List.of("releaseDate", "artist", "albumTitle"));
+    var sorting = new DetectorSort("releaseDate", ASC);
     var expectedPageRequest = new PageRequest(1, RESULT_LIMIT, sorting);
     var artists = List.of(ArtistDtoFactory.withName("A"));
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
@@ -156,10 +156,7 @@ class ReleaseCollectorTest implements WithAssertions {
   @DisplayName("collecting recent releases calls releaseService with correct page request and sorting")
   void test_recent_releases_calls_release_service_with_page_request() {
     // given
-    var sortingOrders = List.of(new DetectorSort.Order(DESC, "releaseDate"),
-                                new DetectorSort.Order(ASC, "artist"),
-                                new DetectorSort.Order(ASC, "albumTitle"));
-    var expectedSorting = new DetectorSort(sortingOrders);
+    var expectedSorting = new DetectorSort("releaseDate", DESC);
     var expectedPageRequest = new PageRequest(1, RESULT_LIMIT, expectedSorting);
     var artists = List.of(ArtistDtoFactory.withName("A"));
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());

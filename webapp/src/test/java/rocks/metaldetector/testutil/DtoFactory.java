@@ -139,6 +139,8 @@ public class DtoFactory {
       return PaginatedReleasesRequest.builder()
           .page(1)
           .size(10)
+          .sort("field")
+          .direction("asc")
           .dateFrom(LocalDate.now())
           .dateTo(LocalDate.now().plusDays(30))
           .build();

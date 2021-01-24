@@ -26,13 +26,14 @@ export class ReleasesRestClient {
     }
 
     private fetchReleases(url: string): Promise<ReleasesResponse> {
-        const parameters = this.urlService.getParametersFromUrl("sort");
-        const sortParameter = parameters.length > 0 ? [parameters[0], parameters[1], parameters[2]] : [];
+        const sort = this.urlService.getParameterFromUrl("sort");
+        const direction = this.urlService.getParameterFromUrl("direction");
         axiosConfig.params = {
             page: this.urlService.getPageFromUrl(),
             size: 30,
             dateFrom: this.dateService.yesterday(),
-            sort: sortParameter
+            sort: sort.length === 0 ? "release_date" : sort,
+            direction: direction.length === 0 ? "asc" : direction
         }
 
         return axios.get(

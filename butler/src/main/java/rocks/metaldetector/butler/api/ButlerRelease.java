@@ -19,6 +19,7 @@ import java.util.List;
     "additionalArtists",
     "albumTitle",
     "releaseDate",
+    "announcementDate",
     "estimatedReleaseDate",
     "genre",
     "type",
