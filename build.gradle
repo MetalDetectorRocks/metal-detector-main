@@ -51,7 +51,7 @@ ext {
                         "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3",
                         "jakarta.activation:jakarta.activation-api:1.2.2",
                         "org.jboss.logging:jboss-logging:3.4.1.Final",
-                        "net.bytebuddy:byte-buddy:1.10.18",
+                        "net.bytebuddy:byte-buddy:1.10.19",
                         "org.javassist:javassist:3.27.0-GA",
                         "org.webjars:jquery:3.5.1"]
   dependencyGroupVersions = ["org.springframework"           : "5.3.3",
