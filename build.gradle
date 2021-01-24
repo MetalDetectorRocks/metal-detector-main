@@ -7,7 +7,7 @@ buildscript {
     commonsCodecVersion = "1.15"
     datatablesVersion = "1.10.23"
     ehcacheVersion = "3.9.0"
-    flywayVersion = "6.4.4"
+    flywayVersion = "7.5.1"
     h2Version = "1.4.200"
     httpClientVersion = "4.5.13"
     mockitoVersion = "3.7.7"
