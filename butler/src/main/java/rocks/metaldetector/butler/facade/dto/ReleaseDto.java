@@ -19,6 +19,7 @@ public class ReleaseDto {
   private List<String> additionalArtists;
   private String albumTitle;
   private LocalDate releaseDate;
+  private LocalDate announcementDate;
   private String estimatedReleaseDate;
   private String genre;
   private String type;
