@@ -29,14 +29,14 @@ public class ReleaseCollector {
   public List<ReleaseDto> collectUpcomingReleases(List<ArtistDto> artists) {
     LocalDate tomorrow = LocalDate.now().plusDays(1);
     TimeRange timeRange = new TimeRange(tomorrow, tomorrow.plusMonths(TIME_RANGE_MONTHS));
-    DetectorSort sort = new DetectorSort(ASC, List.of("releaseDate", "artist", "albumTitle"));
+    DetectorSort sort = new DetectorSort("releaseDate", ASC);
     return collectReleases(artists, timeRange, sort);
   }
 
   public List<ReleaseDto> collectRecentReleases(List<ArtistDto> artists) {
     LocalDate now = LocalDate.now();
     TimeRange timeRange = new TimeRange(now.minusMonths(TIME_RANGE_MONTHS), now);
-    DetectorSort sort = createDescendingSorting();
+    DetectorSort sort = new DetectorSort("releaseDate", DESC);
     return collectReleases(artists, timeRange, sort);
   }
 
@@ -49,12 +49,5 @@ public class ReleaseCollector {
     PageRequest pageRequest = new PageRequest(1, RESULT_LIMIT, sort);
     Page<ReleaseDto> releasePage = releaseService.findReleases(artistNames, timeRange, pageRequest);
     return releasePage.getItems();
-  }
-
-  private DetectorSort createDescendingSorting() {
-    List<DetectorSort.Order> sortingOrders = List.of(new DetectorSort.Order(DESC, "releaseDate"),
-                                                     new DetectorSort.Order(ASC, "artist"),
-                                                     new DetectorSort.Order(ASC, "albumTitle"));
-    return new DetectorSort(sortingOrders);
   }
 }
