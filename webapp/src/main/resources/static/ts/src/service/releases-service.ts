@@ -9,7 +9,7 @@ export class ReleasesService {
     private static readonly MY_RELEASES_PARAM_VALUE = "my";
 
     private static readonly SORT_BY_RELEASE_DATE_OPTION_VALUE = "Release date";
-    private static readonly SORT_BY_ANNOUNCEMENT_DATE_OPTION_VALUE = "Announcement date";
+            static readonly SORT_BY_ANNOUNCEMENT_DATE_OPTION_VALUE = "Announcement date";
     private static readonly SORT_BY_PARAM_NAME = "sort";
     private static readonly SORT_BY_RELEASE_DATE_PARAM_VALUE = "release_date";
     private static readonly SORT_BY_ANNOUNCEMENT_PARAM_VALUE = "announcement_date";

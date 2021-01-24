@@ -6,18 +6,21 @@ import {LoadingIndicatorService} from "./loading-indicator-service";
 import {Pagination} from "../model/pagination.model";
 import {Release} from "../model/release.model";
 import {DateFormat, DateService} from "./date-service";
+import {ReleasesService} from "./releases-service";
 
 export class ReleasesRenderService extends AbstractRenderService<ReleasesResponse> {
 
     private readonly dateService: DateService;
     private readonly paginationComponent: PaginationComponent;
     private readonly releaseTemplateElement: HTMLTemplateElement;
+    private readonly sortPropertySelector!: HTMLSelectElement;
 
     constructor(dateService: DateService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
         super(alertService, loadingIndicatorService);
         this.dateService = dateService;
         this.paginationComponent = new PaginationComponent();
         this.releaseTemplateElement = document.getElementById("detailed-release-card") as HTMLTemplateElement;
+        this.sortPropertySelector = document.getElementById("sort-property-selector") as HTMLSelectElement;
     }
 
     protected getHostElementId(): string {
@@ -69,7 +72,9 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
             ? this.dateService.format(release.releaseDate, DateFormat.LONG)
             : release.estimatedReleaseDate;
 
-        announcementDateElement.textContent = this.dateService.format(release.announcementDate, DateFormat.LONG);
+        this.sortPropertySelector.value === ReleasesService.SORT_BY_ANNOUNCEMENT_DATE_OPTION_VALUE
+            ? announcementDateElement.textContent = this.dateService.format(release.announcementDate, DateFormat.LONG)
+            : releaseDivElement.querySelector("#announcement-date-wrapper")!.remove();
 
         releaseTypeElement.textContent = release.type || "n/a";
         releaseGenreElement.textContent = release.genre || "n/a";
