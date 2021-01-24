@@ -20,7 +20,7 @@ buildscript {
     junitVersion = "5.7.0"
     lombokVersion = "1.18.16"
     materialIconsVersion = "0.3.1"
-    micrometerVersion = "1.6.2"
+    micrometerVersion = "1.6.3"
     modelmapperVersion = "2.3.9"
     postgresqlVersion = "42.2.18"
     restAssuredVersion = "4.2.0"
