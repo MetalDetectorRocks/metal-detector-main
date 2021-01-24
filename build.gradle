@@ -5,7 +5,7 @@ buildscript {
     bootstrapVersion = "4.5.3"
     cacheApiVersion = "1.1.1"
     commonsCodecVersion = "1.15"
-    datatablesVersion = "1.10.21"
+    datatablesVersion = "1.10.23"
     ehcacheVersion = "3.9.0"
     flywayVersion = "6.4.4"
     h2Version = "1.4.200"
