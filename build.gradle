@@ -11,7 +11,7 @@ buildscript {
     h2Version = "1.4.200"
     hibernateValidatorVersion = "6.1.6.Final"
     httpClientVersion = "4.5.13"
-    mockitoVersion = "3.6.28"
+    mockitoVersion = "3.7.7"
     jacksonVersion = "2.12.1"
     jacocoVersion = "0.8.6"
     jaxbApiVersion = "2.3.1"
