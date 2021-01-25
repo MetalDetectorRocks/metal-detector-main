@@ -11,8 +11,46 @@
         <div class="row">
             <div th:replace="frontend/fragments/settings-menu :: settings-menu"></div>
             <div class="col-8">
-                <h2 class="h5 mt-3">Notification Settings</h2>
+                <h2 class="h5 mt-3">Regular email notifications</h2>
                 <hr class="border-secondary"/>
+                <fieldset class="mb-3">
+                    <p>
+                        You can get email notifications about recent or upcoming releases at a frequency of 2 or 4 weeks.
+                        These emails are always sent on Sunday.
+                    </p>
+                    <div class="form-group">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="notification-switch">
+                            <label class="custom-control-label" for="notification-switch">Regular notifications</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="2-weekly-rb" class="custom-control-input" checked="" disabled>
+                            <label class="custom-control-label" for="2-weekly-rb">2-weekly</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="4-weekly-rb" class="custom-control-input" disabled>
+                            <label class="custom-control-label" for="4-weekly-rb">4-weekly</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <h2 class="h5 mt-3">Extra email notifications</h2>
+                <hr class="border-secondary"/>
+                <fieldset>
+                    <p>It is also possible to be notified on the day of the release or the day a new release is announced.</p>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="release-date-notification-cb">
+                            <label class="custom-control-label" for="release-date-notification-cb">Notification on release date</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="announcement-date-notification-cb">
+                            <label class="custom-control-label" for="announcement-date-notification-cb">Notification on announcement date</label>
+                        </div>
+                    </div>
+                </fieldset>
             </div>
         </div>
     </section>
