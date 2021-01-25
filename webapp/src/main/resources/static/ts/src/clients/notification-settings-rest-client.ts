@@ -16,4 +16,17 @@ export class NotificationSettingsRestClient {
             throw error;
         });
     }
+
+    public async updateNotificationSettings(request: NotificationSettings): Promise<Boolean> {
+        return await axios.put(
+            this.NOTIFICATION_SETTINGS_URL,
+            request,
+            axiosConfig
+        ).then((response: AxiosResponse) => {
+            return response.status === 200;
+        }).catch((error: AxiosError) => {
+            console.error(error);
+            throw error;
+        });
+    }
 }

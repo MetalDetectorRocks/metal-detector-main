@@ -2,8 +2,11 @@ import {AbstractRenderService} from "./abstract-render-service";
 import {AlertService} from "./alert-service";
 import {LoadingIndicatorService} from "./loading-indicator-service";
 import {NotificationSettings} from "../model/notification-settings.model";
+import {NotificationSettingsRestClient} from "../clients/notification-settings-rest-client";
 
 export class NotificationSettingsRenderService extends AbstractRenderService<NotificationSettings> {
+
+    private readonly notificationSettingsRestClient: NotificationSettingsRestClient;
 
     private regularNotificationToggle!: HTMLInputElement;
     private twoWeeklyFrequencyRb!: HTMLInputElement;
@@ -11,8 +14,11 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
     private releaseDateNotificationCb!: HTMLInputElement;
     private announcementDateNotificationCb!: HTMLInputElement;
 
-    constructor(alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
+    constructor(notificationSettingsRestClient: NotificationSettingsRestClient,
+                alertService: AlertService,
+                loadingIndicatorService: LoadingIndicatorService) {
         super(alertService, loadingIndicatorService);
+        this.notificationSettingsRestClient = notificationSettingsRestClient;
         this.initDocumentElements();
         this.addEventListener();
     }
@@ -39,6 +45,8 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
 
     protected onRendering(notificationSettings: NotificationSettings): void {
         this.regularNotificationToggle.checked = notificationSettings.notify;
+        this.twoWeeklyFrequencyRb.disabled = !this.regularNotificationToggle.checked;
+        this.fourWeeklyFrequencyRb.disabled = !this.regularNotificationToggle.checked;
         this.twoWeeklyFrequencyRb.checked = notificationSettings.frequencyInWeeks === 2;
         this.fourWeeklyFrequencyRb.checked = notificationSettings.frequencyInWeeks === 4;
         this.releaseDateNotificationCb.checked = notificationSettings.notificationAtReleaseDate;
@@ -56,14 +64,14 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
     }
 
     private persistCurrentSettings(): void {
-        const notificationSettings: NotificationSettings = {
+        this.notificationSettingsRestClient.updateNotificationSettings({
             notify: this.regularNotificationToggle.checked,
             frequencyInWeeks: this.twoWeeklyFrequencyRb.checked ? 2 : 4,
             notificationAtReleaseDate: this.releaseDateNotificationCb.checked,
             notificationAtAnnouncementDate: this.announcementDateNotificationCb.checked
-        }
-
-        console.log(notificationSettings);
-        // ToDo DanielW: Send to Backend
+        }).then(response => {
+            // ToDo DanielW: Handle error
+            console.log(response);
+        });
     }
 }
