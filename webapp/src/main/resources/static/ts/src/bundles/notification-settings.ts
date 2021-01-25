@@ -6,7 +6,7 @@ import {NotificationSettingsRestClient} from "../clients/notification-settings-r
 const alertService = new AlertService();
 const loadingIndicatorService = new LoadingIndicatorService();
 const notificationSettingsRestClient = new NotificationSettingsRestClient();
-const notificationRenderService = new NotificationSettingsRenderService(alertService, loadingIndicatorService);
+const notificationRenderService = new NotificationSettingsRenderService(notificationSettingsRestClient, alertService, loadingIndicatorService);
 
 const notificationSettings = notificationSettingsRestClient.fetchNotificationSettings();
 notificationRenderService.render(notificationSettings);
