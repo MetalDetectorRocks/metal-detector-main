@@ -14,6 +14,7 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
     constructor(alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
         super(alertService, loadingIndicatorService);
         this.initDocumentElements();
+        this.addEventListener();
     }
 
     private initDocumentElements(): void {
@@ -24,12 +25,45 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
         this.announcementDateNotificationCb = document.getElementById("announcement-date-notification-cb") as HTMLInputElement;
     }
 
+    private addEventListener(): void {
+        this.regularNotificationToggle.addEventListener("change", this.onRegularNotificationToggleValueChange.bind(this));
+        this.twoWeeklyFrequencyRb.addEventListener("change", this.onAnyValueChange.bind(this));
+        this.fourWeeklyFrequencyRb.addEventListener("change", this.onAnyValueChange.bind(this));
+        this.releaseDateNotificationCb.addEventListener("change", this.onAnyValueChange.bind(this));
+        this.announcementDateNotificationCb.addEventListener("change", this.onAnyValueChange.bind(this));
+    }
+
     protected getHostElementId(): string {
         return "notification-settings-container";
     }
 
     protected onRendering(notificationSettings: NotificationSettings): void {
-        console.log(notificationSettings);
+        this.regularNotificationToggle.checked = notificationSettings.notify;
+        this.twoWeeklyFrequencyRb.checked = notificationSettings.frequencyInWeeks === 2;
+        this.fourWeeklyFrequencyRb.checked = notificationSettings.frequencyInWeeks === 4;
+        this.releaseDateNotificationCb.checked = notificationSettings.notificationAtReleaseDate;
+        this.announcementDateNotificationCb.checked = notificationSettings.notificationAtAnnouncementDate;
+    }
 
+    private onRegularNotificationToggleValueChange(): void {
+        this.twoWeeklyFrequencyRb.disabled = !this.twoWeeklyFrequencyRb.disabled;
+        this.fourWeeklyFrequencyRb.disabled = !this.fourWeeklyFrequencyRb.disabled;
+        this.persistCurrentSettings();
+    }
+
+    private onAnyValueChange(): void {
+        this.persistCurrentSettings();
+    }
+
+    private persistCurrentSettings(): void {
+        const notificationSettings: NotificationSettings = {
+            notify: this.regularNotificationToggle.checked,
+            frequencyInWeeks: this.twoWeeklyFrequencyRb.checked ? 2 : 4,
+            notificationAtReleaseDate: this.releaseDateNotificationCb.checked,
+            notificationAtAnnouncementDate: this.announcementDateNotificationCb.checked
+        }
+
+        console.log(notificationSettings);
+        // ToDo DanielW: Send to Backend
     }
 }
