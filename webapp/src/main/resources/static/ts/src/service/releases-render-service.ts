@@ -1,21 +1,24 @@
-import {AbstractRenderService} from "./abstract-render-service";
-import {ReleasesResponse} from "../model/releases-response.model";
-import {PaginationComponent} from "../components/pagination/pagination-component";
-import {AlertService} from "./alert-service";
-import {LoadingIndicatorService} from "./loading-indicator-service";
-import {Pagination} from "../model/pagination.model";
-import {Release} from "../model/release.model";
-import {DateFormat, DateService} from "./date-service";
-import {ReleasesService} from "./releases-service";
+import { AbstractRenderService } from "./abstract-render-service";
+import { ReleasesResponse } from "../model/releases-response.model";
+import { PaginationComponent } from "../components/pagination/pagination-component";
+import { AlertService } from "./alert-service";
+import { LoadingIndicatorService } from "./loading-indicator-service";
+import { Pagination } from "../model/pagination.model";
+import { Release } from "../model/release.model";
+import { DateFormat, DateService } from "./date-service";
+import { ReleasesService } from "./releases-service";
 
 export class ReleasesRenderService extends AbstractRenderService<ReleasesResponse> {
-
     private readonly dateService: DateService;
     private readonly paginationComponent: PaginationComponent;
     private readonly releaseTemplateElement: HTMLTemplateElement;
     private readonly sortPropertySelector!: HTMLSelectElement;
 
-    constructor(dateService: DateService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
+    constructor(
+        dateService: DateService,
+        alertService: AlertService,
+        loadingIndicatorService: LoadingIndicatorService,
+    ) {
         super(alertService, loadingIndicatorService);
         this.dateService = dateService;
         this.paginationComponent = new PaginationComponent();
@@ -30,9 +33,8 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
     protected onRendering(data: ReleasesResponse): void {
         if (data.items.length === 0) {
             this.showNoReleasesFoundInfoMessage();
-        }
-        else {
-            data.items.forEach(release => {
+        } else {
+            data.items.forEach((release) => {
                 const releaseDivElement = this.renderReleaseCard(release);
                 this.hostElement.insertAdjacentElement("beforeend", releaseDivElement);
             });
@@ -65,16 +67,17 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
         releaseTitleElement.textContent = `${release.artist} - ${release.albumTitle}`;
 
         release.additionalArtists === null || release.additionalArtists.length === 0
-            ? releaseTemplateNode.getElementById("additional-artists-wrapper")!.remove()
-            : additionalArtistsElement.textContent = release.additionalArtists.join(", ");
+            ? releaseTemplateNode.getElementById("additional-artists-wrapper")?.remove()
+            : (additionalArtistsElement.textContent = release.additionalArtists.join(", "));
 
-        releaseDateElement.textContent = release.releaseDate?.length > 0
-            ? this.dateService.format(release.releaseDate, DateFormat.LONG)
-            : release.estimatedReleaseDate;
+        releaseDateElement.textContent =
+            release.releaseDate?.length > 0
+                ? this.dateService.format(release.releaseDate, DateFormat.LONG)
+                : release.estimatedReleaseDate;
 
         this.sortPropertySelector.value === ReleasesService.SORT_BY_ANNOUNCEMENT_DATE_OPTION_VALUE
-            ? announcementDateElement.textContent = this.dateService.format(release.announcementDate, DateFormat.LONG)
-            : releaseDivElement.querySelector("#announcement-date-wrapper")!.remove();
+            ? (announcementDateElement.textContent = this.dateService.format(release.announcementDate, DateFormat.LONG))
+            : releaseDivElement.querySelector("#announcement-date-wrapper")?.remove();
 
         releaseTypeElement.textContent = release.type || "n/a";
         releaseGenreElement.textContent = release.genre || "n/a";
