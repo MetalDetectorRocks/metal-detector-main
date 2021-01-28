@@ -11,8 +11,8 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
     private regularNotificationToggle!: HTMLInputElement;
     private twoWeeklyFrequencyRb!: HTMLInputElement;
     private fourWeeklyFrequencyRb!: HTMLInputElement;
-    private releaseDateNotificationCb!: HTMLInputElement;
-    private announcementDateNotificationCb!: HTMLInputElement;
+    private releaseDateNotificationToggle!: HTMLInputElement;
+    private announcementDateNotificationToggle!: HTMLInputElement;
 
     constructor(notificationSettingsRestClient: NotificationSettingsRestClient,
                 alertService: AlertService,
@@ -27,16 +27,16 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
         this.regularNotificationToggle = document.getElementById("notification-toggle") as HTMLInputElement;
         this.twoWeeklyFrequencyRb = document.getElementById("2-weekly-rb") as HTMLInputElement;
         this.fourWeeklyFrequencyRb = document.getElementById("4-weekly-rb") as HTMLInputElement;
-        this.releaseDateNotificationCb = document.getElementById("release-date-notification-cb") as HTMLInputElement;
-        this.announcementDateNotificationCb = document.getElementById("announcement-date-notification-cb") as HTMLInputElement;
+        this.releaseDateNotificationToggle = document.getElementById("release-date-notification-toggle") as HTMLInputElement;
+        this.announcementDateNotificationToggle = document.getElementById("announcement-date-notification-toggle") as HTMLInputElement;
     }
 
     private addEventListener(): void {
         this.regularNotificationToggle.addEventListener("change", this.onRegularNotificationToggleValueChange.bind(this));
         this.twoWeeklyFrequencyRb.addEventListener("change", this.onAnyValueChange.bind(this));
         this.fourWeeklyFrequencyRb.addEventListener("change", this.onAnyValueChange.bind(this));
-        this.releaseDateNotificationCb.addEventListener("change", this.onAnyValueChange.bind(this));
-        this.announcementDateNotificationCb.addEventListener("change", this.onAnyValueChange.bind(this));
+        this.releaseDateNotificationToggle.addEventListener("change", this.onAnyValueChange.bind(this));
+        this.announcementDateNotificationToggle.addEventListener("change", this.onAnyValueChange.bind(this));
     }
 
     protected getHostElementId(): string {
@@ -49,8 +49,8 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
         this.fourWeeklyFrequencyRb.disabled = !this.regularNotificationToggle.checked;
         this.twoWeeklyFrequencyRb.checked = notificationSettings.frequencyInWeeks === 2;
         this.fourWeeklyFrequencyRb.checked = notificationSettings.frequencyInWeeks === 4;
-        this.releaseDateNotificationCb.checked = notificationSettings.notificationAtReleaseDate;
-        this.announcementDateNotificationCb.checked = notificationSettings.notificationAtAnnouncementDate;
+        this.releaseDateNotificationToggle.checked = notificationSettings.notificationAtReleaseDate;
+        this.announcementDateNotificationToggle.checked = notificationSettings.notificationAtAnnouncementDate;
     }
 
     private onRegularNotificationToggleValueChange(): void {
@@ -67,8 +67,8 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
         this.notificationSettingsRestClient.updateNotificationSettings({
             notify: this.regularNotificationToggle.checked,
             frequencyInWeeks: this.twoWeeklyFrequencyRb.checked ? 2 : 4,
-            notificationAtReleaseDate: this.releaseDateNotificationCb.checked,
-            notificationAtAnnouncementDate: this.announcementDateNotificationCb.checked
+            notificationAtReleaseDate: this.releaseDateNotificationToggle.checked,
+            notificationAtAnnouncementDate: this.announcementDateNotificationToggle.checked
         }).then(response => {
             // ToDo DanielW: Handle error
             console.log(response);
