@@ -6,8 +6,6 @@ export class AccountDetailsRenderService {
     private readonly toastService: ToastService;
     private readonly accountDetailsRestClient: AccountDetailsRestClient;
 
-
-
     constructor(toastService: ToastService, accountDetailsRestClient: AccountDetailsRestClient) {
         this.toastService = toastService;
         this.accountDetailsRestClient = accountDetailsRestClient;
