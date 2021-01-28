@@ -3,6 +3,7 @@ import {AlertService} from "./alert-service";
 import {LoadingIndicatorService} from "./loading-indicator-service";
 import {NotificationSettings} from "../model/notification-settings.model";
 import {NotificationSettingsRestClient} from "../clients/notification-settings-rest-client";
+import {UNKNOWN_ERROR_MESSAGE} from "../config/messages.config";
 
 export class NotificationSettingsRenderService extends AbstractRenderService<NotificationSettings> {
 
@@ -69,9 +70,11 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
             frequencyInWeeks: this.twoWeeklyFrequencyRb.checked ? 2 : 4,
             notificationAtReleaseDate: this.releaseDateNotificationToggle.checked,
             notificationAtAnnouncementDate: this.announcementDateNotificationToggle.checked
-        }).then(response => {
-            // ToDo DanielW: Handle error
-            console.log(response);
+        }).catch(response => {
+            const message = `<h3 class="h5">${UNKNOWN_ERROR_MESSAGE}</h3>Your changes may not have been saved. Please try again later.`;
+            const infoMessage = this.alertService.renderErrorAlert(message, false);
+            this.hostElement.insertAdjacentElement("afterbegin", infoMessage);
+            console.error(response);
         });
     }
 }
