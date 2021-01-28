@@ -330,7 +330,7 @@ class NotificationServiceImplTest implements WithAssertions {
     @BeforeEach
     void setup() {
       userEntity = UserEntityFactory.createUser("user", "user@user.de");
-      notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).notify(true).notificationAtReleaseDate(true).build();
+      notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).notificationAtReleaseDate(true).build();
       doReturn(List.of(notificationConfigEntity)).when(notificationConfigRepository).findAll();
     }
 
@@ -518,7 +518,7 @@ class NotificationServiceImplTest implements WithAssertions {
     @BeforeEach
     void setup() {
       userEntity = UserEntityFactory.createUser("user", "user@user.de");
-      notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).notify(true).notificationAtAnnouncementDate(true).build();
+      notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).notificationAtAnnouncementDate(true).build();
       doReturn(List.of(notificationConfigEntity)).when(notificationConfigRepository).findAll();
     }
 
