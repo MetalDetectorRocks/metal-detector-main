@@ -1,12 +1,12 @@
-import {FollowArtistService} from "./follow-artist-service";
-import {LoadingIndicatorService} from "./loading-indicator-service";
-import {PaginationComponent} from "../components/pagination/pagination-component";
-import {AlertService} from "./alert-service";
-import {AbstractRenderService} from "./abstract-render-service";
-import {SearchResponse} from "../model/search-response.model";
-import {Pagination} from "../model/pagination.model";
-import {SearchResponseEntry} from "../model/search-response-entry.model";
-import {FollowState} from "../model/follow-state.model";
+import { FollowArtistService } from "./follow-artist-service";
+import { LoadingIndicatorService } from "./loading-indicator-service";
+import { PaginationComponent } from "../components/pagination/pagination-component";
+import { AlertService } from "./alert-service";
+import { AbstractRenderService } from "./abstract-render-service";
+import { SearchResponse } from "../model/search-response.model";
+import { Pagination } from "../model/pagination.model";
+import { SearchResponseEntry } from "../model/search-response-entry.model";
+import { FollowState } from "../model/follow-state.model";
 
 interface SearchCardSelectorNames {
     readonly nameSelector: string;
@@ -15,7 +15,6 @@ interface SearchCardSelectorNames {
 }
 
 export class SearchRenderService extends AbstractRenderService<SearchResponse> {
-
     private static readonly MAX_NAME_LENGTH = 50;
 
     private readonly followArtistService: FollowArtistService;
@@ -23,7 +22,11 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     private readonly topSearchResultTemplateElement: HTMLTemplateElement;
     private readonly searchResultTemplateElement: HTMLTemplateElement;
 
-    constructor(followArtistService: FollowArtistService, alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
+    constructor(
+        followArtistService: FollowArtistService,
+        alertService: AlertService,
+        loadingIndicatorService: LoadingIndicatorService,
+    ) {
         super(alertService, loadingIndicatorService);
         this.followArtistService = followArtistService;
         this.paginationComponent = new PaginationComponent();
@@ -43,11 +46,9 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
 
         if (currentPage == 1 && itemsOnThisPage === 0) {
             this.showNoResultsFoundInfoMessage(query);
-        }
-        else if (itemsOnThisPage === 0) {
+        } else if (itemsOnThisPage === 0) {
             this.showSpotifyBugInfoMessage();
-        }
-        else {
+        } else {
             this.createSearchResultCards(searchResponse, query, currentPage, itemsOnThisPage);
         }
 
@@ -63,14 +64,21 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     }
 
     private showSpotifyBugInfoMessage() {
-        const spotifyBugTicket = "https://community.spotify.com/t5/Spotify-for-Developers/Search-API-returns-wrong-total-amount-of-results/td-p/5006005";
-        const message = '<h3 class="h5">Arghhh! There are no results on this page.</h3>This is due to a bug in the Spotify REST API. ' +
+        const spotifyBugTicket =
+            "https://community.spotify.com/t5/Spotify-for-Developers/Search-API-returns-wrong-total-amount-of-results/td-p/5006005";
+        const message =
+            '<h3 class="h5">Arghhh! There are no results on this page.</h3>This is due to a bug in the Spotify REST API. ' +
             `They will burn in hell for this.<br /><a href="${spotifyBugTicket}" target="_blank">Please support our bug report.</a>`;
         const infoMessage = this.alertService.renderInfoAlert(message, false);
         this.hostElement.insertAdjacentElement("afterbegin", infoMessage);
     }
 
-    private createSearchResultCards(searchResponse: SearchResponse, query: string, currentPage: number, itemsOnThisPage: number): void {
+    private createSearchResultCards(
+        searchResponse: SearchResponse,
+        query: string,
+        currentPage: number,
+        itemsOnThisPage: number,
+    ): void {
         const headline = document.createElement("h1");
         headline.classList.add("h4", "mb-4");
         headline.innerText = this.createHeadlineText(query, searchResponse);
@@ -81,7 +89,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
             this.hostElement.insertAdjacentElement("beforeend", topSearchResult);
         }
 
-        if (currentPage === 1 && itemsOnThisPage > 1 || currentPage > 1) {
+        if ((currentPage === 1 && itemsOnThisPage > 1) || currentPage > 1) {
             const otherHeadline = document.createElement("h2");
             otherHeadline.classList.add("h5", "custom-border-bottom", "pb-1");
             otherHeadline.textContent = "Other";
@@ -100,8 +108,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
             const amount = searchResponse.searchResults.length;
             const resultWord = searchResponse.searchResults.length === 1 ? "result" : "results";
             return `${amount} ${resultWord} for "${query}"`;
-        }
-        else {
+        } else {
             const estimatedAmountOfResults = (totalPages - 1) * itemsPerPage;
             return `More than ${estimatedAmountOfResults} results for "${query}"`;
         }
@@ -112,7 +119,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         const topSearchResultDivElement = this.renderSearchResult(entry, node, {
             nameSelector: "#top-name",
             thumbSelector: "#top-thumb",
-            followIconSelector: "#top-follow-icon"
+            followIconSelector: "#top-follow-icon",
         });
 
         const followInfoElement = topSearchResultDivElement.querySelector("#follow-info") as HTMLParagraphElement;
@@ -126,11 +133,9 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
 
         if (metalDetectorFollower === 0) {
             followerAmountStatement = "Not followed by any users";
-        }
-        else if (metalDetectorFollower === 1) {
+        } else if (metalDetectorFollower === 1) {
             followerAmountStatement = "Followed by 1 user";
-        }
-        else if (metalDetectorFollower > 1) {
+        } else if (metalDetectorFollower > 1) {
             followerAmountStatement = `Followed by ${metalDetectorFollower} users`;
         }
 
@@ -144,10 +149,10 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
 
         let counter = 0;
         searchResults.forEach((entry, index) => {
-            if (index === 0 && currentPage === 1) { // this is the top result
+            if (index === 0 && currentPage === 1) {
+                // this is the top result
                 return;
-            }
-            else if (counter === 3) {
+            } else if (counter === 3) {
                 searchResultWrapper.insertAdjacentElement("beforeend", rowWrapper);
                 rowWrapper = document.createElement("div");
                 rowWrapper.classList.add("row", "mb-4");
@@ -167,25 +172,30 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         return this.renderSearchResult(entry, node, {
             nameSelector: "#other-name",
             thumbSelector: "#other-thumb",
-            followIconSelector: "#other-follow-icon"
+            followIconSelector: "#other-follow-icon",
         });
     }
 
-    private renderSearchResult(entry: SearchResponseEntry, node: DocumentFragment, selectorNames: SearchCardSelectorNames): HTMLDivElement {
+    private renderSearchResult(
+        entry: SearchResponseEntry,
+        node: DocumentFragment,
+        selectorNames: SearchCardSelectorNames,
+    ): HTMLDivElement {
         const searchResultDivElement = node.firstElementChild as HTMLDivElement;
         const nameElement = searchResultDivElement.querySelector(selectorNames.nameSelector) as HTMLParagraphElement;
         const thumbElement = searchResultDivElement.querySelector(selectorNames.thumbSelector) as HTMLImageElement;
-        const followIconDivElement = searchResultDivElement.querySelector(selectorNames.followIconSelector) as HTMLDivElement;
+        const followIconDivElement = searchResultDivElement.querySelector(
+            selectorNames.followIconSelector,
+        ) as HTMLDivElement;
         const followIconElement = followIconDivElement.getElementsByTagName("img").item(0)!;
 
         thumbElement.src = this.determineArtistImageUrl(entry.imageUrl);
         thumbElement.alt = entry.name;
         nameElement.textContent = this.shorten(entry.name);
-        followIconDivElement.addEventListener(
-            "click",
-            this.handleFollowIconClick.bind(this, followIconElement, entry)
-        );
-        followIconElement.src = entry.followed ? FollowState.FOLLOWING.toString() : FollowState.NOT_FOLLOWING.toString();
+        followIconDivElement.addEventListener("click", this.handleFollowIconClick.bind(this, followIconElement, entry));
+        followIconElement.src = entry.followed
+            ? FollowState.FOLLOWING.toString()
+            : FollowState.NOT_FOLLOWING.toString();
 
         return searchResultDivElement;
     }
@@ -194,8 +204,8 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         this.followArtistService.handleFollowIconClick(followIconElement, {
             externalId: entry.id,
             artistName: entry.name,
-            source: entry.source
-        })
+            source: entry.source,
+        });
     }
 
     private attachPagination(paginationData: Pagination) {
@@ -207,11 +217,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         return imageUrl.trim() ? imageUrl : "/images/unknown-img.jpg";
     }
 
-    private getQueryFromUrl(): string {
-        return new URL(window.location.href).searchParams.get("query") || ""
-    }
-
-    private shorten(value: string) : string {
+    private shorten(value: string): string {
         if (value.length > SearchRenderService.MAX_NAME_LENGTH) {
             return value.trim().substring(0, SearchRenderService.MAX_NAME_LENGTH).trimRight().concat("...");
         }

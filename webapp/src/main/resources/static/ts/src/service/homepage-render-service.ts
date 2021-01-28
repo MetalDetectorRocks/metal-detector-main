@@ -1,10 +1,10 @@
-import {LoadingIndicatorService} from "./loading-indicator-service";
-import {AlertService} from "./alert-service";
-import {HomepageResponse} from "../model/homepage-response.model";
-import {AbstractRenderService} from "./abstract-render-service";
-import {Artist} from "../model/artist.model";
-import {Release} from "../model/release.model";
-import {DateFormat, DateService} from "./date-service";
+import { LoadingIndicatorService } from "./loading-indicator-service";
+import { AlertService } from "./alert-service";
+import { HomepageResponse } from "../model/homepage-response.model";
+import { AbstractRenderService } from "./abstract-render-service";
+import { Artist } from "../model/artist.model";
+import { Release } from "../model/release.model";
+import { DateFormat, DateService } from "./date-service";
 
 interface HomepageCard {
     readonly divElement: HTMLDivElement;
@@ -15,14 +15,17 @@ interface HomepageCard {
 }
 
 export class HomepageRenderService extends AbstractRenderService<HomepageResponse> {
-
     private readonly dateService: DateService;
     private readonly artistTemplateElement: HTMLTemplateElement;
     private readonly releaseTemplateElement: HTMLTemplateElement;
     private readonly MAX_CARDS_PER_ROW: number = 4;
     private readonly MIN_CARDS_PER_ROW: number = this.MAX_CARDS_PER_ROW - 1;
 
-    constructor(alertService: AlertService, loadingIndicatorService: LoadingIndicatorService, dateService: DateService) {
+    constructor(
+        alertService: AlertService,
+        loadingIndicatorService: LoadingIndicatorService,
+        dateService: DateService,
+    ) {
         super(alertService, loadingIndicatorService);
         this.dateService = dateService;
         this.artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
@@ -34,12 +37,13 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     }
 
     protected onRendering(response: HomepageResponse): void {
-        if (response.upcomingReleases.length >= this.MIN_CARDS_PER_ROW &&
-            response.recentReleases.length >= this.MIN_CARDS_PER_ROW) {
+        if (
+            response.upcomingReleases.length >= this.MIN_CARDS_PER_ROW &&
+            response.recentReleases.length >= this.MIN_CARDS_PER_ROW
+        ) {
             this.renderUpcomingReleasesRow(response);
             this.renderRecentReleasesRow(response);
-        }
-        else {
+        } else {
             this.renderReleaseRow(response);
         }
 
@@ -48,23 +52,24 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     }
 
     private renderUpcomingReleasesRow(response: HomepageResponse) {
-        this.insertHeadingElement("Upcoming releases")
+        this.insertHeadingElement("Upcoming releases");
         const upcomingReleasesRowElement = this.insertRowElement();
         this.renderReleaseCards(response.upcomingReleases, upcomingReleasesRowElement);
         this.insertPlaceholder(response.upcomingReleases.length, upcomingReleasesRowElement);
     }
 
     private renderRecentReleasesRow(response: HomepageResponse): void {
-        this.insertHeadingElement("Recent releases")
+        this.insertHeadingElement("Recent releases");
         const recentReleasesRowElement = this.insertRowElement();
         this.renderReleaseCards(response.recentReleases, recentReleasesRowElement);
         this.insertPlaceholder(response.recentReleases.length, recentReleasesRowElement);
     }
 
     private renderReleaseRow(response: HomepageResponse): void {
-        const recentReleases = response.recentReleases.sort((r1, r2) => this.dateService.compare(r1.releaseDate, r2.releaseDate));
-        const releases = recentReleases.concat(response.upcomingReleases)
-          .splice(0, this.MAX_CARDS_PER_ROW);
+        const recentReleases = response.recentReleases.sort((r1, r2) =>
+            this.dateService.compare(r1.releaseDate, r2.releaseDate),
+        );
+        const releases = recentReleases.concat(response.upcomingReleases).splice(0, this.MAX_CARDS_PER_ROW);
 
         if (releases.length) {
             this.insertHeadingElement("Releases");
@@ -76,15 +81,18 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
     private renderRecentlyFollowedArtistsRow(response: HomepageResponse): void {
         if (response.recentlyFollowedArtists.length) {
-            this.insertHeadingElement("Recently followed artists")
+            this.insertHeadingElement("Recently followed artists");
             const recentlyFollowedRowElement = this.insertRowElement();
 
-            response.recentlyFollowedArtists.forEach(artist => {
+            response.recentlyFollowedArtists.forEach((artist) => {
                 const artistDivElement = this.renderArtistCard(artist);
                 const followedSinceElement = artistDivElement.querySelector("#artist-sub-title") as HTMLDivElement;
                 followedSinceElement.innerHTML = `
                     <div class="custom-tooltip">${this.dateService.formatRelative(artist.followedSince)}
-                        <span class="tooltip-text">${this.dateService.format(artist.followedSince, DateFormat.LONG)}</span>
+                        <span class="tooltip-text">${this.dateService.format(
+                            artist.followedSince,
+                            DateFormat.LONG,
+                        )}</span>
                     </div>
                 `;
                 this.attachCard(artistDivElement, recentlyFollowedRowElement);
@@ -94,10 +102,10 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
     private renderFavoriteCommunityArtistsRow(response: HomepageResponse): void {
         if (response.favoriteCommunityArtists.length) {
-            this.insertHeadingElement("The community's favorite artists")
+            this.insertHeadingElement("The community's favorite artists");
             const recentlyFollowedRowElement = this.insertRowElement();
 
-            response.favoriteCommunityArtists.forEach(artist => {
+            response.favoriteCommunityArtists.forEach((artist) => {
                 const artistDivElement = this.renderArtistCard(artist);
                 const followerElement = artistDivElement.querySelector("#artist-sub-title") as HTMLDivElement;
                 followerElement.innerHTML = artist.follower + " follower";
@@ -119,7 +127,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     }
 
     private renderReleaseCards(releases: Release[], rowElement: HTMLDivElement): void {
-        releases.forEach(release => {
+        releases.forEach((release) => {
             const releaseDivElement = this.renderReleaseCard(release);
             this.attachCard(releaseDivElement, rowElement);
         });
@@ -142,7 +150,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     private renderPlaceholderCard(): HTMLDivElement {
         const homepageCard = this.getHomepageCard();
         homepageCard.coverElement.src = "/images/question-mark.jpg";
-        homepageCard.nameElement.textContent = "Nothing here..."
+        homepageCard.nameElement.textContent = "Nothing here...";
         homepageCard.subtitleElement.textContent = "Want to see more?";
         homepageCard.footerElement.innerHTML = "Follow more artists!";
 
@@ -157,7 +165,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
             coverElement: divElement.querySelector("#release-cover") as HTMLImageElement,
             nameElement: divElement.querySelector("#release-artist-name") as HTMLParagraphElement,
             subtitleElement: divElement.querySelector("#release-title") as HTMLParagraphElement,
-            footerElement: divElement.querySelector("#release-date") as HTMLDivElement
+            footerElement: divElement.querySelector("#release-date") as HTMLDivElement,
         };
     }
 
