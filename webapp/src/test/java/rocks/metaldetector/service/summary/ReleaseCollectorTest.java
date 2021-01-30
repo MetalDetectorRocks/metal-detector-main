@@ -55,13 +55,13 @@ class ReleaseCollectorTest implements WithAssertions {
     // given
     var expectedArtistNames = List.of("A");
     var artists = List.of(ArtistDtoFactory.withName("A"));
-    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
     underTest.collectUpcomingReleases(artists);
 
     // then
-    verify(releaseService).findReleases(eq(expectedArtistNames), any(), any());
+    verify(releaseService).findReleases(eq(expectedArtistNames), any(), any(), any());
   }
 
   @Test
@@ -71,13 +71,27 @@ class ReleaseCollectorTest implements WithAssertions {
     var tomorrow = LocalDate.now().plusDays(1);
     var expectedTimeRange = new TimeRange(tomorrow, tomorrow.plusMonths(TIME_RANGE_MONTHS));
     var artists = List.of(ArtistDtoFactory.withName("A"));
-    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
     underTest.collectUpcomingReleases(artists);
 
     // then
-    verify(releaseService).findReleases(any(), eq(expectedTimeRange), any());
+    verify(releaseService).findReleases(any(), eq(expectedTimeRange), any(), any());
+  }
+
+  @Test
+  @DisplayName("collecting upcoming releases calls releaseService without query")
+  void test_upcoming_releases_calls_release_service_without_query() {
+    // given
+    var artists = List.of(ArtistDtoFactory.withName("A"));
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
+
+    // when
+    underTest.collectUpcomingReleases(artists);
+
+    // then
+    verify(releaseService).findReleases(any(), any(), eq(null), any());
   }
 
   @Test
@@ -87,13 +101,13 @@ class ReleaseCollectorTest implements WithAssertions {
     var sorting = new DetectorSort("releaseDate", ASC);
     var expectedPageRequest = new PageRequest(1, RESULT_LIMIT, sorting);
     var artists = List.of(ArtistDtoFactory.withName("A"));
-    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
     underTest.collectUpcomingReleases(artists);
 
     // then
-    verify(releaseService).findReleases(any(), any(), eq(expectedPageRequest));
+    verify(releaseService).findReleases(any(), any(), any(), eq(expectedPageRequest));
   }
 
   @Test
@@ -102,7 +116,7 @@ class ReleaseCollectorTest implements WithAssertions {
     // given
     var artists = List.of(ArtistDtoFactory.withName("A"));
     var releases = List.of(ReleaseDtoFactory.createDefault(), ReleaseDtoFactory.createDefault());
-    doReturn(new Page<>(releases, new Pagination())).when(releaseService).findReleases(any(), any(), any());
+    doReturn(new Page<>(releases, new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
     var result = underTest.collectUpcomingReleases(artists);
@@ -127,13 +141,13 @@ class ReleaseCollectorTest implements WithAssertions {
     // given
     var expectedArtistNames = List.of("A");
     var artists = List.of(ArtistDtoFactory.withName("A"));
-    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
     underTest.collectRecentReleases(artists);
 
     // then
-    verify(releaseService).findReleases(eq(expectedArtistNames), any(), any());
+    verify(releaseService).findReleases(eq(expectedArtistNames), any(), any(), any());
   }
 
   @Test
@@ -143,13 +157,27 @@ class ReleaseCollectorTest implements WithAssertions {
     var now = LocalDate.now();
     var expectedTimeRange = new TimeRange(now.minusMonths(TIME_RANGE_MONTHS), now);
     var artists = List.of(ArtistDtoFactory.withName("A"));
-    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
     underTest.collectRecentReleases(artists);
 
     // then
-    verify(releaseService).findReleases(any(), eq(expectedTimeRange), any());
+    verify(releaseService).findReleases(any(), eq(expectedTimeRange), any(), any());
+  }
+
+  @Test
+  @DisplayName("collecting recent releases calls releaseService without query")
+  void test_recent_releases_calls_release_service_without_query() {
+    // given
+    var artists = List.of(ArtistDtoFactory.withName("A"));
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
+
+    // when
+    underTest.collectRecentReleases(artists);
+
+    // then
+    verify(releaseService).findReleases(any(), any(), eq(null), any());
   }
 
   @Test
@@ -159,12 +187,12 @@ class ReleaseCollectorTest implements WithAssertions {
     var expectedSorting = new DetectorSort("releaseDate", DESC);
     var expectedPageRequest = new PageRequest(1, RESULT_LIMIT, expectedSorting);
     var artists = List.of(ArtistDtoFactory.withName("A"));
-    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any());
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
     underTest.collectRecentReleases(artists);
 
     // then
-    verify(releaseService).findReleases(any(), any(), eq(expectedPageRequest));
+    verify(releaseService).findReleases(any(), any(), any(), eq(expectedPageRequest));
   }
 }

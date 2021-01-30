@@ -47,7 +47,7 @@ public class ReleaseCollector {
 
     List<String> artistNames = artists.stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
     PageRequest pageRequest = new PageRequest(1, RESULT_LIMIT, sort);
-    Page<ReleaseDto> releasePage = releaseService.findReleases(artistNames, timeRange, pageRequest);
+    Page<ReleaseDto> releasePage = releaseService.findReleases(artistNames, timeRange, null, pageRequest);
     return releasePage.getItems();
   }
 }

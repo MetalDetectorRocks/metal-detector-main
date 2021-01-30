@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ReleaseService {
 
-  Page<ReleaseDto> findReleases(Iterable<String> artists, TimeRange timeRange, PageRequest pageRequest);
+  Page<ReleaseDto> findReleases(Iterable<String> artists, TimeRange timeRange, String query, PageRequest pageRequest);
 
   List<ReleaseDto> findAllReleases(Iterable<String> artists, TimeRange timeRange);
 

@@ -31,14 +31,14 @@ public class ReleaseServiceImpl implements ReleaseService {
 
   @Override
   public List<ReleaseDto> findAllReleases(Iterable<String> artists, TimeRange timeRange) {
-    ButlerReleasesRequest request = queryRequestTransformer.transform(artists, timeRange, null);
+    ButlerReleasesRequest request = queryRequestTransformer.transform(artists, timeRange, null, null);
     ButlerReleasesResponse response = butlerClient.queryAllReleases(request);
     return queryResponseTransformer.transformToList(response);
   }
 
   @Override
-  public Page<ReleaseDto> findReleases(Iterable<String> artists, TimeRange timeRange, PageRequest pageRequest) {
-    ButlerReleasesRequest request = queryRequestTransformer.transform(artists, timeRange, pageRequest);
+  public Page<ReleaseDto> findReleases(Iterable<String> artists, TimeRange timeRange, String query, PageRequest pageRequest) {
+    ButlerReleasesRequest request = queryRequestTransformer.transform(artists, timeRange, query, pageRequest);
     String sortString = sortTransformer.transform(pageRequest.getSort());
     ButlerReleasesResponse response = butlerClient.queryReleases(request, sortString);
     return queryResponseTransformer.transformToPage(response);

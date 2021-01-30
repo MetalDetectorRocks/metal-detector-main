@@ -18,6 +18,7 @@ import java.time.LocalDate;
     "size",
     "dateFrom",
     "dateTo",
+    "query",
     "artists"
 })
 public class ButlerReleasesRequest {
@@ -33,6 +34,9 @@ public class ButlerReleasesRequest {
 
   @JsonProperty("dateTo")
   private LocalDate dateTo;
+
+  @JsonProperty("query")
+  private String query;
 
   @JsonProperty("artists")
   private Iterable<String> artists;

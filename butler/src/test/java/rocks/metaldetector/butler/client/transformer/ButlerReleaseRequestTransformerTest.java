@@ -21,9 +21,10 @@ class ButlerReleaseRequestTransformerTest implements WithAssertions {
     Iterable<String> artists = List.of("A", "B", "C");
     TimeRange timeRange = new TimeRange(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 1));
     PageRequest pageRequest = new PageRequest(1, 10, null);
+    String query = "query";
 
     // when
-    ButlerReleasesRequest result = underTest.transform(artists, timeRange, pageRequest);
+    ButlerReleasesRequest result = underTest.transform(artists, timeRange, query, pageRequest);
 
     // then
     assertThat(result.getArtists()).isEqualTo(artists);
@@ -31,6 +32,7 @@ class ButlerReleaseRequestTransformerTest implements WithAssertions {
     assertThat(result.getDateTo()).isEqualTo(timeRange.getDateTo());
     assertThat(result.getPage()).isEqualTo(pageRequest.getPage());
     assertThat(result.getSize()).isEqualTo(pageRequest.getSize());
+    assertThat(result.getQuery()).isEqualTo(query);
   }
 
   @Test
@@ -41,7 +43,7 @@ class ButlerReleaseRequestTransformerTest implements WithAssertions {
     TimeRange timeRange = new TimeRange(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 1));
 
     // when
-    ButlerReleasesRequest result = underTest.transform(artists, timeRange, null);
+    ButlerReleasesRequest result = underTest.transform(artists, timeRange, "query", null);
 
     // then
 
