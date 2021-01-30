@@ -1,9 +1,8 @@
-import {AlertService} from "./alert-service";
-import {LoadingIndicatorService} from "./loading-indicator-service";
-import {UNKNOWN_ERROR_MESSAGE} from "../config/messages.config";
+import { AlertService } from "./alert-service";
+import { LoadingIndicatorService } from "./loading-indicator-service";
+import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
 
 export abstract class AbstractRenderService<T> {
-
     protected readonly alertService: AlertService;
     protected readonly loadingIndicatorService: LoadingIndicatorService;
     protected readonly hostElement: HTMLDivElement;
@@ -14,16 +13,18 @@ export abstract class AbstractRenderService<T> {
         this.hostElement = document.getElementById(this.getHostElementId())! as HTMLDivElement;
     }
 
-    public render(data: Promise<T>): void{
+    public render(data: Promise<T>): void {
         this.loadingIndicatorService.showLoadingIndicator(this.getHostElementId());
         data.then((response) => {
             this.onRendering(response);
-        }).catch((reason) => {
-            console.debug(reason);
-            this.onCatch();
-        }).finally(() => {
-            this.loadingIndicatorService.hideLoadingIndicator(this.getHostElementId());
-        });
+        })
+            .catch((reason) => {
+                console.debug(reason);
+                this.onCatch();
+            })
+            .finally(() => {
+                this.loadingIndicatorService.hideLoadingIndicator(this.getHostElementId());
+            });
     }
 
     protected abstract getHostElementId(): string;

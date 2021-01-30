@@ -1,13 +1,12 @@
-import axios, {AxiosError, AxiosResponse} from "axios";
-import {axiosConfig} from "../config/axios.config";
-import {MyArtistsResponse} from "../model/my-artists-response.model";
-import {SearchResponse} from "../model/search-response.model";
-import {ToastService} from "../service/toast-service";
-import {UNKNOWN_ERROR_MESSAGE} from "../config/messages.config";
-import {UrlService} from "../service/url-service";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { axiosConfig } from "../config/axios.config";
+import { MyArtistsResponse } from "../model/my-artists-response.model";
+import { SearchResponse } from "../model/search-response.model";
+import { ToastService } from "../service/toast-service";
+import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
+import { UrlService } from "../service/url-service";
 
 export class ArtistsRestClient {
-
     private readonly SEARCH_URL = "/rest/v1/artists/search";
     private readonly MY_ARTISTS_URL = "/rest/v1/my-artists";
     private readonly FOLLOW_ARTISTS_URL = "/rest/v1/artists/follow";
@@ -25,53 +24,51 @@ export class ArtistsRestClient {
         axiosConfig.params = {
             query: this.urlService.getParameterFromUrl("query"),
             page: this.urlService.getPageFromUrl(),
-            size: 40
-        }
+            size: 40,
+        };
 
-        return await axios.get(
-            this.SEARCH_URL, axiosConfig
-        ).then((response: AxiosResponse<SearchResponse>) => {
-            return response.data;
-        }).catch((error: AxiosError) => {
-            console.error(error);
-            throw error;
-        });
+        return await axios
+            .get(this.SEARCH_URL, axiosConfig)
+            .then((response: AxiosResponse<SearchResponse>) => {
+                return response.data;
+            })
+            .catch((error: AxiosError) => {
+                console.error(error);
+                throw error;
+            });
     }
 
     public async fetchMyArtists(): Promise<MyArtistsResponse> {
         axiosConfig.params = {
-            page: this.urlService.getPageFromUrl()
-        }
+            page: this.urlService.getPageFromUrl(),
+        };
 
-        return await axios.get(
-            this.MY_ARTISTS_URL, axiosConfig
-        ).then((response: AxiosResponse<MyArtistsResponse>) => {
-            return response.data;
-        }).catch((error: AxiosError) => {
-            console.error(error);
-            throw error;
-        });
+        return await axios
+            .get(this.MY_ARTISTS_URL, axiosConfig)
+            .then((response: AxiosResponse<MyArtistsResponse>) => {
+                return response.data;
+            })
+            .catch((error: AxiosError) => {
+                console.error(error);
+                throw error;
+            });
     }
 
-    public async followArtist(artistId: string, source: string): Promise<any> {
-        return await axios.post(
-            `${this.FOLLOW_ARTISTS_URL}/${source}/${artistId}`,
-            {},
-            axiosConfig
-        ).catch((error: AxiosError) => {
-            this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
-            throw error;
-        });
+    public async followArtist(artistId: string, source: string): Promise<unknown> {
+        return await axios
+            .post(`${this.FOLLOW_ARTISTS_URL}/${source}/${artistId}`, {}, axiosConfig)
+            .catch((error: AxiosError) => {
+                this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
+                throw error;
+            });
     }
 
-    public async unfollowArtist(artistId: string, source: string): Promise<any> {
-        return await axios.post(
-            `${this.UNFOLLOW_ARTISTS_URL}/${source}/${artistId}`,
-            {},
-            axiosConfig
-        ).catch((error: AxiosError) => {
-            this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
-            throw error;
-        });
+    public async unfollowArtist(artistId: string, source: string): Promise<unknown> {
+        return await axios
+            .post(`${this.UNFOLLOW_ARTISTS_URL}/${source}/${artistId}`, {}, axiosConfig)
+            .catch((error: AxiosError) => {
+                this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
+                throw error;
+            });
     }
 }

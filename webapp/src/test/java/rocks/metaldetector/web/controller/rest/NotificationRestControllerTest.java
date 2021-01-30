@@ -16,6 +16,7 @@ import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_ANNOUNCEMENT_DATE;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_FREQUENCY;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE_DATE;
 
@@ -30,11 +31,13 @@ class NotificationRestControllerTest implements WithAssertions {
 
   private RestAssuredMockMvcUtils frequencyRestAssuredUtils;
   private RestAssuredMockMvcUtils releaseDateRestAssuredUtils;
+  private RestAssuredMockMvcUtils announcementDateRestAssuredUtils;
 
   @BeforeEach
   void setup() {
     frequencyRestAssuredUtils = new RestAssuredMockMvcUtils(NOTIFICATION_ON_FREQUENCY);
     releaseDateRestAssuredUtils = new RestAssuredMockMvcUtils(NOTIFICATION_ON_RELEASE_DATE);
+    announcementDateRestAssuredUtils = new RestAssuredMockMvcUtils(NOTIFICATION_ON_ANNOUNCEMENT_DATE);
     RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
@@ -81,5 +84,25 @@ class NotificationRestControllerTest implements WithAssertions {
 
     // then
     verify(notificationService).notifyOnReleaseDate();
+  }
+
+  @Test
+  @DisplayName("Notify on announcement date responds with OK")
+  void notify_on_announcement_date_responds_ok() {
+    // when
+    var response = announcementDateRestAssuredUtils.doPost();
+
+    // then
+    response.statusCode(HttpStatus.OK.value());
+  }
+
+  @Test
+  @DisplayName("Notify on announcement date calls notification service")
+  void notify_on_announcement_date_calls_notification_service() {
+    // when
+    announcementDateRestAssuredUtils.doPost();
+
+    // then
+    verify(notificationService).notifyOnAnnouncementDate();
   }
 }

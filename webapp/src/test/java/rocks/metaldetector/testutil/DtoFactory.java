@@ -223,6 +223,15 @@ public class DtoFactory {
           .releaseDate(LocalDate.now().plusDays(10))
           .build();
     }
+
+    public static ReleaseDto withAnnouncementDate(LocalDate announcementDate) {
+      return ReleaseDto.builder()
+          .artist("A")
+          .albumTitle("Heavy Release")
+          .releaseDate(LocalDate.now().plusDays(10))
+          .announcementDate(announcementDate)
+          .build();
+    }
   }
 
   public static class ImportJobResultDtoFactory {

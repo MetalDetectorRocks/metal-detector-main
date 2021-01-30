@@ -1,11 +1,10 @@
-import {axiosConfig} from "../config/axios.config";
-import axios, {AxiosError, AxiosResponse} from "axios";
-import {ReleasesResponse} from "../model/releases-response.model";
-import {DateService} from "../service/date-service";
-import {UrlService} from "../service/url-service";
+import { axiosConfig } from "../config/axios.config";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { ReleasesResponse } from "../model/releases-response.model";
+import { DateService } from "../service/date-service";
+import { UrlService } from "../service/url-service";
 
 export class ReleasesRestClient {
-
     private readonly RELEASES_URL = "/rest/v1/releases";
     private readonly MY_RELEASES_URL = "/rest/v1/releases/my";
 
@@ -33,17 +32,17 @@ export class ReleasesRestClient {
             size: 30,
             dateFrom: this.dateService.yesterday(),
             sort: sort.length === 0 ? "release_date" : sort,
-            direction: direction.length === 0 ? "asc" : direction
-        }
+            direction: direction.length === 0 ? "asc" : direction,
+        };
 
-        return axios.get(
-          url,
-          axiosConfig
-        ).then((response: AxiosResponse<ReleasesResponse>) => {
-            return response.data;
-        }).catch((error: AxiosError) => {
-            console.error(error);
-            throw error;
-        });
+        return axios
+            .get(url, axiosConfig)
+            .then((response: AxiosResponse<ReleasesResponse>) => {
+                return response.data;
+            })
+            .catch((error: AxiosError) => {
+                console.error(error);
+                throw error;
+            });
     }
 }

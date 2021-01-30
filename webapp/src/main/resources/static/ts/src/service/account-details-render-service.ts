@@ -1,8 +1,7 @@
-import {AccountDetailsRestClient} from "../clients/account-details-rest-client";
-import {ToastService} from "./toast-service";
+import { AccountDetailsRestClient } from "../clients/account-details-rest-client";
+import { ToastService } from "./toast-service";
 
 export class AccountDetailsRenderService {
-
     private readonly toastService: ToastService;
     private readonly accountDetailsRestClient: AccountDetailsRestClient;
 
@@ -13,7 +12,7 @@ export class AccountDetailsRenderService {
 
     public init(): void {
         const response = this.accountDetailsRestClient.getAccountDetails();
-        response.then(response => {
+        response.then((response) => {
             if (response.email) {
                 const inputElement = document.getElementById("email-address")! as HTMLInputElement;
                 inputElement.value = response.email;
@@ -29,9 +28,10 @@ export class AccountDetailsRenderService {
 
     private onUpdateEmailAddressClicked(): void {
         const inputElement = document.getElementById("email-address")! as HTMLInputElement;
-        this.accountDetailsRestClient.updateEmailAddress(inputElement.value)
-          .then(response => inputElement.value = response)
-          .then(() => this.toastService.createInfoToast("Successfully updated email address!"));
+        this.accountDetailsRestClient
+            .updateEmailAddress(inputElement.value)
+            .then((response) => (inputElement.value = response))
+            .then(() => this.toastService.createInfoToast("Successfully updated email address!"));
     }
 
     private onDeleteAccountClicked(): void {
