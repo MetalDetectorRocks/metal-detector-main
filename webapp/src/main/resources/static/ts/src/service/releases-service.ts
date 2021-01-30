@@ -25,6 +25,7 @@ export class ReleasesService {
     private sortPropertySelector!: HTMLSelectElement;
     private sortAscRb!: HTMLInputElement;
     private sortDescRb!: HTMLInputElement;
+    private searchField!: HTMLInputElement;
 
     constructor(
         releasesRestClient: ReleasesRestClient,
@@ -39,6 +40,7 @@ export class ReleasesService {
         this.addSortPropertyEventListener();
         this.addSortingEventListener();
         this.addReleaseFilterEventListener();
+        this.addSearchEventListener();
     }
 
     private initDocumentElements(): void {
@@ -47,12 +49,14 @@ export class ReleasesService {
         this.sortPropertySelector = document.getElementById("sort-property-selector") as HTMLSelectElement;
         this.sortAscRb = document.getElementById("sort-asc-rb") as HTMLInputElement;
         this.sortDescRb = document.getElementById("sort-desc-rb") as HTMLInputElement;
+        this.searchField = document.getElementById("release-search") as HTMLInputElement;
     }
 
     private initFilterValuesFromUrl(): void {
         const releasesParamValue = this.urlService.getParameterFromUrl("releases");
         const sortParamValue = this.urlService.getParameterFromUrl("sort");
         const directionParamValue = this.urlService.getParameterFromUrl("direction");
+        const searchQueryParamValue = this.urlService.getParameterFromUrl("query");
 
         this.followedArtistsRb.checked = releasesParamValue === ReleasesService.MY_RELEASES_PARAM_VALUE;
         this.allArtistsRb.checked = !this.followedArtistsRb.checked;
@@ -62,6 +66,7 @@ export class ReleasesService {
                 : ReleasesService.SORT_BY_ANNOUNCEMENT_DATE_OPTION_VALUE;
         this.sortDescRb.checked = directionParamValue === ReleasesService.SORT_DIRECTION_DESC_PARAM_VALUE;
         this.sortAscRb.checked = !this.sortDescRb.checked;
+        this.searchField.value = searchQueryParamValue;
     }
 
     public fetchReleases(): void {
@@ -95,8 +100,11 @@ export class ReleasesService {
     }
 
     private addSortPropertyEventListener(): void {
-        const sortPropertySelector = document.getElementById("sort-property-selector") as HTMLSelectElement;
-        sortPropertySelector.addEventListener("change", this.onAnyValueChange.bind(this));
+        this.sortPropertySelector.addEventListener("change", this.onAnyValueChange.bind(this));
+    }
+
+    private addSearchEventListener(): void {
+        this.searchField.addEventListener("change", this.onAnyValueChange.bind(this));
     }
 
     private onAnyValueChange(): void {
@@ -116,6 +124,8 @@ export class ReleasesService {
         urlSearchParams.set(ReleasesService.RELEASES_PARAM_NAME, releasesFilterValue);
         urlSearchParams.set(ReleasesService.SORT_BY_PARAM_NAME, sortBy);
         urlSearchParams.set(ReleasesService.SORT_DIRECTION_PARAM_NAME, sortDirection);
+        urlSearchParams.set("query", this.searchField.value);
+
         window.location.href = "?" + urlSearchParams.toString();
     }
 }
