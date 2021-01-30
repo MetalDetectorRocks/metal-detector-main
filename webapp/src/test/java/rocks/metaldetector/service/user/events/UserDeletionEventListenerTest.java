@@ -16,7 +16,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
-import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
@@ -25,6 +24,7 @@ import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.AccountDeletedEmail;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.user.UserEntityFactory;
+import rocks.metaldetector.service.user.UserService;
 
 import java.util.Optional;
 
@@ -66,8 +66,8 @@ class UserDeletionEventListenerTest implements WithAssertions {
   @BeforeEach
   void setup() {
     UserEntity userEntity = UserEntityFactory.createUser("userName", "user@mail.com");
-    UserDeletionEventPublisher userDeletionEventPublisher = Mockito.mock(UserDeletionEventPublisher.class);
-    userDeletionEvent = new UserDeletionEvent(userDeletionEventPublisher, userEntity);
+    UserService userService = Mockito.mock(UserService.class);
+    userDeletionEvent = new UserDeletionEvent(userService, userEntity);
   }
 
   @AfterEach
@@ -76,27 +76,13 @@ class UserDeletionEventListenerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("NotificationConfig is fetched from repository")
-  void test_notification_config_fetched() {
-    // when
-    underTest.onApplicationEvent(userDeletionEvent);
-
-    // then
-    verify(notificationConfigRepository).findByUserId(userDeletionEvent.getUserEntity().getId());
-  }
-
-  @Test
-  @DisplayName("If present NotificationConfig is deleted")
+  @DisplayName("notificationConfig is deleted")
   void test_notification_config_deleted() {
-    // given
-    NotificationConfigEntity notificationConfig = NotificationConfigEntity.builder().user(userDeletionEvent.getUserEntity()).build();
-    doReturn(Optional.of(notificationConfig)).when(notificationConfigRepository).findByUserId(any());
-
     // when
     underTest.onApplicationEvent(userDeletionEvent);
 
     // then
-    verify(notificationConfigRepository).delete(notificationConfig);
+    verify(notificationConfigRepository).deleteByUserId(userDeletionEvent.getUserEntity().getId());
   }
 
   @Test

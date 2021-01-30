@@ -3,6 +3,7 @@ package rocks.metaldetector.service.user;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +25,7 @@ import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenService;
-import rocks.metaldetector.service.user.events.UserDeletionEventPublisher;
+import rocks.metaldetector.service.user.events.UserDeletionEvent;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
   private final TokenService tokenService;
   private final CurrentUserSupplier currentUserSupplier;
   private final LoginAttemptService loginAttemptService;
-  private final UserDeletionEventPublisher userDeletionEventPublisher;
+  private final ApplicationEventPublisher applicationEventPublisher;
   private final HttpServletRequest request;
 
   @Override
@@ -239,7 +240,7 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public void deleteCurrentUser() {
     UserEntity currentUser = currentUserSupplier.get();
-    userDeletionEventPublisher.publishUserDeletionEvent(currentUser);
+    applicationEventPublisher.publishEvent(new UserDeletionEvent(this, currentUser));
 
     HttpSession session = request.getSession(false);
     SecurityContextHolder.clearContext();

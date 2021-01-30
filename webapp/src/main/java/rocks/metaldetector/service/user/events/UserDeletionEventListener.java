@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
-import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
@@ -43,10 +42,9 @@ public class UserDeletionEventListener implements ApplicationListener<UserDeleti
     UserEntity user = event.getUserEntity();
     log.info("User '" + user.getPublicId() + "' deleted");
 
-    Optional<NotificationConfigEntity> notificationConfigOptional = notificationConfigRepository.findByUserId(user.getId());
     Optional<SpotifyAuthorizationEntity> spotifyAuthorizationOptional = spotifyAuthorizationRepository.findByUserId(user.getId());
     spotifyAuthorizationOptional.ifPresent(spotifyAuthorizationRepository::delete);
-    notificationConfigOptional.ifPresent(notificationConfigRepository::delete);
+    notificationConfigRepository.deleteByUserId(user.getId());
     followActionRepository.deleteAllByUser(user);
     clearPersistentLogins(user.getUsername());
 

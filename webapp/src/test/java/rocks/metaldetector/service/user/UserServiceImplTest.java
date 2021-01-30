@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,7 +38,7 @@ import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenFactory;
 import rocks.metaldetector.service.token.TokenService;
-import rocks.metaldetector.service.user.events.UserDeletionEventPublisher;
+import rocks.metaldetector.service.user.events.UserDeletionEvent;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
@@ -115,19 +116,19 @@ class UserServiceImplTest implements WithAssertions {
   private NotificationConfigRepository notificationConfigRepository;
 
   @Mock
-  private UserDeletionEventPublisher userDeletionEventPublisher;
+  private ApplicationEventPublisher applicationEventPublisher;
 
   private UserServiceImpl underTest;
 
   @BeforeEach
   void setup() {
     underTest = new UserServiceImpl(userRepository, passwordEncoder, tokenRepository, jwtsSupport, userTransformer,
-                                    notificationConfigRepository, tokenService, currentUserSupplier, loginAttemptService, userDeletionEventPublisher, request);
+                                    notificationConfigRepository, tokenService, currentUserSupplier, loginAttemptService, applicationEventPublisher, request);
   }
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request, notificationConfigRepository, userDeletionEventPublisher);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request, notificationConfigRepository, applicationEventPublisher);
   }
 
   @DisplayName("Create user tests")
@@ -813,6 +814,7 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("Deletion event is published")
     void deletion_event_published() {
       // given
+      ArgumentCaptor<UserDeletionEvent> argumentCaptor = ArgumentCaptor.forClass(UserDeletionEvent.class);
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
       doReturn(user).when(currentUserSupplier).get();
 
@@ -820,7 +822,11 @@ class UserServiceImplTest implements WithAssertions {
       underTest.deleteCurrentUser();
 
       // then
-      verify(userDeletionEventPublisher).publishUserDeletionEvent(user);
+      verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+      UserDeletionEvent userDeletionEvent = argumentCaptor.getValue();
+
+      assertThat(userDeletionEvent.getSource()).isEqualTo(underTest);
+      assertThat(userDeletionEvent.getUserEntity()).isEqualTo(user);
     }
 
     @Test
