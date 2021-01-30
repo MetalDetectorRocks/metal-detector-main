@@ -11,8 +11,10 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.service.email.AbstractEmail;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.ReleasesEmail;
+import rocks.metaldetector.service.email.TodaysAnnouncementsEmail;
 import rocks.metaldetector.service.email.TodaysReleasesEmail;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
@@ -22,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.WEEKS;
@@ -60,9 +63,25 @@ public class NotificationServiceImpl implements NotificationService {
 
     notificationConfigRepository.findAll().stream()
         .filter(config -> config.getUser().isEnabled() &&
-                          config.getNotify() &&
                           config.getNotificationAtReleaseDate())
-        .forEach(config -> releaseDateNotification(config, todaysReleases));
+        .forEach(notificationConfig -> notifyOnSpecificDate(notificationConfig, todaysReleases, (UserEntity user, List<ReleaseDto> filteredReleases) ->
+            new TodaysReleasesEmail(user.getEmail(), user.getUsername(), filteredReleases)));
+  }
+
+  @Override
+//  @Scheduled(cron = "0 0 7 * * *")
+  @Transactional(readOnly = true)
+  public void notifyOnAnnouncementDate() {
+    var now = LocalDate.now();
+    List<ReleaseDto> todaysAnnouncedReleases = releaseService.findAllReleases(Collections.emptyList(), new TimeRange(now, null)).stream()
+        .filter(release -> release.getAnnouncementDate().isEqual(now))
+        .collect(Collectors.toList());
+
+    notificationConfigRepository.findAll().stream()
+        .filter(config -> config.getUser().isEnabled() &&
+                          config.getNotificationAtAnnouncementDate())
+        .forEach(notificationConfig -> notifyOnSpecificDate(notificationConfig, todaysAnnouncedReleases, (UserEntity user, List<ReleaseDto> filteredReleases) ->
+            new TodaysAnnouncementsEmail(user.getEmail(), user.getUsername(), filteredReleases)));
   }
 
   @Override
@@ -113,17 +132,16 @@ public class NotificationServiceImpl implements NotificationService {
     }
   }
 
-  private void releaseDateNotification(NotificationConfigEntity notificationConfigEntity, List<ReleaseDto> releases) {
-    UserEntity user = notificationConfigEntity.getUser();
+  private void notifyOnSpecificDate(NotificationConfigEntity notificationConfig, List<ReleaseDto> releases, BiFunction<UserEntity, List<ReleaseDto>, AbstractEmail> emailBiFunction) {
+    UserEntity user = notificationConfig.getUser();
     List<String> followedArtistsNames = followArtistService.getFollowedArtistsOfUser(user.getPublicId()).stream()
         .map(ArtistDto::getArtistName).collect(Collectors.toList());
 
     if (!followedArtistsNames.isEmpty()) {
-      var now = LocalDate.now();
-      List<ReleaseDto> todaysReleases = releases.stream().filter(release -> followedArtistsNames.contains(release.getArtist())).collect(Collectors.toList());
+      List<ReleaseDto> filteredReleases = releases.stream().filter(release -> followedArtistsNames.contains(release.getArtist())).collect(Collectors.toList());
 
-      if (!todaysReleases.isEmpty()) {
-        emailService.sendEmail(new TodaysReleasesEmail(user.getEmail(), user.getUsername(), todaysReleases));
+      if (!filteredReleases.isEmpty()) {
+        emailService.sendEmail(emailBiFunction.apply(user, filteredReleases));
       }
     }
   }
