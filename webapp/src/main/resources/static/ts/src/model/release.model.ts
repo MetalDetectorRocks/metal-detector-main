@@ -1,5 +1,4 @@
 export interface Release {
-
     readonly artist: string;
     readonly additionalArtists: string[];
     readonly albumTitle: string;
@@ -13,5 +12,4 @@ export interface Release {
     readonly source: string;
     readonly state: string;
     readonly coverUrl: string;
-
 }
