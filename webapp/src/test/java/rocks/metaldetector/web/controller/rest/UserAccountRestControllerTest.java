@@ -17,11 +17,9 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.UpdateEmailRequest;
@@ -35,6 +33,9 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
+import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
+import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER;
+import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
 class UserAccountRestControllerTest implements WithAssertions {
@@ -66,7 +67,7 @@ class UserAccountRestControllerTest implements WithAssertions {
 
     @BeforeEach
     void setup() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.CURRENT_USER);
+      restAssuredUtils = new RestAssuredMockMvcUtils(CURRENT_USER);
     }
 
     @Test
@@ -108,8 +109,8 @@ class UserAccountRestControllerTest implements WithAssertions {
 
     @BeforeEach
     void setup() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.CURRENT_USER_EMAIL);
-      userDto = UserDtoFactory.createUser("user", UserRole.ROLE_USER, true);
+      restAssuredUtils = new RestAssuredMockMvcUtils(CURRENT_USER_EMAIL);
+      userDto = UserDtoFactory.createUser("user", ROLE_USER, true);
       doReturn(userDto).when(userService).updateCurrentEmail(any());
     }
 
@@ -172,6 +173,39 @@ class UserAccountRestControllerTest implements WithAssertions {
           Arguments.of(new UpdateEmailRequest("mailAddress")),
           Arguments.of(new UpdateEmailRequest(null))
       );
+    }
+  }
+
+  @Nested
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @DisplayName("Delete current user")
+  class DeleteCurrentUserTest {
+
+    private RestAssuredMockMvcUtils restAssuredUtils;
+
+    @BeforeEach
+    void setup() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(CURRENT_USER);
+    }
+
+    @Test
+    @DisplayName("Should return 200 if deleting user is successful")
+    void should_return_200() {
+      // when
+      ValidatableMockMvcResponse response = restAssuredUtils.doDelete();
+
+      // then
+      response.statusCode(OK.value());
+    }
+
+    @Test
+    @DisplayName("Should call userService")
+    void should_call_user_service() {
+      // when
+      restAssuredUtils.doDelete();
+
+      // then
+      verify(userService).deleteCurrentUser();
     }
   }
 }

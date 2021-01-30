@@ -40,4 +40,16 @@ export class AccountDetailsRestClient {
                 throw error;
             });
     }
+
+    public async deleteAccount(): Promise<void> {
+        return await axios
+            .delete(this.CURRENT_USER_ENDPOINT, axiosConfig)
+            .then(() => {
+                return;
+            })
+            .catch((error: AxiosError) => {
+                console.error(error);
+                throw error;
+            });
+    }
 }
