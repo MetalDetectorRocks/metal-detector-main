@@ -75,6 +75,7 @@ public class Endpoints {
 
     public static final String NOTIFICATION_ON_FREQUENCY = "/rest/v1/notify/frequency";
     public static final String NOTIFICATION_ON_RELEASE_DATE = "/rest/v1/notify/release-date";
+    public static final String NOTIFICATION_ON_ANNOUNCEMENT_DATE = "/rest/v1/notify/announcement-date";
 
     public static final String TEST = "/rest/v1/only-for-testing";
   }

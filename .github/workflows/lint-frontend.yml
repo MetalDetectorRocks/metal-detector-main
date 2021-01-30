@@ -1,0 +1,23 @@
+name: Lint Frontend
+
+on: push
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
+      - name: Install Node.js dependencies
+        run: npm --prefix webapp/src/main/resources/static/ts/ install
+
+      - name: Run ESLint and Prettier
+        run: npm --prefix webapp/src/main/resources/static/ts/ run lint
