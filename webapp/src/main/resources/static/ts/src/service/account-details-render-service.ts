@@ -15,7 +15,7 @@ export class AccountDetailsRenderService {
         const response = this.accountDetailsRestClient.getAccountDetails();
         response.then((response) => {
             if (response.email) {
-                const inputElement = document.getElementById("email-address")! as HTMLInputElement;
+                const inputElement = document.getElementById("email-address") as HTMLInputElement;
                 inputElement.value = response.email;
             }
         });
@@ -27,7 +27,7 @@ export class AccountDetailsRenderService {
     }
 
     private onUpdateEmailAddressClicked(): void {
-        const inputElement = document.getElementById("email-address")! as HTMLInputElement;
+        const inputElement = document.getElementById("email-address") as HTMLInputElement;
         this.accountDetailsRestClient
             .updateEmailAddress(inputElement.value)
             .then((response) => (inputElement.value = response))
@@ -35,9 +35,9 @@ export class AccountDetailsRenderService {
     }
 
     private onUpdatePasswordClicked(): void {
-        const oldPassword = document.getElementById("old-password")! as HTMLInputElement;
-        const newPassword = document.getElementById("new-password")! as HTMLInputElement;
-        const confirmPassword = document.getElementById("confirm-password")! as HTMLInputElement;
+        const oldPassword = document.getElementById("old-password") as HTMLInputElement;
+        const newPassword = document.getElementById("new-password") as HTMLInputElement;
+        const confirmPassword = document.getElementById("confirm-password") as HTMLInputElement;
         this.accountDetailsRestClient
             .updatePassword(oldPassword.value, newPassword.value, confirmPassword.value)
             .then(() => this.renderSuccess())
