@@ -14,7 +14,7 @@ export class AccountDetailsRenderService {
         const response = this.accountDetailsRestClient.getAccountDetails();
         response.then((response) => {
             if (response.email) {
-                const inputElement = document.getElementById("email-address")! as HTMLInputElement;
+                const inputElement = document.getElementById("email-address") as HTMLInputElement;
                 inputElement.value = response.email;
             }
         });
@@ -27,7 +27,7 @@ export class AccountDetailsRenderService {
     }
 
     private onUpdateEmailAddressClicked(): void {
-        const inputElement = document.getElementById("email-address")! as HTMLInputElement;
+        const inputElement = document.getElementById("email-address") as HTMLInputElement;
         this.accountDetailsRestClient
             .updateEmailAddress(inputElement.value)
             .then((response) => (inputElement.value = response))
@@ -35,9 +35,8 @@ export class AccountDetailsRenderService {
     }
 
     private onDeleteAccountClicked(): void {
-        this.accountDetailsRestClient.deleteAccount()
-          .then(() => {
-              window.location.href = "/";
-          })
+        this.accountDetailsRestClient.deleteAccount().then(() => {
+            window.location.href = "/";
+        });
     }
 }
