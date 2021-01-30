@@ -16,6 +16,7 @@ import rocks.metaldetector.web.api.response.UserResponse;
 
 import javax.validation.Valid;
 
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER;
 import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER_EMAIL;
@@ -54,6 +55,6 @@ public class UserAccountRestController {
                 consumes = APPLICATION_JSON_VALUE)
   public ResponseEntity<Void> updateCurrentPassword(@Valid @RequestBody UpdatePasswordRequest request) {
     userService.updateCurrentPassword(request.getOldPlainPassword(), request.getNewPlainPassword());
-    return ResponseEntity.status(HttpStatus.OK).build();
+    return ResponseEntity.status(OK).build();
   }
 }
