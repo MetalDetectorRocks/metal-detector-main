@@ -180,10 +180,25 @@ class ReleasesRestControllerTest implements WithAssertions {
 
       // then
       verify(releasesService).findReleases(
-          Collections.emptyList(),
-          new TimeRange(request.getDateFrom(), request.getDateTo()),
-          new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection()))
+          eq(Collections.emptyList()),
+          eq(new TimeRange(request.getDateFrom(), request.getDateTo())),
+          any(),
+          eq(new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection())))
       );
+    }
+
+    @Test
+    @DisplayName("Should pass search query to release service")
+    void should_pass_search_query_to_release_service() {
+      // given
+      PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
+      request.setQuery("query");
+
+      // when
+      restAssuredUtils.doGet(toMap(request));
+
+      // then
+      verify(releasesService).findReleases(any(), any(), eq(request.getQuery()), any());
     }
 
     @Test
@@ -193,7 +208,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       var request = PaginatedReleaseRequestFactory.createDefault();
       var releases = List.of(ReleaseDtoFactory.createDefault());
       var page = new Page<>(releases, new Pagination(1, 1, 5));
-      doReturn(page).when(releasesService).findReleases(any(), any(), any());
+      doReturn(page).when(releasesService).findReleases(any(), any(), any(), any());
 
       // when
       var validatableResponse = restAssuredUtils.doGet(toMap(request));
@@ -230,16 +245,17 @@ class ReleasesRestControllerTest implements WithAssertions {
       var validDirection = "asc";
       var validFrom = LocalDate.now();
       var validTo = LocalDate.now().plusDays(10);
+      var query = "query";
 
       return Stream.of(
-          Arguments.of(new PaginatedReleasesRequest(0, validSize, validSort, validDirection, validFrom, validTo)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, 0, validSort, validDirection, validFrom, validTo)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, 51, validSort, validDirection, validFrom, validTo)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, "", validDirection, validFrom, validTo)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, " ", validDirection, validFrom, validTo)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "", validFrom, validTo)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "foo", validFrom, validTo)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, validDirection, validFrom.plusDays(20), validTo))
+          Arguments.of(new PaginatedReleasesRequest(0, validSize, validSort, validDirection, validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, 0, validSort, validDirection, validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, 51, validSort, validDirection, validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, "", validDirection, validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, " ", validDirection, validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "", validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "foo", validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, validDirection, validFrom.plusDays(20), validTo, query))
       );
     }
 
@@ -251,6 +267,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       map.put("direction", request.getDirection());
       map.put("dateFrom", request.getDateFrom().toString());
       map.put("dateTo", request.getDateTo().toString());
+      map.put("query", request.getQuery());
 
       return map;
     }
@@ -292,10 +309,25 @@ class ReleasesRestControllerTest implements WithAssertions {
 
       // then
       verify(releasesService).findReleases(
-          Collections.emptyList(),
-          new TimeRange(request.getDateFrom(), request.getDateTo()),
-          new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection()))
+          eq(Collections.emptyList()),
+          eq(new TimeRange(request.getDateFrom(), request.getDateTo())),
+          any(),
+          eq(new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection())))
       );
+    }
+
+    @Test
+    @DisplayName("Should pass search query to release service")
+    void should_pass_search_query_to_release_service() {
+      // given
+      PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
+      request.setQuery("query");
+
+      // when
+      restAssuredUtils.doGet(toMap(request));
+
+      // then
+      verify(releasesService).findReleases(any(), any(), eq(request.getQuery()), any());
     }
 
     @Test
@@ -314,9 +346,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       // then
       verify(releasesService).findReleases(
           eq(List.of(artist1.getArtistName(), artist2.getArtistName(), artist3.getArtistName())),
-          any(),
-          any()
-      );
+          any(), any(), any());
     }
 
     @Test
@@ -326,7 +356,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       var request = PaginatedReleaseRequestFactory.createDefault();
       var releases = List.of(ReleaseDtoFactory.createDefault());
       var page = new Page<>(releases, new Pagination(1, 1, 5));
-      doReturn(page).when(releasesService).findReleases(any(), any(), any());
+      doReturn(page).when(releasesService).findReleases(any(), any(), any(), any());
 
       // when
       var validatableResponse = restAssuredUtils.doGet(toMap(request));
@@ -363,16 +393,17 @@ class ReleasesRestControllerTest implements WithAssertions {
       var validDirection = "asc";
       var validFrom = LocalDate.now();
       var validTo = LocalDate.now().plusDays(10);
+      var query = "query";
 
       return Stream.of(
-              Arguments.of(new PaginatedReleasesRequest(0, validSize, validSort, validDirection, validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, 0, validSort, validDirection, validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, 51, validSort, validDirection, validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, validSize, "", validDirection, validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, validSize, " ", validDirection, validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "", validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "foo", validFrom, validTo)),
-              Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, validDirection, validFrom.plusDays(20), validTo))
+          Arguments.of(new PaginatedReleasesRequest(0, validSize, validSort, validDirection, validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, 0, validSort, validDirection, validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, 51, validSort, validDirection, validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, "", validDirection, validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, " ", validDirection, validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "", validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "foo", validFrom, validTo, query)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, validDirection, validFrom.plusDays(20), validTo, query))
       );
     }
 
@@ -384,6 +415,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       map.put("direction", request.getDirection());
       map.put("dateFrom", request.getDateFrom().toString());
       map.put("dateTo", request.getDateTo().toString());
+      map.put("query", request.getQuery());
 
       return map;
     }
