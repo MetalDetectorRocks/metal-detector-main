@@ -47,7 +47,29 @@
                 <h2 class="h5 mt-5">Delete account</h2>
                 <hr class="border-secondary"/>
                 <p>Let your account go to hell!</p>
-                <button type="button" class="btn btn-danger">Delete account</button>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete-account-dialog">Delete account</button>
+
+                <div id="delete-account-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+                    <div class="modal-dialog default-modal-dialog-width">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Delete Account</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div role="alert">
+                                    <p>Dou you really want to delete your account? All data related to your account will be lost.</p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="delete-account" type="button" class="btn btn-danger" >Delete</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

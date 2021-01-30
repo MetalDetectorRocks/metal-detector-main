@@ -14,9 +14,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,11 +38,13 @@ import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenFactory;
 import rocks.metaldetector.service.token.TokenService;
+import rocks.metaldetector.service.user.events.UserDeletionEvent;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -48,11 +53,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -108,17 +115,20 @@ class UserServiceImplTest implements WithAssertions {
   @Mock
   private NotificationConfigRepository notificationConfigRepository;
 
+  @Mock
+  private ApplicationEventPublisher applicationEventPublisher;
+
   private UserServiceImpl underTest;
 
   @BeforeEach
   void setup() {
     underTest = new UserServiceImpl(userRepository, passwordEncoder, tokenRepository, jwtsSupport, userTransformer,
-                                    notificationConfigRepository, tokenService, currentUserSupplier, loginAttemptService, request);
+                                    notificationConfigRepository, tokenService, currentUserSupplier, loginAttemptService, applicationEventPublisher, request);
   }
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request, notificationConfigRepository);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request, notificationConfigRepository, applicationEventPublisher);
   }
 
   @DisplayName("Create user tests")
@@ -863,76 +873,80 @@ class UserServiceImplTest implements WithAssertions {
     }
   }
 
-  @DisplayName("Delete user tests")
+  @DisplayName("Delete current user tests")
   @Nested
-  class DeleteUserTest {
+  class DeleteCurrentUserTest {
 
     @Test
-    @DisplayName("Deleting an existing user should delete the user")
+    @DisplayName("Current user is fetched")
     void delete_user_for_existing_user() {
       // given
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
-      doReturn(Optional.of(NotificationConfigEntity.builder().user(user).build())).when(notificationConfigRepository).findByUserId(any());
+      doReturn(user).when(currentUserSupplier).get();
 
       // when
-      underTest.deleteUser(PUBLIC_ID);
+      underTest.deleteCurrentUser();
 
       // then
-      verify(userRepository).findByPublicId(PUBLIC_ID);
-      verify(userRepository).delete(user);
+      verify(currentUserSupplier).get();
     }
 
     @Test
-    @DisplayName("Deleting a not existing user should throw exception")
-    void delete_user_for_not_existing_user() {
+    @DisplayName("Deletion event is published")
+    void deletion_event_published() {
       // given
-      when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.empty());
+      ArgumentCaptor<UserDeletionEvent> argumentCaptor = ArgumentCaptor.forClass(UserDeletionEvent.class);
+      UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
+      doReturn(user).when(currentUserSupplier).get();
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.deleteUser(PUBLIC_ID));
+      underTest.deleteCurrentUser();
 
       // then
-      verify(userRepository).findByPublicId(PUBLIC_ID);
-      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
+      verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+      UserDeletionEvent userDeletionEvent = argumentCaptor.getValue();
+
+      assertThat(userDeletionEvent.getSource()).isEqualTo(underTest);
+      assertThat(userDeletionEvent.getUserEntity()).isEqualTo(user);
     }
 
     @Test
-    @DisplayName("Deleting an existing user should delete the notification config")
-    void delete_notification_config_for_existing_user() {
-      // given
-      var user = mock(UserEntity.class);
-      var notificationConfig = NotificationConfigEntity.builder().user(user).build();
-      var userId = 666L;
-      doReturn(userId).when(user).getId();
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
-      doReturn(Optional.of(notificationConfig)).when(notificationConfigRepository).findByUserId(any());
+    @DisplayName("SecurityContext is cleared")
+    void test_security_context_cleared() {
+      try (MockedStatic<SecurityContextHolder> securityContextHolder = mockStatic(SecurityContextHolder.class)) {
+        // when
+        underTest.deleteCurrentUser();
 
-      // when
-      underTest.deleteUser(PUBLIC_ID);
-
-      // then
-      verify(notificationConfigRepository).findByUserId(userId);
-      verify(notificationConfigRepository).delete(notificationConfig);
+        //then
+        securityContextHolder.verify(SecurityContextHolder::clearContext);
+      }
     }
 
     @Test
-    @DisplayName("Deleting a not existing notification config should throw exception")
-    void delete_not_existing_notification_config() {
+    @DisplayName("HttpSession is fetched from request")
+    void http_session_fetched() {
       // given
-      var user = mock(UserEntity.class);
-      var publicUserId = "abc123";
-      doReturn(publicUserId).when(user).getPublicId();
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
-      doReturn(Optional.empty()).when(notificationConfigRepository).findByUserId(any());
+      doReturn(mock(HttpSession.class)).when(request).getSession(anyBoolean());
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.deleteUser(PUBLIC_ID));
+      underTest.deleteCurrentUser();
 
       // then
-      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(publicUserId);
+      verify(request).getSession(false);
+    }
+
+    @Test
+    @DisplayName("HttpSession is invalidated")
+    void http_session_invalidated() {
+      // given
+      var mockSession = mock(HttpSession.class);
+      doReturn(mockSession).when(request).getSession(anyBoolean());
+
+      // when
+      underTest.deleteCurrentUser();
+
+      // then
+      verify(mockSession).invalidate();
     }
   }
 

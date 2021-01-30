@@ -15,7 +15,7 @@ export class DateService {
     public formatRelativeInDays(dateStr: string): string {
         const relativeTime = dayjs(dateStr).fromNow();
         if (relativeTime.startsWith("in") && !relativeTime.endsWith("days")) {
-            return this.diffFromNow(dateStr, "hour") < 24 ? "tomorrow" : "in 2 days";
+            return Math.abs(this.diffFromNow(dateStr, "hour")) < 24 ? "tomorrow" : "in 2 days";
         } else if (!relativeTime.startsWith("in") && !relativeTime.endsWith("days ago")) {
             return "today";
         } else {

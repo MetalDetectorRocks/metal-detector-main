@@ -24,6 +24,9 @@ export class AccountDetailsRenderService {
         const updatePasswordButton = document.getElementById("update-password") as HTMLButtonElement;
         updateEmailAddressButton.addEventListener("click", this.onUpdateEmailAddressClicked.bind(this));
         updatePasswordButton.addEventListener("click", this.onUpdatePasswordClicked.bind(this));
+
+        const deleteAccountButton = document.getElementById("delete-account") as HTMLButtonElement;
+        deleteAccountButton.addEventListener("click", this.onDeleteAccountClicked.bind(this));
     }
 
     private onUpdateEmailAddressClicked(): void {
@@ -32,6 +35,12 @@ export class AccountDetailsRenderService {
             .updateEmailAddress(inputElement.value)
             .then((response) => (inputElement.value = response))
             .then(() => this.toastService.createInfoToast("Successfully updated email address!"));
+    }
+
+    private onDeleteAccountClicked(): void {
+        this.accountDetailsRestClient.deleteAccount().then(() => {
+            window.location.href = "/";
+        });
     }
 
     private onUpdatePasswordClicked(): void {

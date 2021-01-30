@@ -19,8 +19,6 @@ public interface UserService extends UserDetailsService {
 
   UserDto updateCurrentEmail(String emailAddress);
 
-  void deleteUser(String publicId);
-
   List<UserDto> getAllUsers();
 
   List<UserDto> getAllActiveUsers();
@@ -32,6 +30,8 @@ public interface UserService extends UserDetailsService {
   void changePasswordFromMail(String tokenString, String newPassword);
 
   void persistSuccessfulLogin(String publicUserId);
+
+  void deleteCurrentUser();
 
   void updateCurrentPassword(String oldPlainPassword, String newPlainPassword);
 }

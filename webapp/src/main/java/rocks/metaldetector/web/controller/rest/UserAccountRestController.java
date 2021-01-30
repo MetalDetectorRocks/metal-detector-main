@@ -2,8 +2,8 @@ package rocks.metaldetector.web.controller.rest;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +41,13 @@ public class UserAccountRestController {
                 produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<String> updateCurrentEmail(@Valid @RequestBody UpdateEmailRequest request) {
     UserDto updatedUserDto = userService.updateCurrentEmail(request.getEmailAddress());
-    return ResponseEntity.status(HttpStatus.OK).body(updatedUserDto.getEmail());
+    return ResponseEntity.ok(updatedUserDto.getEmail());
+  }
+
+  @DeleteMapping(path = CURRENT_USER)
+  public ResponseEntity<Void> deleteCurrentUser() {
+    userService.deleteCurrentUser();
+    return ResponseEntity.ok().build();
   }
 
   @PatchMapping(path = CURRENT_USER_PASSWORD,
