@@ -169,6 +169,10 @@ footer .list-inline-item {
     min-height: 33.5rem;
 }
 
+.blog-category-text {
+    font-size: medium;
+}
+
 .blog-intro-text {
     min-height: 5.5rem;
 }
