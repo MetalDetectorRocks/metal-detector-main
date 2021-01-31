@@ -8,6 +8,11 @@
   border: 1px solid white;
 }
 
+.avatar-xl {
+  width: 6rem;
+  height: 6rem;
+}
+
 .avatar-s {
   width: 3rem;
   height: 3rem;

@@ -1,13 +1,165 @@
 <!DOCTYPE html>
 <html layout:decorate="~{frontend/fragments/layout}"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      lang="en">
+      lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <title>Top 6 Releases of 2020</title>
 </head>
 <body>
-<section layout:fragment="content">
-    <h1 class="h4">Top 6 Releases of 2020</h1>
-</section>
+    <section layout:fragment="content">
+        <article id="blog-content-wrapper" class="mt-4 d-flex justify-content-center">
+            <div class="blog-content">
+                <h1 class="h4">Top 6 Releases of 2020</h1>
+                <div id="blog-author-begin" class="blog-post-author d-flex align-items-center mt-4">
+                    <img class="avatar avatar-s" src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Avatar">
+                    <div class="ml-4 text-left">
+                        <p class="mb-0">DanielW</p>
+                        <p class="text-muted mt-n1 mb-0">January 10th, 2021</p>
+                    </div>
+                </div>
+
+                <div class="blog-text text-justify mt-4">
+                    <h2 class="h5">Karg - Traktat</h2>
+                    <div class="row mb-2">
+                        <div class="col-5">
+                            <iframe src="https://open.spotify.com/embed/track/1cCnekVu5PI07iGOTvnC2o"
+                                    width="300"
+                                    height="300"
+                                    allowtransparency="true"
+                                    allow="encrypted-media">
+                            </iframe>
+                        </div>
+                        <div class="col-7">
+                            <p>
+                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+                                magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+                                gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                                gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                            </p>
+                        </div>
+                    </div>
+
+                    <h2 class="h5 mt-4">Emma Ruth Rundle & Thou - May Our Chambers Be Full</h2>
+                    <div class="row mb-2">
+                        <div class="col-5">
+                            <iframe src="https://open.spotify.com/embed/track/7CdVWqLUcMrFQH2fakdhRi"
+                                    width="300"
+                                    height="300"
+                                    allowtransparency="true"
+                                    allow="encrypted-media">
+                            </iframe>
+                        </div>
+                        <div class="col-7">
+                            <p>
+                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+                                magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+                                gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                                gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                            </p>
+                        </div>
+                    </div>
+
+                    <h2 class="h5 mt-4">Naglfar - Cerecloth</h2>
+                    <div class="row mb-2">
+                        <div class="col-5">
+                            <iframe src="https://open.spotify.com/embed/track/1Cm5Xb02ErsySOzDx6FGa0"
+                                    width="300"
+                                    height="300"
+                                    allowtransparency="true"
+                                    allow="encrypted-media">
+                            </iframe>
+                        </div>
+                        <div class="col-7">
+                            <p>
+                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+                                magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+                                gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                                gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                            </p>
+                        </div>
+                    </div>
+
+                    <h2 class="h5 mt-4">Hellripper - The Affair Of The Poisons</h2>
+                    <div class="row mb-2">
+                        <div class="col-5">
+                            <iframe src="https://open.spotify.com/embed/track/6vnFHQ3oSK2oiuSxVnLsya"
+                                    width="300"
+                                    height="300"
+                                    allowtransparency="true"
+                                    allow="encrypted-media">
+                            </iframe>
+                        </div>
+                        <div class="col-7">
+                            <p>
+                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+                                magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+                                gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                                gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                            </p>
+                        </div>
+                    </div>
+
+                    <h2 class="h5 mt-4">Thrudvangar - Vegvisir</h2>
+                    <div class="row mb-2">
+                        <div class="col-5">
+                            <iframe src="https://open.spotify.com/embed/track/4HHpnS8S176IITAjohtdRK"
+                                    width="300"
+                                    height="300"
+                                    allowtransparency="true"
+                                    allow="encrypted-media">
+                            </iframe>
+                        </div>
+                        <div class="col-7">
+                            <p>
+                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+                                magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+                                gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                                gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                            </p>
+                        </div>
+                    </div>
+
+                    <h2 class="h5 mt-4">Afsky - Ofte Jeg Drømmer Mig Død</h2>
+                    <div class="row mb-2">
+                        <div class="col-5">
+                            <iframe src="https://open.spotify.com/embed/track/3dKyLNbYun1timBlPx3Wlp"
+                                    width="300"
+                                    height="300"
+                                    allowtransparency="true"
+                                    allow="encrypted-media">
+                            </iframe>
+                        </div>
+                        <div class="col-7">
+                            <p>
+                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+                                magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+                                gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                                gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div id="blog-tags" class="mt-4">
+                    <a class="btn btn-secondary mr-1" href="#">Releases</a>
+                    <a class="btn btn-secondary mr-1" href="#">Review</a>
+                </div>
+                <div id="blog-author-end" class="blog-post-author d-flex align-items-center mt-4">
+                    <img class="avatar avatar-xl" src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Avatar">
+                    <div class="ml-4 text-left">
+                        <p class="mb-0">Written by</p>
+                        <a href="#" class="author-link">DanielW</a>
+                        <p class="mb-0">Co-Founder of Metal Detector </p>
+                    </div>
+                </div>
+                <div id="blog-comments" class="mt-4">
+                    <h2 class="h4">Comments</h2>
+                    <div class="alert alert-warning py-4" role="alert">
+                        <span class="material-icons">warning</span> The comment function is currently still under development.
+                        Please come back here later.
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
 </body>
 </html>

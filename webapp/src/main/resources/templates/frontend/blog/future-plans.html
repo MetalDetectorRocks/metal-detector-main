@@ -1,13 +1,72 @@
 <!DOCTYPE html>
 <html layout:decorate="~{frontend/fragments/layout}"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      lang="en">
+      lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <title>Future Plans</title>
 </head>
 <body>
     <section layout:fragment="content">
-        <h1 class="h4">Future Plans</h1>
+        <article id="blog-content-wrapper" class="mt-4 d-flex justify-content-center">
+            <div class="blog-content">
+                <h1 class="h4">Future plans</h1>
+                <div id="blog-author-begin" class="blog-post-author d-flex align-items-center mt-4">
+                    <img class="avatar avatar-s" src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Avatar">
+                    <div class="ml-4 text-left">
+                        <p class="mb-0">DanielW</p>
+                        <p class="text-muted mt-n1 mb-0">February 1st, 2021</p>
+                    </div>
+                </div>
+
+                <div class="blog-text text-justify mt-4">
+                    <p>
+                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+                        magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+                        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+                        elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos
+                        et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                        sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
+                        dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+                        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                    </p>
+                    <p>
+                        Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat
+                        nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis
+                        dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
+                        euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+                    </p>
+                    <p>
+                        Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
+                        consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore
+                        eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit
+                        augue duis dolore te feugait nulla facilisi.
+                    </p>
+                    <p>
+                        Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer
+                    </p>
+                </div>
+                <div id="blog-tags" class="mt-4">
+                    <a class="btn btn-secondary mr-1" href="#">Announcement</a>
+                    <a class="btn btn-secondary mr-1" href="#">Metal Detector</a>
+                    <a class="btn btn-secondary mr-1" href="#">Features</a>
+                </div>
+                <div id="blog-author-end" class="blog-post-author d-flex align-items-center mt-4">
+                    <img class="avatar avatar-xl" src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Avatar">
+                    <div class="ml-4 text-left">
+                        <p class="mb-0">Written by</p>
+                        <a href="#" class="author-link">DanielW</a>
+                        <p class="mb-0">Co-Founder of Metal Detector </p>
+                    </div>
+                </div>
+                <div id="blog-comments" class="mt-4">
+                    <h2 class="h4">Comments</h2>
+                    <div class="alert alert-warning py-4" role="alert">
+                        <span class="material-icons">warning</span> The comment function is currently still under development.
+                        Please come back here later.
+                    </div>
+                </div>
+            </div>
+        </article>
     </section>
 </body>
 </html>

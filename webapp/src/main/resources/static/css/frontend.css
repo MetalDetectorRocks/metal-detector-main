@@ -169,10 +169,6 @@ footer .list-inline-item {
     min-height: 33.5rem;
 }
 
-.blog-category-text {
-    font-size: medium;
-}
-
 .blog-intro-text {
     min-height: 5.5rem;
 }
@@ -182,6 +178,40 @@ footer .list-inline-item {
     object-fit: cover;
     width: 100%;
     border-bottom: 1px solid var(--grey-border-color);
+}
+
+.blog-content {
+    width: 750px;
+}
+
+.blog-post-author {
+    border-top: 1px dashed var(--grey-border-color);
+    border-bottom: 1px dashed var(--grey-border-color);
+}
+
+.blog-text {
+    font-size: larger;
+}
+
+#blog-author-begin {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+#blog-author-end {
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+}
+
+.author-link{
+    font-size: x-large;
+    font-weight: bold;
+    color: var(--dark-hyperlink-font-color);
+}
+
+.author-link:hover {
+    text-decoration: none;
+    color: var(--blue-menu-item-color)
 }
 
 /* Other */
