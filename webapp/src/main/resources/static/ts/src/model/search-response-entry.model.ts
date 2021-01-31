@@ -1,5 +1,4 @@
 export interface SearchResponseEntry {
-
     readonly id: string;
     readonly name: string;
     readonly imageUrl: string;
@@ -10,5 +9,4 @@ export interface SearchResponseEntry {
     readonly popularity: string;
     readonly metalDetectorFollower: number;
     readonly spotifyFollower: number;
-
 }

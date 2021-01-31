@@ -139,6 +139,8 @@ public class DtoFactory {
       return PaginatedReleasesRequest.builder()
           .page(1)
           .size(10)
+          .sort("field")
+          .direction("asc")
           .dateFrom(LocalDate.now())
           .dateTo(LocalDate.now().plusDays(30))
           .build();
@@ -219,6 +221,15 @@ public class DtoFactory {
           .artist(artistName)
           .albumTitle("Heavy Release")
           .releaseDate(LocalDate.now().plusDays(10))
+          .build();
+    }
+
+    public static ReleaseDto withAnnouncementDate(LocalDate announcementDate) {
+      return ReleaseDto.builder()
+          .artist("A")
+          .albumTitle("Heavy Release")
+          .releaseDate(LocalDate.now().plusDays(10))
+          .announcementDate(announcementDate)
           .build();
     }
   }

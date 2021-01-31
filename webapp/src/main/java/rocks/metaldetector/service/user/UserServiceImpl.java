@@ -3,9 +3,9 @@ package rocks.metaldetector.service.user;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,10 +25,12 @@ import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenService;
+import rocks.metaldetector.service.user.events.UserDeletionEvent;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -52,6 +54,7 @@ public class UserServiceImpl implements UserService {
   private final TokenService tokenService;
   private final CurrentUserSupplier currentUserSupplier;
   private final LoginAttemptService loginAttemptService;
+  private final ApplicationEventPublisher applicationEventPublisher;
   private final HttpServletRequest request;
 
   @Override
@@ -127,14 +130,15 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void deleteUser(String publicId) {
-    UserEntity userEntity = userRepository.findByPublicId(publicId)
-        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
-    NotificationConfigEntity notificationConfig = notificationConfigRepository.findByUserId(userEntity.getId())
-        .orElseThrow(() -> new ResourceNotFoundException("Notification config for user '" + userEntity.getPublicId() + "' not found"));
+  public UserDto updateCurrentEmail(String emailAddress) {
+    if (userRepository.existsByEmail(emailAddress)) {
+      throw new IllegalArgumentException("emailAddress already in use");
+    }
 
-    userRepository.delete(userEntity);
-    notificationConfigRepository.delete(notificationConfig);
+    UserEntity currentUser = currentUserSupplier.get();
+    currentUser.setEmail(emailAddress);
+    UserEntity updatedUser = userRepository.save(currentUser);
+    return userTransformer.transform(updatedUser);
   }
 
   @Override
@@ -159,13 +163,9 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<UserDto> getAllUsers(int page, int limit) {
-    Pageable pageable = PageRequest.of(page, limit);
-
-    return userRepository.findAll(pageable)
-        .stream()
-        .map(userTransformer::transform)
-        .collect(Collectors.toList());
+  public UserDto getCurrentUser() {
+    UserEntity currentUser = currentUserSupplier.get();
+    return userTransformer.transform(currentUser);
   }
 
   @Override
@@ -223,6 +223,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @Transactional
   public void persistSuccessfulLogin(String publicUserId) {
     Optional<UserEntity> userEntityOptional = userRepository.findByPublicId(publicUserId);
 
@@ -232,6 +233,19 @@ public class UserServiceImpl implements UserService {
       userEntity.setLastLogin(LocalDateTime.now());
 
       userRepository.save(userEntity);
+    }
+  }
+
+  @Override
+  @Transactional
+  public void deleteCurrentUser() {
+    UserEntity currentUser = currentUserSupplier.get();
+    applicationEventPublisher.publishEvent(new UserDeletionEvent(this, currentUser));
+
+    HttpSession session = request.getSession(false);
+    SecurityContextHolder.clearContext();
+    if (session != null) {
+      session.invalidate();
     }
   }
 

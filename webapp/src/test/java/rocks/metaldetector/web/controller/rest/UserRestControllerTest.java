@@ -71,7 +71,7 @@ class UserRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(userService);
+    reset(userService, modelMapper);
   }
 
   @DisplayName("Get all users tests")

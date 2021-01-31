@@ -21,6 +21,7 @@ import rocks.metaldetector.butler.client.ReleaseButlerRestClient;
 import rocks.metaldetector.butler.client.transformer.ButlerImportJobTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseRequestTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer;
+import rocks.metaldetector.butler.client.transformer.ButlerSortTransformer;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.support.DetectorSort;
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportJobFactory;
+import static rocks.metaldetector.support.DetectorSort.Direction.ASC;
 
 @ExtendWith(MockitoExtension.class)
 class ReleaseServiceImplTest implements WithAssertions {
@@ -52,6 +54,9 @@ class ReleaseServiceImplTest implements WithAssertions {
   private ButlerReleaseRequestTransformer releaseRequestTransformer;
 
   @Mock
+  private ButlerSortTransformer sortTransformer;
+
+  @Mock
   private ButlerReleaseResponseTransformer releaseResponseTransformer;
 
   @Mock
@@ -61,12 +66,12 @@ class ReleaseServiceImplTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    underTest = new ReleaseServiceImpl(butlerClient, releaseRequestTransformer, releaseResponseTransformer, importJobResponseTransformer);
+    underTest = new ReleaseServiceImpl(butlerClient, releaseRequestTransformer, sortTransformer, releaseResponseTransformer, importJobResponseTransformer);
   }
 
   @AfterEach
   void tearDown() {
-    reset(butlerClient, releaseRequestTransformer, releaseResponseTransformer, importJobResponseTransformer);
+    reset(butlerClient, releaseRequestTransformer, sortTransformer, releaseResponseTransformer, importJobResponseTransformer);
   }
 
   @DisplayName("Test of findAllReleases()")
@@ -131,13 +136,26 @@ class ReleaseServiceImplTest implements WithAssertions {
       // given
       Iterable<String> artists = List.of("A", "B", "C");
       TimeRange timeRange = new TimeRange(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31));
-      PageRequest pageRequest = new PageRequest(10, 1, null);
+      PageRequest pageRequest = new PageRequest(1, 10, null);
 
       // when
       underTest.findReleases(artists, timeRange, pageRequest);
 
       // then
       verify(releaseRequestTransformer).transform(artists, timeRange, pageRequest);
+    }
+
+    @Test
+    @DisplayName("Should use sort transformer to transform sort parameter")
+    void should_transform_sort_parameter() {
+      // given
+      PageRequest pageRequest = new PageRequest(1, 10, new DetectorSort("foo", "asc"));
+
+      // when
+      underTest.findReleases(null, null, pageRequest);
+
+      // then
+      verify(sortTransformer).transform(pageRequest.getSort());
     }
 
     @Test
@@ -148,7 +166,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       when(releaseRequestTransformer.transform(any(), any(), any())).thenReturn(request);
 
       // when
-      underTest.findReleases(null, null, null);
+      underTest.findReleases(null, null, new PageRequest());
 
       // then
       verify(butlerClient).queryReleases(eq(request), any());
@@ -158,14 +176,15 @@ class ReleaseServiceImplTest implements WithAssertions {
     @DisplayName("Should pass transformed sort parameter to butler client")
     void should_call_butler_client_with_sort() {
       // given
-      PageRequest pageRequest = new PageRequest(0, 0, new DetectorSort(DetectorSort.Direction.ASC, List.of("artist")));
-      var expectedSorting = "sort=artist,ASC";
+      var transformedSortParam = "sort";
+      PageRequest pageRequest = new PageRequest(0, 0, new DetectorSort("artist", ASC));
+      when(sortTransformer.transform(any())).thenReturn(transformedSortParam);
 
       // when
       underTest.findReleases(null, null, pageRequest);
 
       // then
-      verify(butlerClient).queryReleases(any(), eq(expectedSorting));
+      verify(butlerClient).queryReleases(any(), eq(transformedSortParam));
     }
 
     @Test
@@ -178,7 +197,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       when(releaseResponseTransformer.transformToPage(response)).thenReturn(expectedResult);
 
       // when
-      Page<ReleaseDto> releases = underTest.findReleases(null, null, null);
+      Page<ReleaseDto> releases = underTest.findReleases(null, null, new PageRequest());
 
       // then
       verify(releaseResponseTransformer).transformToPage(response);

@@ -1,9 +1,8 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import advancedFormat from "dayjs/plugin/advancedFormat";
-import dayjs from "dayjs";
+import dayjs, { UnitType } from "dayjs";
 
 export class DateService {
-
     constructor() {
         dayjs.extend(relativeTime);
         dayjs.extend(advancedFormat);
@@ -16,12 +15,10 @@ export class DateService {
     public formatRelativeInDays(dateStr: string): string {
         const relativeTime = dayjs(dateStr).fromNow();
         if (relativeTime.startsWith("in") && !relativeTime.endsWith("days")) {
-            return "tomorrow";
-        }
-        else if (!relativeTime.startsWith("in") && !relativeTime.endsWith("days ago")) {
+            return Math.abs(this.diffFromNow(dateStr, "hour")) < 24 ? "tomorrow" : "in 2 days";
+        } else if (!relativeTime.startsWith("in") && !relativeTime.endsWith("days ago")) {
             return "today";
-        }
-        else {
+        } else {
             return relativeTime;
         }
     }
@@ -34,14 +31,22 @@ export class DateService {
         const yesterdayAsDayJs = dayjs().subtract(1, "day");
         return this.format(yesterdayAsDayJs.toString(), DateFormat.UTC);
     }
+
+    public compare(dateStr1: string, dateStr2: string): number {
+        return dayjs(dateStr1).isBefore(dateStr2) ? -1 : dayjs(dateStr2).isBefore(dateStr1) ? 1 : 0;
+    }
+
+    private diffFromNow(dateStr: string, unit: UnitType): number {
+        const date = dayjs(dateStr);
+        const now = dayjs();
+        return now.diff(date, unit);
+    }
 }
 
 export enum DateFormat {
-
     LONG = "MMMM Do YYYY",
     LONG_WITH_TIME = "MMMM Do YYYY, h:mm:ss a",
     SHORT = "MMM Do YY",
     SHORT_WITH_TIME = "MMM Do YY, h:mm:ss a",
-    UTC = "YYYY-MM-DD"
-
+    UTC = "YYYY-MM-DD",
 }

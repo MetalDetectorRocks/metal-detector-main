@@ -16,11 +16,10 @@ dependencies {
   implementation "org.springframework.boot:spring-boot-starter-mail:$springBootVersion"
   implementation "org.springframework.boot:spring-boot-starter-actuator:$springBootVersion"
   implementation "org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion"
+  implementation "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
 
   implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity5:$thymeleafExtrasVersion"
   implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:$thymeleafDialectVersion"
-  implementation "org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion"
-  implementation "javax.validation:validation-api:$validationApiVersion"
   implementation "org.apache.commons:commons-lang3:$apacheCommonsLang3Version"
   implementation "commons-codec:commons-codec:$commonsCodecVersion"
   implementation "org.modelmapper:modelmapper:$modelmapperVersion"

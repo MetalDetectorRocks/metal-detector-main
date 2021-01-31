@@ -94,6 +94,14 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
     return refreshedToken.getAccessToken();
   }
 
+  @Override
+  @Transactional
+  public void deleteAuthorization() {
+    UserEntity currentUser = currentUserSupplier.get();
+    Optional<SpotifyAuthorizationEntity> authorizationEntityOptional = spotifyAuthorizationRepository.findByUserId(currentUser.getId());
+    authorizationEntityOptional.ifPresent(spotifyAuthorizationRepository::delete);
+  }
+
   private SpotifyAuthorizationEntity findAuthorizationEntityFromCurrentUser() {
     UserEntity currentUser = currentUserSupplier.get();
     Optional<SpotifyAuthorizationEntity> authorizationEntityOptional = spotifyAuthorizationRepository.findByUserId(currentUser.getId());

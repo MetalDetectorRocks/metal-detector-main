@@ -14,11 +14,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,11 +38,13 @@ import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenFactory;
 import rocks.metaldetector.service.token.TokenService;
+import rocks.metaldetector.service.user.events.UserDeletionEvent;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -50,11 +53,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -110,17 +115,20 @@ class UserServiceImplTest implements WithAssertions {
   @Mock
   private NotificationConfigRepository notificationConfigRepository;
 
+  @Mock
+  private ApplicationEventPublisher applicationEventPublisher;
+
   private UserServiceImpl underTest;
 
   @BeforeEach
   void setup() {
     underTest = new UserServiceImpl(userRepository, passwordEncoder, tokenRepository, jwtsSupport, userTransformer,
-                                    notificationConfigRepository, tokenService, currentUserSupplier, loginAttemptService, request);
+                                    notificationConfigRepository, tokenService, currentUserSupplier, loginAttemptService, applicationEventPublisher, request);
   }
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request, notificationConfigRepository);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request, notificationConfigRepository, applicationEventPublisher);
   }
 
   @DisplayName("Create user tests")
@@ -503,37 +511,51 @@ class UserServiceImplTest implements WithAssertions {
       assertDtoIsCorrect(userDtoList.get(5), "a1", ROLE_USER, false);
     }
 
+    @Test
+    @DisplayName("currentUserSupplier is called")
+    void test_get_current_user_calls_supplier() {
+      // given
+      doReturn(UserEntityFactory.createUser("user", "mail@mail.de")).when(currentUserSupplier).get();
+
+      // when
+      underTest.getCurrentUser();
+
+      // then
+      verify(currentUserSupplier).get();
+    }
+
+    @Test
+    @DisplayName("current user supplier is transformed")
+    void test_get_current_user_is_transformed() {
+      // given
+      var user = UserEntityFactory.createUser("user", "mail@mail.de");
+      doReturn(user).when(currentUserSupplier).get();
+
+      // when
+      underTest.getCurrentUser();
+
+      // then
+      verify(userTransformer).transform(user);
+    }
+
+    @Test
+    @DisplayName("current user dto is returned")
+    void test_get_current_user_dto_returned() {
+      // given
+      var user = UserDtoFactory.createDefault();
+      doReturn(user).when(userTransformer).transform(any());
+
+      // when
+      var result = underTest.getCurrentUser();
+
+      // then
+      assertThat(result).isEqualTo(user);
+    }
+
     private void assertDtoIsCorrect(UserDto userDto, String userName, UserRole role, boolean enabled) {
       assertThat(userDto.getUsername()).isEqualTo(userName);
       assertThat(userDto.getRole()).isEqualTo(role.getDisplayName());
       assertThat(userDto.isEnabled()).isEqualTo(enabled);
-    }
-
-    @Test
-    @DisplayName("Requesting all users with page and limit should return a sub list")
-    void get_all_users_with_pagination() {
-      // given
-      int PAGE = 1;
-      int LIMIT = 2;
-      UserEntity user1 = UserEntityFactory.createUser("a", "a@example.com");
-      UserEntity user2 = UserEntityFactory.createUser("b", "b@example.com");
-      UserDto userDto1 = UserDtoFactory.withUsernameAndEmail("a", "a@example.com");
-      UserDto userDto2 = UserDtoFactory.withUsernameAndEmail("b", "b@example.com");
-      PageImpl<UserEntity> page = new PageImpl<>(List.of(user1, user2), PageRequest.of(PAGE, LIMIT), 4);
-      when(userRepository.findAll(PageRequest.of(PAGE, LIMIT))).thenReturn(page);
-      when(userTransformer.transform(user1)).thenReturn(userDto1);
-      when(userTransformer.transform(user2)).thenReturn(userDto2);
-
-      // when
-      List<UserDto> userDtoList = underTest.getAllUsers(PAGE, LIMIT);
-
-      // then
-      assertThat(userDtoList).hasSize(2);
-      assertThat(userDtoList.get(0).getUsername()).isEqualTo(user1.getUsername());
-      assertThat(userDtoList.get(0).getEmail()).isEqualTo(user1.getEmail());
-      assertThat(userDtoList.get(1).getUsername()).isEqualTo(user2.getUsername());
-      assertThat(userDtoList.get(1).getEmail()).isEqualTo(user2.getEmail());
-      verify(userRepository).findAll(PageRequest.of(PAGE, LIMIT));
     }
   }
 
@@ -704,78 +726,146 @@ class UserServiceImplTest implements WithAssertions {
       assertThat(throwable).isInstanceOf(TokenExpiredException.class);
       assertThat(throwable).hasMessageContaining(UserErrorMessages.TOKEN_EXPIRED.toDisplayString());
     }
-  }
-
-  @DisplayName("Delete user tests")
-  @Nested
-  class DeleteUserTest {
 
     @Test
-    @DisplayName("Deleting an existing user should delete the user")
+    @DisplayName("Updating the current user's email address calls currentUserSupplier")
+    void test_updating_email_call_current_user_supplier() {
+      // given
+      doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
+      doReturn(null).when(userTransformer).transform(any());
+
+      // when
+      underTest.updateCurrentEmail("email");
+
+      // then
+      verify(currentUserSupplier).get();
+    }
+
+    @Test
+    @DisplayName("New email address is set on current user")
+    void test_new_email_set() {
+      // given
+      ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
+      doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
+      doReturn(null).when(userTransformer).transform(any());
+      var newEmail = "newEmail";
+
+      // when
+      underTest.updateCurrentEmail(newEmail);
+
+      // then
+      verify(userRepository).save(userEntityCaptor.capture());
+      UserEntity savedUser = userEntityCaptor.getValue();
+      assertThat(savedUser.getEmail()).isEqualTo(newEmail);
+    }
+
+    @Test
+    @DisplayName("Updated user is transformed")
+    void test_updated_user_is_transformed() {
+      // given
+      var user = UserEntityFactory.createUser("user", "email");
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(userRepository).save(any());
+      doReturn(null).when(userTransformer).transform(any());
+
+      // when
+      underTest.updateCurrentEmail("email");
+
+      // then
+      verify(userTransformer).transform(user);
+    }
+
+    @Test
+    @DisplayName("Updated user is returned")
+    void test_updated_user_is_returned() {
+      // given
+      var user = UserEntityFactory.createUser("user", "email");
+      var userDto = UserDtoFactory.createDefault();
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(userDto).when(userTransformer).transform(any());
+
+      // when
+      var result = underTest.updateCurrentEmail("email");
+
+      // then
+      assertThat(result).isEqualTo(userDto);
+    }
+  }
+
+  @DisplayName("Delete current user tests")
+  @Nested
+  class DeleteCurrentUserTest {
+
+    @Test
+    @DisplayName("Current user is fetched")
     void delete_user_for_existing_user() {
       // given
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
-      doReturn(Optional.of(NotificationConfigEntity.builder().user(user).build())).when(notificationConfigRepository).findByUserId(any());
+      doReturn(user).when(currentUserSupplier).get();
 
       // when
-      underTest.deleteUser(PUBLIC_ID);
+      underTest.deleteCurrentUser();
 
       // then
-      verify(userRepository).findByPublicId(PUBLIC_ID);
-      verify(userRepository).delete(user);
+      verify(currentUserSupplier).get();
     }
 
     @Test
-    @DisplayName("Deleting a not existing user should throw exception")
-    void delete_user_for_not_existing_user() {
+    @DisplayName("Deletion event is published")
+    void deletion_event_published() {
       // given
-      when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.empty());
+      ArgumentCaptor<UserDeletionEvent> argumentCaptor = ArgumentCaptor.forClass(UserDeletionEvent.class);
+      UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
+      doReturn(user).when(currentUserSupplier).get();
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.deleteUser(PUBLIC_ID));
+      underTest.deleteCurrentUser();
 
       // then
-      verify(userRepository).findByPublicId(PUBLIC_ID);
-      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
+      verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+      UserDeletionEvent userDeletionEvent = argumentCaptor.getValue();
+
+      assertThat(userDeletionEvent.getSource()).isEqualTo(underTest);
+      assertThat(userDeletionEvent.getUserEntity()).isEqualTo(user);
     }
 
     @Test
-    @DisplayName("Deleting an existing user should delete the notification config")
-    void delete_notification_config_for_existing_user() {
-      // given
-      var user = mock(UserEntity.class);
-      var notificationConfig = NotificationConfigEntity.builder().user(user).build();
-      var userId = 666L;
-      doReturn(userId).when(user).getId();
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
-      doReturn(Optional.of(notificationConfig)).when(notificationConfigRepository).findByUserId(any());
+    @DisplayName("SecurityContext is cleared")
+    void test_security_context_cleared() {
+      try (MockedStatic<SecurityContextHolder> securityContextHolder = mockStatic(SecurityContextHolder.class)) {
+        // when
+        underTest.deleteCurrentUser();
 
-      // when
-      underTest.deleteUser(PUBLIC_ID);
-
-      // then
-      verify(notificationConfigRepository).findByUserId(userId);
-      verify(notificationConfigRepository).delete(notificationConfig);
+        //then
+        securityContextHolder.verify(SecurityContextHolder::clearContext);
+      }
     }
 
     @Test
-    @DisplayName("Deleting a not existing notification config should throw exception")
-    void delete_not_existing_notification_config() {
+    @DisplayName("HttpSession is fetched from request")
+    void http_session_fetched() {
       // given
-      var user = mock(UserEntity.class);
-      var publicUserId = "abc123";
-      doReturn(publicUserId).when(user).getPublicId();
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
-      doReturn(Optional.empty()).when(notificationConfigRepository).findByUserId(any());
+      doReturn(mock(HttpSession.class)).when(request).getSession(anyBoolean());
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.deleteUser(PUBLIC_ID));
+      underTest.deleteCurrentUser();
 
       // then
-      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(publicUserId);
+      verify(request).getSession(false);
+    }
+
+    @Test
+    @DisplayName("HttpSession is invalidated")
+    void http_session_invalidated() {
+      // given
+      var mockSession = mock(HttpSession.class);
+      doReturn(mockSession).when(request).getSession(anyBoolean());
+
+      // when
+      underTest.deleteCurrentUser();
+
+      // then
+      verify(mockSession).invalidate();
     }
   }
 
@@ -824,7 +914,7 @@ class UserServiceImplTest implements WithAssertions {
 
   @DisplayName("Verify user tests")
   @Nested
-  class VerfiyUserTest {
+  class VerifyUserTest {
 
     @Test
     @DisplayName("Verifying the registration with an existing and not expired token should work")

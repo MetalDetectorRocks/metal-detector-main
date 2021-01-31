@@ -1,5 +1,4 @@
 export class UrlService {
-
     public getPageFromUrl(): string {
         const url = new URL(window.location.href);
         let page = url.searchParams.get("page") || "1";
@@ -13,11 +12,6 @@ export class UrlService {
     public getParameterFromUrl(parameterName: string): string {
         const url = new URL(window.location.href);
         return url.searchParams.get(parameterName) || "";
-    }
-
-    public getParametersFromUrl(parameterName: string): string[] {
-        const url = new URL(window.location.href);
-        return url.searchParams.getAll(parameterName) || "";
     }
 
     public getPathFromUrl(): string {

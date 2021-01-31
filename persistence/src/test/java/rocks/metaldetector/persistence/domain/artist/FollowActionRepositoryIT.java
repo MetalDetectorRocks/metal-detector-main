@@ -75,6 +75,17 @@ class FollowActionRepositoryIT extends BaseDataJpaTest implements WithAssertions
   }
 
   @Test
+  @DisplayName("Should delete all FollowActions by a given user")
+  void test_delete_all_by_user() {
+    // when
+    underTest.deleteAllByUser(userA);
+    var followActions = underTest.findAllByUser(userA);
+
+    // then
+    assertThat(followActions).isEmpty();
+  }
+
+  @Test
   @DisplayName("Should return true if a follow action exists for a given user and artist")
   void should_return_true_if_a_follow_action_exists() {
     // when

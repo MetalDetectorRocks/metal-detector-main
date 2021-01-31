@@ -63,4 +63,15 @@ class NotificationConfigRepositoryTest extends BaseDataJpaTest implements WithAs
     // then
     assertThat(result).isNotPresent();
   }
+
+  @Test
+  @DisplayName("should delete notification config")
+  void test_delete() {
+    // when
+    underTest.deleteByUserId(USER.getId());
+    var result = underTest.findByUserId(USER.getId());
+
+    // then
+    assertThat(result).isNotPresent();
+  }
 }
