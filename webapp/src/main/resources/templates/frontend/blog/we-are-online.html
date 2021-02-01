@@ -20,29 +20,61 @@
 
                 <div class="blog-text text-justify mt-4">
                     <p>
-                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
-                        magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-                        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-                        elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos
-                        et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                        sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-                        dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-                        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                        Hell Yeah! After a long development time, the "Metal Detector" is finally online in a minimal version that
+                        represents the most important use case. We have invested a lot of work and free time for our baby, which we
+                        want to share with you today.
+                    </p>
+                    <h2 class="h5 mt-4">The story behind Metal Detector</h2>
+                    <p>
+                        At this point I would like to briefly describe how the idea for "Metal Detector" was born. I have been working
+                        with Nils together for many years. I still remember, as if it was yesterday, that about 2 years ago we were
+                        sitting in the office with a beer after work and were modeling the data model of our first side project. There
+                        should be a platform on which multiple choice tests for various IT certificates could be centrally administered
+                        and made available. The idea is not necessarily bad, but there was a clear lack of uniqueness here. We started
+                        roughly by building an application that would provide a rudimentary authentication workflow consisting of
+                        registration, login, logout and password recovery function. Today's foundation of the Metal Detector.
                     </p>
                     <p>
-                        Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat
-                        nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis
-                        dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
-                        euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+                        After a few more weeks, however, we realized that the previous idea of the multiple choice platform had no
+                        prospects for us. It is simply not a real problem that we had ourselves. We would lack the motivation in the
+                        long run to see the project through to the end. So we put our heads together once again and thought about which
+                        unsolved problem we currently have. This problem should ideally be in an area that connects us in some way. That
+                        is heavy metal.
                     </p>
+                    <h2 class="h5 mt-4">What problem should Metal Detector solve</h2>
                     <p>
-                        Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
-                        consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore
-                        eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit
-                        augue duis dolore te feugait nulla facilisi.
+                        Ask yourself how you keep up to date with upcoming releases. For us, it usually looked like this: we regularly
+                        checked a wide range of online sources and set us a reminder that band XY will release a new album in 3 months.
+                        This is mega annoying and time consuming. Our music taste is very broad and we wondered why there is no platform
+                        that knows all my favorite bands and proactively notifies me when one of them announces a new release or the
+                        release date has finally arrived. That was the birth of Metal Detector.
                     </p>
+                    <h2 class="h5 mt-4">The features we start with</h2>
                     <p>
-                        Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer
+                        We want to create a <span class="font-weight-bold">metal release calendar</span> that is 100% tailored to you
+                        and your listening habits. These are the features we are launching with:
+                    </p>
+                    <ul>
+                        <li>
+                            Search, follow and unfollow metal bands (<a href="#" th:href="@{/artists/search?query=Harakiri+for+the+Sky}">Search and Follow Harakiri For The Sky</a>)
+                        </li>
+                        <li>
+                            <a href="#" th:href="@{/settings/spotify-synchronization}">Synchronization</a> of your followed bands from Spotify
+                        </li>
+                        <li>
+                            An <a href="#" th:href="@{/my-artists}">overview</a> of bands you are currently following
+                        </li>
+                        <li>
+                            <a href="#" th:href="@{/releases}">A nicely designed release page</a> that gives you a comprehensive overview of upcoming releases
+                        </li>
+                        <li>
+                            You also have the possibility to <a href="#" th:href="@{/releases?page=1&releases=my&sort=release_date&direction=asc}">
+                            filter this release page to those bands you are currently following</a>
+                        </li>
+                    </ul>
+                    <p>
+                        You can be sure that it won't stay at this level of functionality. We listen to your feedback and still have a
+                        full backlog with a lot of features that you can expect in the future. So you can be curious. It will be cool!
                     </p>
                 </div>
                 <div id="blog-tags" class="mt-4">
@@ -58,13 +90,9 @@
                         <p class="mb-0">Co-Founder of Metal Detector </p>
                     </div>
                 </div>
-                <div id="blog-comments" class="mt-4">
-                    <h2 class="h4">Comments</h2>
-                    <div class="alert alert-warning py-4" role="alert">
-                        <span class="material-icons">warning</span> The comment function is currently still under development.
-                        Please come back here later.
-                    </div>
-                </div>
+<!--                <div id="blog-comments" class="mt-4">-->
+<!--                    <h2 class="h4">Comments</h2>-->
+<!--                </div>-->
             </div>
         </article>
     </section>
