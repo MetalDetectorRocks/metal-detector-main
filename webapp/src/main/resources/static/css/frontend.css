@@ -48,6 +48,10 @@ p, legend {
     color: var(--light-font-color) !important;
 }
 
+a:hover {
+    text-decoration: none;
+}
+
 .container {
     max-width: 1280px;
 }
@@ -173,6 +177,10 @@ footer .list-inline-item {
     min-height: 5.5rem;
 }
 
+.blog-title {
+    color: var(--light-font-color);
+}
+
 .blog-card-img {
     height: 15rem;
     object-fit: cover;
@@ -210,7 +218,6 @@ footer .list-inline-item {
 }
 
 .author-link:hover {
-    text-decoration: none;
     color: var(--blue-menu-item-color)
 }
 
