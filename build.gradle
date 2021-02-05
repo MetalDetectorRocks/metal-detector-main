@@ -16,7 +16,7 @@ buildscript {
     jaxbApiVersion = "2.3.1"
     jsonwebtokenVersion = "0.9.1"
     jsoupVersion = "1.13.1"
-    junitVersion = "5.7.0"
+    junitVersion = "5.7.1"
     lombokVersion = "1.18.18"
     materialIconsVersion = "0.3.1"
     micrometerVersion = "1.6.3"
@@ -49,7 +49,7 @@ ext {
                         "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3",
                         "jakarta.activation:jakarta.activation-api:2.0.0",
                         "org.jboss.logging:jboss-logging:3.4.1.Final",
-                        "net.bytebuddy:byte-buddy:1.10.19",
+                        "net.bytebuddy:byte-buddy:1.10.20",
                         "org.javassist:javassist:3.27.0-GA",
                         "org.webjars:jquery:3.5.1"]
   dependencyGroupVersions = ["org.springframework"           : "5.3.3",
