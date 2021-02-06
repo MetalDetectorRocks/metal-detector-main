@@ -11,12 +11,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.spotify.api.SpotifyArtist;
 import rocks.metaldetector.spotify.api.SpotifyImage;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
+import rocks.metaldetector.support.ImageSize;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyArtistFactory;
+import static rocks.metaldetector.support.ImageSize.L;
+import static rocks.metaldetector.support.ImageSize.XS;
 
 @ExtendWith(MockitoExtension.class)
 class SpotifyArtistTransformerTest implements WithAssertions {
@@ -37,7 +41,6 @@ class SpotifyArtistTransformerTest implements WithAssertions {
               SpotifyArtistDto.builder()
                       .id(givenArtist.getId())
                       .name(givenArtist.getName())
-                      .imageUrl(givenArtist.getImages().get(0).getUrl())
                       .uri(givenArtist.getUri())
                       .genres(givenArtist.getGenres())
                       .popularity(givenArtist.getPopularity())
@@ -46,10 +49,10 @@ class SpotifyArtistTransformerTest implements WithAssertions {
     );
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "should transform {0} to {1}")
   @MethodSource("imageProvider")
-  @DisplayName("'imageUrl' is empty if there are no images")
-  void should_transform_empty_images(List<SpotifyImage> images) {
+  @DisplayName("should transform images")
+  void should_transform_images(List<SpotifyImage> images, Map<ImageSize, String> expectedImages) {
     // given
     SpotifyArtist givenArtist = SpotfiyArtistFactory.withArtistName("Slayer");
     givenArtist.setImages(images);
@@ -58,7 +61,7 @@ class SpotifyArtistTransformerTest implements WithAssertions {
     SpotifyArtistDto result = underTest.transform(givenArtist);
 
     // then
-    assertThat(result.getImageUrl()).isEmpty();
+    assertThat(result.getImages()).isEqualTo(expectedImages);
   }
 
   @Test
@@ -104,9 +107,13 @@ class SpotifyArtistTransformerTest implements WithAssertions {
   }
 
   private static Stream<Arguments> imageProvider() {
+    SpotifyImage spotifyImage1 = new SpotifyImage("url1", 600, 600);
+    SpotifyImage spotifyImage2 = new SpotifyImage("url2", 64, 64);
     return Stream.of(
-            Arguments.of((List<SpotifyImage>) null),
-            Arguments.of(Collections.emptyList())
+            Arguments.of(null, Collections.emptyMap()),
+            Arguments.of(Collections.emptyList(), Collections.emptyMap()),
+            Arguments.of(List.of(spotifyImage1), Map.of(L, "url1")),
+            Arguments.of(List.of(spotifyImage1, spotifyImage2), Map.of(L, "url1", XS, "url2"))
     );
   }
 }

@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
+import static rocks.metaldetector.support.ImageSize.M;
 
 @Service
 @AllArgsConstructor
@@ -42,7 +43,7 @@ public class ArtistServiceImpl implements ArtistService {
   @Override
   public void persistSpotifyArtists(List<SpotifyArtistDto> spotifyArtistDtos) {
     List<ArtistEntity> artistEntities = spotifyArtistDtos.stream()
-        .map(artistDto -> new ArtistEntity(artistDto.getId(), artistDto.getName(), artistDto.getImageUrl(), SPOTIFY))
+        .map(artistDto -> new ArtistEntity(artistDto.getId(), artistDto.getName(), artistDto.getImages().get(M), SPOTIFY)) // ToDo DanielW: Set image properly
         .collect(Collectors.toList());
     artistRepository.saveAll(artistEntities);
   }

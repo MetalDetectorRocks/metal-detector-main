@@ -16,6 +16,9 @@ import rocks.metaldetector.support.Pagination;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import static rocks.metaldetector.support.ImageSize.M;
 
 public class SpotifyDtoFactory {
 
@@ -159,7 +162,7 @@ public class SpotifyDtoFactory {
           .popularity(100)
           .genres(List.of("Black Metal"))
           .id("abcdef12345")
-          .imageUrl("imageUrl")
+          .images(Map.of(M, "http://artist-image"))
           .name(artistName)
           .uri("uri")
           .build();

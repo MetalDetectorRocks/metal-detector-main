@@ -117,7 +117,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
       }
       case SPOTIFY: {
         SpotifyArtistDto artist = spotifyService.searchArtistById(externalId);
-        artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl(), source);
+        artistEntity = new ArtistEntity(artist.getId(), artist.getName(), null, source); // ToDo DanielW: set new fields via own transformer
         break;
       }
       default:
@@ -129,7 +129,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   private void saveSpotifyArtists(List<String> spotifyArtistIds) {
     List<String> newArtistsIds = artistService.findNewArtistIds(spotifyArtistIds);
-    List<SpotifyArtistDto> newSpotifyArtistDtos = spotifyService.searchArtistsByIds(newArtistsIds);
+    List<SpotifyArtistDto> newSpotifyArtistDtos = spotifyService.searchArtistsByIds(newArtistsIds); // ToDo DanielW: multiple artists
     artistService.persistSpotifyArtists(newSpotifyArtistDtos);
   }
 

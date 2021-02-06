@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
+import static rocks.metaldetector.support.ImageSize.M;
 
 @Component
 @AllArgsConstructor
@@ -39,7 +40,7 @@ public class ArtistSearchResponseTransformer {
         .id(spotifySearchResult.getId())
         .name(spotifySearchResult.getName())
         .uri(spotifySearchResult.getUri())
-        .imageUrl(spotifySearchResult.getImageUrl())
+        .imageUrl(spotifySearchResult.getImages().get(M)) // ToDo DanielW: set image properly
         .source(SPOTIFY.getDisplayName())
         .genres(spotifySearchResult.getGenres())
         .popularity(spotifySearchResult.getPopularity())
