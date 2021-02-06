@@ -24,10 +24,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
+import static rocks.metaldetector.support.ImageSize.M;
 
 public class DtoFactory {
 
@@ -284,7 +286,7 @@ public class DtoFactory {
           .popularity(100)
           .genres(List.of("Black Metal"))
           .id(artistName)
-          .imageUrl("imageUrl")
+          .images(Map.of(M, "http://artist-image"))
           .name(artistName)
           .uri("uri")
           .follower(666)
@@ -297,19 +299,6 @@ public class DtoFactory {
     public static SpotifyAlbumDto createDefault() {
       return SpotifyAlbumDto.builder()
           .artists(new ArrayList<>(List.of(SpotifyArtistDtoFactory.withArtistName("artist"))))
-          .uri("uri")
-          .popularity(666)
-          .name("albumName")
-          .imageUrl("imageUrl")
-          .genres(List.of("genre"))
-          .id("albumId")
-          .build();
-    }
-
-    public static SpotifyAlbumDto withTwoArtist() {
-      return SpotifyAlbumDto.builder()
-          .artists(new ArrayList<>(List.of(SpotifyArtistDtoFactory.withArtistName("artist1"),
-                                           SpotifyArtistDtoFactory.withArtistName("artist2"))))
           .uri("uri")
           .popularity(666)
           .name("albumName")
