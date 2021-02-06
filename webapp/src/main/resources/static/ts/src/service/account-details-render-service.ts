@@ -31,11 +31,22 @@ export class AccountDetailsRenderService {
             .then((response) => (this.emailInput.value = response.email))
             .catch(() => this.renderServerError(this.updateEmailErrorMessageHost, UNKNOWN_ERROR_MESSAGE));
 
-        this.updateEmailButton.addEventListener("click", this.onUpdateEmailAddressClicked.bind(this));
+        this.updateEmailButton.addEventListener("click", this.onUpdateEmailClicked.bind(this));
+        this.emailInput.addEventListener("keypress", (event) => this.onEnterPressedInEmailInput(event));
         this.deleteAccountButton.addEventListener("click", this.onDeleteAccountClicked.bind(this));
     }
 
-    private onUpdateEmailAddressClicked(): void {
+    private onEnterPressedInEmailInput(event: KeyboardEvent): void {
+        if (event.key === "Enter") {
+            this.updateEmail();
+        }
+    }
+
+    private onUpdateEmailClicked(): void {
+        this.updateEmail();
+    }
+
+    private updateEmail(): void {
         this.clearErrorMessageHosts();
         this.accountDetailsRestClient
             .updateEmailAddress(this.emailInput.value)
