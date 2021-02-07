@@ -40,7 +40,7 @@ public class ArtistServiceImpl implements ArtistService {
     return artistRepository.existsByExternalIdAndSource(externalId, source);
   }
 
-  @Override // ToDo DanielW: Check Unit tests
+  @Override
   public void persistSpotifyArtists(List<SpotifyArtistDto> spotifyArtistDtos) {
     List<ArtistEntity> artistEntities = spotifyArtistDtos.stream()
         .map(artistEntityTransformer::transformSpotifyArtistDto)

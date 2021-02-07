@@ -5,8 +5,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,6 +14,7 @@ import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
+import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
@@ -43,6 +42,9 @@ class ArtistServiceImplTest implements WithAssertions {
   private ArtistDtoTransformer artistDtoTransformer;
 
   @Mock
+  private ArtistEntityTransformer artistEntityTransformer;
+
+  @Mock
   private ArtistRepository artistRepository;
 
   @Mock
@@ -60,15 +62,13 @@ class ArtistServiceImplTest implements WithAssertions {
   @InjectMocks
   private ArtistServiceImpl underTest;
 
-  @Captor
-  private ArgumentCaptor<List<ArtistEntity>> argumentCaptor;
-
   private final ArtistEntity artistEntity = ArtistEntity.builder().externalId(EXTERNAL_ID).artistName(ARTIST_NAME).source(DISCOGS).build();
   private final ArtistDto artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, "Discogs", null, 666);
 
   @AfterEach
   void tearDown() {
-    reset(artistDtoTransformer, artistRepository, discogsService, searchResponseTransformer, spotifyService, userRepository);
+    reset(artistDtoTransformer, artistEntityTransformer, artistRepository, discogsService,
+            searchResponseTransformer, spotifyService, userRepository);
   }
 
   @Test
@@ -197,19 +197,33 @@ class ArtistServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("persistArtists: calls artistRepository with all entities")
-  void test_artist_repository_called_with_all_entities() {
+  @DisplayName("persistArtists: should transform each spotify artists with ArtistEntityTransformer")
+  void should_transform_spotify_artists_with_artist_entity_transformer() {
     // given
     var spotifyDtos = List.of(SpotifyArtistDtoFactory.withArtistName("a"), SpotifyArtistDtoFactory.withArtistName("b"));
-    var expectedEntities = List.of(ArtistEntityFactory.withExternalId("a"), ArtistEntityFactory.withExternalId("b"));
 
     // when
     underTest.persistSpotifyArtists(spotifyDtos);
 
     // then
-    verify(artistRepository).saveAll(argumentCaptor.capture());
-    List<ArtistEntity> capturedEntites = argumentCaptor.getValue();
-    assertThat(capturedEntites).isEqualTo(expectedEntities);
+    verify(artistEntityTransformer).transformSpotifyArtistDto(spotifyDtos.get(0));
+    verify(artistEntityTransformer).transformSpotifyArtistDto(spotifyDtos.get(1));
+  }
+
+  @Test
+  @DisplayName("persistArtists: calls artistRepository with all entities")
+  void test_artist_repository_called_with_all_entities() {
+    // given
+    var spotifyDtos = List.of(SpotifyArtistDtoFactory.withArtistName("a"), SpotifyArtistDtoFactory.withArtistName("b"));
+    var artistEntities = List.of(ArtistEntityFactory.withExternalId("a"), ArtistEntityFactory.withExternalId("b"));
+    doReturn(artistEntities.get(0)).when(artistEntityTransformer).transformSpotifyArtistDto(spotifyDtos.get(0));
+    doReturn(artistEntities.get(1)).when(artistEntityTransformer).transformSpotifyArtistDto(spotifyDtos.get(1));
+
+    // when
+    underTest.persistSpotifyArtists(spotifyDtos);
+
+    // then
+    verify(artistRepository).saveAll(artistEntities);
   }
 
   @Test
