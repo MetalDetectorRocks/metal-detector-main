@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -66,6 +67,8 @@ public class ArtistEntity extends BaseEntity {
   private String imageL;
 
   public List<String> getGenresAsList() {
-    return Stream.of(genres.split(",")).map(String::trim).collect(Collectors.toList());
+    return genres == null || genres.isBlank() ?
+            Collections.emptyList() :
+            Stream.of(genres.split(",")).map(String::trim).collect(Collectors.toList());
   }
 }
