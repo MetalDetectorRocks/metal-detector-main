@@ -25,7 +25,6 @@ public class ArtistDtoTransformer {
     return ArtistDto.builder()
         .externalId(spotifyArtistDto.getId())
         .artistName(spotifyArtistDto.getName())
-        .thumb(spotifyArtistDto.getImages().get(M))
         .images(spotifyArtistDto.getImages())
         .source(SPOTIFY.getDisplayName())
         .follower(spotifyArtistDto.getFollower())
@@ -36,7 +35,6 @@ public class ArtistDtoTransformer {
     return ArtistDto.builder()
             .externalId(artistEntity.getExternalId())
             .artistName(artistEntity.getArtistName())
-            .thumb(artistEntity.getThumb())
             .images(transformImages(artistEntity))
             .source(artistEntity.getSource().getDisplayName())
             .build();
@@ -46,7 +44,6 @@ public class ArtistDtoTransformer {
     return ArtistDto.builder()
             .externalId(topArtist.getExternalId())
             .artistName(topArtist.getArtistName())
-            .thumb(topArtist.getThumb())
             .images(transformImages(topArtist))
             .build();
   }
