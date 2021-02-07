@@ -17,7 +17,6 @@ public class ArtistDto {
 
   private String externalId;
   private String artistName;
-  private String thumb; // ToDo DanielW: remove, Fix image usage in frontend
   private Map<ImageSize, String> images;
   private String source;
   private LocalDateTime followedSince;

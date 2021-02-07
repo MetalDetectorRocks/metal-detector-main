@@ -9,6 +9,10 @@ import rocks.metaldetector.web.api.response.SummaryResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+
+import static rocks.metaldetector.support.ImageSize.M;
+import static rocks.metaldetector.support.ImageSize.S;
 
 @Service
 @Profile("mockmode")
@@ -46,10 +50,10 @@ public class SummaryServiceMock implements SummaryService {
   }
 
   private List<ArtistDto> createRecentlyFollowedArtists(LocalDateTime now) {
-    ArtistDto harakiriForTheSky = ArtistDto.builder().artistName("Harakiri For the Sky").thumb("/images/dummy/harakiri-for-the-sky.jpg").followedSince(now.minusDays(3)).follower(666).build();
-    ArtistDto marduk = ArtistDto.builder().artistName("Marduk").thumb("/images/dummy/marduk.jpg").followedSince(now.minusDays(7)).follower(666).build();
-    ArtistDto abbath = ArtistDto.builder().artistName("Abbath").thumb("/images/dummy/abbath.jpg").followedSince(now.minusDays(15)).follower(666).build();
-    ArtistDto alcest = ArtistDto.builder().artistName("Alcest").thumb("/images/dummy/alcest.jpg").followedSince(now.minusDays(26)).follower(666).build();
+    ArtistDto harakiriForTheSky = ArtistDto.builder().artistName("Harakiri For the Sky").images(Map.of(S,"/images/dummy/harakiri-for-the-sky.jpg")).followedSince(now.minusDays(3)).follower(666).build();
+    ArtistDto marduk = ArtistDto.builder().artistName("Marduk").images(Map.of(M, "/images/dummy/marduk.jpg")).followedSince(now.minusDays(7)).follower(666).build();
+    ArtistDto abbath = ArtistDto.builder().artistName("Abbath").images(Map.of(M, "/images/dummy/abbath.jpg")).followedSince(now.minusDays(15)).follower(666).build();
+    ArtistDto alcest = ArtistDto.builder().artistName("Alcest").images(Map.of(M, "/images/dummy/alcest.jpg")).followedSince(now.minusDays(26)).follower(666).build();
     return List.of(alcest, abbath, marduk, harakiriForTheSky);
   }
 }

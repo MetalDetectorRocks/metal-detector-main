@@ -54,7 +54,6 @@ class ArtistDtoTransformerTest implements WithAssertions {
     // then
     assertThat(result.getExternalId()).isEqualTo(artistEntity.getExternalId());
     assertThat(result.getArtistName()).isEqualTo(artistEntity.getArtistName());
-    assertThat(result.getThumb()).isEqualTo(artistEntity.getThumb());
     assertThat(result.getImages().get(XS)).isEqualTo(artistEntity.getImageXs());
     assertThat(result.getImages().get(S)).isEqualTo(artistEntity.getImageS());
     assertThat(result.getImages().get(M)).isEqualTo(artistEntity.getImageM());
@@ -68,7 +67,6 @@ class ArtistDtoTransformerTest implements WithAssertions {
     // given
     TopArtist topArtist = mock(TopArtist.class);
     doReturn("artist").when(topArtist).getArtistName();
-    doReturn("thumb").when(topArtist).getThumb();
     doReturn("http://example.com/image-xs.jpg").when(topArtist).getImageXs();
     doReturn("http://example.com/image-s.jpg").when(topArtist).getImageS();
     doReturn("http://example.com/image-m.jpg").when(topArtist).getImageM();
@@ -80,7 +78,6 @@ class ArtistDtoTransformerTest implements WithAssertions {
 
     // then
     assertThat(result.getArtistName()).isEqualTo(topArtist.getArtistName());
-    assertThat(result.getThumb()).isEqualTo(topArtist.getThumb());
     assertThat(result.getImages().get(XS)).isEqualTo(topArtist.getImageXs());
     assertThat(result.getImages().get(S)).isEqualTo(topArtist.getImageS());
     assertThat(result.getImages().get(M)).isEqualTo(topArtist.getImageM());
@@ -103,7 +100,6 @@ class ArtistDtoTransformerTest implements WithAssertions {
     // then
     assertThat(result.getExternalId()).isEqualTo(artistEntity.getExternalId());
     assertThat(result.getArtistName()).isEqualTo(artistEntity.getArtistName());
-    assertThat(result.getThumb()).isEqualTo(artistEntity.getThumb());
     assertThat(result.getSource()).isEqualTo(artistEntity.getSource().getDisplayName());
     assertThat(result.getFollowedSince()).isEqualTo(LocalDateTime.of(2020, 1, 1, 0, 0, 0));
   }

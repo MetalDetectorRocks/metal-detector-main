@@ -162,7 +162,6 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
     // then
     assertThat(result).hasSize(limit);
     assertThat(result.get(0).getArtistName()).isEqualTo(artist3.getArtistName());
-    assertThat(result.get(0).getThumb()).isEqualTo(artist3.getThumb());
     assertThat(result.get(0).getImageXs()).isEqualTo(artist3.getImageXs());
     assertThat(result.get(0).getImageS()).isEqualTo(artist3.getImageS());
     assertThat(result.get(0).getImageM()).isEqualTo(artist3.getImageM());
@@ -170,7 +169,6 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
     assertThat(result.get(0).getExternalId()).isEqualTo(artist3.getExternalId());
 
     assertThat(result.get(1).getArtistName()).isEqualTo(artist2.getArtistName());
-    assertThat(result.get(1).getThumb()).isEqualTo(artist2.getThumb());
     assertThat(result.get(1).getImageXs()).isEqualTo(artist2.getImageXs());
     assertThat(result.get(1).getImageS()).isEqualTo(artist2.getImageS());
     assertThat(result.get(1).getImageM()).isEqualTo(artist2.getImageM());
