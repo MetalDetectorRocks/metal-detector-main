@@ -8,6 +8,7 @@ import rocks.metaldetector.persistence.domain.artist.TopArtist;
 @Component
 public class ArtistTransformer {
 
+  // ToDo DanielW: Move all methods to ArtistDtoTransformer
   public ArtistDto transform(ArtistEntity artistEntity) {
     return ArtistDto.builder()
         .externalId(artistEntity.getExternalId())

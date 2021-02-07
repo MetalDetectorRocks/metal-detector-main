@@ -22,6 +22,7 @@ import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
@@ -50,19 +51,13 @@ class FollowArtistServiceImplTest implements WithAssertions {
   private static final ArtistSource ARTIST_SOURCE = DISCOGS;
 
   @Mock
-  private UserRepository userRepository;
+  private ArtistEntityTransformer artistEntityTransformer;
 
   @Mock
   private ArtistRepository artistRepository;
 
   @Mock
-  private FollowActionRepository followActionRepository;
-
-  @Mock
-  private SpotifyService spotifyService;
-
-  @Mock
-  private DiscogsService discogsService;
+  private ArtistService artistService;
 
   @Mock
   private ArtistTransformer artistTransformer;
@@ -71,7 +66,16 @@ class FollowArtistServiceImplTest implements WithAssertions {
   private CurrentUserSupplier currentUserSupplier;
 
   @Mock
-  private ArtistService artistService;
+  private DiscogsService discogsService;
+
+  @Mock
+  private FollowActionRepository followActionRepository;
+
+  @Mock
+  private SpotifyService spotifyService;
+
+  @Mock
+  private UserRepository userRepository;
 
   @InjectMocks
   private FollowArtistServiceImpl underTest;
@@ -81,7 +85,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(userRepository, artistRepository, currentUserSupplier, discogsService, artistTransformer, userEntity, spotifyService, artistService);
+    reset(artistEntityTransformer, artistRepository, artistService, userRepository, artistTransformer, currentUserSupplier,
+            discogsService, followActionRepository, spotifyService, userRepository, userEntity);
   }
 
   @Test

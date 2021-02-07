@@ -5,20 +5,19 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
+import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
-import static rocks.metaldetector.support.ImageSize.M;
-
 @Service
 @AllArgsConstructor
 public class ArtistServiceImpl implements ArtistService {
 
   private final ArtistRepository artistRepository;
+  private final ArtistEntityTransformer artistEntityTransformer;
   private final ArtistTransformer artistTransformer;
 
   @Override
@@ -40,10 +39,10 @@ public class ArtistServiceImpl implements ArtistService {
     return artistRepository.existsByExternalIdAndSource(externalId, source);
   }
 
-  @Override
+  @Override // ToDo DanielW: Check Unit tests
   public void persistSpotifyArtists(List<SpotifyArtistDto> spotifyArtistDtos) {
     List<ArtistEntity> artistEntities = spotifyArtistDtos.stream()
-        .map(artistDto -> new ArtistEntity(artistDto.getId(), artistDto.getName(), artistDto.getImages().get(M), SPOTIFY)) // ToDo DanielW: Set image properly
+        .map(artistEntityTransformer::transformSpotifyArtistDto)
         .collect(Collectors.toList());
     artistRepository.saveAll(artistEntities);
   }
