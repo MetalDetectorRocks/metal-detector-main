@@ -29,6 +29,7 @@ public class SpotifyArtistTransformer {
             .build();
   }
 
+  // ToDo DanielW: Es ist möglich, dass es mehrere Images gleicher Größe gibt -> führt beim Collector zur Exception
   private Map<ImageSize, String> transformImages(List<SpotifyImage> spotifyImages) {
     return spotifyImages == null ? Collections.emptyMap() : spotifyImages.stream().collect(
             Collectors.toMap(image -> ImageSize.ofHeight(image.getHeight()), SpotifyImage::getUrl)

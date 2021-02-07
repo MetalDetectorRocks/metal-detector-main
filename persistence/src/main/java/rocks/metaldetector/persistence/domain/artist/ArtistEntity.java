@@ -38,10 +38,7 @@ public class ArtistEntity extends BaseEntity implements MultipleSizeImages {
   @NonNull
   private String artistName;
 
-  // ToDo DanielW: must be renamed with flyway (imageL)
-  @Column(name = "thumb", updatable = false)
-  private String thumb;
-
+  @Column(name = "genres")
   private String genres;
 
   @Column(name = "source", nullable = false, updatable = false)
@@ -49,10 +46,10 @@ public class ArtistEntity extends BaseEntity implements MultipleSizeImages {
   private ArtistSource source;
 
   @Column(name = "spotify_popularity")
-  private int spotifyPopularity;
+  private Integer spotifyPopularity;
 
   @Column(name = "spotify_follower")
-  private int spotifyFollower;
+  private Integer spotifyFollower;
 
   @Column(name = "image_xs")
   private String imageXs;
