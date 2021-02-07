@@ -7,10 +7,13 @@ import rocks.metaldetector.discogs.facade.dto.DiscogsArtistSearchResultEntryDto;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
+import rocks.metaldetector.support.ImageSize;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
@@ -40,7 +43,7 @@ public class ArtistSearchResponseTransformer {
         .id(spotifySearchResult.getId())
         .name(spotifySearchResult.getName())
         .uri(spotifySearchResult.getUri())
-        .imageUrl(spotifySearchResult.getImages().get(M)) // ToDo DanielW: set image properly
+        .images(spotifySearchResult.getImages())
         .source(SPOTIFY.getDisplayName())
         .genres(spotifySearchResult.getGenres())
         .popularity(spotifySearchResult.getPopularity())
@@ -62,11 +65,13 @@ public class ArtistSearchResponseTransformer {
   }
 
   private ArtistSearchResponseEntryDto transformDiscogsSearchResult(DiscogsArtistSearchResultEntryDto discogsSearchResult) {
+    Map<ImageSize, String> images = new HashMap<>();
+    images.put(M, discogsSearchResult.getImageUrl());
     return ArtistSearchResponseEntryDto.builder()
         .id(String.valueOf(discogsSearchResult.getId()))
         .name(discogsSearchResult.getName())
         .uri(discogsSearchResult.getUri())
-        .imageUrl(discogsSearchResult.getImageUrl())
+        .images(images)
         .source(DISCOGS.getDisplayName())
         .metalDetectorFollower(artistRepository.countArtistFollower(discogsSearchResult.getId()))
         .build();

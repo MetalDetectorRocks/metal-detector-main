@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import rocks.metaldetector.support.ImageSize;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -15,7 +17,7 @@ public class ArtistSearchResponseEntryDto {
 
   private String id;
   private String name;
-  private String imageUrl;
+  private Map<ImageSize, String> images;
   private String uri;
   private String source;
   private boolean followed;
