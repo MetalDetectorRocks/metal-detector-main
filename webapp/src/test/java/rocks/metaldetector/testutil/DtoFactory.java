@@ -208,6 +208,7 @@ public class DtoFactory {
       return DiscogsArtistDto.builder()
           .id(EXTERNAL_ID)
           .name(ARTIST_NAME)
+          .imageUrl("http://example.com/image.jpg")
           .build();
     }
   }
@@ -283,13 +284,14 @@ public class DtoFactory {
 
     public static SpotifyArtistDto withArtistName(String artistName) {
       return SpotifyArtistDto.builder()
-          .popularity(100)
-          .genres(List.of("Black Metal"))
           .id(artistName)
-          .images(Map.of(M, "http://example.com/image-m.jpg"))
           .name(artistName)
           .uri("uri")
+          .url("http://example.com/" + artistName)
+          .genres(List.of("Black Metal"))
+          .popularity(100)
           .follower(666)
+          .images(Map.of(M, "http://example.com/image-m.jpg"))
           .build();
     }
   }

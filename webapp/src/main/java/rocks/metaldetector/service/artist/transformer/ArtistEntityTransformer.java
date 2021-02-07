@@ -31,7 +31,6 @@ public class ArtistEntityTransformer {
             .build();
   }
 
-  // ToDo DanielW: Welche Infos können wir noch von Discogs bekommen?
   public ArtistEntity transformDiscogsArtistDto(DiscogsArtistDto discogsArtist) {
     return ArtistEntity.builder()
             .externalId(discogsArtist.getId())
