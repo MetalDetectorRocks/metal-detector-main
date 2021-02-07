@@ -20,6 +20,7 @@ import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
 import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
@@ -49,6 +50,9 @@ class FollowArtistServiceImplTest implements WithAssertions {
   private static final ArtistSource ARTIST_SOURCE = DISCOGS;
 
   @Mock
+  private ArtistDtoTransformer artistDtoTransformer;
+
+  @Mock
   private ArtistEntityTransformer artistEntityTransformer;
 
   @Mock
@@ -56,9 +60,6 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
   @Mock
   private ArtistService artistService;
-
-  @Mock
-  private ArtistTransformer artistTransformer;
 
   @Mock
   private CurrentUserSupplier currentUserSupplier;
@@ -83,7 +84,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(artistEntityTransformer, artistRepository, artistService, userRepository, artistTransformer, currentUserSupplier,
+    reset(artistDtoTransformer, artistEntityTransformer, artistRepository, artistService, userRepository, currentUserSupplier,
             discogsService, followActionRepository, spotifyService, userRepository, userEntity);
   }
 
@@ -369,14 +370,14 @@ class FollowArtistServiceImplTest implements WithAssertions {
     FollowActionEntity followAction1 = mock(FollowActionEntity.class);
     FollowActionEntity followAction2 = mock(FollowActionEntity.class);
     when(followActionRepository.findAllByUser(any())).thenReturn(List.of(followAction1, followAction2));
-    when(artistTransformer.transform(any(FollowActionEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
+    when(artistDtoTransformer.transformFollowActionEntity(any(FollowActionEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     underTest.getFollowedArtistsOfCurrentUser();
 
     // then
-    verify(artistTransformer).transform(followAction1);
-    verify(artistTransformer).transform(followAction2);
+    verify(artistDtoTransformer).transformFollowActionEntity(followAction1);
+    verify(artistDtoTransformer).transformFollowActionEntity(followAction2);
   }
 
   @Test
@@ -391,9 +392,9 @@ class FollowArtistServiceImplTest implements WithAssertions {
     ArtistDto artistDto3 = ArtistDtoFactory.withName("Alcest");
 
     when(followActionRepository.findAllByUser(any())).thenReturn(List.of(followAction1, followAction2, followAction3));
-    when(artistTransformer.transform(followAction1)).thenReturn(artistDto1);
-    when(artistTransformer.transform(followAction2)).thenReturn(artistDto2);
-    when(artistTransformer.transform(followAction3)).thenReturn(artistDto3);
+    when(artistDtoTransformer.transformFollowActionEntity(followAction1)).thenReturn(artistDto1);
+    when(artistDtoTransformer.transformFollowActionEntity(followAction2)).thenReturn(artistDto2);
+    when(artistDtoTransformer.transformFollowActionEntity(followAction3)).thenReturn(artistDto3);
 
     // when
     List<ArtistDto> followedArtists = underTest.getFollowedArtistsOfCurrentUser();

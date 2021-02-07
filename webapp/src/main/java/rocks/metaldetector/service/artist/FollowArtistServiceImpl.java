@@ -13,6 +13,7 @@ import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
 import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
@@ -27,10 +28,10 @@ import java.util.stream.Collectors;
 @Service
 public class FollowArtistServiceImpl implements FollowArtistService {
 
+  private final ArtistDtoTransformer artistDtoTransformer;
   private final ArtistEntityTransformer artistEntityTransformer;
   private final ArtistRepository artistRepository;
   private final ArtistService artistService;
-  private final ArtistTransformer artistTransformer;
   private final CurrentUserSupplier currentUserSupplier;
   private final DiscogsService discogsService;
   private final FollowActionRepository followActionRepository;
@@ -99,7 +100,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   private List<ArtistDto> getFollowedArtists(UserEntity user) {
     return followActionRepository.findAllByUser(user).stream()
-        .map(artistTransformer::transform)
+        .map(artistDtoTransformer::transformFollowActionEntity)
         .sorted(Comparator.comparing(ArtistDto::getArtistName))
         .collect(Collectors.toUnmodifiableList());
   }

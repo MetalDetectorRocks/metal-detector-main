@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.artist;
+package rocks.metaldetector.service.artist.transformer;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -6,15 +6,37 @@ import org.junit.jupiter.api.Test;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.TopArtist;
+import rocks.metaldetector.service.artist.ArtistDto;
+import rocks.metaldetector.service.artist.ArtistEntityFactory;
+import rocks.metaldetector.testutil.DtoFactory;
 
 import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 
-class ArtistTransformerTest implements WithAssertions {
+class ArtistDtoTransformerTest implements WithAssertions {
 
-  private final ArtistTransformer underTest = new ArtistTransformer();
+  private final ArtistDtoTransformer underTest = new ArtistDtoTransformer();
+
+  @Test
+  @DisplayName("SpotifyArtistDto is transformed to ArtistDto")
+  void test_spotify_dto_is_transformed() {
+    // given
+    var spotifyArtistDto = DtoFactory.SpotifyArtistDtoFactory.withArtistName("artist");
+
+    // when
+    var result = underTest.transformSpotifyArtistDto(spotifyArtistDto);
+
+    // then
+    assertThat(result.getExternalId()).isEqualTo(spotifyArtistDto.getId());
+    assertThat(result.getArtistName()).isEqualTo(spotifyArtistDto.getName());
+    assertThat(result.getFollower()).isEqualTo(spotifyArtistDto.getFollower());
+    assertThat(result.getSource()).isEqualTo(SPOTIFY.getDisplayName());
+//    assertThat(result.getThumb()).isEqualTo(spotifyArtistDto.getImageUrl()); ToDo DanielW: Adjust Test
+    assertThat(result.getFollowedSince()).isNull();
+  }
 
   @Test
   @DisplayName("Should transform ArtistEntity to ArtistDto")
@@ -23,7 +45,7 @@ class ArtistTransformerTest implements WithAssertions {
     ArtistEntity artistEntity = ArtistEntityFactory.withExternalId("1");
 
     // when
-    ArtistDto result = underTest.transform(artistEntity);
+    ArtistDto result = underTest.transformArtistEntity(artistEntity);
 
     // then
     assertThat(result.getExternalId()).isEqualTo(artistEntity.getExternalId());
@@ -42,7 +64,7 @@ class ArtistTransformerTest implements WithAssertions {
     doReturn("externalId").when(topArtist).getExternalId();
 
     // when
-    ArtistDto result = underTest.transform(topArtist);
+    ArtistDto result = underTest.transformTopArtist(topArtist);
 
     // then
     assertThat(result.getArtistName()).isEqualTo(topArtist.getArtistName());
@@ -60,7 +82,7 @@ class ArtistTransformerTest implements WithAssertions {
     doReturn(LocalDateTime.of(2020, 1, 1, 0, 0, 0)).when(followAction).getCreatedDateTime();
 
     // when
-    ArtistDto result = underTest.transform(followAction);
+    ArtistDto result = underTest.transformFollowActionEntity(followAction);
 
     // then
     assertThat(result.getExternalId()).isEqualTo(artistEntity.getExternalId());

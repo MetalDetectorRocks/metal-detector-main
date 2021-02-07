@@ -16,7 +16,7 @@ import rocks.metaldetector.persistence.domain.artist.TopArtist;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistEntityFactory;
-import rocks.metaldetector.service.artist.ArtistTransformer;
+import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
@@ -40,10 +40,10 @@ import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMI
 class ArtistCollectorTest implements WithAssertions {
 
   @Mock
-  private ArtistRepository artistRepository;
+  private ArtistDtoTransformer artistDtoTransformer;
 
   @Mock
-  private ArtistTransformer artistTransformer;
+  private ArtistRepository artistRepository;
 
   @Mock
   private CurrentUserSupplier currentUserSupplier;
@@ -58,7 +58,7 @@ class ArtistCollectorTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(artistRepository, artistTransformer, currentUserSupplier, followActionRepository);
+    reset(artistDtoTransformer, artistRepository, currentUserSupplier, followActionRepository);
   }
 
   @Test
@@ -78,14 +78,14 @@ class ArtistCollectorTest implements WithAssertions {
     var topArtists = List.of(mock(TopArtist.class), mock(TopArtist.class));
     var artistDto = ArtistDtoFactory.createDefault();
     doReturn(topArtists).when(artistRepository).findTopArtists(anyInt());
-    doReturn(artistDto).when(artistTransformer).transform(any(TopArtist.class));
+    doReturn(artistDto).when(artistDtoTransformer).transformTopArtist(any(TopArtist.class));
 
     // when
     underTest.collectTopFollowedArtists();
 
     // then
-    verify(artistTransformer).transform(topArtists.get(0));
-    verify(artistTransformer).transform(topArtists.get(1));
+    verify(artistDtoTransformer).transformTopArtist(topArtists.get(0));
+    verify(artistDtoTransformer).transformTopArtist(topArtists.get(1));
   }
 
   @Test
@@ -95,8 +95,8 @@ class ArtistCollectorTest implements WithAssertions {
     var artistEntities = List.of(mock(TopArtist.class), mock(TopArtist.class));
     doReturn(artistEntities).when(artistRepository).findTopArtists(anyInt());
     var expectedArtistDtos = List.of(ArtistDtoFactory.withName("A"), ArtistDtoFactory.withName("B"));
-    doReturn(expectedArtistDtos.get(0)).when(artistTransformer).transform(artistEntities.get(0));
-    doReturn(expectedArtistDtos.get(1)).when(artistTransformer).transform(artistEntities.get(1));
+    doReturn(expectedArtistDtos.get(0)).when(artistDtoTransformer).transformTopArtist(artistEntities.get(0));
+    doReturn(expectedArtistDtos.get(1)).when(artistDtoTransformer).transformTopArtist(artistEntities.get(1));
 
     // when
     var result = underTest.collectTopFollowedArtists();
@@ -147,8 +147,8 @@ class ArtistCollectorTest implements WithAssertions {
     underTest.collectRecentlyFollowedArtists();
 
     // then
-    verify(artistTransformer).transform(userFollowsArtist1);
-    verify(artistTransformer).transform(userFollowsArtist2);
+    verify(artistDtoTransformer).transformFollowActionEntity(userFollowsArtist1);
+    verify(artistDtoTransformer).transformFollowActionEntity(userFollowsArtist2);
   }
 
   @Test
@@ -163,14 +163,14 @@ class ArtistCollectorTest implements WithAssertions {
     userFollowsArtist2.setCreatedDateTime(Date.from(Instant.now()));
     var followActionEntities = List.of(userFollowsArtist1, userFollowsArtist2);
     doReturn(followActionEntities).when(followActionRepository).findAllByUser(any());
-    InOrder inOrder = inOrder(artistTransformer);
+    InOrder inOrder = inOrder(artistDtoTransformer);
 
     // when
     underTest.collectRecentlyFollowedArtists();
 
     // then
-    inOrder.verify(artistTransformer).transform(userFollowsArtist2);
-    inOrder.verify(artistTransformer).transform(userFollowsArtist1);
+    inOrder.verify(artistDtoTransformer).transformFollowActionEntity(userFollowsArtist2);
+    inOrder.verify(artistDtoTransformer).transformFollowActionEntity(userFollowsArtist1);
   }
 
   @Test
@@ -199,7 +199,7 @@ class ArtistCollectorTest implements WithAssertions {
     var followAction = FollowActionEntity.builder().user(userEntity).artist(artist).build();
     var expectedArtist = ArtistDtoFactory.createDefault();
     doReturn(List.of(followAction)).when(followActionRepository).findAllByUser(any());
-    doReturn(expectedArtist).when(artistTransformer).transform(followAction);
+    doReturn(expectedArtist).when(artistDtoTransformer).transformFollowActionEntity(followAction);
 
     // when
     var result = underTest.collectRecentlyFollowedArtists();
