@@ -63,7 +63,7 @@ class ArtistServiceImplTest implements WithAssertions {
   private ArtistServiceImpl underTest;
 
   private final ArtistEntity artistEntity = ArtistEntity.builder().externalId(EXTERNAL_ID).artistName(ARTIST_NAME).source(DISCOGS).build();
-  private final ArtistDto artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, "Discogs", null, 666);
+  private final ArtistDto artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, null, "Discogs", null, 666);
 
   @AfterEach
   void tearDown() {

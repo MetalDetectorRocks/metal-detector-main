@@ -15,6 +15,10 @@ import java.time.LocalDateTime;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
+import static rocks.metaldetector.support.ImageSize.L;
+import static rocks.metaldetector.support.ImageSize.M;
+import static rocks.metaldetector.support.ImageSize.S;
+import static rocks.metaldetector.support.ImageSize.XS;
 
 class ArtistDtoTransformerTest implements WithAssertions {
 
@@ -34,7 +38,7 @@ class ArtistDtoTransformerTest implements WithAssertions {
     assertThat(result.getArtistName()).isEqualTo(spotifyArtistDto.getName());
     assertThat(result.getFollower()).isEqualTo(spotifyArtistDto.getFollower());
     assertThat(result.getSource()).isEqualTo(SPOTIFY.getDisplayName());
-//    assertThat(result.getThumb()).isEqualTo(spotifyArtistDto.getImageUrl()); ToDo DanielW: Adjust Test
+    assertThat(result.getImages()).isEqualTo(spotifyArtistDto.getImages());
     assertThat(result.getFollowedSince()).isNull();
   }
 
@@ -51,6 +55,10 @@ class ArtistDtoTransformerTest implements WithAssertions {
     assertThat(result.getExternalId()).isEqualTo(artistEntity.getExternalId());
     assertThat(result.getArtistName()).isEqualTo(artistEntity.getArtistName());
     assertThat(result.getThumb()).isEqualTo(artistEntity.getThumb());
+    assertThat(result.getImages().get(XS)).isEqualTo(artistEntity.getImageXs());
+    assertThat(result.getImages().get(S)).isEqualTo(artistEntity.getImageS());
+    assertThat(result.getImages().get(M)).isEqualTo(artistEntity.getImageM());
+    assertThat(result.getImages().get(L)).isEqualTo(artistEntity.getImageL());
     assertThat(result.getSource()).isEqualTo(artistEntity.getSource().getDisplayName());
   }
 
@@ -61,6 +69,10 @@ class ArtistDtoTransformerTest implements WithAssertions {
     TopArtist topArtist = mock(TopArtist.class);
     doReturn("artist").when(topArtist).getArtistName();
     doReturn("thumb").when(topArtist).getThumb();
+    doReturn("http://example.com/image-xs.jpg").when(topArtist).getImageXs();
+    doReturn("http://example.com/image-s.jpg").when(topArtist).getImageS();
+    doReturn("http://example.com/image-m.jpg").when(topArtist).getImageM();
+    doReturn("http://example.com/image-l.jpg").when(topArtist).getImageL();
     doReturn("externalId").when(topArtist).getExternalId();
 
     // when
@@ -69,6 +81,10 @@ class ArtistDtoTransformerTest implements WithAssertions {
     // then
     assertThat(result.getArtistName()).isEqualTo(topArtist.getArtistName());
     assertThat(result.getThumb()).isEqualTo(topArtist.getThumb());
+    assertThat(result.getImages().get(XS)).isEqualTo(topArtist.getImageXs());
+    assertThat(result.getImages().get(S)).isEqualTo(topArtist.getImageS());
+    assertThat(result.getImages().get(M)).isEqualTo(topArtist.getImageM());
+    assertThat(result.getImages().get(L)).isEqualTo(topArtist.getImageL());
     assertThat(result.getExternalId()).isEqualTo(topArtist.getExternalId());
   }
 

@@ -3,12 +3,20 @@ package rocks.metaldetector.service.artist.transformer;
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
+import rocks.metaldetector.persistence.domain.artist.MultipleSizeImages;
 import rocks.metaldetector.persistence.domain.artist.TopArtist;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
+import rocks.metaldetector.support.ImageSize;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
+import static rocks.metaldetector.support.ImageSize.L;
 import static rocks.metaldetector.support.ImageSize.M;
+import static rocks.metaldetector.support.ImageSize.S;
+import static rocks.metaldetector.support.ImageSize.XS;
 
 @Component
 public class ArtistDtoTransformer {
@@ -17,7 +25,8 @@ public class ArtistDtoTransformer {
     return ArtistDto.builder()
         .externalId(spotifyArtistDto.getId())
         .artistName(spotifyArtistDto.getName())
-        .thumb(spotifyArtistDto.getImages().get(M)) // ToDo DanielW: set image properly
+        .thumb(spotifyArtistDto.getImages().get(M))
+        .images(spotifyArtistDto.getImages())
         .source(SPOTIFY.getDisplayName())
         .follower(spotifyArtistDto.getFollower())
         .build();
@@ -28,6 +37,7 @@ public class ArtistDtoTransformer {
             .externalId(artistEntity.getExternalId())
             .artistName(artistEntity.getArtistName())
             .thumb(artistEntity.getThumb())
+            .images(transformImages(artistEntity))
             .source(artistEntity.getSource().getDisplayName())
             .build();
   }
@@ -37,7 +47,18 @@ public class ArtistDtoTransformer {
             .externalId(topArtist.getExternalId())
             .artistName(topArtist.getArtistName())
             .thumb(topArtist.getThumb())
+            .images(transformImages(topArtist))
             .build();
+  }
+
+  private Map<ImageSize, String> transformImages(MultipleSizeImages artistImages) {
+    Map<ImageSize, String> images = new HashMap<>();
+    images.put(XS, artistImages.getImageXs());
+    images.put(S, artistImages.getImageS());
+    images.put(M, artistImages.getImageM());
+    images.put(L, artistImages.getImageL());
+
+    return images;
   }
 
   public ArtistDto transformFollowActionEntity(FollowActionEntity followAction) {

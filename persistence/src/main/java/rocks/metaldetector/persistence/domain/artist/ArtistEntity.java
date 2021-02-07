@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 @Entity(name = "artists")
-public class ArtistEntity extends BaseEntity {
+public class ArtistEntity extends BaseEntity implements MultipleSizeImages {
 
   @Column(name = "external_id", nullable = false, updatable = false)
   private String externalId;
