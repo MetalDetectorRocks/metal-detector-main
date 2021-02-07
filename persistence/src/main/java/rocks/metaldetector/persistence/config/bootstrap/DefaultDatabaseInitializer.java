@@ -122,21 +122,21 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
             .externalId(OPETH_SPOTIFY_ID)
             .artistName("Opeth")
             .source(SPOTIFY)
-            .thumb("https://img.discogs.com/_ejoULEnb6ub_-_6fUoLW0ZS6C8=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-245797-1584786531-2513.jpeg.jpg")
+            .imageL("https://img.discogs.com/_ejoULEnb6ub_-_6fUoLW0ZS6C8=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-245797-1584786531-2513.jpeg.jpg")
             .build();
 
     ArtistEntity darkthrone = ArtistEntity.builder()
             .externalId(DARKTHRONE_SPOTIFY_ID)
             .artistName("Darkthrone")
             .source(SPOTIFY)
-            .thumb("https://img.discogs.com/z6M8OMNo7GXZR9PzQF8WvaqMvXw=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-252211-1579868454-4269.jpeg.jpg")
+            .imageL("https://img.discogs.com/z6M8OMNo7GXZR9PzQF8WvaqMvXw=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-252211-1579868454-4269.jpeg.jpg")
             .build();
 
     ArtistEntity mayhem = ArtistEntity.builder()
             .externalId(MAYHEM_SPOTIFY_ID)
             .artistName("Mayhem")
             .source(SPOTIFY)
-            .thumb("https://img.discogs.com/ZtM5dcXMOugk9djxyVN7T6BJm7M=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-14092-1551425950-6112.jpeg.jpg")
+            .imageL("https://img.discogs.com/ZtM5dcXMOugk9djxyVN7T6BJm7M=/150x150/smart/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/A-14092-1551425950-6112.jpeg.jpg")
             .build();
 
     entityManager.persist(opeth);

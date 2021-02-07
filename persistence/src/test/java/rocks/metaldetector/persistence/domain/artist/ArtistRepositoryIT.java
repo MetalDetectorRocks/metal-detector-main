@@ -122,7 +122,7 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
       ArtistEntity entity = artistEntities.get(i);
       assertThat(entity.getArtistName()).isEqualTo(String.valueOf(i + 1));
       assertThat(entity.getExternalId()).isEqualTo(String.valueOf(i + 1));
-      assertThat(entity.getThumb()).isNull();
+      assertThat(entity.getImageL()).isNull();
     }
   }
 
@@ -140,7 +140,7 @@ class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, With
       ArtistEntity entity = artistEntities.get(i);
       assertThat(entity.getArtistName()).isEqualTo(String.valueOf(i + 1));
       assertThat(entity.getExternalId()).isEqualTo(String.valueOf(i + 1));
-      assertThat(entity.getThumb()).isNull();
+      assertThat(entity.getImageL()).isNull();
     }
   }
 
