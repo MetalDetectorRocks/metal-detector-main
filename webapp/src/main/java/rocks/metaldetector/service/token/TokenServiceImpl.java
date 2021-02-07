@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.token.TokenType;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
@@ -47,17 +47,17 @@ public class TokenServiceImpl implements TokenService {
   }
 
   private String createToken(String publicUserId, TokenType tokenType, Duration expirationTime) {
-    String      tokenString = jwtsSupport.generateToken(publicUserId, expirationTime);
-    UserEntity  userEntity  = userRepository.findByPublicId(publicUserId).orElseThrow(
-            () -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString())
+    String tokenString = jwtsSupport.generateToken(publicUserId, expirationTime);
+    AbstractUserEntity userEntity = userRepository.findByPublicId(publicUserId).orElseThrow(
+        () -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString())
     );
 
     TokenEntity tokenEntity = TokenEntity.builder()
-                                         .user(userEntity)
-                                         .tokenString(tokenString)
-                                         .expirationDateTime(LocalDateTime.now().plus(expirationTime.toMillis(), ChronoUnit.MILLIS))
-                                         .tokenType(tokenType)
-                                         .build();
+        .user(userEntity)
+        .tokenString(tokenString)
+        .expirationDateTime(LocalDateTime.now().plus(expirationTime.toMillis(), ChronoUnit.MILLIS))
+        .tokenType(tokenType)
+        .build();
 
     tokenRepository.save(tokenEntity);
 
@@ -68,8 +68,8 @@ public class TokenServiceImpl implements TokenService {
   @Transactional
   public void resendExpiredEmailVerificationToken(String tokenString) {
     TokenEntity tokenEntity = tokenRepository.findEmailVerificationToken(tokenString)
-                                             .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
-    UserEntity userEntity = tokenEntity.getUser();
+        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
+    AbstractUserEntity userEntity = tokenEntity.getUser();
 
     tokenRepository.delete(tokenEntity);
     String newTokenString = createEmailVerificationToken(userEntity.getPublicId());
@@ -81,5 +81,4 @@ public class TokenServiceImpl implements TokenService {
   public void deleteToken(TokenEntity tokenEntity) {
     tokenRepository.delete(tokenEntity);
   }
-
 }

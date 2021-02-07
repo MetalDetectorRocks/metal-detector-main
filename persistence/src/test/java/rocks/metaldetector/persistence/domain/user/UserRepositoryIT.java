@@ -57,7 +57,7 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   @Test
   @DisplayName("findByEmail() should return the correct user entity")
   void find_by_email_should_return_user_entity() {
-    Optional<UserEntity> user = userRepository.findByEmail(EMAIL);
+    Optional<AbstractUserEntity> user = userRepository.findByEmail(EMAIL);
 
     assertThat(user).isPresent();
     assertThat(user.get()).isEqualTo(JOHN_DOE);
@@ -66,7 +66,7 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   @Test
   @DisplayName("findByEmail() should return an empty optional if no user was found")
   void find_by_email_should_return_empty_optional() {
-    Optional<UserEntity> user = userRepository.findByEmail(UNKNOWN_EMAIL);
+    Optional<AbstractUserEntity> user = userRepository.findByEmail(UNKNOWN_EMAIL);
 
     assertThat(user).isEmpty();
   }
@@ -74,7 +74,7 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   @Test
   @DisplayName("findByUsername() should return the correct user entity")
   void find_by_username_should_return_user_entity() {
-    Optional<UserEntity> user = userRepository.findByUsername(USERNAME);
+    Optional<AbstractUserEntity> user = userRepository.findByUsername(USERNAME);
 
     assertThat(user).isPresent();
     assertThat(user.get()).isEqualTo(JOHN_DOE);
@@ -83,7 +83,7 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   @Test
   @DisplayName("findByUsername() should return an empty optional if no user was found")
   void find_by_username_should_return_empty_optional() {
-    Optional<UserEntity> user = userRepository.findByUsername(UNKNOWN_USERNAME);
+    Optional<AbstractUserEntity> user = userRepository.findByUsername(UNKNOWN_USERNAME);
 
     assertThat(user).isEmpty();
   }
@@ -91,7 +91,7 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   @Test
   @DisplayName("findByPublicId() should return the correct user entity")
   void find_by_public_id_should_return_user_entity() {
-    Optional<UserEntity> user = userRepository.findByPublicId(JOHN_DOE.getPublicId());
+    Optional<AbstractUserEntity> user = userRepository.findByPublicId(JOHN_DOE.getPublicId());
 
     assertThat(user).isPresent();
     assertThat(user.get()).isEqualTo(JOHN_DOE);
@@ -100,7 +100,7 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   @Test
   @DisplayName("findByPublicId() should return an empty optional if no user was found")
   void find_by_public_id_should_return_empty_optional() {
-    Optional<UserEntity> user = userRepository.findByPublicId(UNKNOWN_USERNAME);
+    Optional<AbstractUserEntity> user = userRepository.findByPublicId(UNKNOWN_USERNAME);
 
     assertThat(user).isEmpty();
   }

@@ -70,6 +70,25 @@
   color: #777;
 }
 
+.or-container {
+  align-items: center;
+  color: #ccc;
+  display: flex;
+  margin: 25px 0
+}
+
+.line-separator {
+  background-color: #ccc;
+  flex-grow: 5;
+  height: 1px
+}
+
+.or-label {
+  flex-grow: 1;
+  margin: 0 15px;
+  text-align: center
+}
+
 /* Fallback for Edge
 -------------------------------------------------- */
 @supports (-ms-ime-align: auto) {

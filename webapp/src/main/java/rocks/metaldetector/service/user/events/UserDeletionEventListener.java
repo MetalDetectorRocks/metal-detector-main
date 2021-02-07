@@ -13,7 +13,7 @@ import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.AccountDeletedEmail;
 import rocks.metaldetector.service.email.EmailService;
@@ -39,7 +39,7 @@ public class UserDeletionEventListener implements ApplicationListener<UserDeleti
   @Override
   @Transactional
   public void onApplicationEvent(UserDeletionEvent event) {
-    UserEntity user = event.getUserEntity();
+    AbstractUserEntity user = event.getUserEntity();
     log.info("User '" + user.getPublicId() + "' deleted");
 
     Optional<SpotifyAuthorizationEntity> spotifyAuthorizationOptional = spotifyAuthorizationRepository.findByUserId(user.getId());

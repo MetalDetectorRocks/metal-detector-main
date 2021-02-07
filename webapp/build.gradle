@@ -17,6 +17,7 @@ dependencies {
   implementation "org.springframework.boot:spring-boot-starter-actuator:$springBootVersion"
   implementation "org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion"
   implementation "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
+  implementation "org.springframework.boot:spring-boot-starter-oauth2-client:$springBootVersion"
 
   implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity5:$thymeleafExtrasVersion"
   implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:$thymeleafDialectVersion"

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.ArtistTransformer;
@@ -33,7 +33,7 @@ public class ArtistCollector {
   }
 
   public List<ArtistDto> collectRecentlyFollowedArtists() {
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
     return followActionRepository.findAllByUser(currentUser).stream()
         .sorted(Comparator.comparing(FollowActionEntity::getCreatedDateTime).reversed())
         .limit(RESULT_LIMIT)

@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import rocks.metaldetector.persistence.domain.BaseEntity;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,9 +24,9 @@ import java.time.LocalDate;
 @Entity(name = "notificationConfigs")
 public class NotificationConfigEntity extends BaseEntity {
 
-  @OneToOne(targetEntity = UserEntity.class)
+  @OneToOne(targetEntity = AbstractUserEntity.class)
   @JoinColumn(nullable = false, name = "users_id")
-  private UserEntity user;
+  private AbstractUserEntity user;
 
   @Column(name = "notify", nullable = false, columnDefinition = "boolean default false")
   @Setter

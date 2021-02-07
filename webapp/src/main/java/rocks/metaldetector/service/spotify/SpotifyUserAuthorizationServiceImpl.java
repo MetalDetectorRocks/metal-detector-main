@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.spotify.facade.dto.SpotifyUserAuthorizationDto;
@@ -28,7 +28,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
   @Override
   @Transactional(readOnly = true)
   public boolean exists() {
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
     Optional<SpotifyAuthorizationEntity> authorizationEntity = spotifyAuthorizationRepository.findByUserId(currentUser.getId());
     return authorizationEntity.isPresent()
             && authorizationEntity.get().getAccessToken() != null
@@ -38,7 +38,7 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
   @Override
   @Transactional
   public String prepareAuthorization() {
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
     Optional<SpotifyAuthorizationEntity> authorizationEntity = spotifyAuthorizationRepository.findByUserId(currentUser.getId());
 
     String state;
@@ -97,13 +97,13 @@ public class SpotifyUserAuthorizationServiceImpl implements SpotifyUserAuthoriza
   @Override
   @Transactional
   public void deleteAuthorization() {
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
     Optional<SpotifyAuthorizationEntity> authorizationEntityOptional = spotifyAuthorizationRepository.findByUserId(currentUser.getId());
     authorizationEntityOptional.ifPresent(spotifyAuthorizationRepository::delete);
   }
 
   private SpotifyAuthorizationEntity findAuthorizationEntityFromCurrentUser() {
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
     Optional<SpotifyAuthorizationEntity> authorizationEntityOptional = spotifyAuthorizationRepository.findByUserId(currentUser.getId());
     return authorizationEntityOptional.orElseThrow(
             () -> new IllegalStateException("no authorization entity exists although it should!")

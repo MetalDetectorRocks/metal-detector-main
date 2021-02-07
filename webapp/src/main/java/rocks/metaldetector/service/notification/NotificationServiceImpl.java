@@ -7,7 +7,7 @@ import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
@@ -64,7 +64,7 @@ public class NotificationServiceImpl implements NotificationService {
     notificationConfigRepository.findAll().stream()
         .filter(config -> config.getUser().isEnabled() &&
                           config.getNotificationAtReleaseDate())
-        .forEach(notificationConfig -> notifyOnSpecificDate(notificationConfig, todaysReleases, (UserEntity user, List<ReleaseDto> filteredReleases) ->
+        .forEach(notificationConfig -> notifyOnSpecificDate(notificationConfig, todaysReleases, (AbstractUserEntity user, List<ReleaseDto> filteredReleases) ->
             new TodaysReleasesEmail(user.getEmail(), user.getUsername(), filteredReleases)));
   }
 
@@ -80,14 +80,14 @@ public class NotificationServiceImpl implements NotificationService {
     notificationConfigRepository.findAll().stream()
         .filter(config -> config.getUser().isEnabled() &&
                           config.getNotificationAtAnnouncementDate())
-        .forEach(notificationConfig -> notifyOnSpecificDate(notificationConfig, todaysAnnouncedReleases, (UserEntity user, List<ReleaseDto> filteredReleases) ->
+        .forEach(notificationConfig -> notifyOnSpecificDate(notificationConfig, todaysAnnouncedReleases, (AbstractUserEntity user, List<ReleaseDto> filteredReleases) ->
             new TodaysAnnouncementsEmail(user.getEmail(), user.getUsername(), filteredReleases)));
   }
 
   @Override
   @Transactional(readOnly = true)
   public NotificationConfigDto getCurrentUserNotificationConfig() {
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
     NotificationConfigEntity notificationConfigEntity = notificationConfigRepository.findByUserId(currentUser.getId())
         .orElseThrow(() -> new ResourceNotFoundException("Notification config for user '" + currentUser.getPublicId() + "' not found"));
     return notificationConfigTransformer.transform(notificationConfigEntity);
@@ -96,7 +96,7 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
   @Transactional
   public void updateCurrentUserNotificationConfig(NotificationConfigDto notificationConfigDto) {
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
     NotificationConfigEntity notificationConfigEntity = notificationConfigRepository.findByUserId(currentUser.getId())
         .orElseThrow(() -> new ResourceNotFoundException("Notification config for user '" + currentUser.getPublicId() + "' not found"));
 
@@ -114,7 +114,7 @@ public class NotificationServiceImpl implements NotificationService {
                            WEEKS.between(notificationConfigEntity.getLastNotificationDate(), now) >= notificationConfigEntity.getFrequencyInWeeks();
 
     if (shouldNotify) {
-      UserEntity user = notificationConfigEntity.getUser();
+      AbstractUserEntity user = notificationConfigEntity.getUser();
       List<String> followedArtistsNames = followArtistService.getFollowedArtistsOfUser(user.getPublicId()).stream()
           .map(ArtistDto::getArtistName).collect(Collectors.toList());
 
@@ -132,8 +132,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
   }
 
-  private void notifyOnSpecificDate(NotificationConfigEntity notificationConfig, List<ReleaseDto> releases, BiFunction<UserEntity, List<ReleaseDto>, AbstractEmail> emailBiFunction) {
-    UserEntity user = notificationConfig.getUser();
+  private void notifyOnSpecificDate(NotificationConfigEntity notificationConfig, List<ReleaseDto> releases, BiFunction<AbstractUserEntity, List<ReleaseDto>, AbstractEmail> emailBiFunction) {
+    AbstractUserEntity user = notificationConfig.getUser();
     List<String> followedArtistsNames = followArtistService.getFollowedArtistsOfUser(user.getPublicId()).stream()
         .map(ArtistDto::getArtistName).collect(Collectors.toList());
 
