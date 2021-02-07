@@ -195,7 +195,7 @@ public class DtoFactory {
     public static DiscogsArtistSearchResultEntryDto withArtistName(String artistName) {
       return DiscogsArtistSearchResultEntryDto.builder()
           .id("abcdef12345")
-          .imageUrl("imageUrl")
+          .imageUrl("http://example.com/image-m.jpg")
           .name(artistName)
           .uri("/uri")
           .build();
@@ -286,7 +286,7 @@ public class DtoFactory {
           .popularity(100)
           .genres(List.of("Black Metal"))
           .id(artistName)
-          .images(Map.of(M, "http://artist-image"))
+          .images(Map.of(M, "http://example.com/image-m.jpg"))
           .name(artistName)
           .uri("uri")
           .follower(666)
@@ -316,7 +316,7 @@ public class DtoFactory {
           .popularity(100)
           .genres(List.of("Black Metal"))
           .id(artistName)
-          .imageUrl("imageUrl")
+          .images(Map.of(M, "http://example.com/image-m.jpg"))
           .name(artistName)
           .uri("uri")
           .followed(false)
@@ -328,7 +328,7 @@ public class DtoFactory {
     public static ArtistSearchResponseEntryDto discogsWithArtistName(String artistName) {
       return ArtistSearchResponseEntryDto.builder()
           .id("abcdef12345")
-          .imageUrl("imageUrl")
+          .images(Map.of(M, "http://example.com/image-m.jpg"))
           .name(artistName)
           .uri("http://discogs.com/uri")
           .followed(false)
