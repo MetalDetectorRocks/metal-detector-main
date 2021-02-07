@@ -15,6 +15,7 @@ import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
+import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
@@ -39,22 +40,22 @@ class ArtistServiceImplTest implements WithAssertions {
   private static final ArtistSource ARTIST_SOURCE = DISCOGS;
 
   @Mock
-  private ArtistRepository artistRepository;
+  private ArtistDtoTransformer artistDtoTransformer;
 
   @Mock
-  private UserRepository userRepository;
+  private ArtistRepository artistRepository;
 
   @Mock
   private DiscogsService discogsService;
 
   @Mock
+  private ArtistSearchResponseTransformer searchResponseTransformer;
+
+  @Mock
   private SpotifyService spotifyService;
 
   @Mock
-  private ArtistTransformer artistTransformer;
-
-  @Mock
-  private ArtistSearchResponseTransformer searchResponseTransformer;
+  private UserRepository userRepository;
 
   @InjectMocks
   private ArtistServiceImpl underTest;
@@ -67,7 +68,7 @@ class ArtistServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(artistRepository, userRepository, discogsService, artistTransformer, spotifyService, searchResponseTransformer);
+    reset(artistDtoTransformer, artistRepository, discogsService, searchResponseTransformer, spotifyService, userRepository);
   }
 
   @Test
@@ -75,7 +76,7 @@ class ArtistServiceImplTest implements WithAssertions {
   void find_by_discogs_id_should_return_correct_artist() {
     // given
     when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(artistEntity));
-    when(artistTransformer.transform(any(ArtistEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
+    when(artistDtoTransformer.transformArtistEntity(any(ArtistEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     Optional<ArtistDto> artistOptional = underTest.findArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
@@ -108,7 +109,7 @@ class ArtistServiceImplTest implements WithAssertions {
     underTest.findArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(artistTransformer).transform(artistEntity);
+    verify(artistDtoTransformer).transformArtistEntity(artistEntity);
   }
 
   @Test
@@ -126,7 +127,7 @@ class ArtistServiceImplTest implements WithAssertions {
   void find_all_by_discogs_ids_should_return_all_entities_that_exist() {
     // given
     when(artistRepository.findAllByExternalIdIn(any())).thenReturn(List.of(artistEntity));
-    when(artistTransformer.transform(any(ArtistEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
+    when(artistDtoTransformer.transformArtistEntity(any(ArtistEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     List<ArtistDto> artists = underTest.findAllArtistsByExternalIds(List.of(EXTERNAL_ID, "0"));
@@ -156,7 +157,7 @@ class ArtistServiceImplTest implements WithAssertions {
     underTest.findAllArtistsByExternalIds(List.of(EXTERNAL_ID, "0"));
 
     // then
-    verify(artistTransformer).transform(artistEntity);
+    verify(artistDtoTransformer).transformArtistEntity(artistEntity);
   }
 
   @Test

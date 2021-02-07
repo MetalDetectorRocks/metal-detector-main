@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
+import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
 import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 
@@ -18,19 +19,19 @@ public class ArtistServiceImpl implements ArtistService {
 
   private final ArtistRepository artistRepository;
   private final ArtistEntityTransformer artistEntityTransformer;
-  private final ArtistTransformer artistTransformer;
+  private final ArtistDtoTransformer artistDtoTransformer;
 
   @Override
   public Optional<ArtistDto> findArtistByExternalId(String externalId, ArtistSource source) {
     return artistRepository.findByExternalIdAndSource(externalId, source)
-        .map(artistTransformer::transform);
+        .map(artistDtoTransformer::transformArtistEntity);
   }
 
   @Override
   public List<ArtistDto> findAllArtistsByExternalIds(List<String> externalIds) {
     List<ArtistEntity> artistEntities = artistRepository.findAllByExternalIdIn(externalIds);
     return artistEntities.stream()
-        .map(artistTransformer::transform)
+        .map(artistDtoTransformer::transformArtistEntity)
         .collect(Collectors.toList());
   }
 
