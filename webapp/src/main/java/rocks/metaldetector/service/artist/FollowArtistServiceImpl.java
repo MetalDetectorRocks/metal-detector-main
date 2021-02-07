@@ -13,6 +13,7 @@ import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
@@ -26,14 +27,15 @@ import java.util.stream.Collectors;
 @Service
 public class FollowArtistServiceImpl implements FollowArtistService {
 
-  private final UserRepository userRepository;
+  private final ArtistEntityTransformer artistEntityTransformer;
   private final ArtistRepository artistRepository;
-  private final FollowActionRepository followActionRepository;
-  private final SpotifyService spotifyService;
-  private final DiscogsService discogsService;
+  private final ArtistService artistService;
   private final ArtistTransformer artistTransformer;
   private final CurrentUserSupplier currentUserSupplier;
-  private final ArtistService artistService;
+  private final DiscogsService discogsService;
+  private final FollowActionRepository followActionRepository;
+  private final SpotifyService spotifyService;
+  private final UserRepository userRepository;
 
   @Override
   @Transactional
@@ -112,12 +114,12 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     switch (source) {
       case DISCOGS: {
         DiscogsArtistDto artist = discogsService.searchArtistById(externalId);
-        artistEntity = new ArtistEntity(artist.getId(), artist.getName(), artist.getImageUrl(), source);
+        artistEntity = artistEntityTransformer.transformDiscogsArtistDto(artist); // ToDo DanielW: Unit Test
         break;
       }
       case SPOTIFY: {
         SpotifyArtistDto artist = spotifyService.searchArtistById(externalId);
-        artistEntity = new ArtistEntity(artist.getId(), artist.getName(), null, source); // ToDo DanielW: set new fields via own transformer
+        artistEntity = artistEntityTransformer.transformSpotifyArtistDto(artist); // ToDo DanielW: UNit Test
         break;
       }
       default:
@@ -129,7 +131,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   private void saveSpotifyArtists(List<String> spotifyArtistIds) {
     List<String> newArtistsIds = artistService.findNewArtistIds(spotifyArtistIds);
-    List<SpotifyArtistDto> newSpotifyArtistDtos = spotifyService.searchArtistsByIds(newArtistsIds); // ToDo DanielW: multiple artists
+    List<SpotifyArtistDto> newSpotifyArtistDtos = spotifyService.searchArtistsByIds(newArtistsIds);
     artistService.persistSpotifyArtists(newSpotifyArtistDtos);
   }
 

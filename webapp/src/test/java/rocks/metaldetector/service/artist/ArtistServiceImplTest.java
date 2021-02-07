@@ -62,7 +62,7 @@ class ArtistServiceImplTest implements WithAssertions {
   @Captor
   private ArgumentCaptor<List<ArtistEntity>> argumentCaptor;
 
-  private final ArtistEntity artistEntity = new ArtistEntity(EXTERNAL_ID, ARTIST_NAME, null, DISCOGS);
+  private final ArtistEntity artistEntity = ArtistEntity.builder().externalId(EXTERNAL_ID).artistName(ARTIST_NAME).source(DISCOGS).build();
   private final ArtistDto artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, "Discogs", null, 666);
 
   @AfterEach
