@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html layout:decorate="~{frontend/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>We are online!</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <article id="blog-content-wrapper" class="mt-4 d-flex justify-content-center">
+            <div class="blog-content">
+                <h1 class="h4">We are online!</h1>
+                <div id="blog-author-begin" class="blog-post-author d-flex align-items-center mt-4">
+                    <img class="avatar avatar-s" src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Avatar">
+                    <div class="ml-4 text-left">
+                        <p class="mb-0">DanielW</p>
+                        <p class="text-muted mt-n1 mb-0">January 9th, 2021</p>
+                    </div>
+                </div>
+
+                <div class="blog-text text-justify mt-4">
+                    <p>
+                        Hell Yeah! After a long development time, the "Metal Detector" is finally online in a minimal version that
+                        represents the most important use case. We have invested a lot of work and free time for our baby, which we
+                        want to share with you today.
+                    </p>
+                    <h2 class="h5 mt-4">The story behind Metal Detector</h2>
+                    <p>
+                        At this point I would like to briefly describe how the idea for "Metal Detector" was born. I have been working
+                        with Nils together for many years. I still remember, as if it was yesterday, that about 2 years ago we were
+                        sitting in the office with a beer after work and were modeling the data model of our first side project. There
+                        should be a platform on which multiple choice tests for various IT certificates could be centrally administered
+                        and made available. The idea is not necessarily bad, but there was a clear lack of uniqueness here. We started
+                        roughly by building an application that would provide a rudimentary authentication workflow consisting of
+                        registration, login, logout and password recovery function. Today's foundation of the Metal Detector.
+                    </p>
+                    <p>
+                        After a few more weeks, however, we realized that the previous idea of the multiple choice platform had no
+                        prospects for us. It is simply not a real problem that we had ourselves. We would lack the motivation in the
+                        long run to see the project through to the end. So we put our heads together once again and thought about which
+                        unsolved problem we currently have. This problem should ideally be in an area that connects us in some way. That
+                        is heavy metal.
+                    </p>
+                    <h2 class="h5 mt-4">What problem should Metal Detector solve</h2>
+                    <p>
+                        Ask yourself how you keep up to date with upcoming releases. For us, it usually looked like this: we regularly
+                        checked a wide range of online sources and set us a reminder that band XY will release a new album in 3 months.
+                        This is mega annoying and time consuming. Our music taste is very broad and we wondered why there is no platform
+                        that knows all my favorite bands and proactively notifies me when one of them announces a new release or the
+                        release date has finally arrived. That was the birth of Metal Detector.
+                    </p>
+                    <h2 class="h5 mt-4">The features we start with</h2>
+                    <p>
+                        We want to create a <span class="font-weight-bold">metal release calendar</span> that is 100% tailored to you
+                        and your listening habits. These are the features we are launching with:
+                    </p>
+                    <ul>
+                        <li>
+                            Search, follow and unfollow metal bands (<a href="#" th:href="@{/artists/search?query=Harakiri+for+the+Sky}">Search and Follow Harakiri For The Sky</a>)
+                        </li>
+                        <li>
+                            <a href="#" th:href="@{/settings/spotify-synchronization}">Synchronization</a> of your followed bands from Spotify
+                        </li>
+                        <li>
+                            An <a href="#" th:href="@{/my-artists}">overview</a> of bands you are currently following
+                        </li>
+                        <li>
+                            <a href="#" th:href="@{/releases}">A nicely designed release page</a> that gives you a comprehensive overview of upcoming releases
+                        </li>
+                        <li>
+                            You also have the possibility to <a href="#" th:href="@{/releases?page=1&releases=my&sort=release_date&direction=asc}">
+                            filter this release page to those bands you are currently following</a>
+                        </li>
+                    </ul>
+                    <p>
+                        You can be sure that it won't stay at this level of functionality. We listen to your feedback and still have a
+                        full backlog with a lot of features that you can expect in the future. So you can be curious. It will be cool!
+                    </p>
+                </div>
+                <div id="blog-tags" class="mt-4">
+                    <a class="btn btn-secondary mr-1" href="#">Announcement</a>
+                    <a class="btn btn-secondary mr-1" href="#">Metal Detector</a>
+                    <a class="btn btn-secondary mr-1" href="#">Features</a>
+                </div>
+                <div id="blog-author-end" class="blog-post-author d-flex align-items-center mt-4">
+                    <img class="avatar avatar-xl" src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Avatar">
+                    <div class="ml-4 text-left">
+                        <p class="mb-0">Written by</p>
+                        <a href="#" class="author-link">DanielW</a>
+                        <p class="mb-0">Co-Founder of Metal Detector </p>
+                    </div>
+                </div>
+<!--                <div id="blog-comments" class="mt-4">-->
+<!--                    <h2 class="h4">Comments</h2>-->
+<!--                </div>-->
+            </div>
+        </article>
+    </section>
+</body>
+</html>
