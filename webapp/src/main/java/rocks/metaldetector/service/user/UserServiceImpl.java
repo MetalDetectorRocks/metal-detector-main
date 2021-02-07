@@ -199,7 +199,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void changePasswordFromMail(String tokenString, String newPassword) {
+  public void resetPasswordWithToken(String tokenString, String newPassword) {
     // 1. get claims to check signature of token
     jwtsSupport.getClaims(tokenString);
 

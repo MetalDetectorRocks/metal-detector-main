@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @FieldsValueMatch.List({
-  @FieldsValueMatch(field = "plainPassword", fieldMatch = "verifyPlainPassword", message = "The Passwords must match")
+  @FieldsValueMatch(field = "plainPassword", fieldMatch = "verifyPlainPassword", message = "The passwords must match")
 })
 @NoArgsConstructor
 @AllArgsConstructor

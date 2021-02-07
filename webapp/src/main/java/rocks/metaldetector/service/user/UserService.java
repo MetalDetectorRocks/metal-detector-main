@@ -27,7 +27,7 @@ public interface UserService extends UserDetailsService {
 
   void verifyEmailToken(String tokenString);
 
-  void changePasswordFromMail(String tokenString, String newPassword);
+  void resetPasswordWithToken(String tokenString, String newPassword);
 
   void persistSuccessfulLogin(String publicUserId);
 

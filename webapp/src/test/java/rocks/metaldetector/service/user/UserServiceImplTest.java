@@ -687,7 +687,7 @@ class UserServiceImplTest implements WithAssertions {
       when(passwordEncoder.encode(NEW_PLAIN_PASSWORD)).thenReturn(NEW_ENCRYPTED_PASSWORD);
 
       // when
-      underTest.changePasswordFromMail(TOKEN, NEW_PLAIN_PASSWORD);
+      underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD);
 
       // then
       verify(userRepository).save(userEntityCaptor.capture());
@@ -704,7 +704,7 @@ class UserServiceImplTest implements WithAssertions {
       when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.empty());
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.changePasswordFromMail(TOKEN, NEW_PLAIN_PASSWORD));
+      Throwable throwable = catchThrowable(() -> underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD));
 
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
@@ -720,7 +720,7 @@ class UserServiceImplTest implements WithAssertions {
 
       // when
       Thread.sleep(1); // wait 1ms so that the token can expire
-      Throwable throwable = catchThrowable(() -> underTest.changePasswordFromMail(TOKEN, NEW_PLAIN_PASSWORD));
+      Throwable throwable = catchThrowable(() -> underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD));
 
       // then
       assertThat(throwable).isInstanceOf(TokenExpiredException.class);

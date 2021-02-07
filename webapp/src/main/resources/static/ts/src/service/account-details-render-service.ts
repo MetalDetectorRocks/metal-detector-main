@@ -80,6 +80,7 @@ export class AccountDetailsRenderService {
         interface ErrorResponse {
             messages: string[];
         }
+
         const response: ErrorResponse = error.response?.data;
         const errorMessageAlert = document.getElementById("alert-message") as HTMLDivElement;
         errorMessageAlert.classList.remove("alert-success");
@@ -105,10 +106,10 @@ export class AccountDetailsRenderService {
             listItem.textContent = "Password length must be at least 8 characters.";
             messages.appendChild(listItem);
         }
-        const passwordMatchMessage = response.messages.find((value) => value.includes("The Passwords must match"));
+        const passwordMatchMessage = response.messages.find((value) => value.includes("The passwords must match"));
         if (passwordMatchMessage != null) {
             const listItem = document.createElement("li") as HTMLLIElement;
-            listItem.textContent = "The Passwords must match.";
+            listItem.textContent = "The passwords must match.";
             messages.appendChild(listItem);
         }
         const oldPasswordMathMessage = response.messages.find((value) => value.includes("Old password does not match"));

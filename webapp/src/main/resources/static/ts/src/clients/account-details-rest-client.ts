@@ -66,6 +66,7 @@ export class AccountDetailsRestClient {
                 return;
             })
             .catch((error: AxiosError) => {
+                console.error(error);
                 throw error;
             });
     }
