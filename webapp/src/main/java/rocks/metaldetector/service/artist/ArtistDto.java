@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import rocks.metaldetector.support.ImageSize;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -15,7 +17,8 @@ public class ArtistDto {
 
   private String externalId;
   private String artistName;
-  private String thumb;
+  private String thumb; // ToDo DanielW: remove, Fix image usage in frontend
+  private Map<ImageSize, String> images;
   private String source;
   private LocalDateTime followedSince;
   private int follower;
