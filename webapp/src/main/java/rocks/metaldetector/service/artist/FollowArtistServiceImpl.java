@@ -114,12 +114,12 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     switch (source) {
       case DISCOGS: {
         DiscogsArtistDto artist = discogsService.searchArtistById(externalId);
-        artistEntity = artistEntityTransformer.transformDiscogsArtistDto(artist); // ToDo DanielW: Unit Test
+        artistEntity = artistEntityTransformer.transformDiscogsArtistDto(artist);
         break;
       }
       case SPOTIFY: {
         SpotifyArtistDto artist = spotifyService.searchArtistById(externalId);
-        artistEntity = artistEntityTransformer.transformSpotifyArtistDto(artist); // ToDo DanielW: UNit Test
+        artistEntity = artistEntityTransformer.transformSpotifyArtistDto(artist);
         break;
       }
       default:
