@@ -1,14 +1,102 @@
 <!DOCTYPE html>
 <html layout:decorate="~{frontend/fragments/layout}"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      lang="en">
+      lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <title>Blog</title>
 </head>
 <body>
     <section layout:fragment="content">
         <h1 class="h4">Blog</h1>
-        <p>Lorem ipsum...</p>
+            <div class="row">
+                <div class="col-md-4">
+                    <article class="card blog-card mt-4">
+                        <img class="blog-card-img" src="#" th:src="@{/images/blog/feature-images/metal-detector.png}" alt="We are online photo">
+                        <div class="card-body">
+                            <h2 class="mb-1 h4"><a class="blog-title" href="#" th:href="@{/blog/future-plans}">Future plans</a></h2>
+                            <p class="mb-3 text-muted">Announcement</p>
+                            <p class="mb-3 text-justify blog-intro-text">
+                                The Metal Detector has been online for a few days now (Closed beta). We want to share with you
+                                what we have planned for the current year.
+                            </p>
+                            <div class="row">
+                                <div class="col">
+<!--                                    <p class="mb-4 text-muted">0 comments</p>-->
+                                </div>
+                                <div class="col text-right">
+                                    <a href="#" th:href="@{/blog/future-plans}" class="dark-hyperlink mb-4">Continue reading</a>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-3 mt-2">
+                                <img class="avatar avatar-s" src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Avatar">
+                                <div class="ml-4 text-left">
+                                    <p class="mb-0">DanielW</p>
+                                    <p class="text-muted mt-n1 mb-0">February 1st, 2021</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="col-md-4">
+                    <article class="card blog-card mt-4">
+                        <img class="blog-card-img" src="#" th:src="@{/images/blog/feature-images/top-releases-2020.jpg}" alt="Top releases 2020 photo">
+                        <div class="card-body">
+                            <h2 class="mb-1 h4"><a class="blog-title" href="#" th:href="@{/blog/top-6-releases-2020}">Top 6 Releases of 2020</a></h2>
+                            <p class="mb-3 text-muted">Releases</p>
+                            <p class="mb-3 text-justify blog-intro-text">
+                                It is now 2021 and we have taken the time to look back at the pandemic year of 2020 to bring you our
+                                top 6 metal releases.
+                            </p>
+                            <div class="row">
+                                <div class="col">
+<!--                                    <p class="mb-4 text-muted">0 comments</p>-->
+                                </div>
+                                <div class="col text-right">
+                                    <a href="#" th:href="@{/blog/top-6-releases-2020}" class="dark-hyperlink mb-4">Continue reading</a>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-3 mt-2">
+                                <img class="avatar avatar-s" src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Avatar">
+                                <div class="ml-4 text-left">
+                                    <p class="mb-0">DanielW</p>
+                                    <p class="text-muted mt-n1 mb-0">January 10th, 2021</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="col-md-4">
+                    <article class="card blog-card mt-4">
+                        <img class="blog-card-img" src="#" th:src="@{/images/blog/feature-images/we-are-online.jpg}" alt="We are online photo">
+                        <div class="card-body">
+                            <h2 class="mb-1 h4"><a class="blog-title" href="#" th:href="@{/blog/we-are-online}">We are online!</a></h2>
+                            <p class="mb-3 text-muted">Announcement</p>
+                            <p class="mb-3 text-justify blog-intro-text">
+                                After many months of development, we can finally go online with Metal Detector in early 2021. Learn more
+                                about the initial features in this blog post.
+                            </p>
+                            <div class="row">
+                                <div class="col">
+<!--                                    <p class="mb-4 text-muted">0 comments</p>-->
+                                </div>
+                                <div class="col text-right">
+                                    <a href="#" th:href="@{/blog/we-are-online}" class="dark-hyperlink mb-4">Continue reading</a>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-3 mt-2">
+                                <img class="avatar avatar-s" src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Avatar">
+                                <div class="ml-4 text-left">
+                                    <p class="mb-0">DanielW</p>
+                                    <p class="text-muted mt-n1 mb-0">January 9th, 2021</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+            </div>
     </section>
 </body>
 </html>
