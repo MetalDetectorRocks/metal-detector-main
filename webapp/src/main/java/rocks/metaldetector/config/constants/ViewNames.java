@@ -22,17 +22,20 @@ public class ViewNames {
   }
 
   public static class Frontend {
-    public static final String HOME                    = "frontend/home";
-    public static final String SEARCH                  = "frontend/search";
-    public static final String RELEASES                = "frontend/releases";
-    public static final String BLOG                    = "frontend/blog";
-    public static final String MY_ARTISTS              = "frontend/my-artists";
-    public static final String IMPRINT                 = "frontend/imprint";
-    public static final String PRIVACY_POLICY          = "frontend/privacy-policy";
-    public static final String ACCOUNT_DETAILS         = "frontend/account-details";
-    public static final String SPOTIFY_SYNCHRONIZATION = "frontend/spotify-synchronization";
-    public static final String NOTIFICATION_SETTINGS   = "frontend/notification-settings";
-    public static final String STATUS                  = "frontend/status";
+    public static final String HOME                         = "frontend/home";
+    public static final String SEARCH                       = "frontend/search";
+    public static final String RELEASES                     = "frontend/releases";
+    public static final String BLOG                         = "frontend/blog";
+    public static final String BLOG_POST_WE_ARE_ONLINE      = "frontend/blog/we-are-online";
+    public static final String BLOG_POST_TOP_RELEASES_2020  = "frontend/blog/top-6-releases-2020";
+    public static final String BLOG_POST_FUTURE_PLANS       = "frontend/blog/future-plans";
+    public static final String MY_ARTISTS                   = "frontend/my-artists";
+    public static final String IMPRINT                      = "frontend/imprint";
+    public static final String PRIVACY_POLICY               = "frontend/privacy-policy";
+    public static final String ACCOUNT_DETAILS              = "frontend/account-details";
+    public static final String SPOTIFY_SYNCHRONIZATION      = "frontend/spotify-synchronization";
+    public static final String NOTIFICATION_SETTINGS        = "frontend/notification-settings";
+    public static final String STATUS                       = "frontend/status";
   }
 
   public static class AdminArea {

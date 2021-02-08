@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html layout:decorate="~{frontend/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Future Plans</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <article id="blog-content-wrapper" class="mt-4 d-flex justify-content-center">
+            <div class="blog-content">
+                <h1 class="h4">Future plans</h1>
+                <div id="blog-author-begin" class="blog-post-author d-flex align-items-center mt-4">
+                    <img class="avatar avatar-s" src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Avatar">
+                    <div class="ml-4 text-left">
+                        <p class="mb-0">DanielW</p>
+                        <p class="text-muted mt-n1 mb-0">February 1st, 2021</p>
+                    </div>
+                </div>
+
+                <div class="blog-text text-justify mt-4">
+                    <p>
+                        Since about a month the Metal Detector has opened its doors for a small selection of people. The development has
+                        not stood still since then and will not stand still the rest of the year. We still have plenty of features and
+                        improvements planned for the Metal Detector. Today I want to give you a small overview of what you can look
+                        forward to in the future.
+                    </p>
+
+                    <h2 class="h5 mt-4">Notifications</h2>
+                    <p>
+                        Currently the concept of the site is that you have to actively visit it and inform yourself when which band is
+                        releasing a new album. By restricting to your favorite bands, you are quickly up to date, but this manual effort is
+                        of course uncomfortable. Exactly for this reason there will soon be a notification system that will notify you
+                        proactively. For the time being this will be done via email and you can choose whether you want to receive a
+                        summary about recently released and upcoming album releases of your favorite band and/or additionally be notified
+                        on the day of announcement and/or release. In addition to email, channels such as Telegram or RSS feed are also
+                        conceivable in the future.
+                    </p>
+
+                    <h2 class="h5 mt-4">Desktop first, mobile second</h2>
+                    <p>
+                        One or the other will have noticed it already, but mobile the Metal Detector is rather a disaster and not really
+                        usable. Of course this does not fit to today's time and we want to change that as soon as possible, because we want
+                        to be available and usable for you on the go. A big construction site this year will therefore be the optimization
+                        of the website's optimization for mobile devices. Currently there are no plans to release the Metal Detector as a
+                        native app for Android and iPhone. We definitely lack the womanpower for that at the moment.
+                    </p>
+
+                    <h2 class="h5 mt-4">Multiple options for Sign in</h2>
+                    <p>
+                        Registering on a completely new and unknown site is already an inhibition threshold for many. And in the end it is
+                        also inconvenient, if I have to enter my email and password somewhere again and again. For this reason you will
+                        have the possibility to log in to your Metal Detector account via Google or Spotify in the future. The login via
+                        Spotify also has the advantage that you have your Spotify account directly linked to your Metal Detector account.
+                    </p>
+
+                    <h2 class="h5 mt-4">Metal Detector worldwide</h2>
+                    <p>
+                        All of the above goals, of course, pay directly into our biggest goal: Metal Detector should be accessible and
+                        usable by everyone. Therefore some concepts of the site have to be reworked and the hard login wall has to be
+                        removed. In any case all features mentioned above have to be implemented before.
+                    </p>
+                </div>
+                <div id="blog-tags" class="mt-4">
+                    <a class="btn btn-secondary mr-1" href="#">Announcement</a>
+                    <a class="btn btn-secondary mr-1" href="#">Metal Detector</a>
+                    <a class="btn btn-secondary mr-1" href="#">Features</a>
+                </div>
+                <div id="blog-author-end" class="blog-post-author d-flex align-items-center mt-4">
+                    <img class="avatar avatar-xl" src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Avatar">
+                    <div class="ml-4 text-left">
+                        <p class="mb-0">Written by</p>
+                        <a href="#" class="author-link">DanielW</a>
+                        <p class="mb-0">Co-Founder of Metal Detector </p>
+                    </div>
+                </div>
+<!--                <div id="blog-comments" class="mt-4">-->
+<!--                    <h2 class="h4">Comments</h2>-->
+<!--                </div>-->
+            </div>
+        </article>
+    </section>
+</body>
+</html>

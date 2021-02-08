@@ -48,6 +48,10 @@ p, legend {
     color: var(--light-font-color) !important;
 }
 
+a:hover {
+    text-decoration: none;
+}
+
 .container {
     max-width: 1280px;
 }
@@ -162,6 +166,59 @@ footer .list-inline-item {
 
 .spotify-synchro-checkbox {
     margin-top: 2.2rem;
+}
+
+/* Blog */
+.blog-card {
+    min-height: 33.5rem;
+}
+
+.blog-intro-text {
+    min-height: 5.5rem;
+}
+
+.blog-title {
+    color: var(--light-font-color);
+}
+
+.blog-card-img {
+    height: 15rem;
+    object-fit: cover;
+    width: 100%;
+    border-bottom: 1px solid var(--grey-border-color);
+}
+
+.blog-content {
+    width: 750px;
+}
+
+.blog-post-author {
+    border-top: 1px dashed var(--grey-border-color);
+    border-bottom: 1px dashed var(--grey-border-color);
+}
+
+.blog-text {
+    font-size: larger;
+}
+
+#blog-author-begin {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+#blog-author-end {
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+}
+
+.author-link{
+    font-size: x-large;
+    font-weight: bold;
+    color: var(--dark-hyperlink-font-color);
+}
+
+.author-link:hover {
+    color: var(--blue-menu-item-color)
 }
 
 /* Other */
