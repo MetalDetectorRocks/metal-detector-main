@@ -20,8 +20,9 @@
                 <hr class="border-secondary"/>
                 <div class="form-group col-5 px-0">
                     <label for="email-address">Email address</label>
-                    <input type="email" class="form-control custom-form-control" id="email-address" name="emailAddress">
+                    <input type="email" class="form-control custom-form-control" id="email-address">
                 </div>
+                <div id="update-email-error-message-wrapper"></div>
                 <button id="update-email-address" class="btn btn-secondary mt-2">Update email address</button>
 
                 <h2 class="h5 mt-5">Change password</h2>
@@ -47,6 +48,7 @@
                 <h2 class="h5 mt-5">Delete account</h2>
                 <hr class="border-secondary"/>
                 <p>Let your account go to hell!</p>
+                <div id="delete-account-error-message-wrapper"></div>
                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete-account-dialog">Delete account</button>
 
                 <div id="delete-account-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
@@ -65,7 +67,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button id="delete-account" type="button" class="btn btn-danger" >Delete</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button id="close-delete-account-dialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                             </div>
                         </div>
                     </div>

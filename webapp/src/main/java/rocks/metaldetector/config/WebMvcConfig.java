@@ -4,13 +4,17 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
 import rocks.metaldetector.support.Endpoints;
+
+import java.util.Locale;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
@@ -59,5 +63,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
   @Bean
   public LayoutDialect layoutDialect() {
     return new LayoutDialect();
+  }
+
+  @Bean
+  LocaleResolver localeResolver() {
+    return new FixedLocaleResolver(Locale.ENGLISH);
   }
 }
