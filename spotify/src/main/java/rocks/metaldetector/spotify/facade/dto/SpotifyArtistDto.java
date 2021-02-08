@@ -1,10 +1,12 @@
 package rocks.metaldetector.spotify.facade.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import rocks.metaldetector.support.ImageBySizeFetcher;
 import rocks.metaldetector.support.ImageSize;
 
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "id")
-public class SpotifyArtistDto {
+public class SpotifyArtistDto implements ImageBySizeFetcher {
 
   private String id;
   private String name;
@@ -24,6 +26,7 @@ public class SpotifyArtistDto {
   private List<String> genres;
   private int popularity;
   private int follower;
-  private Map<ImageSize, String> images;
 
+  @JsonIgnore
+  private Map<ImageSize, String> images;
 }

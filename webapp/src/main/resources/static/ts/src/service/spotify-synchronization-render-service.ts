@@ -144,7 +144,7 @@ export class SpotifySynchronizationRenderService {
             .then((response) => {
                 savedArtistsAvailable = response.artists.length > 0;
                 response.artists.forEach((artist) => {
-                    const artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
+                    const artistTemplateElement = document.getElementById("artist-card") as HTMLTemplateElement;
                     const artistTemplateNode = document.importNode(artistTemplateElement.content, true);
                     const artistDivElement = artistTemplateNode.firstElementChild as HTMLDivElement;
                     const artistThumbElement = artistDivElement.querySelector("#thumb") as HTMLImageElement;
@@ -152,7 +152,7 @@ export class SpotifySynchronizationRenderService {
                     const artistInfoElement = artistDivElement.querySelector("#artist-info") as HTMLParagraphElement;
 
                     artistDivElement.id = artist.id;
-                    artistThumbElement.src = artist.imageUrl;
+                    artistThumbElement.src = artist.smallImage;
                     artistNameElement.textContent = artist.name;
                     artistInfoElement.innerHTML = this.buildArtistInfoText(artist);
                     artistDivElement.addEventListener("click", this.onArtistClicked.bind(this, artistDivElement));

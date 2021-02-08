@@ -27,7 +27,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         this.followArtistService = followArtistService;
         this.dateService = dateService;
         this.paginationComponent = new PaginationComponent();
-        this.artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
+        this.artistTemplateElement = document.getElementById("artist-card") as HTMLTemplateElement;
     }
 
     protected getHostElementId(): string {
@@ -69,7 +69,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
         const followedSinceElement = artistDivElement.querySelector("#followed-since") as HTMLDivElement;
 
-        artistThumbElement.src = artist.thumb;
+        artistThumbElement.src = artist.mediumImage;
         artistNameElement.textContent = artist.artistName;
         followedSinceElement.innerHTML = this.createFollowedSinceString(artist.followedSince);
         followIconElement.addEventListener("click", this.handleFollowIconClick.bind(this, followIcon, artist));

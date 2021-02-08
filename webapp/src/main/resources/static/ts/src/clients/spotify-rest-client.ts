@@ -42,7 +42,7 @@ export class SpotifyRestClient {
             });
     }
 
-    public async disconnectSpotifyAccount() {
+    public async disconnectSpotifyAccount(): Promise<void> {
         axios.delete(this.SPOTIFY_AUTHORIZATION_ENDPOINT, axiosConfig).catch((error: AxiosError) => {
             this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
             throw error;
