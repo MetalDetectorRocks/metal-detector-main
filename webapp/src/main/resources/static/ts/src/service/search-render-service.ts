@@ -189,7 +189,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         ) as HTMLDivElement;
         const followIconElement = followIconDivElement.getElementsByTagName("img").item(0)!;
 
-        thumbElement.src = this.determineArtistImageUrl(entry.imageUrl);
+        thumbElement.src = this.determineArtistImageUrl(entry.smallImage);
         thumbElement.alt = entry.name;
         nameElement.textContent = this.shorten(entry.name);
         followIconDivElement.addEventListener("click", this.handleFollowIconClick.bind(this, followIconElement, entry));
