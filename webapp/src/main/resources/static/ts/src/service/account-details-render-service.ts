@@ -1,8 +1,8 @@
 import { AccountDetailsRestClient } from "../clients/account-details-rest-client";
 import { AlertService } from "./alert-service";
-import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
 import { ToastService } from "./toast-service";
 import { AxiosError } from "axios";
+import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
 
 export class AccountDetailsRenderService {
     private readonly toastService: ToastService;
@@ -11,8 +11,13 @@ export class AccountDetailsRenderService {
     private readonly emailInput: HTMLInputElement;
     private readonly updateEmailButton: HTMLButtonElement;
     private readonly updateEmailErrorMessageHost: HTMLDivElement;
+    private readonly updatePasswordButton: HTMLButtonElement;
     private readonly deleteAccountButton: HTMLButtonElement;
     private readonly deleteAccountErrorMessageHost: HTMLDivElement;
+    private readonly oldPasswordInput: HTMLInputElement;
+    private readonly newPasswordInput: HTMLInputElement;
+    private readonly confirmPasswordInput: HTMLInputElement;
+    private readonly updatePasswordErrorMessageHost: HTMLDivElement;
 
     constructor(
         alertService: AlertService,
@@ -31,6 +36,13 @@ export class AccountDetailsRenderService {
         this.deleteAccountErrorMessageHost = document.getElementById(
             "delete-account-error-message-wrapper",
         ) as HTMLDivElement;
+        this.updatePasswordButton = document.getElementById("update-password") as HTMLButtonElement;
+        this.oldPasswordInput = document.getElementById("old-password") as HTMLInputElement;
+        this.newPasswordInput = document.getElementById("new-password") as HTMLInputElement;
+        this.confirmPasswordInput = document.getElementById("confirm-password") as HTMLInputElement;
+        this.updatePasswordErrorMessageHost = document.getElementById(
+            "update-password-error-message-wrapper",
+        ) as HTMLDivElement;
     }
 
     public init(): void {
@@ -42,9 +54,10 @@ export class AccountDetailsRenderService {
         this.updateEmailButton.addEventListener("click", this.onUpdateEmailClicked.bind(this));
         this.emailInput.addEventListener("keypress", (event) => this.onEnterPressedInEmailInput(event));
         this.deleteAccountButton.addEventListener("click", this.onDeleteAccountClicked.bind(this));
-
-        const updatePasswordButton = document.getElementById("update-password") as HTMLButtonElement;
-        updatePasswordButton.addEventListener("click", this.onUpdatePasswordClicked.bind(this));
+        this.updatePasswordButton.addEventListener("click", this.onUpdatePasswordClicked.bind(this));
+        this.oldPasswordInput.addEventListener("keypress", (event) => this.onEnterPressedInPasswordInput(event));
+        this.newPasswordInput.addEventListener("keypress", (event) => this.onEnterPressedInPasswordInput(event));
+        this.confirmPasswordInput.addEventListener("keypress", (event) => this.onEnterPressedInPasswordInput(event));
     }
 
     private onEnterPressedInEmailInput(event: KeyboardEvent): void {
@@ -96,86 +109,42 @@ export class AccountDetailsRenderService {
     private clearErrorMessageHosts(): void {
         this.updateEmailErrorMessageHost.innerHTML = "";
         this.deleteAccountErrorMessageHost.innerHTML = "";
+        this.updatePasswordErrorMessageHost.innerHTML = "";
     }
 
     private onUpdatePasswordClicked(): void {
+        this.updatePassword();
+    }
+
+    private onEnterPressedInPasswordInput(event: KeyboardEvent): void {
+        if (event.key === "Enter") {
+            this.updatePassword();
+        }
+    }
+
+    private updatePassword(): void {
+        this.clearErrorMessageHosts();
         const oldPassword = document.getElementById("old-password") as HTMLInputElement;
         const newPassword = document.getElementById("new-password") as HTMLInputElement;
         const confirmPassword = document.getElementById("confirm-password") as HTMLInputElement;
         this.accountDetailsRestClient
             .updatePassword(oldPassword.value, newPassword.value, confirmPassword.value)
-            .then(() => this.renderSuccess())
-            .catch((error: AxiosError) => {
-                this.renderPasswordUpdateErrors(error);
+            .then(() => {
+                this.oldPasswordInput.classList.add("is-valid");
+                this.oldPasswordInput.classList.remove("is-invalid");
+                this.newPasswordInput.classList.add("is-valid");
+                this.newPasswordInput.classList.remove("is-invalid");
+                this.confirmPasswordInput.classList.add("is-valid");
+                this.confirmPasswordInput.classList.remove("is-invalid");
+            })
+            .catch((error) => {
+                this.oldPasswordInput.classList.add("is-invalid");
+                this.oldPasswordInput.classList.remove("is-valid");
+                this.newPasswordInput.classList.add("is-invalid");
+                this.newPasswordInput.classList.remove("is-valid");
+                this.confirmPasswordInput.classList.add("is-invalid");
+                this.confirmPasswordInput.classList.remove("is-valid");
+                this.renderServerError(this.updatePasswordErrorMessageHost, error.response.data.messages);
             });
-    }
-
-    private renderSuccess(): void {
-        const errorMessageAlert = document.getElementById("alert-message") as HTMLDivElement;
-        errorMessageAlert.classList.remove("alert-danger");
-        errorMessageAlert.classList.add("alert", "alert-success", "alert-dismissible", "dismissible-button");
-        errorMessageAlert.setAttribute("role", "alert");
-
-        errorMessageAlert.innerHTML = "";
-
-        const closeButton = document.createElement("button") as HTMLButtonElement;
-        closeButton.type = "button";
-        closeButton.classList.add("close");
-        closeButton.innerHTML = "&times;";
-        closeButton.setAttribute("data-dismiss", "alert");
-
-        const messagesSpan = document.createElement("span") as HTMLSpanElement;
-        messagesSpan.textContent = "Successfully updated password!";
-
-        errorMessageAlert.appendChild(closeButton);
-        errorMessageAlert.appendChild(messagesSpan);
-    }
-
-    private renderPasswordUpdateErrors(error: AxiosError): void {
-        interface ErrorResponse {
-            messages: string[];
-        }
-
-        const response: ErrorResponse = error.response?.data;
-        const errorMessageAlert = document.getElementById("alert-message") as HTMLDivElement;
-        errorMessageAlert.classList.remove("alert-success");
-        errorMessageAlert.classList.add("alert", "alert-danger", "alert-dismissible", "dismissible-button");
-        errorMessageAlert.setAttribute("role", "alert");
-
-        errorMessageAlert.innerHTML = "";
-
-        const closeButton = document.createElement("button") as HTMLButtonElement;
-        closeButton.type = "button";
-        closeButton.classList.add("close");
-        closeButton.innerHTML = "&times;";
-        closeButton.setAttribute("data-dismiss", "alert");
-
-        const messagesSpan = document.createElement("span") as HTMLSpanElement;
-        const messages = document.createElement("ul") as HTMLUListElement;
-
-        const passwordLengthMessage = response.messages.find((value) =>
-            value.includes("Password length must be at least 8 characters"),
-        );
-        if (passwordLengthMessage != null) {
-            const listItem = document.createElement("li") as HTMLLIElement;
-            listItem.textContent = "Password length must be at least 8 characters.";
-            messages.appendChild(listItem);
-        }
-        const passwordMatchMessage = response.messages.find((value) => value.includes("The passwords must match"));
-        if (passwordMatchMessage != null) {
-            const listItem = document.createElement("li") as HTMLLIElement;
-            listItem.textContent = "The passwords must match.";
-            messages.appendChild(listItem);
-        }
-        const oldPasswordMathMessage = response.messages.find((value) => value.includes("Old password does not match"));
-        if (oldPasswordMathMessage != null) {
-            const listItem = document.createElement("li") as HTMLLIElement;
-            listItem.textContent = "Old password does not match.";
-            messages.appendChild(listItem);
-        }
-
-        messagesSpan.innerHTML = messages.innerHTML;
-        errorMessageAlert.appendChild(closeButton);
-        errorMessageAlert.appendChild(messagesSpan);
     }
 }

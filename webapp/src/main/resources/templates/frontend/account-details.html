@@ -12,10 +12,6 @@
         <div class="row">
             <div th:replace="frontend/fragments/settings-menu :: settings-menu"></div>
             <div class="col-8">
-                <div class="alert alert-warning" role="alert">
-                    <span class="material-icons">warning</span> This page is currently under construction and does not have any
-                    functionality that brings you added value. Please come back here later.
-                </div>
                 <h2 class="h5 mt-3">Change email address</h2>
                 <hr class="border-secondary"/>
                 <div class="form-group col-5 px-0">
@@ -41,6 +37,7 @@
                     <input type="password" class="form-control custom-form-control" id="confirm-password" autocomplete="new-password">
                 </div>
                 <p class="text-muted">Make sure your new password has at least 8 characters.</p>
+                <div id="update-password-error-message-wrapper"></div>
                 <button id="update-password" class="btn btn-secondary mb-2">Update password</button>
 
                 <div id="alert-message"></div>
