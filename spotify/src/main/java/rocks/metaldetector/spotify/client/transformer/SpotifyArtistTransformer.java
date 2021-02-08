@@ -8,7 +8,10 @@ import rocks.metaldetector.spotify.api.search.SpotifyFollowers;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.support.ImageSize;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,11 +32,21 @@ public class SpotifyArtistTransformer {
             .build();
   }
 
-  // ToDo DanielW: Es ist möglich, dass es mehrere Images gleicher Größe gibt -> führt beim Collector zur Exception
   private Map<ImageSize, String> transformImages(List<SpotifyImage> spotifyImages) {
-    return spotifyImages == null ? Collections.emptyMap() : spotifyImages.stream().collect(
-            Collectors.toMap(image -> ImageSize.ofHeight(image.getHeight()), SpotifyImage::getUrl)
-    );
+    Map<ImageSize, String> images = new HashMap<>();
+    if (spotifyImages != null) {
+      List<SpotifyImage> sortedSpotifyImages = new ArrayList<>(spotifyImages);
+      sortedSpotifyImages.sort(Comparator.comparingInt(SpotifyImage::getHeight).reversed());
+
+      sortedSpotifyImages.forEach(spotifyImage -> {
+        ImageSize size = ImageSize.ofHeight(spotifyImage.getHeight());
+        if (!images.containsKey(size)) {
+          images.put(size, spotifyImage.getUrl());
+        }
+      });
+    }
+
+    return images;
   }
 
   private List<String> transformGenres(List<String> genres) {
