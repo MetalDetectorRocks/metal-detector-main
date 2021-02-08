@@ -131,11 +131,11 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public UserDto updateCurrentEmail(String emailAddress) {
-    if (userRepository.existsByEmail(emailAddress)) {
-      throw new IllegalArgumentException("emailAddress already in use");
+    UserEntity currentUser = currentUserSupplier.get();
+    if (!currentUser.getEmail().equalsIgnoreCase(emailAddress) && userRepository.existsByEmail(emailAddress)) {
+      throw new IllegalArgumentException("The email address is already in use!");
     }
 
-    UserEntity currentUser = currentUserSupplier.get();
     currentUser.setEmail(emailAddress);
     UserEntity updatedUser = userRepository.save(currentUser);
     return userTransformer.transform(updatedUser);

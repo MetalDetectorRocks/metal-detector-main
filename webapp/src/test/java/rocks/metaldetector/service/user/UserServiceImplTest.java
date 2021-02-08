@@ -742,6 +742,50 @@ class UserServiceImplTest implements WithAssertions {
     }
 
     @Test
+    @DisplayName("should check if email already exists")
+    void should_check_if_email_already_exists() {
+      // given
+      doReturn(UserEntityFactory.createUser("user", "mail@example.com")).when(currentUserSupplier).get();
+      doReturn(null).when(userTransformer).transform(any());
+
+      // when
+      underTest.updateCurrentEmail("new-mail@example.com");
+
+      // then
+      verify(userRepository).existsByEmail("new-mail@example.com");
+    }
+
+    @Test
+    @DisplayName("should throw IllegalArgumentException if new email address already exists")
+    void should_throw_exception_if_new_email_address_already_exists() {
+      // given
+      doReturn(UserEntityFactory.createUser("user", "mail@example.com")).when(currentUserSupplier).get();
+      doReturn(true).when(userRepository).existsByEmail(anyString());
+      doReturn(null).when(userTransformer).transform(any());
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.updateCurrentEmail("new-mail@example.com"));
+
+      // then
+      assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("should not throw IllegalArgumentException if the new email already exists and if it is the user's current email")
+    void should_not_throw_exception_if_new_email_address_already_exists() {
+      // given
+      doReturn(UserEntityFactory.createUser("user", "new-mail@example.com")).when(currentUserSupplier).get();
+      doReturn(true).when(userRepository).existsByEmail(anyString());
+      doReturn(null).when(userTransformer).transform(any());
+
+      // when
+      underTest.updateCurrentEmail("new-mail@example.com");
+
+      // then
+      assertThatNoException();
+    }
+
+    @Test
     @DisplayName("New email address is set on current user")
     void test_new_email_set() {
       // given
