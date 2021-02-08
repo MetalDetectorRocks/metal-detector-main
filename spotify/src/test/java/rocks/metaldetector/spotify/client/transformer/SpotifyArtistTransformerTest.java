@@ -107,13 +107,15 @@ class SpotifyArtistTransformerTest implements WithAssertions {
   }
 
   private static Stream<Arguments> imageProvider() {
-    SpotifyImage spotifyImage1 = new SpotifyImage("url1", 600, 600);
-    SpotifyImage spotifyImage2 = new SpotifyImage("url2", 64, 64);
+    SpotifyImage spotifyImage1 = new SpotifyImage("http://example.com/image-l.jpg", 600, 600);
+    SpotifyImage spotifyImage2 = new SpotifyImage("http://example.com/image-xs-1.jpg", 100, 100);
+    SpotifyImage spotifyImage3 = new SpotifyImage("http://example.com/image-xs-2.jpg", 64, 64);
     return Stream.of(
             Arguments.of(null, Collections.emptyMap()),
             Arguments.of(Collections.emptyList(), Collections.emptyMap()),
-            Arguments.of(List.of(spotifyImage1), Map.of(L, "url1")),
-            Arguments.of(List.of(spotifyImage1, spotifyImage2), Map.of(L, "url1", XS, "url2"))
+            Arguments.of(List.of(spotifyImage1), Map.of(L, spotifyImage1.getUrl())),
+            Arguments.of(List.of(spotifyImage1, spotifyImage2), Map.of(L, spotifyImage1.getUrl(), XS, spotifyImage2.getUrl())),
+            Arguments.of(List.of(spotifyImage1, spotifyImage2, spotifyImage3), Map.of(L, spotifyImage1.getUrl(), XS, spotifyImage2.getUrl()))
     );
   }
 }
