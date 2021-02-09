@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static rocks.metaldetector.spotify.client.SpotifyDtoFactory.SpotfiyArtistFactory;
+import static rocks.metaldetector.spotify.client.transformer.SpotifyArtistTransformer.SPOTIFY_URL_KEY_NAME;
 import static rocks.metaldetector.support.ImageSize.L;
 import static rocks.metaldetector.support.ImageSize.XS;
 
@@ -42,6 +43,7 @@ class SpotifyArtistTransformerTest implements WithAssertions {
                       .id(givenArtist.getId())
                       .name(givenArtist.getName())
                       .uri(givenArtist.getUri())
+                      .url(givenArtist.getExternalUrls().get(SPOTIFY_URL_KEY_NAME))
                       .genres(givenArtist.getGenres())
                       .popularity(givenArtist.getPopularity())
                       .follower(givenArtist.getFollowers().getTotal())

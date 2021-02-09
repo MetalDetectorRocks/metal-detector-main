@@ -67,7 +67,6 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
       throw new ExternalServiceException("Could not get search results for query '" + artistQueryString + "' (Response code: " + responseEntity.getStatusCode() + ")");
     }
 
-
     return resultContainer;
   }
 
