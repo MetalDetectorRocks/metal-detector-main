@@ -35,9 +35,14 @@ public class ArtistEntityTransformer {
   public ArtistEntity transformDiscogsArtistDto(DiscogsArtistDto discogsArtist) {
     return ArtistEntity.builder()
             .externalId(discogsArtist.getId())
+            .externalUrl(discogsArtist.getUrl())
+            .externalUri(discogsArtist.getUri())
             .artistName(discogsArtist.getName())
             .source(DISCOGS)
-            .imageL(discogsArtist.getImageUrl())
+            .imageXs(discogsArtist.getImages().get(XS))
+            .imageS(discogsArtist.getImages().get(S))
+            .imageM(discogsArtist.getImages().get(M))
+            .imageL(discogsArtist.getImages().get(L))
             .build();
   }
 }
