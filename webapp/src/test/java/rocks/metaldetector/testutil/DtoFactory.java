@@ -29,7 +29,10 @@ import java.util.UUID;
 
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
+import static rocks.metaldetector.support.ImageSize.L;
 import static rocks.metaldetector.support.ImageSize.M;
+import static rocks.metaldetector.support.ImageSize.S;
+import static rocks.metaldetector.support.ImageSize.XS;
 
 public class DtoFactory {
 
@@ -207,8 +210,13 @@ public class DtoFactory {
     public static DiscogsArtistDto createDefault() {
       return DiscogsArtistDto.builder()
           .id(EXTERNAL_ID)
+          .url("http://example.com/" + ARTIST_NAME)
+          .uri("uri")
           .name(ARTIST_NAME)
-          .imageUrl("http://example.com/image.jpg")
+          .images(Map.of(XS, "http://example.com/image-xs.jpg"))
+          .images(Map.of(S, "http://example.com/image-s.jpg"))
+          .images(Map.of(M, "http://example.com/image-m.jpg"))
+          .images(Map.of(L, "http://example.com/image-l.jpg"))
           .build();
     }
   }
@@ -291,7 +299,10 @@ public class DtoFactory {
           .genres(List.of("Black Metal"))
           .popularity(100)
           .follower(666)
+          .images(Map.of(XS, "http://example.com/image-xs.jpg"))
+          .images(Map.of(S, "http://example.com/image-s.jpg"))
           .images(Map.of(M, "http://example.com/image-m.jpg"))
+          .images(Map.of(L, "http://example.com/image-l.jpg"))
           .build();
     }
   }
