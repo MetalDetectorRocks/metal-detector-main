@@ -1,9 +1,9 @@
-import { ToastService } from "../service/toast-service";
 import { AccountDetailsRestClient } from "../clients/account-details-rest-client";
 import { AccountDetailsRenderService } from "../service/account-details-render-service";
+import { AlertService } from "../service/alert-service";
 
-const toastService = new ToastService();
-const accountDetailsRestClient = new AccountDetailsRestClient(toastService);
-const accountDetailsRenderService = new AccountDetailsRenderService(toastService, accountDetailsRestClient);
+const alertService = new AlertService();
+const accountDetailsRestClient = new AccountDetailsRestClient();
+const accountDetailsRenderService = new AccountDetailsRenderService(alertService, accountDetailsRestClient);
 
 accountDetailsRenderService.init();
