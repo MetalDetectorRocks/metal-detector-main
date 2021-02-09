@@ -29,6 +29,7 @@ class ArtistEntityTransformerTest implements WithAssertions {
     // then
     assertThat(artistEntity.getExternalId()).isEqualTo(spotifyArtist.getId());
     assertThat(artistEntity.getExternalUrl()).isEqualTo(spotifyArtist.getUrl());
+    assertThat(artistEntity.getExternalUri()).isEqualTo(spotifyArtist.getUri());
     assertThat(artistEntity.getArtistName()).isEqualTo(spotifyArtist.getName());
     assertThat(artistEntity.getGenres()).isEqualTo(String.join(", ", spotifyArtist.getGenres()));
     assertThat(artistEntity.getSource()).isEqualTo(SPOTIFY);

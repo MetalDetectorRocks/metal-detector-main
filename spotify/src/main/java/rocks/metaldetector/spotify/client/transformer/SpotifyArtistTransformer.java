@@ -19,12 +19,14 @@ import java.util.stream.Collectors;
 @Service
 public class SpotifyArtistTransformer {
 
+  static final String SPOTIFY_URL_KEY_NAME = "spotify";
+
   public SpotifyArtistDto transform(SpotifyArtist spotifyArtist) {
     return SpotifyArtistDto.builder()
             .id(spotifyArtist.getId())
             .name(spotifyArtist.getName())
             .uri(spotifyArtist.getUri())
-            .uri(spotifyArtist.getHref())
+            .url(spotifyArtist.getExternalUrls().get(SPOTIFY_URL_KEY_NAME))
             .genres(transformGenres(spotifyArtist.getGenres()))
             .popularity(spotifyArtist.getPopularity())
             .follower(getFollower(spotifyArtist.getFollowers()))

@@ -71,7 +71,7 @@ public class SpotifyDtoFactory {
 
     public static SpotifyArtist withArtistName(String artistName) {
       return SpotifyArtist.builder()
-          .externalUrls(Collections.emptyMap())
+          .externalUrls(Map.of("spotify", "http://example.com/" + artistName))
           .followers(SpotfiyFollowersFatory.createDefault())
           .genres(List.of("Black Metal"))
           .href("artistLink")

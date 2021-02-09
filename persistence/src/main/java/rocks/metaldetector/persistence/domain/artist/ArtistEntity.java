@@ -34,6 +34,9 @@ public class ArtistEntity extends BaseEntity implements MultipleSizeImages {
   @Column(name = "external_url")
   private String externalUrl;
 
+  @Column(name = "external_uri")
+  private String externalUri;
+
   @Column(name = "artist_name", nullable = false)
   @NonNull
   private String artistName;

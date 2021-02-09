@@ -1,11 +1,12 @@
 -- Creation Date: 2021-02-07
 -- Description:
--- - adds new columns: external_url, genres, spotify_popularity, spotify_follower, image_xs, image_s, image_m
+-- - adds new columns: external_url, external_uri, genres, spotify_popularity, spotify_follower, image_xs, image_s, image_m
 -- - copies value from column thumb to image_xs, image_s, image_m
 -- - renames column thumb to image_l
 
 alter table artists
 add column external_url varchar(255),
+add column external_uri varchar(255),
 add column genres varchar(255),
 add column spotify_popularity integer,
 add column spotify_follower integer,

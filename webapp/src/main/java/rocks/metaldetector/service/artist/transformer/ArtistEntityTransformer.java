@@ -19,6 +19,7 @@ public class ArtistEntityTransformer {
     return ArtistEntity.builder()
             .externalId(spotifyArtist.getId())
             .externalUrl(spotifyArtist.getUrl())
+            .externalUri(spotifyArtist.getUri())
             .artistName(spotifyArtist.getName())
             .genres(String.join(", ", spotifyArtist.getGenres()))
             .source(SPOTIFY)
