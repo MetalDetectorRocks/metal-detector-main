@@ -299,10 +299,12 @@ public class DtoFactory {
           .genres(List.of("Black Metal"))
           .popularity(100)
           .follower(666)
-          .images(Map.of(XS, "http://example.com/image-xs.jpg"))
-          .images(Map.of(S, "http://example.com/image-s.jpg"))
-          .images(Map.of(M, "http://example.com/image-m.jpg"))
-          .images(Map.of(L, "http://example.com/image-l.jpg"))
+          .images(Map.of(
+                  XS, "http://example.com/image-xs.jpg",
+                  S, "http://example.com/image-s.jpg",
+                  M, "http://example.com/image-m.jpg",
+                  L, "http://example.com/image-l.jpg"
+          ))
           .build();
     }
   }
@@ -329,7 +331,12 @@ public class DtoFactory {
           .popularity(100)
           .genres(List.of("Black Metal"))
           .id(artistName)
-          .images(Map.of(M, "http://example.com/image-m.jpg"))
+          .images(Map.of(
+                  XS, "http://example.com/image-xs.jpg",
+                  S, "http://example.com/image-s.jpg",
+                  M, "http://example.com/image-m.jpg",
+                  L, "http://example.com/image-l.jpg"
+          ))
           .name(artistName)
           .uri("uri")
           .followed(false)
