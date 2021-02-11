@@ -687,7 +687,7 @@ class UserServiceImplTest implements WithAssertions {
       when(passwordEncoder.encode(NEW_PLAIN_PASSWORD)).thenReturn(NEW_ENCRYPTED_PASSWORD);
 
       // when
-      underTest.changePassword(TOKEN, NEW_PLAIN_PASSWORD);
+      underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD);
 
       // then
       verify(userRepository).save(userEntityCaptor.capture());
@@ -704,7 +704,7 @@ class UserServiceImplTest implements WithAssertions {
       when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.empty());
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.changePassword(TOKEN, NEW_PLAIN_PASSWORD));
+      Throwable throwable = catchThrowable(() -> underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD));
 
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
@@ -720,7 +720,7 @@ class UserServiceImplTest implements WithAssertions {
 
       // when
       Thread.sleep(1); // wait 1ms so that the token can expire
-      Throwable throwable = catchThrowable(() -> underTest.changePassword(TOKEN, NEW_PLAIN_PASSWORD));
+      Throwable throwable = catchThrowable(() -> underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD));
 
       // then
       assertThat(throwable).isInstanceOf(TokenExpiredException.class);
@@ -729,7 +729,7 @@ class UserServiceImplTest implements WithAssertions {
 
     @Test
     @DisplayName("Updating the current user's email address calls currentUserSupplier")
-    void test_updating_email_call_current_user_supplier() {
+    void test_updating_email_calls_current_user_supplier() {
       // given
       doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
       doReturn(null).when(userTransformer).transform(any());
@@ -833,6 +833,87 @@ class UserServiceImplTest implements WithAssertions {
 
       // then
       assertThat(result).isEqualTo(userDto);
+    }
+
+    @Test
+    @DisplayName("Updating the current user's password calls currentUserSupplier")
+    void test_updating_password_calls_current_user_supplier() {
+      // given
+      doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
+      doReturn(true).when(passwordEncoder).matches(any(), any());
+
+      // when
+      underTest.updateCurrentPassword("oldPassword", "newPassword");
+
+      // then
+      verify(currentUserSupplier).get();
+    }
+
+    @Test
+    @DisplayName("Updating the current user's password matches old password")
+    void test_updating_password_matches_old_password() {
+      // given
+      var user = UserEntityFactory.createUser("user", "email");
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(true).when(passwordEncoder).matches(any(), any());
+      var oldPassword = "oldPassword";
+      var oldEncryptedPassword = user.getPassword();
+
+      // when
+      underTest.updateCurrentPassword(oldPassword, "newPassword");
+
+      // then
+      verify(passwordEncoder).matches(oldPassword, oldEncryptedPassword);
+    }
+
+    @Test
+    @DisplayName("Updating the current user's password encodes new password")
+    void test_updating_password_encodes_new_password() {
+      // given
+      doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
+      doReturn(true).when(passwordEncoder).matches(any(), any());
+      var newPassword = "newPassword";
+
+      // when
+      underTest.updateCurrentPassword("oldPassword", newPassword);
+
+      // then
+      verify(passwordEncoder).encode(newPassword);
+    }
+
+    @Test
+    @DisplayName("Updating the current user's password saves updated user")
+    void test_updating_password_saves_user() {
+      // given
+      ArgumentCaptor<UserEntity> argumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
+      doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
+      doReturn(true).when(passwordEncoder).matches(any(), any());
+      doReturn(NEW_ENCRYPTED_PASSWORD).when(passwordEncoder).encode(any());
+
+      // when
+      underTest.updateCurrentPassword("oldPassword", "newPassword");
+
+      // then
+      verify(userRepository).save(argumentCaptor.capture());
+      UserEntity updatedUser = argumentCaptor.getValue();
+
+      assertThat(updatedUser.getPassword()).isEqualTo(NEW_ENCRYPTED_PASSWORD);
+    }
+
+    @Test
+    @DisplayName("Updating the current user's password throws Exception when old password does not match")
+    void test_updating_password_throws_exception() {
+      // given
+      var user = UserEntityFactory.createUser("user", "email");
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(false).when(passwordEncoder).matches(any(), any());
+
+      // when
+      var throwable = catchThrowable(() -> underTest.updateCurrentPassword("oldPassword", "newPassword"));
+
+      // then
+      assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+      assertThat(throwable).hasMessageContaining("Old password does not match");
     }
   }
 
