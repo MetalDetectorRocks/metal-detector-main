@@ -27,7 +27,7 @@ public interface ImageBySizeFetcher {
 
   @ArtifactForFramework
   default String getMediumImage() {
-    return getImageBySizePriority(List.of(M, S, L));
+    return getImageBySizePriority(List.of(M, L, S));
   }
 
   @ArtifactForFramework
