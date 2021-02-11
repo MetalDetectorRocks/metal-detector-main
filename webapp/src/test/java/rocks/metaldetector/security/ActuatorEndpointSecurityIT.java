@@ -22,8 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @TestPropertySource(properties = {
-    "management.health.mail.enabled=false",
-    "spring.cache.type=none"
+    "management.health.mail.enabled=false"
 })
 @AutoConfigureMockMvc
 public class ActuatorEndpointSecurityIT implements WithIntegrationTestConfig {

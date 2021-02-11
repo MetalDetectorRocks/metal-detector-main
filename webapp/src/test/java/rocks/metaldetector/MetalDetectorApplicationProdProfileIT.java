@@ -9,8 +9,7 @@ import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 @SpringBootTest
 @ActiveProfiles("prod")
 @TestPropertySource(properties = {
-    "spring.datasource.url=jdbc:h2:mem:test-prod;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-    "spring.cache.type=none"
+    "spring.datasource.url=jdbc:h2:mem:test-prod;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
 })
 class MetalDetectorApplicationProdProfileIT implements WithIntegrationTestConfig {
 
