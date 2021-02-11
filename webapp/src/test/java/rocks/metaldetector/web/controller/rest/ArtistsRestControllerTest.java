@@ -1,5 +1,7 @@
 package rocks.metaldetector.web.controller.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
@@ -20,7 +22,6 @@ import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
-import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -151,8 +152,9 @@ class ArtistsRestControllerTest implements WithAssertions {
 
     @Test
     @DisplayName("Should return response transformer's result for spotify")
-    void handleNameSearch_return_result_spotify() {
+    void handleNameSearch_return_result_spotify() throws JsonProcessingException {
       // given
+      var jsonMapper = new JsonMapper();
       var expectedSearchResult = ArtistSearchResponseFactory.spotify();
       Map<String, Object> requestParams = Map.of(
           "query", VALID_SEARCH_REQUEST,
@@ -165,8 +167,9 @@ class ArtistsRestControllerTest implements WithAssertions {
       var validatableResponse = restAssuredUtils.doGet(requestParams);
 
       // then
-      ArtistSearchResponse searchResponse = validatableResponse.extract().as(ArtistSearchResponse.class);
-      assertThat(searchResponse).isEqualTo(expectedSearchResult);
+      String searchResponse = validatableResponse.extract().asString();
+      var expectedSearchResultAsJson = jsonMapper.writeValueAsString(expectedSearchResult);
+      assertThat(searchResponse).isEqualTo(expectedSearchResultAsJson);
     }
   }
 
