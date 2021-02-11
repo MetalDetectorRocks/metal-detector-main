@@ -211,7 +211,7 @@ class ResetPasswordControllerTest implements WithAssertions {
                             ContentType.HTML);
 
     // then
-    verify(userService).changePassword(token, password);
+    verify(userService).resetPasswordWithToken(token, password);
   }
 
   @ParameterizedTest(name = "[{index}]: {0}")

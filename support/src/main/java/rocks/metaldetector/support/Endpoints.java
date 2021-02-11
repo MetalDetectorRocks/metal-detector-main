@@ -75,6 +75,7 @@ public class Endpoints {
 
     public static final String CURRENT_USER       = "/rest/v1/me";
     public static final String CURRENT_USER_EMAIL = "/rest/v1/me/email";
+    public static final String CURRENT_USER_PASSWORD = "/rest/v1/me/password";
 
     public static final String NOTIFICATION_ON_FREQUENCY = "/rest/v1/notify/frequency";
     public static final String NOTIFICATION_ON_RELEASE_DATE = "/rest/v1/notify/release-date";
