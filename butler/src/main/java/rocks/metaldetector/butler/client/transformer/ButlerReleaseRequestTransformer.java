@@ -15,7 +15,7 @@ public class ButlerReleaseRequestTransformer {
         .artists(artists)
         .dateFrom(timeRange.getDateFrom())
         .dateTo(timeRange.getDateTo())
-        .query(query == null || query.trim().isEmpty() ? null : query)
+        .query(query == null || query.isBlank() ? null : query)
         .build();
   }
 }
