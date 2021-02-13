@@ -52,7 +52,7 @@ public class ReleasesRestController {
   public ResponseEntity<Page<ReleaseDto>> findReleases(@Valid PaginatedReleasesRequest request) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
     var pageRequest = new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection()));
-    Page<ReleaseDto> releasePage = releaseService.findReleases(emptyList(), timeRange, pageRequest);
+    Page<ReleaseDto> releasePage = releaseService.findReleases(emptyList(), timeRange, request.getQuery(), pageRequest);
     return ResponseEntity.ok(releasePage);
   }
 
@@ -62,7 +62,7 @@ public class ReleasesRestController {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
     var pageRequest = new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection()));
     var followedArtists = followArtistService.getFollowedArtistsOfCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
-    Page<ReleaseDto> releasePage = releaseService.findReleases(followedArtists, timeRange, pageRequest);
+    Page<ReleaseDto> releasePage = releaseService.findReleases(followedArtists, timeRange, request.getQuery(), pageRequest);
     return ResponseEntity.ok(releasePage);
   }
 

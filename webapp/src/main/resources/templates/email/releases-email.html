@@ -4,51 +4,56 @@
       xmlns:th="http://www.w3.org/1999/xhtml"
       lang="en">
 <head>
-    <title>Your new metal album releases</title>
+    <title>Your new metal releases</title>
 </head>
 <body>
 <section layout:fragment="content">
     <p>
         Hi <span th:text="${username}">username</span>
     </p>
-    <p>
-        Here are your favorite band's upcoming releases:
-    </p>
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Artist</th>
-            <th scope="col">Album Title</th>
-            <th scope="col">Release Date</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="release: ${upcomingReleases}">
-            <td th:text="${release.artist}"></td>
-            <td th:text="${release.albumTitle}"></td>
-            <td th:text="${release.releaseDate}"></td>
-        </tr>
-        </tbody>
-    </table>
-    <p>
-        Here are your favorite band's recent releases:
-    </p>
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Artist</th>
-            <th scope="col">Album Title</th>
-            <th scope="col">Release Date</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="release: ${recentReleases}">
-            <td th:text="${release.artist}"></td>
-            <td th:text="${release.albumTitle}"></td>
-            <td th:text="${release.releaseDate}"></td>
-        </tr>
-        </tbody>
-    </table>
+    <div id="upcoming-releases" th:unless="${#lists.isEmpty(upcomingReleases)}">
+        <p>
+            Here are your favorite band's upcoming releases:
+        </p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Artist</th>
+                <th scope="col">Album Title</th>
+                <th scope="col">Release Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="release: ${upcomingReleases}">
+                <td th:text="${release.artist}"></td>
+                <td th:text="${release.albumTitle}"></td>
+                <td th:text="${release.releaseDate}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="recent-releases" th:unless="${#lists.isEmpty(recentReleases)}">
+        <p>
+            Here are your favorite band's recent releases:
+        </p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Artist</th>
+                <th scope="col">Album Title</th>
+                <th scope="col">Release Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="release: ${recentReleases}">
+                <td th:text="${release.artist}"></td>
+                <td th:text="${release.albumTitle}"></td>
+                <td th:text="${release.releaseDate}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
     <p>Cheers!</p>
 </section>
 </body>
