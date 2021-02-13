@@ -68,7 +68,7 @@ public class ResetPasswordController {
       return new ModelAndView("redirect:" + Endpoints.Guest.RESET_PASSWORD + "?token=" + changePasswordRequest.getTokenString());
     }
 
-    userService.changePassword(changePasswordRequest.getTokenString(), changePasswordRequest.getNewPlainPassword());
+    userService.resetPasswordWithToken(changePasswordRequest.getTokenString(), changePasswordRequest.getNewPlainPassword());
 
     return new ModelAndView("redirect:" + Endpoints.Guest.LOGIN + "?resetSuccess");
   }

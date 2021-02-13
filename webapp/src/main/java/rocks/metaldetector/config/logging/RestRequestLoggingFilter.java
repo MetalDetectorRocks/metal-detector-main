@@ -4,6 +4,8 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER_PASSWORD;
+
 public class RestRequestLoggingFilter extends CommonsRequestLoggingFilter {
 
   RestRequestLoggingFilter() {
@@ -17,7 +19,8 @@ public class RestRequestLoggingFilter extends CommonsRequestLoggingFilter {
 
   @Override
   protected boolean shouldLog(HttpServletRequest request) {
-    return request.getRequestURI().toLowerCase().startsWith("/rest");
+    var requestUri = request.getRequestURI().toLowerCase();
+    return requestUri.startsWith("/rest") && !requestUri.startsWith(CURRENT_USER_PASSWORD);
   }
 
   @Override
