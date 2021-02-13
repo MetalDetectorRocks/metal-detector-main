@@ -25,5 +25,6 @@ public class UserDto {
   private LocalDateTime createdDateTime;
   private LocalDateTime lastModifiedDateTime;
   private String lastModifiedBy;
+  private boolean nativeUser;
 
 }

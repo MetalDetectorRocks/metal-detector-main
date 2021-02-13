@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
     AbstractUserEntity currentUser = currentUserSupplier.get();
 
     if (currentUser instanceof OAuthUserEntity) {
-      throw new IllegalArgumentException("oAuth users cannot change their email address");
+      throw new IllegalArgumentException("OAuth users cannot change their email address");
     }
     if (!currentUser.getEmail().equalsIgnoreCase(emailAddress) && userRepository.existsByEmail(emailAddress)) {
       throw new IllegalArgumentException("The email address is already in use!");
@@ -240,7 +240,7 @@ public class UserServiceImpl implements UserService {
       throw new TokenExpiredException();
     }
 
-    UserEntity userEntity = (UserEntity) tokenEntity.getUser(); // todo NilsD passt das?
+    UserEntity userEntity = (UserEntity) tokenEntity.getUser();
 
     // 4. set new password
     userEntity.setPassword(passwordEncoder.encode(newPassword));
@@ -279,9 +279,13 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void updateCurrentPassword(String oldPlainPassword, String newPlainPassword) {
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
+
+    if (currentUser instanceof OAuthUserEntity) {
+      throw new IllegalArgumentException("OAuth users cannot change their password");
+    }
     if (passwordEncoder.matches(oldPlainPassword, currentUser.getPassword())) {
-      currentUser.setPassword(passwordEncoder.encode(newPlainPassword));
+      ((UserEntity) currentUser).setPassword(passwordEncoder.encode(newPlainPassword));
       userRepository.save(currentUser);
     }
     else {

@@ -23,5 +23,6 @@ public class UserResponse {
   private LocalDateTime createdDateTime;
   private LocalDateTime lastModifiedDateTime;
   private String lastModifiedBy;
+  private boolean nativeUser;
 
 }

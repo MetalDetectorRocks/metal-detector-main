@@ -889,6 +889,19 @@ class UserServiceImplTest implements WithAssertions {
     }
 
     @Test
+    @DisplayName("should throw IllegalArgumentException if current user is oauth user")
+    void should_throw_exception_if_user_is_oauth_user() {
+      // given
+      doReturn(OAuthUserFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.updateCurrentEmail("new-mail@example.com"));
+
+      // then
+      assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     @DisplayName("should not throw IllegalArgumentException if the new email already exists and if it is the user's current email")
     void should_not_throw_exception_if_new_email_address_already_exists() {
       // given
@@ -1032,6 +1045,19 @@ class UserServiceImplTest implements WithAssertions {
       // then
       assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
       assertThat(throwable).hasMessageContaining("Old password does not match");
+    }
+
+    @Test
+    @DisplayName("Updating the current user's password throws Exception when user is oauth user")
+    void test_updating_password_throws_exception_for_oauth_user() {
+      // given
+      doReturn(OAuthUserFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
+
+      // when
+      var throwable = catchThrowable(() -> underTest.updateCurrentPassword("oldPassword", "newPassword"));
+
+      // then
+      assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
     }
   }
 

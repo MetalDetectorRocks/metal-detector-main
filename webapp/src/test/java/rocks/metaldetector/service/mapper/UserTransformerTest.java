@@ -50,6 +50,7 @@ class UserTransformerTest implements WithAssertions {
         .createdDateTime(entity.getCreatedDateTime())
         .lastModifiedBy(entity.getLastModifiedBy())
         .lastModifiedDateTime(entity.getLastModifiedDateTime())
+        .nativeUser(true)
         .build();
 
     // when
