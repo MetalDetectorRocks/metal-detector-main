@@ -1,36 +1,66 @@
 <!DOCTYPE html>
-<html layout:decorate="~{email/fragments/layout}"
+<html layout:decorate="~{email/fragments/releases-layout}"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.w3.org/1999/xhtml"
       lang="en">
 <head>
-    <title>Today's metal album releases</title>
+    <title>Today's metal releases</title>
+    <style type="text/css">
+        .cover-box {
+            float: left;
+            min-width: 26%;
+            box-sizing: border-box;
+            margin-bottom: 0.5rem;
+        }
+        .cover {
+            border-radius: 5px;
+            width: 9rem;
+            height: 9rem;
+            object-fit: cover;
+            border: 1px solid #464b53;
+        }
+        .release-box {
+            float: left;
+            padding-left: 4%;
+            width: 66%;
+            margin-bottom: 0.5rem;
+            box-sizing: border-box;
+        }
+        @media screen and (max-width: 650px) {
+            .cover-box {
+                width: 100%;
+            }
+            .cover {
+                width: 12rem;
+                height: 12rem;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .release-box {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<section layout:fragment="content">
-    <p>
-        Hi <span th:text="${username}">username</span>
-    </p>
-    <p>
-        Here are your favorite band's releases coming out today:
-    </p>
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Artist</th>
-            <th scope="col">Album Title</th>
-            <th scope="col">Release Date</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="release: ${todaysReleases}">
-            <td th:text="${release.artist}"></td>
-            <td th:text="${release.albumTitle}"></td>
-            <td th:text="${release.releaseDate}"></td>
-        </tr>
-        </tbody>
-    </table>
-    <p>Cheers!</p>
-</section>
+<div layout:fragment="content">
+    <p class="text-l">Here are your favorite band's releases coming out today:</p>
+    <div th:each="release: ${todaysReleases}">
+        <div class="cover-box">
+            <img class="cover" src="#" th:src="${release.coverUrl}" alt="Release Cover" width="150"/>
+        </div>
+        <div class="release-box">
+            <div class="release-title">
+                <span class="text-xl text-bold" th:text="${release.artist}"></span><br />
+                <span class="text-l text-bold" th:text="${release.albumTitle}"></span><br />
+                <span class="text-bold" th:text="${release.releaseDateAsDisplayString}"></span>
+            </div>
+        </div>
+        <div style="clear:both;"></div>
+    </div>
+</div>
 </body>
 </html>
