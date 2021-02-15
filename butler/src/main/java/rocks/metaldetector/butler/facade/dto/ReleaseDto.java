@@ -4,9 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import static java.time.format.FormatStyle.FULL;
+import static java.util.Locale.US;
 
 @Data
 @NoArgsConstructor
@@ -29,4 +34,8 @@ public class ReleaseDto {
   private String state;
   private String coverUrl;
 
+  @ArtifactForFramework
+  public String getReleaseDateAsDisplayString() {
+    return releaseDate.format(DateTimeFormatter.ofLocalizedDate(FULL).withLocale(US));
+  }
 }

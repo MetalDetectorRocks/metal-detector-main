@@ -9,12 +9,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static rocks.metaldetector.support.Endpoints.Frontend.IMPRINT;
+import static rocks.metaldetector.support.Endpoints.Frontend.NOTIFICATION_SETTINGS;
+import static rocks.metaldetector.support.Endpoints.Frontend.PRIVACY_POLICY;
+
 public abstract class AbstractEmail {
 
   private final List<ViewModelEntry> viewModelEntries;
 
   AbstractEmail() {
     viewModelEntries = new ArrayList<>();
+    addDefaultEntries();
+  }
+
+  private void addDefaultEntries() {
+    viewModelEntries.add(ViewModelEntry.builder()
+            .name("notificationSettingsUrl")
+            .value(NOTIFICATION_SETTINGS)
+            .relativeUrl(true)
+            .build()
+    );
+    viewModelEntries.add(ViewModelEntry.builder()
+            .name("imprintUrl")
+            .value(IMPRINT)
+            .relativeUrl(true)
+            .build()
+    );
+    viewModelEntries.add(ViewModelEntry.builder()
+            .name("privacyPolicyUrl")
+            .value(PRIVACY_POLICY)
+            .relativeUrl(true)
+            .build()
+    );
   }
 
   public abstract String getRecipient();
