@@ -90,7 +90,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       underTest.findAllReleases(artists, timeRange);
 
       // then
-      verify(releaseRequestTransformer).transform(artists, timeRange, null);
+      verify(releaseRequestTransformer).transform(artists, timeRange, null, null);
     }
 
     @Test
@@ -98,7 +98,7 @@ class ReleaseServiceImplTest implements WithAssertions {
     void Should_call_butler_client() {
       // given
       ButlerReleasesRequest request = ButlerReleaseRequestFactory.createDefault();
-      when(releaseRequestTransformer.transform(any(), any(), any())).thenReturn(request);
+      when(releaseRequestTransformer.transform(any(), any(), any(), any())).thenReturn(request);
 
       // when
       underTest.findAllReleases(null, null);
@@ -137,12 +137,13 @@ class ReleaseServiceImplTest implements WithAssertions {
       Iterable<String> artists = List.of("A", "B", "C");
       TimeRange timeRange = new TimeRange(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31));
       PageRequest pageRequest = new PageRequest(1, 10, null);
+      String query = "query";
 
       // when
-      underTest.findReleases(artists, timeRange, pageRequest);
+      underTest.findReleases(artists, timeRange, query, pageRequest);
 
       // then
-      verify(releaseRequestTransformer).transform(artists, timeRange, pageRequest);
+      verify(releaseRequestTransformer).transform(artists, timeRange, query, pageRequest);
     }
 
     @Test
@@ -152,7 +153,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       PageRequest pageRequest = new PageRequest(1, 10, new DetectorSort("foo", "asc"));
 
       // when
-      underTest.findReleases(null, null, pageRequest);
+      underTest.findReleases(null, null, null, pageRequest);
 
       // then
       verify(sortTransformer).transform(pageRequest.getSort());
@@ -163,10 +164,10 @@ class ReleaseServiceImplTest implements WithAssertions {
     void should_call_butler_client_with_request() {
       // given
       ButlerReleasesRequest request = ButlerReleaseRequestFactory.createDefault();
-      when(releaseRequestTransformer.transform(any(), any(), any())).thenReturn(request);
+      when(releaseRequestTransformer.transform(any(), any(), any(), any())).thenReturn(request);
 
       // when
-      underTest.findReleases(null, null, new PageRequest());
+      underTest.findReleases(null, null, null, new PageRequest());
 
       // then
       verify(butlerClient).queryReleases(eq(request), any());
@@ -181,7 +182,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       when(sortTransformer.transform(any())).thenReturn(transformedSortParam);
 
       // when
-      underTest.findReleases(null, null, pageRequest);
+      underTest.findReleases(null, null, null, pageRequest);
 
       // then
       verify(butlerClient).queryReleases(any(), eq(transformedSortParam));
@@ -197,7 +198,7 @@ class ReleaseServiceImplTest implements WithAssertions {
       when(releaseResponseTransformer.transformToPage(response)).thenReturn(expectedResult);
 
       // when
-      Page<ReleaseDto> releases = underTest.findReleases(null, null, new PageRequest());
+      Page<ReleaseDto> releases = underTest.findReleases(null, null, null, new PageRequest());
 
       // then
       verify(releaseResponseTransformer).transformToPage(response);

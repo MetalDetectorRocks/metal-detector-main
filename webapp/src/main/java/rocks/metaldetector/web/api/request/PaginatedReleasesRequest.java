@@ -45,4 +45,7 @@ public class PaginatedReleasesRequest implements WithTimeRangeValidation {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate dateTo;
 
+  @Nullable
+  private String query;
+
 }
