@@ -24,7 +24,7 @@ buildscript {
     postgresqlVersion = "42.2.19"
     restAssuredVersion = "4.2.1"
     servletApiVersion = "4.0.1"
-    springBootVersion = "2.4.2"
+    springBootVersion = "2.4.3"
     springSecurityVersion = "5.4.5"
     thymeleafDialectVersion = "2.5.2"
     thymeleafExtrasVersion = "3.0.4.RELEASE"
