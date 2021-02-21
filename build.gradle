@@ -52,7 +52,7 @@ ext {
                         "net.bytebuddy:byte-buddy:1.10.20",
                         "org.javassist:javassist:3.27.0-GA",
                         "org.webjars:jquery:3.5.1"]
-  dependencyGroupVersions = ["org.springframework"           : "5.3.3",
+  dependencyGroupVersions = ["org.springframework"           : "5.3.4",
                              "org.springframework.security"  : springSecurityVersion,
                              "com.fasterxml.jackson.core"    : jacksonVersion,
                              "com.fasterxml.jackson.datatype": jacksonVersion,
