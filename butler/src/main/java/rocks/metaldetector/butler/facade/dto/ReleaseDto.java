@@ -1,12 +1,19 @@
 package rocks.metaldetector.butler.facade.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
+import static java.time.format.FormatStyle.FULL;
+import static java.util.Locale.US;
 
 @Data
 @NoArgsConstructor
@@ -29,4 +36,9 @@ public class ReleaseDto {
   private String state;
   private String coverUrl;
 
+  @ArtifactForFramework
+  @JsonProperty(access = READ_ONLY)
+  public String getReleaseDateAsDisplayString() {
+    return releaseDate.format(DateTimeFormatter.ofLocalizedDate(FULL).withLocale(US));
+  }
 }
