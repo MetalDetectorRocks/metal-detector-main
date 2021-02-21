@@ -21,10 +21,10 @@ buildscript {
     materialIconsVersion = "0.3.1"
     micrometerVersion = "1.6.4"
     modelmapperVersion = "2.3.9"
-    postgresqlVersion = "42.2.18"
+    postgresqlVersion = "42.2.19"
     restAssuredVersion = "4.2.1"
     servletApiVersion = "4.0.1"
-    springBootVersion = "2.4.2"
+    springBootVersion = "2.4.3"
     springSecurityVersion = "5.4.5"
     thymeleafDialectVersion = "2.5.2"
     thymeleafExtrasVersion = "3.0.4.RELEASE"
@@ -52,7 +52,7 @@ ext {
                         "net.bytebuddy:byte-buddy:1.10.20",
                         "org.javassist:javassist:3.27.0-GA",
                         "org.webjars:jquery:3.5.1"]
-  dependencyGroupVersions = ["org.springframework"           : "5.3.3",
+  dependencyGroupVersions = ["org.springframework"           : "5.3.4",
                              "org.springframework.security"  : springSecurityVersion,
                              "com.fasterxml.jackson.core"    : jacksonVersion,
                              "com.fasterxml.jackson.datatype": jacksonVersion,

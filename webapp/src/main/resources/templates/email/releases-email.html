@@ -1,60 +1,90 @@
 <!DOCTYPE html>
-<html layout:decorate="~{email/fragments/layout}"
+<html layout:decorate="~{email/fragments/releases-layout}"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.w3.org/1999/xhtml"
       lang="en">
 <head>
     <title>Your new metal releases</title>
+    <style type="text/css">
+        #upcoming-releases {
+            padding-top: 1rem;
+        }
+        .cover-box {
+            float: left;
+            min-width: 26%;
+            box-sizing: border-box;
+            margin-bottom: 0.5rem;
+        }
+        .cover {
+            border-radius: 5px;
+            width: 9rem;
+            height: 9rem;
+            object-fit: cover;
+            border: 1px solid #464b53;
+        }
+        .release-box {
+            float: left;
+            padding-left: 4%;
+            width: 66%;
+            margin-bottom: 0.5rem;
+            box-sizing: border-box;
+        }
+        @media screen and (max-width: 650px) {
+            .cover-box {
+                width: 100%;
+            }
+            .cover {
+                width: 12rem;
+                height: 12rem;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .release-box {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<section layout:fragment="content">
-    <p>
-        Hi <span th:text="${username}">username</span>
-    </p>
-    <div id="upcoming-releases" th:unless="${#lists.isEmpty(upcomingReleases)}">
-        <p>
-            Here are your favorite band's upcoming releases:
-        </p>
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">Artist</th>
-                <th scope="col">Album Title</th>
-                <th scope="col">Release Date</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="release: ${upcomingReleases}">
-                <td th:text="${release.artist}"></td>
-                <td th:text="${release.albumTitle}"></td>
-                <td th:text="${release.releaseDate}"></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+    <div layout:fragment="content">
+        <p class="text-l">The following releases have been released recently or will be released in the next days.</p>
 
-    <div id="recent-releases" th:unless="${#lists.isEmpty(recentReleases)}">
-        <p>
-            Here are your favorite band's recent releases:
-        </p>
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">Artist</th>
-                <th scope="col">Album Title</th>
-                <th scope="col">Release Date</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="release: ${recentReleases}">
-                <td th:text="${release.artist}"></td>
-                <td th:text="${release.albumTitle}"></td>
-                <td th:text="${release.releaseDate}"></td>
-            </tr>
-            </tbody>
-        </table>
+        <div id="recent-releases" th:unless="${#lists.isEmpty(recentReleases)}">
+            <h2 class="text-xl">Recent releases</h2>
+            <div th:each="release: ${recentReleases}">
+                <div class="cover-box">
+                    <img class="cover" src="#" th:src="${release.coverUrl}" alt="Release Cover" width="150"/>
+                </div>
+                <div class="release-box">
+                    <div class="release-title">
+                        <span class="text-xl text-bold" th:text="${release.artist}"></span><br />
+                        <span class="text-l text-bold" th:text="${release.albumTitle}"></span><br />
+                        <span class="text-bold" th:text="${release.releaseDateAsDisplayString}"></span>
+                    </div>
+                </div>
+                <div style="clear:both;"></div>
+            </div>
+        </div>
+
+        <div id="upcoming-releases" th:unless="${#lists.isEmpty(upcomingReleases)}">
+            <h2 class="text-xl">Upcoming releases</h2>
+            <div th:each="release: ${upcomingReleases}">
+                <div class="cover-box">
+                    <img class="cover" src="#" th:src="${release.coverUrl}" alt="Release Cover" width="150" />
+                </div>
+                <div class="release-box">
+                    <div class="release-title">
+                        <span class="text-xl text-bold" th:text="${release.artist}"></span><br />
+                        <span class="text-l text-bold" th:text="${release.albumTitle}"></span><br />
+                        <span class="text-bold" th:text="${release.releaseDateAsDisplayString}"></span>
+                    </div>
+                </div>
+                <div style="clear:both;"></div>
+            </div>
+        </div>
     </div>
-    <p>Cheers!</p>
-</section>
 </body>
 </html>
