@@ -6,7 +6,7 @@ buildscript {
     cacheApiVersion = "1.1.1"
     commonsCodecVersion = "1.15"
     datatablesVersion = "1.10.23"
-    ehcacheVersion = "3.9.0"
+    ehcacheVersion = "3.9.1"
     flywayVersion = "7.5.3"
     h2Version = "1.4.200"
     httpClientVersion = "4.5.13"
