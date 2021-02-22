@@ -6,7 +6,7 @@ buildscript {
     cacheApiVersion = "1.1.1"
     commonsCodecVersion = "1.15"
     datatablesVersion = "1.10.23"
-    ehcacheVersion = "3.9.0"
+    ehcacheVersion = "3.9.1"
     flywayVersion = "7.5.3"
     h2Version = "1.4.200"
     httpClientVersion = "4.5.13"
@@ -49,7 +49,7 @@ ext {
                         "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3",
                         "jakarta.activation:jakarta.activation-api:2.0.0",
                         "org.jboss.logging:jboss-logging:3.4.1.Final",
-                        "net.bytebuddy:byte-buddy:1.10.20",
+                        "net.bytebuddy:byte-buddy:1.10.21",
                         "org.javassist:javassist:3.27.0-GA",
                         "org.webjars:jquery:3.5.1"]
   dependencyGroupVersions = ["org.springframework"           : "5.3.4",
