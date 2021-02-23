@@ -197,7 +197,7 @@ class ArtistServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("persistArtists: should transform each spotify artists with ArtistEntityTransformer")
+  @DisplayName("persistArtists: should transform each spotify artist with ArtistEntityTransformer")
   void should_transform_spotify_artists_with_artist_entity_transformer() {
     // given
     var spotifyDtos = List.of(SpotifyArtistDtoFactory.withArtistName("a"), SpotifyArtistDtoFactory.withArtistName("b"));
