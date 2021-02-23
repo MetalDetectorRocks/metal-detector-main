@@ -65,8 +65,7 @@ public class ArtistSearchResponseTransformer {
   }
 
   private ArtistSearchResponseEntryDto transformDiscogsSearchResult(DiscogsArtistSearchResultEntryDto discogsSearchResult) {
-    Map<ImageSize, String> images = new HashMap<>();
-    images.put(M, discogsSearchResult.getImageUrl());
+    Map<ImageSize, String> images = Map.of(M, discogsSearchResult.getImageUrl());
     return ArtistSearchResponseEntryDto.builder()
         .id(String.valueOf(discogsSearchResult.getId()))
         .name(discogsSearchResult.getName())

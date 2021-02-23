@@ -1,4 +1,4 @@
-package rocks.metaldetector.spotify.facade.dto;
+package rocks.metaldetector.support;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
