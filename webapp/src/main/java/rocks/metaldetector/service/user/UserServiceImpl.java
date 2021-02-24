@@ -78,10 +78,7 @@ public class UserServiceImpl implements UserService {
 
     OAuthUserEntity savedUserEntity = userRepository.save(oAuthUserEntity);
 
-    NotificationConfigEntity notificationConfigEntity = NotificationConfigEntity.builder()
-        .user(savedUserEntity)
-        .build();
-    notificationConfigRepository.save(notificationConfigEntity);
+    createNotificationConfig(savedUserEntity);
 
     return userTransformer.transform(savedUserEntity);
   }
@@ -106,13 +103,16 @@ public class UserServiceImpl implements UserService {
 
     UserEntity savedUserEntity = userRepository.save(userEntity);
 
-    // create user's notification config
-    NotificationConfigEntity notificationConfigEntity = NotificationConfigEntity.builder()
-        .user(savedUserEntity)
-        .build();
-    notificationConfigRepository.save(notificationConfigEntity);
+    createNotificationConfig(savedUserEntity);
 
     return userTransformer.transform(savedUserEntity);
+  }
+
+  private void createNotificationConfig(AbstractUserEntity user) {
+    NotificationConfigEntity notificationConfigEntity = NotificationConfigEntity.builder()
+        .user(user)
+        .build();
+    notificationConfigRepository.save(notificationConfigEntity);
   }
 
   @Override
@@ -146,8 +146,7 @@ public class UserServiceImpl implements UserService {
     userEntity.setUserRoles(UserRole.getRoleFromString(userDto.getRole()));
     userEntity.setEnabled(userDto.isEnabled());
 
-    AbstractUserEntity updatedUserEntity;
-    updatedUserEntity = userRepository.save((UserEntity) userEntity);
+    AbstractUserEntity updatedUserEntity = userRepository.save((UserEntity) userEntity);
 
     return userTransformer.transform(updatedUserEntity);
   }
@@ -158,7 +157,7 @@ public class UserServiceImpl implements UserService {
     AbstractUserEntity currentUser = currentUserSupplier.get();
 
     if (currentUser instanceof OAuthUserEntity) {
-      throw new IllegalArgumentException("OAuth users cannot change their email address");
+      throw IllegalUserActionException.createOAuthUserCannotChangeEMailException();
     }
     if (!currentUser.getEmail().equalsIgnoreCase(emailAddress) && userRepository.existsByEmail(emailAddress)) {
       throw new IllegalArgumentException("The email address is already in use!");
@@ -282,7 +281,7 @@ public class UserServiceImpl implements UserService {
     AbstractUserEntity currentUser = currentUserSupplier.get();
 
     if (currentUser instanceof OAuthUserEntity) {
-      throw new IllegalArgumentException("OAuth users cannot change their password");
+      throw IllegalUserActionException.createOAuthUserCannotChangePasswordException();
     }
     if (passwordEncoder.matches(oldPlainPassword, currentUser.getPassword())) {
       ((UserEntity) currentUser).setPassword(passwordEncoder.encode(newPlainPassword));
