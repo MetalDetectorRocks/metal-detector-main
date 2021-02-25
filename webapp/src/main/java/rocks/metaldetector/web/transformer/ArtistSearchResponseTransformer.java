@@ -11,7 +11,7 @@ import rocks.metaldetector.support.ImageSize;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -65,7 +65,7 @@ public class ArtistSearchResponseTransformer {
   }
 
   private ArtistSearchResponseEntryDto transformDiscogsSearchResult(DiscogsArtistSearchResultEntryDto discogsSearchResult) {
-    Map<ImageSize, String> images = Map.of(M, discogsSearchResult.getImageUrl());
+    Map<ImageSize, String> images = discogsSearchResult.getImageUrl() != null ? Map.of(M, discogsSearchResult.getImageUrl()) : Collections.emptyMap();
     return ArtistSearchResponseEntryDto.builder()
         .id(String.valueOf(discogsSearchResult.getId()))
         .name(discogsSearchResult.getName())
