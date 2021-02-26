@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final DataSource dataSource;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final SecurityProperties securityProperties;
-  private final SearchQuerySanitizingFilter searchQuerySanitizingFilter;
+  private final XSSFilter xssFilter;
   private final CspNonceFilter cspNonceFilter;
 
   @Override
@@ -106,7 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public FilterRegistrationBean<CspNonceFilter> nonceFilterFilterRegistrationBean() {
+  public FilterRegistrationBean<CspNonceFilter> nonceFilterRegistrationBean() {
     FilterRegistrationBean<CspNonceFilter> filterRegistrationBean = new FilterRegistrationBean<>();
     filterRegistrationBean.setFilter(cspNonceFilter);
     filterRegistrationBean.addUrlPatterns(Endpoints.Frontend.ALL_FRONTEND_PAGES.toArray(new String[0]));
@@ -116,10 +116,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public FilterRegistrationBean<SearchQuerySanitizingFilter> sanitizingFilterFilterRegistrationBean() {
-    FilterRegistrationBean<SearchQuerySanitizingFilter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
-    filterFilterRegistrationBean.setFilter(searchQuerySanitizingFilter);
-    filterFilterRegistrationBean.addUrlPatterns(Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH);
-    return filterFilterRegistrationBean;
+  public FilterRegistrationBean<XSSFilter> xssFilterRegistrationBean() {
+    return new FilterRegistrationBean<>(xssFilter);
   }
 }

@@ -7,6 +7,7 @@ buildscript {
     commonsCodecVersion = "1.15"
     datatablesVersion = "1.10.23"
     ehcacheVersion = "3.9.2"
+    esapiVersion = "2.2.2.0"
     flywayVersion = "7.5.4"
     h2Version = "1.4.200"
     httpClientVersion = "4.5.13"
@@ -51,7 +52,8 @@ ext {
                         "org.jboss.logging:jboss-logging:3.4.1.Final",
                         "net.bytebuddy:byte-buddy:1.10.21",
                         "org.javassist:javassist:3.27.0-GA",
-                        "org.webjars:jquery:3.5.1"]
+                        "org.webjars:jquery:3.5.1",
+                        "commons-io:commons-io:2.6"]
   dependencyGroupVersions = ["org.springframework"           : "5.3.4",
                              "org.springframework.security"  : springSecurityVersion,
                              "com.fasterxml.jackson.core"    : jacksonVersion,
