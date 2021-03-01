@@ -62,12 +62,16 @@ To start the application locally in default profile, the following preparatory a
     - `spotify.client-id`
     - `spotify.client-secret`
 
-5. Define JWT Issuer and secrets (you can choose any value you want) in file `application.yml`:
+5. Deposit your Google Client ID and Client Secret in file `application.yml`:
+   - `spring.security.oauth2.client.registration.google.client-id`
+   - `spring.security.oauth2.client.registration.google.client-secret`
+
+6. Define JWT Issuer and secrets (you can choose any value you want) in file `application.yml`:
     - `security.token-issuer` for JWT
     - `security.token-secret` for JWT
     - `security.remember-me-secret` for remember me functionality
 
-6. Compile the frontend initially. To do this you have to execute the following commands from the root directory of the project:
+7. Compile the frontend initially. To do this you have to execute the following commands from the root directory of the project:
     - `npm --prefix webapp/src/main/resources/static/ts/ install`
     - `npm --prefix webapp/src/main/resources/static/ts/ run prod-build`
 

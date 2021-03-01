@@ -28,7 +28,7 @@ import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-@Entity(name = "abstract_users")
+@Entity(name = "users")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class AbstractUserEntity extends BaseEntity implements UserDetails {
 

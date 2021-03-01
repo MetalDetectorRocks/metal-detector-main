@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 
@@ -37,7 +38,7 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
   @Transactional
   public void run(ApplicationArguments args) {
     if (!(dataSource instanceof EmbeddedDatabase)) {
-      List<UserEntity> currentExistingUser = entityManager.createQuery("select u from users u", UserEntity.class).getResultList();
+      List<AbstractUserEntity> currentExistingUser = entityManager.createQuery("select u from users u", AbstractUserEntity.class).getResultList();
 
       // It is assumed that the database has no demo data if there are no users
       if (currentExistingUser.isEmpty()) {
@@ -115,7 +116,7 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
   }
 
   private void createAndFollowArtists() {
-    UserEntity administrator = entityManager.createQuery("select u from users u where u.username = :username", UserEntity.class)
+    AbstractUserEntity administrator = entityManager.createQuery("select u from users u where u.username = :username", AbstractUserEntity.class)
             .setParameter("username", "Administrator").getSingleResult();
 
     ArtistEntity opeth = ArtistEntity.builder()

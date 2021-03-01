@@ -14,7 +14,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
 @EqualsAndHashCode(callSuper = true)
-@Entity(name = "users")
+@Entity(name = "native_users")
 public class UserEntity extends AbstractUserEntity {
 
   private static final int ENCRYPTED_PASSWORD_LENGTH = 60;
