@@ -8,6 +8,9 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
+  <!-- Do not use '<sec:csrfMetaTags />' here!, see https://trello.com/c/bmaEDU8T -->
+  <sec:csrfMetaTags></sec:csrfMetaTags>
+
   <!-- CSS -->
   <link th:nonce="${random}" href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/cyborg/bootstrap.min.css" rel="stylesheet" integrity="sha384-l7xaoY0cJM4h9xh1RfazbgJVUZvdtyLWPueWNtLAphf/UbBgOVzqbOTogxPwYLHM" crossorigin="anonymous">
   <link th:nonce="${random}" th:href="@{/webjars/datatables/css/dataTables.bootstrap4.min.css}" href="#" rel="stylesheet" type="text/css" />
