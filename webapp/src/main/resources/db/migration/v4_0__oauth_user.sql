@@ -3,7 +3,7 @@
 --              user or an oauth user; avatar column added; unique constraint
 --              for username dropped
 
-alter table users add column dtype varchar(255) not null default 'basic_users';
+alter table users add column dtype varchar(255) not null default 'native_users';
 
 alter table users alter column dtype drop default;
 
