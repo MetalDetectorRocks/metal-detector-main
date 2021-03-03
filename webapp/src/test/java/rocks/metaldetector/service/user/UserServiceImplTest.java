@@ -70,6 +70,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
+import static rocks.metaldetector.service.user.UserErrorMessages.OAUTH_USER_CANNOT_CHANGE_EMAIL;
+import static rocks.metaldetector.service.user.UserErrorMessages.OAUTH_USER_CANNOT_CHANGE_PASSWORD;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_NOT_FOUND;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
@@ -889,7 +891,7 @@ class UserServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("should throw IllegalArgumentException if current user is oauth user")
+    @DisplayName("should throw IllegalUserActionException if current user is oauth user")
     void should_throw_exception_if_user_is_oauth_user() {
       // given
       doReturn(OAuthUserFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
@@ -898,7 +900,8 @@ class UserServiceImplTest implements WithAssertions {
       Throwable throwable = catchThrowable(() -> underTest.updateCurrentEmail("new-mail@example.com"));
 
       // then
-      assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+      assertThat(throwable).isInstanceOf(IllegalUserActionException.class);
+      assertThat(throwable).hasMessage(OAUTH_USER_CANNOT_CHANGE_EMAIL.toDisplayString());
     }
 
     @Test
@@ -1057,7 +1060,8 @@ class UserServiceImplTest implements WithAssertions {
       var throwable = catchThrowable(() -> underTest.updateCurrentPassword("oldPassword", "newPassword"));
 
       // then
-      assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+      assertThat(throwable).isInstanceOf(IllegalUserActionException.class);
+      assertThat(throwable).hasMessage(OAUTH_USER_CANNOT_CHANGE_PASSWORD.toDisplayString());
     }
   }
 
