@@ -51,7 +51,7 @@ ext {
                         "org.jboss.logging:jboss-logging:3.4.1.Final",
                         "net.bytebuddy:byte-buddy:1.10.21",
                         "org.javassist:javassist:3.27.0-GA",
-                        "org.webjars:jquery:3.5.1"]
+                        "org.webjars:jquery:3.6.0"]
   dependencyGroupVersions = ["org.springframework"           : "5.3.4",
                              "org.springframework.security"  : springSecurityVersion,
                              "com.fasterxml.jackson.core"    : jacksonVersion,
