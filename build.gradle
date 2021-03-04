@@ -12,7 +12,7 @@ buildscript {
     h2Version = "1.4.200"
     httpClientVersion = "4.5.13"
     mockitoVersion = "3.8.0"
-    jacksonVersion = "2.12.1"
+    jacksonVersion = "2.12.2"
     jacocoVersion = "0.8.6"
     jaxbApiVersion = "2.3.1"
     jsonwebtokenVersion = "0.9.1"
@@ -52,7 +52,7 @@ ext {
                         "org.jboss.logging:jboss-logging:3.4.1.Final",
                         "net.bytebuddy:byte-buddy:1.10.21",
                         "org.javassist:javassist:3.27.0-GA",
-                        "org.webjars:jquery:3.5.1",
+                        "org.webjars:jquery:3.6.0",
                         "commons-io:commons-io:2.6"]
   dependencyGroupVersions = ["org.springframework"           : "5.3.4",
                              "org.springframework.security"  : springSecurityVersion,
