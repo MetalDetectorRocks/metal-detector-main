@@ -120,11 +120,11 @@ function showUpdateReleaseForm() {
   $('#type').text(data.type);
   $('#source').text(data.source);
 
-  const artistUrl = $('#artist-details-url');
-  artistUrl.text(data.artistDetailsUrl);
+  const artistUrl = $('#artist-details');
+  artistUrl.text(`Go to ${data.source}`);
   artistUrl.attr("href", data.artistDetailsUrl);
-  const albumUrl = $('#release-details-url');
-  albumUrl.text(data.releaseDetailsUrl);
+  const albumUrl = $('#release-details');
+  albumUrl.text(`Go to ${data.source}`);
   albumUrl.attr("href", data.releaseDetailsUrl);
 }
 
