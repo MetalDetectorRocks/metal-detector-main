@@ -115,6 +115,9 @@ function showUpdateReleaseForm() {
   $('#estimated-release-date').text(data.estimatedReleaseDate);
   $('#release-state').val(data.state);
 
+  // cover
+  $('#cover').attr("src", data.coverUrl);
+
   // details
   $('#genre').text(data.genre);
   $('#type').text(data.type);
