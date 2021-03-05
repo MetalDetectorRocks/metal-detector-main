@@ -173,7 +173,7 @@ function createUpdateReleaseRequest() {
  */
 function onUpdateReleaseSuccess() {
   const currentRowIndex = parseInt($('#current-row-index').text());
-  releaseTable.cell(currentRowIndex, 6).data($("#release-state").val()).draw();
+  releaseTable.cell(currentRowIndex, 0).data($("#release-state").val()).draw();
 
   resetUpdateReleaseForm();
   $('#update-release-dialog').modal("hide");
