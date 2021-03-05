@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.web.api.request.RegisterUserRequest;
+import rocks.metaldetector.web.api.request.CreateAdministratorRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.UserResponse;
 
@@ -54,7 +54,7 @@ public class UserRestController {
 
   @PostMapping(consumes = APPLICATION_JSON_VALUE,
                produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<UserResponse> createUser(@Valid @RequestBody RegisterUserRequest request) {
+  public ResponseEntity<UserResponse> createAdministrator(@Valid @RequestBody CreateAdministratorRequest request) {
     UserDto userDto = mapper.map(request, UserDto.class);
     UserDto createdUserDto = userService.createAdministrator(userDto);
     UserResponse response = mapper.map(createdUserDto, UserResponse.class);
