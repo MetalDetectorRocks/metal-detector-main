@@ -178,10 +178,10 @@ class UserRestControllerTest implements WithAssertions {
     }
   }
 
-  @DisplayName("Create user tests")
+  @DisplayName("Create administrator tests")
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
-  class CreateUserTest {
+  class CreateAdministratorTest {
 
     @Test
     @DisplayName("Should pass expected UserDto to UserService")
@@ -219,7 +219,7 @@ class UserRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should return status 409 and ErrorResponse if user with username or email already exists")
+    @DisplayName("Should return status 409 and ErrorResponse if administrator with username or email already exists")
     void should_return_409() {
       // given
       RegisterUserRequest request = RegisterUserRequestFactory.createDefault();
@@ -234,7 +234,7 @@ class UserRestControllerTest implements WithAssertions {
     }
 
     @ParameterizedTest
-    @MethodSource("registerUserRequestProvider")
+    @MethodSource("createAdministratorRequestProvider")
     @DisplayName("Should return status 400 if creating of administrator does not pass validation")
     void should_return_400(RegisterUserRequest request, int expectedErrorCount) {
       // when
@@ -248,7 +248,7 @@ class UserRestControllerTest implements WithAssertions {
       assertThat(errorResponse.getMessages()).hasSize(expectedErrorCount);
     }
 
-    private Stream<Arguments> registerUserRequestProvider() {
+    private Stream<Arguments> createAdministratorRequestProvider() {
       return Stream.of(
           // invalid username
           Arguments.of(RegisterUserRequestFactory.withUsername(""), 1),
@@ -269,7 +269,7 @@ class UserRestControllerTest implements WithAssertions {
           Arguments.of(RegisterUserRequestFactory.withPassword(null, null), 2),
 
           // all null
-          Arguments.of(RegisterUserRequest.builder().build(), 5)
+          Arguments.of(RegisterUserRequest.builder().build(), 4)
       );
     }
   }
