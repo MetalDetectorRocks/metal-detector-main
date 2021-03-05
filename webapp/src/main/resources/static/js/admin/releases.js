@@ -30,24 +30,41 @@ function getReleases() {
       },
       "pagingType": "simple_numbers",
       "columns": [
+        {"data": "state"},
         {"data": "artist"},
         {"data": "albumTitle"},
         {"data": "releaseDate"},
         {"data": "genre"},
         {"data": "type"},
         {"data": "source"},
-        {"data": "state"},
         {"data": "id"}
       ],
       "autoWidth": false, // fixes window resizing issue
-      "order": [[ 2, "asc" ], [0, "asc"]],
+      "order": [[ 3, "asc" ], [1, "asc"]],
       "columnDefs": [
         {
-          "targets": [2],
+          "targets": [0],
+          "render": function (data) {
+            if (data === 'Ok') {
+              return '<span class="badge badge-success">' + data + '</span>';
+            }
+            else if (data === 'Demo') {
+              return '<span class="badge badge-warning">' + data + '</span>';
+            }
+            else if (data === "Faulty") {
+              return '<span class="badge badge-danger">' + data + '</span>';
+            }
+            else {
+              return '<span class="badge badge-info">' + data + '</span>';
+            }
+          }
+        },
+        {
+          "targets": [3],
           "render": formatUtcDate
         },
         {
-          "targets": [3, 4],
+          "targets": [4, 5],
           "render": function (data) {
             if (isEmpty(data)) {
               return 'n/a';
@@ -58,7 +75,7 @@ function getReleases() {
           }
         },
         {
-          "targets": [6, 7],
+          "targets": [7],
           "visible": false
         }
       ]
