@@ -5,6 +5,9 @@
       lang="en">
 <head>
   <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">Metal Detector</title>
+  <link rel="shortcut icon" type="image/x-icon" th:href="@{/images/favicon.png}">
+  <link rel="icon" type="image/png" th:href="@{/images/favicon.png}" sizes="32x32">
+  <link rel="icon" type="image/png" th:href="@{/images/favicon.png}" sizes="96x96">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta id="Viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
@@ -61,8 +64,11 @@
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
                   <p class="pl-4 pr-2">Signed in as <span sec:authentication="name" class="font-weight-bold">Username</span></p>
                   <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#" th:href="@{/settings/account-details}">Account details</a>
+                  <a class="dropdown-item" href="#" th:href="@{/settings/spotify-synchronization}">Spotify synchronization</a>
+                  <a class="dropdown-item" href="#" th:href="@{/settings/notification-settings}">Notification settings</a>
+                  <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#" target="_blank" th:href="@{/admin}" sec:authorize="hasRole('ROLE_ADMINISTRATOR')">Admin area</a>
-                  <a class="dropdown-item" href="#" th:href="@{/settings/account-details}">Settings</a>
                   <a id="logout-link" class="dropdown-item" href="#" th:href="@{/logout}">Logout</a>
                 </div>
               </li>
