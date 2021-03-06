@@ -7,6 +7,13 @@ import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY
 public class ArtistEntityFactory {
 
   public static ArtistEntity withExternalId(String externalId) {
-    return new ArtistEntity(externalId, externalId, "imageUrl", SPOTIFY);
+    return ArtistEntity.builder()
+            .externalId(externalId)
+            .externalUrl("http://example.com/666")
+            .artistName("")
+            .genres("Black Metal, Post Black Metal")
+            .source(SPOTIFY)
+            .imageM("http://example.com/image.jpg")
+            .build();
   }
 }

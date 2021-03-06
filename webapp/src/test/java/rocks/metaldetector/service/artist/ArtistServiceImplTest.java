@@ -5,8 +5,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,6 +13,8 @@ import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
+import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
+import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
@@ -39,35 +39,36 @@ class ArtistServiceImplTest implements WithAssertions {
   private static final ArtistSource ARTIST_SOURCE = DISCOGS;
 
   @Mock
-  private ArtistRepository artistRepository;
+  private ArtistDtoTransformer artistDtoTransformer;
 
   @Mock
-  private UserRepository userRepository;
+  private ArtistEntityTransformer artistEntityTransformer;
+
+  @Mock
+  private ArtistRepository artistRepository;
 
   @Mock
   private DiscogsService discogsService;
 
   @Mock
+  private ArtistSearchResponseTransformer searchResponseTransformer;
+
+  @Mock
   private SpotifyService spotifyService;
 
   @Mock
-  private ArtistTransformer artistTransformer;
-
-  @Mock
-  private ArtistSearchResponseTransformer searchResponseTransformer;
+  private UserRepository userRepository;
 
   @InjectMocks
   private ArtistServiceImpl underTest;
 
-  @Captor
-  private ArgumentCaptor<List<ArtistEntity>> argumentCaptor;
-
-  private final ArtistEntity artistEntity = new ArtistEntity(EXTERNAL_ID, ARTIST_NAME, null, DISCOGS);
-  private final ArtistDto artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, null, "Discogs", null, 666);
+  private final ArtistEntity artistEntity = ArtistEntity.builder().externalId(EXTERNAL_ID).artistName(ARTIST_NAME).source(DISCOGS).build();
+  private final ArtistDto artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, "Discogs", null, 666, null);
 
   @AfterEach
   void tearDown() {
-    reset(artistRepository, userRepository, discogsService, artistTransformer, spotifyService, searchResponseTransformer);
+    reset(artistDtoTransformer, artistEntityTransformer, artistRepository, discogsService,
+            searchResponseTransformer, spotifyService, userRepository);
   }
 
   @Test
@@ -75,7 +76,7 @@ class ArtistServiceImplTest implements WithAssertions {
   void find_by_discogs_id_should_return_correct_artist() {
     // given
     when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(artistEntity));
-    when(artistTransformer.transform(any(ArtistEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
+    when(artistDtoTransformer.transformArtistEntity(any(ArtistEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     Optional<ArtistDto> artistOptional = underTest.findArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
@@ -108,7 +109,7 @@ class ArtistServiceImplTest implements WithAssertions {
     underTest.findArtistByExternalId(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(artistTransformer).transform(artistEntity);
+    verify(artistDtoTransformer).transformArtistEntity(artistEntity);
   }
 
   @Test
@@ -126,7 +127,7 @@ class ArtistServiceImplTest implements WithAssertions {
   void find_all_by_discogs_ids_should_return_all_entities_that_exist() {
     // given
     when(artistRepository.findAllByExternalIdIn(any())).thenReturn(List.of(artistEntity));
-    when(artistTransformer.transform(any(ArtistEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
+    when(artistDtoTransformer.transformArtistEntity(any(ArtistEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     List<ArtistDto> artists = underTest.findAllArtistsByExternalIds(List.of(EXTERNAL_ID, "0"));
@@ -156,7 +157,7 @@ class ArtistServiceImplTest implements WithAssertions {
     underTest.findAllArtistsByExternalIds(List.of(EXTERNAL_ID, "0"));
 
     // then
-    verify(artistTransformer).transform(artistEntity);
+    verify(artistDtoTransformer).transformArtistEntity(artistEntity);
   }
 
   @Test
@@ -196,19 +197,33 @@ class ArtistServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("persistArtists: calls artistRepository with all entities")
-  void test_artist_repository_called_with_all_entities() {
+  @DisplayName("persistArtists: should transform each spotify artist with ArtistEntityTransformer")
+  void should_transform_spotify_artists_with_artist_entity_transformer() {
     // given
     var spotifyDtos = List.of(SpotifyArtistDtoFactory.withArtistName("a"), SpotifyArtistDtoFactory.withArtistName("b"));
-    var expectedEntities = List.of(ArtistEntityFactory.withExternalId("a"), ArtistEntityFactory.withExternalId("b"));
 
     // when
     underTest.persistSpotifyArtists(spotifyDtos);
 
     // then
-    verify(artistRepository).saveAll(argumentCaptor.capture());
-    List<ArtistEntity> capturedEntites = argumentCaptor.getValue();
-    assertThat(capturedEntites).isEqualTo(expectedEntities);
+    verify(artistEntityTransformer).transformSpotifyArtistDto(spotifyDtos.get(0));
+    verify(artistEntityTransformer).transformSpotifyArtistDto(spotifyDtos.get(1));
+  }
+
+  @Test
+  @DisplayName("persistArtists: calls artistRepository with all entities")
+  void test_artist_repository_called_with_all_entities() {
+    // given
+    var spotifyDtos = List.of(SpotifyArtistDtoFactory.withArtistName("a"), SpotifyArtistDtoFactory.withArtistName("b"));
+    var artistEntities = List.of(ArtistEntityFactory.withExternalId("a"), ArtistEntityFactory.withExternalId("b"));
+    doReturn(artistEntities.get(0)).when(artistEntityTransformer).transformSpotifyArtistDto(spotifyDtos.get(0));
+    doReturn(artistEntities.get(1)).when(artistEntityTransformer).transformSpotifyArtistDto(spotifyDtos.get(1));
+
+    // when
+    underTest.persistSpotifyArtists(spotifyDtos);
+
+    // then
+    verify(artistRepository).saveAll(artistEntities);
   }
 
   @Test

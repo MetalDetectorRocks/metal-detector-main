@@ -16,6 +16,7 @@ import rocks.metaldetector.discogs.api.DiscogsImage;
 import rocks.metaldetector.discogs.client.DiscogsDtoFactory.DiscogsArtistFactory;
 import rocks.metaldetector.discogs.client.DiscogsDtoFactory.DiscogsImageFactory;
 import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
+import rocks.metaldetector.support.ImageSize;
 
 import java.util.Collections;
 import java.util.List;
@@ -52,9 +53,11 @@ class DiscogsArtistTransformerTest implements WithAssertions {
     // then
     assertThat(result).isEqualTo(
             DiscogsArtistDto.builder()
-                            .id(String.valueOf(discogsArtist.getId()))
-                            .imageUrl("")
-                            .build()
+                    .id(String.valueOf(discogsArtist.getId()))
+                    .url(discogsArtist.getUri())
+                    .uri(discogsArtist.getResourceUrl())
+                    .images(Collections.emptyMap())
+                    .build()
     );
   }
 
@@ -79,17 +82,18 @@ class DiscogsArtistTransformerTest implements WithAssertions {
   void should_transform_image_url() {
     // given
     DiscogsArtist discogsArtist = DiscogsArtistFactory.createDefault();
-    List<DiscogsImage> images = List.of(
-            DiscogsImageFactory.createDefault("img1"),
-            DiscogsImageFactory.createDefault("img2")
-    );
+    DiscogsImage img1 = DiscogsImageFactory.createDefault("img1");
+    DiscogsImage img2 = DiscogsImageFactory.createDefault("img2");
+    img1.setHeight(400); // to enforce medium size image
+    List<DiscogsImage> images = List.of(img1, img2);
     discogsArtist.setImages(images);
 
     // when
     DiscogsArtistDto result = underTest.transform(discogsArtist);
 
     // then
-    assertThat(result.getImageUrl()).isEqualTo(images.get(0).getResourceUrl());
+    assertThat(result.getImages().get(ImageSize.M)).isEqualTo(images.get(0).getResourceUrl());
+    assertThat(result.getImages().get(ImageSize.XS)).isEqualTo(images.get(0).getUri150());
   }
 
   @ParameterizedTest(name = "Should not fail if images is {0}")
@@ -104,7 +108,7 @@ class DiscogsArtistTransformerTest implements WithAssertions {
     DiscogsArtistDto result = underTest.transform(discogsArtist);
 
     // then
-    assertThat(result.getImageUrl()).isEmpty();
+    assertThat(result.getImages()).isEmpty();
   }
 
   private static Stream<Arguments> discogsImageProvider() {

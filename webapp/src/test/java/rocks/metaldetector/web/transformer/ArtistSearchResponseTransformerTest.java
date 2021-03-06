@@ -73,7 +73,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
       ArtistSearchResponseEntryDto expectedResultEntry = expectedSearchResults.get(i);
 
       assertThat(resultEntry.getId()).isEqualTo(expectedResultEntry.getId());
-      assertThat(resultEntry.getImageUrl()).isEqualTo(expectedResultEntry.getImageUrl());
+      assertThat(resultEntry.getImages()).isEqualTo(expectedResultEntry.getImages());
       assertThat(resultEntry.getName()).isEqualTo(expectedResultEntry.getName());
       assertThat(resultEntry.getPopularity()).isEqualTo(expectedResultEntry.getPopularity());
       assertThat(resultEntry.getGenres()).isEqualTo(expectedResultEntry.getGenres());
@@ -192,7 +192,7 @@ class ArtistSearchResponseTransformerTest implements WithAssertions {
       ArtistSearchResponseEntryDto expectedResultEntry = expectedSearchResults.get(i);
 
       assertThat(resultEntry.getId()).isEqualTo(expectedResultEntry.getId());
-      assertThat(resultEntry.getImageUrl()).isEqualTo(expectedResultEntry.getImageUrl());
+      assertThat(resultEntry.getImages()).isEqualTo(expectedResultEntry.getImages());
       assertThat(resultEntry.getName()).isEqualTo(expectedResultEntry.getName());
       assertThat(resultEntry.getPopularity()).isEqualTo(expectedResultEntry.getPopularity());
       assertThat(resultEntry.getGenres()).isEqualTo(expectedResultEntry.getGenres());

@@ -11,7 +11,10 @@ import rocks.metaldetector.support.Pagination;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static rocks.metaldetector.support.ImageSize.M;
 
 public class DiscogsDtoFactory {
 
@@ -74,6 +77,8 @@ public class DiscogsDtoFactory {
     public static DiscogsArtist createDefault() {
       return DiscogsArtist.builder()
               .id(252211L)
+              .uri("http://example.com/Darkthrone")
+              .resourceUrl("http://example.com/api/v1/1234")
               .name("Darkthrone")
               .profile("profile-description")
               .build();
@@ -110,8 +115,10 @@ public class DiscogsDtoFactory {
     public static DiscogsArtistDto createDefault() {
       return DiscogsArtistDto.builder()
               .id("666")
+              .url("http://example.com/Darkthrone")
+              .uri("http://example.com/api/v1/1234")
               .name("Dummy artist")
-              .imageUrl("http://image.url")
+              .images(Map.of(M, "http://example.com/image-m.jpg"))
               .build();
     }
   }

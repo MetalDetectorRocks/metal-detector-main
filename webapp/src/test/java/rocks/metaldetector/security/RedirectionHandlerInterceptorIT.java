@@ -27,8 +27,7 @@ import java.util.stream.Stream;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {
-    "spring.datasource.url=jdbc:h2:mem:test-prod;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-    "spring.cache.type=none"
+    "spring.datasource.url=jdbc:h2:mem:test-prod;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
 })
 @ExtendWith(MockitoExtension.class)
 class RedirectionHandlerInterceptorIT implements WithAssertions, WithIntegrationTestConfig {
