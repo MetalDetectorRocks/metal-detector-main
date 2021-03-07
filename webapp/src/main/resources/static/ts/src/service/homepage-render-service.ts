@@ -120,7 +120,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         const artistThumbElement = artistDivElement.querySelector("#artist-thumb") as HTMLImageElement;
         const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
 
-        artistThumbElement.src = artist.thumb;
+        artistThumbElement.src = artist.mediumImage;
         artistNameElement.textContent = artist.artistName;
 
         return artistDivElement;

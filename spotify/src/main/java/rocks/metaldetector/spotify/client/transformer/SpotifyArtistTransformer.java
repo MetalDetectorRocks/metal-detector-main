@@ -6,31 +6,49 @@ import rocks.metaldetector.spotify.api.SpotifyArtist;
 import rocks.metaldetector.spotify.api.SpotifyImage;
 import rocks.metaldetector.spotify.api.search.SpotifyFollowers;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
+import rocks.metaldetector.support.ImageSize;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class SpotifyArtistTransformer {
 
+  static final String SPOTIFY_URL_KEY_NAME = "spotify";
+
   public SpotifyArtistDto transform(SpotifyArtist spotifyArtist) {
     return SpotifyArtistDto.builder()
             .id(spotifyArtist.getId())
             .name(spotifyArtist.getName())
-            .imageUrl(getImageUrl(spotifyArtist.getImages()))
             .uri(spotifyArtist.getUri())
+            .url(spotifyArtist.getExternalUrls().get(SPOTIFY_URL_KEY_NAME))
             .genres(transformGenres(spotifyArtist.getGenres()))
             .popularity(spotifyArtist.getPopularity())
             .follower(getFollower(spotifyArtist.getFollowers()))
+            .images(transformImages(spotifyArtist.getImages()))
             .build();
   }
 
-  private String getImageUrl(List<SpotifyImage> images) {
-    if (images != null && !images.isEmpty()) {
-      return images.get(0).getUrl();
+  private Map<ImageSize, String> transformImages(List<SpotifyImage> spotifyImages) {
+    Map<ImageSize, String> images = new HashMap<>();
+    if (spotifyImages != null) {
+      List<SpotifyImage> sortedSpotifyImages = new ArrayList<>(spotifyImages);
+      sortedSpotifyImages.sort(Comparator.comparingInt(SpotifyImage::getHeight).reversed());
+
+      sortedSpotifyImages.forEach(spotifyImage -> {
+        ImageSize size = ImageSize.ofHeight(spotifyImage.getHeight());
+        if (!images.containsKey(size)) {
+          images.put(size, spotifyImage.getUrl());
+        }
+      });
     }
-    return "";
+
+    return images;
   }
 
   private List<String> transformGenres(List<String> genres) {
@@ -38,9 +56,6 @@ public class SpotifyArtistTransformer {
   }
 
   private int getFollower(SpotifyFollowers followers) {
-    if (followers != null) {
-      return followers.getTotal();
-    }
-    return 0;
+    return followers == null ? 0 : followers.getTotal();
   }
 }

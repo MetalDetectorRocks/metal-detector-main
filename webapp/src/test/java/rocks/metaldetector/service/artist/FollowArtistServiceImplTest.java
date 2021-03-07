@@ -7,13 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.discogs.facade.DiscogsService;
-import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
@@ -22,6 +20,8 @@ import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
+import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
@@ -50,10 +50,22 @@ class FollowArtistServiceImplTest implements WithAssertions {
   private static final ArtistSource ARTIST_SOURCE = DISCOGS;
 
   @Mock
-  private UserRepository userRepository;
+  private ArtistDtoTransformer artistDtoTransformer;
+
+  @Mock
+  private ArtistEntityTransformer artistEntityTransformer;
 
   @Mock
   private ArtistRepository artistRepository;
+
+  @Mock
+  private ArtistService artistService;
+
+  @Mock
+  private CurrentUserSupplier currentUserSupplier;
+
+  @Mock
+  private DiscogsService discogsService;
 
   @Mock
   private FollowActionRepository followActionRepository;
@@ -62,16 +74,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
   private SpotifyService spotifyService;
 
   @Mock
-  private DiscogsService discogsService;
-
-  @Mock
-  private ArtistTransformer artistTransformer;
-
-  @Mock
-  private CurrentUserSupplier currentUserSupplier;
-
-  @Mock
-  private ArtistService artistService;
+  private UserRepository userRepository;
 
   @InjectMocks
   private FollowArtistServiceImpl underTest;
@@ -81,7 +84,8 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(userRepository, artistRepository, currentUserSupplier, discogsService, artistTransformer, userEntity, spotifyService, artistService);
+    reset(artistDtoTransformer, artistEntityTransformer, artistRepository, artistService, userRepository, currentUserSupplier,
+            discogsService, followActionRepository, spotifyService, userRepository, userEntity);
   }
 
   @Test
@@ -165,26 +169,52 @@ class FollowArtistServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Artist is saved in repository if it does not yet exist on follow")
-  void follow_should_save_artist() {
+  @DisplayName("Should transform SpotifyArtistDto to ArtistEntity")
+  void should_transform_spotify_artist_to_artist_entity() {
     // given
-    ArgumentCaptor<ArtistEntity> argumentCaptor = ArgumentCaptor.forClass(ArtistEntity.class);
-    DiscogsArtistDto discogsArtist = DiscogsArtistDtoFactory.createDefault();
+    var spotifyArtist = SpotifyArtistDtoFactory.createDefault();
+    when(spotifyService.searchArtistById(anyString())).thenReturn(spotifyArtist);
+    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(artistRepository.save(any())).thenReturn(ArtistEntityFactory.withExternalId(EXTERNAL_ID));
+
+    // when
+    underTest.follow(EXTERNAL_ID, SPOTIFY);
+
+    // then
+    verify(artistEntityTransformer).transformSpotifyArtistDto(spotifyArtist);
+  }
+
+  @Test
+  @DisplayName("Should transform DiscogsArtistDto to ArtistEntity")
+  void should_transform_discogs_artist_to_artist_entity() {
+    // given
+    var discogsArtist = DiscogsArtistDtoFactory.createDefault();
     when(discogsService.searchArtistById(anyString())).thenReturn(discogsArtist);
     when(currentUserSupplier.get()).thenReturn(userEntity);
     when(artistRepository.save(any())).thenReturn(ArtistEntityFactory.withExternalId(EXTERNAL_ID));
 
     // when
+    underTest.follow(EXTERNAL_ID, DISCOGS);
+
+    // then
+    verify(artistEntityTransformer).transformDiscogsArtistDto(discogsArtist);
+  }
+
+  @Test
+  @DisplayName("Artist is saved in repository if it does not yet exist on follow")
+  void follow_should_save_artist() {
+    // given
+    var artistEntity = ArtistEntityFactory.withExternalId(EXTERNAL_ID);
+    when(discogsService.searchArtistById(anyString())).thenReturn(DiscogsArtistDtoFactory.createDefault());
+    when(artistEntityTransformer.transformDiscogsArtistDto(any())).thenReturn(artistEntity);
+    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(artistRepository.save(any())).thenReturn(artistEntity);
+
+    // when
     underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(artistRepository).save(argumentCaptor.capture());
-
-    ArtistEntity artistEntity = argumentCaptor.getValue();
-    assertThat(artistEntity.getArtistName()).isEqualTo(discogsArtist.getName());
-    assertThat(artistEntity.getExternalId()).isEqualTo(discogsArtist.getId());
-    assertThat(artistEntity.getThumb()).isEqualTo(discogsArtist.getImageUrl());
-    assertThat(artistEntity.getSource()).isEqualTo(ARTIST_SOURCE);
+    verify(artistRepository).save(artistEntity);
   }
 
   @Test
@@ -340,14 +370,14 @@ class FollowArtistServiceImplTest implements WithAssertions {
     FollowActionEntity followAction1 = mock(FollowActionEntity.class);
     FollowActionEntity followAction2 = mock(FollowActionEntity.class);
     when(followActionRepository.findAllByUser(any())).thenReturn(List.of(followAction1, followAction2));
-    when(artistTransformer.transform(any(FollowActionEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
+    when(artistDtoTransformer.transformFollowActionEntity(any(FollowActionEntity.class))).thenReturn(ArtistDtoFactory.createDefault());
 
     // when
     underTest.getFollowedArtistsOfCurrentUser();
 
     // then
-    verify(artistTransformer).transform(followAction1);
-    verify(artistTransformer).transform(followAction2);
+    verify(artistDtoTransformer).transformFollowActionEntity(followAction1);
+    verify(artistDtoTransformer).transformFollowActionEntity(followAction2);
   }
 
   @Test
@@ -362,9 +392,9 @@ class FollowArtistServiceImplTest implements WithAssertions {
     ArtistDto artistDto3 = ArtistDtoFactory.withName("Alcest");
 
     when(followActionRepository.findAllByUser(any())).thenReturn(List.of(followAction1, followAction2, followAction3));
-    when(artistTransformer.transform(followAction1)).thenReturn(artistDto1);
-    when(artistTransformer.transform(followAction2)).thenReturn(artistDto2);
-    when(artistTransformer.transform(followAction3)).thenReturn(artistDto3);
+    when(artistDtoTransformer.transformFollowActionEntity(followAction1)).thenReturn(artistDto1);
+    when(artistDtoTransformer.transformFollowActionEntity(followAction2)).thenReturn(artistDto2);
+    when(artistDtoTransformer.transformFollowActionEntity(followAction3)).thenReturn(artistDto3);
 
     // when
     List<ArtistDto> followedArtists = underTest.getFollowedArtistsOfCurrentUser();

@@ -8,7 +8,7 @@ import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistDto;
-import rocks.metaldetector.service.artist.ArtistTransformer;
+import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
 
 import java.util.Comparator;
 import java.util.List;
@@ -21,13 +21,13 @@ import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMI
 public class ArtistCollector {
 
   private final ArtistRepository artistRepository;
-  private final ArtistTransformer artistTransformer;
+  private final ArtistDtoTransformer artistDtoTransformer;
   private final FollowActionRepository followActionRepository;
   private final CurrentUserSupplier currentUserSupplier;
 
   public List<ArtistDto> collectTopFollowedArtists() {
     return artistRepository.findTopArtists(RESULT_LIMIT).stream()
-        .map(artistTransformer::transform)
+        .map(artistDtoTransformer::transformTopArtist)
         .peek(artist -> artist.setFollower(artistRepository.countArtistFollower(artist.getExternalId())))
         .collect(Collectors.toList());
   }
@@ -37,7 +37,7 @@ public class ArtistCollector {
     return followActionRepository.findAllByUser(currentUser).stream()
         .sorted(Comparator.comparing(FollowActionEntity::getCreatedDateTime).reversed())
         .limit(RESULT_LIMIT)
-        .map(artistTransformer::transform)
+        .map(artistDtoTransformer::transformFollowActionEntity)
         .collect(Collectors.toList());
   }
 }
