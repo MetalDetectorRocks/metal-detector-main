@@ -28,10 +28,13 @@ export class ReleasesRestClient {
         const sort = this.urlService.getParameterFromUrl("sort");
         const direction = this.urlService.getParameterFromUrl("direction");
         const query = this.urlService.getParameterFromUrl("query");
+        const dateFrom = this.urlService.getParameterFromUrl("dateFrom");
+        const dateTo = this.urlService.getParameterFromUrl("dateTo");
         axiosConfig.params = {
             page: this.urlService.getPageFromUrl(),
             size: 30,
-            dateFrom: this.dateService.today(),
+            dateFrom: dateFrom === "" ? this.dateService.today() : dateFrom,
+            dateTo: dateTo,
             sort: sort.length === 0 ? "release_date" : sort,
             direction: direction.length === 0 ? "asc" : direction,
             query: query,

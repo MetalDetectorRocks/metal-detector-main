@@ -37,6 +37,16 @@ export class DateService {
         return this.format(yesterdayAsDayJs.toString(), DateFormat.UTC);
     }
 
+    public inAMonth(): string {
+        const inAMonthAsDayJs = dayjs().add(1, "month");
+        return this.format(inAMonthAsDayJs.toString(), DateFormat.UTC);
+    }
+
+    public beforeAMonth(): string {
+        const beforeAMonth = dayjs().subtract(1, "month");
+        return this.format(beforeAMonth.toString(), DateFormat.UTC);
+    }
+
     public compare(dateStr1: string, dateStr2: string): number {
         return dayjs(dateStr1).isBefore(dateStr2) ? -1 : dayjs(dateStr2).isBefore(dateStr1) ? 1 : 0;
     }
