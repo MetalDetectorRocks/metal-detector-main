@@ -27,6 +27,11 @@ export class DateService {
         return dayjs(dateStr).format(dateFormat);
     }
 
+    public today(): string {
+        const todayAsDayJs = dayjs();
+        return this.format(todayAsDayJs.toString(), DateFormat.UTC);
+    }
+
     public yesterday(): string {
         const yesterdayAsDayJs = dayjs().subtract(1, "day");
         return this.format(yesterdayAsDayJs.toString(), DateFormat.UTC);
