@@ -33,7 +33,7 @@ export class ReleasesRestClient {
         axiosConfig.params = {
             page: this.urlService.getPageFromUrl(),
             size: 30,
-            dateFrom: dateFrom === "" ? this.dateService.today() : dateFrom,
+            dateFrom: dateFrom || this.dateService.today(),
             dateTo: dateTo,
             sort: sort.length === 0 ? "release_date" : sort,
             direction: direction.length === 0 ? "asc" : direction,
