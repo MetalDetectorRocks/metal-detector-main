@@ -86,7 +86,7 @@ export class ReleasesService {
         this.searchField.value = searchQueryParamValue;
         this.timeAllUpcomingRb.checked = dateToParamValue === "";
         this.timeNextMonthRb.checked =
-            !this.timeAllUpcomingRb.checked && Date.parse(dateFromParamValue) == Date.parse(this.dateService.today());
+            !this.timeAllUpcomingRb.checked && Date.parse(dateFromParamValue) === Date.parse(this.dateService.today());
         this.timeLastMonthRb.checked = !this.timeAllUpcomingRb.checked && !this.timeNextMonthRb.checked;
     }
 
