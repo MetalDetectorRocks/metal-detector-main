@@ -18,6 +18,7 @@
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link active" id="nav-master-data-tab" data-toggle="tab" href="#nav-master-data" role="tab" aria-controls="nav-home" aria-selected="true">Master data</a>
+                    <a class="nav-item nav-link" id="nav-cover-tab" data-toggle="tab" href="#nav-cover" role="tab" aria-controls="nav-home">Cover</a>
                     <a class="nav-item nav-link" id="nav-details-tab" data-toggle="tab" href="#nav-details" role="tab" aria-controls="nav-home">Details</a>
                 </div>
             </nav>
@@ -98,8 +99,14 @@
                     </form>
                 </div>
 
+                <!-- Cover -->
+                <div class="tab-pane fade mt-3 ml-2" id="nav-cover" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <!-- Cover -->
+                    <img id="cover" src="#" alt="Release Cover" width="500" class="img-thumbnail rounded mx-auto d-block">
+                </div>
+
                 <!-- Details -->
-                <div class="tab-pane fade mt-3 ml-2" id="nav-details" role="tabpanel" aria-labelledby="nav-profile-tab">
+                <div class="tab-pane fade mt-3 ml-2" id="nav-details" role="tabpanel" aria-labelledby="nav-details-tab">
                     <!-- Genre -->
                     <div class="form-group row">
                         <label for="genre" class="col-sm-4 col-form-label">Genre</label>
@@ -116,19 +123,19 @@
                         </div>
                     </div>
 
-                    <!-- Artist Details Url-->
+                    <!-- Artist Details -->
                     <div class="form-group row">
-                        <label for="artist-details-url" class="col-sm-4 col-form-label">Artist Details Url</label>
+                        <label for="artist-details" class="col-sm-4 col-form-label">Artist Details</label>
                         <div class="col-sm-8">
-                            <p readonly class="form-control-plaintext"><a id="artist-details-url" target="_blank"></a></p>
+                            <p readonly class="form-control-plaintext"><a id="artist-details" target="_blank"></a></p>
                         </div>
                     </div>
 
-                    <!-- Release Details Url-->
+                    <!-- Release Details -->
                     <div class="form-group row">
-                        <label for="release-details-url" class="col-sm-4 col-form-label">Release Details Url</label>
+                        <label for="release-details" class="col-sm-4 col-form-label">Release Details</label>
                         <div class="col-sm-8">
-                            <p readonly class="form-control-plaintext"><a id="release-details-url" target="_blank"></a></p>
+                            <p readonly class="form-control-plaintext"><a id="release-details" target="_blank"></a></p>
                         </div>
                     </div>
 

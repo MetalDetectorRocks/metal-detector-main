@@ -178,7 +178,7 @@ export class SpotifySynchronizationRenderService {
     private buildArtistInfoText(artist: SpotifyArtist): string {
         const followerCount = new Intl.NumberFormat("en-us", { minimumFractionDigits: 0 }).format(artist.follower);
         const follower = `${followerCount} followers on Spotify`;
-        const genres = artist.genres.slice(0, 3).join(", ");
+        const genres = artist.genres.slice(0, 4).join(", ");
         return `${genres}<br />${follower}`;
     }
 
