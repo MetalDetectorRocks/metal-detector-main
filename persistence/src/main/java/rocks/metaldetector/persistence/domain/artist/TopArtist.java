@@ -4,4 +4,5 @@ public interface TopArtist extends MultipleSizeImages {
 
   String getExternalId();
   String getArtistName();
+  ArtistSource getSource();
 }

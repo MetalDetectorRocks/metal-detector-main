@@ -5,6 +5,7 @@ import { AbstractRenderService } from "./abstract-render-service";
 import { Artist } from "../model/artist.model";
 import { Release } from "../model/release.model";
 import { DateFormat, DateService } from "./date-service";
+import { FollowArtistService } from "./follow-artist-service";
 
 interface HomepageCard {
     readonly divElement: HTMLDivElement;
@@ -16,6 +17,7 @@ interface HomepageCard {
 
 export class HomepageRenderService extends AbstractRenderService<HomepageResponse> {
     private readonly dateService: DateService;
+    private readonly followArtistService: FollowArtistService;
     private readonly artistTemplateElement: HTMLTemplateElement;
     private readonly releaseTemplateElement: HTMLTemplateElement;
     private readonly MAX_CARDS_PER_ROW: number = 4;
@@ -25,11 +27,13 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         alertService: AlertService,
         loadingIndicatorService: LoadingIndicatorService,
         dateService: DateService,
+        followArtistService: FollowArtistService,
     ) {
         super(alertService, loadingIndicatorService);
         this.dateService = dateService;
-        this.artistTemplateElement = document.getElementById("artist-card")! as HTMLTemplateElement;
-        this.releaseTemplateElement = document.getElementById("release-card")! as HTMLTemplateElement;
+        this.followArtistService = followArtistService;
+        this.artistTemplateElement = document.getElementById("artist-card") as HTMLTemplateElement;
+        this.releaseTemplateElement = document.getElementById("release-card") as HTMLTemplateElement;
     }
 
     protected getHostElementId(): string {
@@ -119,6 +123,9 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         const artistDivElement = artistTemplateNode.firstElementChild as HTMLDivElement;
         const artistThumbElement = artistDivElement.querySelector("#artist-thumb") as HTMLImageElement;
         const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
+        const followIconElement = artistDivElement.querySelector("#follow-icon") as HTMLDivElement;
+        const followIcon = followIconElement.getElementsByTagName("img").item(0) as HTMLImageElement;
+        followIconElement.addEventListener("click", this.handleFollowIconClick.bind(this, followIcon, artist));
 
         artistThumbElement.src = artist.mediumImage;
         artistNameElement.textContent = artist.artistName;
@@ -192,5 +199,13 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
             const placeholderDivElement = this.renderPlaceholderCard();
             this.attachCard(placeholderDivElement, rowElement);
         }
+    }
+
+    private handleFollowIconClick(followIconElement: HTMLImageElement, artist: Artist): void {
+        this.followArtistService.handleFollowIconClick(followIconElement, {
+            externalId: artist.externalId,
+            artistName: artist.artistName,
+            source: artist.source,
+        });
     }
 }
