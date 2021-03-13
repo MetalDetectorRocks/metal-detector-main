@@ -12,6 +12,6 @@ const urlService = new UrlService();
 const dateService = new DateService();
 const releasesRestClient = new ReleasesRestClient(urlService, dateService);
 const releasesRenderService = new ReleasesRenderService(dateService, alertService, loadingIndicatorService);
-const releasesService = new ReleasesService(releasesRestClient, releasesRenderService, urlService);
+const releasesService = new ReleasesService(releasesRestClient, releasesRenderService, urlService, dateService);
 
 releasesService.fetchReleases();
