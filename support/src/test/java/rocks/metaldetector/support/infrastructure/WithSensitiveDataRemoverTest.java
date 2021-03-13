@@ -1,5 +1,6 @@
 package rocks.metaldetector.support.infrastructure;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -64,7 +65,7 @@ class WithSensitiveDataRemoverTest implements WithAssertions {
 
     @Test
     @DisplayName("Should be null-safe")
-    void test_is_null_safe() {
+    void test_is_null_safe() throws JsonProcessingException {
       // when
       String result = underTest.removeSensitiveDataFromPayload(null);
 
@@ -74,7 +75,7 @@ class WithSensitiveDataRemoverTest implements WithAssertions {
 
     @Test
     @DisplayName("Should remove sensitive data only in payload block")
-    void remove_sensitive_data_only_in_payload() {
+    void remove_sensitive_data_only_in_payload() throws JsonProcessingException {
       // given
       String given = "POST /rest/v1/users, token=abc, plainPassword=abc, payload={}";
 
@@ -88,7 +89,7 @@ class WithSensitiveDataRemoverTest implements WithAssertions {
     @ParameterizedTest(name = "Should remove sensitive data from payload block")
     @MethodSource("messageProvider")
     @DisplayName("Should remove sensitive data from payload block")
-    void remove_sensitive_data_from_payload(String given, String expected) {
+    void remove_sensitive_data_from_payload(String given, String expected) throws JsonProcessingException {
       // when
       String result = underTest.removeSensitiveDataFromPayload(given);
 
@@ -109,13 +110,17 @@ class WithSensitiveDataRemoverTest implements WithAssertions {
               Arguments.of(
                       "POST /rest/v1/users, payload={\"token\":\"foobar123\"}",
                       "POST /rest/v1/users, payload={\"token\":\"REMOVED_FOR_LOGGING\"}"
+              ),
+              Arguments.of(
+                      "POST /rest/v1/users, payload={\"token\":\"foobar\\\"123\"}",
+                      "POST /rest/v1/users, payload={\"token\":\"REMOVED_FOR_LOGGING\"}"
               )
       );
     }
 
     @Test
     @DisplayName("Should not remove sensitive data from payload block")
-    void input_is_returned() {
+    void input_is_returned() throws JsonProcessingException {
       // given
       String given = "POST /rest/v1/users, payload={\"username\":\"Testuser\",\"email\":\"test@example.com\"}";
 

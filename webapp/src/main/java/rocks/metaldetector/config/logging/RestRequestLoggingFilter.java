@@ -1,5 +1,6 @@
 package rocks.metaldetector.config.logging;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import rocks.metaldetector.support.infrastructure.WithSensitiveDataRemover;
 
@@ -30,6 +31,12 @@ public class RestRequestLoggingFilter extends CommonsRequestLoggingFilter implem
 
   @Override
   protected void afterRequest(HttpServletRequest request, String message) {
-    logger.info(removeSensitiveDataFromPayload(message));
+    try {
+      message = removeSensitiveDataFromPayload(message);
+      logger.info(message);
+    }
+    catch (JsonProcessingException e) {
+      logger.error(e);
+    }
   }
 }
