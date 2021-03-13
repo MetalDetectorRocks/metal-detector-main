@@ -8,7 +8,7 @@ buildscript {
     datatablesVersion = "1.10.23"
     ehcacheVersion = "3.9.2"
     esapiVersion = "2.2.2.0"
-    flywayVersion = "7.6.0"
+    flywayVersion = "7.7.0"
     h2Version = "1.4.200"
     httpClientVersion = "4.5.13"
     mockitoVersion = "3.8.0"
@@ -34,7 +34,7 @@ buildscript {
 }
 
 plugins {
-  id "java"
+  id "java-library"
   id "org.siouan.frontend-jdk11"
   id "org.springframework.boot"
   id "io.spring.dependency-management"
@@ -56,6 +56,7 @@ ext {
                         "commons-io:commons-io:2.6"]
   dependencyGroupVersions = ["org.springframework"           : "5.3.4",
                              "org.springframework.security"  : springSecurityVersion,
+                             "org.springframework.boot"      : springBootVersion,
                              "com.fasterxml.jackson.core"    : jacksonVersion,
                              "com.fasterxml.jackson.datatype": jacksonVersion,
                              "com.fasterxml.jackson.module"  : jacksonVersion]
@@ -89,11 +90,14 @@ allprojects {
 }
 
 springBoot {
-  mainClassName = 'rocks.metaldetector.MetalDetectorApplication'
+  mainClass.set('rocks.metaldetector.MetalDetectorApplication')
+}
+
+dependencies {
+  developmentOnly "org.springframework.boot:spring-boot-devtools"
 }
 
 subprojects {
-  apply plugin: "java"
   apply plugin: "java-library"
   apply plugin: "io.spring.dependency-management"
   apply plugin: "jacoco"
@@ -106,18 +110,17 @@ subprojects {
   }
 
   dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
-    implementation "org.springframework.boot:spring-boot-starter-cache:$springBootVersion"
-    implementation "org.springframework.boot:spring-boot-configuration-processor:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.springframework.boot:spring-boot-starter-cache"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
 
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
     implementation "org.projectlombok:lombok:$lombokVersion"
 
-    runtimeOnly "org.springframework.boot:spring-boot-devtools:$springBootVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
-    testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion" exclude group: 'junit', module: 'junit'
+    testImplementation "org.springframework.boot:spring-boot-starter-test" exclude group: 'junit', module: 'junit'
     testImplementation "org.springframework.security:spring-security-test:$springSecurityVersion"
     testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
     testImplementation "org.junit.vintage:junit-vintage-engine:$junitVersion"
@@ -143,7 +146,7 @@ subprojects {
   }
 
   wrapper {
-    gradleVersion = "6.7.1"
+    gradleVersion = "6.8.3"
     distributionType = Wrapper.DistributionType.ALL
   }
 }
