@@ -1,6 +1,12 @@
 package rocks.metaldetector.support.infrastructure;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -25,17 +31,22 @@ public interface WithSensitiveDataRemover {
     return headerString;
   }
 
-  default String removeSensitiveDataFromPayload(String originalMessage) {
+  default String removeSensitiveDataFromPayload(String originalMessage) throws JsonProcessingException {
     if (originalMessage != null && originalMessage.toLowerCase().contains(PAYLOAD_IDENTIFIER)) {
-      String prePayload = originalMessage.substring(0, originalMessage.indexOf(PAYLOAD_IDENTIFIER));
-      String payload = originalMessage.substring(originalMessage.indexOf(PAYLOAD_IDENTIFIER));
-      for (String fieldName : SENSITIVE_DATA_FIELD_NAME) {
-        if (payload.contains(fieldName)) {
-          int sensitiveDataBeginIndex = payload.indexOf(fieldName) + fieldName.length() + "\":\"".length();
-          int sensitiveDataEndIndex = payload.indexOf('"', sensitiveDataBeginIndex);
-          payload = new StringBuilder(payload).replace(sensitiveDataBeginIndex, sensitiveDataEndIndex, REMOVED_FOR_LOGGING_STRING).toString();
+      String prePayload = originalMessage.substring(0, originalMessage.indexOf(PAYLOAD_IDENTIFIER) + PAYLOAD_IDENTIFIER.length() - 1);
+      String payload = originalMessage.substring(originalMessage.indexOf(PAYLOAD_IDENTIFIER) + PAYLOAD_IDENTIFIER.length() - 1);
+
+      ObjectMapper mapper = new ObjectMapper();
+      TypeReference<LinkedHashMap<String, String>> typeRef = new TypeReference<>() {};
+      Map<String, String> payloadAsMap = mapper.readValue(payload, typeRef);
+      SENSITIVE_DATA_FIELD_NAME.forEach(fieldName -> {
+        if (payloadAsMap.containsKey(fieldName)) {
+          payloadAsMap.put(fieldName, REMOVED_FOR_LOGGING_STRING);
         }
-      }
+      });
+
+      payload = mapper.writeValueAsString(payloadAsMap);
+
       return prePayload.concat(payload);
     }
 
