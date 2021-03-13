@@ -1,5 +1,5 @@
 dependencies {
-  api "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
+  api "org.springframework.boot:spring-boot-starter-data-jpa"
 
   implementation "org.postgresql:postgresql:$postgresqlVersion"
 
