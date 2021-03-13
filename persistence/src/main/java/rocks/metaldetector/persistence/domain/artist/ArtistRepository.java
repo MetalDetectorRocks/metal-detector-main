@@ -18,17 +18,17 @@ public interface ArtistRepository extends JpaRepository<ArtistEntity, Long> {
 
   boolean existsByExternalIdAndSource(String externalId, ArtistSource source);
 
-  @Query(value = "select a.artist_name as artistName, a.external_id as externalId, " +
+  @Query(value = "select a.artist_name as artistName, a.external_id as externalId, a.source as source," +
                  "a.image_xs as imageXs, a.image_s as imageS, a.image_m as imageM, a.image_l as imageL " +
-                 "from artists as a left join follow_actions as fa on a.id = fa.artist_id " +
-                 "group by a.artist_name, a.external_id, a.image_xs, a.image_s, a.image_m, a.image_l " +
+                 "from follow_actions as fa left join artists as a on a.id = fa.artist_id " +
+                 "group by a.artist_name, a.external_id, a.source, a.image_xs, a.image_s, a.image_m, a.image_l " +
                  "order by count(a.id) desc " +
                  "limit :limit",
          nativeQuery = true)
   List<TopArtist> findTopArtists(@Param("limit") int limit);
 
   @Query(value = "select count(a.external_id) " +
-                 "from artists a left join follow_actions fa on a.id = fa.artist_id " +
+                 "from follow_actions fa left join artists a on a.id = fa.artist_id " +
                  "where a.external_id = :externalId",
          nativeQuery = true)
   int countArtistFollower(@Param("externalId") String externalId);
