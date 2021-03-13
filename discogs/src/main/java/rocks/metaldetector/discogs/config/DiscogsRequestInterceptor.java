@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import rocks.metaldetector.support.infrastructure.WithTokenRemover;
+import rocks.metaldetector.support.infrastructure.WithSensitiveDataRemover;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
-public class DiscogsRequestInterceptor implements ClientHttpRequestInterceptor, WithTokenRemover {
+public class DiscogsRequestInterceptor implements ClientHttpRequestInterceptor, WithSensitiveDataRemover {
 
   static final String TOKEN_PREFIX = "Discogs token=";
 
@@ -31,7 +31,7 @@ public class DiscogsRequestInterceptor implements ClientHttpRequestInterceptor, 
     request.getHeaders().set(AUTHORIZATION, TOKEN_PREFIX + discogsConfig.getAccessToken());
 
     log.info("URI: {}", request.getURI());
-    log.info("Headers: {}", removeTokenForLogging(request.getHeaders().toString()));
+    log.info("Headers: {}", removeTokenFromHeader(request.getHeaders().toString()));
 
     return execution.execute(request, body);
   }
