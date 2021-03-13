@@ -67,6 +67,7 @@ class ArtistDtoTransformerTest implements WithAssertions {
     // given
     TopArtist topArtist = mock(TopArtist.class);
     doReturn("artist").when(topArtist).getArtistName();
+    doReturn(SPOTIFY).when(topArtist).getSource();
     doReturn("http://example.com/image-xs.jpg").when(topArtist).getImageXs();
     doReturn("http://example.com/image-s.jpg").when(topArtist).getImageS();
     doReturn("http://example.com/image-m.jpg").when(topArtist).getImageM();
@@ -83,6 +84,7 @@ class ArtistDtoTransformerTest implements WithAssertions {
     assertThat(result.getImages().get(M)).isEqualTo(topArtist.getImageM());
     assertThat(result.getImages().get(L)).isEqualTo(topArtist.getImageL());
     assertThat(result.getExternalId()).isEqualTo(topArtist.getExternalId());
+    assertThat(result.getSource()).isEqualTo(topArtist.getSource().getDisplayName());
   }
 
   @Test

@@ -30,24 +30,41 @@ function getReleases() {
       },
       "pagingType": "simple_numbers",
       "columns": [
+        {"data": "state"},
         {"data": "artist"},
         {"data": "albumTitle"},
         {"data": "releaseDate"},
         {"data": "genre"},
         {"data": "type"},
         {"data": "source"},
-        {"data": "state"},
         {"data": "id"}
       ],
       "autoWidth": false, // fixes window resizing issue
-      "order": [[ 2, "asc" ], [0, "asc"]],
+      "order": [[ 3, "asc" ], [1, "asc"]],
       "columnDefs": [
         {
-          "targets": [2],
+          "targets": [0],
+          "render": function (data) {
+            if (data === 'Ok') {
+              return '<span class="badge badge-success">' + data + '</span>';
+            }
+            else if (data === 'Demo') {
+              return '<span class="badge badge-warning">' + data + '</span>';
+            }
+            else if (data === "Faulty") {
+              return '<span class="badge badge-danger">' + data + '</span>';
+            }
+            else {
+              return '<span class="badge badge-info">' + data + '</span>';
+            }
+          }
+        },
+        {
+          "targets": [3],
           "render": formatUtcDate
         },
         {
-          "targets": [3, 4],
+          "targets": [4, 5],
           "render": function (data) {
             if (isEmpty(data)) {
               return 'n/a';
@@ -58,7 +75,7 @@ function getReleases() {
           }
         },
         {
-          "targets": [6, 7],
+          "targets": [7],
           "visible": false
         }
       ]
@@ -98,16 +115,19 @@ function showUpdateReleaseForm() {
   $('#estimated-release-date').text(data.estimatedReleaseDate);
   $('#release-state').val(data.state);
 
+  // cover
+  $('#cover').attr("src", data.coverUrl);
+
   // details
   $('#genre').text(data.genre);
   $('#type').text(data.type);
   $('#source').text(data.source);
 
-  const artistUrl = $('#artist-details-url');
-  artistUrl.text(data.artistDetailsUrl);
+  const artistUrl = $('#artist-details');
+  artistUrl.text(`Go to ${data.source}`);
   artistUrl.attr("href", data.artistDetailsUrl);
-  const albumUrl = $('#release-details-url');
-  albumUrl.text(data.releaseDetailsUrl);
+  const albumUrl = $('#release-details');
+  albumUrl.text(`Go to ${data.source}`);
   albumUrl.attr("href", data.releaseDetailsUrl);
 }
 
@@ -153,7 +173,7 @@ function createUpdateReleaseRequest() {
  */
 function onUpdateReleaseSuccess() {
   const currentRowIndex = parseInt($('#current-row-index').text());
-  releaseTable.cell(currentRowIndex, 6).data($("#release-state").val()).draw();
+  releaseTable.cell(currentRowIndex, 0).data($("#release-state").val()).draw();
 
   resetUpdateReleaseForm();
   $('#update-release-dialog').modal("hide");
