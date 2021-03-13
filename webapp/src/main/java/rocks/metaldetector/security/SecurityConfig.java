@@ -1,6 +1,7 @@
 package rocks.metaldetector.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -16,13 +17,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.handler.CustomAccessDeniedHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationFailureHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
 import rocks.metaldetector.security.handler.CustomLogoutSuccessHandler;
+import rocks.metaldetector.security.rememberme.UserIdBasedJdbcTokenRepository;
+import rocks.metaldetector.security.rememberme.UserIdBasedPersistentTokenRememberMeServices;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.SecurityProperties;
@@ -54,6 +57,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final SearchQuerySanitizingFilter searchQuerySanitizingFilter;
   private final CspNonceFilter cspNonceFilter;
 
+  @Value("${security.remember-me-secret}")
+  private String rememberMeSecret;
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
@@ -75,9 +81,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .and()
       .rememberMe()
         .tokenValiditySeconds((int) Duration.ofDays(14).toSeconds())
-        .tokenRepository(jdbcTokenRepository())
-        .userDetailsService(userService)
         .key(securityProperties.getRememberMeSecret())
+        .rememberMeServices(userIdBasedPersistentTokenBasedRememberMeServices())
       .and()
       .logout()
         .logoutUrl(Endpoints.Guest.LOGOUT).permitAll()
@@ -98,14 +103,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public JdbcTokenRepositoryImpl jdbcTokenRepository() {
-    JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
-    jdbcTokenRepository.setCreateTableOnStartup(false);
-    jdbcTokenRepository.setDataSource(dataSource);
-    return jdbcTokenRepository;
-  }
-
-  @Bean
   public FilterRegistrationBean<CspNonceFilter> nonceFilterFilterRegistrationBean() {
     FilterRegistrationBean<CspNonceFilter> filterRegistrationBean = new FilterRegistrationBean<>();
     filterRegistrationBean.setFilter(cspNonceFilter);
@@ -121,5 +118,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     filterFilterRegistrationBean.setFilter(searchQuerySanitizingFilter);
     filterFilterRegistrationBean.addUrlPatterns(Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH);
     return filterFilterRegistrationBean;
+  }
+
+  private PersistentTokenBasedRememberMeServices userIdBasedPersistentTokenBasedRememberMeServices() {
+    UserIdBasedJdbcTokenRepository tokenRepository = new UserIdBasedJdbcTokenRepository();
+    tokenRepository.setCreateTableOnStartup(false);
+    tokenRepository.setDataSource(dataSource);
+    return new UserIdBasedPersistentTokenRememberMeServices(rememberMeSecret, userService, tokenRepository);
   }
 }
