@@ -48,5 +48,4 @@ public abstract class BaseWebMvcTestWithSecurity implements WithSecurityConfig {
 
   @MockBean
   protected HttpSecurity httpSecurity;
-
 }
