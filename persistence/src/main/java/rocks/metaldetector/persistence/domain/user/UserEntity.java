@@ -95,6 +95,14 @@ public class UserEntity extends BaseEntity implements UserDetails {
     email = newEmail == null ? "" : newEmail;
   }
 
+  public String getUsername() {
+    return email;
+  }
+
+  public String getMetalDetectorUsername() {
+    return username;
+  }
+
   @Override
   public String getPassword() {
     return password;

@@ -66,7 +66,7 @@ public class NotificationServiceImpl implements NotificationService {
         .filter(config -> config.getUser().isEnabled() &&
                           config.getNotificationAtReleaseDate())
         .forEach(notificationConfig -> notifyOnSpecificDate(notificationConfig, todaysReleases, (UserEntity user, List<ReleaseDto> filteredReleases) ->
-            new TodaysReleasesEmail(user.getEmail(), user.getUsername(), filteredReleases)));
+            new TodaysReleasesEmail(user.getEmail(), user.getMetalDetectorUsername(), filteredReleases)));
   }
 
   @Override
@@ -82,7 +82,7 @@ public class NotificationServiceImpl implements NotificationService {
         .filter(config -> config.getUser().isEnabled() &&
                           config.getNotificationAtAnnouncementDate())
         .forEach(notificationConfig -> notifyOnSpecificDate(notificationConfig, todaysAnnouncedReleases, (UserEntity user, List<ReleaseDto> filteredReleases) ->
-            new TodaysAnnouncementsEmail(user.getEmail(), user.getUsername(), filteredReleases)));
+            new TodaysAnnouncementsEmail(user.getEmail(), user.getMetalDetectorUsername(), filteredReleases)));
   }
 
   @Override
@@ -124,7 +124,7 @@ public class NotificationServiceImpl implements NotificationService {
         List<ReleaseDto> recentReleases = releaseContainer.recentReleases.stream().filter(release -> followedArtistsNames.contains(release.getArtist())).collect(Collectors.toList());
 
         if (!(upcomingReleases.isEmpty() && recentReleases.isEmpty())) {
-          emailService.sendEmail(new ReleasesEmail(user.getEmail(), user.getUsername(), upcomingReleases, recentReleases));
+          emailService.sendEmail(new ReleasesEmail(user.getEmail(), user.getMetalDetectorUsername(), upcomingReleases, recentReleases));
 
           notificationConfigEntity.setLastNotificationDate(now);
           notificationConfigRepository.save(notificationConfigEntity);

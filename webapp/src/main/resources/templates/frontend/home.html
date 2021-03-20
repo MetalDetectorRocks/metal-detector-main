@@ -2,7 +2,6 @@
 <html layout:decorate="~{frontend/fragments/layout}"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.w3.org/1999/xhtml"
-      xmlns:sec="http://www.w3.org/1999/xhtml"
       lang="en">
 <head>
     <title>Home</title>
@@ -39,7 +38,7 @@
             </div>
         </template>
 
-        <h1 class="h4">Hell Yeah, <span sec:authentication="name">Username</span>!</h1>
+        <h1 class="h4">Hell Yeah, <span th:text="${username}">Username</span>!</h1>
 
         <div id="home-container" class="mb-3">
         </div>

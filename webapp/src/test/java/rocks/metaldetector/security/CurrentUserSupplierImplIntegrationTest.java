@@ -70,7 +70,7 @@ class CurrentUserSupplierImplIntegrationTest implements WithAssertions, WithInte
 
     // then
     assertThat(result).isNotNull();
-    assertThat(result.getUsername()).isEqualTo(USERNAME);
+    assertThat(result.getMetalDetectorUsername()).isEqualTo(USERNAME);
     assertThat(result.getEmail()).isEqualTo(EMAIL);
   }
 
