@@ -15,6 +15,7 @@ public class UserTransformer {
 
   public UserDto transform(UserEntity entity) {
     UserDto userDto = mapper.map(entity, UserDto.class);
+    userDto.setUsername(entity.getMetalDetectorUsername());
     userDto.setRole(entity.getHighestRole().getDisplayName());
     return userDto;
   }
