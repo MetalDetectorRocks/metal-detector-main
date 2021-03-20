@@ -28,7 +28,7 @@ class XSSFilterTest implements WithAssertions {
   private final FilterChain filterChain = new MockFilterChain();
 
   @Test
-  @DisplayName("XSSUtils are called to remove bad JS from request body")
+  @DisplayName("XSSUtils are called to sanitize the request body")
   void test_xss_utils_called() throws IOException, ServletException {
     // given
     var requestBody = "<h1>Nirvana</h1>";

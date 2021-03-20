@@ -53,7 +53,7 @@ class XSSRequestWrapperTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("XSSUtils are called to remove bad JS from parameter")
+  @DisplayName("XSSUtils are called to sanitize parameter")
   void test_xss_utils_called_for_param() {
     // given
     var paramName = "testParam";
@@ -89,7 +89,7 @@ class XSSRequestWrapperTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("XSSUtils are called for every parameter to remove bad JS")
+  @DisplayName("XSSUtils are called for every parameter to sanitize values")
   void test_xss_utils_called_for_every_param() {
     // given
     var paramName = "testParam";
@@ -117,7 +117,7 @@ class XSSRequestWrapperTest implements WithAssertions {
     request.setParameter(paramName, "badInput1", "badInput2");
 
     try(MockedStatic<XSSUtils> mock = Mockito.mockStatic(XSSUtils.class)) {
-      mock.when(() -> XSSUtils.stripXSS(any())).thenReturn(sanitizedValue1, sanitizedValue2); // todo hier ist noch was doof
+      mock.when(() -> XSSUtils.stripXSS(any())).thenReturn(sanitizedValue1, sanitizedValue2);
 
       // when
       var result = new XSSRequestWrapper(request).getParameterValues(paramName);
@@ -130,7 +130,7 @@ class XSSRequestWrapperTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("XSSUtils are called to remove bad JS from header")
+  @DisplayName("XSSUtils are called to sanitize the header")
   void test_xss_utils_called_for_header() {
     // given
     var headerName = "testParam";
@@ -166,7 +166,7 @@ class XSSRequestWrapperTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("XSSUtils are called to remove bad JS from headers")
+  @DisplayName("XSSUtils are called to sanitize the headers")
   void test_xss_utils_called_for_headers() {
     // given
     var headerName = "testParam";

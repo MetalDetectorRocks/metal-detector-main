@@ -120,9 +120,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     filterRegistrationBean.addUrlPatterns(Endpoints.Guest.ALL_AUTH_PAGES.toArray(new String[0]));
     return filterRegistrationBean;
   }
-
-  @Bean
-  public FilterRegistrationBean<XSSFilter> xssFilterRegistrationBean() {
-    return new FilterRegistrationBean<>(xssFilter);
-  }
 }

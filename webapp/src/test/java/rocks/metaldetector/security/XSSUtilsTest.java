@@ -19,8 +19,8 @@ class XSSUtilsTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("HTML/JS is removed from given String")
-  void test_js_removed() {
+  @DisplayName("HTML is removed from given String")
+  void test_html_removed() {
     // given
     var badInput = "<h1>Darkthrone</h1>";
     var sanitizedInput = "Darkthrone";
