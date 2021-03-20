@@ -2,7 +2,7 @@ buildscript {
   ext {
     apacheCommonsLang3Version = "3.12.0"
     apacheCommonsTextVersion = "1.9"
-    bootstrapVersion = "4.5.3"
+    bootstrapVersion = "4.6.0-1"
     cacheApiVersion = "1.1.1"
     commonsCodecVersion = "1.15"
     datatablesVersion = "1.10.24"
