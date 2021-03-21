@@ -95,6 +95,10 @@ public class UserEntity extends BaseEntity implements UserDetails {
     email = newEmail == null ? "" : newEmail;
   }
 
+  // To have unique values in the username column in the persistent_logins table
+  // we have to return the email here, as spring uses the username as a key.
+  // With OAuth users the username can not be unique anymore, so we return the email.
+  // To get the username, use getMetalDetectorUsername()
   public String getUsername() {
     return email;
   }
