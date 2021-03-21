@@ -7,6 +7,7 @@ buildscript {
     commonsCodecVersion = "1.15"
     datatablesVersion = "1.10.24"
     ehcacheVersion = "3.9.2"
+    esapiVersion = "2.2.2.0"
     flywayVersion = "7.7.0"
     h2Version = "1.4.200"
     httpClientVersion = "4.5.13"
@@ -34,9 +35,9 @@ buildscript {
 
 plugins {
   id "java-library"
-  id "org.siouan.frontend-jdk11"
-  id "org.springframework.boot"
-  id "io.spring.dependency-management"
+  id "org.siouan.frontend-jdk11" version "4.0.1"
+  id "org.springframework.boot" version "2.4.3"
+  id "io.spring.dependency-management" version "1.0.10.RELEASE"
 }
 
 ext {
@@ -51,7 +52,8 @@ ext {
                         "org.jboss.logging:jboss-logging:3.4.1.Final",
                         "net.bytebuddy:byte-buddy:1.10.22",
                         "org.javassist:javassist:3.27.0-GA",
-                        "org.webjars:jquery:3.6.0"]
+                        "org.webjars:jquery:3.6.0",
+                        "commons-io:commons-io:2.6"]
   dependencyGroupVersions = ["org.springframework"           : "5.3.4",
                              "org.springframework.security"  : springSecurityVersion,
                              "org.springframework.boot"      : springBootVersion,
