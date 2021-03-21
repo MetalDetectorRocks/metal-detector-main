@@ -37,23 +37,12 @@ class HomeControllerTest {
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Frontend.HOME);
     RestAssuredMockMvc.standaloneSetup(underTest);
-
-    doReturn(UserEntityFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
+    doReturn(UserEntityFactory.createUser("user", "mail@test.de")).when(currentUserSupplier).get();
   }
 
   @AfterEach
   void tearDown() {
     reset(currentUserSupplier);
-  }
-
-  @Test
-  @DisplayName("Requesting '" + Endpoints.Frontend.HOME + "' should call CurrentUserSupplier")
-  void get_should_call_current_user_supplier() {
-    // when
-    restAssuredUtils.doGet();
-
-    // then
-    verify(currentUserSupplier).get();
   }
 
   @Test
@@ -75,7 +64,29 @@ class HomeControllerTest {
     // then
     validatableResponse.assertThat(view().name(ViewNames.Frontend.HOME))
         .assertThat(model().size(1))
+        .assertThat(model().hasNoErrors());
+  }
+
+  @Test
+  @DisplayName("Requesting '" + Endpoints.Frontend.HOME + "' should return the model containing the username")
+  void get_should_return_correct_model() {
+    // when
+    var validatableResponse = restAssuredUtils.doGet();
+
+    // then
+    validatableResponse.assertThat(view().name(ViewNames.Frontend.HOME))
+        .assertThat(model().size(1))
         .assertThat(model().attribute("username", "user"))
         .assertThat(model().hasNoErrors());
+  }
+
+  @Test
+  @DisplayName("Requesting '" + Endpoints.Frontend.HOME + "' should call CurrentUserSupplier")
+  void test_current_user_supplier_called() {
+    // when
+    restAssuredUtils.doGet();
+
+    // then
+    verify(currentUserSupplier).get();
   }
 }

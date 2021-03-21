@@ -46,9 +46,9 @@ public class UserDeletionEventListener implements ApplicationListener<UserDeleti
     spotifyAuthorizationOptional.ifPresent(spotifyAuthorizationRepository::delete);
     notificationConfigRepository.deleteByUserId(user.getId());
     followActionRepository.deleteAllByUser(user);
-    clearPersistentLogins(user.getUsername());
+    clearPersistentLogins(user.getMetalDetectorUsername());
 
-    AccountDeletedEmail email = new AccountDeletedEmail(user.getEmail(), user.getUsername());
+    AccountDeletedEmail email = new AccountDeletedEmail(user.getEmail(), user.getMetalDetectorUsername());
     emailService.sendEmail(email);
 
     userRepository.delete(user);

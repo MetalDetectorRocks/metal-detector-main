@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
 
 import java.util.Optional;
 
@@ -26,8 +26,8 @@ public class PersistenceModuleConfiguration {
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
       if (authentication != null) {
         Object principal = authentication.getPrincipal();
-        if (principal instanceof UserDetails) {
-          return Optional.of(((UserDetails) principal).getUsername());
+        if (principal instanceof UserEntity) {
+          return Optional.of(((UserEntity) principal).getMetalDetectorUsername());
         }
       }
 
