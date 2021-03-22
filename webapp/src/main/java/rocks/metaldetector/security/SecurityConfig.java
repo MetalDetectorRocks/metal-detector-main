@@ -52,8 +52,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final DataSource dataSource;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final SecurityProperties securityProperties;
-  private final XSSFilter xssFilter;
-  private final CspNonceFilter cspNonceFilter;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -112,9 +110,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public FilterRegistrationBean<CspNonceFilter> nonceFilterRegistrationBean() {
-    FilterRegistrationBean<CspNonceFilter> filterRegistrationBean = new FilterRegistrationBean<>();
-    filterRegistrationBean.setFilter(cspNonceFilter);
+  public FilterRegistrationBean<XSSFilter> xssFilterRegistrationBean(XSSFilter xssFilter) {
+    return new FilterRegistrationBean<>(xssFilter);
+  }
+
+  @Bean
+  public FilterRegistrationBean<CspNonceFilter> nonceFilterRegistrationBean(CspNonceFilter cspNonceFilter) {
+    FilterRegistrationBean<CspNonceFilter> filterRegistrationBean = new FilterRegistrationBean<>(cspNonceFilter);
     filterRegistrationBean.addUrlPatterns(Endpoints.Frontend.ALL_FRONTEND_PAGES.toArray(new String[0]));
     filterRegistrationBean.addUrlPatterns(Endpoints.Guest.ALL_GUEST_INDEX_PAGES.toArray(new String[0]));
     filterRegistrationBean.addUrlPatterns(Endpoints.Guest.ALL_AUTH_PAGES.toArray(new String[0]));
