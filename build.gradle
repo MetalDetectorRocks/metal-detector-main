@@ -25,7 +25,7 @@ buildscript {
     postgresqlVersion = "42.2.19"
     restAssuredVersion = "4.2.1"
     servletApiVersion = "4.0.1"
-    springBootVersion = "2.4.3"
+    springBootVersion = "2.4.4"
     springSecurityVersion = "5.4.5"
     thymeleafDialectVersion = "2.5.2"
     thymeleafExtrasVersion = "3.0.4.RELEASE"
@@ -36,8 +36,8 @@ buildscript {
 plugins {
   id "java-library"
   id "org.siouan.frontend-jdk11" version "4.0.1"
-  id "org.springframework.boot" version "2.4.3"
-  id "io.spring.dependency-management" version "1.0.10.RELEASE"
+  id "org.springframework.boot" version "2.4.4"
+  id "io.spring.dependency-management" version "1.0.11.RELEASE"
 }
 
 ext {
@@ -53,8 +53,8 @@ ext {
                         "net.bytebuddy:byte-buddy:1.10.22",
                         "org.javassist:javassist:3.27.0-GA",
                         "org.webjars:jquery:3.6.0",
-                        "commons-io:commons-io:2.6"]
-  dependencyGroupVersions = ["org.springframework"           : "5.3.4",
+                        "commons-io:commons-io:2.8.0"]
+  dependencyGroupVersions = ["org.springframework"           : "5.3.5",
                              "org.springframework.security"  : springSecurityVersion,
                              "org.springframework.boot"      : springBootVersion,
                              "com.fasterxml.jackson.core"    : jacksonVersion,
