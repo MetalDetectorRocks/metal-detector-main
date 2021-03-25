@@ -285,7 +285,7 @@ class UserServiceImplTest implements WithAssertions {
       // then
       verify(userRepository).save(userEntityCaptor.capture());
       OAuthUserEntity passedUserEntity = userEntityCaptor.getValue();
-      assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
+      assertThat(passedUserEntity.getMetalDetectorUsername()).isEqualTo(USERNAME);
       assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
       assertThat(passedUserEntity.getAvatar()).isEqualTo(givenUserDto.getAvatar());
       assertThat(passedUserEntity.getUserRoles()).containsExactly(ROLE_USER);
