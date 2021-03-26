@@ -27,7 +27,7 @@ public class PersistenceModuleConfiguration {
       if (authentication != null) {
         Object principal = authentication.getPrincipal();
         if (principal instanceof AbstractUserEntity) {
-          return Optional.of(((AbstractUserEntity) principal).getMetalDetectorUsername());
+          return Optional.of(((AbstractUserEntity) principal).getUsername());
         }
       }
 

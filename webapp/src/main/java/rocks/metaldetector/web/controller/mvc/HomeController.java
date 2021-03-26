@@ -20,6 +20,6 @@ public class HomeController {
 
   @GetMapping
   public ModelAndView showHome() {
-    return new ModelAndView(ViewNames.Frontend.HOME, Map.of("username", currentUserSupplier.get().getMetalDetectorUsername()));
+    return new ModelAndView(ViewNames.Frontend.HOME, Map.of("username", currentUserSupplier.get().getUsername()));
   }
 }

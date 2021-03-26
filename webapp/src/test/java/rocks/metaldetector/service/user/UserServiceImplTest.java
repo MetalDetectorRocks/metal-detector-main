@@ -168,7 +168,7 @@ class UserServiceImplTest implements WithAssertions {
       // then
       verify(userRepository).save(userEntityCaptor.capture());
       UserEntity passedUserEntity = userEntityCaptor.getValue();
-      assertThat(passedUserEntity.getMetalDetectorUsername()).isEqualTo(USERNAME);
+      assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
       assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
       assertThat(passedUserEntity.getPassword()).isNotEmpty();
       assertThat(passedUserEntity.getUserRoles()).containsExactly(ROLE_USER);
@@ -285,7 +285,7 @@ class UserServiceImplTest implements WithAssertions {
       // then
       verify(userRepository).save(userEntityCaptor.capture());
       OAuthUserEntity passedUserEntity = userEntityCaptor.getValue();
-      assertThat(passedUserEntity.getMetalDetectorUsername()).isEqualTo(USERNAME);
+      assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
       assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
       assertThat(passedUserEntity.getAvatar()).isEqualTo(givenUserDto.getAvatar());
       assertThat(passedUserEntity.getUserRoles()).containsExactly(ROLE_USER);
@@ -415,7 +415,7 @@ class UserServiceImplTest implements WithAssertions {
       // then
       verify(userRepository).save(userEntityCaptor.capture());
       UserEntity passedUserEntity = userEntityCaptor.getValue();
-      assertThat(passedUserEntity.getMetalDetectorUsername()).isEqualTo(USERNAME);
+      assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
       assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
       assertThat(passedUserEntity.getPassword()).isNotEmpty();
       assertThat(passedUserEntity.getUserRoles()).containsExactly(ROLE_ADMINISTRATOR);
@@ -440,7 +440,7 @@ class UserServiceImplTest implements WithAssertions {
 
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
-      assertThat(userDto.getUsername()).isEqualTo(user.getMetalDetectorUsername());
+      assertThat(userDto.getUsername()).isEqualTo(user.getUsername());
       assertThat(userDto.getEmail()).isEqualTo(user.getEmail());
     }
 
@@ -706,7 +706,7 @@ class UserServiceImplTest implements WithAssertions {
       verify(userRepository).save(userEntityCaptor.capture());
       verify(currentUserSupplier).get();
       assertThat(userDto).isNotNull();
-      assertThat(userEntityCaptor.getValue().getMetalDetectorUsername()).isEqualTo(userDtoForUpdate.getUsername());
+      assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
       assertThat(userEntityCaptor.getValue().getUserRoles()).containsExactly(ROLE_ADMINISTRATOR);
     }
 
@@ -733,7 +733,7 @@ class UserServiceImplTest implements WithAssertions {
       verify(userRepository).save(userEntityCaptor.capture());
       verify(currentUserSupplier).get();
       assertThat(userDto).isNotNull();
-      assertThat(userEntityCaptor.getValue().getMetalDetectorUsername()).isEqualTo(userDtoForUpdate.getUsername());
+      assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
       assertThat(userEntityCaptor.getValue().isEnabled()).isFalse();
     }
 
