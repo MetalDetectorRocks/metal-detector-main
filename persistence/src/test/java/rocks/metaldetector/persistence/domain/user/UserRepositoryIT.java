@@ -130,4 +130,10 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
     assertThat(userRepository.existsByUsername(USERNAME)).isTrue();
     assertThat(userRepository.existsByUsername(UNKNOWN_USERNAME)).isFalse();
   }
+
+  @Test
+  @DisplayName("existsByUsername() should return false for oauth users")
+  void exists_by_username_should_return_false_for_oauth_users() {
+    assertThat(userRepository.existsByUsername(OAUTH_USERNAME)).isFalse();
+  }
 }

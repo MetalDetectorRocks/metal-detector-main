@@ -12,12 +12,13 @@ public interface UserRepository extends JpaRepository<AbstractUserEntity, Long> 
 
   Optional<AbstractUserEntity> findByEmail(String email);
 
-  @Query(value = "select * from users as u where u.dtype = 'native_users' and u.username = :username", nativeQuery = true)
+  @Query("select u from users u where dtype = 'native_users' and u.username = :username")
   Optional<AbstractUserEntity> findByUsername(@Param("username") String username);
 
   Optional<AbstractUserEntity> findByPublicId(String publicId);
 
   boolean existsByEmail(String email);
 
-  boolean existsByUsername(String username);
+  @Query("select case when count(u) > 0 then true else false end from users u where dtype = 'native_users' and u.username = :username")
+  boolean existsByUsername(@Param("username")String username);
 }
