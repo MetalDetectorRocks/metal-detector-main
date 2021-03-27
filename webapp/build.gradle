@@ -25,7 +25,7 @@ dependencies {
   implementation "org.modelmapper:modelmapper:$modelmapperVersion"
   implementation "org.ehcache:ehcache:$ehcacheVersion"
   implementation "org.jsoup:jsoup:$jsoupVersion"
-  implementation "org.owasp.esapi:esapi:$esapiVersion"
+  implementation "org.owasp.esapi:esapi:$esapiVersion" exclude group: 'org.slf4j', module: 'slf4j-simple'
 
   runtimeOnly "org.webjars:webjars-locator-core:$webjarsLocatorVersion"
   runtimeOnly "org.webjars:bootstrap:$bootstrapVersion"
