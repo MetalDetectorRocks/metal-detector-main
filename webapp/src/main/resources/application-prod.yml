@@ -21,6 +21,12 @@ spring:
           auth: true
           starttls:
             enable: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            redirect-uri: "https://{baseHost}{basePort}{basePath}/login/oauth2/code/{registrationId}"
 
 server:
   port: 8080
