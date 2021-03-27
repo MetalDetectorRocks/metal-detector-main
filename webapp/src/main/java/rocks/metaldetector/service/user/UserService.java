@@ -9,6 +9,8 @@ public interface UserService extends UserDetailsService {
 
   UserDto createUser(UserDto userDto);
 
+  UserDto createOAuthUser(UserDto userDto);
+
   UserDto createAdministrator(UserDto userDto);
 
   UserDto getUserByPublicId(String publicId);

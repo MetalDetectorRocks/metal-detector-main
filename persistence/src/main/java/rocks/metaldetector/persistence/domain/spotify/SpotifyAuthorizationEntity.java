@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import rocks.metaldetector.persistence.domain.BaseEntity;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,12 +42,12 @@ public class SpotifyAuthorizationEntity extends BaseEntity {
   @Column(name = "expires_at")
   private LocalDateTime expiresAt;
 
-  @OneToOne(targetEntity = UserEntity.class)
+  @OneToOne(targetEntity = AbstractUserEntity.class)
   @JoinColumn(nullable = false, name = "users_id")
   @NonNull
-  private UserEntity user;
+  private AbstractUserEntity user;
 
-  public SpotifyAuthorizationEntity(UserEntity user, String state) {
+  public SpotifyAuthorizationEntity(AbstractUserEntity user, String state) {
     this.state = state;
     this.user = user;
   }

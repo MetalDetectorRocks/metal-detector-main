@@ -5,10 +5,15 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
+
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -22,7 +27,31 @@ public class AuthenticationListener {
     WebAuthenticationDetails authenticationDetails = (WebAuthenticationDetails) event.getAuthentication().getDetails();
     loginAttemptService.loginSucceeded(DigestUtils.md5Hex(authenticationDetails.getRemoteAddress()));
 
-    userService.persistSuccessfulLogin(((UserEntity) event.getAuthentication().getPrincipal()).getPublicId());
+    Object principal = event.getAuthentication().getPrincipal();
+
+    if (principal instanceof UserEntity) {
+      userService.persistSuccessfulLogin(((UserEntity) principal).getPublicId());
+    }
+    else if (principal instanceof OAuth2AuthenticatedPrincipal) {
+      Map<String, Object> oauthTokenAttributes = ((OAuth2AuthenticatedPrincipal) principal).getAttributes();
+      String emailAddress = (String) oauthTokenAttributes.get("email");
+      Optional<UserDto> userOptional = userService.getUserByEmailOrUsername(emailAddress);
+      String publicUserId;
+
+      if (userOptional.isPresent()) {
+        publicUserId = userOptional.get().getPublicId();
+      }
+      else {
+        UserDto userDto = UserDto.builder()
+            .username((String) oauthTokenAttributes.get("given_name"))
+            .email(emailAddress)
+            .avatar((String) oauthTokenAttributes.get("picture"))
+            .build();
+        publicUserId = userService.createOAuthUser(userDto).getPublicId();
+      }
+
+      userService.persistSuccessfulLogin(publicUserId);
+    }
   }
 
   @EventListener

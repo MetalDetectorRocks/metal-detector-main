@@ -76,7 +76,7 @@ class HomeControllerTest {
     // then
     validatableResponse.assertThat(view().name(ViewNames.Frontend.HOME))
         .assertThat(model().size(1))
-        .assertThat(model().attributeExists("username"))
+        .assertThat(model().attribute("username", "user"))
         .assertThat(model().hasNoErrors());
   }
 

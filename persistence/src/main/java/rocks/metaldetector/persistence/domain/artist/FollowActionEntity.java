@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import rocks.metaldetector.persistence.domain.BaseEntity;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -24,10 +24,10 @@ import javax.persistence.OneToOne;
 @EqualsAndHashCode(callSuper = true)
 public class FollowActionEntity extends BaseEntity {
 
-  @OneToOne(targetEntity = UserEntity.class)
+  @OneToOne(targetEntity = AbstractUserEntity.class)
   @JoinColumn(nullable = false, name = "user_id")
   @NonNull
-  private UserEntity user;
+  private AbstractUserEntity user;
 
   @OneToOne(targetEntity = ArtistEntity.class)
   @JoinColumn(nullable = false, name = "artist_id")

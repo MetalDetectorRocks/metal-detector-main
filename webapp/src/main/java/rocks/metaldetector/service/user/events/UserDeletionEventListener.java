@@ -13,6 +13,7 @@ import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.AccountDeletedEmail;
@@ -39,16 +40,19 @@ public class UserDeletionEventListener implements ApplicationListener<UserDeleti
   @Override
   @Transactional
   public void onApplicationEvent(UserDeletionEvent event) {
-    UserEntity user = event.getUserEntity();
+    AbstractUserEntity user = event.getUserEntity();
     log.info("User '" + user.getPublicId() + "' deleted");
 
     Optional<SpotifyAuthorizationEntity> spotifyAuthorizationOptional = spotifyAuthorizationRepository.findByUserId(user.getId());
     spotifyAuthorizationOptional.ifPresent(spotifyAuthorizationRepository::delete);
     notificationConfigRepository.deleteByUserId(user.getId());
     followActionRepository.deleteAllByUser(user);
-    clearPersistentLogins(user.getMetalDetectorUsername());
 
-    AccountDeletedEmail email = new AccountDeletedEmail(user.getEmail(), user.getMetalDetectorUsername());
+    if (user instanceof UserEntity) {
+      clearPersistentLogins(user.getUsername());
+    }
+
+    AccountDeletedEmail email = new AccountDeletedEmail(user.getEmail(), user.getUsername());
     emailService.sendEmail(email);
 
     userRepository.delete(user);

@@ -12,9 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-class LoginControllerTest {
+class PreviewLoginControllerTest {
 
-  private final LoginController underTest = new LoginController();
+  private final PreviewLoginController underTest = new PreviewLoginController();
 
   private RestAssuredMockMvcUtils restAssuredUtils;
 
@@ -41,7 +41,7 @@ class LoginControllerTest {
     var validatableResponse = restAssuredUtils.doGet();
 
     // then
-    validatableResponse.assertThat(view().name(ViewNames.Guest.LOGIN))
+    validatableResponse.assertThat(view().name(ViewNames.Guest.LOGIN_WITHOUT_OAUTH))
         .assertThat(model().size(0))
         .assertThat(model().hasNoErrors());
   }

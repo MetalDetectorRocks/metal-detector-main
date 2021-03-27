@@ -135,7 +135,7 @@ class UserDeletionEventListenerTest implements WithAssertions {
 
     assertThat(value).isNotNull();
     assertThat(value.getSqlType()).isEqualTo(VARCHAR_SQL_TYPE);
-    assertThat((String) value.getValue()).isEqualTo(userDeletionEvent.getUserEntity().getMetalDetectorUsername());
+    assertThat((String) value.getValue()).isEqualTo(userDeletionEvent.getUserEntity().getUsername());
   }
 
   @Test

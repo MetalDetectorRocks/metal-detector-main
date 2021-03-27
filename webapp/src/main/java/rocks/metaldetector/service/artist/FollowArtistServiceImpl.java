@@ -10,7 +10,7 @@ import rocks.metaldetector.persistence.domain.artist.ArtistRepository;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
@@ -55,7 +55,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   public int followSpotifyArtists(List<String> spotifyArtistIds) {
     saveSpotifyArtists(spotifyArtistIds);
     List<ArtistEntity> artistEntitiesToFollow = artistRepository.findAllByExternalIdIn(spotifyArtistIds);
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
     List<FollowActionEntity> followActionEntities = artistEntitiesToFollow.stream()
         .map(artistEntity -> FollowActionEntity.builder()
             .user(currentUser)
@@ -81,7 +81,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
       return false;
     }
 
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
     return followActionRepository.existsByUserIdAndArtistId(currentUser.getId(), artistOptional.get().getId());
   }
 
@@ -94,11 +94,11 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   @Override
   @Transactional
   public List<ArtistDto> getFollowedArtistsOfUser(String publicUserId) {
-    UserEntity user = fetchUserEntity(publicUserId);
+    AbstractUserEntity user = fetchUserEntity(publicUserId);
     return getFollowedArtists(user);
   }
 
-  private List<ArtistDto> getFollowedArtists(UserEntity user) {
+  private List<ArtistDto> getFollowedArtists(AbstractUserEntity user) {
     return followActionRepository.findAllByUser(user).stream()
         .map(artistDtoTransformer::transformFollowActionEntity)
         .sorted(Comparator.comparing(ArtistDto::getArtistName))
@@ -136,7 +136,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     artistService.persistSpotifyArtists(newSpotifyArtistDtos);
   }
 
-  private UserEntity fetchUserEntity(String publicUserId) {
+  private AbstractUserEntity fetchUserEntity(String publicUserId) {
     return userRepository
         .findByPublicId(publicUserId)
         .orElseThrow(() -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!"));

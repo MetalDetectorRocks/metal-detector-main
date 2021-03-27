@@ -3,6 +3,7 @@ import { AlertService } from "./alert-service";
 import { ToastService } from "./toast-service";
 import { AxiosError } from "axios";
 import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
+import { UserResponse } from "../model/user-response.model";
 
 export class AccountDetailsRenderService {
     private readonly toastService: ToastService;
@@ -48,7 +49,7 @@ export class AccountDetailsRenderService {
     public init(): void {
         this.accountDetailsRestClient
             .getAccountDetails()
-            .then((response) => (this.emailInput.value = response.email))
+            .then((response) => this.initUpdatableFields(response))
             .catch(() => this.renderServerError(this.updateEmailErrorMessageHost, UNKNOWN_ERROR_MESSAGE));
 
         this.updateEmailButton.addEventListener("click", this.onUpdateEmailClicked.bind(this));
@@ -146,5 +147,16 @@ export class AccountDetailsRenderService {
                 this.confirmPasswordInput.classList.remove("is-valid");
                 this.renderServerError(this.updatePasswordErrorMessageHost, error.response.data.messages);
             });
+    }
+
+    private initUpdatableFields(response: UserResponse): void {
+        if (response.nativeUser) {
+            this.emailInput.value = response.email;
+        } else {
+            const updateEmailArea = document.getElementById("update-email-address-area") as HTMLDivElement;
+            const updatePasswordArea = document.getElementById("update-password-area") as HTMLDivElement;
+            updateEmailArea.style.display = "none";
+            updatePasswordArea.style.display = "none";
+        }
     }
 }

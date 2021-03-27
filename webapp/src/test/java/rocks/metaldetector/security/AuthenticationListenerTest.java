@@ -1,26 +1,38 @@
 package rocks.metaldetector.security;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
+import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
+import java.util.Map;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AuthenticationListenerTest {
+class AuthenticationListenerTest implements WithAssertions {
 
   @Mock
   private LoginAttemptService loginAttemptService;
@@ -46,10 +58,12 @@ class AuthenticationListenerTest {
   @Mock
   private UserEntity userEntity;
 
+  @Mock
+  private OAuth2AuthenticatedPrincipal oAuthUser;
+
   @AfterEach
   void tearDown() {
-    reset(successEvent, failureEvent, authentication, webAuthenticationDetails,
-          loginAttemptService, userService, userEntity);
+    reset(successEvent, failureEvent, authentication, webAuthenticationDetails, loginAttemptService, userService, userEntity, oAuthUser);
   }
 
   @Test
@@ -57,7 +71,7 @@ class AuthenticationListenerTest {
   void authentication_success_calls_login_attempt_service() {
     // given
     String ip = "i'm an ip";
-    String ipHash = DigestUtils.md5Hex(ip);
+    String ipHash = "i'm a hashed ip";
     when(successEvent.getAuthentication()).thenReturn(authentication);
     when(authentication.getDetails()).thenReturn(webAuthenticationDetails);
     when(webAuthenticationDetails.getRemoteAddress()).thenReturn(ip);
@@ -65,14 +79,17 @@ class AuthenticationListenerTest {
     when(userEntity.getPublicId()).thenReturn("publicId");
 
     // when
-    underTest.onAuthenticationSuccess(successEvent);
+    try (MockedStatic<DigestUtils> mock = mockStatic(DigestUtils.class)) {
+      mock.when(() -> DigestUtils.md5Hex(ip)).thenReturn(ipHash);
+      underTest.onAuthenticationSuccess(successEvent);
+    }
 
     // then
     verify(loginAttemptService).loginSucceeded(ipHash);
   }
 
   @Test
-  @DisplayName("UserService is called to persist login on authentication success")
+  @DisplayName("UserService is called to persist login on authentication success of UserEntity")
   void authentication_success_calls_user_service() {
     // given
     String publicId = "publicId";
@@ -90,17 +107,107 @@ class AuthenticationListenerTest {
   }
 
   @Test
+  @DisplayName("UserService is called to get OAuth-User by email-address")
+  void test_user_service_called_for_oauth_user() {
+    // given
+    var email = "mail@mail.mail";
+    var userAttributes = Map.of("email", email);
+    doReturn(authentication).when(successEvent).getAuthentication();
+    doReturn(webAuthenticationDetails).when(authentication).getDetails();
+    doReturn(oAuthUser).when(authentication).getPrincipal();
+    doReturn(userAttributes).when(oAuthUser).getAttributes();
+    doReturn(Optional.of(UserDtoFactory.createDefault())).when(userService).getUserByEmailOrUsername(any());
+    doReturn("i'm an ip").when(webAuthenticationDetails).getRemoteAddress();
+
+    // when
+    underTest.onAuthenticationSuccess(successEvent);
+
+    // then
+    verify(userService).getUserByEmailOrUsername(email);
+  }
+
+  @Test
+  @DisplayName("UserService is called to persist login on authentication success of existing OAuth user")
+  void test_login_persisted_for_existing_oauth_user() {
+    // given
+    var userDto = UserDtoFactory.createDefault();
+    doReturn(authentication).when(successEvent).getAuthentication();
+    doReturn(webAuthenticationDetails).when(authentication).getDetails();
+    doReturn(oAuthUser).when(authentication).getPrincipal();
+    doReturn(Optional.of(userDto)).when(userService).getUserByEmailOrUsername(any());
+    doReturn("i'm an ip").when(webAuthenticationDetails).getRemoteAddress();
+
+    // when
+    underTest.onAuthenticationSuccess(successEvent);
+
+    // then
+    verify(userService).persistSuccessfulLogin(userDto.getPublicId());
+  }
+
+  @Test
+  @DisplayName("New user is created for non existing OAuth user")
+  void test_new_oauth_user_created() {
+    // given
+    ArgumentCaptor<UserDto> argumentCaptor = ArgumentCaptor.forClass(UserDto.class);
+    var email = "mail@mail.mail";
+    var username = "username";
+    var avatar = "avatar";
+    Map<String, Object> userAttributes = Map.of("email", email,
+                                                "given_name", username,
+                                                "picture", avatar);
+    doReturn(authentication).when(successEvent).getAuthentication();
+    doReturn(webAuthenticationDetails).when(authentication).getDetails();
+    doReturn(oAuthUser).when(authentication).getPrincipal();
+    doReturn(userAttributes).when(oAuthUser).getAttributes();
+    doReturn(Optional.empty()).when(userService).getUserByEmailOrUsername(any());
+    doReturn(UserDtoFactory.createDefault()).when(userService).createOAuthUser(any());
+    doReturn("i'm an ip").when(webAuthenticationDetails).getRemoteAddress();
+
+    // when
+    underTest.onAuthenticationSuccess(successEvent);
+
+    // then
+    verify(userService).createOAuthUser(argumentCaptor.capture());
+    UserDto userDto = argumentCaptor.getValue();
+    assertThat(userDto.getUsername()).isEqualTo(username);
+    assertThat(userDto.getEmail()).isEqualTo(email);
+    assertThat(userDto.getAvatar()).isEqualTo(avatar);
+  }
+
+  @Test
+  @DisplayName("UserService is called to persist login on authentication success of new OAuth user")
+  void test_login_persisted_for_new_oauth_user() {
+    // given
+    var userDto = UserDtoFactory.createDefault();
+    doReturn(authentication).when(successEvent).getAuthentication();
+    doReturn(webAuthenticationDetails).when(authentication).getDetails();
+    doReturn(oAuthUser).when(authentication).getPrincipal();
+    doReturn(Optional.empty()).when(userService).getUserByEmailOrUsername(any());
+    doReturn(userDto).when(userService).createOAuthUser(any());
+    doReturn("i'm an ip").when(webAuthenticationDetails).getRemoteAddress();
+
+    // when
+    underTest.onAuthenticationSuccess(successEvent);
+
+    // then
+    verify(userService).persistSuccessfulLogin(userDto.getPublicId());
+  }
+
+  @Test
   @DisplayName("LoginAttemptService is called with hashed IP on authentication failure")
   void authentication_failure_calls_user_service() {
     // given
     String ip = "i'm an ip";
-    String ipHash = DigestUtils.md5Hex(ip);
+    String ipHash = "i'm a hashed ip";
     when(failureEvent.getAuthentication()).thenReturn(authentication);
     when(authentication.getDetails()).thenReturn(webAuthenticationDetails);
     when(webAuthenticationDetails.getRemoteAddress()).thenReturn(ip);
 
     // when
-    underTest.onAuthenticationFailure(failureEvent);
+    try (MockedStatic<DigestUtils> mock = mockStatic(DigestUtils.class)) {
+      mock.when(() -> DigestUtils.md5Hex(ip)).thenReturn(ipHash);
+      underTest.onAuthenticationFailure(failureEvent);
+    }
 
     // then
     verify(loginAttemptService).loginFailed(ipHash);

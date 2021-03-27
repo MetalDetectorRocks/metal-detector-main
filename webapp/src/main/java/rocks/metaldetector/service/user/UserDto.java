@@ -16,6 +16,7 @@ public class UserDto {
   private String publicId;
   private String username;
   private String email;
+  private String avatar;
   private String plainPassword;
   private boolean enabled;
   private String role;
@@ -24,5 +25,6 @@ public class UserDto {
   private LocalDateTime createdDateTime;
   private LocalDateTime lastModifiedDateTime;
   private String lastModifiedBy;
+  private boolean nativeUser;
 
 }

@@ -28,6 +28,7 @@ import rocks.metaldetector.persistence.domain.notification.NotificationConfigRep
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.token.TokenType;
+import rocks.metaldetector.persistence.domain.user.OAuthUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
@@ -69,6 +70,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
+import static rocks.metaldetector.service.user.UserErrorMessages.OAUTH_USER_CANNOT_CHANGE_EMAIL;
+import static rocks.metaldetector.service.user.UserErrorMessages.OAUTH_USER_CANNOT_CHANGE_PASSWORD;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_NOT_FOUND;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
@@ -131,10 +134,10 @@ class UserServiceImplTest implements WithAssertions {
     reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request, notificationConfigRepository, applicationEventPublisher);
   }
 
-  @DisplayName("Create user tests")
+  @DisplayName("Create user entity tests")
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
-  class CreateUserTest {
+  class CreateUserEntityTest {
 
     @Test
     @DisplayName("Should return UserDto")
@@ -165,7 +168,7 @@ class UserServiceImplTest implements WithAssertions {
       // then
       verify(userRepository).save(userEntityCaptor.capture());
       UserEntity passedUserEntity = userEntityCaptor.getValue();
-      assertThat(passedUserEntity.getMetalDetectorUsername()).isEqualTo(USERNAME);
+      assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
       assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
       assertThat(passedUserEntity.getPassword()).isNotEmpty();
       assertThat(passedUserEntity.getUserRoles()).containsExactly(ROLE_USER);
@@ -247,6 +250,114 @@ class UserServiceImplTest implements WithAssertions {
     }
   }
 
+  @DisplayName("Create oauth user tests")
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @Nested
+  class CreateOAuthUserTest {
+
+    @Test
+    @DisplayName("Should return UserDto")
+    void should_return_user_dto() {
+      // given
+      UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      OAuthUserEntity expectedUser = OAuthUserFactory.createUser(USERNAME, EMAIL);
+      when(userRepository.save(any(OAuthUserEntity.class))).thenReturn(expectedUser);
+
+      // when
+      UserDto createdUserDto = underTest.createOAuthUser(givenUserDto);
+
+      // then
+      assertThat(createdUserDto).isEqualTo(userTransformer.transform(expectedUser));
+    }
+
+    @DisplayName("Should pass enabled OAuthUserEntity with Role USER to UserRepository")
+    @Test
+    void should_use_user_repository() {
+      // given
+      ArgumentCaptor<OAuthUserEntity> userEntityCaptor = ArgumentCaptor.forClass(OAuthUserEntity.class);
+      UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      givenUserDto.setAvatar("avatar");
+      when(userRepository.save(any(OAuthUserEntity.class))).thenReturn(OAuthUserFactory.createUser(USERNAME, EMAIL));
+
+      // when
+      underTest.createOAuthUser(givenUserDto);
+
+      // then
+      verify(userRepository).save(userEntityCaptor.capture());
+      OAuthUserEntity passedUserEntity = userEntityCaptor.getValue();
+      assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
+      assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
+      assertThat(passedUserEntity.getAvatar()).isEqualTo(givenUserDto.getAvatar());
+      assertThat(passedUserEntity.getUserRoles()).containsExactly(ROLE_USER);
+      assertThat(passedUserEntity.isEnabled()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Creating a new user should check if email or username is already used")
+    void should_check_email_and_username() {
+      // given
+      UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      when(userRepository.save(any(OAuthUserEntity.class))).thenReturn(OAuthUserFactory.createUser(USERNAME, EMAIL));
+
+      // when
+      underTest.createOAuthUser(userDto);
+
+      // then
+      verify(userRepository, times(2)).existsByEmail(anyString());
+    }
+
+    @ParameterizedTest(name = "[{index}] => Username <{0}> | Email <{1}>")
+    @MethodSource("oauthUserDtoProvider")
+    @DisplayName("Creating a new user with a username and email that already exists should throw exception")
+    void create_user_with_username_or_email_that_already_exists_should_throw_exception(String username, String email, UserAlreadyExistsException.Reason reason) {
+      // given
+      UserDto userDto = UserDtoFactory.withUsernameAndEmail(username, email);
+
+      when(userRepository.existsByEmail(anyString())).thenAnswer(invocationOnMock -> {
+        String emailArg = invocationOnMock.getArgument(0);
+        return emailArg.equalsIgnoreCase(DUPLICATE_EMAIL) || emailArg.equalsIgnoreCase(DUPLICATE_USERNAME);
+      });
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.createOAuthUser(userDto));
+
+      // then
+      assertThat(throwable).isInstanceOf(UserAlreadyExistsException.class);
+      assertThat(((UserAlreadyExistsException) throwable).getReason()).isEqualTo(reason);
+      verify(userRepository, atMost(2)).existsByEmail(anyString());
+    }
+
+    @Test
+    @DisplayName("default notification config is created for new user")
+    void test_notification_config_created() {
+      // given
+      ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
+      UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      OAuthUserEntity userEntity = OAuthUserFactory.createUser(USERNAME, EMAIL);
+      doReturn(userEntity).when(userRepository).save(any());
+
+      // when
+      underTest.createOAuthUser(userDto);
+
+      // then
+      verify(notificationConfigRepository).save(argumentCaptor.capture());
+      NotificationConfigEntity notificationConfigEntity = argumentCaptor.getValue();
+      assertThat(notificationConfigEntity).isNotNull();
+      assertThat(notificationConfigEntity.getNotify()).isFalse();
+      assertThat(notificationConfigEntity.getNotificationAtReleaseDate()).isFalse();
+      assertThat(notificationConfigEntity.getNotificationAtAnnouncementDate()).isFalse();
+      assertThat(notificationConfigEntity.getFrequencyInWeeks()).isEqualTo(DEFAULT_NOTIFICATION_FREQUENCY);
+      assertThat(notificationConfigEntity.getUser()).isEqualTo(userEntity);
+    }
+
+    private Stream<Arguments> oauthUserDtoProvider() {
+      return Stream.of(
+          Arguments.of(DUPLICATE_USERNAME, EMAIL, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS),
+          Arguments.of(USERNAME, DUPLICATE_EMAIL, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS)
+      );
+    }
+  }
+
   @DisplayName("Create administrator tests")
   @Nested
   class CreateAdministratorTest {
@@ -295,7 +406,7 @@ class UserServiceImplTest implements WithAssertions {
       // then
       verify(userRepository).save(userEntityCaptor.capture());
       UserEntity passedUserEntity = userEntityCaptor.getValue();
-      assertThat(passedUserEntity.getMetalDetectorUsername()).isEqualTo(USERNAME);
+      assertThat(passedUserEntity.getUsername()).isEqualTo(USERNAME);
       assertThat(passedUserEntity.getEmail()).isEqualTo(EMAIL);
       assertThat(passedUserEntity.getPassword()).isNotEmpty();
       assertThat(passedUserEntity.getUserRoles()).containsExactly(ROLE_ADMINISTRATOR);
@@ -320,7 +431,7 @@ class UserServiceImplTest implements WithAssertions {
 
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
-      assertThat(userDto.getUsername()).isEqualTo(user.getMetalDetectorUsername());
+      assertThat(userDto.getUsername()).isEqualTo(user.getUsername());
       assertThat(userDto.getEmail()).isEqualTo(user.getEmail());
     }
 
@@ -586,7 +697,7 @@ class UserServiceImplTest implements WithAssertions {
       verify(userRepository).save(userEntityCaptor.capture());
       verify(currentUserSupplier).get();
       assertThat(userDto).isNotNull();
-      assertThat(userEntityCaptor.getValue().getMetalDetectorUsername()).isEqualTo(userDtoForUpdate.getUsername());
+      assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
       assertThat(userEntityCaptor.getValue().getUserRoles()).containsExactly(ROLE_ADMINISTRATOR);
     }
 
@@ -613,7 +724,7 @@ class UserServiceImplTest implements WithAssertions {
       verify(userRepository).save(userEntityCaptor.capture());
       verify(currentUserSupplier).get();
       assertThat(userDto).isNotNull();
-      assertThat(userEntityCaptor.getValue().getMetalDetectorUsername()).isEqualTo(userDtoForUpdate.getUsername());
+      assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
       assertThat(userEntityCaptor.getValue().isEnabled()).isFalse();
     }
 
@@ -771,6 +882,20 @@ class UserServiceImplTest implements WithAssertions {
     }
 
     @Test
+    @DisplayName("should throw IllegalUserActionException if current user is oauth user")
+    void should_throw_exception_if_user_is_oauth_user() {
+      // given
+      doReturn(OAuthUserFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.updateCurrentEmail("new-mail@example.com"));
+
+      // then
+      assertThat(throwable).isInstanceOf(IllegalUserActionException.class);
+      assertThat(throwable).hasMessage(OAUTH_USER_CANNOT_CHANGE_EMAIL.toDisplayString());
+    }
+
+    @Test
     @DisplayName("should not throw IllegalArgumentException if the new email already exists and if it is the user's current email")
     void should_not_throw_exception_if_new_email_address_already_exists() {
       // given
@@ -914,6 +1039,20 @@ class UserServiceImplTest implements WithAssertions {
       // then
       assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
       assertThat(throwable).hasMessageContaining("Old password does not match");
+    }
+
+    @Test
+    @DisplayName("Updating the current user's password throws Exception when user is oauth user")
+    void test_updating_password_throws_exception_for_oauth_user() {
+      // given
+      doReturn(OAuthUserFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
+
+      // when
+      var throwable = catchThrowable(() -> underTest.updateCurrentPassword("oldPassword", "newPassword"));
+
+      // then
+      assertThat(throwable).isInstanceOf(IllegalUserActionException.class);
+      assertThat(throwable).hasMessage(OAUTH_USER_CANNOT_CHANGE_PASSWORD.toDisplayString());
     }
   }
 

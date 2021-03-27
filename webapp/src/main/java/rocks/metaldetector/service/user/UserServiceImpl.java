@@ -16,6 +16,8 @@ import rocks.metaldetector.persistence.domain.notification.NotificationConfigEnt
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
+import rocks.metaldetector.persistence.domain.user.OAuthUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
@@ -65,12 +67,31 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
+  public UserDto createOAuthUser(UserDto userDto) {
+    checkIfUserAlreadyExistsByEmail(userDto.getUsername(), userDto.getEmail());
+
+    OAuthUserEntity oAuthUserEntity = OAuthUserEntity.builder()
+        .username(userDto.getUsername())
+        .avatar(userDto.getAvatar())
+        .email(userDto.getEmail())
+        .build();
+
+    OAuthUserEntity savedUserEntity = userRepository.save(oAuthUserEntity);
+
+    createNotificationConfig(savedUserEntity);
+
+    return userTransformer.transform(savedUserEntity);
+  }
+
+  @Override
+  @Transactional
   public UserDto createAdministrator(UserDto userDto) {
     return createUserEntity(userDto, UserRole.createAdministratorRole(), true);
   }
 
   private UserDto createUserEntity(UserDto userDto, Set<UserRole> roles, boolean enabled) {
-    checkIfUserAlreadyExists(userDto.getUsername(), userDto.getEmail());
+    checkIfUserAlreadyExistsByUsername(userDto.getUsername(), userDto.getUsername());
+    checkIfUserAlreadyExistsByEmail(userDto.getUsername(), userDto.getEmail());
 
     // create user
     UserEntity userEntity = UserEntity.builder()
@@ -83,19 +104,22 @@ public class UserServiceImpl implements UserService {
 
     UserEntity savedUserEntity = userRepository.save(userEntity);
 
-    // create user's notification config
-    NotificationConfigEntity notificationConfigEntity = NotificationConfigEntity.builder()
-        .user(savedUserEntity)
-        .build();
-    notificationConfigRepository.save(notificationConfigEntity);
+    createNotificationConfig(savedUserEntity);
 
     return userTransformer.transform(savedUserEntity);
+  }
+
+  private void createNotificationConfig(AbstractUserEntity user) {
+    NotificationConfigEntity notificationConfigEntity = NotificationConfigEntity.builder()
+        .user(user)
+        .build();
+    notificationConfigRepository.save(notificationConfigEntity);
   }
 
   @Override
   @Transactional(readOnly = true)
   public UserDto getUserByPublicId(String publicId) {
-    UserEntity userEntity = userRepository.findByPublicId(publicId)
+    AbstractUserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
     return userTransformer.transform(userEntity);
@@ -104,16 +128,16 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(readOnly = true)
   public Optional<UserDto> getUserByEmailOrUsername(String emailOrUsername) {
-    Optional<UserEntity> userEntity = findByEmailOrUsername(emailOrUsername);
+    Optional<AbstractUserEntity> userEntity = findByEmailOrUsername(emailOrUsername);
     return userEntity.map(userTransformer::transform);
   }
 
   @Override
   @Transactional
   public UserDto updateUser(String publicId, UserDto userDto) {
-    UserEntity userEntity = userRepository.findByPublicId(publicId)
+    AbstractUserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
 
     if (publicId.equals(currentUser.getPublicId())) {
       if (!userDto.isEnabled()) { throw IllegalUserActionException.createAdminCannotDisableHimselfException(); }
@@ -123,7 +147,7 @@ public class UserServiceImpl implements UserService {
     userEntity.setUserRoles(UserRole.getRoleFromString(userDto.getRole()));
     userEntity.setEnabled(userDto.isEnabled());
 
-    UserEntity updatedUserEntity = userRepository.save(userEntity);
+    AbstractUserEntity updatedUserEntity = userRepository.save((UserEntity) userEntity);
 
     return userTransformer.transform(updatedUserEntity);
   }
@@ -131,13 +155,17 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public UserDto updateCurrentEmail(String emailAddress) {
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
+
+    if (currentUser instanceof OAuthUserEntity) {
+      throw IllegalUserActionException.createOAuthUserCannotChangeEMailException();
+    }
     if (!currentUser.getEmail().equalsIgnoreCase(emailAddress) && userRepository.existsByEmail(emailAddress)) {
       throw new IllegalArgumentException("The email address is already in use!");
     }
 
     currentUser.setEmail(emailAddress);
-    UserEntity updatedUser = userRepository.save(currentUser);
+    UserEntity updatedUser = userRepository.save((UserEntity) currentUser);
     return userTransformer.transform(updatedUser);
   }
 
@@ -164,7 +192,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(readOnly = true)
   public UserDto getCurrentUser() {
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
     return userTransformer.transform(currentUser);
   }
 
@@ -190,7 +218,7 @@ public class UserServiceImpl implements UserService {
     jwtsSupport.getClaims(tokenString);
 
     // verify registration
-    UserEntity userEntity = tokenEntity.getUser();
+    AbstractUserEntity userEntity = tokenEntity.getUser();
     userEntity.setEnabled(true);
     userRepository.save(userEntity);
 
@@ -225,10 +253,10 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void persistSuccessfulLogin(String publicUserId) {
-    Optional<UserEntity> userEntityOptional = userRepository.findByPublicId(publicUserId);
+    Optional<AbstractUserEntity> userEntityOptional = userRepository.findByPublicId(publicUserId);
 
     if (userEntityOptional.isPresent()) {
-      UserEntity userEntity = userEntityOptional.get();
+      AbstractUserEntity userEntity = userEntityOptional.get();
 
       userEntity.setLastLogin(LocalDateTime.now());
 
@@ -239,7 +267,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void deleteCurrentUser() {
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
     applicationEventPublisher.publishEvent(new UserDeletionEvent(this, currentUser));
 
     HttpSession session = request.getSession(false);
@@ -251,9 +279,13 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void updateCurrentPassword(String oldPlainPassword, String newPlainPassword) {
-    UserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = currentUserSupplier.get();
+
+    if (currentUser instanceof OAuthUserEntity) {
+      throw IllegalUserActionException.createOAuthUserCannotChangePasswordException();
+    }
     if (passwordEncoder.matches(oldPlainPassword, currentUser.getPassword())) {
-      currentUser.setPassword(passwordEncoder.encode(newPlainPassword));
+      ((UserEntity) currentUser).setPassword(passwordEncoder.encode(newPlainPassword));
       userRepository.save(currentUser);
     }
     else {
@@ -261,13 +293,13 @@ public class UserServiceImpl implements UserService {
     }
   }
 
-  private Optional<UserEntity> findByEmailOrUsername(String emailOrUsername) {
+  private Optional<AbstractUserEntity> findByEmailOrUsername(String emailOrUsername) {
     if (loginAttemptService.isBlocked(getClientIPHash())) {
       throw new LockedException("User " + emailOrUsername + " is blocked");
     }
 
     // try to find user by email
-    Optional<UserEntity> userEntity = userRepository.findByEmail(emailOrUsername);
+    Optional<AbstractUserEntity> userEntity = userRepository.findByEmail(emailOrUsername);
 
     // If no user was found by email, a user will be searched by username
     if (userEntity.isEmpty()) {
@@ -277,16 +309,15 @@ public class UserServiceImpl implements UserService {
     return userEntity;
   }
 
-  /*
-   * It's not allowed to use someones username or email.
-   * It's also not allowed to use someones email as username and vice versa.
-   */
-  private void checkIfUserAlreadyExists(String username, String email) {
-    if (userRepository.existsByUsername(username) || userRepository.existsByEmail(username)) {
-      throw UserAlreadyExistsException.createUserWithUsernameAlreadyExistsException();
-    }
-    else if (userRepository.existsByEmail(email) || userRepository.existsByUsername(email)) {
+  private void checkIfUserAlreadyExistsByEmail(String username, String email) {
+    if (userRepository.existsByEmail(email) || userRepository.existsByEmail(username)) {
       throw UserAlreadyExistsException.createUserWithEmailAlreadyExistsException();
+    }
+  }
+
+  private void checkIfUserAlreadyExistsByUsername(String username, String email) {
+    if (userRepository.existsByUsername(username) || userRepository.existsByUsername(email)) {
+      throw UserAlreadyExistsException.createUserWithUsernameAlreadyExistsException();
     }
   }
 
