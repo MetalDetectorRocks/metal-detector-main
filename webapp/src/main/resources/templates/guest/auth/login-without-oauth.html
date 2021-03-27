@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html layout:decorate="~{guest/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <div class="auth-container rounded">
+            <h1 class="mb-3 h4">Login</h1>
+
+      <!-- Login Messages -->
+      <div th:if="${param.badCredentials}" class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <span>Invalid username, email or password!</span>
+      </div>
+      <div th:if="${param.disabled}" class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <span>Your account is disabled. Maybe your email address is not verified. Please check your email inbox.</span>
+      </div>
+      <div th:if="${param.blocked}" class="alert alert-danger" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <span>Your ip is blocked for one day due to too many failed login requests.</span>
+            </div>
+            <div th:if="${param.error}" class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span>Unknown error!</span>
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span>You have been successfully logged out.</span>
+            </div>
+
+            <!-- Registration Messages -->
+            <div th:if="${param.verificationSuccess}" class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span>Registration successfully verified. You are now able to login.</span>
+            </div>
+            <div th:if="${param.resendVerificationTokenSuccess}" class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span>You will shortly receive another email with a verification link. After confirming your registration you can login.</span>
+            </div>
+            <div th:if="${param.tokenNotFound}" class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span>Your account may already be activated or another error has occurred. Please try to login.</span>
+            </div>
+            <div th:if="${param.tokenExpired}" class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span>The email verification link has expired. Click on the following link if we should send you a new verification link:</span>
+                <a href="#" th:href="@{/resend-verification-token?(token=${param.token})}">Resend verification e-mail</a>
+            </div>
+
+            <!-- Reset password messages-->
+            <div th:if="${param.resetSuccess}" class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span>You can now log in with your new password.</span>
+            </div>
+
+            <!-- Login form -->
+            <form id="loginForm" name="loginForm" action="#" th:action="@{/login}" method="POST">
+                <!-- Username -->
+                <div class="form-label-group">
+                    <input type="text" id="username" class="form-control" name="username" placeholder="" autocomplete="username" required autofocus>
+                    <label for="username">Email address or username</label>
+                </div>
+
+                <!-- Password -->
+                <div class="form-label-group">
+                    <input type="password" id="password" class="form-control" name="password" placeholder="" autocomplete="current-password" required>
+                    <label for="password">Password</label>
+                </div>
+
+                <div class="form-label-group">
+                    <div class="row">
+                        <div class="col">
+                            <!-- Remember me -->
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="remember-me" name="remember-me" checked="">
+                                <label class="custom-control-label" for="remember-me">Remember me</label>
+                            </div>
+                        </div>
+                        <div class="col text-right">
+                            <!-- Forgot password -->
+                            <div class="form-label-group">
+                                <a href="#" th:href="@{forgot-password}">Forgot password?</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login -->
+                <button class="btn btn-lg btn-secondary btn-block" type="submit">Login</button>
+            </form>
+      <p class="my-2">
+        New user? <a href="#" th:href="@{/register}">Join now!</a>
+      </p>
+    </div>
+    </section>
+</body>
+</html>

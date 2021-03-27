@@ -10,11 +10,11 @@ import rocks.metaldetector.support.Endpoints;
 
 @Controller
 @RequestMapping(Endpoints.Guest.LOGIN)
-@Profile("!preview")
-public class LoginController {
+@Profile("preview")
+public class PreviewLoginController {
 
   @GetMapping
   public ModelAndView showLoginForm() {
-    return new ModelAndView(ViewNames.Guest.LOGIN);
+    return new ModelAndView(ViewNames.Guest.LOGIN_WITHOUT_OAUTH);
   }
 }

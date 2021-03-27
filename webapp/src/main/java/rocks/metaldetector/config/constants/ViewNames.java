@@ -4,14 +4,15 @@ public class ViewNames {
 
   public static class Guest {
     // Authentication
-    public static final String INDEX              = "guest/index";
-    public static final String LOGIN              = "guest/auth/login";
-    public static final String REGISTER           = "guest/auth/register";
-    public static final String DISABLED_REGISTER  = "guest/auth/disabled-register";
-    public static final String FORGOT_PASSWORD    = "guest/auth/forgot-password";
-    public static final String RESET_PASSWORD     = "guest/auth/reset-password";
-    public static final String IMPRINT            = "guest/imprint";
-    public static final String PRIVACY_POLICY     = "guest/privacy-policy";
+    public static final String INDEX                = "guest/index";
+    public static final String LOGIN                = "guest/auth/login";
+    public static final String LOGIN_WITHOUT_OAUTH  = "guest/auth/login-without-oauth";
+    public static final String REGISTER             = "guest/auth/register";
+    public static final String DISABLED_REGISTER    = "guest/auth/disabled-register";
+    public static final String FORGOT_PASSWORD      = "guest/auth/forgot-password";
+    public static final String RESET_PASSWORD       = "guest/auth/reset-password";
+    public static final String IMPRINT              = "guest/imprint";
+    public static final String PRIVACY_POLICY       = "guest/privacy-policy";
 
     // Error pages
     public static final String ERROR       = "error/default";
