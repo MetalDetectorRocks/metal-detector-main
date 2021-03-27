@@ -16,15 +16,19 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   @Autowired
   private UserRepository userRepository;
 
-  private static final String     USERNAME         = "JohnD";
-  private static final String     EMAIL            = "john.doe@example.com";
-  private static       UserEntity JOHN_DOE         = UserFactory.createUser(USERNAME, EMAIL);
-  private static final String     UNKNOWN_USERNAME = "Unknown";
-  private static final String     UNKNOWN_EMAIL    = "unknown@example.com";
+  private static final String USERNAME = "JohnD";
+  private static final String OAUTH_USERNAME = "OAuthUsername";
+  private static final String EMAIL = "john.doe@example.com";
+  private static final String OAUTH_EMAIL = "oauth@example.com";
+  private static UserEntity JOHN_DOE = UserFactory.createUser(USERNAME, EMAIL);
+  private static OAuthUserEntity OAUTH_USER = OAuthUserFactory.createUser(OAUTH_USERNAME, OAUTH_EMAIL);
+  private static final String UNKNOWN_USERNAME = "Unknown";
+  private static final String UNKNOWN_EMAIL = "unknown@example.com";
 
   @BeforeEach
   void setup() {
     JOHN_DOE = userRepository.save(JOHN_DOE);
+    OAUTH_USER = userRepository.save(OAUTH_USER);
   }
 
   @AfterEach
@@ -81,6 +85,14 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   }
 
   @Test
+  @DisplayName("findByUsername() should not return oauth user entity")
+  void find_by_username_should_not_return_oauth_user_entity() {
+    Optional<AbstractUserEntity> user = userRepository.findByUsername(OAUTH_USERNAME);
+
+    assertThat(user).isEmpty();
+  }
+
+  @Test
   @DisplayName("findByUsername() should return an empty optional if no user was found")
   void find_by_username_should_return_empty_optional() {
     Optional<AbstractUserEntity> user = userRepository.findByUsername(UNKNOWN_USERNAME);
@@ -118,5 +130,4 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
     assertThat(userRepository.existsByUsername(USERNAME)).isTrue();
     assertThat(userRepository.existsByUsername(UNKNOWN_USERNAME)).isFalse();
   }
-
 }

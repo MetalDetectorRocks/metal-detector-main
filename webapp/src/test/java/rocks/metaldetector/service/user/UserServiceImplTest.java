@@ -304,20 +304,14 @@ class UserServiceImplTest implements WithAssertions {
 
       // then
       verify(userRepository, times(2)).existsByEmail(anyString());
-      verify(userRepository, times(2)).existsByUsername(anyString());
     }
 
     @ParameterizedTest(name = "[{index}] => Username <{0}> | Email <{1}>")
-    @MethodSource("userDtoProvider")
+    @MethodSource("oauthUserDtoProvider")
     @DisplayName("Creating a new user with a username and email that already exists should throw exception")
     void create_user_with_username_or_email_that_already_exists_should_throw_exception(String username, String email, UserAlreadyExistsException.Reason reason) {
       // given
       UserDto userDto = UserDtoFactory.withUsernameAndEmail(username, email);
-
-      when(userRepository.existsByUsername(anyString())).thenAnswer(invocationOnMock -> {
-        String usernameArg = invocationOnMock.getArgument(0);
-        return usernameArg.equalsIgnoreCase(DUPLICATE_USERNAME) || usernameArg.equalsIgnoreCase(DUPLICATE_EMAIL);
-      });
 
       when(userRepository.existsByEmail(anyString())).thenAnswer(invocationOnMock -> {
         String emailArg = invocationOnMock.getArgument(0);
@@ -331,7 +325,6 @@ class UserServiceImplTest implements WithAssertions {
       assertThat(throwable).isInstanceOf(UserAlreadyExistsException.class);
       assertThat(((UserAlreadyExistsException) throwable).getReason()).isEqualTo(reason);
       verify(userRepository, atMost(2)).existsByEmail(anyString());
-      verify(userRepository, atMost(2)).existsByUsername(anyString());
     }
 
     @Test
@@ -357,12 +350,10 @@ class UserServiceImplTest implements WithAssertions {
       assertThat(notificationConfigEntity.getUser()).isEqualTo(userEntity);
     }
 
-    private Stream<Arguments> userDtoProvider() {
+    private Stream<Arguments> oauthUserDtoProvider() {
       return Stream.of(
-          Arguments.of(DUPLICATE_USERNAME, EMAIL, UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS),
-          Arguments.of(DUPLICATE_EMAIL, EMAIL, UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS),
-          Arguments.of(USERNAME, DUPLICATE_EMAIL, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS),
-          Arguments.of(USERNAME, DUPLICATE_USERNAME, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS)
+          Arguments.of(DUPLICATE_USERNAME, EMAIL, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS),
+          Arguments.of(USERNAME, DUPLICATE_EMAIL, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS)
       );
     }
   }

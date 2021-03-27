@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.hibernate.annotations.Type;
 import rocks.metaldetector.persistence.domain.BaseEntity;
-import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,10 +37,10 @@ public class TokenEntity extends BaseEntity {
   @Enumerated(value = EnumType.STRING)
   private TokenType tokenType;
 
-  @OneToOne(targetEntity = AbstractUserEntity.class)
+  @OneToOne(targetEntity = UserEntity.class)
   @JoinColumn(nullable = false, name = "users_id")
   @NonNull
-  private AbstractUserEntity user;
+  private UserEntity user;
 
   @Column(name = "expiration_date_time", nullable = false)
   @NonNull

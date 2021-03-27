@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public UserDto createOAuthUser(UserDto userDto) {
-    checkIfUserAlreadyExists(userDto.getUsername(), userDto.getEmail());
+    checkIfUserAlreadyExistsByEmail(userDto.getUsername(), userDto.getEmail());
 
     OAuthUserEntity oAuthUserEntity = OAuthUserEntity.builder()
         .username(userDto.getUsername())
@@ -90,7 +90,8 @@ public class UserServiceImpl implements UserService {
   }
 
   private UserDto createUserEntity(UserDto userDto, Set<UserRole> roles, boolean enabled) {
-    checkIfUserAlreadyExists(userDto.getUsername(), userDto.getEmail());
+    checkIfUserAlreadyExistsByUsername(userDto.getUsername(), userDto.getUsername());
+    checkIfUserAlreadyExistsByEmail(userDto.getUsername(), userDto.getEmail());
 
     // create user
     UserEntity userEntity = UserEntity.builder()
@@ -239,7 +240,7 @@ public class UserServiceImpl implements UserService {
       throw new TokenExpiredException();
     }
 
-    UserEntity userEntity = (UserEntity) tokenEntity.getUser();
+    UserEntity userEntity = tokenEntity.getUser();
 
     // 4. set new password
     userEntity.setPassword(passwordEncoder.encode(newPassword));
@@ -308,16 +309,15 @@ public class UserServiceImpl implements UserService {
     return userEntity;
   }
 
-  /*
-   * It's not allowed to use someones username or email.
-   * It's also not allowed to use someones email as username and vice versa.
-   */
-  private void checkIfUserAlreadyExists(String username, String email) {
-    if (userRepository.existsByUsername(username) || userRepository.existsByEmail(username)) {
-      throw UserAlreadyExistsException.createUserWithUsernameAlreadyExistsException();
-    }
-    else if (userRepository.existsByEmail(email) || userRepository.existsByUsername(email)) {
+  private void checkIfUserAlreadyExistsByEmail(String username, String email) {
+    if (userRepository.existsByEmail(email) || userRepository.existsByEmail(username)) {
       throw UserAlreadyExistsException.createUserWithEmailAlreadyExistsException();
+    }
+  }
+
+  private void checkIfUserAlreadyExistsByUsername(String username, String email) {
+    if (userRepository.existsByUsername(username) || userRepository.existsByUsername(email)) {
+      throw UserAlreadyExistsException.createUserWithUsernameAlreadyExistsException();
     }
   }
 

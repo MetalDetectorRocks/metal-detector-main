@@ -7,6 +7,7 @@ import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.token.TokenType;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
@@ -53,7 +54,7 @@ public class TokenServiceImpl implements TokenService {
     );
 
     TokenEntity tokenEntity = TokenEntity.builder()
-        .user(userEntity)
+        .user((UserEntity) userEntity)
         .tokenString(tokenString)
         .expirationDateTime(LocalDateTime.now().plus(expirationTime.toMillis(), ChronoUnit.MILLIS))
         .tokenType(tokenType)
