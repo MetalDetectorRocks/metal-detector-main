@@ -39,7 +39,7 @@ git clone https://github.com/MetalDetectorRocks/metal-detector-main.git
 
 The following software is required:
 
-- JDK 14 (<https://jdk.java.net/14/>)
+- JDK 11 (<https://jdk.java.net/11/>)
 - Docker (<https://docs.docker.com/get-docker/>)
 - Node.js LTS or Latest (<https://nodejs.org/en/>)
 - TypeScript (run `npm install -g typescript` in your terminal after you have installed Node.js)

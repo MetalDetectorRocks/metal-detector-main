@@ -72,18 +72,6 @@
             <label for="verifyPlainPassword">Verify Password</label>
         </div>
 
-        <!-- Registration Code -->
-        <div class="form-label-group">
-            <input type="text" id="registrationCode" class="form-control" name="registrationCode"
-                   th:class="${#fields.hasErrors('username')}? 'form-control is-invalid' : 'form-control'"
-                   th:field="*{registrationCode}"
-                   placeholder=""
-                   autocomplete="registration-code"
-                   required>
-            <div class="invalid-feedback" th:errors="*{registrationCode}">Registration code error</div>
-            <label for="registrationCode">Registration Code</label>
-        </div>
-
         <!-- Register -->
         <button class="btn btn-lg btn-secondary btn-block mt-4" type="submit">Join Metal Detector</button>
     </form>

@@ -68,32 +68,27 @@ public class DtoFactory {
   public static class RegisterUserRequestFactory {
 
     public static RegisterUserRequest createDefault() {
-      return create("JohnD", "john.d@example.com", "valid-password", "valid-password", "registrationCode");
+      return create("JohnD", "john.d@example.com", "valid-password", "valid-password");
     }
 
     public static RegisterUserRequest withUsername(String username) {
-      return create(username, "john.d@example.com", "valid-password", "valid-password", "registrationCode");
+      return create(username, "john.d@example.com", "valid-password", "valid-password");
     }
 
     public static RegisterUserRequest withEmail(String email) {
-      return create("JohnD", email, "valid-password", "valid-password", "registrationCode");
+      return create("JohnD", email, "valid-password", "valid-password");
     }
 
     public static RegisterUserRequest withPassword(String plainPassword, String verifyPlainPassword) {
-      return create("JohnD", "john.d@example.com", plainPassword, verifyPlainPassword, "registrationCode");
+      return create("JohnD", "john.d@example.com", plainPassword, verifyPlainPassword);
     }
 
-    public static RegisterUserRequest withRegistrationCode(String registrationCode) {
-      return create("JohnD", "john.d@example.com", "plainPassword", "plainPassword", registrationCode);
-    }
-
-    private static RegisterUserRequest create(String username, String email, String plainPassword, String verifyPlainPassword, String registrationCode) {
+    private static RegisterUserRequest create(String username, String email, String plainPassword, String verifyPlainPassword) {
       return RegisterUserRequest.builder()
           .username(username)
           .email(email)
           .plainPassword(plainPassword)
           .verifyPlainPassword(verifyPlainPassword)
-          .registrationCode(registrationCode)
           .build();
     }
   }
