@@ -8,7 +8,7 @@ buildscript {
     datatablesVersion = "1.10.24"
     ehcacheVersion = "3.9.2"
     esapiVersion = "2.2.3.0"
-    flywayVersion = "7.7.1"
+    flywayVersion = "7.7.2"
     h2Version = "1.4.200"
     httpClientVersion = "4.5.13"
     mockitoVersion = "3.8.0"
