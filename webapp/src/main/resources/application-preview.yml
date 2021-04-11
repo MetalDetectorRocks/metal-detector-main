@@ -30,6 +30,10 @@ server:
   tomcat:
     accesslog:
       enabled: false
+  servlet:
+    session:
+      cookie:
+        secure: true
 
 management:
   endpoints:
