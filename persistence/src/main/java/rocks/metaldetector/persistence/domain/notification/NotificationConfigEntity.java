@@ -52,4 +52,7 @@ public class NotificationConfigEntity extends BaseEntity {
   @Setter
   private LocalDate lastNotificationDate;
 
+  @Column(name = "telegram_chat_id")
+  @Setter
+  private Integer telegramChatId;
 }

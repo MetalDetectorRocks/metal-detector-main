@@ -98,3 +98,6 @@ metal-release-butler:
   access-token: ${BUTLER_ACCESS_TOKEN}
 
 log-csp-report: false
+
+telegram:
+  bot-id: ${TELEGRAM_BOT_ID}

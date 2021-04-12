@@ -8,4 +8,5 @@ public interface NotificationService {
 
   NotificationConfigDto getCurrentUserNotificationConfig();
   void updateCurrentUserNotificationConfig(NotificationConfigDto notificationConfigDto);
+  void updateTelegramChatId(long userId, int chatId);
 }

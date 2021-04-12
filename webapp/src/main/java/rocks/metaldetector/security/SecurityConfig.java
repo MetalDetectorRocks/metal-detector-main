@@ -1,6 +1,7 @@
 package rocks.metaldetector.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -53,6 +54,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final SecurityProperties securityProperties;
 
+  @Value("${telegram.bot-id}")
+  private String botId;
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
@@ -62,8 +66,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
         .antMatchers(RESOURCES).permitAll()
         .antMatchers(GUEST_PAGES).permitAll()
-        .antMatchers(Endpoints.Rest.CSP_VIOLATION_REPORT).permitAll()
         .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
+        .antMatchers(Endpoints.Rest.CSP_VIOLATION_REPORT).permitAll()
+        .antMatchers(Endpoints.Rest.NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
         .anyRequest().authenticated()
       .and()
       .formLogin()
