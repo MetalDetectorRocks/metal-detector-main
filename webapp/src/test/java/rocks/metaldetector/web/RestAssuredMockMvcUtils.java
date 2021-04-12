@@ -96,14 +96,18 @@ public class RestAssuredMockMvcUtils {
   }
 
   public ValidatableMockMvcResponse doPost(Object request) {
+    return doPost(request, "");
+  }
+
+  public ValidatableMockMvcResponse doPost(Object request, String pathSegement) {
     return given()
-            .config(NO_SECURITY_CONFIG)
-            .accept(ContentType.JSON)
-            .contentType(ContentType.JSON)
-            .body(request)
-          .when()
-            .post(requestUri)
-          .then();
+        .config(NO_SECURITY_CONFIG)
+        .accept(ContentType.JSON)
+        .contentType(ContentType.JSON)
+        .body(request)
+        .when()
+        .post(requestUri + pathSegement)
+        .then();
   }
 
   public ValidatableMockMvcResponse doPost(Map<String, String> params, ContentType contentType) {

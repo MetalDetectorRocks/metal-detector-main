@@ -109,6 +109,14 @@ public class NotificationServiceImpl implements NotificationService {
     notificationConfigRepository.save(notificationConfigEntity);
   }
 
+  @Override
+  public void updateTelegramChatId(long userId, int chatId) {
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    NotificationConfigEntity notificationConfig = notificationConfigRepository.findByUserId(userId).get();
+    notificationConfig.setTelegramChatId(chatId);
+    notificationConfigRepository.save(notificationConfig);
+  }
+
   private void frequencyNotification(NotificationConfigEntity notificationConfigEntity, ReleaseContainer releaseContainer) {
     var now = LocalDate.now();
     boolean shouldNotify = notificationConfigEntity.getLastNotificationDate() == null ||

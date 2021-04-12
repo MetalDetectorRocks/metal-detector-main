@@ -38,6 +38,7 @@ envs=(
   ACTUATOR_PROMETHEUS_PATH
   GOOGLE_CLIENT_ID
   GOOGLE_CLIENT_SECRET
+  TELEGRAM_BOT_ID
 )
 
 for e in "${envs[@]}"; do

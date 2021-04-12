@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -875,6 +876,43 @@ class NotificationServiceImplTest implements WithAssertions {
       assertThat(savedEntity.getNotify()).isEqualTo(notificationConfigDto.isNotify());
       assertThat(savedEntity.getNotificationAtReleaseDate()).isEqualTo(notificationConfigDto.isNotificationAtReleaseDate());
       assertThat(savedEntity.getNotificationAtAnnouncementDate()).isEqualTo(notificationConfigDto.isNotificationAtAnnouncementDate());
+    }
+  }
+
+  @DisplayName("Tests for updating the telegram chat id")
+  @Nested
+  class UpdateTelegramChatIdTest {
+
+    @Test
+    @DisplayName("Updating telegram chat id calls notificationConfigRepository")
+    void test_update_telegram_id_calls_repository() {
+      // given
+      var userId = 100L;
+      doReturn(Optional.of(NotificationConfigEntity.builder().build())).when(notificationConfigRepository).findByUserId(anyLong());
+
+      // when
+      underTest.updateTelegramChatId(userId, 0);
+
+      // then
+      verify(notificationConfigRepository).findByUserId(userId);
+    }
+
+    @Test
+    @DisplayName("Given telegram chat id is saved")
+    void test_new_telegram_id_saved() {
+      // given
+      ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
+      var chatId = 100;
+      doReturn(Optional.of(NotificationConfigEntity.builder().build())).when(notificationConfigRepository).findByUserId(anyLong());
+
+      // when
+      underTest.updateTelegramChatId(0, chatId);
+
+      // then
+      verify(notificationConfigRepository).save(argumentCaptor.capture());
+      NotificationConfigEntity savedNotificationConfigEntity = argumentCaptor.getValue();
+
+      assertThat(savedNotificationConfigEntity.getTelegramChatId()).isEqualTo(chatId);
     }
   }
 }
