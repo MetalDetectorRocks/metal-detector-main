@@ -12,7 +12,7 @@ buildscript {
     h2Version = "1.4.200"
     httpClientVersion = "4.5.13"
     mockitoVersion = "3.9.0"
-    jacksonVersion = "2.12.2"
+    jacksonVersion = "2.12.3"
     jacocoVersion = "0.8.6"
     jaxbApiVersion = "2.3.1"
     jsonwebtokenVersion = "0.9.1"
