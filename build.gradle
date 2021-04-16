@@ -27,7 +27,7 @@ buildscript {
     servletApiVersion = "4.0.1"
     springBootVersion = "2.4.4"
     springSecurityVersion = "5.4.6"
-    thymeleafDialectVersion = "2.5.2"
+    thymeleafDialectVersion = "2.5.3"
     thymeleafExtrasVersion = "3.0.4.RELEASE"
     webjarsLocatorVersion = "0.46"
   }
