@@ -87,18 +87,36 @@
     </main>
 
     <footer>
-      <div class="container p-3">
-        <div class="row float-right">
-          <ul class="list-inline">
-            <li class="list-inline-item"><a class="dark-hyperlink" href="#" th:href="@{https://github.com/MetalDetectorRocks?tab=repositories}" target="_blank">Find us on GitHub</a></li>
-            <li class="list-inline-item"><a class="dark-hyperlink" href="#" th:href="@{https://github.com/MetalDetectorRocks/metal-detector-main/issues/new?assignees=&labels=&template=feature_request.md&title=}" target="_blank">Request a feature</a></li>
-            <li class="list-inline-item"><a class="dark-hyperlink" href="#" th:href="@{https://github.com/MetalDetectorRocks/metal-detector-main/issues/new?assignees=&labels=&template=bug_report.md&title=}" target="_blank">Report an issue</a></li>
-<!--            <li class="list-inline-item"><a class="dark-hyperlink" href="#" target="_blank">Spend a beer</a></li>-->
-            <li class="list-inline-item"><a class="dark-hyperlink" href="#" th:href="@{/imprint}">Imprint</a></li>
-            <li class="list-inline-item"><a class="dark-hyperlink" href="#" th:href="@{/privacy-policy}">Privacy policy</a></li>
-          </ul>
+        <div class="container p-3">
+          <div class="row">
+            <div class="col-4">
+              <ul class="list-inline float-left">
+                <li class="list-inline-item">
+                  <a class="dark-hyperlink" href=https://www.buymeacoffee.com/metaldetector target=_blank rel="noopener noreferrer me" title="Buy us a beer">
+                    <img height="32" src="#" alt="Buy us a beer logo" th:src="@{/images/buy-us-a-beer-logo.png}" />
+                  </a>
+                </li>
+                <li class="list-inline-item">
+                  <a class="dark-hyperlink" href=https://instagram.com target=_blank rel="noopener noreferrer me" title="Find us on Instagram">
+                    <img height="32" src="#" alt="Instagram Logo" th:src="@{/images/instagram-logo.png}" />
+                  </a>
+                </li>
+                <li class="list-inline-item">
+                  <a class="dark-hyperlink" href="#" th:href="@{https://github.com/MetalDetectorRocks?tab=repositories}" target=_blank rel="noopener noreferrer me" title="Find us on GitHub">
+                    <img height="32" src="#" alt="GitHub Logo" th:src="@{/images/github-logo.png}" />
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="col-8">
+              <ul class="list-inline float-right">
+                <li class="list-inline-item"><a class="dark-hyperlink" href="#" th:href="@{https://stats.uptimerobot.com/WowYOCjRAV}" target="_blank">Website Status</a></li>
+                <li class="list-inline-item"><a class="dark-hyperlink" href="#" th:href="@{/imprint}">Imprint</a></li>
+                <li class="list-inline-item"><a class="dark-hyperlink" href="#" th:href="@{/privacy-policy}">Privacy policy</a></li>
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>
     </footer>
 
     <button class="scroll-to-top" id="back-to-top-button">
