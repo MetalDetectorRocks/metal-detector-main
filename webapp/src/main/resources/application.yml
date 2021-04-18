@@ -96,4 +96,5 @@ metal-release-butler:
 log-csp-report: false
 
 telegram:
+  rest-base-url: https://api.telegram.org
   bot-id: ${TELEGRAM_BOT_ID}

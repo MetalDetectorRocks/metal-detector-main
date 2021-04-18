@@ -2,7 +2,6 @@ package rocks.metaldetector.web.controller.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +12,7 @@ import rocks.metaldetector.web.api.request.TelegramUpdate;
 
 import javax.validation.Valid;
 
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
 
@@ -36,6 +36,6 @@ public class TelegramRestController {
       return ResponseEntity.ok().build();
     }
     log.warn("False botId called");
-    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    return ResponseEntity.status(FORBIDDEN).build();
   }
 }

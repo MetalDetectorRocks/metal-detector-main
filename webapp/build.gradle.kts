@@ -45,6 +45,7 @@ dependencies {
   implementation(project(":discogs"))
   implementation(project(":butler"))
   implementation(project(":persistence"))
+  implementation(project(":telegram"))
 
   testImplementation("io.rest-assured:rest-assured:${rootProject.extra["restAssuredVersion"]}")
   testImplementation("io.rest-assured:json-path:${rootProject.extra["restAssuredVersion"]}")

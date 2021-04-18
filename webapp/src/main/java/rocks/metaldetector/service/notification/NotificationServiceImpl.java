@@ -19,6 +19,7 @@ import rocks.metaldetector.service.email.TodaysAnnouncementsEmail;
 import rocks.metaldetector.service.email.TodaysReleasesEmail;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
+import rocks.metaldetector.telegram.facade.TelegramService;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -35,6 +36,8 @@ import static java.time.temporal.ChronoUnit.WEEKS;
 public class NotificationServiceImpl implements NotificationService {
 
   static final List<Integer> SUPPORTED_FREQUENCIES = List.of(2, 4);
+  static final String TODAYS_RELEASES_TEXT = "Today's metal releases:";
+  static final String TODAYS_ANNOUNCEMENTS_TEXT = "Today's metal release announcements:";
 
   private final ReleaseService releaseService;
   private final EmailService emailService;
@@ -42,6 +45,8 @@ public class NotificationServiceImpl implements NotificationService {
   private final NotificationConfigRepository notificationConfigRepository;
   private final NotificationConfigTransformer notificationConfigTransformer;
   private final CurrentUserSupplier currentUserSupplier;
+  private final TelegramService telegramService;
+  private final TelegramNotificationFormatter notificationFormatter;
 
   @Override
   @Scheduled(cron = "0 0 4 * * SUN")
@@ -117,13 +122,13 @@ public class NotificationServiceImpl implements NotificationService {
     notificationConfigRepository.save(notificationConfig);
   }
 
-  private void frequencyNotification(NotificationConfigEntity notificationConfigEntity, ReleaseContainer releaseContainer) {
+  private void frequencyNotification(NotificationConfigEntity notificationConfig, ReleaseContainer releaseContainer) {
     var now = LocalDate.now();
-    boolean shouldNotify = notificationConfigEntity.getLastNotificationDate() == null ||
-                           WEEKS.between(notificationConfigEntity.getLastNotificationDate(), now) >= notificationConfigEntity.getFrequencyInWeeks();
+    boolean shouldNotify = notificationConfig.getLastNotificationDate() == null ||
+                           WEEKS.between(notificationConfig.getLastNotificationDate(), now) >= notificationConfig.getFrequencyInWeeks();
 
     if (shouldNotify) {
-      AbstractUserEntity user = notificationConfigEntity.getUser();
+      AbstractUserEntity user = notificationConfig.getUser();
       List<String> followedArtistsNames = followArtistService.getFollowedArtistsOfUser(user.getPublicId()).stream()
           .map(ArtistDto::getArtistName).collect(Collectors.toList());
 
@@ -134,8 +139,13 @@ public class NotificationServiceImpl implements NotificationService {
         if (!(upcomingReleases.isEmpty() && recentReleases.isEmpty())) {
           emailService.sendEmail(new ReleasesEmail(user.getEmail(), user.getUsername(), upcomingReleases, recentReleases));
 
-          notificationConfigEntity.setLastNotificationDate(now);
-          notificationConfigRepository.save(notificationConfigEntity);
+          if (notificationConfig.getTelegramChatId() != null) {
+            String message = notificationFormatter.formatFrequencyNotificationMessage(upcomingReleases, recentReleases);
+            telegramService.sendMessage(notificationConfig.getTelegramChatId(), message);
+          }
+
+          notificationConfig.setLastNotificationDate(now);
+          notificationConfigRepository.save(notificationConfig);
         }
       }
     }
@@ -150,7 +160,14 @@ public class NotificationServiceImpl implements NotificationService {
       List<ReleaseDto> filteredReleases = releases.stream().filter(release -> followedArtistsNames.contains(release.getArtist())).collect(Collectors.toList());
 
       if (!filteredReleases.isEmpty()) {
-        emailService.sendEmail(emailBiFunction.apply(user, filteredReleases));
+        AbstractEmail email = emailBiFunction.apply(user, filteredReleases);
+        emailService.sendEmail(email);
+
+        if (notificationConfig.getTelegramChatId() != null) {
+          String text = email instanceof TodaysReleasesEmail ? TODAYS_RELEASES_TEXT : TODAYS_ANNOUNCEMENTS_TEXT;
+          String message = notificationFormatter.formatDateNotificationMessage(filteredReleases, text);
+          telegramService.sendMessage(notificationConfig.getTelegramChatId(), message);
+        }
       }
     }
   }

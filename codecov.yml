@@ -23,4 +23,5 @@ ignore:
   - "butler/src/main/java/rocks/metaldetector/butler/api"
   - "discogs/src/main/java/rocks/metaldetector/discogs/api"
   - "spotify/src/main/java/rocks/metaldetector/spotify/api"
+  - "telegram/src/main/java/rocks/metaldetector/telegram/api"
   - "webapp/src/main/java/rocks/metaldetector/web/api"
