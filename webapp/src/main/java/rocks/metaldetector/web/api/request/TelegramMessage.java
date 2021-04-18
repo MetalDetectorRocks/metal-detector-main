@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -18,5 +19,5 @@ public class TelegramMessage {
   private String text;
 
   @NotNull
-  private TelegramChat chat;
+  private @Valid TelegramChat chat;
 }

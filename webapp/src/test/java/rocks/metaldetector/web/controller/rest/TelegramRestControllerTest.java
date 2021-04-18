@@ -113,16 +113,16 @@ class TelegramRestControllerTest implements WithAssertions {
   }
 
   private static Stream<Arguments> inputProvider() {
-    var update = TelegramUpdate.builder();
+    var messageWithoutChat = new TelegramMessage("text", null);
+    var messageWithoutText = new TelegramMessage(null, new TelegramChat(0));
+    var messageWithoutText2 = new TelegramMessage("", new TelegramChat(0));
+    var messageWithChatWithoutId = new TelegramMessage("text", new TelegramChat(null));
     return Stream.of(
-        Arguments.of(update.build()),
-        Arguments.of(update.message(
-            TelegramMessage.builder().text("text").build())
-                         .build()),
-        Arguments.of(update.message(
-            TelegramMessage.builder().chat(TelegramChat.builder().build())
-                .build())
-                         .build())
+        Arguments.of(new TelegramUpdate()),
+        Arguments.of(new TelegramUpdate(messageWithoutChat)),
+        Arguments.of(new TelegramUpdate(messageWithoutText)),
+        Arguments.of(new TelegramUpdate(messageWithoutText2)),
+        Arguments.of(new TelegramUpdate(messageWithChatWithoutId))
     );
   }
 }
