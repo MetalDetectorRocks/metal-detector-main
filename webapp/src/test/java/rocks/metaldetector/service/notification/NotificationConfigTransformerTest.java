@@ -30,17 +30,4 @@ class NotificationConfigTransformerTest implements WithAssertions {
     assertThat(result.isNotificationAtReleaseDate()).isEqualTo(notificationConfigEntity.getNotificationAtReleaseDate());
     assertThat(result.getTelegramChatId()).isEqualTo(notificationConfigEntity.getTelegramChatId());
   }
-
-  @Test
-  @DisplayName("null as chatId is transformed to 0")
-  void test_chat_id_null_is_transformed() {
-    // given
-    var notificationConfigEntity = NotificationConfigEntity.builder().build();
-
-    // when
-    var result = underTest.transform(notificationConfigEntity);
-
-    // then
-    assertThat(result.getTelegramChatId()).isEqualTo(0);
-  }
 }
