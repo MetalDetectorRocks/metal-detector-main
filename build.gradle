@@ -8,7 +8,7 @@ buildscript {
     datatablesVersion = "1.10.24"
     ehcacheVersion = "3.9.2"
     esapiVersion = "2.2.3.0"
-    flywayVersion = "7.7.3"
+    flywayVersion = "7.8.1"
     h2Version = "1.4.200"
     httpClientVersion = "4.5.13"
     mockitoVersion = "3.9.0"
@@ -25,9 +25,9 @@ buildscript {
     postgresqlVersion = "42.2.19"
     restAssuredVersion = "4.2.1"
     servletApiVersion = "4.0.1"
-    springBootVersion = "2.4.4"
+    springBootVersion = "2.4.5"
     springSecurityVersion = "5.4.6"
-    thymeleafDialectVersion = "2.5.2"
+    thymeleafDialectVersion = "2.5.3"
     thymeleafExtrasVersion = "3.0.4.RELEASE"
     webjarsLocatorVersion = "0.46"
   }
@@ -36,7 +36,7 @@ buildscript {
 plugins {
   id "java-library"
   id "org.siouan.frontend-jdk11" version "5.0.1"
-  id "org.springframework.boot" version "2.4.4"
+  id "org.springframework.boot" version "2.4.5"
   id "io.spring.dependency-management" version "1.0.11.RELEASE"
 }
 
