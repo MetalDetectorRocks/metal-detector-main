@@ -12,7 +12,7 @@ public class NotificationConfigTransformer {
         .notificationAtReleaseDate(notificationConfigentity.getNotificationAtReleaseDate())
         .notificationAtAnnouncementDate(notificationConfigentity.getNotificationAtAnnouncementDate())
         .frequencyInWeeks(notificationConfigentity.getFrequencyInWeeks())
-        .telegramChatId(notificationConfigentity.getTelegramChatId() == null ? 0 : notificationConfigentity.getTelegramChatId())
+        .telegramChatId(notificationConfigentity.getTelegramChatId())
         .build();
   }
 }

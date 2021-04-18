@@ -45,7 +45,7 @@ class TelegramUpdateServiceImplTest implements WithAssertions {
   void test_user_repository_called() {
     // given
     var messageText = "text";
-    var update = TelegramUpdate.builder().message(TelegramMessage.builder().text(messageText).build()).build();
+    var update = new TelegramUpdate(new TelegramMessage(messageText, null));
 
     // when
     underTest.processUpdate(update);
@@ -55,12 +55,12 @@ class TelegramUpdateServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("is user is present, notificationService is called to set telegram chat id")
+  @DisplayName("if user is present, notificationService is called to set telegram chat id")
   void test_notification_service_called() {
     // given
     var user = mock(AbstractUserEntity.class);
     var chatId = 666;
-    var update = TelegramUpdate.builder().message(TelegramMessage.builder().chat(TelegramChat.builder().id(chatId).build()).build()).build();
+    var update = new TelegramUpdate(new TelegramMessage(null, new TelegramChat(chatId)));
     doReturn(555L).when(user).getId();
     doReturn(Optional.of(user)).when(userRepository).findByEmail(any());
 
