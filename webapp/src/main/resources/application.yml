@@ -63,10 +63,6 @@ server:
   tomcat:
     accesslog:
       enabled: true
-  servlet:
-    session:
-      cookie:
-        secure: true
 
 logging:
   config: classpath:config/logging/logback-spring.xml
