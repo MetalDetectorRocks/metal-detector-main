@@ -69,6 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
         .antMatchers(Endpoints.Rest.CSP_VIOLATION_REPORT).permitAll()
         .antMatchers(Endpoints.Rest.NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
+        .antMatchers(Endpoints.Rest.NOTIFICATION_TELEGRAM).permitAll()
         .anyRequest().authenticated()
       .and()
       .formLogin()

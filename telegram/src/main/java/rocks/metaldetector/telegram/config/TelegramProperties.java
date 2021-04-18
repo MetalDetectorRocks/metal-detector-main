@@ -1,0 +1,27 @@
+package rocks.metaldetector.telegram.config;
+
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+
+@Configuration
+@PropertySource(value = "classpath:application.yml")
+@ConfigurationProperties(prefix = "telegram")
+@Data
+public class TelegramProperties {
+
+  private final Environment environment;
+  private final String restBaseUrl;
+  private final String botId;
+
+  public TelegramProperties(Environment environment,
+                            @Value("${rest-base-url}") String restBaseUrl,
+                            @Value("${bot-id}") String botId) {
+    this.environment = environment;
+    this.restBaseUrl = restBaseUrl;
+    this.botId = botId;
+  }
+}
