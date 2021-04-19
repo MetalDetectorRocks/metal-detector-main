@@ -24,7 +24,7 @@ jobs:
       - name: Build with gradle
         uses: eskatos/gradle-command-action@v1
         with:
-          gradle-version: 6.7.1
+          gradle-version: 7.0
           arguments: build
 
       - name: Set up QEMU
