@@ -15,7 +15,4 @@ jobs:
         with:
           java-version: 1.11
       - name: Execute all tests
-        uses: eskatos/gradle-command-action@v1
-        with:
-          gradle-version: 7.0
-          arguments: clean test
+        run: ./gradlew clean test --no-daemon --info --stacktrace
