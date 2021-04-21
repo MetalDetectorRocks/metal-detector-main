@@ -18,10 +18,7 @@ jobs:
         with:
           java-version: 1.11
       - name: Generate coverage report
-        uses: eskatos/gradle-command-action@v1
-        with:
-          gradle-version: 6.7.1
-          arguments: clean test jacocoTestReport
+        run: ./gradlew clean test jacocoTestReport --no-daemon --info --stacktrace
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
