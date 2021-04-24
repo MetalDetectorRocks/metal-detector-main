@@ -54,7 +54,7 @@ val dependencyVersions = listOf(
   "commons-io:commons-io:2.8.0"
 )
 val dependencyGroupVersions = mapOf(
-  "org.springframework" to "5.3.5",
+  "org.springframework" to "5.3.6",
   "org.springframework.security" to extra["springSecurityVersion"] as String,
   "org.springframework.boot" to extra["springBootVersion"] as String,
   "com.fasterxml.jackson.core" to extra["jacksonVersion"] as String,
