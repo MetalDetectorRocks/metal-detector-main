@@ -4,6 +4,8 @@ import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 import static rocks.metaldetector.support.ImageSize.L;
@@ -39,6 +41,20 @@ class ArtistEntityTransformerTest implements WithAssertions {
     assertThat(artistEntity.getImageS()).isEqualTo(spotifyArtist.getImages().get(S));
     assertThat(artistEntity.getImageM()).isEqualTo(spotifyArtist.getImages().get(M));
     assertThat(artistEntity.getImageL()).isEqualTo(spotifyArtist.getImages().get(L));
+  }
+
+  @Test
+  @DisplayName("should transform empty genre list to empty string")
+  void test_empty_genres() {
+    // given
+    var spotifyArtist = SpotifyArtistDtoFactory.createDefault();
+    spotifyArtist.setGenres(Collections.emptyList());
+
+    // when
+    var artistEntity = underTest.transformSpotifyArtistDto(spotifyArtist);
+
+    // then
+    assertThat(artistEntity.getGenres()).isEqualTo("");
   }
 
   @Test
