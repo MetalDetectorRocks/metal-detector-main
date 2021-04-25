@@ -5,6 +5,8 @@ import rocks.metaldetector.discogs.facade.dto.DiscogsArtistDto;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 
+import java.util.List;
+
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 import static rocks.metaldetector.support.ImageSize.L;
@@ -21,7 +23,7 @@ public class ArtistEntityTransformer {
             .externalUrl(spotifyArtist.getUrl())
             .externalUri(spotifyArtist.getUri())
             .artistName(spotifyArtist.getName())
-            .genres(String.join(", ", spotifyArtist.getGenres()))
+            .genres(buildGenreString(spotifyArtist.getGenres()))
             .source(SPOTIFY)
             .spotifyPopularity(spotifyArtist.getPopularity())
             .spotifyFollower(spotifyArtist.getFollower())
@@ -44,5 +46,10 @@ public class ArtistEntityTransformer {
             .imageM(discogsArtist.getImages().get(M))
             .imageL(discogsArtist.getImages().get(L))
             .build();
+  }
+
+  private String buildGenreString(List<String> genres) {
+    String genreString = String.join(", ", genres);
+    return genreString.substring(0, Math.min(genreString.length(), 256));
   }
 }
