@@ -62,6 +62,8 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
         const announcementDateElement = releaseDivElement.querySelector("#announcement-date") as HTMLElement;
         const releaseTypeElement = releaseDivElement.querySelector("#release-type") as HTMLElement;
         const releaseGenreElement = releaseDivElement.querySelector("#release-genre") as HTMLElement;
+        const reissueIconElement = releaseDivElement.querySelector("#reissue-icon") as HTMLDivElement;
+        const reissueElement = releaseDivElement.querySelector("#reissue-text") as HTMLDivElement;
 
         releaseCoverElement.src = release.coverUrl || "/images/unknown-img.jpg";
         releaseTitleElement.textContent = `${release.artist} - ${release.albumTitle}`;
@@ -81,6 +83,11 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
 
         releaseTypeElement.textContent = release.type || "n/a";
         releaseGenreElement.textContent = release.genre || "n/a";
+
+        release.reissue
+            ? (reissueElement.innerHTML =
+                  '<span class="material-icons">report_problem</span>' + " This release might be a reissue/re-release")
+            : releaseTemplateNode.getElementById("reissue-wrapper")?.remove();
 
         return releaseDivElement;
     }
