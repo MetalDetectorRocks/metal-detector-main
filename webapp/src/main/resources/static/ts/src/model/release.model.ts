@@ -12,4 +12,5 @@ export interface Release {
     readonly source: string;
     readonly state: string;
     readonly coverUrl: string;
+    readonly reissue: boolean;
 }
