@@ -33,21 +33,22 @@ public class ButlerReleaseResponseTransformer {
 
   private ReleaseDto transformRelease(ButlerRelease release) {
     return ReleaseDto.builder()
-            .id(release.getId())
-            .artist(release.getArtist())
-            .albumTitle(release.getAlbumTitle())
-            .additionalArtists(release.getAdditionalArtists())
-            .releaseDate(release.getReleaseDate())
-            .announcementDate(release.getAnnouncementDate())
-            .estimatedReleaseDate(release.getEstimatedReleaseDate())
-            .genre(release.getGenre())
-            .type(enumPrettyPrinter.prettyPrintEnumValue(release.getType()))
-            .artistDetailsUrl(release.getArtistDetailsUrl())
-            .releaseDetailsUrl(release.getReleaseDetailsUrl())
-            .source(enumPrettyPrinter.prettyPrintEnumValue(release.getSource()))
-            .state(enumPrettyPrinter.prettyPrintEnumValue(release.getState()))
-            .coverUrl(transformCoverUrl(release.getCoverUrl()))
-            .build();
+        .id(release.getId())
+        .artist(release.getArtist())
+        .albumTitle(release.getAlbumTitle())
+        .additionalArtists(release.getAdditionalArtists())
+        .releaseDate(release.getReleaseDate())
+        .announcementDate(release.getAnnouncementDate())
+        .estimatedReleaseDate(release.getEstimatedReleaseDate())
+        .genre(release.getGenre())
+        .type(enumPrettyPrinter.prettyPrintEnumValue(release.getType()))
+        .artistDetailsUrl(release.getArtistDetailsUrl())
+        .releaseDetailsUrl(release.getReleaseDetailsUrl())
+        .source(enumPrettyPrinter.prettyPrintEnumValue(release.getSource()))
+        .state(enumPrettyPrinter.prettyPrintEnumValue(release.getState()))
+        .coverUrl(transformCoverUrl(release.getCoverUrl()))
+        .reissue(release.isReissue())
+        .build();
   }
 
   private String transformCoverUrl(String coverUrl) {
