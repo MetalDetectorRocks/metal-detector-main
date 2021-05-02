@@ -2,7 +2,7 @@ package rocks.metaldetector.service.telegram;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.notification.NotificationService;
@@ -10,7 +10,7 @@ import rocks.metaldetector.web.api.request.TelegramUpdate;
 
 import java.util.Optional;
 
-@Component
+@Service
 @AllArgsConstructor
 @Slf4j
 public class TelegramUpdateServiceImpl implements TelegramUpdateService {
