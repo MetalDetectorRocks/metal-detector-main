@@ -12,6 +12,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
@@ -37,13 +38,15 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -808,218 +811,6 @@ class NotificationServiceImplTest implements WithAssertions {
 
       // then
       verify(telegramService).sendMessage(notificationConfigEntity.getTelegramChatId(), message);
-    }
-  }
-
-  @DisplayName("Tests for getting notification config")
-  @Nested
-  class GetNotificationConfigTest {
-
-    @Test
-    @DisplayName("Getting current user's config calls currentUserSupplier")
-    void test_get_config_calls_current_user_supplier() {
-      // given
-      UserEntity userEntity = UserEntityFactory.createUser("name", "mail@mail.mail");
-      doReturn(userEntity).when(currentUserSupplier).get();
-      doReturn(Optional.of(NotificationConfigEntity.builder().user(userEntity).build())).when(notificationConfigRepository).findByUserId(any());
-
-      // when
-      underTest.getCurrentUserNotificationConfig();
-
-      // then
-      verify(currentUserSupplier).get();
-    }
-
-    @Test
-    @DisplayName("Getting current user's config calls notificationConfigRepository")
-    void test_get_config_calls_notification_repo() {
-      // given
-      var mockUser = mock(UserEntity.class);
-      var userId = 666L;
-      doReturn(userId).when(mockUser).getId();
-      doReturn(mockUser).when(currentUserSupplier).get();
-      doReturn(Optional.of(NotificationConfigEntity.builder().user(mockUser).build())).when(notificationConfigRepository).findByUserId(any());
-
-      // when
-      underTest.getCurrentUserNotificationConfig();
-
-      // then
-      verify(notificationConfigRepository).findByUserId(userId);
-    }
-
-    @Test
-    @DisplayName("Getting current user's config throws exception when id not found")
-    void test_get_config_throws_exception() {
-      // given
-      var mockUser = mock(UserEntity.class);
-      var userId = 666L;
-      var publicUserId = "123abc";
-      doReturn(userId).when(mockUser).getId();
-      doReturn(publicUserId).when(mockUser).getPublicId();
-      doReturn(mockUser).when(currentUserSupplier).get();
-      doReturn(Optional.empty()).when(notificationConfigRepository).findByUserId(any());
-
-      // when
-      var throwable = catchThrowable(() -> underTest.getCurrentUserNotificationConfig());
-
-      // then
-      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(publicUserId);
-    }
-
-    @Test
-    @DisplayName("Getting current user's config calls notificationConfigTransformer")
-    void test_get_config_calls_notification_config_trafo() {
-      // given
-      var userEntity = UserEntityFactory.createUser("name", "mail@mail.mail");
-      var notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).build();
-      doReturn(userEntity).when(currentUserSupplier).get();
-      doReturn(Optional.of(notificationConfigEntity)).when(notificationConfigRepository).findByUserId(any());
-
-      // when
-      underTest.getCurrentUserNotificationConfig();
-
-      // then
-      verify(notificationConfigTransformer).transform(notificationConfigEntity);
-    }
-
-    @Test
-    @DisplayName("Getting current user's config returns dto")
-    void test_get_config_returns_dto() {
-      // given
-      var userEntity = UserEntityFactory.createUser("name", "mail@mail.mail");
-      var notificationConfigDto = NotificationConfigDto.builder().frequencyInWeeks(4).build();
-      doReturn(userEntity).when(currentUserSupplier).get();
-      doReturn(Optional.of(NotificationConfigEntity.builder().user(userEntity).build())).when(notificationConfigRepository).findByUserId(any());
-      doReturn(notificationConfigDto).when(notificationConfigTransformer).transform(any());
-
-      // when
-      var result = underTest.getCurrentUserNotificationConfig();
-
-      // then
-      assertThat(result).isEqualTo(notificationConfigDto);
-    }
-  }
-
-  @DisplayName("Tests for updating notification config")
-  @Nested
-  class UpdateNotificationConfigTest {
-
-    @Test
-    @DisplayName("Updating current user's config calls currentUserSupplier")
-    void test_update_config_calls_current_user_supplier() {
-      // given
-      UserEntity userEntity = UserEntityFactory.createUser("name", "mail@mail.mail");
-      doReturn(userEntity).when(currentUserSupplier).get();
-      doReturn(Optional.of(NotificationConfigEntity.builder().user(userEntity).build())).when(notificationConfigRepository).findByUserId(any());
-
-      // when
-      underTest.updateCurrentUserNotificationConfig(new NotificationConfigDto());
-
-      // then
-      verify(currentUserSupplier).get();
-    }
-
-    @Test
-    @DisplayName("Updating current user's config calls notificationConfigRepository")
-    void test_update_config_calls_notification_repo() {
-      // given
-      var mockUser = mock(UserEntity.class);
-      var userId = 666L;
-      doReturn(userId).when(mockUser).getId();
-      doReturn(mockUser).when(currentUserSupplier).get();
-      doReturn(Optional.of(NotificationConfigEntity.builder().user(mockUser).build())).when(notificationConfigRepository).findByUserId(any());
-
-      // when
-      underTest.updateCurrentUserNotificationConfig(new NotificationConfigDto());
-
-      // then
-      verify(notificationConfigRepository).findByUserId(userId);
-    }
-
-    @Test
-    @DisplayName("Updating current user's config throws exception when id not found")
-    void test_update_config_throws_exception() {
-      // given
-      var mockUser = mock(UserEntity.class);
-      var userId = 666L;
-      var publicUserId = "123abc";
-      doReturn(userId).when(mockUser).getId();
-      doReturn(publicUserId).when(mockUser).getPublicId();
-      doReturn(mockUser).when(currentUserSupplier).get();
-      doReturn(Optional.empty()).when(notificationConfigRepository).findByUserId(any());
-
-      // when
-      var throwable = catchThrowable(() -> underTest.updateCurrentUserNotificationConfig(new NotificationConfigDto()));
-
-      // then
-      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(publicUserId);
-    }
-
-    @Test
-    @DisplayName("Updated config is saved")
-    void test_updated_config_saved() {
-      // given
-      ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
-      var userEntity = UserEntityFactory.createUser("name", "mail@mail.mail");
-      var notificationConfig = NotificationConfigEntity.builder().user(userEntity)
-          .frequencyInWeeks(2)
-          .build();
-      var notificationConfigDto = NotificationConfigDto.builder()
-          .frequencyInWeeks(4)
-          .notify(true).build();
-      doReturn(userEntity).when(currentUserSupplier).get();
-      doReturn(Optional.of(notificationConfig)).when(notificationConfigRepository).findByUserId(any());
-
-      // when
-      underTest.updateCurrentUserNotificationConfig(notificationConfigDto);
-
-      // then
-      verify(notificationConfigRepository).save(argumentCaptor.capture());
-      var savedEntity = argumentCaptor.getValue();
-      assertThat(savedEntity.getUser()).isEqualTo(notificationConfig.getUser());
-      assertThat(savedEntity.getFrequencyInWeeks()).isEqualTo(notificationConfigDto.getFrequencyInWeeks());
-      assertThat(savedEntity.getNotify()).isEqualTo(notificationConfigDto.isNotify());
-      assertThat(savedEntity.getNotificationAtReleaseDate()).isEqualTo(notificationConfigDto.isNotificationAtReleaseDate());
-      assertThat(savedEntity.getNotificationAtAnnouncementDate()).isEqualTo(notificationConfigDto.isNotificationAtAnnouncementDate());
-    }
-  }
-
-  @DisplayName("Tests for updating the telegram chat id")
-  @Nested
-  class UpdateTelegramChatIdTest {
-
-    @Test
-    @DisplayName("Updating telegram chat id calls notificationConfigRepository")
-    void test_update_telegram_id_calls_repository() {
-      // given
-      var userId = 100L;
-      doReturn(Optional.of(NotificationConfigEntity.builder().build())).when(notificationConfigRepository).findByUserId(anyLong());
-
-      // when
-      underTest.updateTelegramChatId(userId, 0);
-
-      // then
-      verify(notificationConfigRepository).findByUserId(userId);
-    }
-
-    @Test
-    @DisplayName("Given telegram chat id is saved")
-    void test_new_telegram_id_saved() {
-      // given
-      ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
-      var chatId = 100;
-      doReturn(Optional.of(NotificationConfigEntity.builder().build())).when(notificationConfigRepository).findByUserId(anyLong());
-
-      // when
-      underTest.updateTelegramChatId(0, chatId);
-
-      // then
-      verify(notificationConfigRepository).save(argumentCaptor.capture());
-      NotificationConfigEntity savedNotificationConfigEntity = argumentCaptor.getValue();
-
-      assertThat(savedNotificationConfigEntity.getTelegramChatId()).isEqualTo(chatId);
     }
   }
 }

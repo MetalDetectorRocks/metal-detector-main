@@ -3,4 +3,5 @@ export interface NotificationSettings {
     readonly frequencyInWeeks: number;
     readonly notificationAtReleaseDate: boolean;
     readonly notificationAtAnnouncementDate: boolean;
+    readonly telegramNotificationsActive: boolean;
 }

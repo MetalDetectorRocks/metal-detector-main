@@ -28,6 +28,6 @@ class NotificationConfigTransformerTest implements WithAssertions {
     assertThat(result.getFrequencyInWeeks()).isEqualTo(notificationConfigEntity.getFrequencyInWeeks());
     assertThat(result.isNotificationAtAnnouncementDate()).isEqualTo(notificationConfigEntity.getNotificationAtAnnouncementDate());
     assertThat(result.isNotificationAtReleaseDate()).isEqualTo(notificationConfigEntity.getNotificationAtReleaseDate());
-    assertThat(result.getTelegramChatId()).isEqualTo(notificationConfigEntity.getTelegramChatId());
+    assertThat(result.isTelegramNotificationsActive()).isTrue();
   }
 }

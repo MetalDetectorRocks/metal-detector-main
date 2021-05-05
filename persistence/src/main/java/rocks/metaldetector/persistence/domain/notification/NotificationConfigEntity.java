@@ -55,4 +55,8 @@ public class NotificationConfigEntity extends BaseEntity {
   @Column(name = "telegram_chat_id")
   @Setter
   private Integer telegramChatId;
+
+  @Column(name = "telegram_registration_id")
+  @Setter
+  private Integer telegramRegistrationId;
 }

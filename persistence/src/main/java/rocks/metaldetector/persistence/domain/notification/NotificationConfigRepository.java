@@ -9,4 +9,8 @@ public interface NotificationConfigRepository extends JpaRepository<Notification
   Optional<NotificationConfigEntity> findByUserId(Long userId);
 
   void deleteByUserId(Long userId);
+
+  boolean existsByTelegramRegistrationId(Integer telegramRegistrationId);
+
+  Optional<NotificationConfigEntity> findByTelegramRegistrationId(Integer telegramRegistrationId);
 }

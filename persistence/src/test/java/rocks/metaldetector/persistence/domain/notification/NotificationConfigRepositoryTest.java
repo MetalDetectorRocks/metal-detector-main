@@ -32,6 +32,7 @@ class NotificationConfigRepositoryTest extends BaseDataJpaTest implements WithAs
         .notificationAtReleaseDate(true)
         .notificationAtAnnouncementDate(true)
         .frequencyInWeeks(4)
+        .telegramRegistrationId(666)
         .build();
     userRepository.save(USER);
     underTest.save(NOTIFICATION_CONFIG);
@@ -45,7 +46,7 @@ class NotificationConfigRepositoryTest extends BaseDataJpaTest implements WithAs
 
   @Test
   @DisplayName("should find notification config entity by user id")
-  void should_find_notification_config_entity_by_public_user_id() {
+  void should_find_notification_config_entity_by_user_id() {
     // when
     var result = underTest.findByUserId(USER.getId());
 
@@ -56,7 +57,7 @@ class NotificationConfigRepositoryTest extends BaseDataJpaTest implements WithAs
 
   @Test
   @DisplayName("should return empty Optional if no notification config could be found")
-  void should_return_empty_optional_if_no_notification_config_could_be_found() {
+  void should_return_empty_optional_for_unknown_user_id() {
     // when
     var result = underTest.findByUserId(123456L);
 
@@ -70,6 +71,53 @@ class NotificationConfigRepositoryTest extends BaseDataJpaTest implements WithAs
     // when
     underTest.deleteByUserId(USER.getId());
     var result = underTest.findByUserId(USER.getId());
+
+    // then
+    assertThat(result).isNotPresent();
+  }
+
+  @Test
+  @DisplayName("should return true if notification config exists")
+  void test_exists_true() {
+    // given
+    var registrationId = 666;
+
+    // when
+    var result = underTest.existsByTelegramRegistrationId(registrationId);
+
+    // then
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  @DisplayName("should return false if notification config does not exist")
+  void test_exists_false() {
+    // given
+    var registrationId = 555;
+
+    // when
+    var result = underTest.existsByTelegramRegistrationId(registrationId);
+
+    // then
+    assertThat(result).isFalse();
+  }
+
+  @Test
+  @DisplayName("should find notification config entity by telegram registration id")
+  void should_find_notification_config_entity_by_registration_id() {
+    // when
+    var result = underTest.findByTelegramRegistrationId(NOTIFICATION_CONFIG.getTelegramRegistrationId());
+
+    // then
+    assertThat(result).isPresent();
+    assertThat(result.get()).isEqualTo(NOTIFICATION_CONFIG);
+  }
+
+  @Test
+  @DisplayName("should return empty Optional if no notification config could be found")
+  void should_return_empty_optional_for_unknown_registration_id() {
+    // when
+    var result = underTest.findByTelegramRegistrationId(555);
 
     // then
     assertThat(result).isNotPresent();

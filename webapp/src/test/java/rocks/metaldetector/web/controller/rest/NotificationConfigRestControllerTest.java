@@ -13,7 +13,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import rocks.metaldetector.service.notification.NotificationConfigDto;
-import rocks.metaldetector.service.notification.NotificationService;
+import rocks.metaldetector.service.notification.NotificationConfigService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
@@ -30,7 +30,7 @@ import static org.springframework.http.HttpStatus.OK;
 class NotificationConfigRestControllerTest implements WithAssertions {
 
   @Mock
-  private NotificationService notificationService;
+  private NotificationConfigService notificationConfigService;
 
   @Spy
   private ModelMapper modelMapper;
@@ -48,7 +48,7 @@ class NotificationConfigRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(notificationService, modelMapper);
+    reset(notificationConfigService, modelMapper);
   }
 
   @Test
@@ -68,7 +68,7 @@ class NotificationConfigRestControllerTest implements WithAssertions {
     restAssuredMockMvcUtils.doGet();
 
     // then
-    verify(notificationService).getCurrentUserNotificationConfig();
+    verify(notificationConfigService).getCurrentUserNotificationConfig();
   }
 
   @Test
@@ -76,7 +76,7 @@ class NotificationConfigRestControllerTest implements WithAssertions {
   void test_get_returns_dto() {
     // given
     var expectedDto = NotificationConfigDto.builder().frequencyInWeeks(4).build();
-    doReturn(expectedDto).when(notificationService).getCurrentUserNotificationConfig();
+    doReturn(expectedDto).when(notificationConfigService).getCurrentUserNotificationConfig();
 
     // when
     var validatableResponse = restAssuredMockMvcUtils.doGet();
@@ -137,6 +137,61 @@ class NotificationConfigRestControllerTest implements WithAssertions {
     restAssuredMockMvcUtils.doPut(updateNotificationConfigRequest);
 
     // then
-    verify(notificationService).updateCurrentUserNotificationConfig(notificationConfigDto);
+    verify(notificationConfigService).updateCurrentUserNotificationConfig(notificationConfigDto);
+  }
+
+  @Test
+  @DisplayName("Generating a registration id should return 200")
+  void test_post_returns_200() {
+    // when
+    var validatableResponse = restAssuredMockMvcUtils.doPost();
+
+    // then
+    validatableResponse.statusCode(OK.value());
+  }
+
+  @Test
+  @DisplayName("Generating a registration id calls service")
+  void test_post_calls_service() {
+    // when
+    restAssuredMockMvcUtils.doPost();
+
+    // then
+    verify(notificationConfigService).generateTelegramRegistrationId();
+  }
+
+  @Test
+  @DisplayName("Generating a registration id returns id")
+  void test_post_returns_id() {
+    // given
+    var expectedId = 666_666;
+    doReturn(expectedId).when(notificationConfigService).generateTelegramRegistrationId();
+
+    // when
+    var validatableResponse = restAssuredMockMvcUtils.doPost();
+
+    // then
+    var response = validatableResponse.extract().as(Integer.class);
+    assertThat(response).isEqualTo(expectedId);
+  }
+
+  @Test
+  @DisplayName("Deactivating telegram notifications should return 200")
+  void test_delete_returns_200() {
+    // when
+    var validatableResponse = restAssuredMockMvcUtils.doDelete();
+
+    // then
+    validatableResponse.statusCode(OK.value());
+  }
+
+  @Test
+  @DisplayName("Deactivating telegram notifications calls service")
+  void test_delete_calls_service() {
+    // when
+    restAssuredMockMvcUtils.doDelete();
+
+    // then
+    verify(notificationConfigService).deactivateTelegramNotifications();
   }
 }

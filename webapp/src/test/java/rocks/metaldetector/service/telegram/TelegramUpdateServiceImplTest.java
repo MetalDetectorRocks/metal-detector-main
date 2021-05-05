@@ -8,18 +8,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.service.notification.NotificationService;
+import rocks.metaldetector.service.notification.NotificationConfigService;
 import rocks.metaldetector.web.api.request.TelegramChat;
 import rocks.metaldetector.web.api.request.TelegramMessage;
 import rocks.metaldetector.web.api.request.TelegramUpdate;
 
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
@@ -27,7 +21,7 @@ import static org.mockito.Mockito.verify;
 class TelegramUpdateServiceImplTest implements WithAssertions {
 
   @Mock
-  private NotificationService notificationService;
+  private NotificationConfigService notificationConfigService;
 
   @Mock
   private UserRepository userRepository;
@@ -37,37 +31,20 @@ class TelegramUpdateServiceImplTest implements WithAssertions {
 
   @AfterEach
   private void tearDown() {
-    reset(notificationService, userRepository);
+    reset(notificationConfigService, userRepository);
   }
 
   @Test
-  @DisplayName("userRepository is called with email address from message")
+  @DisplayName("notificationService is called with correct ids")
   void test_user_repository_called() {
     // given
-    var messageText = "text";
-    var update = new TelegramUpdate(new TelegramMessage(messageText, null));
+    var messageText = "123456";
+    var update = new TelegramUpdate(new TelegramMessage(messageText, new TelegramChat(666)));
 
     // when
     underTest.processUpdate(update);
 
     // then
-    verify(userRepository).findByEmail(messageText);
-  }
-
-  @Test
-  @DisplayName("if user is present, notificationService is called to set telegram chat id")
-  void test_notification_service_called() {
-    // given
-    var user = mock(AbstractUserEntity.class);
-    var chatId = 666;
-    var update = new TelegramUpdate(new TelegramMessage(null, new TelegramChat(chatId)));
-    doReturn(555L).when(user).getId();
-    doReturn(Optional.of(user)).when(userRepository).findByEmail(any());
-
-    // when
-    underTest.processUpdate(update);
-
-    // then
-    verify(notificationService).updateTelegramChatId(user.getId(), chatId);
+    verify(notificationConfigService).updateTelegramChatId(Integer.parseInt(messageText), update.getMessage().getChat().getId());
   }
 }
