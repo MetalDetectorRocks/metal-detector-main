@@ -28,4 +28,28 @@ export class NotificationSettingsRestClient {
                 throw error;
             });
     }
+
+    public async generateRegistrationId(): Promise<number> {
+        return await axios
+            .post(this.NOTIFICATION_SETTINGS_URL, axiosConfig)
+            .then((response: AxiosResponse) => {
+                return response.data;
+            })
+            .catch((error: AxiosError) => {
+                console.error(error);
+                throw error;
+            });
+    }
+
+    public async deactivateTelegramNotifications(): Promise<void> {
+        return await axios
+            .delete(this.NOTIFICATION_SETTINGS_URL, axiosConfig)
+            .then((response: AxiosResponse) => {
+                return response.data;
+            })
+            .catch((error: AxiosError) => {
+                console.error(error);
+                throw error;
+            });
+    }
 }

@@ -9,7 +9,6 @@ import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
-import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.email.AbstractEmail;
@@ -18,7 +17,6 @@ import rocks.metaldetector.service.email.ReleasesEmail;
 import rocks.metaldetector.service.email.TodaysAnnouncementsEmail;
 import rocks.metaldetector.service.email.TodaysReleasesEmail;
 import rocks.metaldetector.support.TimeRange;
-import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.telegram.facade.TelegramService;
 
 import java.time.LocalDate;
@@ -43,8 +41,6 @@ public class NotificationServiceImpl implements NotificationService {
   private final EmailService emailService;
   private final FollowArtistService followArtistService;
   private final NotificationConfigRepository notificationConfigRepository;
-  private final NotificationConfigTransformer notificationConfigTransformer;
-  private final CurrentUserSupplier currentUserSupplier;
   private final TelegramService telegramService;
   private final TelegramNotificationFormatter notificationFormatter;
 
@@ -88,38 +84,6 @@ public class NotificationServiceImpl implements NotificationService {
                           config.getNotificationAtAnnouncementDate())
         .forEach(notificationConfig -> notifyOnSpecificDate(notificationConfig, todaysAnnouncedReleases, (AbstractUserEntity user, List<ReleaseDto> filteredReleases) ->
             new TodaysAnnouncementsEmail(user.getEmail(), user.getUsername(), filteredReleases)));
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public NotificationConfigDto getCurrentUserNotificationConfig() {
-    AbstractUserEntity currentUser = currentUserSupplier.get();
-    NotificationConfigEntity notificationConfigEntity = notificationConfigRepository.findByUserId(currentUser.getId())
-        .orElseThrow(() -> new ResourceNotFoundException("Notification config for user '" + currentUser.getPublicId() + "' not found"));
-    return notificationConfigTransformer.transform(notificationConfigEntity);
-  }
-
-  @Override
-  @Transactional
-  public void updateCurrentUserNotificationConfig(NotificationConfigDto notificationConfigDto) {
-    AbstractUserEntity currentUser = currentUserSupplier.get();
-    NotificationConfigEntity notificationConfigEntity = notificationConfigRepository.findByUserId(currentUser.getId())
-        .orElseThrow(() -> new ResourceNotFoundException("Notification config for user '" + currentUser.getPublicId() + "' not found"));
-
-    notificationConfigEntity.setFrequencyInWeeks(notificationConfigDto.getFrequencyInWeeks());
-    notificationConfigEntity.setNotificationAtAnnouncementDate(notificationConfigDto.isNotificationAtAnnouncementDate());
-    notificationConfigEntity.setNotificationAtReleaseDate(notificationConfigDto.isNotificationAtReleaseDate());
-    notificationConfigEntity.setNotify(notificationConfigDto.isNotify());
-
-    notificationConfigRepository.save(notificationConfigEntity);
-  }
-
-  @Override
-  public void updateTelegramChatId(long userId, int chatId) {
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
-    NotificationConfigEntity notificationConfig = notificationConfigRepository.findByUserId(userId).get();
-    notificationConfig.setTelegramChatId(chatId);
-    notificationConfigRepository.save(notificationConfig);
   }
 
   private void frequencyNotification(NotificationConfigEntity notificationConfig, ReleaseContainer releaseContainer) {

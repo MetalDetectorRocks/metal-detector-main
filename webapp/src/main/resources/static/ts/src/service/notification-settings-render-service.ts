@@ -13,6 +13,11 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
     private fourWeeklyFrequencyRb!: HTMLInputElement;
     private releaseDateNotificationToggle!: HTMLInputElement;
     private announcementDateNotificationToggle!: HTMLInputElement;
+    private generateRegistrationIdButton!: HTMLButtonElement;
+    private deactivateTelegramNotificationButton!: HTMLButtonElement;
+    private telegramArea!: HTMLDivElement;
+    private telegramActivationArea!: HTMLDivElement;
+    private telegramDeactivationArea!: HTMLDivElement;
 
     constructor(
         notificationSettingsRestClient: NotificationSettingsRestClient,
@@ -35,6 +40,13 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
         this.announcementDateNotificationToggle = document.getElementById(
             "announcement-date-notification-toggle",
         ) as HTMLInputElement;
+        this.generateRegistrationIdButton = document.getElementById("telegram-id-button") as HTMLButtonElement;
+        this.deactivateTelegramNotificationButton = document.getElementById(
+            "deactivate-telegram-button",
+        ) as HTMLButtonElement;
+        this.telegramArea = document.getElementById("telegram-area") as HTMLDivElement;
+        this.telegramActivationArea = document.getElementById("telegram-activation-area") as HTMLDivElement;
+        this.telegramDeactivationArea = document.getElementById("telegram-deactivation-area") as HTMLDivElement;
     }
 
     private addEventListener(): void {
@@ -46,6 +58,11 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
         this.fourWeeklyFrequencyRb.addEventListener("change", this.onAnyValueChange.bind(this));
         this.releaseDateNotificationToggle.addEventListener("change", this.onAnyValueChange.bind(this));
         this.announcementDateNotificationToggle.addEventListener("change", this.onAnyValueChange.bind(this));
+        this.generateRegistrationIdButton.addEventListener("click", this.generateRegistrationId.bind(this));
+        this.deactivateTelegramNotificationButton.addEventListener(
+            "click",
+            this.deactivateTelegramNotifications.bind(this),
+        );
     }
 
     protected getHostElementId(): string {
@@ -60,6 +77,12 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
         this.fourWeeklyFrequencyRb.checked = notificationSettings.frequencyInWeeks === 4;
         this.releaseDateNotificationToggle.checked = notificationSettings.notificationAtReleaseDate;
         this.announcementDateNotificationToggle.checked = notificationSettings.notificationAtAnnouncementDate;
+
+        if (notificationSettings.telegramNotificationsActive) {
+            this.telegramArea.removeChild(this.telegramActivationArea);
+        } else {
+            this.telegramArea.removeChild(this.telegramDeactivationArea);
+        }
     }
 
     private onRegularNotificationToggleValueChange(): void {
@@ -79,9 +102,37 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
                 frequencyInWeeks: this.twoWeeklyFrequencyRb.checked ? 2 : 4,
                 notificationAtReleaseDate: this.releaseDateNotificationToggle.checked,
                 notificationAtAnnouncementDate: this.announcementDateNotificationToggle.checked,
+                telegramNotificationsActive: false,
             })
-            .catch((response) => {
+            .catch(() => {
                 const message = `<h3 class="h5">${UNKNOWN_ERROR_MESSAGE}</h3>Your changes may not have been saved. Please try again later.`;
+                const infoMessage = this.alertService.renderErrorAlert(message, false);
+                this.hostElement.insertAdjacentElement("afterbegin", infoMessage);
+            });
+    }
+
+    private generateRegistrationId(): void {
+        this.notificationSettingsRestClient
+            .generateRegistrationId()
+            .then((response) => {
+                this.generateRegistrationIdButton.textContent = response + "";
+            })
+            .catch(() => {
+                const message = `<h3 class="h5">${UNKNOWN_ERROR_MESSAGE}</h3>Id could not be generated. Please try again later.`;
+                const infoMessage = this.alertService.renderErrorAlert(message, false);
+                this.hostElement.insertAdjacentElement("afterbegin", infoMessage);
+            });
+    }
+
+    private deactivateTelegramNotifications(): void {
+        this.notificationSettingsRestClient
+            .deactivateTelegramNotifications()
+            .then(() => {
+                const telegramArea = document.getElementById("telegram-area") as HTMLDivElement;
+                telegramArea.replaceChild(this.telegramActivationArea, this.telegramDeactivationArea);
+            })
+            .catch(() => {
+                const message = `<h3 class="h5">${UNKNOWN_ERROR_MESSAGE}</h3>Telegram notifications could not be deactivated. Please try again later.`;
                 const infoMessage = this.alertService.renderErrorAlert(message, false);
                 this.hostElement.insertAdjacentElement("afterbegin", infoMessage);
             });

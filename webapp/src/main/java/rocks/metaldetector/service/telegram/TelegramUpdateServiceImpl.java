@@ -2,21 +2,16 @@ package rocks.metaldetector.service.telegram;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
-import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.service.notification.NotificationService;
+import org.springframework.stereotype.Component;
+import rocks.metaldetector.service.notification.NotificationConfigService;
 import rocks.metaldetector.web.api.request.TelegramUpdate;
 
-import java.util.Optional;
-
-@Service
+@Component
 @AllArgsConstructor
 @Slf4j
 public class TelegramUpdateServiceImpl implements TelegramUpdateService {
 
-  private final NotificationService notificationService;
-  private final UserRepository userRepository;
+  private final NotificationConfigService notificationConfigService;
 
   @Override
   public void processUpdate(TelegramUpdate update) {
@@ -24,12 +19,7 @@ public class TelegramUpdateServiceImpl implements TelegramUpdateService {
   }
 
   private void registerForTelegramNotifications(TelegramUpdate update) {
-    String messageText = update.getMessage().getText();
-    Optional<AbstractUserEntity> user = userRepository.findByEmail(messageText);
-    if (user.isPresent()) {
-      notificationService.updateTelegramChatId(user.get().getId(), update.getMessage().getChat().getId());
-    } else {
-      log.warn("Could not update telegram chat id for user with email '{}' - user not found", messageText);
-    }
+    String messageText = update.getMessage().getText().trim();
+    notificationConfigService.updateTelegramChatId(Integer.parseInt(messageText), update.getMessage().getChat().getId());
   }
 }
