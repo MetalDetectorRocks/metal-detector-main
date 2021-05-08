@@ -73,6 +73,11 @@
                 </a>
             </li>
             <li class="nav-item h5">
+                <a href="#" th:href="@{/admin/notifications}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/notifications'}? 'active' : ''" class="text-dark px-4 py-3 ">
+                    <i class="material-icons pr-2">announcement</i>Notifications
+                </a>
+            </li>
+            <li class="nav-item h5">
                 <a href="#" th:href="@{/admin/analytics}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/analytics'}? 'active' : ''" class="text-dark px-4 py-3 ">
                     <i class="material-icons pr-2">timeline</i>Analytics
                 </a>

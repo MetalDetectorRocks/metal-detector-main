@@ -40,13 +40,14 @@ public class ViewNames {
   }
 
   public static class AdminArea {
-    public static final String INDEX       = "admin/index";
-    public static final String IMPORT      = "admin/import/list";
-    public static final String ANALYTICS   = "admin/analytics";
-    public static final String SETTINGS    = "admin/settings";
-    public static final String RELEASES    = "admin/releases/list";
-    public static final String USERS       = "admin/users/list";
-    public static final String PROFILE     = "admin/profile";
+    public static final String INDEX          = "admin/index";
+    public static final String IMPORT         = "admin/import/list";
+    public static final String ANALYTICS      = "admin/analytics";
+    public static final String SETTINGS       = "admin/settings";
+    public static final String RELEASES       = "admin/releases/list";
+    public static final String USERS          = "admin/users/list";
+    public static final String PROFILE        = "admin/profile";
+    public static final String NOTIFICATIONS  = "admin/notifications";
   }
 
   public static class EmailTemplates {

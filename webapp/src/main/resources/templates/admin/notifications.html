@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en">
+<head>
+    <title>Notifications</title>
+    <script th:src="@{/js/admin/notifications.js}" src="#"></script>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1 class="h2 text-dark">Notifications</h1>
+        <p>Warning: these buttons trigger notifications for all users!</p>
+        <button id="frequency-notification-button" type="button" class="btn btn-dark btn-sm mt-2 mb-3">
+            Notify on frequency
+        </button>
+        <button id="release-date-notification-button" type="button" class="btn btn-dark btn-sm mt-2 mb-3">
+            Notify on release date
+        </button>
+        <button id="announcement-date-notification-button" type="button" class="btn btn-dark btn-sm mt-2 mb-3">
+            Notify on announcement date
+        </button>
+    </section>
+</body>
+</html>
