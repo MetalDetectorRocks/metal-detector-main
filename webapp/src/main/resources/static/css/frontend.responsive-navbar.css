@@ -1,0 +1,276 @@
+.nav-wrapper {
+    background-color: var(--dark-background-color);
+    border-bottom: 1px solid var(--grey-border-color);
+    width: 100%;
+    padding: 0 2%;
+}
+.nav-wrapper nav {
+    display: flex;
+    align-items: center;
+    position: relative;
+    max-width: 1440px;
+    margin: 0 auto;
+    height: 80px;
+}
+.logo {
+    flex-grow: 0;
+}
+.search-box {
+    margin-left: 25px;
+    flex-grow: 10;
+}
+.search-box input {
+    height: 3rem;
+    background-color: var(--dark-field-background-color);
+    color: var(--light-font-color) !important;
+    border-color: var(--grey-border-color);
+    font-size: 1.5rem;
+    font-family: 'Metal Mania', cursive;
+    width: 100%;
+    margin-bottom: 7px;
+}
+.search-box input:focus {
+    background-color: var(--dark-field-background-color);
+}
+.search-box input::placeholder {
+    color: var(--light-font-color-muted);
+}
+nav ul {
+    margin: 0;
+    padding-inline-start: 20px;
+}
+.links {
+    display: flex;
+    flex-grow: 0;
+}
+nav li {
+    list-style: none;
+}
+.links li a,
+.links li label {
+    color: var(--menu-foreground-color);
+    font-size: 16px;
+    font-weight: 650;
+    padding: 0 15px;
+    transition: all 0.5s ease;
+}
+.links li a.active {
+    color: var(--menu-foreground-hover-color);
+}
+.links li label {
+    display: none;
+}
+.links li a:hover,
+.links li label:hover {
+    color: var(--menu-foreground-hover-color);
+}
+.setting-links .dropdown-menu {
+    top: 15px !important;
+}
+.setting-links a {
+    color: var(--light-font-color);
+}
+.nav-wrapper .search-icon,
+.nav-wrapper .menu-icon {
+    color: var(--light-font-color);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 60px;
+    width: 70px;
+    text-align: center;
+    margin: 0;
+    display: none;
+}
+.nav-wrapper .mobile-search-box {
+    position: absolute;
+    height: 100%;
+    max-width: calc(100% - 50px);
+    width: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.75s ease;
+}
+.mobile-search-box input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    color: var(--light-font-color);
+    font-family: 'Metal Mania', cursive;
+    font-size: 1.5rem;
+    background: var(--dark-background-color);
+    padding: 0 100px 0 15px;
+}
+.mobile-search-box input::placeholder {
+    color: var(--light-font-color-muted);
+    font-family: 'Metal Mania', cursive;
+    font-size: 1.5rem;
+}
+.mobile-search-box .go-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    line-height: 60px;
+    width: 70px;
+    background: var(--dark-background-color);
+    border: none;
+    outline: none;
+    color: var(--light-font-color);
+    font-size: 20px;
+    cursor: pointer;
+}
+.nav-wrapper input[type="checkbox"] {
+    display: none;
+}
+.nav-wrapper .material-icons {
+    vertical-align: middle;
+    font-weight: 900;
+}
+
+/* Dropdown menu */
+.links ul {
+    position: absolute;
+    background: var(--dark-background-color);
+    top: 80px;
+    z-index: -1;
+    opacity: 0;
+    visibility: hidden;
+}
+.links li:hover > ul {
+    top: 70px;
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.5s ease
+}
+.links ul li a {
+    display: block;
+    width: 100%;
+    line-height: 30px;
+}
+/* 2nd level dropdown */
+.links ul ul {
+    position: absolute;
+    top: 0;
+    right: calc(-70% + 4px);
+}
+.links ul li:hover ul {
+    top: 0;
+}
+.links ul li {
+    position: relative;
+}
+
+/* Responsive navigation */
+@media screen and (max-width: 1250px) {
+    .nav-wrapper nav {
+        max-width: 100%;
+    }
+    .links li a {
+        padding: 0 10px;
+    }
+}
+
+@media screen and (max-width: 1050px) {
+    .nav-wrapper nav {
+        justify-content: space-between;
+    }
+    .nav-wrapper #show-search:checked ~ .logo {
+        display: none;
+    }
+    .nav-wrapper .search-box,
+    .nav-wrapper .desktop-link {
+        display: none;
+    }
+    .nav-wrapper .search-icon,
+    .nav-wrapper .menu-icon {
+        display: block;
+    }
+    .nav-wrapper #show-search:checked ~ .mobile-search-box {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .nav-wrapper #show-menu ~ .menu-icon .material-icons::before {
+        content: "menu";
+    }
+    .nav-wrapper #show-menu:checked ~ .menu-icon .material-icons::before {
+        content: "close"
+    }
+    .nav-wrapper #show-search ~ .search-icon .material-icons::before {
+        content: "search";
+    }
+    .nav-wrapper #show-search:checked ~ .search-icon .material-icons::before {
+        content: "close"
+    }
+    .links {
+        display: block;
+        position: fixed;
+        background: var(--dark-background-color);
+        height: 100%;
+        width: 100%;
+        top: 81px;
+        left: -100%;
+        margin-left: 0;
+        max-width: 350px;
+        overflow-y: auto;
+        padding-bottom: 100px;
+        transition: all 0.5s ease;
+        z-index: 1;
+    }
+    #show-menu:checked ~ .links {
+        left: 0;
+    }
+    .links li {
+        margin: 10px 0;
+    }
+    .links li a,
+    .links li label {
+        font-size: 20px;
+        display: block;
+        padding: 0 10px;
+        cursor: pointer;
+    }
+    .mobile-search-box input::placeholder {
+        font-size: 1.3rem;
+    }
+
+    /* Dropdown menu responsive */
+    .links ul,
+    .links ul ul {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        background: none;
+        max-height: 0;
+        overflow: hidden;
+        padding-inline-start: 5px;
+    }
+    .links #show-profile-and-settings:checked ~ ul {
+        max-height: 100vh;
+    }
+    .links ul li {
+        margin: 7px 15px;
+    }
+    .links ul li a {
+        font-size: 18px;
+        line-height: 35px;
+    }
+    .links .dropdown-item.active,
+    .links .dropdown-item:hover,
+    .links .dropdown-item:focus {
+        background-color: transparent;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .nav-wrapper .mobile-search-box {
+        max-width: calc(100% - 70px);
+    }
+    .nav-wrapper .mobile-search-box .go-icon{
+        width: 30px;
+        right: 0;
+    }
+    .nav-wrapper .mobile-search-box input {
+        padding-right: 30px;
+    }
+}
