@@ -86,13 +86,14 @@ public class Endpoints {
   }
 
   public static class AdminArea {
-    public static final String INDEX        = "/admin";
-    public static final String IMPORT       = "/admin/import";
-    public static final String ANALYTICS    = "/admin/analytics";
-    public static final String SETTINGS     = "/admin/settings";
-    public static final String RELEASES     = "/admin/releases";
-    public static final String USERS        = "/admin/users";
-    public static final String PROFILE      = "/admin/profile";
+    public static final String INDEX          = "/admin";
+    public static final String IMPORT         = "/admin/import";
+    public static final String ANALYTICS      = "/admin/analytics";
+    public static final String SETTINGS       = "/admin/settings";
+    public static final String RELEASES       = "/admin/releases";
+    public static final String USERS          = "/admin/users";
+    public static final String PROFILE        = "/admin/profile";
+    public static final String NOTIFICATIONS  = "/admin/notifications";
   }
 
   public static class AntPattern {
