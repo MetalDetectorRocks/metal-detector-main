@@ -110,6 +110,8 @@ export class SpotifySynchronizationRenderService {
     private onDisconnectSpotifyClicked(): void {
         this.spotifyRestClient.disconnectSpotifyAccount().then(() => {
             this.toastService.createInfoToast("Spotify account successfully disconnected");
+            this.artistSelectionElement.classList.add("invisible");
+            this.clearArtistsContainer();
             this.deactivateButtonBar();
         });
     }
