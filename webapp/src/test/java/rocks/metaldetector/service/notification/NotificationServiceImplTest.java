@@ -28,6 +28,7 @@ import rocks.metaldetector.service.email.TodaysReleasesEmail;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
+import rocks.metaldetector.telegram.facade.TelegramService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -49,6 +51,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.service.email.ReleasesEmail.SUBJECT;
 import static rocks.metaldetector.service.notification.NotificationServiceImpl.SUPPORTED_FREQUENCIES;
+import static rocks.metaldetector.service.notification.NotificationServiceImpl.TODAYS_ANNOUNCEMENTS_TEXT;
+import static rocks.metaldetector.service.notification.NotificationServiceImpl.TODAYS_RELEASES_TEXT;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceImplTest implements WithAssertions {
@@ -71,12 +75,19 @@ class NotificationServiceImplTest implements WithAssertions {
   @Mock
   private CurrentUserSupplier currentUserSupplier;
 
+  @Mock
+  private TelegramNotificationFormatter notificationFormatter;
+
+  @Mock
+  private TelegramService telegramService;
+
   @InjectMocks
   private NotificationServiceImpl underTest;
 
   @AfterEach
   void tearDown() {
-    reset(releaseService, emailService, followArtistService, notificationConfigRepository, notificationConfigTransformer, currentUserSupplier);
+    reset(releaseService, emailService, followArtistService, notificationConfigRepository, notificationConfigTransformer,
+          currentUserSupplier, notificationConfigRepository, telegramService);
   }
 
   @DisplayName("Tests for notification on frequency")
@@ -99,7 +110,7 @@ class NotificationServiceImplTest implements WithAssertions {
     @BeforeEach
     void setup() {
       userEntity = UserEntityFactory.createUser("user", "user@user.de");
-      notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).notify(true).build();
+      notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).notify(true).telegramChatId(666).build();
       doReturn(List.of(notificationConfigEntity)).when(notificationConfigRepository).findAll();
     }
 
@@ -312,6 +323,38 @@ class NotificationServiceImplTest implements WithAssertions {
       // then
       verifyNoInteractions(followArtistService);
     }
+
+    @Test
+    @DisplayName("if telegramChatId is set, notificationFormatter is called")
+    void test_notification_formatter_called() {
+      // given
+      var releaseDtos = List.of(ReleaseDtoFactory.withArtistName("A"));
+      doReturn(releaseDtos).when(releaseService).findAllReleases(any(), any());
+      doReturn(List.of(ArtistDtoFactory.withName("A"))).when(followArtistService).getFollowedArtistsOfUser(any());
+
+      // when
+      underTest.notifyOnFrequency();
+
+      // then
+      verify(notificationFormatter).formatFrequencyNotificationMessage(releaseDtos, releaseDtos);
+    }
+
+    @Test
+    @DisplayName("if telegramChatId is set, telegramService is called")
+    void test_telegram_service_called() {
+      // given
+      var releaseDtos = List.of(ReleaseDtoFactory.withArtistName("A"));
+      var message = "message";
+      doReturn(releaseDtos).when(releaseService).findAllReleases(any(), any());
+      doReturn(List.of(ArtistDtoFactory.withName("A"))).when(followArtistService).getFollowedArtistsOfUser(any());
+      doReturn(message).when(notificationFormatter).formatFrequencyNotificationMessage(anyList(), anyList());
+
+      // when
+      underTest.notifyOnFrequency();
+
+      // then
+      verify(telegramService).sendMessage(notificationConfigEntity.getTelegramChatId(), message);
+    }
   }
 
   @DisplayName("Tests for notification on release date")
@@ -331,7 +374,7 @@ class NotificationServiceImplTest implements WithAssertions {
     @BeforeEach
     void setup() {
       userEntity = UserEntityFactory.createUser("user", "user@user.de");
-      notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).notificationAtReleaseDate(true).build();
+      notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).notificationAtReleaseDate(true).telegramChatId(666).build();
       doReturn(List.of(notificationConfigEntity)).when(notificationConfigRepository).findAll();
     }
 
@@ -500,6 +543,38 @@ class NotificationServiceImplTest implements WithAssertions {
       // then
       verifyNoInteractions(followArtistService);
     }
+
+    @Test
+    @DisplayName("if telegramChatId is set, notificationFormatter is called")
+    void test_notification_formatter_called() {
+      // given
+      var releaseDtos = List.of(ReleaseDtoFactory.withArtistName("A"));
+      doReturn(releaseDtos).when(releaseService).findAllReleases(any(), any());
+      doReturn(List.of(ArtistDtoFactory.withName("A"))).when(followArtistService).getFollowedArtistsOfUser(any());
+
+      // when
+      underTest.notifyOnReleaseDate();
+
+      // then
+      verify(notificationFormatter).formatDateNotificationMessage(releaseDtos, TODAYS_RELEASES_TEXT);
+    }
+
+    @Test
+    @DisplayName("if telegramChatId is set, telegramService is called")
+    void test_telegram_service_called() {
+      // given
+      var releaseDtos = List.of(ReleaseDtoFactory.withArtistName("A"));
+      var message = "message";
+      doReturn(releaseDtos).when(releaseService).findAllReleases(any(), any());
+      doReturn(List.of(ArtistDtoFactory.withName("A"))).when(followArtistService).getFollowedArtistsOfUser(any());
+      doReturn(message).when(notificationFormatter).formatDateNotificationMessage(anyList(), any());
+
+      // when
+      underTest.notifyOnReleaseDate();
+
+      // then
+      verify(telegramService).sendMessage(notificationConfigEntity.getTelegramChatId(), message);
+    }
   }
 
   @DisplayName("Tests for notification on announcement date")
@@ -519,7 +594,7 @@ class NotificationServiceImplTest implements WithAssertions {
     @BeforeEach
     void setup() {
       userEntity = UserEntityFactory.createUser("user", "user@user.de");
-      notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).notificationAtAnnouncementDate(true).build();
+      notificationConfigEntity = NotificationConfigEntity.builder().user(userEntity).notificationAtAnnouncementDate(true).telegramChatId(666).build();
       doReturn(List.of(notificationConfigEntity)).when(notificationConfigRepository).findAll();
     }
 
@@ -701,6 +776,38 @@ class NotificationServiceImplTest implements WithAssertions {
 
       // then
       verifyNoInteractions(followArtistService);
+    }
+
+    @Test
+    @DisplayName("if telegramChatId is set, notificationFormatter is called")
+    void test_notification_formatter_called() {
+      // given
+      var releaseDtos = List.of(ReleaseDtoFactory.withAnnouncementDate(LocalDate.now()));
+      doReturn(releaseDtos).when(releaseService).findAllReleases(any(), any());
+      doReturn(List.of(ArtistDtoFactory.withName("A"))).when(followArtistService).getFollowedArtistsOfUser(any());
+
+      // when
+      underTest.notifyOnAnnouncementDate();
+
+      // then
+      verify(notificationFormatter).formatDateNotificationMessage(releaseDtos, TODAYS_ANNOUNCEMENTS_TEXT);
+    }
+
+    @Test
+    @DisplayName("if telegramChatId is set, telegramService is called")
+    void test_telegram_service_called() {
+      // given
+      var releaseDtos = List.of(ReleaseDtoFactory.withAnnouncementDate(LocalDate.now()));
+      var message = "message";
+      doReturn(releaseDtos).when(releaseService).findAllReleases(any(), any());
+      doReturn(List.of(ArtistDtoFactory.withName("A"))).when(followArtistService).getFollowedArtistsOfUser(any());
+      doReturn(message).when(notificationFormatter).formatDateNotificationMessage(anyList(), any());
+
+      // when
+      underTest.notifyOnAnnouncementDate();
+
+      // then
+      verify(telegramService).sendMessage(notificationConfigEntity.getTelegramChatId(), message);
     }
   }
 

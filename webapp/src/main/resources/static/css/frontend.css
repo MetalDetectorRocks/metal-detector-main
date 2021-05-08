@@ -83,6 +83,15 @@ footer .footer-icon {
 footer .footer-icon:hover {
     filter: grayscale(0);
 }
+@media screen and (max-width: 1050px) {
+    footer .flex-wrapper {
+        flex-direction: column-reverse;
+    }
+    footer .flex-wrapper .flex-item {
+        width: 100%;
+        text-align: center;
+    }
+}
 
 /* Cards */
 .card {
@@ -325,14 +334,4 @@ footer .footer-icon:hover {
 .dismissible-button {
     width: max-content;
     padding-left: 1.75rem;
-}
-
-@media screen and (max-width: 1050px) {
-    footer .flex-wrapper {
-        flex-direction: column-reverse;
-    }
-    footer .flex-wrapper .flex-item {
-        width: 100%;
-        text-align: center;
-    }
 }

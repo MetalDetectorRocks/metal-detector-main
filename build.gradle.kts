@@ -54,7 +54,7 @@ val dependencyVersions = listOf(
   "commons-io:commons-io:2.8.0"
 )
 val dependencyGroupVersions = mapOf(
-  "org.springframework" to "5.3.5",
+  "org.springframework" to "5.3.6",
   "org.springframework.security" to extra["springSecurityVersion"] as String,
   "org.springframework.boot" to extra["springBootVersion"] as String,
   "com.fasterxml.jackson.core" to extra["jacksonVersion"] as String,
@@ -64,7 +64,7 @@ val dependencyGroupVersions = mapOf(
 
 plugins {
   id("java-library")
-  id("org.siouan.frontend-jdk11") version "5.0.1"
+  id("org.siouan.frontend-jdk11") version "5.1.0"
   id("org.springframework.boot") version "2.4.5"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
 }

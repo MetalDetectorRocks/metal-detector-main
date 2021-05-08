@@ -35,6 +35,7 @@ public class ReleaseDto {
   private String source;
   private String state;
   private String coverUrl;
+  private boolean reissue;
 
   @ArtifactForFramework
   @JsonProperty(access = READ_ONLY)

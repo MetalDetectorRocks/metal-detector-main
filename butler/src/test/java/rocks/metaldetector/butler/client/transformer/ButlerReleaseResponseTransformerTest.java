@@ -106,6 +106,7 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
     assertThat(releaseDto.getReleaseDetailsUrl()).isEqualTo(release.getReleaseDetailsUrl());
     assertThat(releaseDto.getSource()).isEqualTo(WordUtils.capitalizeFully(release.getSource()));
     assertThat(releaseDto.getState()).isEqualTo(WordUtils.capitalizeFully(release.getState()));
+    assertThat(releaseDto.isReissue()).isEqualTo(release.isReissue());
   }
 
   @Test
