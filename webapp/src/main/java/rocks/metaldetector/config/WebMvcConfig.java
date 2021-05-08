@@ -46,6 +46,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     registry.addViewController(Endpoints.AdminArea.ANALYTICS).setViewName(ViewNames.AdminArea.ANALYTICS);
     registry.addViewController(Endpoints.AdminArea.SETTINGS).setViewName(ViewNames.AdminArea.SETTINGS);
     registry.addViewController(Endpoints.AdminArea.PROFILE).setViewName(ViewNames.AdminArea.PROFILE);
+    registry.addViewController(Endpoints.AdminArea.NOTIFICATIONS).setViewName(ViewNames.AdminArea.NOTIFICATIONS);
   }
 
   @Override
