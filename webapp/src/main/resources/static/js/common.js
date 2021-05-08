@@ -1,25 +1,32 @@
+$(document).ready(function () {
+    registerLogoutListener();
+    registerSearchIconClickListener();
+    setupScrollToTop();
+});
+
 function registerLogoutListener() {
-    document.getElementById('logout-link').addEventListener('click', function(event) {
-        event.preventDefault();
-        document.getElementById('logout-form').submit();
+    Array.from(document.getElementsByClassName("logout-link")).forEach(element => {
+        element.addEventListener("click", (event) => {
+            event.preventDefault();
+            document.getElementById("logout-form").submit();
+        });
     });
 }
 
-/**
- * Set the onscroll function
- */
-$(document).ready(function () {
-    window.onscroll = function() {onScrollFunction()};
+function registerSearchIconClickListener() {
+    const searchIcon = document.getElementById("show-search");
+    searchIcon.addEventListener("click", () => document.getElementById("mobile-query").focus());
+}
+
+function setupScrollToTop() {
+    window.onscroll = () => showScrollToTopButton();
     const backToTopButton = document.getElementById("back-to-top-button");
     if (backToTopButton) {
-        backToTopButton.onclick = function () {scrollToTop()};
+        backToTopButton.onclick = () => scrollToTop();
     }
-});
+}
 
-/**
- * Function called on scrolling
- */
-function onScrollFunction() {
+function showScrollToTopButton() {
     const backToTopButton = $('#back-to-top-button');
     if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
         backToTopButton.fadeIn();

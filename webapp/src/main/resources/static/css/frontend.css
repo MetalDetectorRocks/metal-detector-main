@@ -4,12 +4,13 @@
     --grey-border-color: #404040;
     --grey-border-color-highlight: #5a5a5a;
     --grey-hover-color: #323232;
-    --blue-menu-item-color: #1d7097;
+    --menu-foreground-color: #fcfcfc;
+    --menu-foreground-hover-color: #767676;
     --dark-field-background-color: #212121;
     --light-font-color: #adafae;
     --light-font-color-highlight: #fcfcfc;
     --light-font-color-muted: #5c5c5c;
-    --light-hyperlink-font-color: var(--blue-menu-item-color);
+    --light-hyperlink-font-color: #1d7097;
     --light-hyperlink-font-color-highlight: #2a90c1;
     --dark-hyperlink-font-color: #555;
     --dark-hyperlink-font-color-highlight: #777;
@@ -66,9 +67,30 @@ footer {
     font-size: 0.9rem;
     margin-top: auto;
 }
-
-footer .container {
+footer .divider {
     border-top: 1px solid var(--grey-border-color);
+    padding-left: 20px;
+    padding-right: 20px;
+}
+footer .flex-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+footer .footer-icon {
+    height: 24px;
+    filter: grayscale(90%);
+}
+footer .footer-icon:hover {
+    filter: grayscale(0);
+}
+@media screen and (max-width: 1050px) {
+    footer .flex-wrapper {
+        flex-direction: column-reverse;
+    }
+    footer .flex-wrapper .flex-item {
+        width: 100%;
+        text-align: center;
+    }
 }
 
 /* Cards */
@@ -214,7 +236,7 @@ footer .container {
 }
 
 .author-link:hover {
-    color: var(--blue-menu-item-color)
+    color: var(--light-hyperlink-font-color)
 }
 
 /* Other */
@@ -288,22 +310,6 @@ footer .container {
 
 .page-link {
     color: #adafae;
-}
-
-.list-group-item {
-    border: 1px solid var(--grey-border-color);
-    background-color: var(--dark-field-background-color);
-}
-
-.list-group-item.active {
-    background-color: var(--dark-field-background-color);
-    border: 1px solid var(--grey-border-color);
-    color: var(--blue-menu-item-color);
-}
-
-.list-group-item:hover {
-    color: var(--blue-menu-item-color);
-    background-color: var(--dark-field-background-color);
 }
 
 .dropdown-menu {
