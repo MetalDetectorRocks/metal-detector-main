@@ -4,4 +4,5 @@ export interface NotificationSettings {
     readonly notificationAtReleaseDate: boolean;
     readonly notificationAtAnnouncementDate: boolean;
     readonly telegramNotificationsActive: boolean;
+    readonly registrationId: number;
 }

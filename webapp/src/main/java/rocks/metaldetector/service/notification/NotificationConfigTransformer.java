@@ -6,13 +6,14 @@ import rocks.metaldetector.persistence.domain.notification.NotificationConfigEnt
 @Component
 public class NotificationConfigTransformer {
 
-  public NotificationConfigDto transform(NotificationConfigEntity notificationConfigentity) {
+  public NotificationConfigDto transform(NotificationConfigEntity notificationConfig) {
     return NotificationConfigDto.builder()
-        .notify(notificationConfigentity.getNotify())
-        .notificationAtReleaseDate(notificationConfigentity.getNotificationAtReleaseDate())
-        .notificationAtAnnouncementDate(notificationConfigentity.getNotificationAtAnnouncementDate())
-        .frequencyInWeeks(notificationConfigentity.getFrequencyInWeeks())
-        .telegramNotificationsActive(notificationConfigentity.getTelegramChatId() != null)
+        .notify(notificationConfig.getNotify())
+        .notificationAtReleaseDate(notificationConfig.getNotificationAtReleaseDate())
+        .notificationAtAnnouncementDate(notificationConfig.getNotificationAtAnnouncementDate())
+        .frequencyInWeeks(notificationConfig.getFrequencyInWeeks())
+        .registrationId(notificationConfig.getTelegramRegistrationId())
+        .telegramNotificationsActive(notificationConfig.getTelegramChatId() != null)
         .build();
   }
 }

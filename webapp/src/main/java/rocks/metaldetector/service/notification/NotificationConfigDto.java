@@ -15,5 +15,6 @@ public class NotificationConfigDto {
   private int frequencyInWeeks;
   private boolean notificationAtReleaseDate;
   private boolean notificationAtAnnouncementDate;
+  private Integer registrationId;
   private boolean telegramNotificationsActive;
 }
