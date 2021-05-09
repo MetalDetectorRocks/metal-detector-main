@@ -68,8 +68,8 @@ public class NotificationConfigServiceImpl implements NotificationConfigService 
     while (notificationConfigRepository.existsByTelegramRegistrationId(registrationId));
 
     AbstractUserEntity currentUser = currentUserSupplier.get();
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
-    NotificationConfigEntity notificationConfig = notificationConfigRepository.findByUserId(currentUser.getId()).get();
+    NotificationConfigEntity notificationConfig = notificationConfigRepository.findByUserId(currentUser.getId())
+        .orElseThrow(() -> new ResourceNotFoundException("Notification config for user '" + currentUser.getPublicId() + "' not found"));
     notificationConfig.setTelegramRegistrationId(registrationId);
     notificationConfigRepository.save(notificationConfig);
     return registrationId;
@@ -79,8 +79,8 @@ public class NotificationConfigServiceImpl implements NotificationConfigService 
   @Transactional
   public void deactivateTelegramNotifications() {
     AbstractUserEntity currentUser = currentUserSupplier.get();
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
-    NotificationConfigEntity notificationConfig = notificationConfigRepository.findByUserId(currentUser.getId()).get();
+    NotificationConfigEntity notificationConfig = notificationConfigRepository.findByUserId(currentUser.getId())
+        .orElseThrow(() -> new ResourceNotFoundException("Notification config for user '" + currentUser.getPublicId() + "' not found"));
     notificationConfig.setTelegramChatId(null);
     notificationConfigRepository.save(notificationConfig);
   }
