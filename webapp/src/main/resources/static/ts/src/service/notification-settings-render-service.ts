@@ -82,6 +82,9 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
             this.telegramArea.removeChild(this.telegramActivationArea);
         } else {
             this.telegramArea.removeChild(this.telegramDeactivationArea);
+            if (notificationSettings.registrationId !== null) {
+                this.generateRegistrationIdButton.textContent = notificationSettings.registrationId + "";
+            }
         }
     }
 
@@ -103,6 +106,7 @@ export class NotificationSettingsRenderService extends AbstractRenderService<Not
                 notificationAtReleaseDate: this.releaseDateNotificationToggle.checked,
                 notificationAtAnnouncementDate: this.announcementDateNotificationToggle.checked,
                 telegramNotificationsActive: false,
+                registrationId: 0,
             })
             .catch(() => {
                 const message = `<h3 class="h5">${UNKNOWN_ERROR_MESSAGE}</h3>Your changes may not have been saved. Please try again later.`;

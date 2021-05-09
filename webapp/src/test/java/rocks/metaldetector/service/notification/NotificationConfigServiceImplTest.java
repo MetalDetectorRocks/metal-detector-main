@@ -17,6 +17,7 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
+import rocks.metaldetector.telegram.facade.TelegramService;
 
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static rocks.metaldetector.service.notification.NotificationConfigServiceImpl.REGISTRATION_SUCCESSFUL_MESSAGE;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationConfigServiceImplTest implements WithAssertions {
@@ -41,12 +43,16 @@ class NotificationConfigServiceImplTest implements WithAssertions {
   @Mock
   private CurrentUserSupplier currentUserSupplier;
 
+  @Mock
+  private TelegramService telegramService;
+
   @InjectMocks
   private NotificationConfigServiceImpl underTest;
 
   @AfterEach
   void tearDown() {
-    reset(notificationConfigRepository, notificationConfigTransformer, currentUserSupplier, notificationConfigRepository);
+    reset(notificationConfigRepository, notificationConfigTransformer, currentUserSupplier,
+          notificationConfigRepository, telegramService);
   }
 
   @DisplayName("Tests for getting notification config")
@@ -261,6 +267,20 @@ class NotificationConfigServiceImplTest implements WithAssertions {
     }
 
     @Test
+    @DisplayName("updateTelegramChatId: A confirmation message is sent to the chat id")
+    void test_confirmation_sent() {
+      // given
+      var chatId = 666;
+      doReturn(Optional.of(NotificationConfigEntity.builder().build())).when(notificationConfigRepository).findByTelegramRegistrationId(anyInt());
+
+      // when
+      underTest.updateTelegramChatId(0, chatId);
+
+      // then
+      verify(telegramService).sendMessage(chatId, REGISTRATION_SUCCESSFUL_MESSAGE);
+    }
+
+    @Test
     @DisplayName("generateTelegramRegistrationId: an unused registration id is generated")
     void test_unused_id_generated() {
       // given
@@ -413,5 +433,7 @@ class NotificationConfigServiceImplTest implements WithAssertions {
 
       assertThat(notificationConfig.getTelegramChatId()).isNull();
     }
+
+
   }
 }

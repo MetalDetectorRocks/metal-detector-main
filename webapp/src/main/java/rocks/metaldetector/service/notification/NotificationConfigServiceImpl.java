@@ -9,6 +9,7 @@ import rocks.metaldetector.persistence.domain.notification.NotificationConfigRep
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
+import rocks.metaldetector.telegram.facade.TelegramService;
 
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -18,9 +19,12 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class NotificationConfigServiceImpl implements NotificationConfigService {
 
+  static final String REGISTRATION_SUCCESSFUL_MESSAGE = "You successfully registered for Telegram notifications!";
+
   private final NotificationConfigRepository notificationConfigRepository;
   private final NotificationConfigTransformer notificationConfigTransformer;
   private final CurrentUserSupplier currentUserSupplier;
+  private final TelegramService telegramService;
 
   @Override
   @Transactional(readOnly = true)
@@ -55,6 +59,7 @@ public class NotificationConfigServiceImpl implements NotificationConfigService 
       notificationConfig.setTelegramChatId(chatId);
       notificationConfig.setTelegramRegistrationId(null);
       notificationConfigRepository.save(notificationConfig);
+      telegramService.sendMessage(chatId, REGISTRATION_SUCCESSFUL_MESSAGE);
     } else {
       log.warn("Could not set telegram chat id for registration id '{}' - id not found", registrationId);
     }
