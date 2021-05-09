@@ -12,7 +12,7 @@ buildscript {
     set("datatablesVersion", "1.10.24")
     set("ehcacheVersion", "3.9.2")
     set("esapiVersion", "2.2.3.0")
-    set("flywayVersion", "7.8.1")
+    set("flywayVersion", "7.8.2")
     set("h2Version", "1.4.200")
     set("httpClientVersion", "4.5.13")
     set("mockitoVersion", "3.9.0")
