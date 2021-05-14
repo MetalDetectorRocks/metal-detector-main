@@ -8,8 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.service.notification.NotificationConfigService;
+import rocks.metaldetector.service.notification.TelegramConfigService;
 import rocks.metaldetector.web.api.request.TelegramChat;
 import rocks.metaldetector.web.api.request.TelegramMessage;
 import rocks.metaldetector.web.api.request.TelegramUpdate;
@@ -21,17 +20,14 @@ import static org.mockito.Mockito.verify;
 class TelegramUpdateServiceImplTest implements WithAssertions {
 
   @Mock
-  private NotificationConfigService notificationConfigService;
-
-  @Mock
-  private UserRepository userRepository;
+  private TelegramConfigService telegramConfigService;
 
   @InjectMocks
   private TelegramUpdateServiceImpl underTest;
 
   @AfterEach
   private void tearDown() {
-    reset(notificationConfigService, userRepository);
+    reset(telegramConfigService);
   }
 
   @Test
@@ -39,12 +35,13 @@ class TelegramUpdateServiceImplTest implements WithAssertions {
   void test_user_repository_called() {
     // given
     var messageText = "123456";
-    var update = new TelegramUpdate(new TelegramMessage(messageText, new TelegramChat(666)));
+    var chatId = 666;
+    var update = new TelegramUpdate(new TelegramMessage(messageText, new TelegramChat(chatId)));
 
     // when
     underTest.processUpdate(update);
 
     // then
-    verify(notificationConfigService).updateTelegramChatId(Integer.parseInt(messageText), update.getMessage().getChat().getId());
+    verify(telegramConfigService).updateChatId(messageText, chatId);
   }
 }

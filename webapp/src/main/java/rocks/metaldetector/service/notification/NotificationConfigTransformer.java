@@ -12,8 +12,7 @@ public class NotificationConfigTransformer {
         .notificationAtReleaseDate(notificationConfig.getNotificationAtReleaseDate())
         .notificationAtAnnouncementDate(notificationConfig.getNotificationAtAnnouncementDate())
         .frequencyInWeeks(notificationConfig.getFrequencyInWeeks())
-        .registrationId(notificationConfig.getTelegramRegistrationId())
-        .telegramNotificationsActive(notificationConfig.getTelegramChatId() != null)
+        .channel(notificationConfig.getChannel().name())
         .build();
   }
 }

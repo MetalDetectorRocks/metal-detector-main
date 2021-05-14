@@ -313,8 +313,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @Test
   @DisplayName("isCurrentUserFollowing(): should call FollowActionRepository if artist entity exists")
   void isCurrentUserFollowing_should_call_follow_action_repository() {
-    ArtistEntity artistEntity = mock(ArtistEntity.class);
-    doReturn(1L).when(artistEntity).getId();
+    var artistEntity = mock(ArtistEntity.class);
     doReturn(userEntity).when(currentUserSupplier).get();
     doReturn(Optional.of(artistEntity)).when(artistRepository).findByExternalIdAndSource(any(), any());
 
@@ -322,7 +321,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.isCurrentUserFollowing(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(followActionRepository).existsByUserIdAndArtistId(userEntity.getId(), artistEntity.getId());
+    verify(followActionRepository).existsByUserAndArtist(userEntity, artistEntity);
   }
 
   @ParameterizedTest(name = "should return {0}")
@@ -331,7 +330,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
   void isCurrentUserFollowing_should_result_from_follow_action_repository(boolean existsByUserIdAndArtistId) {
     doReturn(userEntity).when(currentUserSupplier).get();
     doReturn(Optional.of(mock(ArtistEntity.class))).when(artistRepository).findByExternalIdAndSource(any(), any());
-    doReturn(existsByUserIdAndArtistId).when(followActionRepository).existsByUserIdAndArtistId(any(), any());
+    doReturn(existsByUserIdAndArtistId).when(followActionRepository).existsByUserAndArtist(any(), any());
 
     // when
     boolean result = underTest.isCurrentUserFollowing(EXTERNAL_ID, ARTIST_SOURCE);

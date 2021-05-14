@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 
+import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.EMAIL;
+
 class NotificationConfigTransformerTest implements WithAssertions {
 
   private final NotificationConfigTransformer underTest = new NotificationConfigTransformer();
@@ -13,12 +15,12 @@ class NotificationConfigTransformerTest implements WithAssertions {
   @DisplayName("entity is transformed to dto")
   void test_transform() {
     // given
-    var notificationConfigEntity = NotificationConfigEntity.builder().frequencyInWeeks(4)
+    var notificationConfigEntity = NotificationConfigEntity.builder()
+        .frequencyInWeeks(4)
         .notificationAtAnnouncementDate(true)
         .notificationAtReleaseDate(true)
         .notify(true)
-        .telegramChatId(100)
-        .telegramRegistrationId(666)
+        .channel(EMAIL)
         .build();
 
     // when
@@ -29,7 +31,6 @@ class NotificationConfigTransformerTest implements WithAssertions {
     assertThat(result.getFrequencyInWeeks()).isEqualTo(notificationConfigEntity.getFrequencyInWeeks());
     assertThat(result.isNotificationAtAnnouncementDate()).isEqualTo(notificationConfigEntity.getNotificationAtAnnouncementDate());
     assertThat(result.isNotificationAtReleaseDate()).isEqualTo(notificationConfigEntity.getNotificationAtReleaseDate());
-    assertThat(result.getRegistrationId()).isEqualTo(notificationConfigEntity.getTelegramRegistrationId());
-    assertThat(result.isTelegramNotificationsActive()).isTrue();
+    assertThat(result.getChannel()).isEqualTo(EMAIL.name());
   }
 }

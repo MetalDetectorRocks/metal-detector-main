@@ -82,7 +82,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     }
 
     AbstractUserEntity currentUser = currentUserSupplier.get();
-    return followActionRepository.existsByUserIdAndArtistId(currentUser.getId(), artistOptional.get().getId());
+    return followActionRepository.existsByUserAndArtist(currentUser, artistOptional.get());
   }
 
   @Override

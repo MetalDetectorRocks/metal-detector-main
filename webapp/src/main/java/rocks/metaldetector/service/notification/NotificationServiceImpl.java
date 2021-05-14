@@ -8,6 +8,8 @@ import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
+import rocks.metaldetector.persistence.domain.notification.TelegramConfigEntity;
+import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
@@ -17,13 +19,14 @@ import rocks.metaldetector.service.email.ReleasesEmail;
 import rocks.metaldetector.service.email.TodaysAnnouncementsEmail;
 import rocks.metaldetector.service.email.TodaysReleasesEmail;
 import rocks.metaldetector.support.TimeRange;
-import rocks.metaldetector.telegram.facade.TelegramService;
+import rocks.metaldetector.telegram.facade.TelegramMessagingService;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -41,8 +44,9 @@ public class NotificationServiceImpl implements NotificationService {
   private final EmailService emailService;
   private final FollowArtistService followArtistService;
   private final NotificationConfigRepository notificationConfigRepository;
-  private final TelegramService telegramService;
-  private final TelegramNotificationFormatter notificationFormatter;
+  private final TelegramConfigRepository telegramConfigRepository;
+  private final TelegramMessagingService telegramMessagingService;
+  private final TelegramNotificationFormatter telegramNotificationFormatter;
 
   @Override
   @Scheduled(cron = "0 0 4 * * SUN")
@@ -103,9 +107,14 @@ public class NotificationServiceImpl implements NotificationService {
         if (!(upcomingReleases.isEmpty() && recentReleases.isEmpty())) {
           emailService.sendEmail(new ReleasesEmail(user.getEmail(), user.getUsername(), upcomingReleases, recentReleases));
 
-          if (notificationConfig.getTelegramChatId() != null) {
-            String message = notificationFormatter.formatFrequencyNotificationMessage(upcomingReleases, recentReleases);
-            telegramService.sendMessage(notificationConfig.getTelegramChatId(), message);
+          Optional<TelegramConfigEntity> telegramConfigOptional = telegramConfigRepository.findByNotificationConfig(notificationConfig);
+          if (telegramConfigOptional.isPresent()) {
+            TelegramConfigEntity telegramConfig = telegramConfigOptional.get();
+
+            if (telegramConfig.getChatId() != null) {
+              String message = telegramNotificationFormatter.formatFrequencyNotificationMessage(upcomingReleases, recentReleases);
+              telegramMessagingService.sendMessage(telegramConfig.getChatId(), message);
+            }
           }
 
           notificationConfig.setLastNotificationDate(now);
@@ -127,10 +136,15 @@ public class NotificationServiceImpl implements NotificationService {
         AbstractEmail email = emailBiFunction.apply(user, filteredReleases);
         emailService.sendEmail(email);
 
-        if (notificationConfig.getTelegramChatId() != null) {
-          String text = email instanceof TodaysReleasesEmail ? TODAYS_RELEASES_TEXT : TODAYS_ANNOUNCEMENTS_TEXT;
-          String message = notificationFormatter.formatDateNotificationMessage(filteredReleases, text);
-          telegramService.sendMessage(notificationConfig.getTelegramChatId(), message);
+        Optional<TelegramConfigEntity> telegramConfigOptional = telegramConfigRepository.findByNotificationConfig(notificationConfig);
+        if (telegramConfigOptional.isPresent()) {
+          TelegramConfigEntity telegramConfig = telegramConfigOptional.get();
+
+          if (telegramConfig.getChatId() != null) {
+            String text = email instanceof TodaysReleasesEmail ? TODAYS_RELEASES_TEXT : TODAYS_ANNOUNCEMENTS_TEXT;
+            String message = telegramNotificationFormatter.formatDateNotificationMessage(filteredReleases, text);
+            telegramMessagingService.sendMessage(telegramConfig.getChatId(), message);
+          }
         }
       }
     }

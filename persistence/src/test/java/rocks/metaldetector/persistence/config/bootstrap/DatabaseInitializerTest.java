@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserFactory;
 
 import javax.persistence.EntityManager;
@@ -62,6 +63,6 @@ class DatabaseInitializerTest implements WithAssertions {
     underTest.run(null);
 
     // then
-    verify(entityManager, times(2)).persist(any());
+    verify(entityManager, times(1)).persist(any(UserEntity.class));
   }
 }

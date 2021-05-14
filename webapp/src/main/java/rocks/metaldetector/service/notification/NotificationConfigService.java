@@ -1,11 +1,9 @@
 package rocks.metaldetector.service.notification;
 
+import java.util.List;
+
 public interface NotificationConfigService {
 
-  NotificationConfigDto getCurrentUserNotificationConfig();
+  List<NotificationConfigDto> getCurrentUserNotificationConfigs();
   void updateCurrentUserNotificationConfig(NotificationConfigDto notificationConfigDto);
-
-  void updateTelegramChatId(int registrationId, int chatId);
-  int generateTelegramRegistrationId();
-  void deactivateTelegramNotifications();
 }

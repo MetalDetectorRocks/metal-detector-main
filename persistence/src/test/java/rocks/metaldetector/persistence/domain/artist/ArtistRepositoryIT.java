@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import rocks.metaldetector.persistence.BaseDataJpaTest;
-import rocks.metaldetector.persistence.WithIntegrationTestConfig;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserFactory;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
@@ -24,7 +23,7 @@ import java.util.stream.Stream;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
 
-class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
+class ArtistRepositoryIT extends BaseDataJpaTest implements WithAssertions {
 
   @Autowired
   private ArtistRepository underTest;

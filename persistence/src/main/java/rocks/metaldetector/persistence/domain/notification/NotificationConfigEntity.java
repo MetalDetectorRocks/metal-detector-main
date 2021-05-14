@@ -12,6 +12,8 @@ import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import java.time.LocalDate;
@@ -27,6 +29,10 @@ public class NotificationConfigEntity extends BaseEntity {
   @OneToOne(targetEntity = AbstractUserEntity.class)
   @JoinColumn(nullable = false, name = "users_id")
   private AbstractUserEntity user;
+
+  @Column(name = "channel", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private NotificationChannel channel;
 
   @Column(name = "notify", nullable = false, columnDefinition = "boolean default false")
   @Setter
@@ -52,11 +58,4 @@ public class NotificationConfigEntity extends BaseEntity {
   @Setter
   private LocalDate lastNotificationDate;
 
-  @Column(name = "telegram_chat_id")
-  @Setter
-  private Integer telegramChatId;
-
-  @Column(name = "telegram_registration_id")
-  @Setter
-  private Integer telegramRegistrationId;
 }

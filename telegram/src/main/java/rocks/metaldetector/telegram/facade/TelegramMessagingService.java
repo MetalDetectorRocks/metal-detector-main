@@ -1,6 +1,6 @@
 package rocks.metaldetector.telegram.facade;
 
-public interface TelegramService {
+public interface TelegramMessagingService {
 
   void sendMessage(int telegramChatId, String message);
 }

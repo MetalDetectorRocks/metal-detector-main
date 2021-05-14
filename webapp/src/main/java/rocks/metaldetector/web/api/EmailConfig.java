@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.notification;
+package rocks.metaldetector.web.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NotificationConfigDto {
+public class EmailConfig {
 
   private boolean notify;
   private int frequencyInWeeks;
   private boolean notificationAtReleaseDate;
   private boolean notificationAtAnnouncementDate;
-  private String channel;
 }

@@ -11,15 +11,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
-import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
+import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.AccountDeletedEmail;
 import rocks.metaldetector.service.email.EmailService;
-
-import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
@@ -32,6 +30,7 @@ public class UserDeletionEventListener implements ApplicationListener<UserDeleti
 
   private final FollowActionRepository followActionRepository;
   private final NotificationConfigRepository notificationConfigRepository;
+  private final TelegramConfigRepository telegramConfigRepository;
   private final SpotifyAuthorizationRepository spotifyAuthorizationRepository;
   private final UserRepository userRepository;
   private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -43,9 +42,9 @@ public class UserDeletionEventListener implements ApplicationListener<UserDeleti
     AbstractUserEntity user = event.getUserEntity();
     log.info("User '" + user.getPublicId() + "' deleted");
 
-    Optional<SpotifyAuthorizationEntity> spotifyAuthorizationOptional = spotifyAuthorizationRepository.findByUserId(user.getId());
-    spotifyAuthorizationOptional.ifPresent(spotifyAuthorizationRepository::delete);
-    notificationConfigRepository.deleteByUserId(user.getId());
+    spotifyAuthorizationRepository.deleteByUser(user);
+    telegramConfigRepository.deleteByUser(user);
+    notificationConfigRepository.deleteAllByUser(user);
     followActionRepository.deleteAllByUser(user);
 
     if (user instanceof UserEntity) {

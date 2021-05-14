@@ -6,7 +6,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
@@ -40,11 +39,7 @@ public class DatabaseInitializer implements ApplicationRunner {
             .enabled(true)
             .userRoles(UserRole.createAdministratorRole())
             .build();
-    NotificationConfigEntity notificationConfig = NotificationConfigEntity.builder()
-        .user(administrator)
-        .build();
 
     entityManager.persist(administrator);
-    entityManager.persist(notificationConfig);
   }
 }

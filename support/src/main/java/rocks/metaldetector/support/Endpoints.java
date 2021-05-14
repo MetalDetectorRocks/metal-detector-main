@@ -67,6 +67,7 @@ public class Endpoints {
     public static final String COVER_JOB                      = "/rest/v1/releases/cover-reload";
     public static final String CSP_VIOLATION_REPORT           = "/rest/v1/csp-violation-report";
     public static final String NOTIFICATION_CONFIG            = "/rest/v1/notification-config";
+    public static final String TELEGRAM_CONFIG                = "/rest/v1/telegram-config";
     public static final String SEARCH                         = "/search";
     public static final String FOLLOW                         = "/follow";
     public static final String UNFOLLOW                       = "/unfollow";

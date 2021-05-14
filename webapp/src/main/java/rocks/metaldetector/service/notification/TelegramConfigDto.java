@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NotificationConfigDto {
+public class TelegramConfigDto {
 
-  private boolean notify;
-  private int frequencyInWeeks;
-  private boolean notificationAtReleaseDate;
-  private boolean notificationAtAnnouncementDate;
-  private String channel;
+  private Integer registrationId;
+  private Integer chatId;
 }
