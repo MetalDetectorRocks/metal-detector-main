@@ -12,8 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.comparator.BooleanComparator;
-import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
-import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
@@ -52,7 +50,6 @@ public class UserServiceImpl implements UserService {
   private final TokenRepository tokenRepository;
   private final JwtsSupport jwtsSupport;
   private final UserTransformer userTransformer;
-  private final NotificationConfigRepository notificationConfigRepository;
   private final TokenService tokenService;
   private final CurrentUserSupplier currentUserSupplier;
   private final LoginAttemptService loginAttemptService;
@@ -78,8 +75,6 @@ public class UserServiceImpl implements UserService {
 
     OAuthUserEntity savedUserEntity = userRepository.save(oAuthUserEntity);
 
-    createNotificationConfig(savedUserEntity);
-
     return userTransformer.transform(savedUserEntity);
   }
 
@@ -104,16 +99,7 @@ public class UserServiceImpl implements UserService {
 
     UserEntity savedUserEntity = userRepository.save(userEntity);
 
-    createNotificationConfig(savedUserEntity);
-
     return userTransformer.transform(savedUserEntity);
-  }
-
-  private void createNotificationConfig(AbstractUserEntity user) {
-    NotificationConfigEntity notificationConfigEntity = NotificationConfigEntity.builder()
-        .user(user)
-        .build();
-    notificationConfigRepository.save(notificationConfigEntity);
   }
 
   @Override

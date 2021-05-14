@@ -23,8 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
-import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.token.TokenType;
@@ -83,7 +81,6 @@ class UserServiceImplTest implements WithAssertions {
   private static final String DUPLICATE_USERNAME = "Duplicate";
   private static final String DUPLICATE_EMAIL = "duplicate@example.com";
   private static final String PUBLIC_ID = "public-id";
-  private static final int DEFAULT_NOTIFICATION_FREQUENCY = 4;
   private final String TOKEN = "user-token";
   private final String NEW_PLAIN_PASSWORD = "new-plain-password";
   private final String NEW_ENCRYPTED_PASSWORD = "encryption".repeat(6); // an encrypted password must be 60 characters long
@@ -116,9 +113,6 @@ class UserServiceImplTest implements WithAssertions {
   private UserTransformer userTransformer;
 
   @Mock
-  private NotificationConfigRepository notificationConfigRepository;
-
-  @Mock
   private ApplicationEventPublisher applicationEventPublisher;
 
   private UserServiceImpl underTest;
@@ -126,12 +120,12 @@ class UserServiceImplTest implements WithAssertions {
   @BeforeEach
   void setup() {
     underTest = new UserServiceImpl(userRepository, passwordEncoder, tokenRepository, jwtsSupport, userTransformer,
-                                    notificationConfigRepository, tokenService, currentUserSupplier, loginAttemptService, applicationEventPublisher, request);
+                                    tokenService, currentUserSupplier, loginAttemptService, applicationEventPublisher, request);
   }
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request, notificationConfigRepository, applicationEventPublisher);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request, applicationEventPublisher);
   }
 
   @DisplayName("Create user entity tests")
@@ -215,29 +209,6 @@ class UserServiceImplTest implements WithAssertions {
       assertThat(((UserAlreadyExistsException) throwable).getReason()).isEqualTo(reason);
       verify(userRepository, atMost(2)).existsByEmail(anyString());
       verify(userRepository, atMost(2)).existsByUsername(anyString());
-    }
-
-    @Test
-    @DisplayName("default notification config is created for new user")
-    void test_notification_config_created() {
-      // given
-      ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
-      UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
-      UserEntity userEntity = UserEntityFactory.createUser(USERNAME, EMAIL);
-      doReturn(userEntity).when(userRepository).save(any());
-
-      // when
-      underTest.createUser(userDto);
-
-      // then
-      verify(notificationConfigRepository).save(argumentCaptor.capture());
-      NotificationConfigEntity notificationConfigEntity = argumentCaptor.getValue();
-      assertThat(notificationConfigEntity).isNotNull();
-      assertThat(notificationConfigEntity.getNotify()).isFalse();
-      assertThat(notificationConfigEntity.getNotificationAtReleaseDate()).isFalse();
-      assertThat(notificationConfigEntity.getNotificationAtAnnouncementDate()).isFalse();
-      assertThat(notificationConfigEntity.getFrequencyInWeeks()).isEqualTo(DEFAULT_NOTIFICATION_FREQUENCY);
-      assertThat(notificationConfigEntity.getUser()).isEqualTo(userEntity);
     }
 
     private Stream<Arguments> userDtoProvider() {
@@ -325,29 +296,6 @@ class UserServiceImplTest implements WithAssertions {
       assertThat(throwable).isInstanceOf(UserAlreadyExistsException.class);
       assertThat(((UserAlreadyExistsException) throwable).getReason()).isEqualTo(reason);
       verify(userRepository, atMost(2)).existsByEmail(anyString());
-    }
-
-    @Test
-    @DisplayName("default notification config is created for new user")
-    void test_notification_config_created() {
-      // given
-      ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
-      UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
-      OAuthUserEntity userEntity = OAuthUserFactory.createUser(USERNAME, EMAIL);
-      doReturn(userEntity).when(userRepository).save(any());
-
-      // when
-      underTest.createOAuthUser(userDto);
-
-      // then
-      verify(notificationConfigRepository).save(argumentCaptor.capture());
-      NotificationConfigEntity notificationConfigEntity = argumentCaptor.getValue();
-      assertThat(notificationConfigEntity).isNotNull();
-      assertThat(notificationConfigEntity.getNotify()).isFalse();
-      assertThat(notificationConfigEntity.getNotificationAtReleaseDate()).isFalse();
-      assertThat(notificationConfigEntity.getNotificationAtAnnouncementDate()).isFalse();
-      assertThat(notificationConfigEntity.getFrequencyInWeeks()).isEqualTo(DEFAULT_NOTIFICATION_FREQUENCY);
-      assertThat(notificationConfigEntity.getUser()).isEqualTo(userEntity);
     }
 
     private Stream<Arguments> oauthUserDtoProvider() {

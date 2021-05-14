@@ -3,7 +3,7 @@ package rocks.metaldetector.service.telegram;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import rocks.metaldetector.service.notification.NotificationConfigService;
+import rocks.metaldetector.service.notification.config.TelegramConfigService;
 import rocks.metaldetector.web.api.request.TelegramUpdate;
 
 @Component
@@ -11,7 +11,7 @@ import rocks.metaldetector.web.api.request.TelegramUpdate;
 @Slf4j
 public class TelegramUpdateServiceImpl implements TelegramUpdateService {
 
-  private final NotificationConfigService notificationConfigService;
+  private final TelegramConfigService telegramConfigService;
 
   @Override
   public void processUpdate(TelegramUpdate update) {
@@ -19,7 +19,8 @@ public class TelegramUpdateServiceImpl implements TelegramUpdateService {
   }
 
   private void registerForTelegramNotifications(TelegramUpdate update) {
-    String messageText = update.getMessage().getText().trim();
-    notificationConfigService.updateTelegramChatId(Integer.parseInt(messageText), update.getMessage().getChat().getId());
+    String messageText = update.getMessage().getText();
+    int chatId = update.getMessage().getChat().getId();
+    telegramConfigService.updateChatId(messageText, chatId);
   }
 }

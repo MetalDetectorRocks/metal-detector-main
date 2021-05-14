@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,10 +14,13 @@ import javax.validation.constraints.Min;
 @Data
 public class UpdateNotificationConfigRequest {
 
-  @Min(0L)
-  private int frequencyInWeeks;
+  private boolean notify;
   private boolean notificationAtReleaseDate;
   private boolean notificationAtAnnouncementDate;
-  private boolean notify;
 
+  @Min(0)
+  private int frequencyInWeeks;
+
+  @NotBlank
+  private String channel;
 }

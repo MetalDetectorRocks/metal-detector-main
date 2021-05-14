@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import rocks.metaldetector.service.notification.NotificationService;
+import rocks.metaldetector.service.notification.messaging.NotificationScheduler;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import static org.mockito.Mockito.reset;
@@ -24,7 +24,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE
 class NotificationRestControllerTest implements WithAssertions {
 
   @Mock
-  private NotificationService notificationService;
+  private NotificationScheduler notificationScheduler;
 
   @InjectMocks
   private NotificationRestController underTest;
@@ -43,7 +43,7 @@ class NotificationRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(notificationService);
+    reset(notificationScheduler);
   }
 
   @Test
@@ -63,7 +63,7 @@ class NotificationRestControllerTest implements WithAssertions {
     frequencyRestAssuredUtils.doPost();
 
     // then
-    verify(notificationService).notifyOnFrequency();
+    verify(notificationScheduler).notifyOnFrequency();
   }
 
   @Test
@@ -83,7 +83,7 @@ class NotificationRestControllerTest implements WithAssertions {
     releaseDateRestAssuredUtils.doPost();
 
     // then
-    verify(notificationService).notifyOnReleaseDate();
+    verify(notificationScheduler).notifyOnReleaseDate();
   }
 
   @Test
@@ -103,6 +103,6 @@ class NotificationRestControllerTest implements WithAssertions {
     announcementDateRestAssuredUtils.doPost();
 
     // then
-    verify(notificationService).notifyOnAnnouncementDate();
+    verify(notificationScheduler).notifyOnAnnouncementDate();
   }
 }

@@ -6,12 +6,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import rocks.metaldetector.persistence.BaseDataJpaTest;
-import rocks.metaldetector.persistence.WithIntegrationTestConfig;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-class BaseEntityIT extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
+class BaseEntityIT extends BaseDataJpaTest implements WithAssertions {
 
   @Autowired
   private SimpleTestRepository testRepository;

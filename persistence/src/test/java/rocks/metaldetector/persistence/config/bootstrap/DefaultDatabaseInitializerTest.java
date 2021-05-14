@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
-import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserFactory;
 
@@ -73,9 +72,6 @@ class DefaultDatabaseInitializerTest implements WithAssertions {
 
     // then
     verify(entityManager, times(4)).persist(any(UserEntity.class));
-
-    // and
-    verify(entityManager, times(4)).persist(any(NotificationConfigEntity.class));
 
     // and
     verify(entityManager, times(3)).persist(any(ArtistEntity.class));

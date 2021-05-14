@@ -7,7 +7,7 @@ import rocks.metaldetector.telegram.client.TelegramClient;
 
 @Component
 @AllArgsConstructor
-public class TelegramServiceImpl implements TelegramService {
+public class TelegramMessagingServiceImpl implements TelegramMessagingService {
 
   private final TelegramClient telegramClient;
 
