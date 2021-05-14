@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import rocks.metaldetector.service.notification.NotificationService;
+import rocks.metaldetector.service.notification.messaging.NotificationScheduler;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,7 +19,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE
 public class NotificationRestControllerIT extends BaseWebMvcTestWithSecurity {
 
   @MockBean
-  private NotificationService notificationService;
+  private NotificationScheduler notificationScheduler;
 
   @Nested
   @DisplayName("Administrator is allowed to send requests to all notification endpoints")

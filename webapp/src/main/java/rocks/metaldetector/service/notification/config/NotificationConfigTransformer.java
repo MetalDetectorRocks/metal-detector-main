@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.notification;
+package rocks.metaldetector.service.notification.config;
 
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
@@ -12,8 +12,7 @@ public class NotificationConfigTransformer {
         .notificationAtReleaseDate(notificationConfig.getNotificationAtReleaseDate())
         .notificationAtAnnouncementDate(notificationConfig.getNotificationAtAnnouncementDate())
         .frequencyInWeeks(notificationConfig.getFrequencyInWeeks())
-        .registrationId(notificationConfig.getTelegramRegistrationId())
-        .telegramNotificationsActive(notificationConfig.getTelegramChatId() != null)
+        .channel(notificationConfig.getChannel().name())
         .build();
   }
 }

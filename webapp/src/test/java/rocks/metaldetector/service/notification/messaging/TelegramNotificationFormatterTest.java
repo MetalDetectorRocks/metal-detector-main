@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.notification;
+package rocks.metaldetector.service.notification.messaging;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;

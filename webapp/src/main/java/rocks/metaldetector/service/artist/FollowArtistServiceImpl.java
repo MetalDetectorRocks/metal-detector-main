@@ -82,7 +82,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     }
 
     AbstractUserEntity currentUser = currentUserSupplier.get();
-    return followActionRepository.existsByUserIdAndArtistId(currentUser.getId(), artistOptional.get().getId());
+    return followActionRepository.existsByUserAndArtist(currentUser, artistOptional.get());
   }
 
   @Override
@@ -93,8 +93,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   @Override
   @Transactional
-  public List<ArtistDto> getFollowedArtistsOfUser(String publicUserId) {
-    AbstractUserEntity user = fetchUserEntity(publicUserId);
+  public List<ArtistDto> getFollowedArtistsOfUser(AbstractUserEntity user) {
     return getFollowedArtists(user);
   }
 
@@ -134,12 +133,6 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     List<String> newArtistsIds = artistService.findNewArtistIds(spotifyArtistIds);
     List<SpotifyArtistDto> newSpotifyArtistDtos = spotifyService.searchArtistsByIds(newArtistsIds);
     artistService.persistSpotifyArtists(newSpotifyArtistDtos);
-  }
-
-  private AbstractUserEntity fetchUserEntity(String publicUserId) {
-    return userRepository
-        .findByPublicId(publicUserId)
-        .orElseThrow(() -> new ResourceNotFoundException("User with public id '" + publicUserId + "' not found!"));
   }
 
   private ArtistEntity fetchArtistEntity(String externalArtistId, ArtistSource source) {

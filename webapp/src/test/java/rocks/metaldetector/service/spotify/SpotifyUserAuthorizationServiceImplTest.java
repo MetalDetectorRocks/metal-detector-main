@@ -32,13 +32,11 @@ import java.util.stream.Stream;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static rocks.metaldetector.service.spotify.SpotifyUserAuthorizationServiceImpl.GRACE_PERIOD_SECONDS;
 import static rocks.metaldetector.service.spotify.SpotifyUserAuthorizationServiceImpl.STATE_SIZE;
 
@@ -88,15 +86,11 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     @Test
     @DisplayName("should call authorization repository with user id")
     void should_call_authorization_repository_with_user_id() {
-      // given
-      Long userId = 666L;
-      doReturn(userId).when(userMock).getId();
-
       // when
       underTest.exists();
 
       // then
-      verify(authorizationRepository).findByUserId(userId);
+      verify(authorizationRepository).findByUser(userMock);
     }
 
     @Test
@@ -104,7 +98,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     void should_return_true() {
       // given
       SpotifyAuthorizationEntity authorizationEntity = SpotifyAuthorizationEntity.builder().user(userMock).accessToken("foo").refreshToken("bar").build();
-      doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUser(any());
 
       // when
       boolean result = underTest.exists();
@@ -118,7 +112,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     @DisplayName("should return false if access token or refresh token don't exist")
     void should_return_false(SpotifyAuthorizationEntity authorizationEntity) {
       // given
-      doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUser(any());
 
       // when
       boolean result = underTest.exists();
@@ -155,22 +149,20 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     @DisplayName("spotifyUserAuthorizationRepository is called")
     void spotify_user_authorization_repository_is_called() {
       // given
-      Long userId = 666L;
-      doReturn(userId).when(userMock).getId();
       doReturn(userMock).when(currentUserSupplier).get();
 
       // when
       underTest.prepareAuthorization();
 
       // then
-      verify(authorizationRepository).findByUserId(userId);
+      verify(authorizationRepository).findByUser(userMock);
     }
 
     @Test
     @DisplayName("spotifyAuthorizationRepository is called to save authorization entity if no entity already exists")
     void test_authorization_repository_is_called() {
       // given
-      doReturn(Optional.empty()).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.empty()).when(authorizationRepository).findByUser(any());
       ArgumentCaptor<SpotifyAuthorizationEntity> argumentCaptor = ArgumentCaptor.forClass(SpotifyAuthorizationEntity.class);
 
       // when
@@ -192,7 +184,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       var existingState = "spotify-state";
       SpotifyAuthorizationEntity authorizationMock = mock(SpotifyAuthorizationEntity.class);
       doReturn(existingState).when(authorizationMock).getState();
-      doReturn(Optional.of(authorizationMock)).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.of(authorizationMock)).when(authorizationRepository).findByUser(any());
 
       // when
       var result = underTest.prepareAuthorization();
@@ -243,7 +235,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
           .accessToken("foo")
           .refreshToken("bar")
           .build();
-      doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUser(any());
       doReturn(authorizationDto).when(spotifyService).getAccessToken(any());
     }
 
@@ -260,22 +252,18 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     @Test
     @DisplayName("should call spotify authorization repository with user id")
     void should_call_spotify_authorization_repository_with_user_id() {
-      // given
-      Long userId = 666L;
-      doReturn(userId).when(userMock).getId();
-
       // when
       underTest.persistInitialToken(SAMPLE_STATE, "code");
 
       // then
-      verify(authorizationRepository).findByUserId(userId);
+      verify(authorizationRepository).findByUser(userMock);
     }
 
     @Test
     @DisplayName("Exception is thrown when authorization entity is empty")
     void test_authorization_entity_null() {
       // given
-      doReturn(Optional.empty()).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.empty()).when(authorizationRepository).findByUser(any());
 
       // when
       Throwable throwable = catchThrowable(() -> underTest.persistInitialToken(SAMPLE_STATE, "code"));
@@ -290,7 +278,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       // given
       var authorizationMock = mock(SpotifyAuthorizationEntity.class);
       doReturn(null).when(authorizationMock).getState();
-      doReturn(Optional.of(authorizationMock)).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.of(authorizationMock)).when(authorizationRepository).findByUser(any());
 
       // when
       Throwable throwable = catchThrowable(() -> underTest.persistInitialToken(SAMPLE_STATE, "code"));
@@ -306,7 +294,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       // given
       var authorizationMock = mock(SpotifyAuthorizationEntity.class);
       doReturn("unknown-state").when(authorizationMock).getState();
-      doReturn(Optional.of(authorizationMock)).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.of(authorizationMock)).when(authorizationRepository).findByUser(any());
 
       // when
       Throwable throwable = catchThrowable(() -> underTest.persistInitialToken(SAMPLE_STATE, "code"));
@@ -378,7 +366,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
           .expiresAt(LocalDateTime.of(2100, 1, 1, 0, 0))
           .build();
       authorizationEntity.setCreatedDateTime(Date.from(Instant.now()));
-      doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUser(any());
     }
 
     @Test
@@ -394,22 +382,18 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     @Test
     @DisplayName("should call spotify authorization repository with user id")
     void should_call_spotify_authorization_repository_with_user_id() {
-      // given
-      Long userId = 666L;
-      doReturn(userId).when(userMock).getId();
-
       // when
       underTest.getOrRefreshToken();
 
       // then
-      verify(authorizationRepository).findByUserId(userId);
+      verify(authorizationRepository).findByUser(userMock);
     }
 
     @Test
     @DisplayName("Exception is thrown when authorization entity is empty")
     void test_authorization_entity_null() {
       // given
-      doReturn(Optional.empty()).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.empty()).when(authorizationRepository).findByUser(any());
 
       // when
       Throwable throwable = catchThrowable(() -> underTest.getOrRefreshToken());
@@ -423,7 +407,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     @DisplayName("exception is thrown when authorization entity is incomplete")
     void test_incomplete_authorization_entity(SpotifyAuthorizationEntity authorizationEntity) {
       // given
-      doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUser(any());
 
       // when
       Throwable throwable = catchThrowable(() -> underTest.getOrRefreshToken());
@@ -459,7 +443,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       var spotifyAuthorization = SpotifyAuthorizationEntity.builder()
           .user(userMock).expiresAt(LocalDateTime.now()).refreshToken("refreshToken").accessToken("accessToken").build();
       spotifyAuthorization.setCreatedDateTime(Date.from(Instant.now().minus(120, SECONDS)));
-      doReturn(Optional.of(spotifyAuthorization)).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.of(spotifyAuthorization)).when(authorizationRepository).findByUser(any());
 
       var authorizationDto = SpotifyUserAuthorizationDto.builder().build();
       doReturn(authorizationDto).when(spotifyService).refreshToken(any());
@@ -479,7 +463,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       var spotifyAuthorization = SpotifyAuthorizationEntity.builder()
           .user(userMock).expiresAt(LocalDateTime.of(2019, 1, 1, 0, 0, 0)).refreshToken("refreshToken").accessToken("accessToken").build();
       spotifyAuthorization.setCreatedDateTime(Date.from(Instant.now().minus(120, SECONDS)));
-      doReturn(Optional.of(spotifyAuthorization)).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.of(spotifyAuthorization)).when(authorizationRepository).findByUser(any());
 
       var authorizationDto = SpotifyUserAuthorizationDto.builder()
           .accessToken("newAccessToken").expiresIn(120).tokenType("newTokenTyp").scope("newScope").build();
@@ -508,7 +492,7 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
       var spotifyAuthorization = SpotifyAuthorizationEntity.builder()
           .user(userMock).expiresAt(LocalDateTime.now()).refreshToken("refreshToken").accessToken("accessToken").build();
       spotifyAuthorization.setCreatedDateTime(Date.from(Instant.now().minus(120, SECONDS)));
-      doReturn(Optional.of(spotifyAuthorization)).when(authorizationRepository).findByUserId(anyLong());
+      doReturn(Optional.of(spotifyAuthorization)).when(authorizationRepository).findByUser(any());
 
       var authorizationDto = SpotifyUserAuthorizationDto.builder().accessToken("newAccessToken").build();
       doReturn(authorizationDto).when(spotifyService).refreshToken(any());
@@ -544,44 +528,13 @@ class SpotifyUserAuthorizationServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("spotifyAuthorizationRepository is called to get user's entity")
+    @DisplayName("spotifyAuthorizationRepository is called to delete user's entity")
     void test_spotify_repository_called() {
-      // given
-      var userId = 1L;
-      doReturn(userId).when(userMock).getId();
-
       // when
       underTest.deleteAuthorization();
 
       // then
-      verify(authorizationRepository).findByUserId(userId);
-    }
-
-    @Test
-    @DisplayName("if present entity is deleted")
-    void test_entity_deleted_if_present() {
-      // given
-      var authorizationEntity = SpotifyAuthorizationEntity.builder().user(userMock).build();
-      doReturn(Optional.of(authorizationEntity)).when(authorizationRepository).findByUserId(any());
-
-      // when
-      underTest.deleteAuthorization();
-
-      // then
-      verify(authorizationRepository).delete(authorizationEntity);
-    }
-
-    @Test
-    @DisplayName("if entity is not present repository is not called again")
-    void test_entity_not_present() {
-      // given
-      doReturn(Optional.empty()).when(authorizationRepository).findByUserId(any());
-
-      // when
-      underTest.deleteAuthorization();
-
-      // then
-      verifyNoMoreInteractions(authorizationRepository);
+      verify(authorizationRepository).deleteByUser(userMock);
     }
   }
 }

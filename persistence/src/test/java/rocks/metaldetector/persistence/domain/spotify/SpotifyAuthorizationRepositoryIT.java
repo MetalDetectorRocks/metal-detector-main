@@ -7,12 +7,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import rocks.metaldetector.persistence.BaseDataJpaTest;
-import rocks.metaldetector.persistence.WithIntegrationTestConfig;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserFactory;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 
-class SpotifyAuthorizationRepositoryTest extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
+class SpotifyAuthorizationRepositoryIT extends BaseDataJpaTest implements WithAssertions {
 
   private static UserEntity USER;
   private static SpotifyAuthorizationEntity SPOTIFY_AUTHORIZATION;
@@ -38,10 +37,10 @@ class SpotifyAuthorizationRepositoryTest extends BaseDataJpaTest implements With
   }
 
   @Test
-  @DisplayName("should find spotify authorization entity by user id")
-  void should_find_spotify_authorization_entity_by_public_user_id() {
+  @DisplayName("should find spotifyAuthorization by user")
+  void should_find_spotify_authorization_entity_by_user() {
     // when
-    var result = underTest.findByUserId(USER.getId());
+    var result = underTest.findByUser(USER);
 
     // then
     assertThat(result).isPresent();
@@ -49,12 +48,13 @@ class SpotifyAuthorizationRepositoryTest extends BaseDataJpaTest implements With
   }
 
   @Test
-  @DisplayName("should return empty Optional if no spotify authorization could be found")
-  void should_return_empty_optional_if_no_spotify_authorization_could_be_found() {
+  @DisplayName("should delete spotifyAuthorization by user")
+  void test_delete_by_user() {
     // when
-    var result = underTest.findByUserId(123456L);
+    underTest.deleteByUser(USER);
+    var result = underTest.findByUser(USER);
 
     // then
-    assertThat(result).isNotPresent();
+    assertThat(result).isEmpty();
   }
 }

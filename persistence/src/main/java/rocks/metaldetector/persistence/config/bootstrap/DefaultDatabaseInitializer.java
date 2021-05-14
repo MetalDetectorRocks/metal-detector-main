@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.artist.ArtistEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
-import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
@@ -62,20 +61,12 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
             .userRoles(UserRole.createUserRole())
             .build();
 
-    NotificationConfigEntity notificationConfigJohnDoe = NotificationConfigEntity.builder()
-            .user(johnDoe)
-            .build();
-
     UserEntity mariaThompson = UserEntity.builder()
             .username("MariaT")
             .email("maria.thompson@example.com")
             .password("$2a$10$fiWhbakTv3lFCiz6weDJXO/qZuzUL.uLJFOkQuquOnRGIJaoJGKpS")
             .enabled(true)
             .userRoles(UserRole.createUserRole())
-            .build();
-
-    NotificationConfigEntity notificationConfigMariaThompson = NotificationConfigEntity.builder()
-            .user(mariaThompson)
             .build();
 
     UserEntity mikeMiller = UserEntity.builder()
@@ -86,17 +77,9 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
             .userRoles(UserRole.createUserRole())
             .build();
 
-    NotificationConfigEntity notificationConfigMikeMiller = NotificationConfigEntity.builder()
-            .user(mikeMiller)
-            .build();
-
     entityManager.persist(johnDoe);
     entityManager.persist(mariaThompson);
     entityManager.persist(mikeMiller);
-
-    entityManager.persist(notificationConfigJohnDoe);
-    entityManager.persist(notificationConfigMariaThompson);
-    entityManager.persist(notificationConfigMikeMiller);
   }
 
   private void createAdministrator() {
@@ -107,12 +90,8 @@ public class DefaultDatabaseInitializer implements ApplicationRunner {
             .enabled(true)
             .userRoles(UserRole.createAdministratorRole())
             .build();
-    NotificationConfigEntity notificationConfig = NotificationConfigEntity.builder()
-            .user(administrator)
-            .build();
 
     entityManager.persist(administrator);
-    entityManager.persist(notificationConfig);
   }
 
   private void createAndFollowArtists() {

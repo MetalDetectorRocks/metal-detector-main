@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.notification;
+package rocks.metaldetector.web.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NotificationConfigDto {
+public class TelegramConfig {
 
   private boolean notify;
   private int frequencyInWeeks;
   private boolean notificationAtReleaseDate;
   private boolean notificationAtAnnouncementDate;
-  private Integer registrationId;
-  private boolean telegramNotificationsActive;
+  private int registrationId;
+  private boolean notificationsActivated;
 }

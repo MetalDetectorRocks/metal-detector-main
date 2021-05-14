@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.notification;
+package rocks.metaldetector.service.notification.messaging;
 
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;

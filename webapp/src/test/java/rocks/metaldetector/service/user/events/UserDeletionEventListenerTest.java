@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
-import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
+import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
@@ -26,11 +26,7 @@ import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.service.user.UserService;
 
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.service.user.events.UserDeletionEventListener.DELETE_QUERY;
@@ -45,6 +41,9 @@ class UserDeletionEventListenerTest implements WithAssertions {
 
   @Mock
   private NotificationConfigRepository notificationConfigRepository;
+
+  @Mock
+  private TelegramConfigRepository telegramConfigRepository;
 
   @Mock
   private SpotifyAuthorizationRepository spotifyAuthorizationRepository;
@@ -72,41 +71,38 @@ class UserDeletionEventListenerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(followActionRepository, notificationConfigRepository, spotifyAuthorizationRepository, userRepository, jdbcTemplate, emailService);
+    reset(followActionRepository, notificationConfigRepository, spotifyAuthorizationRepository,
+          userRepository, jdbcTemplate, emailService, telegramConfigRepository);
   }
 
   @Test
-  @DisplayName("notificationConfig is deleted")
-  void test_notification_config_deleted() {
+  @DisplayName("notificationConfigs are deleted")
+  void test_notification_configs_deleted() {
     // when
     underTest.onApplicationEvent(userDeletionEvent);
 
     // then
-    verify(notificationConfigRepository).deleteByUserId(userDeletionEvent.getUserEntity().getId());
+    verify(notificationConfigRepository).deleteAllByUser(userDeletionEvent.getUserEntity());
   }
 
   @Test
-  @DisplayName("SpotifyAuthorization is fetched from repository")
+  @DisplayName("telegramConfig is deleted")
+  void test_telegram_config_deleted() {
+    // when
+    underTest.onApplicationEvent(userDeletionEvent);
+
+    // then
+    verify(telegramConfigRepository).deleteByUser(userDeletionEvent.getUserEntity());
+  }
+
+  @Test
+  @DisplayName("spotifyAuthorization is deleted")
   void test_spotify_authorization_fetched() {
     // when
     underTest.onApplicationEvent(userDeletionEvent);
 
     // then
-    verify(spotifyAuthorizationRepository).findByUserId(userDeletionEvent.getUserEntity().getId());
-  }
-
-  @Test
-  @DisplayName("If present SpotifyAuthorization is deleted")
-  void test_spotify_authorization_deleted() {
-    // given
-    SpotifyAuthorizationEntity spotifyAuthorization = SpotifyAuthorizationEntity.builder().user(userDeletionEvent.getUserEntity()).build();
-    doReturn(Optional.of(spotifyAuthorization)).when(spotifyAuthorizationRepository).findByUserId(any());
-
-    // when
-    underTest.onApplicationEvent(userDeletionEvent);
-
-    // then
-    verify(spotifyAuthorizationRepository).delete(spotifyAuthorization);
+    verify(spotifyAuthorizationRepository).deleteByUser(userDeletionEvent.getUserEntity());
   }
 
   @Test

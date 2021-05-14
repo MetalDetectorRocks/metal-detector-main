@@ -15,13 +15,13 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class TelegramServiceImplTest implements WithAssertions {
+class TelegramMessagingServiceImplTest implements WithAssertions {
 
   @Mock
   private TelegramClient telegramClient;
 
   @InjectMocks
-  private TelegramServiceImpl underTest;
+  private TelegramMessagingServiceImpl underTest;
 
   @AfterEach
   private void tearDown() {
