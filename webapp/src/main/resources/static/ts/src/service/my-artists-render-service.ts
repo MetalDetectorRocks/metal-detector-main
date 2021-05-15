@@ -31,7 +31,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
     }
 
     protected getHostElementId(): string {
-        return "artists-container";
+        return "my-artists-wrapper";
     }
 
     protected onRendering(response: MyArtistsResponse): void {
@@ -46,11 +46,9 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
             // In this case you will be forwarded to the last page.
             window.location.replace(`?page=${response.pagination.totalPages}`);
         } else {
-            let currentCardNo = 1;
             response.myArtists.forEach((artist) => {
                 const artistDivElement = this.renderArtistCard(artist);
-                this.attachArtistCard(artistDivElement, currentCardNo);
-                currentCardNo++;
+                this.hostElement.insertAdjacentElement("beforeend", artistDivElement);
             });
 
             const pagination = response.pagination;
@@ -78,12 +76,12 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
     }
 
     private attachArtistCard(artistDivElement: HTMLDivElement, currentCarNo: number): void {
-        if (this.rowElement === undefined || currentCarNo % this.MAX_CARDS_PER_ROW === 1) {
-            this.rowElement = document.createElement("div");
-            this.rowElement.className = "row";
-        }
-        this.rowElement.insertAdjacentElement("beforeend", artistDivElement);
-        this.hostElement.insertAdjacentElement("beforeend", this.rowElement);
+        // if (this.rowElement === undefined || currentCarNo % this.MAX_CARDS_PER_ROW === 1) {
+        //     this.rowElement = document.createElement("div");
+        //     this.rowElement.className = "row";
+        // }
+        // this.rowElement.insertAdjacentElement("beforeend", artistDivElement);
+        this.hostElement.insertAdjacentElement("beforeend", artistDivElement);
     }
 
     private createFollowedSinceString(followedSince: string): string {

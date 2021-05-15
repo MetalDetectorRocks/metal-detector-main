@@ -262,7 +262,7 @@ nav li {
     }
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 540px) {
     .nav-wrapper .mobile-search-box {
         max-width: calc(100% - 70px);
     }
