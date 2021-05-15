@@ -3,10 +3,10 @@ package rocks.metaldetector.web.transformer;
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.service.notification.config.NotificationConfigDto;
 import rocks.metaldetector.service.notification.config.TelegramConfigDto;
-import rocks.metaldetector.web.api.EmailConfig;
-import rocks.metaldetector.web.api.TelegramConfig;
 import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
+import rocks.metaldetector.web.api.response.EmailConfig;
 import rocks.metaldetector.web.api.response.NotificationConfigResponse;
+import rocks.metaldetector.web.api.response.TelegramConfig;
 
 import java.util.List;
 

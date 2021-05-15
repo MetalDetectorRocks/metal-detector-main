@@ -5,9 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import rocks.metaldetector.service.notification.config.NotificationConfigDto;
 import rocks.metaldetector.service.notification.config.TelegramConfigDto;
-import rocks.metaldetector.web.api.EmailConfig;
-import rocks.metaldetector.web.api.TelegramConfig;
 import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
+import rocks.metaldetector.web.api.response.EmailConfig;
+import rocks.metaldetector.web.api.response.TelegramConfig;
 
 import java.util.List;
 

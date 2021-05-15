@@ -18,10 +18,10 @@ import rocks.metaldetector.service.notification.config.NotificationConfigService
 import rocks.metaldetector.service.notification.config.TelegramConfigDto;
 import rocks.metaldetector.service.notification.config.TelegramConfigService;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
-import rocks.metaldetector.web.api.EmailConfig;
-import rocks.metaldetector.web.api.TelegramConfig;
 import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
+import rocks.metaldetector.web.api.response.EmailConfig;
 import rocks.metaldetector.web.api.response.NotificationConfigResponse;
+import rocks.metaldetector.web.api.response.TelegramConfig;
 import rocks.metaldetector.web.transformer.NotificationConfigResponseTransformer;
 
 import java.util.Collections;
