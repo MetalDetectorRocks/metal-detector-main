@@ -1,4 +1,4 @@
-package rocks.metaldetector.web.api;
+package rocks.metaldetector.web.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
