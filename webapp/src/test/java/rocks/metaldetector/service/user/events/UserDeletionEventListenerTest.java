@@ -18,7 +18,6 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
-import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationEntity;
 import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
@@ -27,11 +26,7 @@ import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.service.user.UserService;
 
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.service.user.events.UserDeletionEventListener.DELETE_QUERY;
@@ -108,20 +103,6 @@ class UserDeletionEventListenerTest implements WithAssertions {
 
     // then
     verify(spotifyAuthorizationRepository).deleteByUser(userDeletionEvent.getUserEntity());
-  }
-
-  @Test
-  @DisplayName("If present SpotifyAuthorization is deleted")
-  void test_spotify_authorization_deleted() {
-    // given
-    SpotifyAuthorizationEntity spotifyAuthorization = SpotifyAuthorizationEntity.builder().user(userDeletionEvent.getUserEntity()).build();
-    doReturn(Optional.of(spotifyAuthorization)).when(spotifyAuthorizationRepository).findByUser(any());
-
-    // when
-    underTest.onApplicationEvent(userDeletionEvent);
-
-    // then
-    verify(spotifyAuthorizationRepository).delete(spotifyAuthorization);
   }
 
   @Test
