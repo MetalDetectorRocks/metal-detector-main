@@ -17,17 +17,12 @@ import java.util.Map;
 @Slf4j
 public class CustomErrorController implements ErrorController {
 
-  @Override
-  public String getErrorPath() {
-    return null;
-  }
-
   @RequestMapping(Endpoints.ERROR)
   public ModelAndView handleError(HttpServletRequest request) {
     Object statusCodeObj = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
     Object requestURIObj = request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
 
-    int statusCode      = statusCodeObj != null ? Integer.parseInt(statusCodeObj.toString()) : -1;
+    int statusCode = statusCodeObj != null ? Integer.parseInt(statusCodeObj.toString()) : -1;
     String requestedURI = requestURIObj != null ? (String) requestURIObj : "";
 
     if (statusCode == HttpStatus.NOT_FOUND.value()) {
@@ -40,7 +35,7 @@ public class CustomErrorController implements ErrorController {
     }
     else if (statusCode == HttpStatus.FORBIDDEN.value()) {
       log.warn("Access denied while requesting '{}' for user {}'",
-              requestedURI, request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : "[Unknown]");
+               requestedURI, request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : "[Unknown]");
       return new ModelAndView(ViewNames.Guest.ERROR_403, Map.of("requestedURI", requestedURI), HttpStatus.FORBIDDEN);
     }
 
@@ -49,5 +44,4 @@ public class CustomErrorController implements ErrorController {
     HttpStatus responseStatus = statusCode != -1 ? HttpStatus.valueOf(statusCode) : HttpStatus.I_AM_A_TEAPOT;
     return new ModelAndView(ViewNames.Guest.ERROR, Map.of("requestedURI", requestedURI), responseStatus);
   }
-
 }
