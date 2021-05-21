@@ -21,6 +21,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     private readonly paginationComponent: PaginationComponent;
     private readonly topSearchResultTemplateElement: HTMLTemplateElement;
     private readonly searchResultTemplateElement: HTMLTemplateElement;
+    private readonly paginationWrapper: HTMLDivElement;
 
     constructor(
         followArtistService: FollowArtistService,
@@ -32,6 +33,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         this.paginationComponent = new PaginationComponent();
         this.topSearchResultTemplateElement = document.getElementById("top-search-result") as HTMLTemplateElement;
         this.searchResultTemplateElement = document.getElementById("search-result") as HTMLTemplateElement;
+        this.paginationWrapper = document.getElementById("pagination-wrapper") as HTMLDivElement;
     }
 
     protected getHostElementId(): string {
@@ -210,7 +212,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
 
     private attachPagination(paginationData: Pagination) {
         const paginationList = this.paginationComponent.render(paginationData);
-        this.hostElement.insertAdjacentElement("beforeend", paginationList);
+        this.paginationWrapper.insertAdjacentElement("beforeend", paginationList);
     }
 
     private determineArtistImageUrl(imageUrl: string): string {

@@ -83,15 +83,6 @@ footer .footer-icon {
 footer .footer-icon:hover {
     filter: grayscale(0);
 }
-@media screen and (max-width: 1050px) {
-    footer .flex-wrapper {
-        flex-direction: column-reverse;
-    }
-    footer .flex-wrapper .flex-item {
-        width: 100%;
-        text-align: center;
-    }
-}
 
 /* Cards */
 .card {
@@ -111,36 +102,21 @@ footer .footer-icon:hover {
     font-size: 1.3rem;
 }
 
+/* Pagination */
+#pagination-wrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+
 /* My Artists */
 #my-artists-wrapper.flex-wrapper {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
 }
 #my-artists-wrapper .flex-item {
-    margin-right: 20px;
     position: relative;
-    width: 23%;
-}
-@media screen and (max-width: 1050px) {
-    #my-artists-wrapper .flex-item {
-        margin-right: 15px;
-        width: 31%;
-    }
-}
-@media screen and (max-width: 700px) {
-    #my-artists-wrapper.flex-wrapper {
-        justify-content: space-evenly;
-    }
-    #my-artists-wrapper .flex-item {
-        width: 90%;
-    }
-    #my-artists-wrapper .card-body,
-    #my-artists-wrapper .card-footer {
-        text-align: center;
-    }
-    #my-artists-wrapper .card-title {
-        font-size: 2rem;
-    }
+    width: 24%;
 }
 
 /* Search Results */
@@ -367,4 +343,36 @@ footer .footer-icon:hover {
 .dismissible-button {
     width: max-content;
     padding-left: 1.75rem;
+}
+
+/* Responsive */
+@media screen and (max-width: 1050px) {
+    footer .flex-wrapper {
+        flex-direction: column-reverse;
+    }
+    footer .flex-wrapper .flex-item {
+        width: 100%;
+        text-align: center;
+    }
+    #my-artists-wrapper .flex-item {
+        width: 31%;
+    }
+}
+@media screen and (max-width: 700px) {
+    #my-artists-wrapper.flex-wrapper {
+        justify-content: space-evenly;
+    }
+    #my-artists-wrapper .flex-item {
+        width: 90%;
+    }
+    #my-artists-wrapper .card-body,
+    #my-artists-wrapper .card-footer {
+        text-align: center;
+    }
+    #my-artists-wrapper .card-title {
+        font-size: 2rem;
+    }
+    #pagination-wrapper {
+        justify-content: center;
+    }
 }
