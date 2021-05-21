@@ -21,7 +21,7 @@ export class PaginationComponent {
 
     public render(pagination: Pagination): HTMLUListElement {
         this.paginationList = document.createElement("ul") as HTMLUListElement;
-        this.paginationList.classList.add("pagination", "justify-content-end");
+        this.paginationList.classList.add("pagination");
         this.insertPreviousLink(pagination.currentPage, pagination.totalPages);
 
         // no dotting for 10 pages or less

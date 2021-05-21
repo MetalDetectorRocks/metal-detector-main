@@ -13,6 +13,7 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
     private readonly paginationComponent: PaginationComponent;
     private readonly releaseTemplateElement: HTMLTemplateElement;
     private readonly sortPropertySelector!: HTMLSelectElement;
+    private readonly paginationWrapper: HTMLDivElement;
 
     constructor(
         dateService: DateService,
@@ -24,6 +25,7 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
         this.paginationComponent = new PaginationComponent();
         this.releaseTemplateElement = document.getElementById("detailed-release-card") as HTMLTemplateElement;
         this.sortPropertySelector = document.getElementById("sort-property-selector") as HTMLSelectElement;
+        this.paginationWrapper = document.getElementById("pagination-wrapper") as HTMLDivElement;
     }
 
     protected getHostElementId(): string {
@@ -94,6 +96,6 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
 
     private attachPagination(paginationData: Pagination) {
         const paginationList = this.paginationComponent.render(paginationData);
-        this.hostElement.insertAdjacentElement("beforeend", paginationList);
+        this.paginationWrapper.insertAdjacentElement("beforeend", paginationList);
     }
 }
