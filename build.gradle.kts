@@ -29,8 +29,8 @@ buildscript {
     set("postgresqlVersion", "42.2.19")
     set("restAssuredVersion", "4.2.1")
     set("servletApiVersion", "4.0.1")
-    set("springBootVersion", "2.4.5")
-    set("springSecurityVersion", "5.4.6")
+    set("springBootVersion", "2.5.0")
+    set("springSecurityVersion", "5.5.0")
     set("thymeleafDialectVersion", "2.5.3")
     set("thymeleafExtrasVersion", "3.0.4.RELEASE")
     set("webjarsLocatorVersion", "0.46")
@@ -54,7 +54,7 @@ val dependencyVersions = listOf(
   "commons-io:commons-io:2.8.0"
 )
 val dependencyGroupVersions = mapOf(
-  "org.springframework" to "5.3.6",
+  "org.springframework" to "5.3.7",
   "org.springframework.security" to extra["springSecurityVersion"] as String,
   "org.springframework.boot" to extra["springBootVersion"] as String,
   "com.fasterxml.jackson.core" to extra["jacksonVersion"] as String,
