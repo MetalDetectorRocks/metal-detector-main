@@ -372,7 +372,12 @@ footer .footer-icon:hover {
     #my-artists-wrapper .card-title {
         font-size: 2rem;
     }
+
     #pagination-wrapper {
         justify-content: center;
+    }
+
+    .vertical-card-img {
+        min-height: 22.5rem;
     }
 }
