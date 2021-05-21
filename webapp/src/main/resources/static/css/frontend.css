@@ -101,6 +101,9 @@ footer .footer-icon:hover {
 .card-title {
     font-size: 1.3rem;
 }
+.card-footer {
+    padding: 0.75rem 0.5rem;
+}
 
 /* Pagination */
 #pagination-wrapper {
@@ -363,7 +366,7 @@ footer .footer-icon:hover {
         justify-content: space-evenly;
     }
     #my-artists-wrapper .flex-item {
-        width: 90%;
+        width: 80%;
     }
     #my-artists-wrapper .card-body,
     #my-artists-wrapper .card-footer {
@@ -378,6 +381,6 @@ footer .footer-icon:hover {
     }
 
     .vertical-card-img {
-        min-height: 22.5rem;
+        min-height: 27.5rem;
     }
 }
