@@ -61,7 +61,7 @@ export class DateService {
 export enum DateFormat {
     LONG = "MMMM Do YYYY",
     LONG_WITH_TIME = "MMMM Do YYYY, h:mm:ss a",
-    SHORT = "MMM Do YY",
+    SHORT = "MMM Do YYYY",
     SHORT_WITH_TIME = "MMM Do YY, h:mm:ss a",
     UTC = "YYYY-MM-DD",
 }
