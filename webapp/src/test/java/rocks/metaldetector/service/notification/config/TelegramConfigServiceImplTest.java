@@ -275,6 +275,24 @@ class TelegramConfigServiceImplTest implements WithAssertions {
     }
 
     @Test
+    @DisplayName("exception is thrown if after 100 retries no unique id was found")
+    void test_exception_thrown() {
+      // given
+      var threadLocalRandomMock = mock(ThreadLocalRandom.class);
+      doReturn(true).when(telegramConfigRepository).existsByRegistrationId(any());
+
+      // when
+      Throwable throwable;
+      try (MockedStatic<ThreadLocalRandom> mock = mockStatic(ThreadLocalRandom.class)) {
+        mock.when(ThreadLocalRandom::current).thenReturn(threadLocalRandomMock);
+        throwable = catchThrowable(() -> underTest.generateRegistrationId());
+      }
+
+      // then
+      assertThat(throwable).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
     @DisplayName("generateRegistrationId: user's notification config is fetched")
     void test_users_notification_config_fetched_on_id_generation() {
       // given

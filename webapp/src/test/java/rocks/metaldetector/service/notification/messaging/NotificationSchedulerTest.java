@@ -98,7 +98,7 @@ class NotificationSchedulerTest implements WithAssertions {
       // given
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
-      doReturn(new NotificationReleaseCollector.ReleaseContainer(Collections.emptyList(), Collections.emptyList()))
+      doReturn(new NotificationReleaseCollector.ReleaseContainer(List.of(ReleaseDtoFactory.createDefault()), Collections.emptyList()))
           .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt());
 
       // when
@@ -106,6 +106,24 @@ class NotificationSchedulerTest implements WithAssertions {
 
       // then
       verify(notificationSenderSupplier).apply(notificationConfig.getChannel());
+    }
+
+    @Test
+    @DisplayName("serviceSupplier is not called and message not sent if releases are empty")
+    void test_service_supplier_not_called() {
+      // given
+      var notificationServiceMock = mock(NotificationSender.class);
+      doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
+      doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
+      doReturn(new NotificationReleaseCollector.ReleaseContainer(Collections.emptyList(), Collections.emptyList()))
+          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt());
+
+      // when
+      underTest.notifyOnFrequency();
+
+      // then
+      verifyNoInteractions(notificationSenderSupplier);
+      verifyNoInteractions(notificationServiceMock);
     }
 
     @Test
@@ -155,9 +173,10 @@ class NotificationSchedulerTest implements WithAssertions {
     void test_services_called_for_each_config() {
       // given
       var notificationConfig2 = NotificationConfigEntity.builder().user(USER).notify(true).channel(TELEGRAM).build();
+      var notificationServiceMock = mock(NotificationSender.class);
       doReturn(List.of(notificationConfig, notificationConfig2)).when(notificationConfigRepository).findAllActive();
-      doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
-      doReturn(new NotificationReleaseCollector.ReleaseContainer(Collections.emptyList(), Collections.emptyList()))
+      doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
+      doReturn(new NotificationReleaseCollector.ReleaseContainer(List.of(ReleaseDtoFactory.createDefault()), Collections.emptyList()))
           .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt());
 
       // when
@@ -167,6 +186,7 @@ class NotificationSchedulerTest implements WithAssertions {
       verify(notificationReleaseCollector, times(2)).fetchReleasesForUserAndFrequency(any(), anyInt());
       verify(notificationSenderSupplier, times(2)).apply(any());
       verify(notificationConfigRepository, times(2)).save(any());
+      verify(notificationServiceMock, times(2)).sendFrequencyMessage(any(), any(), any());
     }
 
     @Test
@@ -226,13 +246,30 @@ class NotificationSchedulerTest implements WithAssertions {
       // given
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
-      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any());
+      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any());
 
       // when
       underTest.notifyOnReleaseDate();
 
       // then
       verify(notificationSenderSupplier).apply(notificationConfig.getChannel());
+    }
+
+    @Test
+    @DisplayName("serviceSupplier is called not called and message not sent if releases are empty")
+    void test_service_supplier_not_called() {
+      // given
+      var notificationServiceMock = mock(NotificationSender.class);
+      doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
+      doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
+      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any());
+
+      // when
+      underTest.notifyOnReleaseDate();
+
+      // then
+      verifyNoInteractions(notificationSenderSupplier);
+      verifyNoInteractions(notificationServiceMock);
     }
 
     @Test
@@ -257,9 +294,10 @@ class NotificationSchedulerTest implements WithAssertions {
     void test_services_called_for_each_config() {
       // given
       var notificationConfig2 = NotificationConfigEntity.builder().user(USER).notify(true).notificationAtReleaseDate(true).channel(TELEGRAM).build();
+      var notificationServiceMock = mock(NotificationSender.class);
       doReturn(List.of(notificationConfig, notificationConfig2)).when(notificationConfigRepository).findAllActive();
-      doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
-      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any());
+      doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
+      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any());
 
       // when
       underTest.notifyOnReleaseDate();
@@ -267,6 +305,7 @@ class NotificationSchedulerTest implements WithAssertions {
       // then
       verify(notificationReleaseCollector, times(2)).fetchTodaysReleaseForUser(any());
       verify(notificationSenderSupplier, times(2)).apply(any());
+      verify(notificationServiceMock, times(2)).sendReleaseDateMessage(any(), any());
     }
 
     @Test
@@ -326,13 +365,30 @@ class NotificationSchedulerTest implements WithAssertions {
       // given
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
-      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any());
+      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any());
 
       // when
       underTest.notifyOnAnnouncementDate();
 
       // then
       verify(notificationSenderSupplier).apply(notificationConfig.getChannel());
+    }
+
+    @Test
+    @DisplayName("serviceSupplier is not called and message not sent if releases are empty")
+    void test_service_supplier_not_called() {
+      // given
+      var notificationServiceMock = mock(NotificationSender.class);
+      doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
+      doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
+      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any());
+
+      // when
+      underTest.notifyOnAnnouncementDate();
+
+      // then
+      verifyNoInteractions(notificationSenderSupplier);
+      verifyNoInteractions(notificationServiceMock);
     }
 
     @Test
@@ -357,9 +413,10 @@ class NotificationSchedulerTest implements WithAssertions {
     void test_services_called_for_each_config() {
       // given
       var notificationConfig2 = NotificationConfigEntity.builder().user(USER).notify(true).notificationAtAnnouncementDate(true).channel(TELEGRAM).build();
+      var notificationServiceMock = mock(NotificationSender.class);
       doReturn(List.of(notificationConfig, notificationConfig2)).when(notificationConfigRepository).findAllActive();
-      doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
-      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any());
+      doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
+      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any());
 
       // when
       underTest.notifyOnAnnouncementDate();
@@ -367,6 +424,7 @@ class NotificationSchedulerTest implements WithAssertions {
       // then
       verify(notificationReleaseCollector, times(2)).fetchTodaysAnnouncementsForUser(any());
       verify(notificationSenderSupplier, times(2)).apply(any());
+      verify(notificationServiceMock, times(2)).sendAnnouncementDateMessage(any(), any());
     }
 
     @Test

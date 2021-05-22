@@ -21,6 +21,7 @@ public class TelegramConfigServiceImpl implements TelegramConfigService {
   static final String REGISTRATION_SUCCESSFUL_MESSAGE = "You successfully registered for Telegram notifications!";
   static final String REGISTRATION_FAILED_MESSAGE_NOT_READABLE = "The registration id could not be parsed: '%s'";
   static final String REGISTRATION_FAILED_ID_NOT_FOUND = "The registration id could not be found: '%d'";
+  static final int MAX_RETRIES_ID_GENERATION = 100;
 
   private final TelegramConfigRepository telegramConfigRepository;
   private final TelegramConfigTransformer telegramConfigTransformer;
@@ -65,8 +66,16 @@ public class TelegramConfigServiceImpl implements TelegramConfigService {
   @Transactional
   public int generateRegistrationId() {
     int registrationId;
-    do { registrationId = ThreadLocalRandom.current().nextInt(100_000, 1_000_000); }
-    while (telegramConfigRepository.existsByRegistrationId(registrationId));
+    int retries = 0;
+    do {
+      registrationId = ThreadLocalRandom.current().nextInt(100_000, 1_000_000);
+      log.info("Generating new registration id: {}", registrationId);
+    }
+    while (telegramConfigRepository.existsByRegistrationId(registrationId) && ++retries < MAX_RETRIES_ID_GENERATION);
+
+    if (retries == MAX_RETRIES_ID_GENERATION) {
+      throw new IllegalStateException("could not generate new unique registration id");
+    }
 
     AbstractUserEntity currentUser = currentUserSupplier.get();
     TelegramConfigEntity telegramConfig = telegramConfigRepository.findByUser(currentUser)

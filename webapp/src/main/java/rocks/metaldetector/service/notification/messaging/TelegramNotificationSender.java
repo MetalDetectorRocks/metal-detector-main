@@ -26,16 +26,14 @@ public class TelegramNotificationSender implements NotificationSender {
   @Override
   @Transactional(readOnly = true)
   public void sendFrequencyMessage(AbstractUserEntity user, List<ReleaseDto> upcomingReleases, List<ReleaseDto> recentReleases) {
-    if (!(upcomingReleases.isEmpty() && recentReleases.isEmpty())) {
-      TelegramConfigEntity telegramConfig = telegramConfigRepository.findByUser(user).orElseThrow(
-          () -> new ResourceNotFoundException("TelegramConfigEntity for user '" + user.getPublicId() + "' not found")
-      );
+    TelegramConfigEntity telegramConfig = telegramConfigRepository.findByUser(user).orElseThrow(
+        () -> new ResourceNotFoundException("TelegramConfigEntity for user '" + user.getPublicId() + "' not found")
+    );
 
-      var chatId = telegramConfig.getChatId();
-      if (chatId != null) {
-        String message = telegramNotificationFormatter.formatFrequencyNotificationMessage(upcomingReleases, recentReleases);
-        telegramMessagingService.sendMessage(chatId, message);
-      }
+    var chatId = telegramConfig.getChatId();
+    if (chatId != null) {
+      String message = telegramNotificationFormatter.formatFrequencyNotificationMessage(upcomingReleases, recentReleases);
+      telegramMessagingService.sendMessage(chatId, message);
     }
   }
 
@@ -52,16 +50,14 @@ public class TelegramNotificationSender implements NotificationSender {
   }
 
   private void sendDateMessage(AbstractUserEntity user, List<ReleaseDto> releases, String releasesText) {
-    if (!releases.isEmpty()) {
-      TelegramConfigEntity telegramConfig = telegramConfigRepository.findByUser(user).orElseThrow(
-          () -> new ResourceNotFoundException("TelegramConfigEntity for user '" + user.getPublicId() + "' not found")
-      );
+    TelegramConfigEntity telegramConfig = telegramConfigRepository.findByUser(user).orElseThrow(
+        () -> new ResourceNotFoundException("TelegramConfigEntity for user '" + user.getPublicId() + "' not found")
+    );
 
-      var chatId = telegramConfig.getChatId();
-      if (chatId != null) {
-        String message = telegramNotificationFormatter.formatDateNotificationMessage(releases, releasesText);
-        telegramMessagingService.sendMessage(chatId, message);
-      }
+    var chatId = telegramConfig.getChatId();
+    if (chatId != null) {
+      String message = telegramNotificationFormatter.formatDateNotificationMessage(releases, releasesText);
+      telegramMessagingService.sendMessage(chatId, message);
     }
   }
 }

@@ -17,21 +17,21 @@ import static rocks.metaldetector.persistence.domain.notification.NotificationCh
 class NotificationSenderSupplierTest implements WithAssertions {
 
   @Mock
-  private NotificationSender emailService;
+  private NotificationSender emailNotificationSender;
 
   @Mock
-  private NotificationSender telegramService;
+  private NotificationSender telegramNotificationSender;
 
   private NotificationSenderSupplier underTest;
 
   @BeforeEach
   void setup() {
-    underTest = new NotificationSenderSupplier(emailService, telegramService);
+    underTest = new NotificationSenderSupplier(emailNotificationSender, telegramNotificationSender);
   }
 
   @AfterEach
   void tearDown() {
-    reset(emailService, telegramService);
+    reset(emailNotificationSender, telegramNotificationSender);
   }
 
   @Test
@@ -41,7 +41,7 @@ class NotificationSenderSupplierTest implements WithAssertions {
     var result = underTest.apply(EMAIL);
 
     // then
-    assertThat(result).isEqualTo(emailService);
+    assertThat(result).isEqualTo(emailNotificationSender);
   }
 
   @Test
@@ -51,6 +51,6 @@ class NotificationSenderSupplierTest implements WithAssertions {
     var result = underTest.apply(TELEGRAM);
 
     // then
-    assertThat(result).isEqualTo(telegramService);
+    assertThat(result).isEqualTo(telegramNotificationSender);
   }
 }

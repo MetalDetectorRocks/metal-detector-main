@@ -21,7 +21,7 @@ public class NotificationScheduler {
   private final NotificationReleaseCollector notificationReleaseCollector;
   private final NotificationSenderSupplier notificationSenderSupplier;
 
-  @Scheduled(cron = "0 0 4 * * SUN")
+  @Scheduled(cron = "0 0 7 * * SUN")
   @Transactional
   public void notifyOnFrequency() {
     var now = LocalDate.now();
@@ -48,22 +48,32 @@ public class NotificationScheduler {
 
   private void frequencyNotification(NotificationConfigEntity notificationConfig, LocalDate now) {
     NotificationReleaseCollector.ReleaseContainer releaseContainer = notificationReleaseCollector.fetchReleasesForUserAndFrequency(notificationConfig.getUser(), notificationConfig.getFrequencyInWeeks());
-    NotificationSender notificationSender = notificationSenderSupplier.apply(notificationConfig.getChannel());
-    notificationSender.sendFrequencyMessage(notificationConfig.getUser(), releaseContainer.getUpcomingReleases(), releaseContainer.getRecentReleases());
+
+    if (!(releaseContainer.getUpcomingReleases().isEmpty() && releaseContainer.getRecentReleases().isEmpty())) {
+      NotificationSender notificationSender = notificationSenderSupplier.apply(notificationConfig.getChannel());
+      notificationSender.sendFrequencyMessage(notificationConfig.getUser(), releaseContainer.getUpcomingReleases(), releaseContainer.getRecentReleases());
+    }
+
     notificationConfig.setLastNotificationDate(now);
     notificationConfigRepository.save(notificationConfig);
   }
 
   private void releaseDateNotification(NotificationConfigEntity notificationConfig) {
     List<ReleaseDto> todaysReleases = notificationReleaseCollector.fetchTodaysReleaseForUser(notificationConfig.getUser());
-    NotificationSender notificationSender = notificationSenderSupplier.apply(notificationConfig.getChannel());
-    notificationSender.sendReleaseDateMessage(notificationConfig.getUser(), todaysReleases);
+
+    if (!todaysReleases.isEmpty()) {
+      NotificationSender notificationSender = notificationSenderSupplier.apply(notificationConfig.getChannel());
+      notificationSender.sendReleaseDateMessage(notificationConfig.getUser(), todaysReleases);
+    }
   }
 
   private void announcementDateNotification(NotificationConfigEntity notificationConfig) {
     List<ReleaseDto> todaysAnnouncements = notificationReleaseCollector.fetchTodaysAnnouncementsForUser(notificationConfig.getUser());
-    NotificationSender notificationSender = notificationSenderSupplier.apply(notificationConfig.getChannel());
-    notificationSender.sendAnnouncementDateMessage(notificationConfig.getUser(), todaysAnnouncements);
+
+    if (!todaysAnnouncements.isEmpty()) {
+      NotificationSender notificationSender = notificationSenderSupplier.apply(notificationConfig.getChannel());
+      notificationSender.sendAnnouncementDateMessage(notificationConfig.getUser(), todaysAnnouncements);
+    }
   }
 
   private boolean notificationIsDue(NotificationConfigEntity notificationConfig, LocalDate now) {

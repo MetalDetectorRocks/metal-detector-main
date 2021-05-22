@@ -5,7 +5,7 @@ public enum NotificationChannel {
   EMAIL,
   TELEGRAM;
 
-  public static NotificationChannel getChannelFromString(String channel) {
+  public static NotificationChannel from(String channel) {
     if (channel.equalsIgnoreCase(EMAIL.name())) {
       return EMAIL;
     }

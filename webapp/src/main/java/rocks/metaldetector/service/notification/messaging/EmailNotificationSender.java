@@ -19,22 +19,16 @@ public class EmailNotificationSender implements NotificationSender {
 
   @Override
   public void sendFrequencyMessage(AbstractUserEntity user, List<ReleaseDto> upcomingReleases, List<ReleaseDto> recentReleases) {
-    if (!(upcomingReleases.isEmpty() && recentReleases.isEmpty())) {
-      emailService.sendEmail(new ReleasesEmail(user.getEmail(), user.getUsername(), upcomingReleases, recentReleases));
-    }
+    emailService.sendEmail(new ReleasesEmail(user.getEmail(), user.getUsername(), upcomingReleases, recentReleases));
   }
 
   @Override
   public void sendReleaseDateMessage(AbstractUserEntity user, List<ReleaseDto> todaysReleases) {
-    if (!todaysReleases.isEmpty()) {
-      emailService.sendEmail(new TodaysReleasesEmail(user.getEmail(), user.getUsername(), todaysReleases));
-    }
+    emailService.sendEmail(new TodaysReleasesEmail(user.getEmail(), user.getUsername(), todaysReleases));
   }
 
   @Override
   public void sendAnnouncementDateMessage(AbstractUserEntity user, List<ReleaseDto> todaysAnnouncements) {
-    if (!todaysAnnouncements.isEmpty()) {
-      emailService.sendEmail(new TodaysAnnouncementsEmail(user.getEmail(), user.getUsername(), todaysAnnouncements));
-    }
+    emailService.sendEmail(new TodaysAnnouncementsEmail(user.getEmail(), user.getUsername(), todaysAnnouncements));
   }
 }
