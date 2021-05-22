@@ -3,11 +3,9 @@ package rocks.metaldetector.service.notification.messaging;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,12 +19,10 @@ import rocks.metaldetector.service.email.TodaysReleasesEmail;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class EmailNotificationSenderTest implements WithAssertions {
@@ -44,125 +40,74 @@ class EmailNotificationSenderTest implements WithAssertions {
     reset(emailService);
   }
 
-  @DisplayName("Tests for notification on frequency")
-  @Nested
-  class NotificationFrequencyTest {
+  @Test
+  @DisplayName("sendFrequencyMessage: emailService is called if releases are present")
+  void test_frequency_email_service_called() {
+    // given
+    ArgumentCaptor<ReleasesEmail> argumentCaptor = ArgumentCaptor.forClass(ReleasesEmail.class);
+    var releases = List.of(ReleaseDtoFactory.createDefault());
 
-    @Captor
-    private ArgumentCaptor<ReleasesEmail> argumentCaptor;
+    // when
+    underTest.sendFrequencyMessage(USER, releases, releases);
 
-    @Test
-    @DisplayName("emailService is called if releases are present")
-    void test_email_service_called() {
-      // given
-      var releases = List.of(ReleaseDtoFactory.createDefault());
+    // then
+    verify(emailService).sendEmail(argumentCaptor.capture());
+    var mail = argumentCaptor.getValue();
+    assertThat(mail.getRecipient()).isEqualTo(USER.getEmail());
+    assertThat(mail.getSubject()).isEqualTo(ReleasesEmail.SUBJECT);
+    assertThat(mail.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.NEW_RELEASES);
 
-      // when
-      underTest.sendFrequencyMessage(USER, releases, releases);
-
-      // then
-      verify(emailService).sendEmail(argumentCaptor.capture());
-      var mail = argumentCaptor.getValue();
-      assertThat(mail.getRecipient()).isEqualTo(USER.getEmail());
-      assertThat(mail.getSubject()).isEqualTo(ReleasesEmail.SUBJECT);
-      assertThat(mail.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.NEW_RELEASES);
-
-      var upcomingReleases = (List<ReleaseDto>) mail.getEnhancedViewModel("dummy-base-url").get("upcomingReleases");
-      var recentReleases = (List<ReleaseDto>) mail.getEnhancedViewModel("dummy-base-url").get("recentReleases");
-      var username = (String) mail.getEnhancedViewModel("dummy-base-url").get("username");
-      assertThat(username).isEqualTo(USER.getUsername());
-      assertThat(upcomingReleases).isEqualTo(releases);
-      assertThat(recentReleases).isEqualTo(releases);
-    }
-
-    @Test
-    @DisplayName("emailService is not called if not releases are present")
-    void test_email_service_not_called() {
-      // when
-      underTest.sendFrequencyMessage(USER, Collections.emptyList(), Collections.emptyList());
-
-      // then
-      verifyNoInteractions(emailService);
-    }
+    var upcomingReleases = (List<ReleaseDto>) mail.getEnhancedViewModel("dummy-base-url").get("upcomingReleases");
+    var recentReleases = (List<ReleaseDto>) mail.getEnhancedViewModel("dummy-base-url").get("recentReleases");
+    var username = (String) mail.getEnhancedViewModel("dummy-base-url").get("username");
+    assertThat(username).isEqualTo(USER.getUsername());
+    assertThat(upcomingReleases).isEqualTo(releases);
+    assertThat(recentReleases).isEqualTo(releases);
   }
 
-  @DisplayName("Tests for notification on release date")
-  @Nested
-  class NotificationReleaseDateTest {
+  @Test
+  @DisplayName("sendReleaseDateMessage: emailService is called if releases are present")
+  void test_release_date_email_service_called() {
+    // given
+    ArgumentCaptor<TodaysReleasesEmail> argumentCaptor = ArgumentCaptor.forClass(TodaysReleasesEmail.class);
+    var releases = List.of(ReleaseDtoFactory.createDefault());
 
-    @Captor
-    private ArgumentCaptor<TodaysReleasesEmail> argumentCaptor;
+    // when
+    underTest.sendReleaseDateMessage(USER, releases);
 
-    @Test
-    @DisplayName("emailService is called if releases are present")
-    void test_email_service_called() {
-      // given
-      var releases = List.of(ReleaseDtoFactory.createDefault());
+    // then
+    verify(emailService).sendEmail(argumentCaptor.capture());
+    var mail = argumentCaptor.getValue();
+    assertThat(mail.getRecipient()).isEqualTo(USER.getEmail());
+    assertThat(mail.getSubject()).isEqualTo(TodaysReleasesEmail.SUBJECT);
+    assertThat(mail.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.TODAYS_RELEASES);
 
-      // when
-      underTest.sendReleaseDateMessage(USER, releases);
-
-      // then
-      verify(emailService).sendEmail(argumentCaptor.capture());
-      var mail = argumentCaptor.getValue();
-      assertThat(mail.getRecipient()).isEqualTo(USER.getEmail());
-      assertThat(mail.getSubject()).isEqualTo(TodaysReleasesEmail.SUBJECT);
-      assertThat(mail.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.TODAYS_RELEASES);
-
-      var todaysReleases = (List<ReleaseDto>) mail.getEnhancedViewModel("dummy-base-url").get("todaysReleases");
-      var username = (String) mail.getEnhancedViewModel("dummy-base-url").get("username");
-      assertThat(username).isEqualTo(USER.getUsername());
-      assertThat(todaysReleases).isEqualTo(releases);
-    }
-
-    @Test
-    @DisplayName("emailService is not called if not releases are present")
-    void test_email_service_not_called() {
-      // when
-      underTest.sendReleaseDateMessage(USER, Collections.emptyList());
-
-      // then
-      verifyNoInteractions(emailService);
-    }
+    var todaysReleases = (List<ReleaseDto>) mail.getEnhancedViewModel("dummy-base-url").get("todaysReleases");
+    var username = (String) mail.getEnhancedViewModel("dummy-base-url").get("username");
+    assertThat(username).isEqualTo(USER.getUsername());
+    assertThat(todaysReleases).isEqualTo(releases);
   }
 
-  @DisplayName("Tests for notification on announcement date")
-  @Nested
-  class NotificationAnnouncementDateTest {
+  @Test
+  @DisplayName("sendAnnouncementDateMessage: emailService is called if releases are present")
+  void test_announcement_date_email_service_called() {
+    // given
+    ArgumentCaptor<TodaysAnnouncementsEmail> argumentCaptor = ArgumentCaptor.forClass(TodaysAnnouncementsEmail.class);
+    var releases = List.of(ReleaseDtoFactory.createDefault());
 
-    @Captor
-    private ArgumentCaptor<TodaysAnnouncementsEmail> argumentCaptor;
+    // when
+    underTest.sendAnnouncementDateMessage(USER, releases);
 
-    @Test
-    @DisplayName("emailService is called if releases are present")
-    void test_email_service_called() {
-      // given
-      var releases = List.of(ReleaseDtoFactory.createDefault());
+    // then
+    verify(emailService).sendEmail(argumentCaptor.capture());
+    var mail = argumentCaptor.getValue();
+    assertThat(mail.getRecipient()).isEqualTo(USER.getEmail());
+    assertThat(mail.getSubject()).isEqualTo(TodaysAnnouncementsEmail.SUBJECT);
+    assertThat(mail.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.TODAYS_ANNOUNCEMENTS);
 
-      // when
-      underTest.sendAnnouncementDateMessage(USER, releases);
-
-      // then
-      verify(emailService).sendEmail(argumentCaptor.capture());
-      var mail = argumentCaptor.getValue();
-      assertThat(mail.getRecipient()).isEqualTo(USER.getEmail());
-      assertThat(mail.getSubject()).isEqualTo(TodaysAnnouncementsEmail.SUBJECT);
-      assertThat(mail.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.TODAYS_ANNOUNCEMENTS);
-
-      var todaysAnnouncements = (List<ReleaseDto>) mail.getEnhancedViewModel("dummy-base-url").get("todaysAnnouncements");
-      var username = (String) mail.getEnhancedViewModel("dummy-base-url").get("username");
-      assertThat(username).isEqualTo(USER.getUsername());
-      assertThat(todaysAnnouncements).isEqualTo(releases);
-    }
-
-    @Test
-    @DisplayName("emailService is not called if not releases are present")
-    void test_email_service_not_called() {
-      // when
-      underTest.sendAnnouncementDateMessage(USER, Collections.emptyList());
-
-      // then
-      verifyNoInteractions(emailService);
-    }
+    var todaysAnnouncements = (List<ReleaseDto>) mail.getEnhancedViewModel("dummy-base-url").get("todaysAnnouncements");
+    var username = (String) mail.getEnhancedViewModel("dummy-base-url").get("username");
+    assertThat(username).isEqualTo(USER.getUsername());
+    assertThat(todaysAnnouncements).isEqualTo(releases);
   }
 }

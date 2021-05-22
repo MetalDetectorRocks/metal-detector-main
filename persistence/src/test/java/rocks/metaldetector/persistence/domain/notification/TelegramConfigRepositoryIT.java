@@ -78,7 +78,7 @@ class TelegramConfigRepositoryIT extends BaseDataJpaTest implements WithAssertio
   }
 
   @Test
-  @DisplayName("should return true if notification config exists")
+  @DisplayName("should return true if registration id exists")
   void test_exists_true() {
     // given
     var registrationId = 666;
@@ -91,7 +91,7 @@ class TelegramConfigRepositoryIT extends BaseDataJpaTest implements WithAssertio
   }
 
   @Test
-  @DisplayName("should return false if notification config does not exist")
+  @DisplayName("should return false if registration id does not exist")
   void test_exists_false() {
     // given
     var registrationId = 555;
@@ -104,8 +104,8 @@ class TelegramConfigRepositoryIT extends BaseDataJpaTest implements WithAssertio
   }
 
   @Test
-  @DisplayName("should find notification config entity by telegram registration id")
-  void should_find_notification_config_entity_by_registration_id() {
+  @DisplayName("should find telegram config entity by telegram registration id")
+  void should_find_telegram_config_entity_by_registration_id() {
     // when
     var result = underTest.findByRegistrationId(TELEGRAM_CONFIG.getRegistrationId());
 
@@ -115,7 +115,7 @@ class TelegramConfigRepositoryIT extends BaseDataJpaTest implements WithAssertio
   }
 
   @Test
-  @DisplayName("should return empty Optional if no notification config could be found")
+  @DisplayName("should return empty Optional if no telegram config could be found")
   void should_return_empty_optional_for_unknown_registration_id() {
     // when
     var result = underTest.findByRegistrationId(555);

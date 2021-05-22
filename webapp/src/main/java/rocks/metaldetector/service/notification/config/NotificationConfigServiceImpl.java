@@ -38,11 +38,9 @@ public class NotificationConfigServiceImpl implements NotificationConfigService 
   public void updateCurrentUserNotificationConfig(NotificationConfigDto notificationConfigDto) {
     AbstractUserEntity currentUser = currentUserSupplier.get();
 
-    NotificationChannel channel = NotificationChannel.getChannelFromString(notificationConfigDto.getChannel());
+    NotificationChannel channel = NotificationChannel.from(notificationConfigDto.getChannel());
     Optional<NotificationConfigEntity> notificationConfigOptional = notificationConfigRepository.findByUserAndChannel(currentUser, channel);
-    NotificationConfigEntity notificationConfig;
-
-    notificationConfig = notificationConfigOptional.orElseGet(() -> NotificationConfigEntity.builder()
+    NotificationConfigEntity notificationConfig = notificationConfigOptional.orElseGet(() -> NotificationConfigEntity.builder()
         .user(currentUser)
         .channel(channel)
         .build());

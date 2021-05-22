@@ -19,6 +19,7 @@ import static rocks.metaldetector.persistence.domain.notification.NotificationCh
 class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAssertions {
 
   private static UserEntity USER_1;
+  private static UserEntity USER_2;
   private static NotificationConfigEntity NOTIFICATION_CONFIG_1;
   private static NotificationConfigEntity NOTIFICATION_CONFIG_2;
   private static NotificationConfigEntity NOTIFICATION_CONFIG_3;
@@ -32,7 +33,7 @@ class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAsse
   @BeforeEach
   void setup() {
     USER_1 = UserFactory.createUser("user", "user@example.com");
-    UserEntity USER_2 = UserFactory.createUser("user2", "user2@example.com");
+    USER_2 = UserFactory.createUser("user2", "user2@example.com");
     NOTIFICATION_CONFIG_1 = NotificationConfigEntity.builder()
         .user(USER_1)
         .notify(true)
@@ -82,6 +83,27 @@ class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAsse
     assertThat(result).hasSize(2);
     assertThat(result.get(0)).isEqualTo(NOTIFICATION_CONFIG_1);
     assertThat(result.get(1)).isEqualTo(NOTIFICATION_CONFIG_2);
+  }
+
+  @Test
+  @DisplayName("findByUserAndChannel returns entity if present")
+  void test_find_by_user_and_channel_returns_entity() {
+    // when
+    var result = underTest.findByUserAndChannel(USER_1, EMAIL);
+
+    // then
+    assertThat(result).isPresent();
+    assertThat(result.get()).isEqualTo(NOTIFICATION_CONFIG_1);
+  }
+
+  @Test
+  @DisplayName("findByUserAndChannel returns empty optional")
+  void test_find_by_user_and_channel() {
+    // when
+    var result = underTest.findByUserAndChannel(USER_2, TELEGRAM);
+
+    // then
+    assertThat(result).isEmpty();
   }
 
   @Test

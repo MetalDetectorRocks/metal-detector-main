@@ -67,37 +67,23 @@ class TelegramNotificationSenderTest implements WithAssertions {
   class FrequencyTests {
 
     @Test
-    @DisplayName("repository is called if releases are present")
+    @DisplayName("repository is called")
     void test_repository_called() {
-      // given
-      var releases = List.of(ReleaseDtoFactory.createDefault());
-
       // when
-      underTest.sendFrequencyMessage(USER, releases, releases);
+      underTest.sendFrequencyMessage(USER, Collections.emptyList(), Collections.emptyList());
 
       // then
       verify(telegramConfigRepository).findByUser(USER);
     }
 
     @Test
-    @DisplayName("nothing is called is releases are empty")
-    void test_nothing_called() {
-      // when
-      underTest.sendFrequencyMessage(USER, Collections.emptyList(), Collections.emptyList());
-
-      // then
-      verifyNoInteractions(telegramConfigRepository);
-    }
-
-    @Test
     @DisplayName("exception is thrown if no config could not be found")
     void test_exception_thrown() {
       // given
-      var releases = List.of(ReleaseDtoFactory.createDefault());
       doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
 
       // when
-      var throwable = catchThrowable(() -> underTest.sendFrequencyMessage(USER, releases, releases));
+      var throwable = catchThrowable(() -> underTest.sendFrequencyMessage(USER, Collections.emptyList(), Collections.emptyList()));
 
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
@@ -121,10 +107,9 @@ class TelegramNotificationSenderTest implements WithAssertions {
     void test_notification_formatter_not_called() {
       // given
       telegramConfig.setChatId(null);
-      var releases = List.of(ReleaseDtoFactory.createDefault());
 
       // when
-      underTest.sendFrequencyMessage(USER, releases, releases);
+      underTest.sendFrequencyMessage(USER, Collections.emptyList(), Collections.emptyList());
 
       // then
       verifyNoInteractions(telegramNotificationFormatter);
@@ -134,12 +119,11 @@ class TelegramNotificationSenderTest implements WithAssertions {
     @DisplayName("messagingService is called with formatted message")
     void test_messaging_service_called() {
       // given
-      var releases = List.of(ReleaseDtoFactory.createDefault());
       var message = "message";
       doReturn(message).when(telegramNotificationFormatter).formatFrequencyNotificationMessage(anyList(), anyList());
 
       // when
-      underTest.sendFrequencyMessage(USER, releases, releases);
+      underTest.sendFrequencyMessage(USER, Collections.emptyList(), Collections.emptyList());
 
       // then
       verify(telegramMessagingService).sendMessage(telegramConfig.getChatId(), message);
@@ -151,7 +135,7 @@ class TelegramNotificationSenderTest implements WithAssertions {
   class ReleaseDateTests {
 
     @Test
-    @DisplayName("repository is called if releases are present")
+    @DisplayName("repository is called")
     void test_repository_called() {
       // when
       underTest.sendReleaseDateMessage(USER, List.of(ReleaseDtoFactory.createDefault()));
@@ -161,23 +145,13 @@ class TelegramNotificationSenderTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("nothing is called is releases are empty")
-    void test_nothing_called() {
-      // when
-      underTest.sendReleaseDateMessage(USER, Collections.emptyList());
-
-      // then
-      verifyNoInteractions(telegramConfigRepository);
-    }
-
-    @Test
     @DisplayName("exception is thrown if no config could not be found")
     void test_exception_thrown() {
       // given
       doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
 
       // when
-      var throwable = catchThrowable(() -> underTest.sendReleaseDateMessage(USER, List.of(ReleaseDtoFactory.createDefault())));
+      var throwable = catchThrowable(() -> underTest.sendReleaseDateMessage(USER, Collections.emptyList()));
 
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
@@ -203,7 +177,7 @@ class TelegramNotificationSenderTest implements WithAssertions {
       telegramConfig.setChatId(null);
 
       // when
-      underTest.sendReleaseDateMessage(USER, List.of(ReleaseDtoFactory.createDefault()));
+      underTest.sendReleaseDateMessage(USER, Collections.emptyList());
 
       // then
       verifyNoInteractions(telegramNotificationFormatter);
@@ -217,7 +191,7 @@ class TelegramNotificationSenderTest implements WithAssertions {
       doReturn(message).when(telegramNotificationFormatter).formatDateNotificationMessage(anyList(), anyString());
 
       // when
-      underTest.sendReleaseDateMessage(USER, List.of(ReleaseDtoFactory.createDefault()));
+      underTest.sendReleaseDateMessage(USER, Collections.emptyList());
 
       // then
       verify(telegramMessagingService).sendMessage(telegramConfig.getChatId(), message);
@@ -229,7 +203,7 @@ class TelegramNotificationSenderTest implements WithAssertions {
   class AnnouncementDateTests {
 
     @Test
-    @DisplayName("repository is called if releases are present")
+    @DisplayName("repository is called")
     void test_repository_called() {
       // when
       underTest.sendAnnouncementDateMessage(USER, List.of(ReleaseDtoFactory.createDefault()));
@@ -239,23 +213,13 @@ class TelegramNotificationSenderTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("nothing is called is releases are empty")
-    void test_nothing_called() {
-      // when
-      underTest.sendAnnouncementDateMessage(USER, Collections.emptyList());
-
-      // then
-      verifyNoInteractions(telegramConfigRepository);
-    }
-
-    @Test
     @DisplayName("exception is thrown if no config could not be found")
     void test_exception_thrown() {
       // given
       doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
 
       // when
-      var throwable = catchThrowable(() -> underTest.sendAnnouncementDateMessage(USER, List.of(ReleaseDtoFactory.createDefault())));
+      var throwable = catchThrowable(() -> underTest.sendAnnouncementDateMessage(USER, Collections.emptyList()));
 
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
@@ -281,7 +245,7 @@ class TelegramNotificationSenderTest implements WithAssertions {
       telegramConfig.setChatId(null);
 
       // when
-      underTest.sendAnnouncementDateMessage(USER, List.of(ReleaseDtoFactory.createDefault()));
+      underTest.sendAnnouncementDateMessage(USER, Collections.emptyList());
 
       // then
       verifyNoInteractions(telegramNotificationFormatter);
@@ -295,7 +259,7 @@ class TelegramNotificationSenderTest implements WithAssertions {
       doReturn(message).when(telegramNotificationFormatter).formatDateNotificationMessage(anyList(), anyString());
 
       // when
-      underTest.sendAnnouncementDateMessage(USER, List.of(ReleaseDtoFactory.createDefault()));
+      underTest.sendAnnouncementDateMessage(USER, Collections.emptyList());
 
       // then
       verify(telegramMessagingService).sendMessage(telegramConfig.getChatId(), message);
