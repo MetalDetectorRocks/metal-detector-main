@@ -50,6 +50,6 @@ public class ArtistEntityTransformer {
 
   private String buildGenreString(List<String> genres) {
     String genreString = String.join(", ", genres);
-    return genreString.substring(0, Math.min(genreString.length(), 256));
+    return genreString.substring(0, Math.min(genreString.length(), 255));
   }
 }
