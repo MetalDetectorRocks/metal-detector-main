@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
@@ -76,5 +78,20 @@ class ArtistEntityTransformerTest implements WithAssertions {
     assertThat(artistEntity.getImageS()).isEqualTo(discogsArtist.getImages().get(S));
     assertThat(artistEntity.getImageM()).isEqualTo(discogsArtist.getImages().get(M));
     assertThat(artistEntity.getImageL()).isEqualTo(discogsArtist.getImages().get(L));
+  }
+
+  @Test
+  @DisplayName("the genre has a maximum of 255 characters")
+  void test_genre_max_length() {
+    // given
+    var genres = IntStream.range(1, 70).mapToObj(String::valueOf).collect(Collectors.toList());
+    var spotifyArtist = SpotifyArtistDtoFactory.createDefault();
+    spotifyArtist.setGenres(genres);
+
+    // when
+    var result = underTest.transformSpotifyArtistDto(spotifyArtist);
+
+    // then
+    assertThat(result.getGenres()).hasSize(255);
   }
 }
