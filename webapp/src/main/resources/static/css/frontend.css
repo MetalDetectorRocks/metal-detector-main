@@ -83,31 +83,43 @@ footer .footer-icon {
 footer .footer-icon:hover {
     filter: grayscale(0);
 }
-@media screen and (max-width: 1050px) {
-    footer .flex-wrapper {
-        flex-direction: column-reverse;
-    }
-    footer .flex-wrapper .flex-item {
-        width: 100%;
-        text-align: center;
-    }
-}
 
 /* Cards */
 .card {
     border: 1px solid var(--grey-border-color);
 }
-
 .card:hover > .follow-icon-my-artists {
     opacity: 1;
     -webkit-transition: all 0.3s ease-in;
     transition: all 0.3s ease-in;
 }
-
 .vertical-card-img {
     height: 18rem;
     object-fit: cover;
     border-bottom: 1px solid var(--grey-border-color);
+}
+.card-title {
+    font-size: 1.3rem;
+}
+.card-footer {
+    padding: 0.75rem 0.5rem;
+}
+
+/* Pagination */
+#pagination-wrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* My Artists */
+#my-artists-wrapper.flex-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25%;
+}
+#my-artists-wrapper .flex-item {
+    position: relative;
+    width: 24%;
 }
 
 /* Search Results */
@@ -334,4 +346,41 @@ footer .footer-icon:hover {
 .dismissible-button {
     width: max-content;
     padding-left: 1.75rem;
+}
+
+/* Responsive */
+@media screen and (max-width: 1050px) {
+    footer .flex-wrapper {
+        flex-direction: column-reverse;
+    }
+    footer .flex-wrapper .flex-item {
+        width: 100%;
+        text-align: center;
+    }
+    #my-artists-wrapper .flex-item {
+        width: 32.5%;
+    }
+}
+@media screen and (max-width: 700px) {
+    #my-artists-wrapper.flex-wrapper {
+        justify-content: space-evenly;
+    }
+    #my-artists-wrapper .flex-item {
+        width: 80%;
+    }
+    #my-artists-wrapper .card-body,
+    #my-artists-wrapper .card-footer {
+        text-align: center;
+    }
+    #my-artists-wrapper .card-title {
+        font-size: 2rem;
+    }
+
+    #pagination-wrapper {
+        justify-content: center;
+    }
+
+    .vertical-card-img {
+        min-height: 27.5rem;
+    }
 }

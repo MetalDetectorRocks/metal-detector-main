@@ -9,13 +9,11 @@ import { AbstractRenderService } from "./abstract-render-service";
 import { DateFormat, DateService } from "./date-service";
 
 export class MyArtistsRenderService extends AbstractRenderService<MyArtistsResponse> {
-    private readonly MAX_CARDS_PER_ROW = 4;
-
     private readonly followArtistService: FollowArtistService;
     private readonly dateService: DateService;
     private readonly paginationComponent: PaginationComponent;
     private readonly artistTemplateElement: HTMLTemplateElement;
-    private rowElement?: HTMLDivElement;
+    private readonly paginationWrapper: HTMLDivElement;
 
     constructor(
         followArtistService: FollowArtistService,
@@ -28,10 +26,11 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         this.dateService = dateService;
         this.paginationComponent = new PaginationComponent();
         this.artistTemplateElement = document.getElementById("artist-card") as HTMLTemplateElement;
+        this.paginationWrapper = document.getElementById("pagination-wrapper") as HTMLDivElement;
     }
 
     protected getHostElementId(): string {
-        return "artists-container";
+        return "my-artists-wrapper";
     }
 
     protected onRendering(response: MyArtistsResponse): void {
@@ -46,11 +45,9 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
             // In this case you will be forwarded to the last page.
             window.location.replace(`?page=${response.pagination.totalPages}`);
         } else {
-            let currentCardNo = 1;
             response.myArtists.forEach((artist) => {
                 const artistDivElement = this.renderArtistCard(artist);
-                this.attachArtistCard(artistDivElement, currentCardNo);
-                currentCardNo++;
+                this.hostElement.insertAdjacentElement("beforeend", artistDivElement);
             });
 
             const pagination = response.pagination;
@@ -77,15 +74,6 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
         return artistDivElement;
     }
 
-    private attachArtistCard(artistDivElement: HTMLDivElement, currentCarNo: number): void {
-        if (this.rowElement === undefined || currentCarNo % this.MAX_CARDS_PER_ROW === 1) {
-            this.rowElement = document.createElement("div");
-            this.rowElement.className = "row";
-        }
-        this.rowElement.insertAdjacentElement("beforeend", artistDivElement);
-        this.hostElement.insertAdjacentElement("beforeend", this.rowElement);
-    }
-
     private createFollowedSinceString(followedSince: string): string {
         const followedSinceString = this.dateService.format(followedSince, DateFormat.LONG);
         return `<img class="followed-since-icon" src="/images/pommesgabel.svg" alt="followed" width=26> on ${followedSinceString}`;
@@ -101,6 +89,6 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
 
     private attachPagination(paginationData: Pagination): void {
         const paginationList = this.paginationComponent.render(paginationData);
-        this.hostElement.insertAdjacentElement("beforeend", paginationList);
+        this.paginationWrapper.insertAdjacentElement("beforeend", paginationList);
     }
 }
