@@ -12,8 +12,10 @@ spring:
     hikari:
       max-lifetime: 600000
       connection-test-query: SELECT 1
-    platform: postgres
-    initialization-mode: always
+  sql:
+    init:
+      platform: postgres
+      enabled: true
   flyway:
     baseline-on-migrate: true
     sql-migration-prefix: v
