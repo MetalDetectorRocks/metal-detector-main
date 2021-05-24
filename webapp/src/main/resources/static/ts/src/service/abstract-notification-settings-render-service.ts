@@ -60,9 +60,7 @@ export abstract class AbstractNotificationSettingsRenderService<
 
     protected onRendering(notificationSettings: NotificationSettings): void {
         const config = this.getNotificationConfig(notificationSettings);
-        console.log(config);
         this.nonePeriodicNotificationsRb.checked = !config.notify;
-        console.log(this.nonePeriodicNotificationsRb);
         if (config.notify) {
             this.twoWeeklyFrequencyRb.checked = config.frequencyInWeeks === 2;
             this.fourWeeklyFrequencyRb.checked = config.frequencyInWeeks === 4;
