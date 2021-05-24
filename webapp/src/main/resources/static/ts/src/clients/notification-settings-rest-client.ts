@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { axiosConfig } from "../config/axios.config";
-import { NotificationSettings } from "../model/notification-settings.model";
+import { NotificationSettings, UpdateNotificationSettingsRequest } from "../model/notification-settings.model";
 
 export class NotificationSettingsRestClient {
     private readonly NOTIFICATION_SETTINGS_URL = "/rest/v1/notification-config";
@@ -17,7 +17,7 @@ export class NotificationSettingsRestClient {
             });
     }
 
-    public async updateNotificationSettings(request: NotificationSettings): Promise<boolean> {
+    public async updateNotificationSettings(request: UpdateNotificationSettingsRequest): Promise<boolean> {
         return await axios
             .put(this.NOTIFICATION_SETTINGS_URL, request, axiosConfig)
             .then((response: AxiosResponse) => {
