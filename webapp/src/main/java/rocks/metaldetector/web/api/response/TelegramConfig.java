@@ -15,6 +15,6 @@ public class TelegramConfig {
   private int frequencyInWeeks;
   private boolean notificationAtReleaseDate;
   private boolean notificationAtAnnouncementDate;
-  private int registrationId;
+  private Integer registrationId;
   private boolean notificationsActivated;
 }
