@@ -33,25 +33,24 @@
                     <div id="email-notification-config" class="collapse collapse-content" aria-labelledby="email-notification" data-parent="#notification-configs">
                         <div class="card-body">
                             <fieldset>
-                                <div class="form-group mb-3">
-                                    <label class="font-weight-bold" id="frequency-label">Periodic notifications</label><br />
+                                <div class="form-group mb-4">
+                                    <label class="font-weight-bold">Periodic notifications</label><br />
                                     <div class="form-group">
-                                        <div class="custom-control custom-radio">
+                                        <div class="custom-control custom-radio mb-2">
                                             <input type="radio" id="email-none-rb" name="email-regular-notification-frequency" class="custom-control-input">
                                             <label class="custom-control-label" for="email-none-rb">None</label>
                                         </div>
-                                        <div class="custom-control custom-radio">
+                                        <div class="custom-control custom-radio mb-2">
                                             <input type="radio" id="email-2-weekly-rb" name="email-regular-notification-frequency" class="custom-control-input">
                                             <label class="custom-control-label" for="email-2-weekly-rb">2-weekly</label>
                                         </div>
-                                        <div class="custom-control custom-radio">
+                                        <div class="custom-control custom-radio mb-2">
                                             <input type="radio" id="email-4-weekly-rb" name="email-regular-notification-frequency" class="custom-control-input">
                                             <label class="custom-control-label" for="email-4-weekly-rb">4-weekly</label>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="form-group mb-3">
+                                <div class="form-group mb-4">
                                     <label class="font-weight-bold" id="extra-notifications-label">Extra Notifications</label><br />
                                     <div class="custom-control custom-switch mb-2">
                                         <input type="checkbox" class="custom-control-input" id="email-release-date-notification-toggle">
@@ -78,9 +77,9 @@
                     </div>
                     <div id="telegram-notification-config" class="collapse" aria-labelledby="telegram-notification" data-parent="#notification-configs">
                         <div class="card-body">
-                            <fieldset id="telegram-area">
+                            <div id="telegram-area">
                                 <div id="telegram-activation-area">
-                                    <p>Notifications can be sent per Telegram too! To activate this generate a registration ID and send it in your Telegram app to our bot 'metal_detector_notification_bot'.</p>
+                                    <p>To activate telegram notifications generate a registration ID and send it in your Telegram app to our bot <span class="font-weight-bold">metal_detector_notification_bot</span>.</p>
                                     <div class="form-group">
                                         <button class="btn btn-secondary" id="telegram-id-button">Generate registration ID</button>
                                     </div>
@@ -90,8 +89,38 @@
                                     <div class="form-group">
                                         <button class="btn btn-outline-danger" id="deactivate-telegram-button">Deactivate telegram notifications</button>
                                     </div>
+                                    <fieldset>
+                                        <div class="form-group mb-4">
+                                            <label class="font-weight-bold">Periodic notifications</label><br />
+                                            <div class="form-group">
+                                                <div class="custom-control custom-radio mb-2">
+                                                    <input type="radio" id="telegram-none-rb" name="telegram-regular-notification-frequency" class="custom-control-input">
+                                                    <label class="custom-control-label" for="telegram-none-rb">None</label>
+                                                </div>
+                                                <div class="custom-control custom-radio mb-2">
+                                                    <input type="radio" id="telegram-2-weekly-rb" name="telegram-regular-notification-frequency" class="custom-control-input">
+                                                    <label class="custom-control-label" for="telegram-2-weekly-rb">2-weekly</label>
+                                                </div>
+                                                <div class="custom-control custom-radio mb-2">
+                                                    <input type="radio" id="telegram-4-weekly-rb" name="telegram-regular-notification-frequency" class="custom-control-input">
+                                                    <label class="custom-control-label" for="telegram-4-weekly-rb">4-weekly</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-4">
+                                            <label class="font-weight-bold">Extra Notifications</label><br />
+                                            <div class="custom-control custom-switch mb-2">
+                                                <input type="checkbox" class="custom-control-input" id="telegram-release-date-notification-toggle">
+                                                <label class="custom-control-label" for="telegram-release-date-notification-toggle">Notification on release date</label>
+                                            </div>
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" class="custom-control-input" id="telegram-announcement-date-notification-toggle">
+                                                <label class="custom-control-label" for="telegram-announcement-date-notification-toggle">Notification on announcement date</label>
+                                            </div>
+                                        </div>
+                                    </fieldset>
                                 </div>
-                            </fieldset>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -100,3 +129,5 @@
     </section>
 </body>
 </html>
+
+<!--ToDo DanielW: Neuer User bzw. leere Notification Tabelle-->
