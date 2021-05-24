@@ -178,6 +178,17 @@ footer .footer-icon:hover {
     border-left: 2px solid var(--grey-border-color);
 }
 
+/* Notification Settings */
+#notification-settings-container .collapse-content {
+    padding: 0.25rem 1.25rem;
+}
+#notification-settings-container .btn:focus {
+    box-shadow: unset;
+}
+#notification-settings-container #email-frequency-select {
+    max-width: 200px;
+}
+
 /* Spotify Synchronization */
 #artists-container {
     min-height: 15rem;
