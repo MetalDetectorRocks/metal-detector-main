@@ -47,7 +47,7 @@ val dependencyVersions = listOf(
   "junit:junit:4.13.2",
   "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3",
   "jakarta.activation:jakarta.activation-api:2.0.1",
-  "org.jboss.logging:jboss-logging:3.4.1.Final",
+  "org.jboss.logging:jboss-logging:3.4.2.Final",
   "net.bytebuddy:byte-buddy:1.11.0",
   "org.javassist:javassist:3.28.0-GA",
   "org.webjars:jquery:3.6.0",
