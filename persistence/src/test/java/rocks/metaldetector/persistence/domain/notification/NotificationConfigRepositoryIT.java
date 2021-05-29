@@ -107,14 +107,26 @@ class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAsse
   }
 
   @Test
-  @DisplayName("should delete notification config")
-  void test_delete() {
+  @DisplayName("should delete notification config by user")
+  void test_delete_by_user() {
     // when
     underTest.deleteAllByUser(USER_1);
     var result = underTest.findAllByUser(USER_1);
 
     // then
     assertThat(result).isEmpty();
+  }
+
+  @Test
+  @DisplayName("should delete notification config by user and channel")
+  void test_delete_by_user_and_channel() {
+    // when
+    underTest.deleteByUserAndChannel(USER_1, TELEGRAM);
+    var result = underTest.findAllByUser(USER_1);
+
+    // then
+    assertThat(result.size()).isEqualTo(1);
+    assertThat(result.get(0).getChannel()).isNotEqualTo(TELEGRAM);
   }
 
   @Test
