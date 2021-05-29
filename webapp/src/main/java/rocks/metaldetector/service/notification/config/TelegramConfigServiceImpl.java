@@ -95,9 +95,9 @@ public class TelegramConfigServiceImpl implements TelegramConfigService {
   }
 
   private NotificationConfigEntity getOrCreateNotificationConfig(AbstractUserEntity user) {
-    Optional<NotificationConfigEntity> notificationConfigOrEmpty = notificationConfigRepository.findByUserAndChannel(user, TELEGRAM);
-    if (notificationConfigOrEmpty.isPresent()) {
-      return notificationConfigOrEmpty.get();
+    Optional<NotificationConfigEntity> notificationConfigOptional = notificationConfigRepository.findByUserAndChannel(user, TELEGRAM);
+    if (notificationConfigOptional.isPresent()) {
+      return notificationConfigOptional.get();
     }
     else {
       var notificationConfig = NotificationConfigEntity.builder()
