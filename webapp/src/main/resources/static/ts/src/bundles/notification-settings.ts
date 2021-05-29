@@ -1,8 +1,8 @@
 import { AlertService } from "../service/alert-service";
 import { LoadingIndicatorService } from "../service/loading-indicator-service";
-import { EmailNotificationSettingsRenderService } from "../service/email-notification-settings-render-service";
+import { EmailNotificationSettingsRenderService } from "../service/notifications/email-notification-settings-render-service";
 import { NotificationSettingsRestClient } from "../clients/notification-settings-rest-client";
-import { TelegramNotificationSettingsRenderService } from "../service/telegram-notification-settings-render-service";
+import { TelegramNotificationSettingsRenderService } from "../service/notifications/telegram-notification-settings-render-service";
 
 const alertService = new AlertService();
 const loadingIndicatorService = new LoadingIndicatorService();

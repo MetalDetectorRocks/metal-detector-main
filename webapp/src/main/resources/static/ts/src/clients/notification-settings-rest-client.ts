@@ -4,6 +4,7 @@ import { NotificationSettings, UpdateNotificationSettingsRequest } from "../mode
 
 export class NotificationSettingsRestClient {
     private readonly NOTIFICATION_SETTINGS_URL = "/rest/v1/notification-config";
+    private readonly TELEGRAM_NOTIFICATION_SETTINGS_URL = "/rest/v1/telegram-config";
 
     public async fetchNotificationSettings(): Promise<NotificationSettings> {
         return await axios
@@ -31,7 +32,7 @@ export class NotificationSettingsRestClient {
 
     public async generateRegistrationId(): Promise<number> {
         return await axios
-            .post(this.NOTIFICATION_SETTINGS_URL, axiosConfig)
+            .post(this.TELEGRAM_NOTIFICATION_SETTINGS_URL, axiosConfig)
             .then((response: AxiosResponse) => {
                 return response.data;
             })
@@ -43,7 +44,7 @@ export class NotificationSettingsRestClient {
 
     public async deactivateTelegramNotifications(): Promise<void> {
         return await axios
-            .delete(this.NOTIFICATION_SETTINGS_URL, axiosConfig)
+            .delete(this.TELEGRAM_NOTIFICATION_SETTINGS_URL, axiosConfig)
             .then((response: AxiosResponse) => {
                 return response.data;
             })

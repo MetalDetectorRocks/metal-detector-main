@@ -1,13 +1,13 @@
-import { AbstractRenderService } from "./abstract-render-service";
-import { AlertService } from "./alert-service";
-import { LoadingIndicatorService } from "./loading-indicator-service";
+import { AbstractRenderService } from "../abstract-render-service";
+import { AlertService } from "../alert-service";
+import { LoadingIndicatorService } from "../loading-indicator-service";
 import {
     DefaultNotificationConfig,
     NotificationChannel,
     NotificationSettings,
-} from "../model/notification-settings.model";
-import { NotificationSettingsRestClient } from "../clients/notification-settings-rest-client";
-import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
+} from "../../model/notification-settings.model";
+import { NotificationSettingsRestClient } from "../../clients/notification-settings-rest-client";
+import { UNKNOWN_ERROR_MESSAGE } from "../../config/messages.config";
 
 export abstract class AbstractNotificationSettingsRenderService<
     T extends DefaultNotificationConfig
