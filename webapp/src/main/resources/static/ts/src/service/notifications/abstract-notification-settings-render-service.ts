@@ -9,6 +9,7 @@ import {
 import { NotificationSettingsRestClient } from "../../clients/notification-settings-rest-client";
 import { UNKNOWN_ERROR_MESSAGE } from "../../config/messages.config";
 
+// eslint-disable-next-line prettier/prettier
 export abstract class AbstractNotificationSettingsRenderService<
     T extends DefaultNotificationConfig
 > extends AbstractRenderService<NotificationSettings> {
