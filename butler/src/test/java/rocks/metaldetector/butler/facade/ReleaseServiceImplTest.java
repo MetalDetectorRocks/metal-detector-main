@@ -12,17 +12,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleaseRequestFactory;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory;
-import rocks.metaldetector.butler.ButlerDtoFactory.ImportJobResultDtoFactory;
 import rocks.metaldetector.butler.ButlerDtoFactory.ReleaseDtoFactory;
-import rocks.metaldetector.butler.api.ButlerImportJob;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
 import rocks.metaldetector.butler.client.ReleaseButlerRestClient;
-import rocks.metaldetector.butler.client.transformer.ButlerImportJobTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseRequestTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerReleaseResponseTransformer;
 import rocks.metaldetector.butler.client.transformer.ButlerSortTransformer;
-import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.support.DetectorSort;
 import rocks.metaldetector.support.Page;
@@ -31,17 +27,13 @@ import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.support.TimeRange;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static rocks.metaldetector.butler.ButlerDtoFactory.ButlerImportJobFactory;
 import static rocks.metaldetector.support.DetectorSort.Direction.ASC;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,19 +51,16 @@ class ReleaseServiceImplTest implements WithAssertions {
   @Mock
   private ButlerReleaseResponseTransformer releaseResponseTransformer;
 
-  @Mock
-  private ButlerImportJobTransformer importJobResponseTransformer;
-
   private ReleaseServiceImpl underTest;
 
   @BeforeEach
   void setup() {
-    underTest = new ReleaseServiceImpl(butlerClient, releaseRequestTransformer, sortTransformer, releaseResponseTransformer, importJobResponseTransformer);
+    underTest = new ReleaseServiceImpl(butlerClient, releaseRequestTransformer, sortTransformer, releaseResponseTransformer);
   }
 
   @AfterEach
   void tearDown() {
-    reset(butlerClient, releaseRequestTransformer, sortTransformer, releaseResponseTransformer, importJobResponseTransformer);
+    reset(butlerClient, releaseRequestTransformer, sortTransformer, releaseResponseTransformer);
   }
 
   @DisplayName("Test of findAllReleases()")
@@ -204,77 +193,6 @@ class ReleaseServiceImplTest implements WithAssertions {
       verify(releaseResponseTransformer).transformToPage(response);
       assertThat(releases).isEqualTo(expectedResult);
     }
-  }
-
-  @Test
-  @DisplayName("Creating an import job should call butler client")
-  void create_import_job_should_call_butler_client() {
-    // when
-    underTest.createImportJob();
-
-    // then
-    verify(butlerClient).createImportJob();
-  }
-
-  @Test
-  @DisplayName("Querying import job results should use butler client")
-  void query_import_job_results_should_use_butler_client() {
-    // given
-    doReturn(Collections.emptyList()).when(butlerClient).queryImportJobResults();
-
-    // when
-    underTest.queryImportJobResults();
-
-    // then
-    verify(butlerClient).queryImportJobResults();
-  }
-
-  @Test
-  @DisplayName("Querying import job results should use import job transformer to transform each response")
-  void query_import_job_results_should_use_transformer() {
-    // given
-    var butlerImportJobs = List.of(
-        ButlerImportJobFactory.createDefault(),
-        ButlerImportJobFactory.createDefault()
-    );
-    doReturn(butlerImportJobs).when(butlerClient).queryImportJobResults();
-
-    // when
-    underTest.queryImportJobResults();
-
-    // then
-    verify(importJobResponseTransformer, times(butlerImportJobs.size())).transform(any(ButlerImportJob.class));
-  }
-
-  @Test
-  @DisplayName("Querying import job results should return transformed responses")
-  void query_import_job_results_should_return_transformed_responses() {
-    // given
-    var butlerImportJobs = List.of(
-        ButlerImportJobFactory.createDefault(),
-        ButlerImportJobFactory.createDefault()
-    );
-    doReturn(butlerImportJobs).when(butlerClient).queryImportJobResults();
-    doReturn(ImportJobResultDtoFactory.createDefault()).when(importJobResponseTransformer).transform(any());
-
-    // when
-    List<ImportJobResultDto> response = underTest.queryImportJobResults();
-
-    // then
-    assertThat(response).isEqualTo(List.of(
-        ImportJobResultDtoFactory.createDefault(),
-        ImportJobResultDtoFactory.createDefault()
-    ));
-  }
-
-  @Test
-  @DisplayName("Creating an cover download job should call butler client")
-  void create_cover_download_job_should_call_butler_client() {
-    // when
-    underTest.createRetryCoverDownloadJob();
-
-    // then
-    verify(butlerClient).createRetryCoverDownloadJob();
   }
 
   @Test

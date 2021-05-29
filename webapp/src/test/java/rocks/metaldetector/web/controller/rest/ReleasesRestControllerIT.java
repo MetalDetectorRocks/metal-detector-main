@@ -13,12 +13,9 @@ import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
-import static rocks.metaldetector.support.Endpoints.Rest.COVER_JOB;
-import static rocks.metaldetector.support.Endpoints.Rest.IMPORT_JOB;
 import static rocks.metaldetector.support.Endpoints.Rest.MY_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
 
@@ -63,32 +60,6 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
     }
 
     @Test
-    @DisplayName("Administrator is allowed to POST on endpoint " + IMPORT_JOB + "'")
-    @WithMockUser(roles = "ADMINISTRATOR")
-    void admin_is_allowed_to_create_import_job() throws Exception {
-      mockMvc.perform(post(IMPORT_JOB))
-              .andExpect(status().isCreated());
-    }
-
-    @Test
-    @DisplayName("Administrator is allowed to GET on endpoint " + IMPORT_JOB + "'")
-    @WithMockUser(roles = "ADMINISTRATOR")
-    void admin_is_allowed_to_query_import_job_results() throws Exception {
-      mockMvc.perform(get(IMPORT_JOB)
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("Administrator is allowed to GET on endpoint " + COVER_JOB + "'")
-    @WithMockUser(roles = "ADMINISTRATOR")
-    void admin_is_allowed_to_create_retry_cover_download_job() throws Exception {
-      mockMvc.perform(post(COVER_JOB)
-                          .contentType(APPLICATION_JSON))
-          .andExpect(status().isOk());
-    }
-
-    @Test
     @DisplayName("Administrator is allowed to PUT on endpoint " + RELEASES + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void user_not_is_allowed_to_update_release_state() throws Exception {
@@ -128,32 +99,6 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
       mockMvc.perform(get(MY_RELEASES).param("sort", "fieldName")
               .contentType(APPLICATION_JSON))
               .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("User is not allowed to POST on endpoint " + IMPORT_JOB + "'")
-    @WithMockUser(roles = "USER")
-    void user_is_not_allowed_to_create_import_job() throws Exception {
-      mockMvc.perform(post(IMPORT_JOB))
-              .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @DisplayName("User is not allowed to GET on endpoint " + IMPORT_JOB + "'")
-    @WithMockUser(roles = "USER")
-    void user_is_not_allowed_to_query_import_job_results() throws Exception {
-      mockMvc.perform(get(IMPORT_JOB)
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @DisplayName("User is not allowed to GET on endpoint " + COVER_JOB + "'")
-    @WithMockUser(roles = "USER")
-    void user_not_is_allowed_to_create_retry_cover_download_job() throws Exception {
-      mockMvc.perform(post(COVER_JOB)
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isForbidden());
     }
 
     @Test
