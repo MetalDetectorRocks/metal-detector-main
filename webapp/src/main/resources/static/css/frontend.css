@@ -101,9 +101,6 @@ footer .footer-icon:hover {
 .card-title {
     font-size: 1.3rem;
 }
-.card-footer {
-    padding: 0.75rem 0.5rem;
-}
 
 /* Pagination */
 #pagination-wrapper {
@@ -120,6 +117,9 @@ footer .footer-icon:hover {
 #my-artists-wrapper .flex-item {
     position: relative;
     width: 24%;
+}
+#my-artists-wrapper .card-footer {
+    padding: 0.75rem 0.5rem;
 }
 
 /* Search Results */
