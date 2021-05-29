@@ -1,14 +1,11 @@
 import { AbstractRenderService } from "../abstract-render-service";
 import { AlertService } from "../alert-service";
 import { LoadingIndicatorService } from "../loading-indicator-service";
-import {
-    DefaultNotificationConfig,
-    NotificationChannel,
-    NotificationSettings,
-} from "../../model/notification-settings.model";
+import { DefaultNotificationConfig, NotificationChannel, NotificationSettings, } from "../../model/notification-settings.model";
 import { NotificationSettingsRestClient } from "../../clients/notification-settings-rest-client";
 import { UNKNOWN_ERROR_MESSAGE } from "../../config/messages.config";
 
+// eslint-disable-next-line prettier/prettier
 export abstract class AbstractNotificationSettingsRenderService<
     T extends DefaultNotificationConfig
 > extends AbstractRenderService<NotificationSettings> {
