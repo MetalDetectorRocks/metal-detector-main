@@ -5,12 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.butler.facade.ReleaseService;
-import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
@@ -28,7 +26,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
-import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -64,28 +61,6 @@ public class ReleasesRestController {
     var followedArtists = followArtistService.getFollowedArtistsOfCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
     Page<ReleaseDto> releasePage = releaseService.findReleases(followedArtists, timeRange, request.getQuery(), pageRequest);
     return ResponseEntity.ok(releasePage);
-  }
-
-  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-  @PostMapping(path = Endpoints.Rest.IMPORT_JOB)
-  public ResponseEntity<Void> createImportJob() {
-    releaseService.createImportJob();
-    return ResponseEntity.status(CREATED).build();
-  }
-
-  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-  @GetMapping(path = Endpoints.Rest.IMPORT_JOB,
-              produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<ImportJobResultDto>> getImportJobResults() {
-    List<ImportJobResultDto> response = releaseService.queryImportJobResults();
-    return ResponseEntity.ok(response);
-  }
-
-  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-  @PostMapping(path = Endpoints.Rest.COVER_JOB)
-  public ResponseEntity<Void> createRetryCoverDownloadJob() {
-    releaseService.createRetryCoverDownloadJob();
-    return ResponseEntity.ok().build();
   }
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
