@@ -1,12 +1,12 @@
-import { AlertService } from "./alert-service";
-import { LoadingIndicatorService } from "./loading-indicator-service";
+import { AlertService } from "../alert-service";
+import { LoadingIndicatorService } from "../loading-indicator-service";
 import {
     NotificationChannel,
     NotificationSettings,
     TelegramNotificationConfig,
-} from "../model/notification-settings.model";
-import { NotificationSettingsRestClient } from "../clients/notification-settings-rest-client";
-import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
+} from "../../model/notification-settings.model";
+import { NotificationSettingsRestClient } from "../../clients/notification-settings-rest-client";
+import { UNKNOWN_ERROR_MESSAGE } from "../../config/messages.config";
 import { AbstractNotificationSettingsRenderService } from "./abstract-notification-settings-render-service";
 
 export class TelegramNotificationSettingsRenderService extends AbstractNotificationSettingsRenderService<TelegramNotificationConfig> {
@@ -62,7 +62,7 @@ export class TelegramNotificationSettingsRenderService extends AbstractNotificat
 
     protected onRendering(notificationSettings: NotificationSettings): void {
         super.onRendering(notificationSettings);
-        if (notificationSettings.telegramConfig.telegramNotificationsActive) {
+        if (notificationSettings.telegramConfig.notificationsActivated) {
             this.telegramArea.removeChild(this.telegramActivationArea);
         } else {
             this.telegramArea.removeChild(this.telegramDeactivationArea);

@@ -9,7 +9,7 @@ export interface DefaultNotificationConfig {
     readonly notificationAtAnnouncementDate: boolean;
 }
 export interface TelegramNotificationConfig extends DefaultNotificationConfig {
-    readonly telegramNotificationsActive: boolean;
+    readonly notificationsActivated: boolean;
     readonly registrationId: number;
 }
 export interface UpdateNotificationSettingsRequest extends DefaultNotificationConfig {

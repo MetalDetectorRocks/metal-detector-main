@@ -75,7 +75,7 @@
                             </button>
                         </h2>
                     </div>
-                    <div id="telegram-notification-config" class="collapse" aria-labelledby="telegram-notification" data-parent="#notification-configs">
+                    <div id="telegram-notification-config" class="collapse collapse-content" aria-labelledby="telegram-notification" data-parent="#notification-configs">
                         <div class="card-body">
                             <div id="telegram-area">
                                 <div id="telegram-activation-area">
@@ -85,10 +85,6 @@
                                     </div>
                                 </div>
                                 <div id="telegram-deactivation-area">
-                                    <p>Telegram notifications are activated for your account.</p>
-                                    <div class="form-group">
-                                        <button class="btn btn-outline-danger" id="deactivate-telegram-button">Deactivate telegram notifications</button>
-                                    </div>
                                     <fieldset>
                                         <div class="form-group mb-4">
                                             <label class="font-weight-bold">Periodic notifications</label><br />
@@ -119,6 +115,11 @@
                                             </div>
                                         </div>
                                     </fieldset>
+                                    <div class="form-group">
+                                        <button class="btn btn-outline-danger btn-lg disabled" id="deactivate-telegram-button">
+                                            <span class="material-icons">delete</span> Delete bot configuration
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -131,3 +132,4 @@
 </html>
 
 <!--ToDo DanielW: Neuer User bzw. leere Notification Tabelle-->
+<!-- ToDo DanielW: Abstände auf den Cards anpassen -->

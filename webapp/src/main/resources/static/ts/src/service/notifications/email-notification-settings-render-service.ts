@@ -1,11 +1,11 @@
-import { AlertService } from "./alert-service";
-import { LoadingIndicatorService } from "./loading-indicator-service";
+import { AlertService } from "../alert-service";
+import { LoadingIndicatorService } from "../loading-indicator-service";
 import {
     DefaultNotificationConfig,
     NotificationChannel,
     NotificationSettings,
-} from "../model/notification-settings.model";
-import { NotificationSettingsRestClient } from "../clients/notification-settings-rest-client";
+} from "../../model/notification-settings.model";
+import { NotificationSettingsRestClient } from "../../clients/notification-settings-rest-client";
 import { AbstractNotificationSettingsRenderService } from "./abstract-notification-settings-render-service";
 
 export class EmailNotificationSettingsRenderService extends AbstractNotificationSettingsRenderService<DefaultNotificationConfig> {
