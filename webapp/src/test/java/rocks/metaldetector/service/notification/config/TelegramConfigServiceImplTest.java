@@ -426,4 +426,47 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       assertThat(result).isEqualTo(id);
     }
   }
+
+  @DisplayName("Tests for the deleting the configuration")
+  @Nested
+  class DeleteConfigurationTest {
+
+    @Test
+    @DisplayName("should get the current user")
+    void should_get_the_current_user() {
+      // when
+      underTest.deleteCurrentUserTelegramConfig();
+
+      // then
+      verify(currentUserSupplier).get();
+    }
+
+    @Test
+    @DisplayName("should delete the telegram config")
+    void should_delete_the_telegram_config() {
+      // given
+      var user = UserEntityFactory.createUser("user", "mail@mail.mail");
+      doReturn(user).when(currentUserSupplier).get();
+
+      // when
+      underTest.deleteCurrentUserTelegramConfig();
+
+      // then
+      verify(telegramConfigRepository).deleteByUser(user);
+    }
+
+    @Test
+    @DisplayName("should delete the notification config")
+    void should_delete_the_notification_config() {
+      // given
+      var user = UserEntityFactory.createUser("user", "mail@mail.mail");
+      doReturn(user).when(currentUserSupplier).get();
+
+      // when
+      underTest.deleteCurrentUserTelegramConfig();
+
+      // then
+      verify(notificationConfigRepository).deleteByUserAndChannel(user, TELEGRAM);
+    }
+  }
 }

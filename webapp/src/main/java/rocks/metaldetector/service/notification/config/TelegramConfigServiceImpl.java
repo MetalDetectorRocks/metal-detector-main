@@ -107,4 +107,12 @@ public class TelegramConfigServiceImpl implements TelegramConfigService {
       return notificationConfigRepository.save(notificationConfig);
     }
   }
+
+  @Override
+  @Transactional
+  public void deleteCurrentUserTelegramConfig() {
+    AbstractUserEntity currentUser = currentUserSupplier.get();
+    telegramConfigRepository.deleteByUser(currentUser);
+    notificationConfigRepository.deleteByUserAndChannel(currentUser, TELEGRAM);
+  }
 }
