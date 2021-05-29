@@ -9,9 +9,9 @@ import {
 import { NotificationSettingsRestClient } from "../../clients/notification-settings-rest-client";
 import { UNKNOWN_ERROR_MESSAGE } from "../../config/messages.config";
 
-// eslint-disable-next-line prettier/prettier
 export abstract class AbstractNotificationSettingsRenderService<
-    T extends DefaultNotificationConfig
+    // eslint-disable-next-line prettier/prettier
+    T extends DefaultNotificationConfig,
 > extends AbstractRenderService<NotificationSettings> {
     protected readonly notificationSettingsRestClient: NotificationSettingsRestClient;
     private nonePeriodicNotificationsRb!: HTMLInputElement;
