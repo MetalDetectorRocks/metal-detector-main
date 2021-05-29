@@ -20,7 +20,6 @@ import org.springframework.data.web.SortHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
 import rocks.metaldetector.butler.facade.ReleaseService;
-import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
@@ -31,7 +30,6 @@ import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.testutil.DtoFactory;
-import rocks.metaldetector.testutil.DtoFactory.ImportJobResultDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseRequestFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
@@ -53,7 +51,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static rocks.metaldetector.testutil.DtoFactory.PaginatedReleaseRequestFactory;
 
@@ -66,11 +63,9 @@ class ReleasesRestControllerTest implements WithAssertions {
   @Mock
   private FollowArtistService followArtistService;
 
-  private ReleasesRestController underTest;
-
   @BeforeEach
   void setUp() {
-    underTest = new ReleasesRestController(releasesService, followArtistService);
+    ReleasesRestController underTest = new ReleasesRestController(releasesService, followArtistService);
     StandaloneMockMvcBuilder mockMvcBuilder = MockMvcBuilders.standaloneSetup(underTest, RestExceptionsHandler.class)
         .setCustomArgumentResolvers(new SortHandlerMethodArgumentResolver());
     RestAssuredMockMvc.standaloneSetup(mockMvcBuilder);
@@ -418,111 +413,6 @@ class ReleasesRestControllerTest implements WithAssertions {
       map.put("query", request.getQuery());
 
       return map;
-    }
-  }
-
-  @Nested
-  @DisplayName("Tests creating an import job")
-  class CreateImportTest {
-
-    private RestAssuredMockMvcUtils restAssuredUtils;
-
-    @BeforeEach
-    void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.IMPORT_JOB);
-    }
-
-    @Test
-    @DisplayName("Should call release service")
-    void should_call_release_service() {
-      // when
-      restAssuredUtils.doPost();
-
-      // then
-      verify(releasesService).createImportJob();
-    }
-
-    @Test
-    @DisplayName("Should return CREATED")
-    void should_return_status_created() {
-      // when
-      ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doPost();
-
-      // then
-      validatableResponse.statusCode(CREATED.value());
-    }
-  }
-
-  @Nested
-  @DisplayName("Tests creating a job for retrying cover downloads")
-  class CreateRetryDownloadTest {
-
-    private RestAssuredMockMvcUtils restAssuredUtils;
-
-    @BeforeEach
-    void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.COVER_JOB);
-    }
-
-    @Test
-    @DisplayName("Should call release service")
-    void should_call_release_service() {
-      // when
-      restAssuredUtils.doPost();
-
-      // then
-      verify(releasesService).createRetryCoverDownloadJob();
-    }
-
-    @Test
-    @DisplayName("Should return OK")
-    void should_return_status_ok() {
-      // when
-      ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doPost();
-
-      // then
-      validatableResponse.statusCode(OK.value());
-    }
-  }
-
-  @Nested
-  @DisplayName("Tests querying import job results")
-  class QueryImportJobResultsTest {
-
-    private RestAssuredMockMvcUtils restAssuredUtils;
-
-    @BeforeEach
-    void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.IMPORT_JOB);
-    }
-
-    @Test
-    @DisplayName("Should call release service")
-    void should_call_release_service() {
-      // when
-      restAssuredUtils.doGet();
-
-      // then
-      verify(releasesService).queryImportJobResults();
-    }
-
-    @Test
-    @DisplayName("Should return result from release service with status OK")
-    void should_return_status_created() {
-      // given
-      var importJobResultDto = List.of(
-          ImportJobResultDtoFactory.createDefault(),
-          ImportJobResultDtoFactory.createDefault()
-      );
-      doReturn(importJobResultDto).when(releasesService).queryImportJobResults();
-
-      // when
-      ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doGet();
-
-      // then
-      validatableResponse.statusCode(OK.value());
-      var result = validatableResponse.extract().body().jsonPath().getList(".", ImportJobResultDto.class);
-      assertThat(result).isEqualTo(importJobResultDto);
     }
   }
 

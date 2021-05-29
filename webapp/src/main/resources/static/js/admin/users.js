@@ -1,101 +1,110 @@
 let userTable;
 
 $(document).ready(function () {
-    userTable = requestUsersFromServer();
+  userTable = requestUsersFromServer();
 
-    // create administrator
-    $("#create-user-button").button().on("click", createAdministrator);
-    $("#cancel-create-user-button").button().on("click", resetCreateUserForm);
-    $("#create-admin-user-form-close").button().on("click", resetCreateUserForm);
+  // create administrator
+  $("#create-user-button").button().on("click", createAdministrator);
+  $("#cancel-create-user-button").button().on("click", resetCreateUserForm);
+  $("#create-admin-user-form-close").button().on("click", resetCreateUserForm);
 
-    // update user
-    $("#update-user-button").button().on("click", updateUser);
-    $("#cancel-update-user-button").button().on("click", resetUpdateUserForm);
-    $(document).on("click", "#user-table tbody tr", showUpdateUserForm);
-    $("#update-user-form-close").button().on("click", resetUpdateUserForm);
+  // update user
+  $("#update-user-button").button().on("click", updateUser);
+  $("#cancel-update-user-button").button().on("click", resetUpdateUserForm);
+  $(document).on("click", "#user-table tbody tr", showUpdateUserForm);
+  $("#update-user-form-close").button().on("click", resetUpdateUserForm);
 });
 
 /**
  * Request users from REST endpoint via AJAX using DataTable jQuery Plugin.
  */
 function requestUsersFromServer() {
-    clearHtmlTable();
-    return $('#user-table').DataTable({
-        'ajax': {
-            'url': '/rest/v1/users',
-            'type': 'GET',
-            'dataSrc': ''
+  clearHtmlTable();
+  return $("#user-table").DataTable({
+    ajax: {
+      url: "/rest/v1/users",
+      type: "GET",
+      dataSrc: "",
+    },
+    pagingType: "simple_numbers",
+    columns: [
+      { data: "publicId" },
+      { data: "username" },
+      { data: "email" },
+      { data: "nativeUser" },
+      { data: "role" },
+      { data: "enabled" },
+      { data: "lastLogin" },
+      { data: "createdDateTime" },
+    ],
+    autoWidth: false, // fixes window resizing issue
+    columnDefs: [
+      {
+        targets: [0],
+        visible: false,
+      },
+      {
+        targets: 3,
+        render: function (data) {
+          if (data) {
+            return '<span class="badge">Native</span>';
+          } else {
+            return '<span class="badge">OAuth</span>';
+          }
         },
-        'pagingType': 'simple_numbers',
-        'columns': [
-            {'data': 'publicId'},
-            {'data': 'username'},
-            {'data': 'email'},
-            {'data': 'role'},
-            {'data': 'enabled'},
-            {'data': 'lastLogin'},
-            {'data': 'createdDateTime'}
-        ],
-        "autoWidth": false, // fixes window resizing issue
-        "columnDefs": [
-            {
-                "targets": [0],
-                "visible": false
-            },
-            {
-                "targets": 3,
-                "render": function (data) {
-                    if (data === 'Administrator') {
-                        return '<span class="badge badge-danger">' + data + '</span>';
-                    }
-                    else {
-                        return '<span class="badge badge-info">' + data + '</span>';
-                    }
-                }
-            },
-            {
-                "targets": 4,
-                "render": function (data) {
-                    if (data) {
-                        return '<span class="badge badge-success">Enabled</span>';
-                    }
-                    else {
-                        return '<span class="badge badge-secondary">Disabled</span>';
-                    }
-                }
-            },
-            {
-                "targets": [5, 6],
-                "render": formatUtcDateTime
-            }
-        ]
-    });
+      },
+      {
+        targets: 4,
+        render: function (data) {
+          if (data === "Administrator") {
+            return '<span class="badge badge-danger">' + data + "</span>";
+          } else {
+            return '<span class="badge badge-info">' + data + "</span>";
+          }
+        },
+      },
+      {
+        targets: 5,
+        render: function (data) {
+          if (data) {
+            return '<span class="badge badge-success">Enabled</span>';
+          } else {
+            return '<span class="badge badge-secondary">Disabled</span>';
+          }
+        },
+      },
+      {
+        targets: [6, 7],
+        render: formatUtcDateTime,
+      },
+    ],
+  });
 }
 
 /**
  * Removes all tr elements from the table body.
  */
 function clearHtmlTable() {
-    $("#user-data tr").remove();
+  $("#user-data tr").remove();
 }
 
 /**
  * Create a new administrator on the server.
  */
-function createAdministrator () {
-    $.post({
-        url: '/rest/v1/users',
-        data: createAdministratorCreateRequest(),
-        type: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        success: onCreateAdministratorSuccess,
-        error: function (errorResponse) {
-            onCreateError(errorResponse, '#create-admin-user-validation-area')
-        }
-    });
+function createAdministrator() {
+  $.post({
+    url: "/rest/v1/users",
+    data: createAdministratorCreateRequest(),
+    type: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    success: onCreateAdministratorSuccess,
+    error: function (errorResponse) {
+      onCreateError(errorResponse, "#create-admin-user-validation-area");
+    },
+  });
 }
 
 /**
@@ -103,12 +112,12 @@ function createAdministrator () {
  * @returns {string} Stringified json payload to create a new administrator.
  */
 function createAdministratorCreateRequest() {
-    return JSON.stringify({
-        username: $("#username").val(),
-        email: $("#email").val(),
-        plainPassword: $("#plainPassword").val(),
-        verifyPlainPassword: $("#verifyPlainPassword").val()
-    });
+  return JSON.stringify({
+    username: $("#username").val(),
+    email: $("#email").val(),
+    plainPassword: $("#plain-password").val(),
+    verifyPlainPassword: $("#verify-plain-password").val(),
+  });
 }
 
 /**
@@ -116,9 +125,9 @@ function createAdministratorCreateRequest() {
  * @param createResponse The json response
  */
 function onCreateAdministratorSuccess(createResponse) {
-    userTable.row.add(createResponse).draw(false);
-    resetCreateUserForm();
-    $('#create-admin-user-dialog').modal('hide');
+  userTable.row.add(createResponse).draw(false);
+  resetCreateUserForm();
+  $("#create-admin-user-dialog").modal("hide");
 }
 
 /**
@@ -127,7 +136,7 @@ function onCreateAdministratorSuccess(createResponse) {
  * @param validationAreaId  ID of the area to display errors (create)
  */
 function onCreateError(errorResponse, validationAreaId) {
-    onError(errorResponse, validationAreaId);
+  onError(errorResponse, validationAreaId);
 }
 
 /**
@@ -136,10 +145,10 @@ function onCreateError(errorResponse, validationAreaId) {
  * @param validationAreaId  ID of the area to display errors (update)
  */
 function onUpdateError(errorResponse, validationAreaId) {
-    onError(errorResponse, validationAreaId);
+  onError(errorResponse, validationAreaId);
 
-    $('#updateRole').val('Administrator');
-    $('#updateStatus').val('Enabled');
+  $("#update-role").val("Administrator");
+  $("#update-status").val("Enabled");
 }
 
 /**
@@ -148,25 +157,29 @@ function onUpdateError(errorResponse, validationAreaId) {
  * @param validationAreaId  ID of the area to display errors (create/update)
  */
 function onError(errorResponse, validationAreaId) {
-    resetValidationArea(validationAreaId);
-    const validationMessageArea = $(validationAreaId);
-    validationMessageArea.addClass("alert alert-danger");
+  resetValidationArea(validationAreaId);
+  const validationMessageArea = $(validationAreaId);
+  validationMessageArea.addClass("alert alert-danger");
 
-    if (errorResponse.status === 400) { // BAD REQUEST
-        validationMessageArea.append("The following errors occurred during server-side validation:");
-        const errorsList = $('<ul>', {class: "errors mb-0"}).append(
-          errorResponse.responseJSON.messages.map(message =>
-            $("<li>").text(message)
-          )
-        );
-        validationMessageArea.append(errorsList);
-    }
-    else if (errorResponse.status === 409) { // CONFLICT
-        validationMessageArea.append(errorResponse.responseJSON.messages[0]);
-    }
-    else {
-        validationMessageArea.append("An unexpected error has occurred. Please try again at a later time.");
-    }
+  if (errorResponse.status === 400) {
+    // BAD REQUEST
+    validationMessageArea.append(
+      "The following errors occurred during server-side validation:"
+    );
+    const errorsList = $("<ul>", { class: "errors mb-0" }).append(
+      errorResponse.responseJSON.messages.map((message) =>
+        $("<li>").text(message)
+      )
+    );
+    validationMessageArea.append(errorsList);
+  } else if (errorResponse.status === 409) {
+    // CONFLICT
+    validationMessageArea.append(errorResponse.responseJSON.messages[0]);
+  } else {
+    validationMessageArea.append(
+      "An unexpected error has occurred. Please try again at a later time."
+    );
+  }
 }
 
 /**
@@ -174,52 +187,55 @@ function onError(errorResponse, validationAreaId) {
  * @returns {string} Stringified json payload to update a user.
  */
 function createUpdateUserRequest() {
-    return JSON.stringify({
-        publicUserId: $("#updatePublicId").val(),
-        role: $("#updateRole").val(),
-        enabled: $("#updateStatus").val() === "Enabled",
-    });
+  return JSON.stringify({
+    publicUserId: $("#update-public-id").val(),
+    role: $("#update-role").val(),
+    enabled: $("#update-status").val() === "Enabled",
+  });
 }
 
 /**
  * Shows the update form and fills form with values from the selected user.
  */
 function showUpdateUserForm() {
-    let data = userTable.row(this).data();
-    $('#update-user-dialog').modal('show');
+  let data = userTable.row(this).data();
+  $("#update-user-dialog").modal("show");
 
-    // master data
-    $('#updatePublicId').val(data.publicId);
-    $('#updateUsername').val(data.username);
-    $('#updateEmail').val(data.email);
-    $('#updateRole').val(data.role);
-    $('#updateStatus').val(data.enabled ? 'Enabled' : 'Disabled');
+  // master data
+  $("#update-public-id").val(data.publicId);
+  $("#update-username").val(data.username);
+  $("#update-email").val(data.email);
+  $("#update-type").val(data.nativeUser ? "Native" : "OAuth");
+  $("#update-role").val(data.role);
+  $("#update-status").val(data.enabled ? "Enabled" : "Disabled");
 
-    // meta data
-    $('#updateLastLogin').val(formatUtcDateTime(data.lastLogin));
-    $('#updateCreatedBy').val(data.createdBy);
-    $('#updateCreatedDateTime').val(formatUtcDateTime(data.createdDateTime));
-    $('#updateLastModifiedBy').val(data.lastModifiedBy);
-    $('#updateLastModifiedDateTime').val(formatUtcDateTime(data.lastModifiedDateTime));
+  // meta data
+  $("#update-last-login").val(formatUtcDateTime(data.lastLogin));
+  $("#update-created-by").val(data.createdBy);
+  $("#update-created-date-time").val(formatUtcDateTime(data.createdDateTime));
+  $("#update-last-modified-by").val(data.lastModifiedBy);
+  $("#update-last-modified-date-time").val(
+    formatUtcDateTime(data.lastModifiedDateTime)
+  );
 }
 
 /**
  * Sends the update request to the server.
  */
 function updateUser() {
-    $.post({
-        url: '/rest/v1/users',
-        data: createUpdateUserRequest(),
-        type: 'PUT',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        success: onUpdateUserSuccess,
-        error: function (errorResponse) {
-            onUpdateError(errorResponse, '#update-user-validation-area')
-        }
-    });
+  $.post({
+    url: "/rest/v1/users",
+    data: createUpdateUserRequest(),
+    type: "PUT",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    success: onUpdateUserSuccess,
+    error: function (errorResponse) {
+      onUpdateError(errorResponse, "#update-user-validation-area");
+    },
+  });
 }
 
 /**
@@ -227,29 +243,32 @@ function updateUser() {
  * @param updateResponse The json response
  */
 function onUpdateUserSuccess(updateResponse) {
-    userTable.rows().every(function (rowIndex) {
-        if (userTable.cell(rowIndex, 1).data() === updateResponse.username) {
-            userTable.cell(rowIndex, 3).data(updateResponse.role);
-            userTable.cell(rowIndex, 4).data(updateResponse.enabled);
-        }
-    }).draw();
+  userTable
+    .rows()
+    .every(function (rowIndex) {
+      if (userTable.cell(rowIndex, 1).data() === updateResponse.username) {
+        userTable.cell(rowIndex, 3).data(updateResponse.role);
+        userTable.cell(rowIndex, 4).data(updateResponse.enabled);
+      }
+    })
+    .draw();
 
-    resetUpdateUserForm();
-    $('#update-user-dialog').modal('hide');
+  resetUpdateUserForm();
+  $("#update-user-dialog").modal("hide");
 }
 
 /**
  * Resets the user creation form.
  */
 function resetCreateUserForm() {
-    $("#create-admin-user-form")[0].reset();
-    resetValidationArea('#create-admin-user-validation-area');
+  $("#create-admin-user-form")[0].reset();
+  resetValidationArea("#create-admin-user-validation-area");
 }
 
 /**
  * Resets the user update form.
  */
 function resetUpdateUserForm() {
-    $("#update-user-form")[0].reset();
-    resetValidationArea('#update-user-validation-area');
+  $("#update-user-form")[0].reset();
+  resetValidationArea("#update-user-validation-area");
 }
