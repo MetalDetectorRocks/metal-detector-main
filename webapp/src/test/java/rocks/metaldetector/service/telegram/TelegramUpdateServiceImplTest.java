@@ -15,6 +15,7 @@ import rocks.metaldetector.web.api.request.TelegramUpdate;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class TelegramUpdateServiceImplTest implements WithAssertions {
@@ -43,5 +44,20 @@ class TelegramUpdateServiceImplTest implements WithAssertions {
 
     // then
     verify(telegramConfigService).updateChatId(messageText, chatId);
+  }
+
+  @Test
+  @DisplayName("nothing is called if the conversation with the bot has just started")
+  void test_nothing_called() {
+    // given
+    var messageText = "/start";
+    var chatId = 666;
+    var update = new TelegramUpdate(new TelegramMessage(messageText, new TelegramChat(chatId)));
+
+    // when
+    underTest.processUpdate(update);
+
+    // then
+    verifyNoInteractions(telegramConfigService);
   }
 }
