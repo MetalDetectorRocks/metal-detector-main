@@ -124,12 +124,24 @@ footer .footer-icon:hover {
 }
 
 /* Search Results */
-#search-result-wrapper {
+#search-result-wrapper,
+#search-results-page #pagination-wrapper {
     width: 60%;
     margin: auto;
 }
-.search-result-item {
+#search-result-item-wrapper {
     width: 100%;
+    display: flex;
+}
+#search-result-wrapper .search-result-item:nth-child(1) {
+    flex-basis: 25%;
+    margin-right: 10px;
+}
+#search-result-wrapper .search-result-item:nth-child(2) {
+    flex-basis: 70%;
+}
+#search-result-wrapper .search-result-item:nth-child(3) {
+    flex-basis: 5%
 }
 .search-card-img {
     height: 9rem;
@@ -367,9 +379,18 @@ footer .footer-icon:hover {
         width: 100%;
         text-align: center;
     }
-    #search-result-wrapper {
-        width: 100%;
+
+    #search-result-wrapper,
+    #search-results-page #pagination-wrapper {
+        width: 80%;
     }
+    #search-result-wrapper .search-result-item:nth-child(1) {
+        flex-basis: 20%;
+    }
+    #search-result-wrapper .search-result-item:nth-child(2) {
+        flex-basis: 75%;
+    }
+
     #my-artists-wrapper .flex-item {
         width: 32.5%;
     }
@@ -387,6 +408,11 @@ footer .footer-icon:hover {
     }
     #my-artists-wrapper .card-title {
         font-size: 2rem;
+    }
+
+    #search-result-wrapper,
+    #search-results-page #pagination-wrapper {
+        width: 100%;
     }
 
     #pagination-wrapper {
