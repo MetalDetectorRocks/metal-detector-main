@@ -9,63 +9,36 @@
 </head>
 <body>
     <section layout:fragment="content">
-        <template id="top-search-result">
-            <div id="top-search-result-wrapper">
-                <h2 class="h5">Top result</h2>
-                <div class="row mb-5">
-                    <div class="col">
-                        <div class="card">
-                            <div class="row">
-                                <div class="col-md-auto">
-                                    <img id="top-thumb" class="top-search-card-img" src="#" alt="#">
-                                </div>
-                                <div class="col">
-                                    <div class="row">
-                                        <div class="col">
-                                            <p id="top-name" class="h4 card-title mt-3"></p>
-                                        </div>
-                                        <div id="top-follow-icon" class="col-md-auto follow-icon-search">
-                                            <img src="#" th:src="@{/images/pommesgabel.svg}" alt="follow" width="32">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <p id="follow-info" class="h6 card-subtitle"></p>
-                                        </div>
-                                        <div class="col"></div>
-                                    </div>
-                                </div>
-                            </div>
+        <template id="search-result">
+            <div class="row mb-3 search-result-item">
+                <div class="col-md-auto">
+                    <img id="thumb" class="search-card-img" src="#" alt="#">
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <p id="name" class="h4 card-title mt-3"></p>
+                        </div>
+                        <div id="follow-icon" class="col-md-auto follow-icon-search">
+                            <img src="#" th:src="@{/images/pommesgabel.svg}" alt="follow" width="30">
                         </div>
                     </div>
-                    <div class="col"></div>
-                </div>
-            </div>
-        </template>
-        <template id="search-result">
-            <div class="col-4">
-                <div class="card">
-                    <div class="row">
-                        <div class="col-md-auto">
-                            <img id="other-thumb" class="search-card-img" src="#" alt="#">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div id="genres"></div>
                         </div>
-                        <div class="col">
-                            <div class="row">
-                                <div class="col">
-                                    <p id="other-name" class="h5 card-title mt-2"></p>
-                                </div>
-                                <div id="other-follow-icon" class="col-md-auto follow-icon-search">
-                                    <img src="#" th:src="@{/images/pommesgabel.svg}" alt="follow" width="32">
-                                </div>
-                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <p id="follow-info" class="h6 card-subtitle"></p>
                         </div>
                     </div>
                 </div>
             </div>
         </template>
 
-        <div id="search-result-container" class="mb-3"></div>
-        <div id="pagination-wrapper"></div>
+        <div id="search-result-wrapper" class="mb-3"></div>
+        <div id="pagination-wrapper" class="justify-content-center mt-5"></div>
     </section>
 </body>
 </html>
