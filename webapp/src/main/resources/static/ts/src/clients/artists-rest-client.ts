@@ -24,7 +24,7 @@ export class ArtistsRestClient {
         axiosConfig.params = {
             query: this.urlService.getParameterFromUrl("query"),
             page: this.urlService.getPageFromUrl(),
-            size: 40,
+            size: 10,
         };
 
         return await axios
