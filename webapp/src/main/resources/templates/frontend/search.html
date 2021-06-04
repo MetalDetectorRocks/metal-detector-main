@@ -10,35 +10,25 @@
 <body>
     <section layout:fragment="content">
         <template id="search-result">
-            <div class="row mb-3 search-result-item">
-                <div class="col-md-auto">
+            <div id="search-result-item-wrapper" class="mb-3">
+                <div class="search-result-item search-result-item-image">
                     <img id="thumb" class="search-card-img" src="#" alt="#">
                 </div>
-                <div class="col">
-                    <div class="row">
-                        <div class="col">
-                            <p id="name" class="h4 card-title mt-3"></p>
-                        </div>
-                        <div id="follow-icon" class="col-md-auto follow-icon-search">
-                            <img src="#" th:src="@{/images/pommesgabel.svg}" alt="follow" width="30">
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <div id="genres"></div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <p id="follow-info" class="h6 card-subtitle"></p>
-                        </div>
-                    </div>
+                <div class="search-result-item search-result-item-content">
+                    <p id="name" class="h4 card-title mt-3"></p>
+                    <div id="genres"></div>
+                    <p id="follow-info" class="h6 card-subtitle mt-2"></p>
+                </div>
+                <div id="follow-icon" class="search-result-item search-result-item-follow follow-icon-search">
+                    <img src="#" th:src="@{/images/pommesgabel.svg}" alt="follow" width="30">
                 </div>
             </div>
         </template>
 
-        <div id="search-result-wrapper" class="mb-3"></div>
-        <div id="pagination-wrapper" class="justify-content-center mt-5"></div>
+        <div id="search-results-page">
+            <div id="search-result-wrapper" class="mb-3"></div>
+            <div id="pagination-wrapper"></div>
+        </div>
     </section>
 </body>
 </html>
