@@ -10,6 +10,7 @@
     --light-font-color: #adafae;
     --light-font-color-highlight: #fcfcfc;
     --light-font-color-muted: #5c5c5c;
+    --dark-font-color: #181818;
     --light-hyperlink-font-color: #1d7097;
     --light-hyperlink-font-color-highlight: #2a90c1;
     --dark-hyperlink-font-color: #555;
@@ -123,20 +124,31 @@ footer .footer-icon:hover {
 }
 
 /* Search Results */
-.top-search-card-img {
-    height: 8rem;
-    width: 8rem;
-    object-fit: cover;
-    border-right: 1px solid var(--grey-border-color);
+#search-result-wrapper,
+#search-results-page #pagination-wrapper {
+    width: 60%;
+    margin: auto;
 }
-
+#search-result-item-wrapper {
+    width: 100%;
+    display: flex;
+}
+#search-result-wrapper .search-result-item:nth-child(1) {
+    flex-basis: 25%;
+    margin-right: 10px;
+}
+#search-result-wrapper .search-result-item:nth-child(2) {
+    flex-basis: 70%;
+}
+#search-result-wrapper .search-result-item:nth-child(3) {
+    flex-basis: 5%
+}
 .search-card-img {
-    height: 6rem;
-    width: 6rem;
+    height: 9rem;
+    width: 9rem;
     object-fit: cover;
-    border-bottom: 1px solid var(--grey-border-color);
+    border-radius: 8px;
 }
-
 .custom-border-bottom {
     border-bottom: 1px solid var(--grey-border-color);
 }
@@ -148,15 +160,16 @@ footer .footer-icon:hover {
     -webkit-transition: all 0.5s ease-out;
     transition: all 0.5s ease-out;
 }
-
 .follow-icon-search {
     cursor: pointer;
+    opacity: 0.75;
 }
-
-.follow-icon-search:hover, .follow-icon-my-artists:hover {
+.follow-icon-search:hover {
+    opacity: 1;
+}
+.follow-icon-my-artists:hover {
     opacity: 0.5;
 }
-
 .followed-since-icon {
     opacity: 0.5;
     margin-bottom: 0.15rem;
@@ -330,33 +343,31 @@ footer .footer-icon:hover {
 .alert-light {
     border: 1px solid var(--grey-border-color);
 }
-
 .page-link {
     color: #adafae;
 }
-
 .dropdown-menu {
     font-size: 1rem;
     border: 1px solid var(--grey-border-color);
 }
-
 .dropdown-item {
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
 }
-
 .dropdown-item:hover {
     background-color: var(--grey-hover-color);
 }
-
 .card-body {
     padding: 1.25rem 1.25rem 0;
     min-height: 5rem;
 }
-
 .dismissible-button {
     width: max-content;
     padding-left: 1.75rem;
+}
+.badge-dark {
+    color: var(--dark-font-color);
+    font-size: 0.85rem;
 }
 
 /* Responsive */
@@ -368,6 +379,18 @@ footer .footer-icon:hover {
         width: 100%;
         text-align: center;
     }
+
+    #search-result-wrapper,
+    #search-results-page #pagination-wrapper {
+        width: 80%;
+    }
+    #search-result-wrapper .search-result-item:nth-child(1) {
+        flex-basis: 20%;
+    }
+    #search-result-wrapper .search-result-item:nth-child(2) {
+        flex-basis: 75%;
+    }
+
     #my-artists-wrapper .flex-item {
         width: 32.5%;
     }
@@ -385,6 +408,11 @@ footer .footer-icon:hover {
     }
     #my-artists-wrapper .card-title {
         font-size: 2rem;
+    }
+
+    #search-result-wrapper,
+    #search-results-page #pagination-wrapper {
+        width: 100%;
     }
 
     #pagination-wrapper {

@@ -8,12 +8,6 @@ import { Pagination } from "../model/pagination.model";
 import { SearchResponseEntry } from "../model/search-response-entry.model";
 import { FollowState } from "../model/follow-state.model";
 
-interface SearchCardSelectorNames {
-    readonly nameSelector: string;
-    readonly thumbSelector: string;
-    readonly followIconSelector: string;
-}
-
 export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     private static readonly MAX_NAME_LENGTH = 50;
 
@@ -37,7 +31,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     }
 
     protected getHostElementId(): string {
-        return "search-result-container";
+        return "search-result-wrapper";
     }
 
     protected onRendering(searchResponse: SearchResponse): void {
@@ -51,7 +45,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         } else if (itemsOnThisPage === 0) {
             this.showSpotifyBugInfoMessage();
         } else {
-            this.createSearchResultCards(searchResponse, query, currentPage, itemsOnThisPage);
+            this.createSearchResultCards(searchResponse, query);
         }
 
         if (totalPages > 1) {
@@ -75,31 +69,16 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         this.hostElement.insertAdjacentElement("afterbegin", infoMessage);
     }
 
-    private createSearchResultCards(
-        searchResponse: SearchResponse,
-        query: string,
-        currentPage: number,
-        itemsOnThisPage: number,
-    ): void {
+    private createSearchResultCards(searchResponse: SearchResponse, query: string): void {
         const headline = document.createElement("h1");
         headline.classList.add("h4", "mb-4");
         headline.innerText = this.createHeadlineText(query, searchResponse);
         this.hostElement.insertAdjacentElement("afterbegin", headline);
 
-        if (currentPage === 1) {
-            const topSearchResult = this.renderTopSearchResult(searchResponse.searchResults[0]);
-            this.hostElement.insertAdjacentElement("beforeend", topSearchResult);
-        }
-
-        if ((currentPage === 1 && itemsOnThisPage > 1) || currentPage > 1) {
-            const otherHeadline = document.createElement("h2");
-            otherHeadline.classList.add("h5", "custom-border-bottom", "pb-1");
-            otherHeadline.textContent = "Other";
-            this.hostElement.insertAdjacentElement("beforeend", otherHeadline);
-
-            const otherSearchResults = this.renderOtherSearchResults(currentPage, searchResponse.searchResults);
-            this.hostElement.insertAdjacentElement("beforeend", otherSearchResults);
-        }
+        searchResponse.searchResults.forEach((entry) => {
+            const card = this.renderSearchResultCard(entry);
+            this.hostElement.insertAdjacentElement("beforeend", card);
+        });
     }
 
     private createHeadlineText(query: string, searchResponse: SearchResponse): string {
@@ -116,25 +95,11 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         }
     }
 
-    private renderTopSearchResult(entry: SearchResponseEntry): HTMLDivElement {
-        const node = document.importNode(this.topSearchResultTemplateElement.content, true);
-        const topSearchResultDivElement = this.renderSearchResult(entry, node, {
-            nameSelector: "#top-name",
-            thumbSelector: "#top-thumb",
-            followIconSelector: "#top-follow-icon",
-        });
-
-        const followInfoElement = topSearchResultDivElement.querySelector("#follow-info") as HTMLParagraphElement;
-        followInfoElement.textContent = this.determineFollowerAmountStatement(entry.metalDetectorFollower);
-
-        return topSearchResultDivElement;
-    }
-
     private determineFollowerAmountStatement(metalDetectorFollower: number): string {
         let followerAmountStatement = "";
 
         if (metalDetectorFollower === 0) {
-            followerAmountStatement = "Not followed by any users";
+            followerAmountStatement = "Not followed by any user";
         } else if (metalDetectorFollower === 1) {
             followerAmountStatement = "Followed by 1 user";
         } else if (metalDetectorFollower > 1) {
@@ -144,60 +109,36 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         return followerAmountStatement;
     }
 
-    private renderOtherSearchResults(currentPage: number, searchResults: SearchResponseEntry[]): HTMLDivElement {
-        const searchResultWrapper = document.createElement("div");
-        let rowWrapper: HTMLDivElement = document.createElement("div");
-        rowWrapper.classList.add("row", "mt-1", "mb-4");
-
-        let counter = 0;
-        searchResults.forEach((entry, index) => {
-            if (index === 0 && currentPage === 1) {
-                // this is the top result
-                return;
-            } else if (counter === 3) {
-                searchResultWrapper.insertAdjacentElement("beforeend", rowWrapper);
-                rowWrapper = document.createElement("div");
-                rowWrapper.classList.add("row", "mb-4");
-                counter = 0;
-            }
-
-            rowWrapper.insertAdjacentElement("beforeend", this.renderOtherSearchResult(entry));
-            counter++;
-        });
-
-        searchResultWrapper.insertAdjacentElement("beforeend", rowWrapper);
-        return searchResultWrapper;
-    }
-
-    private renderOtherSearchResult(entry: SearchResponseEntry): HTMLDivElement {
+    private renderSearchResultCard(entry: SearchResponseEntry): HTMLDivElement {
         const node = document.importNode(this.searchResultTemplateElement.content, true);
-        return this.renderSearchResult(entry, node, {
-            nameSelector: "#other-name",
-            thumbSelector: "#other-thumb",
-            followIconSelector: "#other-follow-icon",
-        });
-    }
-
-    private renderSearchResult(
-        entry: SearchResponseEntry,
-        node: DocumentFragment,
-        selectorNames: SearchCardSelectorNames,
-    ): HTMLDivElement {
         const searchResultDivElement = node.firstElementChild as HTMLDivElement;
-        const nameElement = searchResultDivElement.querySelector(selectorNames.nameSelector) as HTMLParagraphElement;
-        const thumbElement = searchResultDivElement.querySelector(selectorNames.thumbSelector) as HTMLImageElement;
-        const followIconDivElement = searchResultDivElement.querySelector(
-            selectorNames.followIconSelector,
-        ) as HTMLDivElement;
-        const followIconElement = followIconDivElement.getElementsByTagName("img").item(0)!;
 
+        const nameElement = searchResultDivElement.querySelector("#name") as HTMLParagraphElement;
+        nameElement.textContent = this.shorten(entry.name);
+
+        const thumbElement = searchResultDivElement.querySelector("#thumb") as HTMLImageElement;
         thumbElement.src = this.determineArtistImageUrl(entry.smallImage);
         thumbElement.alt = entry.name;
-        nameElement.textContent = this.shorten(entry.name);
+
+        const followIconDivElement = searchResultDivElement.querySelector("#follow-icon") as HTMLDivElement;
+        const followIconElement = followIconDivElement.getElementsByTagName("img").item(0)!;
+        const followInfoElement = searchResultDivElement.querySelector("#follow-info") as HTMLParagraphElement;
         followIconDivElement.addEventListener("click", this.handleFollowIconClick.bind(this, followIconElement, entry));
         followIconElement.src = entry.followed
             ? FollowState.FOLLOWING.toString()
             : FollowState.NOT_FOLLOWING.toString();
+        followInfoElement.textContent = this.determineFollowerAmountStatement(entry.metalDetectorFollower);
+
+        const genreElement = searchResultDivElement.querySelector("#genres") as HTMLParagraphElement;
+        entry.genres.forEach((genre, index) => {
+            if (index >= 3) {
+                return;
+            }
+            const genreBadge = document.createElement("span");
+            genreBadge.classList.add("badge", "badge-dark", "mr-2");
+            genreBadge.textContent = genre;
+            genreElement.insertAdjacentElement("beforeend", genreBadge);
+        });
 
         return searchResultDivElement;
     }
