@@ -1,50 +1,62 @@
 $(document).ready(function () {
-    registerLogoutListener();
-    registerSearchIconClickListener();
-    setupScrollToTop();
+  registerLogoutListener();
+  registerSearchIconClickListener();
+  setupScrollToTop();
 });
 
 function registerLogoutListener() {
-    Array.from(document.getElementsByClassName("logout-link")).forEach(element => {
-        element.addEventListener("click", (event) => {
-            event.preventDefault();
-            document.getElementById("logout-form").submit();
-        });
-    });
+  Array.from(document.getElementsByClassName("logout-link")).forEach(
+    (element) => {
+      element.addEventListener("click", (event) => {
+        event.preventDefault();
+        document.getElementById("logout-form").submit();
+      });
+    }
+  );
 }
 
 function registerSearchIconClickListener() {
-    const searchIcon = document.getElementById("show-search");
-    searchIcon.addEventListener("click", () => document.getElementById("mobile-query").focus());
+  const searchIcon = document.getElementById("show-search");
+  if (searchIcon) {
+    searchIcon.addEventListener("click", () =>
+      document.getElementById("mobile-query").focus()
+    );
+  }
 }
 
 function setupScrollToTop() {
-    window.onscroll = () => showScrollToTopButton();
-    const backToTopButton = document.getElementById("back-to-top-button");
-    if (backToTopButton) {
-        backToTopButton.onclick = () => scrollToTop();
-    }
+  window.onscroll = () => showScrollToTopButton();
+  const backToTopButton = document.getElementById("back-to-top-button");
+  if (backToTopButton) {
+    backToTopButton.onclick = () => scrollToTop();
+  }
 }
 
 function showScrollToTopButton() {
-    const backToTopButton = $('#back-to-top-button');
-    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-        backToTopButton.fadeIn();
-    } else {
-        backToTopButton.fadeOut();
-    }
+  const backToTopButton = $("#back-to-top-button");
+  if (
+    document.body.scrollTop > 200 ||
+    document.documentElement.scrollTop > 200
+  ) {
+    backToTopButton.fadeIn();
+  } else {
+    backToTopButton.fadeOut();
+  }
 }
 
 /**
  * Animates scrolling back to the top
  */
 function scrollToTop() {
-    $('#back-to-top-button').click(function () {
-        $('body,html').animate({
-            scrollTop: 0
-        }, 800);
-        return false;
-    });
+  $("#back-to-top-button").click(function () {
+    $("body,html").animate(
+      {
+        scrollTop: 0,
+      },
+      800
+    );
+    return false;
+  });
 }
 
 /**
@@ -52,16 +64,14 @@ function scrollToTop() {
  * @param text  The toast text
  */
 function createToast(text) {
-    const toast = $("<div>");
-    toast.attr("id", "toast");
-    toast.addClass("show success");
-    toast.text(text);
-    setTimeout(function() {
-            toast.removeClass("show");
-        },
-        2900
-    );
-    $("#toast-wrapper").append(toast);
+  const toast = $("<div>");
+  toast.attr("id", "toast");
+  toast.addClass("show success");
+  toast.text(text);
+  setTimeout(function () {
+    toast.removeClass("show");
+  }, 2900);
+  $("#toast-wrapper").append(toast);
 }
 
 /**
@@ -70,7 +80,7 @@ function createToast(text) {
  * @returns {boolean} true if the value is empty, false otherwise
  */
 function isEmpty(value) {
-    return typeof value === "undefined" || value === null || value.length === 0;
+  return typeof value === "undefined" || value === null || value.length === 0;
 }
 
 /**
@@ -79,16 +89,26 @@ function isEmpty(value) {
  * @return {string} the formatted DateTime
  */
 function formatUtcDateTime(dateTimeInput) {
-    if (dateTimeInput) {
-        const formattedDate = formatUtcDate(dateTimeInput);
-        const date = new Date(Date.parse(dateTimeInput));
-        const timeFormat = new Intl.DateTimeFormat('de', { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-        const [{ value: hour },,{ value: minute },,{ value: second }] = timeFormat.formatToParts(date);
+  if (dateTimeInput) {
+    const formattedDate = formatUtcDate(dateTimeInput);
+    const date = new Date(Date.parse(dateTimeInput));
+    const timeFormat = new Intl.DateTimeFormat("de", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    const [
+      { value: hour },
+      ,
+      { value: minute },
+      ,
+      { value: second },
+    ] = timeFormat.formatToParts(date);
 
-        return `${formattedDate} ${hour}:${minute}:${second}`;
-    }
+    return `${formattedDate} ${hour}:${minute}:${second}`;
+  }
 
-    return "";
+  return "";
 }
 
 /**
@@ -97,15 +117,25 @@ function formatUtcDateTime(dateTimeInput) {
  * @return {string} the formatted Date
  */
 function formatUtcDate(dateInput) {
-    if (dateInput) {
-        const date = new Date(Date.parse(dateInput));
-        const dateFormat = new Intl.DateTimeFormat('de', { year: "numeric", month: "2-digit", day: "2-digit" });
-        const [{ value: day },,{ value: month },,{ value: year }] = dateFormat.formatToParts(date);
+  if (dateInput) {
+    const date = new Date(Date.parse(dateInput));
+    const dateFormat = new Intl.DateTimeFormat("de", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const [
+      { value: day },
+      ,
+      { value: month },
+      ,
+      { value: year },
+    ] = dateFormat.formatToParts(date);
 
-        return `${year}-${month}-${day}`;
-    }
+    return `${year}-${month}-${day}`;
+  }
 
-    return "";
+  return "";
 }
 
 /**
@@ -113,7 +143,7 @@ function formatUtcDate(dateInput) {
  * @param validationAreaId  ID of the area to reset
  */
 function resetValidationArea(validationAreaId) {
-    const validationMessageArea = $(validationAreaId);
-    validationMessageArea.removeClass('alert alert-danger alert-success');
-    validationMessageArea.empty();
+  const validationMessageArea = $(validationAreaId);
+  validationMessageArea.removeClass("alert alert-danger alert-success");
+  validationMessageArea.empty();
 }

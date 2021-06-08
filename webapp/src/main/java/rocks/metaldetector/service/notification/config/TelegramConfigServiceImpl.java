@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
+import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
@@ -12,6 +14,8 @@ import rocks.metaldetector.telegram.facade.TelegramMessagingService;
 
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.TELEGRAM;
 
 @Service
 @AllArgsConstructor
@@ -26,6 +30,7 @@ public class TelegramConfigServiceImpl implements TelegramConfigService {
   private final TelegramConfigRepository telegramConfigRepository;
   private final TelegramConfigTransformer telegramConfigTransformer;
   private final TelegramMessagingService telegramMessagingService;
+  private final NotificationConfigRepository notificationConfigRepository;
   private final CurrentUserSupplier currentUserSupplier;
 
   @Override
@@ -79,10 +84,35 @@ public class TelegramConfigServiceImpl implements TelegramConfigService {
 
     AbstractUserEntity currentUser = currentUserSupplier.get();
     TelegramConfigEntity telegramConfig = telegramConfigRepository.findByUser(currentUser)
-        .orElseGet(() -> TelegramConfigEntity.builder().build());
+        .orElseGet(() -> {
+          NotificationConfigEntity notificationConfig = getOrCreateNotificationConfig(currentUser);
+          return TelegramConfigEntity.builder().notificationConfig(notificationConfig).build();
+        });
 
     telegramConfig.setRegistrationId(registrationId);
     telegramConfigRepository.save(telegramConfig);
     return registrationId;
+  }
+
+  private NotificationConfigEntity getOrCreateNotificationConfig(AbstractUserEntity user) {
+    Optional<NotificationConfigEntity> notificationConfigOptional = notificationConfigRepository.findByUserAndChannel(user, TELEGRAM);
+    if (notificationConfigOptional.isPresent()) {
+      return notificationConfigOptional.get();
+    }
+    else {
+      var notificationConfig = NotificationConfigEntity.builder()
+              .user(user)
+              .channel(TELEGRAM)
+              .build();
+      return notificationConfigRepository.save(notificationConfig);
+    }
+  }
+
+  @Override
+  @Transactional
+  public void deleteCurrentUserTelegramConfig() {
+    AbstractUserEntity currentUser = currentUserSupplier.get();
+    telegramConfigRepository.deleteByUser(currentUser);
+    notificationConfigRepository.deleteByUserAndChannel(currentUser, TELEGRAM);
   }
 }

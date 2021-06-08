@@ -75,4 +75,24 @@ class TelegramConfigRestControllerTest implements WithAssertions {
     var response = validatableResponse.extract().as(Integer.class);
     assertThat(response).isEqualTo(expectedId);
   }
+
+  @Test
+  @DisplayName("Deleting the telegram config should return 200")
+  void test_delete_returns_200() {
+    // when
+    var validatableResponse = restAssuredMockMvcUtils.doDelete();
+
+    // then
+    validatableResponse.statusCode(OK.value());
+  }
+
+  @Test
+  @DisplayName("Deleting the telegram config should call service")
+  void test_delete_calls_service() {
+    // when
+    restAssuredMockMvcUtils.doDelete();
+
+    // then
+    verify(telegramConfigService).deleteCurrentUserTelegramConfig();
+  }
 }

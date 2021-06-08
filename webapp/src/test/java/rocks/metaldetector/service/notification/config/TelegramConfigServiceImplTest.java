@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
+import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
@@ -28,6 +30,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.TELEGRAM;
 import static rocks.metaldetector.service.notification.config.TelegramConfigServiceImpl.REGISTRATION_FAILED_ID_NOT_FOUND;
 import static rocks.metaldetector.service.notification.config.TelegramConfigServiceImpl.REGISTRATION_FAILED_MESSAGE_NOT_READABLE;
 import static rocks.metaldetector.service.notification.config.TelegramConfigServiceImpl.REGISTRATION_SUCCESSFUL_MESSAGE;
@@ -47,12 +50,15 @@ class TelegramConfigServiceImplTest implements WithAssertions {
   @Mock
   private TelegramMessagingService telegramMessagingService;
 
+  @Mock
+  private NotificationConfigRepository notificationConfigRepository;
+
   @InjectMocks
   private TelegramConfigServiceImpl underTest;
 
   @AfterEach
   void tearDown() {
-    reset(telegramConfigRepository, telegramConfigTransformer, currentUserSupplier, telegramMessagingService);
+    reset(telegramConfigRepository, telegramConfigTransformer, currentUserSupplier, telegramMessagingService, notificationConfigRepository);
   }
 
   @DisplayName("Tests for the fetching the configuration")
@@ -312,15 +318,13 @@ class TelegramConfigServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("generateRegistrationId: generated id is saved on existing config")
-    void test_generated_id_saved_existing_config() {
+    @DisplayName("generateRegistrationId: existing notification config is fetched if no telegram config exists")
+    void test_fetch_existing_notification_config() {
       // given
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
-      var id = 666_666;
-      var telegramConfig = TelegramConfigEntity.builder().build();
-      doReturn(id).when(threadLocalRandomMock).nextInt(anyInt(), anyInt());
-      doReturn(UserEntityFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
-      doReturn(Optional.of(telegramConfig)).when(telegramConfigRepository).findByUser(any());
+      var user = UserEntityFactory.createUser("user", "mail@mail.mail");
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
 
       // when
       try (MockedStatic<ThreadLocalRandom> mock = mockStatic(ThreadLocalRandom.class)) {
@@ -329,7 +333,53 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       }
 
       // then
-      verify(telegramConfigRepository).save(telegramConfig);
+      verify(notificationConfigRepository).findByUserAndChannel(user, TELEGRAM);
+    }
+
+    @Test
+    @DisplayName("generateRegistrationId: notification config for telegram channel is created if it does not exist")
+    void test_create_new_notification_config() {
+      // given
+      ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
+      var threadLocalRandomMock = mock(ThreadLocalRandom.class);
+      var user = UserEntityFactory.createUser("user", "mail@mail.mail");
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
+      doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), any());
+
+      // when
+      try (MockedStatic<ThreadLocalRandom> mock = mockStatic(ThreadLocalRandom.class)) {
+        mock.when(ThreadLocalRandom::current).thenReturn(threadLocalRandomMock);
+        underTest.generateRegistrationId();
+      }
+
+      // then
+      verify(notificationConfigRepository).save(argumentCaptor.capture());
+      assertThat(argumentCaptor.getValue().getUser()).isEqualTo(user);
+      assertThat(argumentCaptor.getValue().getChannel()).isEqualTo(TELEGRAM);
+    }
+
+    @Test
+    @DisplayName("generateRegistrationId: newly created telegram config is saved")
+    void test_newly_created_telegram_config_is_saved() {
+      // given
+      ArgumentCaptor<TelegramConfigEntity> argumentCaptor = ArgumentCaptor.forClass(TelegramConfigEntity.class);
+      var threadLocalRandomMock = mock(ThreadLocalRandom.class);
+      var user = UserEntityFactory.createUser("user", "mail@mail.mail");
+      var notificationConfig = mock(NotificationConfigEntity.class);
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
+      doReturn(Optional.of(notificationConfig)).when(notificationConfigRepository).findByUserAndChannel(any(), any());
+
+      // when
+      try (MockedStatic<ThreadLocalRandom> mock = mockStatic(ThreadLocalRandom.class)) {
+        mock.when(ThreadLocalRandom::current).thenReturn(threadLocalRandomMock);
+        underTest.generateRegistrationId();
+      }
+
+      // then
+      verify(telegramConfigRepository).save(argumentCaptor.capture());
+      assertThat(argumentCaptor.getValue().getNotificationConfig()).isEqualTo(notificationConfig);
     }
 
     @Test
@@ -352,7 +402,6 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       // then
       verify(telegramConfigRepository).save(argumentCaptor.capture());
       TelegramConfigEntity notificationConfig = argumentCaptor.getValue();
-
       assertThat(notificationConfig.getRegistrationId()).isEqualTo(id);
     }
 
@@ -375,6 +424,49 @@ class TelegramConfigServiceImplTest implements WithAssertions {
 
       // then
       assertThat(result).isEqualTo(id);
+    }
+  }
+
+  @DisplayName("Tests for the deleting the configuration")
+  @Nested
+  class DeleteConfigurationTest {
+
+    @Test
+    @DisplayName("should get the current user")
+    void should_get_the_current_user() {
+      // when
+      underTest.deleteCurrentUserTelegramConfig();
+
+      // then
+      verify(currentUserSupplier).get();
+    }
+
+    @Test
+    @DisplayName("should delete the telegram config")
+    void should_delete_the_telegram_config() {
+      // given
+      var user = UserEntityFactory.createUser("user", "mail@mail.mail");
+      doReturn(user).when(currentUserSupplier).get();
+
+      // when
+      underTest.deleteCurrentUserTelegramConfig();
+
+      // then
+      verify(telegramConfigRepository).deleteByUser(user);
+    }
+
+    @Test
+    @DisplayName("should delete the notification config")
+    void should_delete_the_notification_config() {
+      // given
+      var user = UserEntityFactory.createUser("user", "mail@mail.mail");
+      doReturn(user).when(currentUserSupplier).get();
+
+      // when
+      underTest.deleteCurrentUserTelegramConfig();
+
+      // then
+      verify(notificationConfigRepository).deleteByUserAndChannel(user, TELEGRAM);
     }
   }
 }

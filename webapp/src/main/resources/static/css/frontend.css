@@ -101,9 +101,6 @@ footer .footer-icon:hover {
 .card-title {
     font-size: 1.3rem;
 }
-.card-footer {
-    padding: 0.75rem 0.5rem;
-}
 
 /* Pagination */
 #pagination-wrapper {
@@ -120,6 +117,9 @@ footer .footer-icon:hover {
 #my-artists-wrapper .flex-item {
     position: relative;
     width: 24%;
+}
+#my-artists-wrapper .card-footer {
+    padding: 0.75rem 0.5rem;
 }
 
 /* Search Results */
@@ -176,6 +176,17 @@ footer .footer-icon:hover {
 
 .custom-border-left {
     border-left: 2px solid var(--grey-border-color);
+}
+
+/* Notification Settings */
+#notification-settings-container .collapse-content {
+    padding: 0.25rem 1.25rem;
+}
+#notification-settings-container .btn:focus {
+    box-shadow: unset;
+}
+#notification-settings-container #email-frequency-select {
+    max-width: 200px;
 }
 
 /* Spotify Synchronization */

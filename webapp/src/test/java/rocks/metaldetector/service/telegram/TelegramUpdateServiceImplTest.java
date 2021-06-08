@@ -9,12 +9,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.service.notification.config.TelegramConfigService;
+import rocks.metaldetector.telegram.facade.TelegramMessagingService;
 import rocks.metaldetector.web.api.request.TelegramChat;
 import rocks.metaldetector.web.api.request.TelegramMessage;
 import rocks.metaldetector.web.api.request.TelegramUpdate;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static rocks.metaldetector.service.telegram.TelegramUpdateServiceImpl.FIRST_BOT_MESSAGE_TEXT;
+import static rocks.metaldetector.service.telegram.TelegramUpdateServiceImpl.FIRST_BOT_RESPONSE_TEXT;
 
 @ExtendWith(MockitoExtension.class)
 class TelegramUpdateServiceImplTest implements WithAssertions {
@@ -22,12 +25,15 @@ class TelegramUpdateServiceImplTest implements WithAssertions {
   @Mock
   private TelegramConfigService telegramConfigService;
 
+  @Mock
+  private TelegramMessagingService telegramMessagingService;
+
   @InjectMocks
   private TelegramUpdateServiceImpl underTest;
 
   @AfterEach
   private void tearDown() {
-    reset(telegramConfigService);
+    reset(telegramConfigService, telegramMessagingService);
   }
 
   @Test
@@ -43,5 +49,19 @@ class TelegramUpdateServiceImplTest implements WithAssertions {
 
     // then
     verify(telegramConfigService).updateChatId(messageText, chatId);
+  }
+
+  @Test
+  @DisplayName("telegramMessagingService is called if the conversation with the bot has just started")
+  void test_nothing_called() {
+    // given
+    var chatId = 666;
+    var update = new TelegramUpdate(new TelegramMessage(FIRST_BOT_MESSAGE_TEXT, new TelegramChat(chatId)));
+
+    // when
+    underTest.processUpdate(update);
+
+    // then
+    verify(telegramMessagingService).sendMessage(chatId, FIRST_BOT_RESPONSE_TEXT);
   }
 }
