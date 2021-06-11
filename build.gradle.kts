@@ -29,7 +29,7 @@ buildscript {
     set("postgresqlVersion", "42.2.19")
     set("restAssuredVersion", "4.2.1")
     set("servletApiVersion", "4.0.1")
-    set("springBootVersion", "2.5.0")
+    set("springBootVersion", "2.5.1")
     set("springSecurityVersion", "5.5.0")
     set("thymeleafDialectVersion", "2.5.3")
     set("thymeleafExtrasVersion", "3.0.4.RELEASE")
@@ -157,7 +157,7 @@ subprojects {
 
 tasks {
   wrapper {
-    gradleVersion = "7.0"
+    gradleVersion = "7.0.2"
     distributionType = Wrapper.DistributionType.ALL
   }
 
