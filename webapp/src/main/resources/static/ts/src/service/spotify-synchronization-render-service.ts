@@ -9,7 +9,7 @@ import { Endpoints } from "../config/endpoints";
 export class SpotifySynchronizationRenderService {
     private static readonly BUTTON_BAR_DIV_NAME = "button-bar";
     private static readonly ARTISTS_SELECTION_BAR_ID = "artists-selection-bar";
-    private static readonly ARTISTS_CONTAINER_ID = "artists-container";
+    private static readonly ARTISTS_CONTAINER_ID = "spotify-artists-container";
 
     private connected = false;
     private readonly spotifyRestClient: SpotifyRestClient;
@@ -151,7 +151,7 @@ export class SpotifySynchronizationRenderService {
                     artistDivElement.id = artist.id;
                     artistThumbElement.src = artist.smallImage;
                     artistNameElement.textContent = artist.name;
-                    artistInfoElement.innerHTML = this.buildArtistInfoText(artist);
+                    artistInfoElement.insertAdjacentElement("beforeend", this.buidArtistInfoElement(artist));
                     artistDivElement.addEventListener("click", this.onArtistClicked.bind(this, artistDivElement));
                     this.artistContainerElement.insertAdjacentElement("beforeend", artistDivElement);
                 });
@@ -172,11 +172,30 @@ export class SpotifySynchronizationRenderService {
             });
     }
 
-    private buildArtistInfoText(artist: SpotifyArtist): string {
+    private buidArtistInfoElement(artist: SpotifyArtist): HTMLSpanElement {
+        const artistInfoElement = document.createElement("span");
+        artistInfoElement.insertAdjacentElement("beforeend", this.buildGenreTagsElement(artist));
+        artistInfoElement.insertAdjacentHTML("beforeend", "<br />");
+        artistInfoElement.insertAdjacentElement("beforeend", this.buildSpotifyFollowerElement(artist));
+        return artistInfoElement;
+    }
+
+    private buildGenreTagsElement(artist: SpotifyArtist): HTMLSpanElement {
+        const genreElement = document.createElement("span");
+        artist.genres.slice(0, 3).forEach((genre) => {
+            const genreBadge = document.createElement("span");
+            genreBadge.classList.add("badge", "badge-dark", "mr-2", "mb-1");
+            genreBadge.textContent = genre;
+            genreElement.insertAdjacentElement("beforeend", genreBadge);
+        });
+        return genreElement;
+    }
+
+    private buildSpotifyFollowerElement(artist: SpotifyArtist): HTMLSpanElement {
         const followerCount = new Intl.NumberFormat("en-us", { minimumFractionDigits: 0 }).format(artist.follower);
-        const follower = `${followerCount} followers on Spotify`;
-        const genres = artist.genres.slice(0, 4).join(", ");
-        return `${genres}<br />${follower}`;
+        const followerElement = document.createElement("span");
+        followerElement.innerText = `${followerCount} followers on Spotify`;
+        return followerElement;
     }
 
     private onSynchronizeArtistsClicked(): void {
@@ -203,9 +222,7 @@ export class SpotifySynchronizationRenderService {
             .synchronizeArtists(selectedArtistIds)
             .then((response) => {
                 const successIcon = '<span class="material-icons">check_circle</span>';
-                const successMessage =
-                    `${successIcon} You are now following ${response.artistsCount} new artists on Metal Detector and ` +
-                    `will be notified as soon as these artists announce a new release.`;
+                const successMessage = `${successIcon} You are now following ${response.artistsCount} new artists on Metal Detector.`;
                 const successMessageElement = this.alertService.renderSuccessAlert(successMessage, true);
                 this.artistContainerElement.insertAdjacentElement("beforeend", successMessageElement);
             })
@@ -240,13 +257,21 @@ export class SpotifySynchronizationRenderService {
         const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
         const artistInfoElement = artistDivElement.querySelector("#artist-info") as HTMLParagraphElement;
 
-        artistCheckbox.innerText = shouldSelect ? "check_box" : "check_box_outline_blank";
-        shouldSelect ? artistCheckbox.classList.add("md-success") : artistCheckbox.classList.remove("md-success");
-        shouldSelect
-            ? artistThumbElement.classList.remove("img-inactive")
-            : artistThumbElement.classList.add("img-inactive");
-        shouldSelect ? artistNameElement.classList.remove("text-muted") : artistNameElement.classList.add("text-muted");
-        shouldSelect ? artistInfoElement.classList.remove("text-muted") : artistInfoElement.classList.add("text-muted");
+        if (shouldSelect) {
+            artistDivElement.classList.add("active");
+            artistCheckbox.innerText = "check_box";
+            artistCheckbox.classList.add("md-success");
+            artistThumbElement.classList.remove("img-inactive");
+            artistNameElement.classList.remove("text-muted");
+            artistInfoElement.classList.remove("text-muted");
+        } else {
+            artistDivElement.classList.remove("active");
+            artistCheckbox.innerText = "check_box_outline_blank";
+            artistCheckbox.classList.remove("md-success");
+            artistThumbElement.classList.add("img-inactive");
+            artistNameElement.classList.add("text-muted");
+            artistInfoElement.classList.add("text-muted");
+        }
     }
 
     private clearArtistsContainer(): void {
