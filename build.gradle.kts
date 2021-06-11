@@ -29,7 +29,7 @@ buildscript {
     set("postgresqlVersion", "42.2.19")
     set("restAssuredVersion", "4.2.1")
     set("servletApiVersion", "4.0.1")
-    set("springBootVersion", "2.5.0")
+    set("springBootVersion", "2.5.1")
     set("springSecurityVersion", "5.5.0")
     set("thymeleafDialectVersion", "2.5.3")
     set("thymeleafExtrasVersion", "3.0.4.RELEASE")
@@ -48,7 +48,7 @@ val dependencyVersions = listOf(
   "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3",
   "jakarta.activation:jakarta.activation-api:2.0.1",
   "org.jboss.logging:jboss-logging:3.4.2.Final",
-  "net.bytebuddy:byte-buddy:1.11.1",
+  "net.bytebuddy:byte-buddy:1.11.2",
   "org.javassist:javassist:3.28.0-GA",
   "org.webjars:jquery:3.6.0",
   "commons-io:commons-io:2.9.0"
@@ -65,7 +65,7 @@ val dependencyGroupVersions = mapOf(
 plugins {
   id("java-library")
   id("org.siouan.frontend-jdk11") version "5.2.0"
-  id("org.springframework.boot") version "2.5.0"
+  id("org.springframework.boot") version "2.5.1"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
 }
 
@@ -157,7 +157,7 @@ subprojects {
 
 tasks {
   wrapper {
-    gradleVersion = "7.0"
+    gradleVersion = "7.0.2"
     distributionType = Wrapper.DistributionType.ALL
   }
 
