@@ -10,16 +10,16 @@
 <body>
     <section layout:fragment="content">
         <template id="artist-card">
-            <div class="card mt-2 spotify-synchro-card pointer">
-                <div class="row">
-                    <div class="col-md-auto">
+            <div class="card mt-2 pointer">
+                <div class="flex-wrapper">
+                    <div class="image">
                         <img class="spotify-synchro-img" src="" alt="" id="thumb">
                     </div>
-                    <div class="col">
-                        <p class="h5 mt-3" id="artist-name"></p>
+                    <div class="artist-info">
+                        <p class="h5 mt-2" id="artist-name"></p>
                         <p id="artist-info"></p>
                     </div>
-                    <div class="col col-sm-2 text-center spotify-synchro-checkbox">
+                    <div class="text-center checkbox">
                         <span class="material-icons md-42 md-success" id="artist-check-box">check_box</span>
                     </div>
                 </div>
@@ -59,7 +59,7 @@
             <a class="light-hyperlink mr-2" href="#" id="select-all-link">Select all</a> |
             <a class="light-hyperlink ml-2" href="#" id="deselect-all-link">Deselect all</a>
         </div>
-        <div id="artists-container"></div>
+        <div id="spotify-artists-container"></div>
     </section>
 </body>
 </html>

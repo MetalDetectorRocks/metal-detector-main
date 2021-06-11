@@ -203,23 +203,27 @@ footer .footer-icon:hover {
 }
 
 /* Spotify Synchronization */
-#connection-bar {
-
-}
-#artists-container {
+#spotify-artists-container {
     min-height: 15rem;
 }
-.spotify-synchro-img {
+#spotify-artists-container .flex-wrapper {
+    display: flex;
+}
+#spotify-artists-container .artist-info {
+    margin-left: 15px;
+    flex-grow: 2;
+}
+#spotify-artists-container .checkbox {
+    align-self: center;
+    margin-right: 15px;
+}
+#spotify-artists-container .image img {
     height: 7rem;
     width: 7rem;
     object-fit: cover;
-    border-bottom: 1px solid var(--grey-border-color);
 }
-.spotify-synchro-card:hover {
+#spotify-artists-container .card:hover {
     border-color: var(--grey-border-color-highlight);
-}
-.spotify-synchro-checkbox {
-    margin-top: 2.2rem;
 }
 
 /* Blog */
@@ -422,5 +426,20 @@ footer .footer-icon:hover {
 
     .vertical-card-img {
         min-height: 27.5rem;
+    }
+
+    #spotify-artists-container .checkbox {
+        align-self: start;
+        margin-top: 5px;
+        margin-right: 5px;
+    }
+    #spotify-artists-container .checkbox span {
+        font-size: 20px !important;
+    }
+    #spotify-artists-container .artist-info {
+        margin-right: 0;
+    }
+    #spotify-artists-container p {
+        margin-bottom: 2px;
     }
 }
