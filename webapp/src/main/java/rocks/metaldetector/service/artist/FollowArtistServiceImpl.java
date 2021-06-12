@@ -11,7 +11,6 @@ import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
-import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
 import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
@@ -21,6 +20,7 @@ import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,7 +36,6 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   private final DiscogsService discogsService;
   private final FollowActionRepository followActionRepository;
   private final SpotifyService spotifyService;
-  private final UserRepository userRepository;
 
   @Override
   @Transactional
@@ -95,6 +94,17 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   @Transactional
   public List<ArtistDto> getFollowedArtistsOfUser(AbstractUserEntity user) {
     return getFollowedArtists(user);
+  }
+
+  @Override
+  public List<ArtistDto> getFollowedArtists(int minFollower) {
+    Map<ArtistEntity, List<FollowActionEntity>> userPerArtist = followActionRepository.findAll().stream()
+        .collect(Collectors.groupingBy(FollowActionEntity::getArtist));
+    return userPerArtist.entrySet().stream()
+        .filter(entry -> entry.getValue().size() >= minFollower)
+        .map(entry -> artistDtoTransformer.transformArtistEntity(entry.getKey()))
+        .peek(artist -> artist.setFollower(artistRepository.countArtistFollower(artist.getExternalId())))
+        .collect(Collectors.toList());
   }
 
   private List<ArtistDto> getFollowedArtists(AbstractUserEntity user) {

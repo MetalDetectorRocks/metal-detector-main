@@ -40,6 +40,15 @@ public class ReleaseCollector {
     return collectReleases(artists, timeRange, sort);
   }
 
+  public List<ReleaseDto> collectReleases(List<ArtistDto> artists, TimeRange timeRange) {
+    if (artists.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<String> artistNames = artists.stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
+    return releaseService.findAllReleases(artistNames, timeRange);
+  }
+
   private List<ReleaseDto> collectReleases(List<ArtistDto> artists, TimeRange timeRange, DetectorSort sort) {
     if (artists.isEmpty()) {
       return Collections.emptyList();
