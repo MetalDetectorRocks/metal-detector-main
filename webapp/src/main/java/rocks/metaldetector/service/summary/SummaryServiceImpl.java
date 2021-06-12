@@ -6,9 +6,13 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.web.api.response.SummaryResponse;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Profile({"default", "preview", "prod"})
@@ -39,5 +43,19 @@ public class SummaryServiceImpl implements SummaryService {
         .mostExpectedReleases(mostExpectedReleases)
         .recentlyFollowedArtists(recentlyFollowedArtists)
         .build();
+  }
+
+  @Override
+  public List<ReleaseDto> findTopReleases(TimeRange timeRange, int minFollower, int maxReleases) {
+    List<ArtistDto> artists = followArtistService.getFollowedArtists(minFollower);
+    Map<String, Integer> followersPerArtist = artists.stream()
+        .collect(Collectors.groupingBy(artistDto -> artistDto.getArtistName().toLowerCase(),
+                                       Collectors.summingInt(ArtistDto::getFollower)));
+    return releaseCollector.collectReleases(artists, timeRange).stream()
+        .sorted(Comparator.comparingInt(
+            (ReleaseDto release) -> followersPerArtist.get(release.getArtist().toLowerCase()))
+                    .reversed())
+        .limit(maxReleases)
+        .collect(Collectors.toList());
   }
 }
