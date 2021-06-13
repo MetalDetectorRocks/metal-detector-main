@@ -28,4 +28,16 @@
             <heap unit="MB">10</heap>
         </resources>
     </cache>
+
+    <cache alias="spotifyAppAuthorizationToken">
+        <value-type>java.lang.String</value-type>
+
+        <expiry>
+            <ttl unit="minutes">59</ttl>
+        </expiry>
+
+        <resources>
+            <heap unit="MB">1</heap>
+        </resources>
+    </cache>
 </config>

@@ -22,4 +22,9 @@ public class OAuth2ClientManagerConfig {
     manager.setAuthorizedClientProvider(authorizedClientProvider);
     return manager;
   }
+
+  @Bean
+  public String registrationId() {
+    return "spotify";
+  }
 }
