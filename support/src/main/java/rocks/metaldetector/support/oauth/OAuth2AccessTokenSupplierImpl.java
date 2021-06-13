@@ -1,7 +1,6 @@
 package rocks.metaldetector.support.oauth;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
@@ -17,13 +16,12 @@ import static org.springframework.security.core.authority.AuthorityUtils.createA
 @RequiredArgsConstructor
 public class OAuth2AccessTokenSupplierImpl implements OAuth2AccessTokenSupplier {
 
-  private static final AnonymousAuthenticationToken PRINCIPAL = new AnonymousAuthenticationToken("key", "anonymous", createAuthorityList("ROLE_ANONYMOUS"));
+  static final AnonymousAuthenticationToken PRINCIPAL = new AnonymousAuthenticationToken("key", "anonymous", createAuthorityList("ROLE_ANONYMOUS"));
 
   private final OAuth2AuthorizedClientManager manager;
   private String registrationId;
 
   @Override
-  @Cacheable("spotifyAppAuthorizationToken")
   public String get() {
     OAuth2AuthorizeRequest authorizedRequest = OAuth2AuthorizeRequest
         .withClientRegistrationId(registrationId)
