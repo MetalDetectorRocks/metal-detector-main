@@ -9,6 +9,7 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestOperations;
+import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.support.infrastructure.CustomClientErrorHandler;
 import rocks.metaldetector.support.oauth.OAuth2ClientInterceptor;
 
@@ -27,21 +28,22 @@ public class SpotifyModuleConfig {
 
   @Bean
   public RestOperations spotifyRestTemplate(RestTemplateBuilder restTemplateBuilder) {
-    return restTemplateBuilder
-        .requestFactory(() -> clientHttpRequestFactory)
-        .errorHandler(new CustomClientErrorHandler())
-        .interceptors(new SpotifyRequestInterceptor())
-        .messageConverters(List.of(jackson2HttpMessageConverter, stringHttpMessageConverter, formHttpMessageConverter))
-        .build();
+    return restTemplate(restTemplateBuilder);
   }
 
   @Bean
   public RestOperations spotifyOAuthRestTemplate(RestTemplateBuilder restTemplateBuilder, SpotifyOAuth2AccessTokenSupplierWrapper oAuth2AccessTokenSupplier) {
     oAuth2AccessTokenSupplier.setRegistrationId(REGISTRATION_ID);
+    RestTemplate restTemplate = restTemplate(restTemplateBuilder);
+    restTemplate.getInterceptors().add(new OAuth2ClientInterceptor(oAuth2AccessTokenSupplier));
+    return restTemplate;
+  }
+
+  private RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
     return restTemplateBuilder
         .requestFactory(() -> clientHttpRequestFactory)
         .errorHandler(new CustomClientErrorHandler())
-        .interceptors(new SpotifyRequestInterceptor(), new OAuth2ClientInterceptor(oAuth2AccessTokenSupplier))
+        .interceptors(new SpotifyRequestInterceptor())
         .messageConverters(List.of(jackson2HttpMessageConverter, stringHttpMessageConverter, formHttpMessageConverter))
         .build();
   }
