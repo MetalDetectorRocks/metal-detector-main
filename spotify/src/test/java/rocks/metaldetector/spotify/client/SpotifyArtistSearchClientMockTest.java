@@ -17,7 +17,7 @@ class SpotifyArtistSearchClientMockTest implements WithAssertions {
   @DisplayName("searchByName: should return mock result")
   void test_searchByName() {
     // when
-    var result = underTest.searchByName("token", "query", 1, 10);
+    var result = underTest.searchByName("query", 1, 10);
 
     // then
     assertThat(result.getArtists().getItems().size()).isEqualTo(1);
@@ -27,7 +27,7 @@ class SpotifyArtistSearchClientMockTest implements WithAssertions {
   @DisplayName("searchById: should return mock result")
   void test_searchById() {
     // when
-    var result = underTest.searchById("token", "666");
+    var result = underTest.searchById("666");
 
     // then
     assertThat(result).isNotNull();
@@ -37,7 +37,7 @@ class SpotifyArtistSearchClientMockTest implements WithAssertions {
   @DisplayName("searchByIds: should return mock result")
   void test_searchByIds() {
     // when
-    var result = underTest.searchByIds("token", List.of("id"));
+    var result = underTest.searchByIds(List.of("id"));
 
     // then
     assertThat(result).isNotNull();

@@ -50,6 +50,13 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
+          spotify:
+            client-id: ${SPOTIFY_CLIENT_ID}
+            client-secret: ${SPOTIFY_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+        provider:
+          spotify:
+            tokenUri: https://accounts.spotify.com/api/token
 
 security:
   token-issuer: ${JWT_ISSUER}

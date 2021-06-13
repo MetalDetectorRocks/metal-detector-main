@@ -50,15 +50,13 @@ public class SpotifyServiceImpl implements SpotifyService {
 
   @Override
   public SpotifyArtistSearchResultDto searchArtistByName(String artistQueryString, int pageNumber, int pageSize) {
-    String authorizationToken = authorizationClient.getAppAuthorizationToken();
-    SpotifyArtistSearchResultContainer searchResult = artistSearchClient.searchByName(authorizationToken, artistQueryString, pageNumber, pageSize);
+    SpotifyArtistSearchResultContainer searchResult = artistSearchClient.searchByName(artistQueryString, pageNumber, pageSize);
     return searchResultTransformer.transform(searchResult);
   }
 
   @Override
   public SpotifyArtistDto searchArtistById(String artistId) {
-    String authenticationToken = authorizationClient.getAppAuthorizationToken();
-    SpotifyArtist spotifyArtist = artistSearchClient.searchById(authenticationToken, artistId);
+    SpotifyArtist spotifyArtist = artistSearchClient.searchById(artistId);
     return artistTransformer.transform(spotifyArtist);
   }
 
@@ -68,8 +66,7 @@ public class SpotifyServiceImpl implements SpotifyService {
     int totalPages = (int) Math.ceil((double) artistIds.size() / (double) PAGE_SIZE);
     for (int i = 1; i <= totalPages; i++) {
       List<String> idsPerPage = slicingService.slice(artistIds, i, PAGE_SIZE);
-      String authenticationToken = authorizationClient.getAppAuthorizationToken();
-      SpotifyArtistsContainer spotifyArtistsContainer = artistSearchClient.searchByIds(authenticationToken, idsPerPage);
+      SpotifyArtistsContainer spotifyArtistsContainer = artistSearchClient.searchByIds(idsPerPage);
       spotifyArtists.addAll(spotifyArtistsContainer.getArtists());
     }
     return spotifyArtists.stream()
