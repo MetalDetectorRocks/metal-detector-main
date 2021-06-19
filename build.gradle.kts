@@ -41,17 +41,17 @@ val javaVersion: JavaVersion = JavaVersion.VERSION_11
 val dependencyVersions = listOf(
   "org.junit.jupiter:junit-jupiter:${extra["junitVersion"]}",
   "org.junit.jupiter:junit-jupiter-api:${extra["junitVersion"]}",
-  "org.slf4j:slf4j-api:1.7.30",
+  "org.slf4j:slf4j-api:1.7.31",
   "org.mockito:mockito-core:${extra["mockitoVersion"]}",
   "org.junit:junit-bom:${extra["junitVersion"]}",
   "junit:junit:4.13.2",
   "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3",
   "jakarta.activation:jakarta.activation-api:2.0.1",
   "org.jboss.logging:jboss-logging:3.4.2.Final",
-  "net.bytebuddy:byte-buddy:1.11.2",
+  "net.bytebuddy:byte-buddy:1.11.3",
   "org.javassist:javassist:3.28.0-GA",
   "org.webjars:jquery:3.6.0",
-  "commons-io:commons-io:2.9.0"
+  "commons-io:commons-io:2.10.0"
 )
 val dependencyGroupVersions = mapOf(
   "org.springframework" to "5.3.7",
