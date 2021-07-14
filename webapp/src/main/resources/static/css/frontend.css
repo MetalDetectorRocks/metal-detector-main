@@ -15,6 +15,7 @@
     --light-hyperlink-font-color-highlight: #1d7097;
     --dark-card-background-color: #282828;
     --dark-card-footer-background-color: #262626;
+    --light-badge-background-color: #adafae;
 }
 
 /* General Styling */
@@ -45,8 +46,11 @@ h1, h2, h3, h4, h5, h6,
 ul, p, legend, label {
     color: var(--light-font-color);
 }
-.h5 {
-    font-size: 1.3rem !important;
+h5, .h5 {
+    font-size: 1.3rem;
+}
+h6, .h6 {
+    font-size: 0.875rem;
 }
 a {
     color: var(--light-hyperlink-font-color);
@@ -365,7 +369,7 @@ footer .footer-icon:hover {
 }
 .badge-dark {
     color: var(--dark-font-color);
-    font-size: 0.85rem;
+    background-color: var(--light-badge-background-color);
 }
 .text-muted {
     color: var(--dark-muted-font-color) !important;
