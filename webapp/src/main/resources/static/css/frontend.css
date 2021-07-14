@@ -8,13 +8,13 @@
     --menu-foreground-hover-color: #767676;
     --dark-field-background-color: #212121;
     --light-font-color: #adafae;
-    --light-font-color-highlight: #fcfcfc;
-    --light-font-color-muted: #5c5c5c;
+    --dark-muted-font-color: #5c5c5c;
+    --dark-muted-highlight-font-color: #777;
     --dark-font-color: #181818;
-    --light-hyperlink-font-color: #1d7097;
-    --light-hyperlink-font-color-highlight: #2a90c1;
-    --dark-hyperlink-font-color: #555;
-    --dark-hyperlink-font-color-highlight: #777;
+    --light-hyperlink-font-color: #2a9fd6;
+    --light-hyperlink-font-color-highlight: #1d7097;
+    --dark-card-background-color: #282828;
+    --dark-card-footer-background-color: #262626;
 }
 
 /* General Styling */
@@ -22,7 +22,6 @@ html {
     height: 100%;
     margin: 0;
 }
-
 body {
     /* push footer to the bottom */
     margin: 0;
@@ -31,36 +30,34 @@ body {
     flex-direction: column;
 
     /* other */
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
     text-align: left;
     background-image: url("/images/background.png")
 }
-
 h1, h2 {
     font-family: 'Metal Mania', cursive;
 }
-
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6,
+ul, p, legend, label {
+    color: var(--light-font-color);
+}
 .h5 {
     font-size: 1.3rem !important;
 }
-
-p, legend {
-    color: var(--light-font-color) !important;
-}
-
-a:hover {
+a {
+    color: var(--light-hyperlink-font-color);
     text-decoration: none;
 }
-
+a:hover {
+    color: var(--light-hyperlink-font-color-highlight);
+    text-decoration: none;
+}
 .container {
     max-width: 1280px;
-}
-
-.img-inactive {
-    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
-    filter: grayscale(100%);
 }
 
 /* Footer */
@@ -102,11 +99,30 @@ footer .footer-icon:hover {
 .card-title {
     font-size: 1.3rem;
 }
+.dark-card {
+    background-color: var(--dark-card-background-color);
+}
+.dark-card-body {
+    background-color: var(--dark-card-background-color);
+}
+.dark-card-footer {
+    background-color: var(--dark-card-footer-background-color);
+}
 
 /* Pagination */
 #pagination-wrapper {
     display: flex;
     justify-content: flex-end;
+}
+.page-link,
+.page-item.disabled .page-link {
+    background-color: var(--dark-card-footer-background-color);
+    border: 0;
+}
+.page-link:hover,
+.page-item.active .page-link {
+    background-color: var(--light-hyperlink-font-color-highlight);
+    color: white;
 }
 
 /* My Artists */
@@ -182,11 +198,6 @@ footer .footer-icon:hover {
     object-fit: cover;
     border-right: 1px solid var(--grey-border-color);
 }
-
-#release-filter .custom-control {
-    margin-bottom: 0.5rem;
-}
-
 .custom-border-left {
     border-left: 2px solid var(--grey-border-color);
 }
@@ -268,36 +279,28 @@ footer .footer-icon:hover {
 .author-link{
     font-size: x-large;
     font-weight: bold;
-    color: var(--dark-hyperlink-font-color);
+    color: var(--dark-muted-font-color);
 }
 
 .author-link:hover {
-    color: var(--light-hyperlink-font-color)
+    color: var(--light-hyperlink-font-color-highlight)
 }
 
 /* Other */
 .dark-hyperlink {
-    color: var(--dark-hyperlink-font-color);
-    text-decoration: none;
+    color: var(--dark-muted-font-color);
     background-color: transparent
 }
-
 .dark-hyperlink:hover {
-    color: var(--dark-hyperlink-font-color-highlight);
-    text-decoration: none;
+    color: var(--dark-muted-highlight-font-color);
 }
-
 .light-hyperlink {
     color: var(--light-hyperlink-font-color);
-    text-decoration: none;
     background-color: transparent
 }
-
 .light-hyperlink:hover {
     color: var(--light-hyperlink-font-color-highlight);
-    text-decoration: none;
 }
-
 .scroll-to-top {
     display: none;
     position: fixed;
@@ -312,7 +315,6 @@ footer .footer-icon:hover {
     border-radius: 10px;
     padding-top: 5px;
 }
-
 .top-right {
     position: absolute;
     top: 8px;
@@ -325,18 +327,11 @@ footer .footer-icon:hover {
     color: var(--light-font-color) !important;
     border-color: var(--grey-border-color);
 }
-
 .custom-form-control:focus {
     background-color: var(--dark-field-background-color);
 }
-
 .custom-form-control::placeholder {
-    color: var(--light-font-color);
-}
-
-.sorting-form-control {
-    float: right;
-    width: auto;
+    color: var(--dark-muted-font-color);
 }
 
 /* Overrides */
@@ -361,6 +356,9 @@ footer .footer-icon:hover {
     padding: 1.25rem 1.25rem 0;
     min-height: 5rem;
 }
+.card-footer {
+    padding: 0.75rem 1.25rem;
+}
 .dismissible-button {
     width: max-content;
     padding-left: 1.75rem;
@@ -368,6 +366,18 @@ footer .footer-icon:hover {
 .badge-dark {
     color: var(--dark-font-color);
     font-size: 0.85rem;
+}
+.text-muted {
+    color: var(--dark-muted-font-color) !important;
+}
+
+/* Utils */
+.font-size-s {
+    font-size: 0.875rem;
+}
+.img-inactive {
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
 }
 
 /* Responsive */

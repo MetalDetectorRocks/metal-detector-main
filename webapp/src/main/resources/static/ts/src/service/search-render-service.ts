@@ -135,7 +135,7 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
                 return;
             }
             const genreBadge = document.createElement("span");
-            genreBadge.classList.add("badge", "badge-dark", "mr-2");
+            genreBadge.classList.add("badge", "badge-dark", "me-2");
             genreBadge.textContent = genre;
             genreElement.insertAdjacentElement("beforeend", genreBadge);
         });

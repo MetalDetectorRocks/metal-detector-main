@@ -10,7 +10,7 @@
 <body>
     <section layout:fragment="content">
         <template id="detailed-release-card">
-            <div class="card mb-3">
+            <div class="card dark-card-body mb-3">
                 <div class="row">
                     <div class="col-md-auto">
                         <img class="release-cover-img" src="#" alt="#" id="release-cover">
@@ -86,24 +86,26 @@
                     </fieldset>
                     <fieldset class="mb-3">
                         <legend>Sort</legend>
-                        <div class="form-group row">
-                            <label for="sort-property-selector" class="col-sm-3 col-form-label">by</label>
-                            <div class="col-sm-6">
-                                <select class="form-control sorting-form-control" id="sort-property-selector">
-                                    <option>Release date</option>
+                        <div class="form-group row mb-3">
+                            <div class="col-auto col-form-label">
+                                <label for="sort-property-selector">by</label>
+                            </div>
+                            <div class="col-auto ps-0">
+                                <select class="form-select" id="sort-property-selector">
+                                    <option selected>Release date</option>
                                     <option>Announcement date</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <form id="sorting-form">
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="sort-asc-rb" name="releases" class="custom-control-input" checked="">
-                                    <label class="custom-control-label" for="sort-asc-rb">Ascending</label>
+                                <div class="form-check mb-1">
+                                    <input type="radio" id="sort-asc-rb" name="releases" class="form-check-input" checked="">
+                                    <label class="form-check-label" for="sort-asc-rb">Ascending</label>
                                 </div>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="sort-desc-rb" name="releases" class="custom-control-input">
-                                    <label class="custom-control-label" for="sort-desc-rb">Descending</label>
+                                <div class="form-check mb-1">
+                                    <input type="radio" id="sort-desc-rb" name="releases" class="form-check-input">
+                                    <label class="form-check-label" for="sort-desc-rb">Descending</label>
                                 </div>
                             </form>
                         </div>
@@ -112,13 +114,13 @@
                         <legend>Artists</legend>
                         <div class="form-group">
                             <form id="release-filter-form">
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="all-artists-rb" name="releases" class="custom-control-input" checked="">
-                                    <label class="custom-control-label" for="all-artists-rb">All artists</label>
+                                <div class="form-check mb-1">
+                                    <input type="radio" id="all-artists-rb" name="releases" class="form-check-input" checked="">
+                                    <label class="form-check-label" for="all-artists-rb">All artists</label>
                                 </div>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="followed-artists-rb" name="releases" class="custom-control-input">
-                                    <label class="custom-control-label" for="followed-artists-rb">Only followed artists</label>
+                                <div class="form-check mb-1">
+                                    <input type="radio" id="followed-artists-rb" name="releases" class="form-check-input">
+                                    <label class="form-check-label" for="followed-artists-rb">Only followed artists</label>
                                 </div>
                             </form>
                         </div>
@@ -126,17 +128,17 @@
                     <fieldset class="mb-3">
                         <legend>Time</legend>
                         <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="time-all-upcoming-rb" name="time" class="custom-control-input" checked="">
-                                <label class="custom-control-label" for="time-all-upcoming-rb">All upcoming</label>
+                            <div class="form-check mb-1">
+                                <input type="radio" id="time-all-upcoming-rb" name="time" class="form-check-input" checked="">
+                                <label class="form-check-label" for="time-all-upcoming-rb">All upcoming</label>
                             </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="time-next-month-rb" name="time" class="custom-control-input">
-                                <label class="custom-control-label" for="time-next-month-rb">Next 30 days</label>
+                            <div class="form-check mb-1">
+                                <input type="radio" id="time-next-month-rb" name="time" class="form-check-input">
+                                <label class="form-check-label" for="time-next-month-rb">Next 30 days</label>
                             </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="time-last-month-rb" name="time" class="custom-control-input">
-                                <label class="custom-control-label" for="time-last-month-rb">Last 30 days</label>
+                            <div class="form-check mb-1">
+                                <input type="radio" id="time-last-month-rb" name="time" class="form-check-input">
+                                <label class="form-check-label" for="time-last-month-rb">Last 30 days</label>
                             </div>
                         </div>
                     </fieldset>
