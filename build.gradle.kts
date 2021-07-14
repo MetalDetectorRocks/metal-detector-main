@@ -6,7 +6,6 @@ buildscript {
   extra.apply {
     set("apacheCommonsLang3Version", "3.12.0")
     set("apacheCommonsTextVersion", "1.9")
-    set("bootstrapVersion", "5.0.1")
     set("cacheApiVersion", "1.1.1")
     set("commonsCodecVersion", "1.15")
     set("datatablesVersion", "1.10.24")
@@ -23,7 +22,6 @@ buildscript {
     set("jsoupVersion", "1.13.1")
     set("junitVersion", "5.7.1")
     set("lombokVersion", "1.18.20")
-    set("materialIconsVersion", "0.3.1")
     set("micrometerVersion", "1.6.6")
     set("modelmapperVersion", "2.4.0")
     set("postgresqlVersion", "42.2.19")
