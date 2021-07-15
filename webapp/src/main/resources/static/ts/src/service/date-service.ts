@@ -13,13 +13,24 @@ export class DateService {
     }
 
     public formatRelativeInDays(dateStr: string): string {
-        const relativeTime = dayjs(dateStr).fromNow();
-        if (relativeTime.startsWith("in") && !relativeTime.endsWith("days")) {
-            return Math.abs(this.diffFromNow(dateStr, "hour")) < 24 ? "tomorrow" : "in 2 days";
-        } else if (!relativeTime.startsWith("in") && !relativeTime.endsWith("days ago")) {
+        if (dateStr === this.today()) {
             return "today";
+        } else if (dateStr === this.tomorrow()) {
+            return "tomorrow";
+        } else if (dateStr === this.yesterday()) {
+            return "yesterday";
         } else {
-            return relativeTime;
+            const relativeDisplayString = dayjs(dateStr).fromNow();
+            const hoursFromNow = Math.abs(this.diffFromNow(dateStr, "hour"));
+            if (relativeDisplayString.match(/in \d* days/)) {
+                const daysFromNow = Math.ceil(hoursFromNow / 24);
+                return `in ${daysFromNow} days`;
+            } else if (relativeDisplayString.match(/\d days ago/)) {
+                const daysFromNow = Math.floor(hoursFromNow / 24);
+                return `${daysFromNow} days ago`;
+            } else {
+                return relativeDisplayString;
+            }
         }
     }
 
@@ -34,6 +45,11 @@ export class DateService {
 
     public yesterday(): string {
         const yesterdayAsDayJs = dayjs().subtract(1, "day");
+        return this.format(yesterdayAsDayJs.toString(), DateFormat.UTC);
+    }
+
+    public tomorrow(): string {
+        const yesterdayAsDayJs = dayjs().add(1, "day");
         return this.format(yesterdayAsDayJs.toString(), DateFormat.UTC);
     }
 
