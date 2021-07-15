@@ -1,28 +1,24 @@
 package rocks.metaldetector.support.oauth;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.stereotype.Component;
 
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 
 @Component
-@Scope(SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
-public class OAuth2AccessTokenSupplierImpl implements OAuth2AccessTokenSupplier {
+public class OAuth2AccessTokenClient {
 
   static final AnonymousAuthenticationToken PRINCIPAL = new AnonymousAuthenticationToken("key", "anonymous", createAuthorityList("ROLE_ANONYMOUS"));
 
   private final OAuth2AuthorizedClientManager manager;
   private String registrationId;
 
-  @Override
-  public String get() {
+  public String getAccessToken() {
     OAuth2AuthorizeRequest authorizedRequest = OAuth2AuthorizeRequest
         .withClientRegistrationId(registrationId)
         .principal(PRINCIPAL)
@@ -35,7 +31,6 @@ public class OAuth2AccessTokenSupplierImpl implements OAuth2AccessTokenSupplier 
     return authorizedClient.getAccessToken().getTokenValue();
   }
 
-  @Override
   public void setRegistrationId(String registrationId) {
     this.registrationId = registrationId;
   }

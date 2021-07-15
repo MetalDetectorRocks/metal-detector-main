@@ -24,7 +24,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 class OAuth2ClientInterceptorTest implements WithAssertions {
 
   @Mock
-  private OAuth2AccessTokenSupplier tokenSupplier;
+  private OAuth2AccessTokenClient tokenSupplier;
 
   @InjectMocks
   private OAuth2ClientInterceptor underTest;
@@ -41,7 +41,7 @@ class OAuth2ClientInterceptorTest implements WithAssertions {
     underTest.intercept(new MockClientHttpRequest(), "body".getBytes(), mock(ClientHttpRequestExecution.class));
 
     // then
-    verify(tokenSupplier).get();
+    verify(tokenSupplier).getAccessToken();
   }
 
   @Test
@@ -50,7 +50,7 @@ class OAuth2ClientInterceptorTest implements WithAssertions {
     // given
     var requestMock = new MockClientHttpRequest();
     var token = "token";
-    doReturn(token).when(tokenSupplier).get();
+    doReturn(token).when(tokenSupplier).getAccessToken();
 
     // when
     underTest.intercept(requestMock, "body".getBytes(), mock(ClientHttpRequestExecution.class));

@@ -11,6 +11,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.support.infrastructure.CustomClientErrorHandler;
+import rocks.metaldetector.support.oauth.OAuth2AccessTokenClient;
 import rocks.metaldetector.support.oauth.OAuth2ClientInterceptor;
 
 import java.util.List;
@@ -32,10 +33,10 @@ public class SpotifyModuleConfig {
   }
 
   @Bean
-  public RestOperations spotifyOAuthRestTemplate(RestTemplateBuilder restTemplateBuilder, SpotifyOAuth2AccessTokenSupplierWrapper oAuth2AccessTokenSupplier) {
-    oAuth2AccessTokenSupplier.setRegistrationId(REGISTRATION_ID);
+  public RestOperations spotifyOAuthRestTemplate(RestTemplateBuilder restTemplateBuilder, OAuth2AccessTokenClient tokenClient) {
+    tokenClient.setRegistrationId(REGISTRATION_ID);
     RestTemplate restTemplate = restTemplate(restTemplateBuilder);
-    restTemplate.getInterceptors().add(new OAuth2ClientInterceptor(oAuth2AccessTokenSupplier));
+    restTemplate.getInterceptors().add(new OAuth2ClientInterceptor(tokenClient));
     return restTemplate;
   }
 

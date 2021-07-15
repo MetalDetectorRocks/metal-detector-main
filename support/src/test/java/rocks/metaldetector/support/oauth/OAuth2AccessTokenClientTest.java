@@ -20,16 +20,16 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static rocks.metaldetector.support.oauth.OAuth2AccessTokenSupplierImpl.PRINCIPAL;
+import static rocks.metaldetector.support.oauth.OAuth2AccessTokenClient.PRINCIPAL;
 
 @ExtendWith(MockitoExtension.class)
-class OAuth2AccessTokenSupplierImplTest implements WithAssertions {
+class OAuth2AccessTokenClientTest implements WithAssertions {
 
   @Mock
   private OAuth2AuthorizedClientManager manager;
 
   @InjectMocks
-  private OAuth2AccessTokenSupplierImpl underTest;
+  private OAuth2AccessTokenClient underTest;
 
   @BeforeEach
   void setup() {
@@ -54,7 +54,7 @@ class OAuth2AccessTokenSupplierImplTest implements WithAssertions {
     doReturn(tokenValue).when(accessToken).getTokenValue();
 
     // when
-    underTest.get();
+    underTest.getAccessToken();
 
     // then
     verify(manager).authorize(argumentCaptor.capture());
@@ -75,7 +75,7 @@ class OAuth2AccessTokenSupplierImplTest implements WithAssertions {
     doReturn(tokenValue).when(accessToken).getTokenValue();
 
     // when
-    var result = underTest.get();
+    var result = underTest.getAccessToken();
 
     // then
     assertThat(result).isEqualTo(tokenValue);
@@ -88,7 +88,7 @@ class OAuth2AccessTokenSupplierImplTest implements WithAssertions {
     doReturn(null).when(manager).authorize(any());
 
     // when
-    var throwable = catchThrowable(() -> underTest.get());
+    var throwable = catchThrowable(() -> underTest.getAccessToken());
 
     // then
     assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
