@@ -51,7 +51,7 @@ val dependencyVersions = listOf(
   "net.bytebuddy:byte-buddy:1.11.7",
   "org.javassist:javassist:3.28.0-GA",
   "org.webjars:jquery:3.6.0",
-  "commons-io:commons-io:2.10.0"
+  "commons-io:commons-io:2.11.0"
 )
 val dependencyGroupVersions = mapOf(
   "org.springframework" to "5.3.7",
