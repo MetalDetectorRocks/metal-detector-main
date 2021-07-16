@@ -9,8 +9,9 @@ import { Endpoints } from "../config/endpoints";
 export class SpotifySynchronizationRenderService {
     private static readonly BUTTON_BAR_DIV_NAME = "button-bar";
     private static readonly ARTISTS_SELECTION_BAR_ID = "artists-selection-bar";
-    private static readonly ARTISTS_CONTAINER_ID = "artists-container";
+    private static readonly ARTISTS_CONTAINER_ID = "spotify-artists-container";
 
+    private connected = false;
     private readonly spotifyRestClient: SpotifyRestClient;
     private readonly loadingIndicatorService: LoadingIndicatorService;
     private readonly toastService: ToastService;
@@ -20,10 +21,10 @@ export class SpotifySynchronizationRenderService {
     private readonly artistSelectionElement: HTMLDivElement;
     private readonly artistContainerElement: HTMLDivElement;
 
-    private readonly connectWithSpotifyButton: HTMLButtonElement;
+    private readonly spotifyConnectionLink: HTMLAnchorElement;
+    private readonly spotifyConnectionStatus: HTMLSpanElement;
     private readonly fetchArtistsButton: HTMLButtonElement;
     private readonly synchronizeArtistsButton: HTMLButtonElement;
-    private readonly disconnectSpotifyButton: HTMLButtonElement;
 
     constructor(
         spotifyRestClient: SpotifyRestClient,
@@ -38,8 +39,8 @@ export class SpotifySynchronizationRenderService {
         this.urlService = urlService;
         this.alertService = alertService;
 
-        this.connectWithSpotifyButton = document.getElementById("connect-with-spotify-button") as HTMLButtonElement;
-        this.disconnectSpotifyButton = document.getElementById("disconnect-spotify-button") as HTMLButtonElement;
+        this.spotifyConnectionLink = document.getElementById("spotify-connection-link") as HTMLAnchorElement;
+        this.spotifyConnectionStatus = document.getElementById("spotify-connection-status") as HTMLSpanElement;
         this.fetchArtistsButton = document.getElementById("fetch-artists-button") as HTMLButtonElement;
         this.synchronizeArtistsButton = document.getElementById("synchronize-artists-button") as HTMLButtonElement;
         this.artistSelectionElement = document.getElementById(
@@ -53,8 +54,7 @@ export class SpotifySynchronizationRenderService {
     }
 
     private addEventListener(): void {
-        this.connectWithSpotifyButton.addEventListener("click", this.onConnectWithSpotifyClicked.bind(this));
-        this.disconnectSpotifyButton.addEventListener("click", this.onDisconnectSpotifyClicked.bind(this));
+        this.spotifyConnectionLink.addEventListener("click", this.onSpotifyConnectionLinkClicked.bind(this));
         this.synchronizeArtistsButton.addEventListener("click", this.onSynchronizeArtistsClicked.bind(this));
         document
             .getElementById("fetch-from-saved-albums")!
@@ -81,48 +81,43 @@ export class SpotifySynchronizationRenderService {
             const code = this.urlService.getParameterFromUrl("code");
             this.spotifyRestClient
                 .fetchInitialToken(state, code)
-                .then(() => this.toastService.createInfoToast("Successfully connected with Spotify!"))
                 .then(() => (window.location.href = Endpoints.SPOTIFY_SYNCHRONIZATION));
         } else {
-            this.initButtonBar();
+            const response = this.spotifyRestClient.existsAuthorization();
+            response.then((response) => {
+                if (response.exists) {
+                    this.connected = true;
+                    this.spotifyConnectionLink.textContent = "Disconnect";
+                    this.spotifyConnectionStatus.textContent = "Connected";
+                    this.spotifyConnectionStatus.classList.replace("font-color-red", "font-color-green");
+                    [this.fetchArtistsButton, this.synchronizeArtistsButton].forEach((button) => {
+                        button.classList.remove("invisible");
+                    });
+                } else {
+                    this.spotifyConnectionLink.textContent = "Connect";
+                    this.spotifyConnectionStatus.textContent = "Disconnected";
+                    this.spotifyConnectionStatus.classList.replace("font-color-green", "font-color-red");
+                }
+            });
         }
     }
 
-    private initButtonBar(): void {
-        const response = this.spotifyRestClient.existsAuthorization();
-        response.then((response) => {
-            if (response.exists) {
-                document.getElementById("button-bar")!.removeChild(this.connectWithSpotifyButton);
-                [this.disconnectSpotifyButton, this.fetchArtistsButton, this.synchronizeArtistsButton].forEach(
-                    (button) => {
-                        button.classList.remove("invisible");
-                    },
-                );
-            }
-        });
-    }
-
-    private onConnectWithSpotifyClicked(): void {
-        const authorizationResponse = this.spotifyRestClient.createAuthorizationUrl();
-        authorizationResponse.then((response) => (window.location.href = response.authorizationUrl));
-    }
-
-    private onDisconnectSpotifyClicked(): void {
-        this.spotifyRestClient.disconnectSpotifyAccount().then(() => {
-            this.toastService.createInfoToast("Spotify account successfully disconnected");
-            this.artistSelectionElement.classList.add("invisible");
-            this.clearArtistsContainer();
-            this.deactivateButtonBar();
-        });
-    }
-
-    private deactivateButtonBar(): void {
-        document
-            .getElementById("button-bar")!
-            .replaceChild(this.connectWithSpotifyButton, this.disconnectSpotifyButton);
-        [this.disconnectSpotifyButton, this.fetchArtistsButton, this.synchronizeArtistsButton].forEach((button) => {
-            button.classList.add("invisible");
-        });
+    private onSpotifyConnectionLinkClicked(): void {
+        if (this.connected) {
+            this.spotifyRestClient.disconnectSpotifyAccount().then(() => {
+                this.spotifyConnectionLink.textContent = "Connect";
+                this.spotifyConnectionStatus.textContent = "Disconnected";
+                this.spotifyConnectionStatus.classList.replace("font-color-green", "font-color-red");
+                [this.fetchArtistsButton, this.synchronizeArtistsButton, this.artistSelectionElement].forEach((el) => {
+                    el.classList.add("invisible");
+                });
+                this.clearArtistsContainer();
+            });
+        } else {
+            const authorizationResponse = this.spotifyRestClient.createAuthorizationUrl();
+            authorizationResponse.then((response) => (window.location.href = response.authorizationUrl));
+        }
+        this.connected = !this.connected;
     }
 
     private onFetchSpotifyArtistsFromAlbumsClicked(): void {
@@ -156,7 +151,7 @@ export class SpotifySynchronizationRenderService {
                     artistDivElement.id = artist.id;
                     artistThumbElement.src = artist.smallImage;
                     artistNameElement.textContent = artist.name;
-                    artistInfoElement.innerHTML = this.buildArtistInfoText(artist);
+                    artistInfoElement.insertAdjacentElement("beforeend", this.buidArtistInfoElement(artist));
                     artistDivElement.addEventListener("click", this.onArtistClicked.bind(this, artistDivElement));
                     this.artistContainerElement.insertAdjacentElement("beforeend", artistDivElement);
                 });
@@ -177,11 +172,30 @@ export class SpotifySynchronizationRenderService {
             });
     }
 
-    private buildArtistInfoText(artist: SpotifyArtist): string {
+    private buidArtistInfoElement(artist: SpotifyArtist): HTMLSpanElement {
+        const artistInfoElement = document.createElement("span");
+        artistInfoElement.insertAdjacentElement("beforeend", this.buildGenreTagsElement(artist));
+        artistInfoElement.insertAdjacentHTML("beforeend", "<br />");
+        artistInfoElement.insertAdjacentElement("beforeend", this.buildSpotifyFollowerElement(artist));
+        return artistInfoElement;
+    }
+
+    private buildGenreTagsElement(artist: SpotifyArtist): HTMLSpanElement {
+        const genreElement = document.createElement("span");
+        artist.genres.slice(0, 3).forEach((genre) => {
+            const genreBadge = document.createElement("span");
+            genreBadge.classList.add("badge", "badge-dark", "mr-2", "mb-1");
+            genreBadge.textContent = genre;
+            genreElement.insertAdjacentElement("beforeend", genreBadge);
+        });
+        return genreElement;
+    }
+
+    private buildSpotifyFollowerElement(artist: SpotifyArtist): HTMLSpanElement {
         const followerCount = new Intl.NumberFormat("en-us", { minimumFractionDigits: 0 }).format(artist.follower);
-        const follower = `${followerCount} followers on Spotify`;
-        const genres = artist.genres.slice(0, 4).join(", ");
-        return `${genres}<br />${follower}`;
+        const followerElement = document.createElement("span");
+        followerElement.innerText = `${followerCount} followers on Spotify`;
+        return followerElement;
     }
 
     private onSynchronizeArtistsClicked(): void {
@@ -208,9 +222,7 @@ export class SpotifySynchronizationRenderService {
             .synchronizeArtists(selectedArtistIds)
             .then((response) => {
                 const successIcon = '<span class="material-icons">check_circle</span>';
-                const successMessage =
-                    `${successIcon} You are now following ${response.artistsCount} new artists on Metal Detector and ` +
-                    `will be notified as soon as these artists announce a new release.`;
+                const successMessage = `${successIcon} You are now following ${response.artistsCount} new artists on Metal Detector.`;
                 const successMessageElement = this.alertService.renderSuccessAlert(successMessage, true);
                 this.artistContainerElement.insertAdjacentElement("beforeend", successMessageElement);
             })
@@ -245,13 +257,21 @@ export class SpotifySynchronizationRenderService {
         const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
         const artistInfoElement = artistDivElement.querySelector("#artist-info") as HTMLParagraphElement;
 
-        artistCheckbox.innerText = shouldSelect ? "check_box" : "check_box_outline_blank";
-        shouldSelect ? artistCheckbox.classList.add("md-success") : artistCheckbox.classList.remove("md-success");
-        shouldSelect
-            ? artistThumbElement.classList.remove("img-inactive")
-            : artistThumbElement.classList.add("img-inactive");
-        shouldSelect ? artistNameElement.classList.remove("text-muted") : artistNameElement.classList.add("text-muted");
-        shouldSelect ? artistInfoElement.classList.remove("text-muted") : artistInfoElement.classList.add("text-muted");
+        if (shouldSelect) {
+            artistDivElement.classList.add("active");
+            artistCheckbox.innerText = "check_box";
+            artistCheckbox.classList.add("md-success");
+            artistThumbElement.classList.remove("img-inactive");
+            artistNameElement.classList.remove("text-muted");
+            artistInfoElement.classList.remove("text-muted");
+        } else {
+            artistDivElement.classList.remove("active");
+            artistCheckbox.innerText = "check_box_outline_blank";
+            artistCheckbox.classList.remove("md-success");
+            artistThumbElement.classList.add("img-inactive");
+            artistNameElement.classList.add("text-muted");
+            artistInfoElement.classList.add("text-muted");
+        }
     }
 
     private clearArtistsContainer(): void {
