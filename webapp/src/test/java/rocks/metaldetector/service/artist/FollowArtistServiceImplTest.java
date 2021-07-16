@@ -21,7 +21,6 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.security.CurrentUserSupplier;
 import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
 import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
-import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
@@ -37,7 +36,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.SPOTIFY;
@@ -481,134 +479,5 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
     // then
     verify(followActionRepository).saveAll(expectedFollowActionEntities);
-  }
-
-  @Test
-  @DisplayName("followActionRepository is called to find all followActions")
-  void test_action_repository_called_for_all_follow_actions() {
-    // when
-    underTest.getFollowedArtists(666);
-
-    // then
-    verify(followActionRepository).findAll();
-  }
-
-  @Test
-  @DisplayName("artistDtoTransformer is called for every artist with more than given followers")
-  void test_artist_transformer_called_for_artists_with_followers() {
-    // given
-    var user1 = UserEntityFactory.createUser("user1", "user1@test.de");
-    var user2 = UserEntityFactory.createUser("user2", "user2@test.de");
-    var artist1 = ArtistEntityFactory.withExternalId("1");
-    var artist2 = ArtistEntityFactory.withExternalId("2");
-    var artist3 = ArtistEntityFactory.withExternalId("3");
-    var followAction1 = FollowActionEntity.builder().user(user1).artist(artist1).build();
-    var followAction2 = FollowActionEntity.builder().user(user1).artist(artist2).build();
-    var followAction3 = FollowActionEntity.builder().user(user1).artist(artist3).build();
-    var followAction4 = FollowActionEntity.builder().user(user2).artist(artist1).build();
-    var followAction5 = FollowActionEntity.builder().user(user2).artist(artist2).build();
-    var followActions = List.of(followAction1, followAction2, followAction3, followAction4, followAction5);
-    doReturn(followActions).when(followActionRepository).findAll();
-    doReturn(new ArtistDto()).when(artistDtoTransformer).transformArtistEntity(any());
-
-    // when
-    underTest.getFollowedArtists(1);
-
-    // then
-    verify(artistDtoTransformer).transformArtistEntity(artist1);
-    verify(artistDtoTransformer).transformArtistEntity(artist2);
-    verifyNoMoreInteractions(artistDtoTransformer);
-  }
-
-  @Test
-  @DisplayName("artistDtos are returned")
-  void test_top_artist_dtos_returned() {
-    // given
-    var user1 = UserEntityFactory.createUser("user1", "user1@test.de");
-    var user2 = UserEntityFactory.createUser("user2", "user2@test.de");
-    var artist = ArtistEntityFactory.withExternalId("1");
-    var followAction1 = FollowActionEntity.builder().user(user1).artist(artist).build();
-    var followAction2 = FollowActionEntity.builder().user(user2).artist(artist).build();
-    var expectedDto = ArtistDtoFactory.createDefault();
-    doReturn(List.of(followAction1, followAction2)).when(followActionRepository).findAll();
-    doReturn(expectedDto).when(artistDtoTransformer).transformArtistEntity(any());
-
-    // when
-    var result = underTest.getFollowedArtists(1);
-
-    // then
-    assertThat(result).containsExactly(expectedDto);
-  }
-
-  @Test
-  @DisplayName("getFollowedArtists: calls followActionRepository")
-  void test_calls_repository() {
-    // when
-    underTest.getFollowedArtists(0);
-
-    // then
-    verify(followActionRepository).findAll();
-  }
-
-  @Test
-  @DisplayName("getFollowedArtists: calls dtoTrafo for every artist with more than x followers")
-  void test_transformer_called_for_every_artist_with_follower() {
-    // given
-    var user1 = UserEntityFactory.createUser("user1", "user1@mail.test");
-    var user2 = UserEntityFactory.createUser("user2", "user2@mail.test");
-    var artist1 = ArtistEntityFactory.withExternalId("1");
-    var artist2 = ArtistEntityFactory.withExternalId("2");
-    var followAction1 = FollowActionEntity.builder().user(user1).artist(artist1).build();
-    var followAction2 = FollowActionEntity.builder().user(user1).artist(artist2).build();
-    var followAction3 = FollowActionEntity.builder().user(user2).artist(artist1).build();
-    var followActions = List.of(followAction1, followAction2, followAction3);
-    doReturn(followActions).when(followActionRepository).findAll();
-    doReturn(new ArtistDto()).when(artistDtoTransformer).transformArtistEntity(any());
-
-    // when
-    underTest.getFollowedArtists(1);
-
-    // then
-    verify(artistDtoTransformer).transformArtistEntity(artist1);
-  }
-
-  @Test
-  @DisplayName("getFollowedArtists: calls artistRepo to set number of followers")
-  void test_artist_repository_called_for_number_of_followers() {
-    // given
-    var user = UserEntityFactory.createUser("user", "user@mail.test");
-    var artist = ArtistEntityFactory.withExternalId("1");
-    var followAction = FollowActionEntity.builder().user(user).artist(artist).build();
-    var followActions = List.of(followAction);
-    var artistDto = ArtistDtoFactory.createDefault();
-    artistDto.setExternalId("1");
-    doReturn(followActions).when(followActionRepository).findAll();
-    doReturn(artistDto).when(artistDtoTransformer).transformArtistEntity(any());
-
-    // when
-    underTest.getFollowedArtists(1);
-
-    // then
-    verify(artistRepository).countArtistFollower(artistDto.getExternalId());
-  }
-
-  @Test
-  @DisplayName("getFollowedArtists: returns dtos with followers")
-  void test_returns_artist_dtos_with_followers() {
-    // given
-    var user = UserEntityFactory.createUser("user", "user@mail.test");
-    var artist = ArtistEntityFactory.withExternalId("1");
-    var followAction = FollowActionEntity.builder().user(user).artist(artist).build();
-    var followActions = List.of(followAction);
-    doReturn(followActions).when(followActionRepository).findAll();
-    doReturn(new ArtistDto()).when(artistDtoTransformer).transformArtistEntity(any());
-    doReturn(1).when(artistRepository).countArtistFollower(any());
-
-    // when
-    var result = underTest.getFollowedArtists(1);
-
-    // then
-    assertThat(result).hasSize(1);
-    assertThat(result.get(0).getFollower()).isEqualTo(1);
   }
 }

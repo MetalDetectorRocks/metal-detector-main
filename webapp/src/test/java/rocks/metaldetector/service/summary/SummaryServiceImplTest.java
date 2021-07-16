@@ -25,6 +25,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static rocks.metaldetector.service.summary.SummaryServiceImpl.MIN_FOLLOWER;
+import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
 
 @ExtendWith(MockitoExtension.class)
 class SummaryServiceImplTest implements WithAssertions {
@@ -93,7 +95,7 @@ class SummaryServiceImplTest implements WithAssertions {
     void test_release_collector_most_expected_releases() {
       // given
       var artists = List.of(ArtistDtoFactory.createDefault());
-      doReturn(artists).when(artistCollector).collectTopFollowedArtists();
+      doReturn(artists).when(artistCollector).collectTopFollowedArtists(anyInt());
 
       // when
       underTest.createSummaryResponse();
@@ -109,7 +111,7 @@ class SummaryServiceImplTest implements WithAssertions {
       underTest.createSummaryResponse();
 
       // then
-      verify(artistCollector).collectTopFollowedArtists();
+      verify(artistCollector).collectTopFollowedArtists(MIN_FOLLOWER);
     }
 
     @Test
@@ -119,7 +121,7 @@ class SummaryServiceImplTest implements WithAssertions {
       underTest.createSummaryResponse();
 
       // then
-      verify(artistCollector).collectRecentlyFollowedArtists();
+      verify(artistCollector).collectRecentlyFollowedArtists(RESULT_LIMIT);
     }
 
     @Test
@@ -151,17 +153,18 @@ class SummaryServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("top followed artists are returned")
+    @DisplayName("top followed artists are filtered and returned")
     void test_top_followed_artists_returned() {
       // given
-      var artists = List.of(ArtistDtoFactory.createDefault());
-      doReturn(artists).when(artistCollector).collectTopFollowedArtists();
+      var artist = ArtistDtoFactory.createDefault();
+      var artists = List.of(artist, artist, artist, artist, artist);
+      doReturn(artists).when(artistCollector).collectTopFollowedArtists(anyInt());
 
       // when
       var result = underTest.createSummaryResponse();
 
       // then
-      assertThat(result.getFavoriteCommunityArtists()).isEqualTo(artists);
+      assertThat(result.getFavoriteCommunityArtists()).isEqualTo(artists.subList(0, RESULT_LIMIT));
     }
 
     @Test
@@ -184,7 +187,7 @@ class SummaryServiceImplTest implements WithAssertions {
     void test_recently_followed_artists_returned() {
       // given
       var artists = List.of(ArtistDtoFactory.createDefault());
-      doReturn(artists).when(artistCollector).collectRecentlyFollowedArtists();
+      doReturn(artists).when(artistCollector).collectRecentlyFollowedArtists(anyInt());
 
       // when
       var result = underTest.createSummaryResponse();
@@ -199,8 +202,8 @@ class SummaryServiceImplTest implements WithAssertions {
   class TopReleasesTest {
 
     @Test
-    @DisplayName("followArtistService is called")
-    void test_follow_artist_called() {
+    @DisplayName("artistCollector is called")
+    void test_artist_collector_called() {
       // given
       var minFollower = 1;
 
@@ -208,7 +211,7 @@ class SummaryServiceImplTest implements WithAssertions {
       underTest.findTopReleases(new TimeRange(), minFollower, 10);
 
       // then
-      verify(followArtistService).getFollowedArtists(minFollower);
+      verify(artistCollector).collectTopFollowedArtists(minFollower);
     }
 
     @Test
@@ -217,7 +220,7 @@ class SummaryServiceImplTest implements WithAssertions {
       // given
       var timeRange = new TimeRange(LocalDate.now(), null);
       var artists = List.of(ArtistDtoFactory.createDefault());
-      doReturn(artists).when(followArtistService).getFollowedArtists(anyInt());
+      doReturn(artists).when(artistCollector).collectTopFollowedArtists(anyInt());
 
       // when
       underTest.findTopReleases(timeRange, 1, 10);
@@ -236,8 +239,8 @@ class SummaryServiceImplTest implements WithAssertions {
       artist2.setFollower(1);
       var release1 = ReleaseDtoFactory.withArtistName(artist1.getArtistName());
       var release2 = ReleaseDtoFactory.withArtistName(artist2.getArtistName());
-      doReturn(List.of(artist1, artist2)).when(followArtistService).getFollowedArtists(anyInt());
-      doReturn(List.of(release2, release1)).when(releaseCollector).collectReleases(any(),any());
+      doReturn(List.of(artist1, artist2)).when(artistCollector).collectTopFollowedArtists(anyInt());
+      doReturn(List.of(release2, release1)).when(releaseCollector).collectReleases(any(), any());
 
       // when
       var result = underTest.findTopReleases(new TimeRange(), 1, 10);
@@ -259,8 +262,8 @@ class SummaryServiceImplTest implements WithAssertions {
       artist2.setFollower(1);
       var release1 = ReleaseDtoFactory.withArtistName(artist1.getArtistName());
       var release2 = ReleaseDtoFactory.withArtistName(artist2.getArtistName());
-      doReturn(List.of(artist1, artist2)).when(followArtistService).getFollowedArtists(anyInt());
-      doReturn(List.of(release2, release1)).when(releaseCollector).collectReleases(any(),any());
+      doReturn(List.of(artist1, artist2)).when(artistCollector).collectTopFollowedArtists(anyInt());
+      doReturn(List.of(release2, release1)).when(releaseCollector).collectReleases(any(), any());
 
       // when
       var result = underTest.findTopReleases(new TimeRange(), 1, maxReleases);

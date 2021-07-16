@@ -19,6 +19,4 @@ public interface FollowArtistService {
 
   List<ArtistDto> getFollowedArtistsOfUser(AbstractUserEntity user);
 
-  List<ArtistDto> getFollowedArtists(int minFollower);
-
 }
