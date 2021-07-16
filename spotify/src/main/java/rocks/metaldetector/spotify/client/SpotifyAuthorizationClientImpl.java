@@ -3,7 +3,6 @@ package rocks.metaldetector.spotify.client;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -12,8 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-import rocks.metaldetector.spotify.api.authorization.SpotifyAppAuthorizationResponse;
+import org.springframework.web.client.RestOperations;
 import rocks.metaldetector.spotify.api.authorization.SpotifyUserAuthorizationResponse;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.Endpoints;
@@ -33,31 +31,11 @@ public class SpotifyAuthorizationClientImpl implements SpotifyAuthorizationClien
   static final String CODE_REQUEST_KEY = "code";
   static final String REDIRECT_URI_KEY = "redirect_uri";
   static final String REFRESH_TOKEN_KEY = "refresh_token";
-  static final String APP_AUTH_REQUEST_VALUE = "client_credentials";
   static final String USER_AUTH_REQUEST_VALUE = "authorization_code";
   static final String USER_REFRESH_AUTH_REQUEST_VALUE = "refresh_token";
 
-  private final RestTemplate spotifyRestTemplate;
+  private final RestOperations spotifyRestTemplate;
   private final SpotifyProperties spotifyProperties;
-
-  @Override
-  @Cacheable("spotifyAppAuthorizationToken")
-  public String getAppAuthorizationToken() {
-    MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
-    request.add(GRANT_TYPE_KEY, APP_AUTH_REQUEST_VALUE);
-
-    HttpEntity<MultiValueMap<String, String>> httpEntity = createHttpEntity(request);
-    ResponseEntity<SpotifyAppAuthorizationResponse> responseEntity = spotifyRestTemplate.postForEntity(
-        spotifyProperties.getAuthenticationBaseUrl() + AUTHORIZATION_ENDPOINT, httpEntity, SpotifyAppAuthorizationResponse.class);
-
-    SpotifyAppAuthorizationResponse resultContainer = responseEntity.getBody();
-    var shouldNotHappen = resultContainer == null || !responseEntity.getStatusCode().is2xxSuccessful();
-    if (shouldNotHappen) {
-      throw new ExternalServiceException("Could not get app authorization token from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
-    }
-
-    return resultContainer.getAccessToken();
-  }
 
   @Override
   public SpotifyUserAuthorizationResponse getUserAuthorizationToken(String code) {

@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface SpotifyArtistSearchClient {
 
-  SpotifyArtistSearchResultContainer searchByName(String authorizationToken, String artistQueryString, int pageNumber, int pageSize);
+  SpotifyArtistSearchResultContainer searchByName(String artistQueryString, int pageNumber, int pageSize);
 
-  SpotifyArtist searchById(String authenticationToken, String artistId);
+  SpotifyArtist searchById(String artistId);
 
-  SpotifyArtistsContainer searchByIds(String authenticationToken, List<String> artistIds);
+  SpotifyArtistsContainer searchByIds(List<String> artistIds);
 
 }

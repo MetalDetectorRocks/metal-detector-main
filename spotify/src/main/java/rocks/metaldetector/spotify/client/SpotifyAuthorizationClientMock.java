@@ -15,11 +15,6 @@ public class SpotifyAuthorizationClientMock implements SpotifyAuthorizationClien
   static final String MOCK_TOKEN = "i'm a token";
 
   @Override
-  public String getAppAuthorizationToken() {
-    return MOCK_TOKEN;
-  }
-
-  @Override
   public SpotifyUserAuthorizationResponse getUserAuthorizationToken(String code) {
     return SpotifyUserAuthorizationResponse.builder()
         .accessToken(MOCK_TOKEN)

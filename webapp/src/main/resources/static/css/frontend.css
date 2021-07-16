@@ -203,23 +203,27 @@ footer .footer-icon:hover {
 }
 
 /* Spotify Synchronization */
-#artists-container {
+#spotify-artists-container {
     min-height: 15rem;
 }
-
-.spotify-synchro-img {
+#spotify-artists-container .flex-wrapper {
+    display: flex;
+}
+#spotify-artists-container .artist-info {
+    margin-left: 15px;
+    flex-grow: 2;
+}
+#spotify-artists-container .checkbox {
+    align-self: center;
+    margin-right: 15px;
+}
+#spotify-artists-container .image img {
     height: 7rem;
     width: 7rem;
     object-fit: cover;
-    border-bottom: 1px solid var(--grey-border-color);
 }
-
-.spotify-synchro-card:hover {
+#spotify-artists-container .card:hover {
     border-color: var(--grey-border-color-highlight);
-}
-
-.spotify-synchro-checkbox {
-    margin-top: 2.2rem;
 }
 
 /* Blog */
@@ -281,23 +285,25 @@ footer .footer-icon:hover {
     text-decoration: none;
     background-color: transparent
 }
-
 .dark-hyperlink:hover {
     color: var(--dark-hyperlink-font-color-highlight);
     text-decoration: none;
 }
-
 .light-hyperlink {
     color: var(--light-hyperlink-font-color);
     text-decoration: none;
     background-color: transparent
 }
-
 .light-hyperlink:hover {
     color: var(--light-hyperlink-font-color-highlight);
     text-decoration: none;
 }
-
+.font-color-red {
+    color: darkred;
+}
+.font-color-green {
+    color: darkgreen;
+}
 .scroll-to-top {
     display: none;
     position: fixed;
@@ -312,7 +318,6 @@ footer .footer-icon:hover {
     border-radius: 10px;
     padding-top: 5px;
 }
-
 .top-right {
     position: absolute;
     top: 8px;
@@ -421,5 +426,20 @@ footer .footer-icon:hover {
 
     .vertical-card-img {
         min-height: 27.5rem;
+    }
+
+    #spotify-artists-container .checkbox {
+        align-self: start;
+        margin-top: 5px;
+        margin-right: 5px;
+    }
+    #spotify-artists-container .checkbox span {
+        font-size: 20px !important;
+    }
+    #spotify-artists-container .artist-info {
+        margin-right: 0;
+    }
+    #spotify-artists-container p {
+        margin-bottom: 2px;
     }
 }
