@@ -20,7 +20,6 @@ import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -94,17 +93,6 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   @Transactional
   public List<ArtistDto> getFollowedArtistsOfUser(AbstractUserEntity user) {
     return getFollowedArtists(user);
-  }
-
-  @Override
-  public List<ArtistDto> getFollowedArtists(int minFollower) {
-    Map<ArtistEntity, List<FollowActionEntity>> userPerArtist = followActionRepository.findAll().stream()
-        .collect(Collectors.groupingBy(FollowActionEntity::getArtist));
-    return userPerArtist.entrySet().stream()
-        .filter(entry -> entry.getValue().size() >= minFollower)
-        .map(entry -> artistDtoTransformer.transformArtistEntity(entry.getKey()))
-        .peek(artist -> artist.setFollower(artistRepository.countArtistFollower(artist.getExternalId())))
-        .collect(Collectors.toList());
   }
 
   private List<ArtistDto> getFollowedArtists(AbstractUserEntity user) {
