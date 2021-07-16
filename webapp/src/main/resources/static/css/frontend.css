@@ -52,6 +52,9 @@ h5, .h5 {
 h6, .h6 {
     font-size: 0.875rem;
 }
+hr {
+    margin-top: 0;
+}
 a {
     color: var(--light-hyperlink-font-color);
     text-decoration: none;
@@ -373,6 +376,15 @@ footer .footer-icon:hover {
 }
 .text-muted {
     color: var(--dark-muted-font-color) !important;
+}
+.modal-content {
+    background-color: var(--dark-card-background-color);
+}
+.modal-header {
+    border-bottom: 1px solid var(--grey-border-color);
+}
+.modal-footer {
+    border-top: 1px solid var(--grey-border-color);
 }
 
 /* Utils */

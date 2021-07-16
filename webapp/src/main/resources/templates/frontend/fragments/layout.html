@@ -42,7 +42,7 @@
                         <img th:src="@{/images/logo.png}" alt="Logo" src="#" width="280" />
                     </a>
                 </div>
-                <form class="search-box form-group" action="#" th:action="@{/artists/search}" method="GET">
+                <form class="search-box" action="#" th:action="@{/artists/search}" method="GET">
                   <label for="query"></label>
                   <input id="query" autocomplete="off" type="text" class="form-control" th:name="query" placeholder="Search artist" required>
                 </form>
