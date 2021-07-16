@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestOperations;
 import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPage;
 import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPageContainer;
 import rocks.metaldetector.spotify.api.imports.SpotifySavedAlbumsPage;
@@ -34,7 +34,7 @@ public class SpotifyUserLibraryClientImpl implements SpotifyUserLibraryClient {
   static final String MY_ALBUMS_ENDPOINT = "/v1/me/albums?limit={" + LIMIT_PARAMETER_NAME + "}&" +
                                                "offset={" + OFFSET_PARAMETER_NAME + "}";
 
-  private final RestTemplate spotifyRestTemplate;
+  private final RestOperations spotifyRestTemplate;
   private final SpotifyProperties spotifyProperties;
 
   @Override

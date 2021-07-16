@@ -21,7 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestOperations;
 import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPage;
 import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPageContainer;
 import rocks.metaldetector.spotify.api.imports.SpotifySavedAlbumsPage;
@@ -54,7 +54,7 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
   private static final String AUTHORIZATION_HEADER_PREFIX = "Bearer ";
 
   @Mock
-  private RestTemplate restTemplate;
+  private RestOperations restTemplate;
 
   @Mock
   private SpotifyProperties spotifyProperties;
