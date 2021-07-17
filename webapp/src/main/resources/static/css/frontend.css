@@ -318,6 +318,13 @@ footer .footer-icon:hover {
 .dark-accordion-item {
     background-color: var(--dark-card-background-color);
 }
+.dark-dropdown-menu {
+    background-color: var(--dark-card-background-color);
+}
+.dark-dropdown-item:hover,
+.dark-dropdown-item:active {
+    color: var(--light-font-color);
+}
 .light-hyperlink {
     color: var(--light-hyperlink-font-color);
     background-color: transparent
