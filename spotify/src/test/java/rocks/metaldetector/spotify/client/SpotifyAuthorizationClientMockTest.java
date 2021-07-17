@@ -4,21 +4,9 @@ import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static rocks.metaldetector.spotify.client.SpotifyAuthorizationClientMock.MOCK_TOKEN;
-
 class SpotifyAuthorizationClientMockTest implements WithAssertions {
 
-  private SpotifyAuthorizationClientMock underTest = new SpotifyAuthorizationClientMock();
-
-  @Test
-  @DisplayName("getAppAuthenticationToken: should return mock token string")
-  void test_get_app_token() {
-    // when
-    var result = underTest.getAppAuthorizationToken();
-
-    // then
-    assertThat(result).isEqualTo(MOCK_TOKEN);
-  }
+  private final SpotifyAuthorizationClientMock underTest = new SpotifyAuthorizationClientMock();
 
   @Test
   @DisplayName("getUserAuthenticationToken: should return mock response")

@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestOperations;
 import rocks.metaldetector.spotify.api.SpotifyArtist;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistsContainer;
@@ -39,19 +39,19 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
                                         + "type=artist&offset={" + OFFSET_PARAMETER_NAME + "}&"
                                         + "limit={" + LIMIT_PARAMETER_NAME + "}";
 
-  private final RestTemplate spotifyRestTemplate;
+  private final RestOperations spotifyOAuthRestTemplate;
   private final SpotifyProperties spotifyProperties;
 
   @Override
-  public SpotifyArtistSearchResultContainer searchByName(String authorizationToken, String artistQueryString, int pageNumber, int pageSize) {
+  public SpotifyArtistSearchResultContainer searchByName(String artistQueryString, int pageNumber, int pageSize) {
     if (artistQueryString == null || artistQueryString.isEmpty()) {
       return SpotifyArtistSearchResultContainer.builder().build();
     }
 
-    HttpEntity<Object> httpEntity = createQueryHttpEntity(authorizationToken);
+    HttpEntity<Object> httpEntity = createQueryHttpEntity();
     int offset = pageSize * (pageNumber - 1);
 
-    ResponseEntity<SpotifyArtistSearchResultContainer> responseEntity = spotifyRestTemplate.exchange(
+    ResponseEntity<SpotifyArtistSearchResultContainer> responseEntity = spotifyOAuthRestTemplate.exchange(
         spotifyProperties.getRestBaseUrl() + SEARCH_ENDPOINT,
         GET,
         httpEntity,
@@ -71,13 +71,13 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
   }
 
   @Override
-  public SpotifyArtist searchById(String authenticationToken, String artistId) {
+  public SpotifyArtist searchById(String artistId) {
     if (artistId == null || artistId.isEmpty()) {
       throw new IllegalArgumentException("externalId must not be empty");
     }
 
-    HttpEntity<Object> httpEntity = createQueryHttpEntity(authenticationToken);
-    ResponseEntity<SpotifyArtist> responseEntity = spotifyRestTemplate.exchange(
+    HttpEntity<Object> httpEntity = createQueryHttpEntity();
+    ResponseEntity<SpotifyArtist> responseEntity = spotifyOAuthRestTemplate.exchange(
         spotifyProperties.getRestBaseUrl() + GET_ARTIST_ENDPOINT,
         GET,
         httpEntity,
@@ -95,14 +95,14 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
   }
 
   @Override
-  public SpotifyArtistsContainer searchByIds(String authenticationToken, List<String> artistIds) {
+  public SpotifyArtistsContainer searchByIds(List<String> artistIds) {
     if (artistIds == null || artistIds.isEmpty()) {
       throw new IllegalArgumentException("artistIds must not be empty");
     }
 
-    HttpEntity<Object> httpEntity = createQueryHttpEntity(authenticationToken);
+    HttpEntity<Object> httpEntity = createQueryHttpEntity();
     String artistIdsString = String.join(",", artistIds);
-    ResponseEntity<SpotifyArtistsContainer> responseEntity = spotifyRestTemplate.exchange(
+    ResponseEntity<SpotifyArtistsContainer> responseEntity = spotifyOAuthRestTemplate.exchange(
         spotifyProperties.getRestBaseUrl() + GET_ARTISTS_ENDPOINT,
         GET,
         httpEntity,
@@ -119,11 +119,10 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
     return spotifyArtistsContainer;
   }
 
-  private HttpEntity<Object> createQueryHttpEntity(String authenticationToken) {
+  private HttpEntity<Object> createQueryHttpEntity() {
     HttpHeaders headers = new HttpHeaders();
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
-    headers.setBearerAuth(authenticationToken);
     return new HttpEntity<>(headers);
   }
 }

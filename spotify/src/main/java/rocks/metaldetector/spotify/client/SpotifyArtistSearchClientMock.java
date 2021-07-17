@@ -21,7 +21,7 @@ import java.util.Map;
 public class SpotifyArtistSearchClientMock implements SpotifyArtistSearchClient {
 
   @Override
-  public SpotifyArtistSearchResultContainer searchByName(String authorizationToken, String artistQueryString, int pageNumber, int pageSize) {
+  public SpotifyArtistSearchResultContainer searchByName(String artistQueryString, int pageNumber, int pageSize) {
     return SpotifyArtistSearchResultContainer.builder()
         .artists(SpotifyArtistSearchResult.builder()
                      .href("https://api.spotify.com/v1/search?query=Opeth&type=artist&offset=0&limit=20")
@@ -36,12 +36,12 @@ public class SpotifyArtistSearchClientMock implements SpotifyArtistSearchClient 
   }
 
   @Override
-  public SpotifyArtist searchById(String authenticationToken, String artistId) {
+  public SpotifyArtist searchById(String artistId) {
     return createOpeth();
   }
 
   @Override
-  public SpotifyArtistsContainer searchByIds(String authenticationToken, List<String> artistIds) {
+  public SpotifyArtistsContainer searchByIds(List<String> artistIds) {
     return SpotifyArtistsContainer.builder()
         .artists(List.of(createOpeth(), createDarkthrone()))
         .build();

@@ -92,30 +92,6 @@ class SpotifyServiceImplTest implements WithAssertions {
   class SearchByNameTest {
 
     @Test
-    @DisplayName("Should call authentication client")
-    void test_authentication_client_called() {
-      // when
-      underTest.searchArtistByName("query", 1, 10);
-
-      // then
-      verify(authenticationClient).getAppAuthorizationToken();
-    }
-
-    @Test
-    @DisplayName("Should call search client with token")
-    void test_search_client_token() {
-      // given
-      var token = "token";
-      doReturn(token).when(authenticationClient).getAppAuthorizationToken();
-
-      // when
-      underTest.searchArtistByName("query", 1, 10);
-
-      // then
-      verify(searchClient).searchByName(eq(token), any(), anyInt(), anyInt());
-    }
-
-    @Test
     @DisplayName("searchClient is called with query")
     void test_search_client_query() {
       // given
@@ -125,7 +101,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistByName(query, 1, 10);
 
       // then
-      verify(searchClient).searchByName(any(), eq(query), anyInt(), anyInt());
+      verify(searchClient).searchByName(eq(query), anyInt(), anyInt());
     }
 
     @Test
@@ -138,7 +114,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistByName("query", pageNumber, 10);
 
       // then
-      verify(searchClient).searchByName(any(), any(), eq(pageNumber), anyInt());
+      verify(searchClient).searchByName(any(), eq(pageNumber), anyInt());
     }
 
     @Test
@@ -151,7 +127,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistByName("query", 1, pageSize);
 
       // then
-      verify(searchClient).searchByName(any(), any(), anyInt(), eq(pageSize));
+      verify(searchClient).searchByName(any(), anyInt(), eq(pageSize));
     }
 
     @Test
@@ -159,7 +135,7 @@ class SpotifyServiceImplTest implements WithAssertions {
     void test_call_response_transformer() {
       // given
       SpotifyArtistSearchResultContainer resultContainer = SpotifyArtistSearchResultContainerFactory.createDefault();
-      doReturn(resultContainer).when(searchClient).searchByName(any(), any(), anyInt(), anyInt());
+      doReturn(resultContainer).when(searchClient).searchByName(any(), anyInt(), anyInt());
 
       // when
       underTest.searchArtistByName("query", 1, 10);
@@ -188,30 +164,6 @@ class SpotifyServiceImplTest implements WithAssertions {
   class SearchByIdTest {
 
     @Test
-    @DisplayName("Should call authentication client")
-    void test_authentication_client_called() {
-      // when
-      underTest.searchArtistById("666");
-
-      // then
-      verify(authenticationClient).getAppAuthorizationToken();
-    }
-
-    @Test
-    @DisplayName("Should call search client with token")
-    void test_search_client_token() {
-      // given
-      var token = "token";
-      doReturn(token).when(authenticationClient).getAppAuthorizationToken();
-
-      // when
-      underTest.searchArtistById("666");
-
-      // then
-      verify(searchClient).searchById(eq(token), anyString());
-    }
-
-    @Test
     @DisplayName("Should pass provided artist id to search client")
     void should_pass_arguments() {
       // given
@@ -221,7 +173,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       underTest.searchArtistById(artistId);
 
       // then
-      verify(searchClient).searchById(any(), eq(artistId));
+      verify(searchClient).searchById(eq(artistId));
     }
 
     @Test
@@ -229,7 +181,7 @@ class SpotifyServiceImplTest implements WithAssertions {
     void should_transform_search_results() {
       // given
       var artist = SpotfiyArtistFactory.withArtistName("Slayer");
-      doReturn(artist).when(searchClient).searchById(any(), any());
+      doReturn(artist).when(searchClient).searchById(any());
 
       // when
       underTest.searchArtistById("666");
@@ -244,7 +196,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       // given
       var artist = SpotfiyArtistFactory.withArtistName("Slayer");
       var transformedSearchResult = SpotifyArtistDtoFactory.withArtistName("Slayer");
-      doReturn(artist).when(searchClient).searchById(any(), any());
+      doReturn(artist).when(searchClient).searchById(any());
       doReturn(transformedSearchResult).when(artistTransformer).transform(any());
 
       // when
@@ -264,7 +216,7 @@ class SpotifyServiceImplTest implements WithAssertions {
     void test_slicing_service_is_called() {
       // given
       var artists = IntStream.rangeClosed(1, 101).mapToObj(String::valueOf).collect(Collectors.toList());
-      doReturn(SpotifyArtistsContainer.builder().artists(Collections.emptyList()).build()).when(searchClient).searchByIds(any(), any());
+      doReturn(SpotifyArtistsContainer.builder().artists(Collections.emptyList()).build()).when(searchClient).searchByIds(any());
 
       // when
       underTest.searchArtistsByIds(artists);
@@ -276,47 +228,18 @@ class SpotifyServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("authentication client is called for every page")
-    void test_authentication_client_called() {
-      // given
-      var artists = IntStream.rangeClosed(1, 101).mapToObj(String::valueOf).collect(Collectors.toList());
-      doReturn(SpotifyArtistsContainer.builder().artists(Collections.emptyList()).build()).when(searchClient).searchByIds(any(), any());
-
-      // when
-      underTest.searchArtistsByIds(artists);
-
-      // then
-      verify(authenticationClient, times(3)).getAppAuthorizationToken();
-    }
-
-    @Test
-    @DisplayName("Should call search client with token")
-    void test_search_client_token() {
-      // given
-      var token = "token";
-      doReturn(token).when(authenticationClient).getAppAuthorizationToken();
-      doReturn(SpotifyArtistsContainer.builder().artists(Collections.emptyList()).build()).when(searchClient).searchByIds(any(), any());
-
-      // when
-      underTest.searchArtistsByIds(List.of("666"));
-
-      // then
-      verify(searchClient).searchByIds(eq(token), any());
-    }
-
-    @Test
     @DisplayName("Should pass every page of provided artist ids to search client")
     void should_pass_arguments() {
       // given
       var artists = IntStream.rangeClosed(1, 101).mapToObj(String::valueOf).collect(Collectors.toList());
-      doReturn(SpotifyArtistsContainer.builder().artists(Collections.emptyList()).build()).when(searchClient).searchByIds(any(), any());
+      doReturn(SpotifyArtistsContainer.builder().artists(Collections.emptyList()).build()).when(searchClient).searchByIds(any());
       doReturn(artists).when(slicingService).slice(any(), anyInt(), anyInt());
 
       // when
       underTest.searchArtistsByIds(artists);
 
       // then
-      verify(searchClient, times(3)).searchByIds(any(), eq(artists));
+      verify(searchClient, times(3)).searchByIds(eq(artists));
     }
 
     @Test
@@ -325,7 +248,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       // given
       var artists = SpotifyArtistsContainer.builder().artists(List.of(SpotfiyArtistFactory.withArtistName("Slayer"),
                                                                       SpotfiyArtistFactory.withArtistName("Darkthrone"))).build();
-      doReturn(artists).when(searchClient).searchByIds(any(), any());
+      doReturn(artists).when(searchClient).searchByIds(any());
 
       // when
       underTest.searchArtistsByIds(List.of("666"));
@@ -341,7 +264,7 @@ class SpotifyServiceImplTest implements WithAssertions {
       // given
       var artists = SpotifyArtistsContainer.builder().artists(List.of(SpotfiyArtistFactory.withArtistName("Slayer"))).build();
       var transformedSearchResult = SpotifyArtistDtoFactory.withArtistName("Slayer");
-      doReturn(artists).when(searchClient).searchByIds(any(), any());
+      doReturn(artists).when(searchClient).searchByIds(any());
       doReturn(transformedSearchResult).when(artistTransformer).transform(any());
 
       // when
