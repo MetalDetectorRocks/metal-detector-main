@@ -21,42 +21,40 @@
                 All you need to do is configuring your preferred channels.
             </p>
             <!-- Email Config -->
-            <div class="accordion" id="notification-configs">
-                <div class="card">
-                    <div class="card-header" id="email-notification">
-                        <h2 class="mb-0">
-                            <button class="btn btn-block text-left" type="button" data-toggle="collapse" data-target="#email-notification-config" aria-expanded="false" aria-controls="email-notification-config">
-                                <span class="material-icons">email</span><span class="ms-2 h5">Email</span>
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="email-notification-config" class="collapse collapse-content" aria-labelledby="email-notification" data-parent="#notification-configs">
-                        <div class="card-body dark-card-body">
+            <div class="accordion grey-border" id="notification-configs">
+                <div class="accordion-item dark-accordion-item">
+                    <h2 class="accordion-header" id="email-notification">
+                        <button class="accordion-button dark-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#email-notification-config" aria-expanded="false" aria-controls="email-notification-config">
+                            <span class="material-icons md-light">email</span><span class="ms-3 mb-0 h5">Email</span>
+                        </button>
+                    </h2>
+                    <div id="email-notification-config" class="accordion-collapse collapse" aria-labelledby="email-notification" data-bs-parent="#notification-configs">
+                        <div class="accordion-body dark-card-body">
                             <fieldset>
                                 <div class="mb-4">
-                                    <label class="font-weight-bold">Periodic notifications</label><br />
-                                    <div class="custom-control custom-radio mb-2">
-                                        <input type="radio" id="email-none-rb" name="email-regular-notification-frequency" class="custom-control-input">
-                                        <label class="custom-control-label" for="email-none-rb">None</label>
+                                    <label class="fw-bolder mb-2">Periodic notifications</label><br />
+                                    <div class="form-check mb-2">
+                                        <input type="radio" id="email-none-rb" name="email-regular-notification-frequency" class="form-check-input">
+                                        <label class="form-check-label" for="email-none-rb">None</label>
                                     </div>
-                                    <div class="custom-control custom-radio mb-2">
-                                        <input type="radio" id="email-2-weekly-rb" name="email-regular-notification-frequency" class="custom-control-input">
-                                        <label class="custom-control-label" for="email-2-weekly-rb">2-weekly</label>
+                                    <div class="form-check mb-2">
+                                        <input type="radio" id="email-2-weekly-rb" name="email-regular-notification-frequency" class="form-check-input">
+                                        <label class="form-check-label" for="email-2-weekly-rb">2-weekly</label>
                                     </div>
-                                    <div class="custom-control custom-radio mb-2">
-                                        <input type="radio" id="email-4-weekly-rb" name="email-regular-notification-frequency" class="custom-control-input">
-                                        <label class="custom-control-label" for="email-4-weekly-rb">4-weekly</label>
+                                    <div class="custom-control form-check mb-2">
+                                        <input type="radio" id="email-4-weekly-rb" name="email-regular-notification-frequency" class="form-check-input">
+                                        <label class="form-check-label" for="email-4-weekly-rb">4-weekly</label>
                                     </div>
                                 </div>
-                                <div class="mb-4">
-                                    <label class="font-weight-bold" id="extra-notifications-label">Extra notifications</label><br />
-                                    <div class="custom-control custom-switch mb-2">
-                                        <input type="checkbox" class="custom-control-input" id="email-release-date-notification-toggle">
-                                        <label class="custom-control-label" for="email-release-date-notification-toggle">Notification on release date</label>
+                                <div>
+                                    <label class="fw-bolder mb-2" id="extra-notifications-label">Extra notifications</label><br />
+                                    <div class="form-check form-switch mb-2">
+                                        <input type="checkbox" class="form-check-input" id="email-release-date-notification-toggle">
+                                        <label class="form-check-label" for="email-release-date-notification-toggle">Notification on release date</label>
                                     </div>
-                                    <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input" id="email-announcement-date-notification-toggle">
-                                        <label class="custom-control-label" for="email-announcement-date-notification-toggle">Notification on announcement date</label>
+                                    <div class="form-check form-switch">
+                                        <input type="checkbox" class="form-check-input" id="email-announcement-date-notification-toggle">
+                                        <label class="form-check-label" for="email-announcement-date-notification-toggle">Notification on announcement date</label>
                                     </div>
                                 </div>
                             </fieldset>
@@ -65,16 +63,14 @@
                 </div>
 
                 <!-- Telegram Config -->
-                <div class="card">
-                    <div class="card-header" id="telegram-notification">
-                        <h2 class="mb-0">
-                            <button class="btn btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#telegram-notification-config" aria-expanded="false" aria-controls="telegram-notification-config">
-                                <span class="material-icons">phone_android</span><span class="ms-2 h5">Telegram</span>
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="telegram-notification-config" class="collapse collapse-content" aria-labelledby="telegram-notification" data-parent="#notification-configs">
-                        <div class="card-body dark-card-body">
+                <div class="accordion-item dark-accordion-item">
+                    <h2 class="accordion-header" id="telegram-notification">
+                        <button class="accordion-button dark-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#telegram-notification-config" aria-expanded="false" aria-controls="telegram-notification-config">
+                            <span class="material-icons md-light">phone_android</span><span class="ms-3 mb-0 h5">Telegram</span>
+                        </button>
+                    </h2>
+                    <div id="telegram-notification-config" class="accordion-collapse collapse" aria-labelledby="telegram-notification" data-bs-parent="#notification-configs">
+                        <div class="accordion-body dark-card-body">
                             <div id="telegram-area">
                                 <div id="telegram-activation-area">
                                     <p>
@@ -86,38 +82,38 @@
                                         <li>Come back here again and reload the page.</li>
                                         <li>Finally you can configure which notifications you want to receive from the bot.</li>
                                     </ol>
-                                    <button class="btn btn-secondary" id="telegram-id-button">Generate registration ID</button>
+                                    <button class="btn btn-outline-success" id="telegram-id-button">Generate registration ID</button>
                                 </div>
                                 <div id="telegram-deactivation-area">
                                     <fieldset>
                                         <div class="mb-4">
-                                            <label class="font-weight-bold">Periodic notifications</label><br />
-                                            <div class="custom-control custom-radio mb-2">
-                                                <input type="radio" id="telegram-none-rb" name="telegram-regular-notification-frequency" class="custom-control-input">
-                                                <label class="custom-control-label" for="telegram-none-rb">None</label>
+                                            <label class="fw-bolder mb-2">Periodic notifications</label><br />
+                                            <div class="form-check mb-2">
+                                                <input type="radio" id="telegram-none-rb" name="telegram-regular-notification-frequency" class="form-check-input">
+                                                <label class="form-check-label" for="telegram-none-rb">None</label>
                                             </div>
-                                            <div class="custom-control custom-radio mb-2">
-                                                <input type="radio" id="telegram-2-weekly-rb" name="telegram-regular-notification-frequency" class="custom-control-input">
-                                                <label class="custom-control-label" for="telegram-2-weekly-rb">2-weekly</label>
+                                            <div class="form-check mb-2">
+                                                <input type="radio" id="telegram-2-weekly-rb" name="telegram-regular-notification-frequency" class="form-check-input">
+                                                <label class="form-check-label" for="telegram-2-weekly-rb">2-weekly</label>
                                             </div>
-                                            <div class="custom-control custom-radio mb-2">
-                                                <input type="radio" id="telegram-4-weekly-rb" name="telegram-regular-notification-frequency" class="custom-control-input">
-                                                <label class="custom-control-label" for="telegram-4-weekly-rb">4-weekly</label>
+                                            <div class="form-check mb-2">
+                                                <input type="radio" id="telegram-4-weekly-rb" name="telegram-regular-notification-frequency" class="form-check-input">
+                                                <label class="form-check-label" for="telegram-4-weekly-rb">4-weekly</label>
                                             </div>
                                         </div>
                                         <div class="mb-4">
-                                            <label class="font-weight-bold">Extra notifications</label><br />
-                                            <div class="custom-control custom-switch mb-2">
-                                                <input type="checkbox" class="custom-control-input" id="telegram-release-date-notification-toggle">
-                                                <label class="custom-control-label" for="telegram-release-date-notification-toggle">Notification on release date</label>
+                                            <label class="fw-bolder mb-2">Extra notifications</label><br />
+                                            <div class="form-check form-switch mb-2">
+                                                <input type="checkbox" class="form-check-input" id="telegram-release-date-notification-toggle">
+                                                <label class="form-check-label" for="telegram-release-date-notification-toggle">Notification on release date</label>
                                             </div>
-                                            <div class="custom-control custom-switch">
-                                                <input type="checkbox" class="custom-control-input" id="telegram-announcement-date-notification-toggle">
-                                                <label class="custom-control-label" for="telegram-announcement-date-notification-toggle">Notification on announcement date</label>
+                                            <div class="form-check form-switch">
+                                                <input type="checkbox" class="form-check-input" id="telegram-announcement-date-notification-toggle">
+                                                <label class="form-check-label" for="telegram-announcement-date-notification-toggle">Notification on announcement date</label>
                                             </div>
                                         </div>
                                     </fieldset>
-                                    <button class="btn btn-outline-danger btn-lg disabled" id="deactivate-telegram-button">
+                                    <button class="btn btn-outline-danger" id="deactivate-telegram-button">
                                         <span class="material-icons">delete</span> Delete configuration
                                     </button>
                                 </div>

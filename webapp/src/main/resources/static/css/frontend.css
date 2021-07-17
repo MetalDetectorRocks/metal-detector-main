@@ -43,7 +43,7 @@ h1, h2 {
 }
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6,
-ul, p, legend, label {
+ul, ol, p, legend, label {
     color: var(--light-font-color);
 }
 h5, .h5 {
@@ -172,9 +172,6 @@ footer .footer-icon:hover {
     object-fit: cover;
     border-radius: 8px;
 }
-.custom-border-bottom {
-    border-bottom: 1px solid var(--grey-border-color);
-}
 
 /* Following */
 .follow-icon-my-artists {
@@ -301,6 +298,26 @@ footer .footer-icon:hover {
 .dark-hyperlink:hover {
     color: var(--dark-muted-highlight-font-color);
 }
+.dark-modal-content {
+    background-color: var(--dark-card-background-color);
+}
+.dark-modal-header {
+    border-bottom: 1px solid var(--grey-border-color);
+}
+.dark-modal-footer {
+    border-top: 1px solid var(--grey-border-color);
+}
+.dark-accordion-button {
+    background-color: var(--dark-card-footer-background-color);
+}
+.dark-accordion-button,
+.dark-accordion-button:focus,
+.dark-accordion-button:not(.collapsed) {
+    background-color: var(--dark-card-footer-background-color);
+}
+.dark-accordion-item {
+    background-color: var(--dark-card-background-color);
+}
 .light-hyperlink {
     color: var(--light-hyperlink-font-color);
     background-color: transparent
@@ -377,14 +394,8 @@ footer .footer-icon:hover {
 .text-muted {
     color: var(--dark-muted-font-color) !important;
 }
-.modal-content {
-    background-color: var(--dark-card-background-color);
-}
-.modal-header {
-    border-bottom: 1px solid var(--grey-border-color);
-}
-.modal-footer {
-    border-top: 1px solid var(--grey-border-color);
+.accordion-button::after {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='grey'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
 }
 
 /* Utils */
@@ -394,6 +405,10 @@ footer .footer-icon:hover {
 .img-inactive {
     -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
     filter: grayscale(100%);
+}
+.grey-border {
+    border: 1px solid var(--grey-border-color);
+    border-radius: 5px;
 }
 
 /* Responsive */
