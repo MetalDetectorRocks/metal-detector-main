@@ -42,7 +42,7 @@ val javaVersion: JavaVersion = JavaVersion.VERSION_11
 val dependencyVersions = listOf(
   "org.junit.jupiter:junit-jupiter:${extra["junitVersion"]}",
   "org.junit.jupiter:junit-jupiter-api:${extra["junitVersion"]}",
-  "org.slf4j:slf4j-api:1.7.31",
+  "org.slf4j:slf4j-api:1.7.32",
   "org.mockito:mockito-core:${extra["mockitoVersion"]}",
   "org.junit:junit-bom:${extra["junitVersion"]}",
   "junit:junit:4.13.2",
