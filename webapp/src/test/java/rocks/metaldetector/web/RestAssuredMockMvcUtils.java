@@ -101,13 +101,13 @@ public class RestAssuredMockMvcUtils {
 
   public ValidatableMockMvcResponse doPost(Object request, String pathSegement) {
     return given()
-        .config(NO_SECURITY_CONFIG)
-        .accept(ContentType.JSON)
-        .contentType(ContentType.JSON)
-        .body(request)
-        .when()
-        .post(requestUri + pathSegement)
-        .then();
+            .config(NO_SECURITY_CONFIG)
+            .accept(ContentType.JSON)
+            .contentType(ContentType.JSON)
+            .body(request)
+          .when()
+            .post(requestUri + pathSegement)
+          .then();
   }
 
   public ValidatableMockMvcResponse doPost(Map<String, String> params, ContentType contentType) {
@@ -141,17 +141,21 @@ public class RestAssuredMockMvcUtils {
             .accept(ContentType.JSON)
             .contentType(ContentType.JSON)
             .body(request)
-        .when()
+          .when()
             .patch(requestUri)
-        .then();
+          .then();
   }
 
   public ValidatableMockMvcResponse doDelete() {
+    return doDelete("");
+  }
+
+  public ValidatableMockMvcResponse doDelete(String pathSegment) {
     return given()
-        .config(NO_SECURITY_CONFIG)
-        .contentType(ContentType.JSON)
-        .when()
-        .delete(requestUri)
-        .then();
+            .config(NO_SECURITY_CONFIG)
+            .contentType(ContentType.JSON)
+          .when()
+            .delete(requestUri + pathSegment)
+          .then();
   }
 }

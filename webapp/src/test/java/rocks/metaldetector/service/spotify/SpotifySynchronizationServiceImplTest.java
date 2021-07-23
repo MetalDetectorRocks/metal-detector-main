@@ -35,15 +35,12 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
   @Mock
   private FollowArtistService followArtistService;
 
-  @Mock
-  private SpotifyUserAuthorizationService userAuthorizationService;
-
   @InjectMocks
   private SpotifySynchronizationServiceImpl underTest;
 
   @AfterEach
   void tearDown() {
-    reset(spotifyService, followArtistService, userAuthorizationService);
+    reset(spotifyService, followArtistService);
   }
 
   @Nested
@@ -83,30 +80,6 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
   class FetchSavedArtistsTest {
 
     @Test
-    @DisplayName("ALBUMS: userAuthorizationService is called")
-    void test_user_authorization_service_called() {
-      // when
-      underTest.fetchSavedArtists(List.of(ALBUMS));
-
-      // then
-      verify(userAuthorizationService).getOrRefreshToken();
-    }
-
-    @Test
-    @DisplayName("ALBUMS: spotifyService is called with access token for import")
-    void test_spotify_service_called() {
-      // given
-      var accessToken = "accessToken";
-      doReturn(accessToken).when(userAuthorizationService).getOrRefreshToken();
-
-      // when
-      underTest.fetchSavedArtists(List.of(ALBUMS));
-
-      // then
-      verify(spotifyService).fetchLikedAlbums(accessToken);
-    }
-
-    @Test
     @DisplayName("ALBUMS: duplicates are eliminated from liked albums before the spotify service is called")
     void test_no_duplicates_when_calling_artist_service() {
       // given
@@ -117,7 +90,7 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
       firstAlbum.getArtists().get(0).setId(id);
       secondAlbum.getArtists().get(0).setId(id);
       var albumDtos = List.of(firstAlbum, secondAlbum);
-      doReturn(albumDtos).when(spotifyService).fetchLikedAlbums(any());
+      doReturn(albumDtos).when(spotifyService).fetchLikedAlbums();
 
       // when
       underTest.fetchSavedArtists(List.of(ALBUMS));
@@ -127,37 +100,13 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("ARTISTS: authorizationService is called when getting followed artists")
-    void test__called_followed_artists() {
-      // when
-      underTest.fetchSavedArtists(List.of(ARTISTS));
-
-      // then
-      verify(userAuthorizationService).getOrRefreshToken();
-    }
-
-    @Test
-    @DisplayName("ARTISTS: spotifyService is called to get followed artists")
-    void test_spotify_service_called_followed_artists() {
-      // given
-      var token = "token";
-      doReturn(token).when(userAuthorizationService).getOrRefreshToken();
-
-      // when
-      underTest.fetchSavedArtists(List.of(ARTISTS));
-
-      // then
-      verify(spotifyService).fetchFollowedArtists(token);
-    }
-
-    @Test
     @DisplayName("results from both sources are returned")
     void test_both_sources() {
       // given
       var artistA = SpotifyArtistDtoFactory.withArtistName("a");
       var artistB = SpotifyArtistDtoFactory.withArtistName("b");
       doReturn(false).when(followArtistService).isCurrentUserFollowing(any(), any());
-      doReturn(List.of(artistA)).when(spotifyService).fetchFollowedArtists(any());
+      doReturn(List.of(artistA)).when(spotifyService).fetchFollowedArtists();
       doReturn(List.of(artistB)).when(spotifyService).searchArtistsByIds(any());
 
       // when
@@ -174,7 +123,7 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
       var artistA = SpotifyArtistDtoFactory.withArtistName("a");
       var artistADuplicate = SpotifyArtistDtoFactory.withArtistName("a");
       doReturn(false).when(followArtistService).isCurrentUserFollowing(any(), any());
-      doReturn(List.of(artistADuplicate)).when(spotifyService).fetchFollowedArtists(any());
+      doReturn(List.of(artistADuplicate)).when(spotifyService).fetchFollowedArtists( );
       doReturn(List.of(artistA)).when(spotifyService).searchArtistsByIds(any());
 
       // when
@@ -190,7 +139,7 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
       // given
       var spotifyArtist1 = SpotifyArtistDtoFactory.withArtistName("Slayer");
       var spotifyArtist2 = SpotifyArtistDtoFactory.withArtistName("Metallica");
-      doReturn(List.of(SpotifyAlbumDtoFactory.createDefault())).when(spotifyService).fetchLikedAlbums(any());
+      doReturn(List.of(SpotifyAlbumDtoFactory.createDefault())).when(spotifyService).fetchLikedAlbums();
       doReturn(List.of(spotifyArtist1, spotifyArtist2)).when(spotifyService).searchArtistsByIds(anyList());
 
       // when
@@ -208,7 +157,7 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
       var spotifyArtist1 = SpotifyArtistDtoFactory.withArtistName("B");
       var spotifyArtist2 = SpotifyArtistDtoFactory.withArtistName("C");
       var spotifyArtist3 = SpotifyArtistDtoFactory.withArtistName("A");
-      doReturn(List.of(SpotifyAlbumDtoFactory.createDefault())).when(spotifyService).fetchLikedAlbums(any());
+      doReturn(List.of(SpotifyAlbumDtoFactory.createDefault())).when(spotifyService).fetchLikedAlbums();
       doReturn(List.of(spotifyArtist1, spotifyArtist2, spotifyArtist3)).when(spotifyService).searchArtistsByIds(anyList());
 
       // when

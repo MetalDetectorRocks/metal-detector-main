@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
-import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
@@ -31,7 +30,6 @@ public class UserDeletionEventListener implements ApplicationListener<UserDeleti
   private final FollowActionRepository followActionRepository;
   private final NotificationConfigRepository notificationConfigRepository;
   private final TelegramConfigRepository telegramConfigRepository;
-  private final SpotifyAuthorizationRepository spotifyAuthorizationRepository;
   private final UserRepository userRepository;
   private final NamedParameterJdbcTemplate jdbcTemplate;
   private final EmailService emailService;
@@ -42,7 +40,6 @@ public class UserDeletionEventListener implements ApplicationListener<UserDeleti
     AbstractUserEntity user = event.getUserEntity();
     log.info("User '" + user.getPublicId() + "' deleted");
 
-    spotifyAuthorizationRepository.deleteByUser(user);
     telegramConfigRepository.deleteByUser(user);
     notificationConfigRepository.deleteAllByUser(user);
     followActionRepository.deleteAllByUser(user);

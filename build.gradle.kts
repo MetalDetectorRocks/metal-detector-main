@@ -1,3 +1,5 @@
+import org.siouan.frontendgradleplugin.infrastructure.gradle.NodeInstallTask
+
 buildscript {
   repositories {
     mavenCentral()
@@ -15,7 +17,6 @@ buildscript {
     set("flywayVersion", "7.11.2")
     set("h2Version", "1.4.200")
     set("httpClientVersion", "4.5.13")
-    set("mockitoVersion", "3.11.2")
     set("jacksonVersion", "2.12.4")
     set("jacocoVersion", "0.8.7")
     set("jaxbApiVersion", "2.3.1")
@@ -25,6 +26,7 @@ buildscript {
     set("lombokVersion", "1.18.20")
     set("materialIconsVersion", "0.7.0")
     set("micrometerVersion", "1.7.2")
+    set("mockitoVersion", "3.11.2")
     set("modelmapperVersion", "2.4.4")
     set("postgresqlVersion", "42.2.23")
     set("restAssuredVersion", "4.4.0")
@@ -43,7 +45,6 @@ val dependencyVersions = listOf(
   "org.junit.jupiter:junit-jupiter:${extra["junitVersion"]}",
   "org.junit.jupiter:junit-jupiter-api:${extra["junitVersion"]}",
   "org.slf4j:slf4j-api:1.7.32",
-  "org.mockito:mockito-core:${extra["mockitoVersion"]}",
   "org.junit:junit-bom:${extra["junitVersion"]}",
   "junit:junit:4.13.2",
   "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3",
@@ -60,7 +61,8 @@ val dependencyGroupVersions = mapOf(
   "org.springframework.boot" to extra["springBootVersion"] as String,
   "com.fasterxml.jackson.core" to extra["jacksonVersion"] as String,
   "com.fasterxml.jackson.datatype" to extra["jacksonVersion"] as String,
-  "com.fasterxml.jackson.module" to extra["jacksonVersion"] as String
+  "com.fasterxml.jackson.module" to extra["jacksonVersion"] as String,
+  "org.mockito" to extra["mockitoVersion"] as String
 )
 
 plugins {
@@ -125,6 +127,7 @@ subprojects {
     testImplementation("org.junit.jupiter:junit-jupiter:${rootProject.extra["junitVersion"]}")
     testImplementation("org.junit.vintage:junit-vintage-engine:${rootProject.extra["junitVersion"]}")
     testImplementation("org.mockito:mockito-junit-jupiter:${rootProject.extra["mockitoVersion"]}")
+    testImplementation("org.mockito:mockito-inline:${rootProject.extra["mockitoVersion"]}")
     testImplementation("com.h2database:h2:${rootProject.extra["h2Version"]}")
   }
 

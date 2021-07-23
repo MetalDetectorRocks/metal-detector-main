@@ -9,7 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SpotifyUserAuthorizationResponse {
+public class OAuth2UserAuthorizationExistsResponse {
 
-  private String authorizationUrl;
+  private boolean exists;
+
+  public boolean exists() {
+    return exists;
+  }
 }

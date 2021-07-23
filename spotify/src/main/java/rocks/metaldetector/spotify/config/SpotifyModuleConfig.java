@@ -11,7 +11,8 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.support.infrastructure.CustomClientErrorHandler;
-import rocks.metaldetector.support.oauth.OAuth2AccessTokenClient;
+import rocks.metaldetector.support.oauth.OAuth2AccessTokenAuthorizationCodeClient;
+import rocks.metaldetector.support.oauth.OAuth2AccessTokenClientCredentialsClient;
 import rocks.metaldetector.support.oauth.OAuth2ClientInterceptor;
 
 import java.util.List;
@@ -20,7 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 public class SpotifyModuleConfig {
 
-  private static final String REGISTRATION_ID = "spotify";
+  private static final String REGISTRATION_ID_APP = "spotify-app";
+  private static final String REGISTRATION_ID_USER = "spotify-user";
 
   private final MappingJackson2HttpMessageConverter jackson2HttpMessageConverter;
   private final StringHttpMessageConverter stringHttpMessageConverter;
@@ -33,8 +35,16 @@ public class SpotifyModuleConfig {
   }
 
   @Bean
-  public RestOperations spotifyOAuthRestTemplate(RestTemplateBuilder restTemplateBuilder, OAuth2AccessTokenClient tokenClient) {
-    tokenClient.setRegistrationId(REGISTRATION_ID);
+  public RestOperations spotifyOAuthClientCredentialsRestTemplate(RestTemplateBuilder restTemplateBuilder, OAuth2AccessTokenClientCredentialsClient tokenClient) {
+    tokenClient.setRegistrationId(REGISTRATION_ID_APP);
+    RestTemplate restTemplate = restTemplate(restTemplateBuilder);
+    restTemplate.getInterceptors().add(new OAuth2ClientInterceptor(tokenClient));
+    return restTemplate;
+  }
+
+  @Bean
+  public RestOperations spotifyOAuthAuthorizationCodeRestTemplate(RestTemplateBuilder restTemplateBuilder, OAuth2AccessTokenAuthorizationCodeClient tokenClient) {
+    tokenClient.setRegistrationId(REGISTRATION_ID_USER);
     RestTemplate restTemplate = restTemplate(restTemplateBuilder);
     restTemplate.getInterceptors().add(new OAuth2ClientInterceptor(tokenClient));
     return restTemplate;

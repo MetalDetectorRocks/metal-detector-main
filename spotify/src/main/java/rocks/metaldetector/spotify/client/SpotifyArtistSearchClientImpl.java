@@ -39,7 +39,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
                                         + "type=artist&offset={" + OFFSET_PARAMETER_NAME + "}&"
                                         + "limit={" + LIMIT_PARAMETER_NAME + "}";
 
-  private final RestOperations spotifyOAuthRestTemplate;
+  private final RestOperations spotifyOAuthClientCredentialsRestTemplate;
   private final SpotifyProperties spotifyProperties;
 
   @Override
@@ -51,7 +51,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
     HttpEntity<Object> httpEntity = createQueryHttpEntity();
     int offset = pageSize * (pageNumber - 1);
 
-    ResponseEntity<SpotifyArtistSearchResultContainer> responseEntity = spotifyOAuthRestTemplate.exchange(
+    ResponseEntity<SpotifyArtistSearchResultContainer> responseEntity = spotifyOAuthClientCredentialsRestTemplate.exchange(
         spotifyProperties.getRestBaseUrl() + SEARCH_ENDPOINT,
         GET,
         httpEntity,
@@ -77,7 +77,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
     }
 
     HttpEntity<Object> httpEntity = createQueryHttpEntity();
-    ResponseEntity<SpotifyArtist> responseEntity = spotifyOAuthRestTemplate.exchange(
+    ResponseEntity<SpotifyArtist> responseEntity = spotifyOAuthClientCredentialsRestTemplate.exchange(
         spotifyProperties.getRestBaseUrl() + GET_ARTIST_ENDPOINT,
         GET,
         httpEntity,
@@ -102,7 +102,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
 
     HttpEntity<Object> httpEntity = createQueryHttpEntity();
     String artistIdsString = String.join(",", artistIds);
-    ResponseEntity<SpotifyArtistsContainer> responseEntity = spotifyOAuthRestTemplate.exchange(
+    ResponseEntity<SpotifyArtistsContainer> responseEntity = spotifyOAuthClientCredentialsRestTemplate.exchange(
         spotifyProperties.getRestBaseUrl() + GET_ARTISTS_ENDPOINT,
         GET,
         httpEntity,

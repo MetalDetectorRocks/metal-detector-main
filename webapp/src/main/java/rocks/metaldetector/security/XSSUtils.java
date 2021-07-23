@@ -1,7 +1,7 @@
 package rocks.metaldetector.security;
 
 import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.owasp.esapi.ESAPI;
 
 public class XSSUtils {
@@ -13,6 +13,6 @@ public class XSSUtils {
     value = ESAPI.encoder()
         .canonicalize(value)
         .replaceAll("\0", "");
-    return Jsoup.clean(value, Whitelist.none());
+    return Jsoup.clean(value, Safelist.none());
   }
 }

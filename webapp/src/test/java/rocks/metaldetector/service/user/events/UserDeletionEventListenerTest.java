@@ -18,7 +18,6 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
-import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.AccountDeletedEmail;
@@ -46,9 +45,6 @@ class UserDeletionEventListenerTest implements WithAssertions {
   private TelegramConfigRepository telegramConfigRepository;
 
   @Mock
-  private SpotifyAuthorizationRepository spotifyAuthorizationRepository;
-
-  @Mock
   private UserRepository userRepository;
 
   @Mock
@@ -71,8 +67,8 @@ class UserDeletionEventListenerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(followActionRepository, notificationConfigRepository, spotifyAuthorizationRepository,
-          userRepository, jdbcTemplate, emailService, telegramConfigRepository);
+    reset(followActionRepository, notificationConfigRepository, userRepository,
+          jdbcTemplate, emailService, telegramConfigRepository);
   }
 
   @Test
@@ -93,16 +89,6 @@ class UserDeletionEventListenerTest implements WithAssertions {
 
     // then
     verify(telegramConfigRepository).deleteByUser(userDeletionEvent.getUserEntity());
-  }
-
-  @Test
-  @DisplayName("spotifyAuthorization is deleted")
-  void test_spotify_authorization_fetched() {
-    // when
-    underTest.onApplicationEvent(userDeletionEvent);
-
-    // then
-    verify(spotifyAuthorizationRepository).deleteByUser(userDeletionEvent.getUserEntity());
   }
 
   @Test

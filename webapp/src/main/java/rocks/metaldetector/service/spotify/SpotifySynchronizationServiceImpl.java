@@ -23,7 +23,6 @@ public class SpotifySynchronizationServiceImpl implements SpotifySynchronization
 
   private final SpotifyService spotifyService;
   private final FollowArtistService followArtistService;
-  private final SpotifyUserAuthorizationService userAuthorizationService;
 
   @Override
   public int synchronizeArtists(List<String> artistsIds) {
@@ -48,11 +47,11 @@ public class SpotifySynchronizationServiceImpl implements SpotifySynchronization
   }
 
   private List<SpotifyArtistDto> getFollowedArtists() {
-    return spotifyService.fetchFollowedArtists(userAuthorizationService.getOrRefreshToken());
+    return spotifyService.fetchFollowedArtists();
   }
 
   private List<SpotifyArtistDto> getArtistsFromLikedAlbums() {
-    List<SpotifyAlbumDto> likedAlbums = spotifyService.fetchLikedAlbums(userAuthorizationService.getOrRefreshToken());
+    List<SpotifyAlbumDto> likedAlbums = spotifyService.fetchLikedAlbums();
     List<String> artistIds = likedAlbums.stream()
             .flatMap(album -> album.getArtists().stream())
             .distinct()
