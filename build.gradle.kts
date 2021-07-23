@@ -29,7 +29,7 @@ buildscript {
     set("postgresqlVersion", "42.2.23")
     set("restAssuredVersion", "4.4.0")
     set("servletApiVersion", "4.0.1")
-    set("springBootVersion", "2.5.2")
+    set("springBootVersion", "2.5.3")
     set("springJdbcVersion", "5.3.9")
     set("springSecurityVersion", "5.5.1")
     set("thymeleafDialectVersion", "2.5.3")
@@ -55,7 +55,7 @@ val dependencyVersions = listOf(
   "commons-io:commons-io:2.11.0"
 )
 val dependencyGroupVersions = mapOf(
-  "org.springframework" to "5.3.7",
+  "org.springframework" to "5.3.9",
   "org.springframework.security" to extra["springSecurityVersion"] as String,
   "org.springframework.boot" to extra["springBootVersion"] as String,
   "com.fasterxml.jackson.core" to extra["jacksonVersion"] as String,
@@ -66,7 +66,7 @@ val dependencyGroupVersions = mapOf(
 plugins {
   id("java-library")
   id("org.siouan.frontend-jdk11") version "5.2.0"
-  id("org.springframework.boot") version "2.5.2"
+  id("org.springframework.boot") version "2.5.3"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
 }
 
