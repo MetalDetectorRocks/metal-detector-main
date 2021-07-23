@@ -21,7 +21,7 @@ jobs:
       - name: Generate coverage report
         run: ./gradlew clean test jacocoTestReport --no-daemon --info --stacktrace
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2.0.1
+        uses: codecov/codecov-action@v2.0.2
         with:
           name: codecov-umbrella
           fail_ci_if_error: true
