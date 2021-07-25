@@ -1,6 +1,6 @@
 export class AlertService {
     public renderInfoAlert(text: string, dismissible: boolean): HTMLDivElement {
-        return this.renderAlert("alert-light", text, dismissible);
+        return this.renderAlert("alert-primary", text, dismissible);
     }
 
     public renderSuccessAlert(text: string, dismissible: boolean): HTMLDivElement {
