@@ -59,7 +59,7 @@ spring:
             client-id: ${SPOTIFY_CLIENT_ID}
             client-secret: ${SPOTIFY_CLIENT_SECRET}
             authorization-grant-type: authorization_code
-            redirect-uri: "${application.host}:${server.port}/settings/spotify-synchronization"
+            redirect-uri: "{baseUrl}/settings/spotify-synchronization"
             scope: user-library-read, user-follow-read
             provider: spotify-user
         provider:
