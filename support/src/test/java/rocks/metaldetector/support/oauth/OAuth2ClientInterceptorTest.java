@@ -24,7 +24,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 class OAuth2ClientInterceptorTest implements WithAssertions {
 
   @Mock
-  private OAuth2AccessTokenClient tokenSupplier;
+  private OAuth2AccessTokenClientCredentialsClient tokenSupplier;
 
   @InjectMocks
   private OAuth2ClientInterceptor underTest;

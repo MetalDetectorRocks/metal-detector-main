@@ -4,15 +4,17 @@ import { UrlService } from "./url-service";
 import { LoadingIndicatorService } from "./loading-indicator-service";
 import { SpotifyArtist } from "../model/spotify-artist.model";
 import { AlertService } from "./alert-service";
-import { Endpoints } from "../config/endpoints";
+import { AxiosError } from "axios";
+import { OauthRestClient } from "../clients/oauth-rest-client";
 
 export class SpotifySynchronizationRenderService {
-    private static readonly BUTTON_BAR_DIV_NAME = "button-bar";
+    private static readonly OAUTH2_CLIENT_REGISTRATION_ID = "spotify-user";
     private static readonly ARTISTS_SELECTION_BAR_ID = "artists-selection-bar";
     private static readonly ARTISTS_CONTAINER_ID = "spotify-artists-container";
 
     private connected = false;
     private readonly spotifyRestClient: SpotifyRestClient;
+    private readonly oauthRestClient: OauthRestClient;
     private readonly loadingIndicatorService: LoadingIndicatorService;
     private readonly toastService: ToastService;
     private readonly urlService: UrlService;
@@ -28,12 +30,14 @@ export class SpotifySynchronizationRenderService {
 
     constructor(
         spotifyRestClient: SpotifyRestClient,
+        oauthRestClient: OauthRestClient,
         loadingIndicatorService: LoadingIndicatorService,
         toastService: ToastService,
         urlService: UrlService,
         alertService: AlertService,
     ) {
         this.spotifyRestClient = spotifyRestClient;
+        this.oauthRestClient = oauthRestClient;
         this.loadingIndicatorService = loadingIndicatorService;
         this.toastService = toastService;
         this.urlService = urlService;
@@ -74,50 +78,51 @@ export class SpotifySynchronizationRenderService {
     }
 
     public init(): void {
-        const path = this.urlService.getPathFromUrl();
-        if (path.endsWith(Endpoints.SPOTIFY_CALLBACK)) {
-            this.loadingIndicatorService.showLoadingIndicator(SpotifySynchronizationRenderService.BUTTON_BAR_DIV_NAME);
-            const state = this.urlService.getParameterFromUrl("state");
-            const code = this.urlService.getParameterFromUrl("code");
-            this.spotifyRestClient
-                .fetchInitialToken(state, code)
-                .then(() => (window.location.href = Endpoints.SPOTIFY_SYNCHRONIZATION));
-        } else {
-            const response = this.spotifyRestClient.existsAuthorization();
-            response.then((response) => {
-                if (response.exists) {
-                    this.connected = true;
-                    this.spotifyConnectionLink.textContent = "Disconnect";
-                    this.spotifyConnectionStatus.textContent = "Connected";
-                    this.spotifyConnectionStatus.classList.replace("font-color-red", "font-color-green");
-                    [this.fetchArtistsButton, this.synchronizeArtistsButton].forEach((button) => {
-                        button.classList.remove("invisible");
-                    });
-                } else {
-                    this.spotifyConnectionLink.textContent = "Connect";
-                    this.spotifyConnectionStatus.textContent = "Disconnected";
-                    this.spotifyConnectionStatus.classList.replace("font-color-green", "font-color-red");
-                }
-            });
-        }
+        const response = this.oauthRestClient.existsAuthorization(
+            SpotifySynchronizationRenderService.OAUTH2_CLIENT_REGISTRATION_ID,
+        );
+        response.then((response) => {
+            if (response.exists) {
+                this.connected = true;
+                this.spotifyConnectionLink.textContent = "Disconnect";
+                this.spotifyConnectionLink.href = "";
+                this.spotifyConnectionStatus.textContent = "Connected";
+                this.spotifyConnectionStatus.classList.replace("font-color-red", "font-color-green");
+                [this.fetchArtistsButton, this.synchronizeArtistsButton].forEach((button) => {
+                    button.classList.remove("invisible");
+                });
+            } else {
+                this.spotifyConnectionLink.textContent = "Connect";
+                this.spotifyConnectionLink.href =
+                    OauthRestClient.OAUTH2_AUTHORIZATION_CODE_FLOW_ENDPOINT +
+                    "/" +
+                    SpotifySynchronizationRenderService.OAUTH2_CLIENT_REGISTRATION_ID;
+                this.spotifyConnectionStatus.textContent = "Disconnected";
+                this.spotifyConnectionStatus.classList.replace("font-color-green", "font-color-red");
+            }
+        });
     }
 
     private onSpotifyConnectionLinkClicked(): void {
         if (this.connected) {
-            this.spotifyRestClient.disconnectSpotifyAccount().then(() => {
-                this.spotifyConnectionLink.textContent = "Connect";
-                this.spotifyConnectionStatus.textContent = "Disconnected";
-                this.spotifyConnectionStatus.classList.replace("font-color-green", "font-color-red");
-                [this.fetchArtistsButton, this.synchronizeArtistsButton, this.artistSelectionElement].forEach((el) => {
-                    el.classList.add("invisible");
+            this.oauthRestClient
+                .deleteAuthorization(SpotifySynchronizationRenderService.OAUTH2_CLIENT_REGISTRATION_ID)
+                .then(() => {
+                    this.spotifyConnectionLink.textContent = "Connect";
+                    this.spotifyConnectionStatus.textContent = "Disconnected";
+                    this.spotifyConnectionStatus.classList.replace("font-color-green", "font-color-red");
+                    [this.fetchArtistsButton, this.synchronizeArtistsButton, this.artistSelectionElement].forEach(
+                        (el) => {
+                            el.classList.add("invisible");
+                        },
+                    );
+                    this.clearArtistsContainer();
+                })
+                .catch((error: AxiosError) => {
+                    console.log(error);
                 });
-                this.clearArtistsContainer();
-            });
-        } else {
-            const authorizationResponse = this.spotifyRestClient.createAuthorizationUrl();
-            authorizationResponse.then((response) => (window.location.href = response.authorizationUrl));
+            this.connected = false;
         }
-        this.connected = !this.connected;
     }
 
     private onFetchSpotifyArtistsFromAlbumsClicked(): void {

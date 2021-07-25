@@ -34,17 +34,13 @@ public class SpotifyUserLibraryClientImpl implements SpotifyUserLibraryClient {
   static final String MY_ALBUMS_ENDPOINT = "/v1/me/albums?limit={" + LIMIT_PARAMETER_NAME + "}&" +
                                                "offset={" + OFFSET_PARAMETER_NAME + "}";
 
-  private final RestOperations spotifyRestTemplate;
+  private final RestOperations spotifyOAuthAuthorizationCodeRestTemplate;
   private final SpotifyProperties spotifyProperties;
 
   @Override
-  public SpotifySavedAlbumsPage fetchLikedAlbums(String token, int offset) {
-    if (token == null || token.isEmpty()) {
-      throw new IllegalArgumentException("token must not be empty");
-    }
-
-    HttpEntity<Object> httpEntity = createHttpEntity(token);
-    ResponseEntity<SpotifySavedAlbumsPage> responseEntity = spotifyRestTemplate.exchange(
+  public SpotifySavedAlbumsPage fetchLikedAlbums(int offset) {
+    HttpEntity<Object> httpEntity = createHttpEntity();
+    ResponseEntity<SpotifySavedAlbumsPage> responseEntity = spotifyOAuthAuthorizationCodeRestTemplate.exchange(
         spotifyProperties.getRestBaseUrl() + MY_ALBUMS_ENDPOINT,
         GET,
         httpEntity,
@@ -62,14 +58,10 @@ public class SpotifyUserLibraryClientImpl implements SpotifyUserLibraryClient {
   }
 
   @Override
-  public SpotifyFollowedArtistsPage fetchFollowedArtists(String token, String nextPage) {
-    if (token == null || token.isEmpty()) {
-      throw new IllegalArgumentException("token must not be empty");
-    }
-
+  public SpotifyFollowedArtistsPage fetchFollowedArtists(String nextPage) {
     var endpoint = nextPage == null ? spotifyProperties.getRestBaseUrl() + FOLLOWED_ARTISTS_FIRST_PAGE_ENDPOINT : nextPage;
-    HttpEntity<Object> httpEntity = createHttpEntity(token);
-    ResponseEntity<SpotifyFollowedArtistsPageContainer> responseEntity = spotifyRestTemplate.exchange(
+    HttpEntity<Object> httpEntity = createHttpEntity();
+    ResponseEntity<SpotifyFollowedArtistsPageContainer> responseEntity = spotifyOAuthAuthorizationCodeRestTemplate.exchange(
         endpoint,
         GET,
         httpEntity,
@@ -85,11 +77,10 @@ public class SpotifyUserLibraryClientImpl implements SpotifyUserLibraryClient {
     return result.getArtistsPage();
   }
 
-  private HttpEntity<Object> createHttpEntity(String token) {
+  private HttpEntity<Object> createHttpEntity() {
     HttpHeaders headers = new HttpHeaders();
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
-    headers.setBearerAuth(token);
     return new HttpEntity<>(headers);
   }
 }

@@ -5,7 +5,7 @@ import rocks.metaldetector.spotify.api.imports.SpotifySavedAlbumsPage;
 
 public interface SpotifyUserLibraryClient {
 
-  SpotifySavedAlbumsPage fetchLikedAlbums(String token, int offset);
+  SpotifySavedAlbumsPage fetchLikedAlbums(int offset);
 
-  SpotifyFollowedArtistsPage fetchFollowedArtists(String token, String nextPage);
+  SpotifyFollowedArtistsPage fetchFollowedArtists(String nextPage);
 }

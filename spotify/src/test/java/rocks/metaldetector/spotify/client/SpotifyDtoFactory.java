@@ -2,15 +2,12 @@ package rocks.metaldetector.spotify.client;
 
 import rocks.metaldetector.spotify.api.SpotifyArtist;
 import rocks.metaldetector.spotify.api.SpotifyImage;
-import rocks.metaldetector.spotify.api.authorization.SpotifyAppAuthorizationResponse;
-import rocks.metaldetector.spotify.api.authorization.SpotifyUserAuthorizationResponse;
 import rocks.metaldetector.spotify.api.imports.SpotifyAlbum;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResult;
 import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer;
 import rocks.metaldetector.spotify.api.search.SpotifyFollowers;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
-import rocks.metaldetector.spotify.facade.dto.SpotifyUserAuthorizationDto;
 import rocks.metaldetector.support.Pagination;
 
 import java.util.ArrayList;
@@ -101,43 +98,6 @@ public class SpotifyDtoFactory {
           .height(150)
           .width(150)
           .url("link")
-          .build();
-    }
-  }
-
-  public static class SpotifyAppAuthenticationResponseFactory {
-
-    public static SpotifyAppAuthorizationResponse createDefault() {
-      return SpotifyAppAuthorizationResponse.builder()
-          .accessToken("accessToken")
-          .expiresIn(3600)
-          .tokenType("tokenType")
-          .build();
-    }
-  }
-
-  public static class SpotfiyUserAuthorizationResponseFactory {
-
-    public static SpotifyUserAuthorizationResponse createDefault() {
-      return SpotifyUserAuthorizationResponse.builder()
-          .accessToken("accessToken")
-          .refreshToken("refreshToken")
-          .expiresIn(3600)
-          .scope("scope")
-          .tokenType("tokenType")
-          .build();
-    }
-  }
-
-  public static class SpotfiyUserAuthorizationDtoFactory {
-
-    public static SpotifyUserAuthorizationDto createDefault() {
-      return SpotifyUserAuthorizationDto.builder()
-          .accessToken("accessToken")
-          .refreshToken("refreshToken")
-          .expiresIn(3600)
-          .scope("scope")
-          .tokenType("tokenType")
           .build();
     }
   }

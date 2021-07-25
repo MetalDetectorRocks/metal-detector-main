@@ -27,6 +27,8 @@ spring:
         registration:
           google:
             redirect-uri: "https://{baseHost}{basePort}{basePath}/login/oauth2/code/{registrationId}"
+          spotify-user:
+            redirect-uri: "https://{baseHost}{basePort}{basePath}/settings/spotify-synchronization"
 
 server:
   port: 8080

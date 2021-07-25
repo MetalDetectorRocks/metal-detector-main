@@ -22,7 +22,7 @@ import java.util.List;
 public class SpotifyUserLibraryClientMock implements SpotifyUserLibraryClient {
 
   @Override
-  public SpotifySavedAlbumsPage fetchLikedAlbums(String token, int offset) {
+  public SpotifySavedAlbumsPage fetchLikedAlbums(int offset) {
     return SpotifySavedAlbumsPage.builder()
         .href("https://api.spotify.com/v1/search?query=Opeth&type=artist&offset=0&limit=20")
         .items(List.of(createARomanceWithViolence()))
@@ -35,7 +35,7 @@ public class SpotifyUserLibraryClientMock implements SpotifyUserLibraryClient {
   }
 
   @Override
-  public SpotifyFollowedArtistsPage fetchFollowedArtists(String token, String nextPage) {
+  public SpotifyFollowedArtistsPage fetchFollowedArtists(String nextPage) {
     return SpotifyFollowedArtistsPage.builder()
         .items(List.of(createWayfarer()))
         .build();
