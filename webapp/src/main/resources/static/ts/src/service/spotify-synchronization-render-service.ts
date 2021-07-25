@@ -21,7 +21,8 @@ export class SpotifySynchronizationRenderService {
     private readonly artistSelectionElement: HTMLDivElement;
     private readonly artistContainerElement: HTMLDivElement;
 
-    private readonly spotifyConnectionLink: HTMLAnchorElement;
+    private readonly spotifyConnectButton: HTMLAnchorElement;
+    private readonly spotifyDisconnectButton: HTMLAnchorElement;
     private readonly spotifyConnectionStatus: HTMLSpanElement;
     private readonly fetchArtistsButton: HTMLButtonElement;
     private readonly synchronizeArtistsButton: HTMLButtonElement;
@@ -39,7 +40,8 @@ export class SpotifySynchronizationRenderService {
         this.urlService = urlService;
         this.alertService = alertService;
 
-        this.spotifyConnectionLink = document.getElementById("spotify-connection-link") as HTMLAnchorElement;
+        this.spotifyConnectButton = document.getElementById("spotify-connect-button") as HTMLAnchorElement;
+        this.spotifyDisconnectButton = document.getElementById("spotify-disconnect-button") as HTMLAnchorElement;
         this.spotifyConnectionStatus = document.getElementById("spotify-connection-status") as HTMLSpanElement;
         this.fetchArtistsButton = document.getElementById("fetch-artists-button") as HTMLButtonElement;
         this.synchronizeArtistsButton = document.getElementById("synchronize-artists-button") as HTMLButtonElement;
@@ -54,7 +56,8 @@ export class SpotifySynchronizationRenderService {
     }
 
     private addEventListener(): void {
-        this.spotifyConnectionLink.addEventListener("click", this.onSpotifyConnectionLinkClicked.bind(this));
+        this.spotifyConnectButton.addEventListener("click", this.onSpotifyConnectButtonClicked.bind(this));
+        this.spotifyDisconnectButton.addEventListener("click", this.onSpotifyDisconnectButtonClicked.bind(this));
         this.synchronizeArtistsButton.addEventListener("click", this.onSynchronizeArtistsClicked.bind(this));
         document
             .getElementById("fetch-from-saved-albums")!
@@ -87,37 +90,51 @@ export class SpotifySynchronizationRenderService {
             response.then((response) => {
                 if (response.exists) {
                     this.connected = true;
-                    this.spotifyConnectionLink.textContent = "Disconnect";
-                    this.spotifyConnectionStatus.textContent = "Connected";
-                    this.spotifyConnectionStatus.classList.replace("font-color-red", "font-color-green");
-                    [this.fetchArtistsButton, this.synchronizeArtistsButton].forEach((button) => {
-                        button.classList.remove("invisible");
-                    });
+                    this.onConnected();
                 } else {
-                    this.spotifyConnectionLink.textContent = "Connect";
-                    this.spotifyConnectionStatus.textContent = "Disconnected";
-                    this.spotifyConnectionStatus.classList.replace("font-color-green", "font-color-red");
+                    this.connected = false;
+                    this.onDisconnected();
                 }
             });
         }
     }
 
-    private onSpotifyConnectionLinkClicked(): void {
-        if (this.connected) {
-            this.spotifyRestClient.disconnectSpotifyAccount().then(() => {
-                this.spotifyConnectionLink.textContent = "Connect";
-                this.spotifyConnectionStatus.textContent = "Disconnected";
-                this.spotifyConnectionStatus.classList.replace("font-color-green", "font-color-red");
-                [this.fetchArtistsButton, this.synchronizeArtistsButton, this.artistSelectionElement].forEach((el) => {
-                    el.classList.add("invisible");
-                });
-                this.clearArtistsContainer();
-            });
-        } else {
-            const authorizationResponse = this.spotifyRestClient.createAuthorizationUrl();
-            authorizationResponse.then((response) => (window.location.href = response.authorizationUrl));
-        }
-        this.connected = !this.connected;
+    private onSpotifyConnectButtonClicked(): void {
+        this.spotifyRestClient.createAuthorizationUrl().then((response) => {
+            window.location.href = response.authorizationUrl;
+        });
+    }
+
+    private onSpotifyDisconnectButtonClicked(): void {
+        this.spotifyRestClient.disconnectSpotifyAccount().then(() => {
+            this.onDisconnected();
+            this.connected = !this.connected;
+        });
+    }
+
+    private onConnected(): void {
+        this.spotifyConnectButton.classList.add("invisible");
+        this.spotifyConnectButton.classList.remove("visible");
+        this.spotifyDisconnectButton.classList.add("visible");
+        this.spotifyDisconnectButton.classList.remove("invisible");
+        this.spotifyConnectionStatus.textContent = "Connected";
+        this.spotifyConnectionStatus.classList.replace("font-color-red", "font-color-green");
+        [this.fetchArtistsButton, this.synchronizeArtistsButton].forEach((button) => {
+            button.classList.remove("invisible");
+        });
+    }
+
+    private onDisconnected(): void {
+        this.spotifyConnectButton.classList.add("visible");
+        this.spotifyConnectButton.classList.remove("invisible");
+        this.spotifyDisconnectButton.classList.add("invisible");
+        this.spotifyDisconnectButton.classList.remove("visible");
+        this.spotifyConnectionStatus.textContent = "Disconnected";
+        this.spotifyConnectionStatus.classList.replace("font-color-green", "font-color-red");
+        [this.fetchArtistsButton, this.synchronizeArtistsButton, this.artistSelectionElement].forEach((el) => {
+            el.classList.add("invisible");
+        });
+        this.clearArtistsContainer();
     }
 
     private onFetchSpotifyArtistsFromAlbumsClicked(): void {
