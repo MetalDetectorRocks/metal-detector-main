@@ -1,5 +1,3 @@
-import org.siouan.frontendgradleplugin.infrastructure.gradle.NodeInstallTask
-
 buildscript {
   repositories {
     mavenCentral()
