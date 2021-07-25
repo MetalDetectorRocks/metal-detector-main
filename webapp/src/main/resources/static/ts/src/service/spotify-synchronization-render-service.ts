@@ -151,7 +151,7 @@ export class SpotifySynchronizationRenderService {
                     artistDivElement.id = artist.id;
                     artistThumbElement.src = artist.smallImage;
                     artistNameElement.textContent = artist.name;
-                    artistInfoElement.insertAdjacentElement("beforeend", this.buidArtistInfoElement(artist));
+                    artistInfoElement.insertAdjacentElement("beforeend", this.buildArtistInfoElement(artist));
                     artistDivElement.addEventListener("click", this.onArtistClicked.bind(this, artistDivElement));
                     this.artistContainerElement.insertAdjacentElement("beforeend", artistDivElement);
                 });
@@ -172,7 +172,7 @@ export class SpotifySynchronizationRenderService {
             });
     }
 
-    private buidArtistInfoElement(artist: SpotifyArtist): HTMLSpanElement {
+    private buildArtistInfoElement(artist: SpotifyArtist): HTMLSpanElement {
         const artistInfoElement = document.createElement("span");
         artistInfoElement.insertAdjacentElement("beforeend", this.buildGenreTagsElement(artist));
         artistInfoElement.insertAdjacentHTML("beforeend", "<br />");
@@ -184,7 +184,7 @@ export class SpotifySynchronizationRenderService {
         const genreElement = document.createElement("span");
         artist.genres.slice(0, 3).forEach((genre) => {
             const genreBadge = document.createElement("span");
-            genreBadge.classList.add("badge", "badge-dark", "mr-2", "mb-1");
+            genreBadge.classList.add("badge", "badge-dark", "me-1", "mb-1");
             genreBadge.textContent = genre;
             genreElement.insertAdjacentElement("beforeend", genreBadge);
         });
@@ -261,12 +261,14 @@ export class SpotifySynchronizationRenderService {
             artistDivElement.classList.add("active");
             artistCheckbox.innerText = "check_box";
             artistCheckbox.classList.add("md-success");
+            artistCheckbox.classList.remove("md-light");
             artistThumbElement.classList.remove("img-inactive");
             artistNameElement.classList.remove("text-muted");
             artistInfoElement.classList.remove("text-muted");
         } else {
             artistDivElement.classList.remove("active");
             artistCheckbox.innerText = "check_box_outline_blank";
+            artistCheckbox.classList.add("md-light");
             artistCheckbox.classList.remove("md-success");
             artistThumbElement.classList.add("img-inactive");
             artistNameElement.classList.add("text-muted");

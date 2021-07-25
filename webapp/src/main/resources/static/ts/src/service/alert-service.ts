@@ -22,11 +22,10 @@ export class AlertService {
         alertElement.setAttribute("role", "alert");
 
         if (dismissible) {
+            alertElement.classList.add("alert-dismissible");
             const closeButton = document.createElement("button");
-            closeButton.classList.add("close");
-            closeButton.setAttribute("data-dismiss", "alert");
-
-            closeButton.innerHTML = "&times;";
+            closeButton.classList.add("btn-close");
+            closeButton.setAttribute("data-bs-dismiss", "alert");
             alertElement.insertAdjacentElement("afterbegin", closeButton);
         }
 

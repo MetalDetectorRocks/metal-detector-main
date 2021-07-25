@@ -46,6 +46,9 @@ h1, h2, h3, h4, h5, h6,
 ul, ol, p, legend, label {
     color: var(--light-font-color);
 }
+h1, h2 {
+    font-family: 'Metal Mania', cursive;
+}
 h5, .h5 {
     font-size: 1.3rem;
 }
@@ -325,6 +328,7 @@ footer .footer-icon:hover {
 .dark-dropdown-menu {
     background-color: var(--dark-card-background-color);
 }
+.dark-dropdown-item,
 .dark-dropdown-item:hover,
 .dark-dropdown-item:active {
     color: var(--light-font-color);
