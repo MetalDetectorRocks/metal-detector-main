@@ -1,8 +1,9 @@
-$(document).ready(function () {
+// equivalent of jQuerys '$(document).ready()' (doesn't work in older IEs)
+document.addEventListener('DOMContentLoaded', function(){
   registerLogoutListener();
   registerSearchIconClickListener();
   setupScrollToTop();
-});
+}, false);
 
 function registerLogoutListener() {
   Array.from(document.getElementsByClassName("logout-link")).forEach(
@@ -25,38 +26,25 @@ function registerSearchIconClickListener() {
 }
 
 function setupScrollToTop() {
-  window.onscroll = () => showScrollToTopButton();
-  const backToTopButton = document.getElementById("back-to-top-button");
-  if (backToTopButton) {
-    backToTopButton.onclick = () => scrollToTop();
+  const scrollTopButton = document.querySelector(".scroll-top");
+  if (scrollTopButton) {
+    showScrollToTopButton(scrollTopButton);
+    scrollTopButton.addEventListener("click", () => {
+      window.scrollTo(0, 0);
+    });
   }
+  window.onscroll = () => showScrollToTopButton(scrollTopButton);
 }
 
-function showScrollToTopButton() {
-  const backToTopButton = $("#back-to-top-button");
+function showScrollToTopButton(scrollTopButton) {
   if (
     document.body.scrollTop > 200 ||
     document.documentElement.scrollTop > 200
   ) {
-    backToTopButton.fadeIn();
+    scrollTopButton.style.display = "flex";
   } else {
-    backToTopButton.fadeOut();
+    scrollTopButton.style.display = "none";
   }
-}
-
-/**
- * Animates scrolling back to the top
- */
-function scrollToTop() {
-  $("#back-to-top-button").click(function () {
-    $("body,html").animate(
-      {
-        scrollTop: 0,
-      },
-      800
-    );
-    return false;
-  });
 }
 
 /**
@@ -64,14 +52,14 @@ function scrollToTop() {
  * @param text  The toast text
  */
 function createToast(text) {
-  const toast = $("<div>");
+  const toast = document.createElement("div");
   toast.attr("id", "toast");
   toast.addClass("show success");
   toast.text(text);
   setTimeout(function () {
     toast.removeClass("show");
   }, 2900);
-  $("#toast-wrapper").append(toast);
+  document.getElementById("toast-wrapper").append(toast);
 }
 
 /**
@@ -143,7 +131,7 @@ function formatUtcDate(dateInput) {
  * @param validationAreaId  ID of the area to reset
  */
 function resetValidationArea(validationAreaId) {
-  const validationMessageArea = $(validationAreaId);
+  const validationMessageArea = document.getElementById(validationAreaId);
   validationMessageArea.removeClass("alert alert-danger alert-success");
   validationMessageArea.empty();
 }
