@@ -47,9 +47,9 @@ function requestUsersFromServer() {
         targets: 3,
         render: function (data) {
           if (data) {
-            return '<span class="badge">Native</span>';
+            return '<span class="badge bg-primary">Native</span>';
           } else {
-            return '<span class="badge">OAuth</span>';
+            return '<span class="badge bg-success">OAuth</span>';
           }
         },
       },
