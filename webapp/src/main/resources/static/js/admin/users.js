@@ -57,9 +57,9 @@ function requestUsersFromServer() {
         targets: 4,
         render: function (data) {
           if (data === "Administrator") {
-            return '<span class="badge badge-danger">' + data + "</span>";
+            return '<span class="badge bg-danger">' + data + "</span>";
           } else {
-            return '<span class="badge badge-info">' + data + "</span>";
+            return '<span class="badge bg-info">' + data + "</span>";
           }
         },
       },
@@ -67,9 +67,9 @@ function requestUsersFromServer() {
         targets: 5,
         render: function (data) {
           if (data) {
-            return '<span class="badge badge-success">Enabled</span>';
+            return '<span class="badge bg-success">Enabled</span>';
           } else {
-            return '<span class="badge badge-secondary">Disabled</span>';
+            return '<span class="badge bg-secondary">Disabled</span>';
           }
         },
       },
