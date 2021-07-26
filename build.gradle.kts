@@ -6,7 +6,6 @@ buildscript {
   extra.apply {
     set("apacheCommonsLang3Version", "3.12.0")
     set("apacheCommonsTextVersion", "1.9")
-    set("bootstrapVersion", "4.6.0-1")
     set("cacheApiVersion", "1.1.1")
     set("commonsCodecVersion", "1.15")
     set("datatablesVersion", "1.10.25")
@@ -22,7 +21,6 @@ buildscript {
     set("jsoupVersion", "1.14.1")
     set("junitVersion", "5.7.2")
     set("lombokVersion", "1.18.20")
-    set("materialIconsVersion", "0.7.0")
     set("micrometerVersion", "1.7.2")
     set("mockitoVersion", "3.11.2")
     set("modelmapperVersion", "2.4.4")
@@ -34,7 +32,6 @@ buildscript {
     set("springSecurityVersion", "5.5.1")
     set("thymeleafDialectVersion", "2.5.3")
     set("thymeleafExtrasVersion", "3.0.4.RELEASE")
-    set("webjarsLocatorVersion", "0.47")
   }
 }
 
@@ -50,7 +47,6 @@ val dependencyVersions = listOf(
   "org.jboss.logging:jboss-logging:3.4.2.Final",
   "net.bytebuddy:byte-buddy:1.11.8",
   "org.javassist:javassist:3.28.0-GA",
-  "org.webjars:jquery:3.6.0",
   "commons-io:commons-io:2.11.0"
 )
 val dependencyGroupVersions = mapOf(

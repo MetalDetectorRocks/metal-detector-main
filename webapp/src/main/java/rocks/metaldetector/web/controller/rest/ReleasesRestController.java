@@ -59,6 +59,9 @@ public class ReleasesRestController {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
     var pageRequest = new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection()));
     var followedArtists = followArtistService.getFollowedArtistsOfCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
+    if (followedArtists.isEmpty()) {
+      return ResponseEntity.ok(Page.empty());
+    }
     Page<ReleaseDto> releasePage = releaseService.findReleases(followedArtists, timeRange, request.getQuery(), pageRequest);
     return ResponseEntity.ok(releasePage);
   }

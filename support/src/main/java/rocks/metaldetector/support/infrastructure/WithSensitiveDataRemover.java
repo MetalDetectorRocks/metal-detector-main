@@ -37,17 +37,21 @@ public interface WithSensitiveDataRemover {
       String payload = originalMessage.substring(originalMessage.indexOf(PAYLOAD_IDENTIFIER) + PAYLOAD_IDENTIFIER.length() - 1);
 
       ObjectMapper mapper = new ObjectMapper();
-      TypeReference<LinkedHashMap<String, String>> typeRef = new TypeReference<>() {};
-      Map<String, String> payloadAsMap = mapper.readValue(payload, typeRef);
-      SENSITIVE_DATA_FIELD_NAME.forEach(fieldName -> {
-        if (payloadAsMap.containsKey(fieldName)) {
-          payloadAsMap.put(fieldName, REMOVED_FOR_LOGGING_STRING);
-        }
-      });
+      try {
+        TypeReference<LinkedHashMap<String, String>> typeRef = new TypeReference<>() {};
+        Map<String, String> payloadAsMap = mapper.readValue(payload, typeRef);
+        SENSITIVE_DATA_FIELD_NAME.forEach(fieldName -> {
+          if (payloadAsMap.containsKey(fieldName)) {
+            payloadAsMap.put(fieldName, REMOVED_FOR_LOGGING_STRING);
+          }
+        });
 
-      payload = mapper.writeValueAsString(payloadAsMap);
-
-      return prePayload.concat(payload);
+        payload = mapper.writeValueAsString(payloadAsMap);
+        return prePayload.concat(payload);
+      }
+      catch (Exception e) {
+        return originalMessage;
+      }
     }
 
     return originalMessage;

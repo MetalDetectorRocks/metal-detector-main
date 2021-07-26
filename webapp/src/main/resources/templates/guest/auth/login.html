@@ -11,87 +11,89 @@
         <div class="auth-container rounded">
             <h1 class="mb-3 h4">Login</h1>
 
-      <!-- Login Messages -->
-      <div th:if="${param.badCredentials}" class="alert alert-danger alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <span>Invalid username, email or password!</span>
-      </div>
-      <div th:if="${param.disabled}" class="alert alert-danger alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <span>Your account is disabled. Maybe your email address is not verified. Please check your email inbox.</span>
-      </div>
-      <div th:if="${param.blocked}" class="alert alert-danger" role="alert">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <span>Your ip is blocked for one day due to too many failed login requests.</span>
+            <!-- Login Messages -->
+            <div th:if="${param.badCredentials}" class="alert alert-danger alert-dismissible" role="alert">
+                <span>Invalid username, email or password!</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${param.disabled}" class="alert alert-danger alert-dismissible" role="alert">
+                <span>Your account is disabled. Maybe your email address is not verified. Please check your email inbox.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${param.blocked}" class="alert alert-danger alert-dismissible" role="alert">
+                <span>Your ip is blocked for one day due to too many failed login requests.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             <div th:if="${param.error}" class="alert alert-danger alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
                 <span>Unknown error!</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             <div th:if="${param.logout}" class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
                 <span>You have been successfully logged out.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
             <!-- Registration Messages -->
             <div th:if="${param.verificationSuccess}" class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
                 <span>Registration successfully verified. You are now able to login.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             <div th:if="${param.resendVerificationTokenSuccess}" class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
                 <span>You will shortly receive another email with a verification link. After confirming your registration you can login.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             <div th:if="${param.tokenNotFound}" class="alert alert-danger alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
                 <span>Your account may already be activated or another error has occurred. Please try to login.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             <div th:if="${param.tokenExpired}" class="alert alert-danger alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
                 <span>The email verification link has expired. Click on the following link if we should send you a new verification link:</span>
-                <a href="#" th:href="@{/resend-verification-token?(token=${param.token})}">Resend verification e-mail</a>
+                <a href="#" th:href="@{/resend-verification-token?(token=${param.token})}" class="alert-link">Resend verification e-mail</a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
             <!-- Reset password messages-->
             <div th:if="${param.resetSuccess}" class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
                 <span>You can now log in with your new password.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
             <!-- Login form -->
             <form id="loginForm" name="loginForm" action="#" th:action="@{/login}" method="POST">
                 <!-- Username -->
-                <div class="form-label-group">
-                    <input type="text" id="username" class="form-control" name="username" placeholder="" autocomplete="username" required autofocus>
-                    <label for="username">Email address or username</label>
+                <div class="form-floating mb-3">
+                    <input type="text" id="username" class="form-control" name="username" placeholder="name@example.com" autocomplete="username" required autofocus>
+                    <label for="username" class="dark-foreground">Email address or username</label>
                 </div>
 
                 <!-- Password -->
-                <div class="form-label-group">
-                    <input type="password" id="password" class="form-control" name="password" placeholder="" autocomplete="current-password" required>
-                    <label for="password">Password</label>
+                <div class="form-floating mb-3">
+                    <input type="password" id="password" class="form-control" name="password" placeholder="Password" autocomplete="current-password" required>
+                    <label for="password" class="dark-foreground">Password</label>
                 </div>
 
-                <div class="form-label-group">
+                <div class="mb-4">
                     <div class="row">
                         <div class="col">
                             <!-- Remember me -->
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="remember-me" name="remember-me" checked="">
-                                <label class="custom-control-label" for="remember-me">Remember me</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="remember-me" name="remember-me" checked="">
+                                <label class="form-check-label" for="remember-me">
+                                    Remember me
+                                </label>
                             </div>
                         </div>
-                        <div class="col text-right">
+                        <div class="col text-end">
                             <!-- Forgot password -->
-                            <div class="form-label-group">
-                                <a href="#" th:href="@{forgot-password}">Forgot password?</a>
-                            </div>
+                            <a href="#" th:href="@{forgot-password}">Forgot password?</a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Login -->
-                <button class="btn btn-lg btn-secondary btn-block" type="submit">Login</button>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-lg btn-secondary" type="submit">Login</button>
+                </div>
             </form>
 
             <div class="or-container">
@@ -100,14 +102,17 @@
                 <div class="line-separator"></div>
             </div>
 
-            <div class="row">
-                <div class="col-md-12"> <a class="btn btn-lg btn-secondary btn-block" href="/oauth2/authorization/google"><img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="google-logo"> Sign in using Google</a></div>
+            <div class="d-grid gap-2 mb-3">
+                <a class="btn btn-lg btn-secondary" href="#" th:href="@{/oauth2/authorization/google}">
+                    <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="google-logo" class="mx-1 mb-1">
+                    Sign in with Google
+                </a>
             </div>
 
-      <p class="my-2">
-        New user? <a href="#" th:href="@{/register}">Join now!</a>
-      </p>
-    </div>
+            <p class="my-2">
+                New user? <a href="#" th:href="@{/register}">Join now!</a>
+            </p>
+        </div>
     </section>
 </body>
 </html>

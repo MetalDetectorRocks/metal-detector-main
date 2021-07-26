@@ -23,7 +23,7 @@ export class SpotifySynchronizationRenderService {
     private readonly artistSelectionElement: HTMLDivElement;
     private readonly artistContainerElement: HTMLDivElement;
 
-    private readonly spotifyConnectionLink: HTMLAnchorElement;
+    private readonly spotifyConnectionLink: HTMLSpanElement;
     private readonly spotifyConnectionStatus: HTMLSpanElement;
     private readonly fetchArtistsButton: HTMLButtonElement;
     private readonly synchronizeArtistsButton: HTMLButtonElement;
@@ -43,7 +43,7 @@ export class SpotifySynchronizationRenderService {
         this.urlService = urlService;
         this.alertService = alertService;
 
-        this.spotifyConnectionLink = document.getElementById("spotify-connection-link") as HTMLAnchorElement;
+        this.spotifyConnectionLink = document.getElementById("spotify-connection-link") as HTMLSpanElement;
         this.spotifyConnectionStatus = document.getElementById("spotify-connection-status") as HTMLSpanElement;
         this.fetchArtistsButton = document.getElementById("fetch-artists-button") as HTMLButtonElement;
         this.synchronizeArtistsButton = document.getElementById("synchronize-artists-button") as HTMLButtonElement;
@@ -83,22 +83,9 @@ export class SpotifySynchronizationRenderService {
         );
         response.then((response) => {
             if (response.exists) {
-                this.connected = true;
-                this.spotifyConnectionLink.textContent = "Disconnect";
-                this.spotifyConnectionLink.href = "";
-                this.spotifyConnectionStatus.textContent = "Connected";
-                this.spotifyConnectionStatus.classList.replace("font-color-red", "font-color-green");
-                [this.fetchArtistsButton, this.synchronizeArtistsButton].forEach((button) => {
-                    button.classList.remove("invisible");
-                });
+                this.onConnected();
             } else {
-                this.spotifyConnectionLink.textContent = "Connect";
-                this.spotifyConnectionLink.href =
-                    OauthRestClient.OAUTH2_AUTHORIZATION_CODE_FLOW_ENDPOINT +
-                    "/" +
-                    SpotifySynchronizationRenderService.OAUTH2_CLIENT_REGISTRATION_ID;
-                this.spotifyConnectionStatus.textContent = "Disconnected";
-                this.spotifyConnectionStatus.classList.replace("font-color-green", "font-color-red");
+                this.onDisconnected();
             }
         });
     }
@@ -108,21 +95,35 @@ export class SpotifySynchronizationRenderService {
             this.oauthRestClient
                 .deleteAuthorization(SpotifySynchronizationRenderService.OAUTH2_CLIENT_REGISTRATION_ID)
                 .then(() => {
-                    this.spotifyConnectionLink.textContent = "Connect";
-                    this.spotifyConnectionStatus.textContent = "Disconnected";
-                    this.spotifyConnectionStatus.classList.replace("font-color-green", "font-color-red");
-                    [this.fetchArtistsButton, this.synchronizeArtistsButton, this.artistSelectionElement].forEach(
-                        (el) => {
-                            el.classList.add("invisible");
-                        },
-                    );
-                    this.clearArtistsContainer();
+                    this.onDisconnected();
                 })
                 .catch((error: AxiosError) => {
                     console.log(error);
                 });
-            this.connected = false;
+        } else {
+            this.oauthRestClient.authenticate(SpotifySynchronizationRenderService.OAUTH2_CLIENT_REGISTRATION_ID);
         }
+    }
+
+    private onConnected(): void {
+        this.connected = true;
+        this.spotifyConnectionLink.textContent = "Disconnect";
+        this.spotifyConnectionStatus.textContent = "Connected";
+        this.spotifyConnectionStatus.classList.replace("font-color-red", "font-color-green");
+        [this.fetchArtistsButton, this.synchronizeArtistsButton].forEach((button) => {
+            button.classList.remove("invisible");
+        });
+    }
+
+    private onDisconnected(): void {
+        this.connected = false;
+        this.spotifyConnectionLink.textContent = "Connect";
+        this.spotifyConnectionStatus.textContent = "Disconnected";
+        this.spotifyConnectionStatus.classList.replace("font-color-green", "font-color-red");
+        [this.fetchArtistsButton, this.synchronizeArtistsButton, this.artistSelectionElement].forEach((el) => {
+            el.classList.add("invisible");
+        });
+        this.clearArtistsContainer();
     }
 
     private onFetchSpotifyArtistsFromAlbumsClicked(): void {
@@ -156,7 +157,7 @@ export class SpotifySynchronizationRenderService {
                     artistDivElement.id = artist.id;
                     artistThumbElement.src = artist.smallImage;
                     artistNameElement.textContent = artist.name;
-                    artistInfoElement.insertAdjacentElement("beforeend", this.buidArtistInfoElement(artist));
+                    artistInfoElement.insertAdjacentElement("beforeend", this.buildArtistInfoElement(artist));
                     artistDivElement.addEventListener("click", this.onArtistClicked.bind(this, artistDivElement));
                     this.artistContainerElement.insertAdjacentElement("beforeend", artistDivElement);
                 });
@@ -177,7 +178,7 @@ export class SpotifySynchronizationRenderService {
             });
     }
 
-    private buidArtistInfoElement(artist: SpotifyArtist): HTMLSpanElement {
+    private buildArtistInfoElement(artist: SpotifyArtist): HTMLSpanElement {
         const artistInfoElement = document.createElement("span");
         artistInfoElement.insertAdjacentElement("beforeend", this.buildGenreTagsElement(artist));
         artistInfoElement.insertAdjacentHTML("beforeend", "<br />");
@@ -189,7 +190,7 @@ export class SpotifySynchronizationRenderService {
         const genreElement = document.createElement("span");
         artist.genres.slice(0, 3).forEach((genre) => {
             const genreBadge = document.createElement("span");
-            genreBadge.classList.add("badge", "badge-dark", "mr-2", "mb-1");
+            genreBadge.classList.add("badge", "badge-dark", "me-1", "mb-1");
             genreBadge.textContent = genre;
             genreElement.insertAdjacentElement("beforeend", genreBadge);
         });
@@ -227,7 +228,8 @@ export class SpotifySynchronizationRenderService {
             .synchronizeArtists(selectedArtistIds)
             .then((response) => {
                 const successIcon = '<span class="material-icons">check_circle</span>';
-                const successMessage = `${successIcon} You are now following ${response.artistsCount} new artists on Metal Detector.`;
+                const artistOrArtistsLabel = response.artistsCount > 1 ? "artists" : "artist";
+                const successMessage = `${successIcon} You are now following ${response.artistsCount} new ${artistOrArtistsLabel} on Metal Detector.`;
                 const successMessageElement = this.alertService.renderSuccessAlert(successMessage, true);
                 this.artistContainerElement.insertAdjacentElement("beforeend", successMessageElement);
             })
@@ -266,12 +268,14 @@ export class SpotifySynchronizationRenderService {
             artistDivElement.classList.add("active");
             artistCheckbox.innerText = "check_box";
             artistCheckbox.classList.add("md-success");
+            artistCheckbox.classList.remove("md-light");
             artistThumbElement.classList.remove("img-inactive");
             artistNameElement.classList.remove("text-muted");
             artistInfoElement.classList.remove("text-muted");
         } else {
             artistDivElement.classList.remove("active");
             artistCheckbox.innerText = "check_box_outline_blank";
+            artistCheckbox.classList.add("md-light");
             artistCheckbox.classList.remove("md-success");
             artistThumbElement.classList.add("img-inactive");
             artistNameElement.classList.add("text-muted");

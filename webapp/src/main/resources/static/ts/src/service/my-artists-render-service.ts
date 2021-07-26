@@ -36,7 +36,7 @@ export class MyArtistsRenderService extends AbstractRenderService<MyArtistsRespo
     protected onRendering(response: MyArtistsResponse): void {
         if (response.myArtists.length === 0 && response.pagination.currentPage === 1) {
             const message =
-                '<h3 class="h5">Currently you do not follow any artist.</h3>Start a search for your favorite artists ' +
+                '<h3 class="h5">Currently you do not follow any artists.</h3>Start a search for your favorite artists ' +
                 'or <a href="/settings/spotify-synchronization">synchronize</a> your artists from your Spotify account.';
             const infoMessage = this.alertService.renderInfoAlert(message, false);
             this.hostElement.insertAdjacentElement("afterbegin", infoMessage);

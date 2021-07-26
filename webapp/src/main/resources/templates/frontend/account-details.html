@@ -9,66 +9,64 @@
 </head>
 <body>
     <section layout:fragment="content">
-        <div id="update-email-address-area">
-            <h2 class="h5 mt-3">Change email address</h2>
-            <hr class="border-secondary"/>
-            <div class="form-group col-5 px-0">
-                <label for="email-address">Email address</label>
+        <div id="update-email-address-area" class="mt-4">
+            <h2 class="h5">Change email address</h2>
+            <hr class="border-bottom"/>
+            <div class="col-5 px-0 mb-3">
+                <label for="email-address" class="form-label">Email address</label>
                 <input type="email" class="form-control custom-form-control" id="email-address">
             </div>
             <div id="update-email-error-message-wrapper"></div>
-            <button id="update-email-address" class="btn btn-secondary mt-2">Update email address</button>
+            <button id="update-email-address" class="btn btn-outline-success mt-2">Update email address</button>
         </div>
 
-        <div id="update-password-area">
-            <h2 class="h5 mt-3">Change password</h2>
-            <hr class="border-secondary"/>
+        <div id="update-password-area" class="mt-5">
+            <h2 class="h5">Change password</h2>
+            <hr class="border-bottom"/>
 
-            <div class="form-group col-5 px-0">
-                <label for="old-password">Old password</label>
+            <div class="col-5 px-0 mb-3">
+                <label for="old-password" class="form-label">Old password</label>
                 <input type="password" class="form-control custom-form-control" id="old-password" autocomplete="current-password">
             </div>
-            <div class="form-group col-5 px-0">
-                <label for="new-password">New password</label>
+            <div class="col-5 px-0 mb-3">
+                <label for="new-password" class="form-label">New password</label>
                 <input type="password" class="form-control custom-form-control" id="new-password" autocomplete="new-password">
             </div>
-            <div class="form-group col-5 px-0">
-                <label for="confirm-password">Confirm password</label>
+            <div class="col-5 px-0 mb-3">
+                <label for="confirm-password" class="form-label">Confirm password</label>
                 <input type="password" class="form-control custom-form-control" id="confirm-password" autocomplete="new-password">
             </div>
             <p class="text-muted">Make sure your new password has at least 8 characters.</p>
             <div id="update-password-error-message-wrapper"></div>
-            <button id="update-password" class="btn btn-secondary mb-2">Update password</button>
+            <button id="update-password" class="btn btn-outline-success mb-2">Update password</button>
 
             <div id="alert-message"></div>
         </div>
 
         <div id="delete-account-area">
-            <h2 class="h5 mt-3">Delete account</h2>
-            <hr class="border-secondary"/>
+            <h2 class="h5 mt-5">Delete account</h2>
+            <hr class="border-bottom"/>
             <p>Let your account go to hell!</p>
             <div id="delete-account-error-message-wrapper"></div>
-            <button class="btn btn-outline-danger btn-lg disabled" data-toggle="modal" data-target="#delete-account-dialog">
+            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#delete-account-dialog">
                 <span class="material-icons">delete</span> Delete account
             </button>
 
             <div id="delete-account-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
                 <div class="modal-dialog default-modal-dialog-width">
-                    <div class="modal-content">
-                        <div class="modal-header">
+                    <div class="modal-content dark-modal-content">
+                        <div class="modal-header dark-modal-header">
                             <h5 class="modal-title">Delete Account</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                            <span class="material-icons material-icons md-light pointer" data-bs-dismiss="modal" aria-label="Close">close</span>
                         </div>
                         <div class="modal-body">
                             <div role="alert">
                                 <p>Dou you really want to delete your account? All data related to your account will be lost.</p>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button id="delete-account" type="button" class="btn btn-danger" >Delete</button>
-                            <button id="close-delete-account-dialog" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <div class="modal-footer dark-modal-footer">
+                            <button id="delete-account" type="button" class="btn btn-danger">Delete</button>
+                            <button id="close-delete-account-dialog" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </div>

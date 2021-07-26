@@ -1,7 +1,6 @@
 import { AccountDetailsRestClient } from "../clients/account-details-rest-client";
 import { AlertService } from "./alert-service";
 import { ToastService } from "./toast-service";
-import { AxiosError } from "axios";
 import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
 import { UserResponse } from "../model/user-response.model";
 

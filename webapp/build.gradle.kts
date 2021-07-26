@@ -32,9 +32,6 @@ dependencies {
     exclude(group = "org.slf4j", module = "slf4j-simple")
   }
 
-  runtimeOnly("org.webjars:webjars-locator-core:${rootProject.extra["webjarsLocatorVersion"]}")
-  runtimeOnly("org.webjars:bootstrap:${rootProject.extra["bootstrapVersion"]}")
-  runtimeOnly("org.webjars.npm:material-icons:${rootProject.extra["materialIconsVersion"]}")
   runtimeOnly("org.webjars:datatables:${rootProject.extra["datatablesVersion"]}")
   runtimeOnly("org.flywaydb:flyway-core:${rootProject.extra["flywayVersion"]}")
   runtimeOnly("io.micrometer:micrometer-registry-prometheus:${rootProject.extra["micrometerVersion"]}")

@@ -18,7 +18,6 @@ public class CspNonceFilter extends OncePerRequestFilter {
   static final String CSP_HEADER_NAME = "Content-Security-Policy";
   static final String CSP_POLICY = "object-src 'none'; " +
                                    "script-src 'nonce-%s' 'strict-dynamic'; " +
-                                   "style-src https://fonts.googleapis.com 'nonce-%s'; " +
                                    "base-uri 'none'; " +
                                    "form-action 'self'; " +
                                    "frame-ancestors 'none'; " +
