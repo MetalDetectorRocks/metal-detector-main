@@ -239,7 +239,8 @@ export class SpotifySynchronizationRenderService {
             .synchronizeArtists(selectedArtistIds)
             .then((response) => {
                 const successIcon = '<span class="material-icons">check_circle</span>';
-                const successMessage = `${successIcon} You are now following ${response.artistsCount} new artists on Metal Detector.`;
+                const artistOrArtistsLabel = response.artistsCount > 1 ? "artists" : "artist";
+                const successMessage = `${successIcon} You are now following ${response.artistsCount} new ${artistOrArtistsLabel} on Metal Detector.`;
                 const successMessageElement = this.alertService.renderSuccessAlert(successMessage, true);
                 this.artistContainerElement.insertAdjacentElement("beforeend", successMessageElement);
             })
