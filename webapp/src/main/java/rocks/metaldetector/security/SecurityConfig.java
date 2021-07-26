@@ -14,6 +14,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -53,6 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final DataSource dataSource;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final SecurityProperties securityProperties;
+  private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
+  private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
 
   @Value("${telegram.bot-id}")
   private String botId;
@@ -81,6 +85,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           .loginPage(Endpoints.Guest.LOGIN)
           .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
           .failureHandler(new CustomAuthenticationFailureHandler())
+      .and()
+        .oauth2Client()
+          .authorizedClientService(oAuth2AuthorizedClientService)
+          .authorizedClientRepository(oAuth2AuthorizedClientRepository)
       .and()
       .rememberMe()
         .tokenValiditySeconds((int) Duration.ofDays(14).toSeconds())

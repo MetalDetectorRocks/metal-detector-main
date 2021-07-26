@@ -14,11 +14,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
-import rocks.metaldetector.persistence.domain.spotify.SpotifyAuthorizationRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.AccountDeletedEmail;
@@ -31,6 +31,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.service.user.events.UserDeletionEventListener.DELETE_QUERY;
 import static rocks.metaldetector.service.user.events.UserDeletionEventListener.PARAMETER_NAME;
+import static rocks.metaldetector.service.user.events.UserDeletionEventListener.SPOTIFY_REGISTRATION_ID;
 import static rocks.metaldetector.service.user.events.UserDeletionEventListener.VARCHAR_SQL_TYPE;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,9 +47,6 @@ class UserDeletionEventListenerTest implements WithAssertions {
   private TelegramConfigRepository telegramConfigRepository;
 
   @Mock
-  private SpotifyAuthorizationRepository spotifyAuthorizationRepository;
-
-  @Mock
   private UserRepository userRepository;
 
   @Mock
@@ -56,6 +54,9 @@ class UserDeletionEventListenerTest implements WithAssertions {
 
   @Mock
   private EmailService emailService;
+
+  @Mock
+  private OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
 
   @InjectMocks
   private UserDeletionEventListener underTest;
@@ -71,8 +72,8 @@ class UserDeletionEventListenerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(followActionRepository, notificationConfigRepository, spotifyAuthorizationRepository,
-          userRepository, jdbcTemplate, emailService, telegramConfigRepository);
+    reset(followActionRepository, notificationConfigRepository, userRepository,
+          jdbcTemplate, emailService, telegramConfigRepository, oAuth2AuthorizedClientService);
   }
 
   @Test
@@ -96,16 +97,6 @@ class UserDeletionEventListenerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("spotifyAuthorization is deleted")
-  void test_spotify_authorization_fetched() {
-    // when
-    underTest.onApplicationEvent(userDeletionEvent);
-
-    // then
-    verify(spotifyAuthorizationRepository).deleteByUser(userDeletionEvent.getUserEntity());
-  }
-
-  @Test
   @DisplayName("FollowActions are deleted")
   void test_follow_actions_deleted() {
     // when
@@ -116,7 +107,19 @@ class UserDeletionEventListenerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Persistent logins are clear via jdbcTemplate")
+  @DisplayName("spotify oAuth token is deleted")
+  void test_spotify_oauth_token_deleted() {
+    // given
+
+    // when
+    underTest.onApplicationEvent(userDeletionEvent);
+
+    // then
+    verify(oAuth2AuthorizedClientService).removeAuthorizedClient(SPOTIFY_REGISTRATION_ID, userDeletionEvent.getUserEntity().getUsername());
+  }
+
+  @Test
+  @DisplayName("Persistent logins are cleared via jdbcTemplate")
   void test_persistent_logins_cleared() {
     // given
     ArgumentCaptor<MapSqlParameterSource> argumentCaptor = ArgumentCaptor.forClass(MapSqlParameterSource.class);

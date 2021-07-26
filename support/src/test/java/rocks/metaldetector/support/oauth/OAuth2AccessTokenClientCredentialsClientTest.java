@@ -20,16 +20,16 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static rocks.metaldetector.support.oauth.OAuth2AccessTokenClient.PRINCIPAL;
+import static rocks.metaldetector.support.oauth.OAuth2AccessTokenClientCredentialsClient.PRINCIPAL;
 
 @ExtendWith(MockitoExtension.class)
-class OAuth2AccessTokenClientTest implements WithAssertions {
+class OAuth2AccessTokenClientCredentialsClientTest implements WithAssertions {
 
   @Mock
   private OAuth2AuthorizedClientManager manager;
 
   @InjectMocks
-  private OAuth2AccessTokenClient underTest;
+  private OAuth2AccessTokenClientCredentialsClient underTest;
 
   @BeforeEach
   void setup() {
