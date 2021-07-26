@@ -29,22 +29,12 @@
         <h2 class="h5 mt-4">Spotify Synchronization</h2>
         <hr class="border-bottom"/>
 
-        <div id="spotify-connection" class="row">
-            <div class="col-auto me-auto mt-1">
-                <span class="fw-bold font-color-light me-1">Connection status:</span>
-                <span class="font-color-red fw-bolder" id="spotify-connection-status"></span>
-            </div>
-            <div id="connection-button" class="col-auto">
-                <button id="spotify-connect-button" class="btn btn-outline-success btn-sm invisible">
-                    <span class="material-icons">power</span> Connect
-                </button>
-                <button id="spotify-disconnect-button" class="btn btn-outline-danger btn-sm invisible">
-                    <span class="material-icons">power_off</span> Disconnect
-                </button>
-            </div>
+        <div id="connection-bar" class="d-flex">
+            <span class="fw-bold font-color-light me-1">Connection status:</span>
+            <span class="font-color-red fw-bolder me-2" id="spotify-connection-status"></span>
+            <p>(<span id="spotify-connection-link" class="pointer a"></span>)</p>
         </div>
-
-        <div id="button-bar" class="mt-3">
+        <div id="button-bar" class="mt-2">
             <div class="btn-group" role="group" aria-label="Fetch artists from Spotify">
                 <div class="btn-group" role="group">
                     <button type="button" class="btn btn-outline-success me-2 mb-2 dropdown-toggle invisible" id="fetch-artists-button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

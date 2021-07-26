@@ -5,13 +5,17 @@ import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
 import { UserAuthorizationExistsResponse } from "../model/user-authorization-exist-response.model";
 
 export class OauthRestClient {
-    public static readonly OAUTH2_AUTHORIZATION_CODE_FLOW_ENDPOINT = "/oauth2/authorization";
+    private static readonly OAUTH2_AUTHORIZATION_CODE_FLOW_ENDPOINT = "/oauth2/authorization";
     private static readonly AUTHORIZATION_EXISTS_ENDPOINT = "/rest/v1/oauth";
 
     private readonly toastService: ToastService;
 
     constructor(toastService: ToastService) {
         this.toastService = toastService;
+    }
+
+    public authenticate(clientRegistrationId: string): void {
+        window.location.href = `${OauthRestClient.OAUTH2_AUTHORIZATION_CODE_FLOW_ENDPOINT}/${clientRegistrationId}`;
     }
 
     public async existsAuthorization(registrationId: string): Promise<UserAuthorizationExistsResponse> {

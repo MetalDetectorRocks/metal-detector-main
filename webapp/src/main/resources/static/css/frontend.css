@@ -59,11 +59,13 @@ h6, .h6 {
 hr {
     margin-top: 0;
 }
-a {
+a,
+.a {
     color: var(--light-hyperlink-font-color);
     text-decoration: none;
 }
-a:hover {
+a:hover,
+.a:hover {
     color: var(--light-hyperlink-font-color-highlight);
     text-decoration: none;
 }
