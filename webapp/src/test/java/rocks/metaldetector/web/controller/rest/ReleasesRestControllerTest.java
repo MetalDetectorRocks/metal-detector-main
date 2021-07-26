@@ -50,6 +50,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static rocks.metaldetector.testutil.DtoFactory.PaginatedReleaseRequestFactory;
@@ -294,17 +295,34 @@ class ReleasesRestControllerTest implements WithAssertions {
     }
 
     @Test
+    @DisplayName("Should not call release service if user does not follow any artists")
+    void should_not_call_release_service() {
+      // given
+      PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
+      doReturn(Collections.emptyList()).when(followArtistService).getFollowedArtistsOfCurrentUser();
+
+      // when
+      restAssuredUtils.doGet(toMap(request));
+
+      // then
+      verifyNoInteractions(releasesService);
+    }
+
+    @Test
     @DisplayName("Should pass query request parameter to release service")
     void should_pass_query_parameter_to_release_service() {
       // given
       PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
+      var artist1 = DtoFactory.ArtistDtoFactory.withName("A");
+      var artist2 = DtoFactory.ArtistDtoFactory.withName("B");
+      doReturn(List.of(artist1, artist2)).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
       // when
       restAssuredUtils.doGet(toMap(request));
 
       // then
       verify(releasesService).findReleases(
-          eq(Collections.emptyList()),
+          any(),
           eq(new TimeRange(request.getDateFrom(), request.getDateTo())),
           any(),
           eq(new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection())))
@@ -317,6 +335,9 @@ class ReleasesRestControllerTest implements WithAssertions {
       // given
       PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
       request.setQuery("query");
+      var artist1 = DtoFactory.ArtistDtoFactory.withName("A");
+      var artist2 = DtoFactory.ArtistDtoFactory.withName("B");
+      doReturn(List.of(artist1, artist2)).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
       // when
       restAssuredUtils.doGet(toMap(request));
@@ -329,18 +350,17 @@ class ReleasesRestControllerTest implements WithAssertions {
     @DisplayName("Should pass artist names to release service")
     void should_pass_artist_names_to_release_service() {
       // given
-      PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
+      var request = PaginatedReleaseRequestFactory.createDefault();
       var artist1 = DtoFactory.ArtistDtoFactory.withName("A");
       var artist2 = DtoFactory.ArtistDtoFactory.withName("B");
-      var artist3 = DtoFactory.ArtistDtoFactory.withName("C");
-      doReturn(List.of(artist1, artist2, artist3)).when(followArtistService).getFollowedArtistsOfCurrentUser();
+      doReturn(List.of(artist1, artist2)).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
       // when
       restAssuredUtils.doGet(toMap(request));
 
       // then
       verify(releasesService).findReleases(
-          eq(List.of(artist1.getArtistName(), artist2.getArtistName(), artist3.getArtistName())),
+          eq(List.of(artist1.getArtistName(), artist2.getArtistName())),
           any(), any(), any());
     }
 
@@ -351,6 +371,9 @@ class ReleasesRestControllerTest implements WithAssertions {
       var request = PaginatedReleaseRequestFactory.createDefault();
       var releases = List.of(ReleaseDtoFactory.createDefault());
       var page = new Page<>(releases, new Pagination(1, 1, 5));
+      var artist1 = DtoFactory.ArtistDtoFactory.withName("A");
+      var artist2 = DtoFactory.ArtistDtoFactory.withName("B");
+      doReturn(List.of(artist1, artist2)).when(followArtistService).getFollowedArtistsOfCurrentUser();
       doReturn(page).when(releasesService).findReleases(any(), any(), any(), any());
 
       // when
@@ -366,6 +389,29 @@ class ReleasesRestControllerTest implements WithAssertions {
       var itemsResult = jsonPath.getObject("items", ReleaseDto[].class);
       assertThat(paginationResult).isEqualTo(page.getPagination());
       assertThat(Arrays.asList(itemsResult)).isEqualTo(page.getItems());
+    }
+
+    @Test
+    @DisplayName("Should return an empty page if user does not follow any artists")
+    void should_return_empty_page() {
+      // given
+      var request = PaginatedReleaseRequestFactory.createDefault();
+      var expectedPage = Page.empty();
+      doReturn(Collections.emptyList()).when(followArtistService).getFollowedArtistsOfCurrentUser();
+
+      // when
+      var validatableResponse = restAssuredUtils.doGet(toMap(request));
+
+      // then
+      validatableResponse
+              .contentType(ContentType.JSON)
+              .statusCode(OK.value());
+
+      var jsonPath = validatableResponse.extract().jsonPath();
+      var paginationResult = jsonPath.getObject("pagination", Pagination.class);
+      var itemsResult = jsonPath.getObject("items", ReleaseDto[].class);
+      assertThat(paginationResult).isEqualTo(expectedPage.getPagination());
+      assertThat(Arrays.asList(itemsResult)).isEqualTo(expectedPage.getItems());
     }
 
     @ParameterizedTest(name = "Should return 400 on invalid query request <{0}>")
