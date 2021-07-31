@@ -15,7 +15,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -57,6 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final SecurityProperties securityProperties;
   private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
   private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
+  private final OAuth2UserService<OidcUserRequest, OidcUser> customOidcUserService;
 
   @Value("${telegram.bot-id}")
   private String botId;
@@ -85,6 +89,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           .loginPage(Endpoints.Guest.LOGIN)
           .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
           .failureHandler(new CustomAuthenticationFailureHandler())
+          .userInfoEndpoint()
+            .oidcUserService(customOidcUserService)
+          .and()
       .and()
         .oauth2Client()
           .authorizedClientService(oAuth2AuthorizedClientService)
