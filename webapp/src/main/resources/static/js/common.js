@@ -131,6 +131,9 @@ function formatUtcDate(dateInput) {
  * @param validationAreaId  ID of the area to reset
  */
 function resetValidationArea(validationAreaId) {
+  if (validationAreaId.startsWith("#")) {
+    validationAreaId = validationAreaId.substring(1);
+  }
   const validationMessageArea = document.getElementById(validationAreaId);
   validationMessageArea.classList.remove("alert", "alert-danger", "alert-success");
   validationMessageArea.textContent = "";

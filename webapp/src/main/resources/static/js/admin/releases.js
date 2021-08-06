@@ -136,7 +136,7 @@ function showUpdateReleaseForm() {
  */
 function resetUpdateReleaseForm() {
   $("#update-release-form")[0].reset();
-  resetValidationArea('#release-validation-area');
+  resetValidationArea('#update-release-validation-area');
 }
 
 /**
