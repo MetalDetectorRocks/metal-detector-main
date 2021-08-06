@@ -45,7 +45,7 @@ val dependencyVersions = listOf(
   "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3",
   "jakarta.activation:jakarta.activation-api:2.0.1",
   "org.jboss.logging:jboss-logging:3.4.2.Final",
-  "net.bytebuddy:byte-buddy:1.11.9",
+  "net.bytebuddy:byte-buddy:1.11.11",
   "org.javassist:javassist:3.28.0-GA",
   "commons-io:commons-io:2.11.0"
 )
