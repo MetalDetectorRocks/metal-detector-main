@@ -138,3 +138,12 @@ function resetValidationArea(validationAreaId) {
   validationMessageArea.classList.remove("alert", "alert-danger", "alert-success");
   validationMessageArea.textContent = "";
 }
+
+/**
+ * Sleeps for defined amount of ms.
+ * @param ms time to sleep
+ * @returns {Promise<>}
+ */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

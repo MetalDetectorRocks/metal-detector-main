@@ -134,7 +134,8 @@ function showUpdateReleaseForm() {
 /**
  * Resets the release update form.
  */
-function resetUpdateReleaseForm() {
+async function resetUpdateReleaseForm() {
+  await sleep(500);
   $("#update-release-form")[0].reset();
   resetValidationArea('#update-release-validation-area');
 }

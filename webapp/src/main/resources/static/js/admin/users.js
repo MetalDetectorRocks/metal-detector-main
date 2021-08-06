@@ -188,7 +188,7 @@ function onError(errorResponse, validationAreaId) {
  */
 function createUpdateUserRequest() {
   return JSON.stringify({
-    publicUserId: $("#update-public-id").val(),
+    publicUserId: $("#update-public-id").text(),
     role: $("#update-role").val(),
     enabled: $("#update-status").val() === "Enabled",
   });
@@ -202,19 +202,19 @@ function showUpdateUserForm() {
   $("#update-user-dialog").modal("show");
 
   // master data
-  $("#update-public-id").val(data.publicId);
-  $("#update-username").val(data.username);
-  $("#update-email").val(data.email);
-  $("#update-type").val(data.nativeUser ? "Native" : "OAuth");
+  $("#update-public-id").text(data.publicId);
+  $("#update-username").text(data.username);
+  $("#update-email").text(data.email);
+  $("#update-type").text(data.nativeUser ? "Native" : "OAuth");
   $("#update-role").val(data.role);
   $("#update-status").val(data.enabled ? "Enabled" : "Disabled");
 
   // meta data
-  $("#update-last-login").val(formatUtcDateTime(data.lastLogin));
-  $("#update-created-by").val(data.createdBy);
-  $("#update-created-date-time").val(formatUtcDateTime(data.createdDateTime));
-  $("#update-last-modified-by").val(data.lastModifiedBy);
-  $("#update-last-modified-date-time").val(
+  $("#update-last-login").text(formatUtcDateTime(data.lastLogin));
+  $("#update-created-by").text(data.createdBy);
+  $("#update-created-date-time").text(formatUtcDateTime(data.createdDateTime));
+  $("#update-last-modified-by").text(data.lastModifiedBy);
+  $("#update-last-modified-date-time").text(
     formatUtcDateTime(data.lastModifiedDateTime)
   );
 }
@@ -247,8 +247,8 @@ function onUpdateUserSuccess(updateResponse) {
     .rows()
     .every(function (rowIndex) {
       if (userTable.cell(rowIndex, 1).data() === updateResponse.username) {
-        userTable.cell(rowIndex, 3).data(updateResponse.role);
-        userTable.cell(rowIndex, 4).data(updateResponse.enabled);
+        userTable.cell(rowIndex, 4).data(updateResponse.role);
+        userTable.cell(rowIndex, 5).data(updateResponse.enabled);
       }
     })
     .draw();
@@ -268,7 +268,8 @@ function resetCreateUserForm() {
 /**
  * Resets the user update form.
  */
-function resetUpdateUserForm() {
+async function resetUpdateUserForm() {
+  await sleep(500);
   $("#update-user-form")[0].reset();
   resetValidationArea("#update-user-validation-area");
 }
