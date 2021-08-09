@@ -17,15 +17,15 @@ export class OauthRestClient {
         window.location.href = `${OauthRestClient.OAUTH2_AUTHORIZATION_CODE_FLOW_ENDPOINT}/${clientRegistrationId}`;
     }
 
-    public async existsAuthorization(registrationId: string): Promise<number> {
+    public async existsAuthorization(registrationId: string): Promise<boolean> {
         return await axios
             .get(OauthRestClient.AUTHORIZATION_EXISTS_ENDPOINT + "/" + registrationId, axiosConfig)
-            .then((response: AxiosResponse) => {
-                return response.status;
+            .then(() => {
+                return true;
             })
             .catch((error: AxiosError) => {
                 if (error.response?.status == 404) {
-                    return 404;
+                    return false;
                 } else {
                     this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
                     throw error;
