@@ -2,7 +2,6 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { axiosConfig } from "../config/axios.config";
 import { ToastService } from "../service/toast-service";
 import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
-import { UserAuthorizationExistsResponse } from "../model/user-authorization-exist-response.model";
 
 export class OauthRestClient {
     private static readonly OAUTH2_AUTHORIZATION_CODE_FLOW_ENDPOINT = "/oauth2/authorization";
@@ -18,15 +17,19 @@ export class OauthRestClient {
         window.location.href = `${OauthRestClient.OAUTH2_AUTHORIZATION_CODE_FLOW_ENDPOINT}/${clientRegistrationId}`;
     }
 
-    public async existsAuthorization(registrationId: string): Promise<UserAuthorizationExistsResponse> {
+    public async existsAuthorization(registrationId: string): Promise<boolean> {
         return await axios
             .get(OauthRestClient.AUTHORIZATION_EXISTS_ENDPOINT + "/" + registrationId, axiosConfig)
-            .then((response: AxiosResponse<UserAuthorizationExistsResponse>) => {
-                return response.data;
+            .then(() => {
+                return true;
             })
             .catch((error: AxiosError) => {
-                this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
-                throw error;
+                if (error.response?.status == 404) {
+                    return false;
+                } else {
+                    this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
+                    throw error;
+                }
             });
     }
 

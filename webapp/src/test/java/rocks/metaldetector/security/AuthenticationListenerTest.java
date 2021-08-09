@@ -127,63 +127,35 @@ class AuthenticationListenerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("UserService is called to persist login on authentication success of existing OAuth user")
-  void test_login_persisted_for_existing_oauth_user() {
+  @DisplayName("Exception is thrown if user is not found")
+  void test_exception_if_user_not_found() {
+    // given
+    var email = "mail@mail.mail";
+    var userAttributes = Map.of("email", email);
+    doReturn(authentication).when(successEvent).getAuthentication();
+    doReturn(webAuthenticationDetails).when(authentication).getDetails();
+    doReturn(oAuthUser).when(authentication).getPrincipal();
+    doReturn(userAttributes).when(oAuthUser).getAttributes();
+    doReturn(Optional.empty()).when(userService).getUserByEmailOrUsername(any());
+    doReturn("i'm an ip").when(webAuthenticationDetails).getRemoteAddress();
+
+    // when
+    Throwable throwable = catchThrowable(() -> underTest.onAuthenticationSuccess(successEvent));
+
+    // then
+    assertThat(throwable).isInstanceOf(IllegalStateException.class);
+    assertThat(throwable).hasMessageContaining(email);
+  }
+
+  @Test
+  @DisplayName("UserService is called to persist login on authentication success of OAuth user")
+  void test_login_persisted_for_oauth_user() {
     // given
     var userDto = UserDtoFactory.createDefault();
     doReturn(authentication).when(successEvent).getAuthentication();
     doReturn(webAuthenticationDetails).when(authentication).getDetails();
     doReturn(oAuthUser).when(authentication).getPrincipal();
     doReturn(Optional.of(userDto)).when(userService).getUserByEmailOrUsername(any());
-    doReturn("i'm an ip").when(webAuthenticationDetails).getRemoteAddress();
-
-    // when
-    underTest.onAuthenticationSuccess(successEvent);
-
-    // then
-    verify(userService).persistSuccessfulLogin(userDto.getPublicId());
-  }
-
-  @Test
-  @DisplayName("New user is created for non existing OAuth user")
-  void test_new_oauth_user_created() {
-    // given
-    ArgumentCaptor<UserDto> argumentCaptor = ArgumentCaptor.forClass(UserDto.class);
-    var email = "mail@mail.mail";
-    var username = "username";
-    var avatar = "avatar";
-    Map<String, Object> userAttributes = Map.of("email", email,
-                                                "given_name", username,
-                                                "picture", avatar);
-    doReturn(authentication).when(successEvent).getAuthentication();
-    doReturn(webAuthenticationDetails).when(authentication).getDetails();
-    doReturn(oAuthUser).when(authentication).getPrincipal();
-    doReturn(userAttributes).when(oAuthUser).getAttributes();
-    doReturn(Optional.empty()).when(userService).getUserByEmailOrUsername(any());
-    doReturn(UserDtoFactory.createDefault()).when(userService).createOAuthUser(any());
-    doReturn("i'm an ip").when(webAuthenticationDetails).getRemoteAddress();
-
-    // when
-    underTest.onAuthenticationSuccess(successEvent);
-
-    // then
-    verify(userService).createOAuthUser(argumentCaptor.capture());
-    UserDto userDto = argumentCaptor.getValue();
-    assertThat(userDto.getUsername()).isEqualTo(username);
-    assertThat(userDto.getEmail()).isEqualTo(email);
-    assertThat(userDto.getAvatar()).isEqualTo(avatar);
-  }
-
-  @Test
-  @DisplayName("UserService is called to persist login on authentication success of new OAuth user")
-  void test_login_persisted_for_new_oauth_user() {
-    // given
-    var userDto = UserDtoFactory.createDefault();
-    doReturn(authentication).when(successEvent).getAuthentication();
-    doReturn(webAuthenticationDetails).when(authentication).getDetails();
-    doReturn(oAuthUser).when(authentication).getPrincipal();
-    doReturn(Optional.empty()).when(userService).getUserByEmailOrUsername(any());
-    doReturn(userDto).when(userService).createOAuthUser(any());
     doReturn("i'm an ip").when(webAuthenticationDetails).getRemoteAddress();
 
     // when

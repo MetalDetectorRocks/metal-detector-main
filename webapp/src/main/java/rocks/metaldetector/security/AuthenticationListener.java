@@ -35,22 +35,9 @@ public class AuthenticationListener {
     else if (principal instanceof OAuth2AuthenticatedPrincipal) {
       Map<String, Object> oauthTokenAttributes = ((OAuth2AuthenticatedPrincipal) principal).getAttributes();
       String emailAddress = (String) oauthTokenAttributes.get("email");
-      Optional<UserDto> userOptional = userService.getUserByEmailOrUsername(emailAddress);
-      String publicUserId;
-
-      if (userOptional.isPresent()) {
-        publicUserId = userOptional.get().getPublicId();
-      }
-      else {
-        UserDto userDto = UserDto.builder()
-            .username((String) oauthTokenAttributes.get("given_name"))
-            .email(emailAddress)
-            .avatar((String) oauthTokenAttributes.get("picture"))
-            .build();
-        publicUserId = userService.createOAuthUser(userDto).getPublicId();
-      }
-
-      userService.persistSuccessfulLogin(publicUserId);
+      UserDto user = userService.getUserByEmailOrUsername(emailAddress)
+          .orElseThrow(() -> new IllegalStateException("OAuth user with email '" + emailAddress + "' not found"));
+      userService.persistSuccessfulLogin(user.getPublicId());
     }
   }
 
