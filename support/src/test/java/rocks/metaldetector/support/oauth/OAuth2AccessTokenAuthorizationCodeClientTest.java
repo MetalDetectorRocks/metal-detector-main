@@ -12,12 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -37,22 +32,25 @@ class OAuth2AccessTokenAuthorizationCodeClientTest implements WithAssertions {
   @Mock
   private OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
 
+  @Mock
+  private CurrentOAuthUserIdSupplier currentOAuthUserIdSupplier;
+
   private OAuth2AccessTokenAuthorizationCodeClient underTest;
 
   @BeforeEach
   private void setup() {
-    underTest = new OAuth2AccessTokenAuthorizationCodeClient(oAuth2AuthorizedClientService);
+    underTest = new OAuth2AccessTokenAuthorizationCodeClient(oAuth2AuthorizedClientService, currentOAuthUserIdSupplier);
   }
 
   @AfterEach
   private void tearDown() {
-    reset(oAuth2AuthorizedClientService);
+    reset(oAuth2AuthorizedClientService, currentOAuthUserIdSupplier);
   }
 
-  @DisplayName("Tests for SecurityContext handling")
+  @DisplayName("Tests for service handling")
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
-  class SecurityContextTest {
+  class ServicesTest {
 
     @BeforeEach
     void setup() {
@@ -64,105 +62,41 @@ class OAuth2AccessTokenAuthorizationCodeClientTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("securityContextHolder is called for securityContext")
-    void test_security_context_holder_called() {
-      // given
-      var securityContextMock = mock(SecurityContext.class);
-      doReturn(mock(Authentication.class)).when(securityContextMock).getAuthentication();
-
-      try (MockedStatic<SecurityContextHolder> securityContextHolderMock = Mockito.mockStatic(SecurityContextHolder.class)) {
-        // given
-        securityContextHolderMock.when(SecurityContextHolder::getContext).thenReturn(securityContextMock);
-
-        // when
-        underTest.getAccessToken();
-
-        // then
-        securityContextHolderMock.verify(SecurityContextHolder::getContext);
-      }
-    }
-
-    @Test
-    @DisplayName("securityContext is called for current authentication")
-    void test_security_context_called() {
-      // given
-      var securityContextMock = mock(SecurityContext.class);
-      doReturn(mock(Authentication.class)).when(securityContextMock).getAuthentication();
-
-      try (MockedStatic<SecurityContextHolder> securityContextHolderMock = Mockito.mockStatic(SecurityContextHolder.class)) {
-        // given
-        securityContextHolderMock.when(SecurityContextHolder::getContext).thenReturn(securityContextMock);
-
-        // when
-        underTest.getAccessToken();
-      }
+    @DisplayName("currentOAuthUserIdSupplier is called")
+    void test_current_oauth_id_supplier_called() {
+      // when
+      underTest.getAccessToken();
 
       // then
-      verify(securityContextMock).getAuthentication();
-    }
-
-    @Test
-    @DisplayName("authentication is called for username")
-    void test_authentication_called() {
-      // given
-      var securityContextMock = mock(SecurityContext.class);
-      var authenticationMock = mock(Authentication.class);
-      doReturn(authenticationMock).when(securityContextMock).getAuthentication();
-
-      try (MockedStatic<SecurityContextHolder> securityContextHolderMock = Mockito.mockStatic(SecurityContextHolder.class)) {
-        // given
-        securityContextHolderMock.when(SecurityContextHolder::getContext).thenReturn(securityContextMock);
-
-        // when
-        underTest.getAccessToken();
-      }
-
-      // then
-      verify(authenticationMock).getName();
+      verify(currentOAuthUserIdSupplier).get();
     }
 
     @Test
     @DisplayName("oAuth2AuthorizedClientService is called with registrationId")
     void test_oauth_service_called_with_registration_id() {
       // given
-      var securityContextMock = mock(SecurityContext.class);
-      var authenticationMock = mock(Authentication.class);
       var registrationId = "registrationId";
       underTest.setRegistrationId(registrationId);
-      doReturn(authenticationMock).when(securityContextMock).getAuthentication();
 
-      try (MockedStatic<SecurityContextHolder> securityContextHolderMock = Mockito.mockStatic(SecurityContextHolder.class)) {
-        // given
-        securityContextHolderMock.when(SecurityContextHolder::getContext).thenReturn(securityContextMock);
-
-        // when
-        underTest.getAccessToken();
-      }
+      // when
+      underTest.getAccessToken();
 
       // then
       verify(oAuth2AuthorizedClientService).loadAuthorizedClient(eq(registrationId), any());
     }
 
     @Test
-    @DisplayName("oAuth2AuthorizedClientService is called with username")
-    void test_oauth_service_called_with_username() {
+    @DisplayName("oAuth2AuthorizedClientService is called with userId")
+    void test_oauth_service_called_with_user_id() {
       // given
-      var securityContextMock = mock(SecurityContext.class);
-      var authenticationMock = mock(Authentication.class);
-      var username = "username";
-      doReturn(authenticationMock).when(securityContextMock).getAuthentication();
-      doReturn(username).when(authenticationMock).getName();
+      var userId = "userId";
+      doReturn(userId).when(currentOAuthUserIdSupplier).get();
 
-      try (MockedStatic<SecurityContextHolder> securityContextHolderMock = Mockito.mockStatic(SecurityContextHolder.class)) {
-        // given
-        securityContextHolderMock.when(SecurityContextHolder::getContext).thenReturn(securityContextMock);
-
-        // when
-        underTest.getAccessToken();
-      }
+      // when
+      underTest.getAccessToken();
 
       // then
-      verify(oAuth2AuthorizedClientService).loadAuthorizedClient(any(), eq(username));
+      verify(oAuth2AuthorizedClientService).loadAuthorizedClient(any(), eq(userId));
     }
   }
 
@@ -178,20 +112,12 @@ class OAuth2AccessTokenAuthorizationCodeClientTest implements WithAssertions {
       var authorizedClientMock = mock(OAuth2AuthorizedClient.class);
       var accessTokenMock = mock(OAuth2AccessToken.class);
       var token = "token";
-      var securityContextMock = mock(SecurityContext.class);
-      String result;
       doReturn(authorizedClientMock).when(oAuth2AuthorizedClientService).loadAuthorizedClient(any(), any());
       doReturn(accessTokenMock).when(authorizedClientMock).getAccessToken();
       doReturn(token).when(accessTokenMock).getTokenValue();
-      doReturn(mock(Authentication.class)).when(securityContextMock).getAuthentication();
 
-      try (MockedStatic<SecurityContextHolder> securityContextHolderMock = Mockito.mockStatic(SecurityContextHolder.class)) {
-        // given
-        securityContextHolderMock.when(SecurityContextHolder::getContext).thenReturn(securityContextMock);
-
-        // when
-        result = underTest.getAccessToken();
-      }
+      // when
+      String result = underTest.getAccessToken();
 
       assertThat(result).isEqualTo(token);
     }
@@ -201,10 +127,8 @@ class OAuth2AccessTokenAuthorizationCodeClientTest implements WithAssertions {
     @MethodSource("badClientInputProvider")
     void test_exception_thrown_for_bad_clients_or_tokens(OAuth2AuthorizedClient client, OAuth2AccessToken accessToken, String token) {
       // given
-      var securityContextMock = mock(SecurityContext.class);
       var registrationId = "registrationId";
       underTest.setRegistrationId(registrationId);
-      doReturn(mock(Authentication.class)).when(securityContextMock).getAuthentication();
       doReturn(client).when(oAuth2AuthorizedClientService).loadAuthorizedClient(any(), any());
       if (client != null) {
         doReturn(accessToken).when(client).getAccessToken();
@@ -212,15 +136,9 @@ class OAuth2AccessTokenAuthorizationCodeClientTest implements WithAssertions {
           doReturn(token).when(accessToken).getTokenValue();
         }
       }
-      Throwable throwable;
 
-      try (MockedStatic<SecurityContextHolder> securityContextHolderMock = Mockito.mockStatic(SecurityContextHolder.class)) {
-        // given
-        securityContextHolderMock.when(SecurityContextHolder::getContext).thenReturn(securityContextMock);
-
-        // when
-        throwable = catchThrowable(() -> underTest.getAccessToken());
-      }
+      // when
+      var throwable = catchThrowable(() -> underTest.getAccessToken());
 
       // then
       assertThat(throwable).isInstanceOf(IllegalArgumentException.class);

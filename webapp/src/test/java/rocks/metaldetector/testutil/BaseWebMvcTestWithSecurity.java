@@ -8,6 +8,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.security.NonceSupplier;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
@@ -48,4 +51,7 @@ public abstract class BaseWebMvcTestWithSecurity implements WithSecurityConfig {
 
   @MockBean
   protected HttpSecurity httpSecurity;
+
+  @MockBean
+  protected OAuth2UserService<OidcUserRequest, OidcUser> customOidcUserService;
 }

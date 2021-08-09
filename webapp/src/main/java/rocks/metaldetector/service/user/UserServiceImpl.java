@@ -64,22 +64,6 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public UserDto createOAuthUser(UserDto userDto) {
-    checkIfUserAlreadyExistsByEmail(userDto.getUsername(), userDto.getEmail());
-
-    OAuthUserEntity oAuthUserEntity = OAuthUserEntity.builder()
-        .username(userDto.getUsername())
-        .avatar(userDto.getAvatar())
-        .email(userDto.getEmail())
-        .build();
-
-    OAuthUserEntity savedUserEntity = userRepository.save(oAuthUserEntity);
-
-    return userTransformer.transform(savedUserEntity);
-  }
-
-  @Override
-  @Transactional
   public UserDto createAdministrator(UserDto userDto) {
     return createUserEntity(userDto, UserRole.createAdministratorRole(), true);
   }
