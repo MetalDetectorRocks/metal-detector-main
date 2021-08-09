@@ -130,5 +130,18 @@ class WithSensitiveDataRemoverTest implements WithAssertions {
       // then
       assertThat(result).isEqualTo(given);
     }
+
+    @Test
+    @DisplayName("Should return original payload if exception occurs during removing attempt")
+    void input_is_returned_if_exception_occurs() throws JsonProcessingException {
+      // given
+      String given = "POST /rest/v1/users, payload={some invalid json}";
+
+      // when
+      String result = underTest.removeSensitiveDataFromPayload(given);
+
+      // then
+      assertThat(result).isEqualTo(given);
+    }
   }
 }

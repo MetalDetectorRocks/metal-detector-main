@@ -46,16 +46,16 @@ function getReleases() {
           "targets": [0],
           "render": function (data) {
             if (data === 'Ok') {
-              return '<span class="badge badge-success">' + data + '</span>';
+              return '<span class="badge bg-success">' + data + '</span>';
             }
             else if (data === 'Demo') {
-              return '<span class="badge badge-warning">' + data + '</span>';
+              return '<span class="badge bg-warning">' + data + '</span>';
             }
             else if (data === "Faulty") {
-              return '<span class="badge badge-danger">' + data + '</span>';
+              return '<span class="badge bg-danger">' + data + '</span>';
             }
             else {
-              return '<span class="badge badge-info">' + data + '</span>';
+              return '<span class="badge bg-info">' + data + '</span>';
             }
           }
         },
@@ -134,9 +134,10 @@ function showUpdateReleaseForm() {
 /**
  * Resets the release update form.
  */
-function resetUpdateReleaseForm() {
+async function resetUpdateReleaseForm() {
+  await sleep(500);
   $("#update-release-form")[0].reset();
-  resetValidationArea('#release-validation-area');
+  resetValidationArea('#update-release-validation-area');
 }
 
 /**

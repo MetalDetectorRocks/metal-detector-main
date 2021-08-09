@@ -27,7 +27,7 @@ function sendNotification(endpoint) {
       createToast("Notification successfully sent!");
     },
     error: function (err) {
-      createToast("Error sending notification: " + err);
+      createToast(`Error sending notification (Status ${err.status}).`);
     },
   });
 }

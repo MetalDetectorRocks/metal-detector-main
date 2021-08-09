@@ -49,15 +49,15 @@ function showScrollToTopButton(scrollTopButton) {
 
 /**
  * Creates a toast that is displayed for a short time.
- * @param text  The toast text
+ * @param text The toast text
  */
 function createToast(text) {
   const toast = document.createElement("div");
-  toast.attr("id", "toast");
-  toast.addClass("show success");
-  toast.text(text);
+  toast.id = "toast";
+  toast.textContent = text;
+  toast.classList.add("show", "success");
   setTimeout(function () {
-    toast.removeClass("show");
+    toast.classList.remove("show");
   }, 2900);
   document.getElementById("toast-wrapper").append(toast);
 }
@@ -131,7 +131,19 @@ function formatUtcDate(dateInput) {
  * @param validationAreaId  ID of the area to reset
  */
 function resetValidationArea(validationAreaId) {
+  if (validationAreaId.startsWith("#")) {
+    validationAreaId = validationAreaId.substring(1);
+  }
   const validationMessageArea = document.getElementById(validationAreaId);
-  validationMessageArea.removeClass("alert alert-danger alert-success");
-  validationMessageArea.empty();
+  validationMessageArea.classList.remove("alert", "alert-danger", "alert-success");
+  validationMessageArea.textContent = "";
+}
+
+/**
+ * Sleeps for defined amount of ms.
+ * @param ms time to sleep
+ * @returns {Promise<>}
+ */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

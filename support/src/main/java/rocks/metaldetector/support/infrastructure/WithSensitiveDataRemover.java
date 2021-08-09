@@ -3,6 +3,8 @@ package rocks.metaldetector.support.infrastructure;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,6 +14,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 public interface WithSensitiveDataRemover {
 
+  Logger log = LoggerFactory.getLogger(WithSensitiveDataRemover.class);
   String REMOVED_FOR_LOGGING_STRING = "REMOVED_FOR_LOGGING";
   String PAYLOAD_IDENTIFIER = "payload={";
   List<String> SENSITIVE_DATA_FIELD_NAME = List.of(
@@ -50,6 +53,7 @@ public interface WithSensitiveDataRemover {
         return prePayload.concat(payload);
       }
       catch (Exception e) {
+        log.warn("Error while trying to remove sensitive data from the payload.", e);
         return originalMessage;
       }
     }

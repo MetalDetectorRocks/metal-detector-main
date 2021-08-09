@@ -8,9 +8,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Create new Administrator</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="create-admin-user-form-close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div id="create-admin-user-validation-area" class="small" role="alert">
@@ -18,34 +16,34 @@
                 <form method="post" action="#" id="create-admin-user-form">
                     <fieldset>
                         <!-- Username-->
-                        <div class="row">
-                            <label for="username" class="col-sm-4 col-form-label">Username</label>
-                            <div class="col-sm-8">
+                        <div class="row mb-2">
+                            <label for="username" class="col-4 col-form-label">Username</label>
+                            <div class="col-8">
                                 <input type="text" id="username" class="form-control" autocomplete="username" required autofocus />
                             </div>
                         </div>
 
                         <!-- Email -->
-                        <div class="row">
-                            <label for="email" class="col-sm-4 col-form-label">Email</label>
-                            <div class="col-sm-8">
+                        <div class="row mb-2">
+                            <label for="email" class="col-4 col-form-label">Email</label>
+                            <div class="col-8">
                                 <input type="email" id="email" class="form-control" required />
                             </div>
                         </div>
 
                         <!-- Password -->
-                        <div class="row">
-                            <label for="plain-password" class="col-sm-4 col-form-label">Password</label>
-                            <div class="col-sm-8">
+                        <div class="row mb-2">
+                            <label for="plain-password" class="col-4 col-form-label">Password</label>
+                            <div class="col-8">
                                 <input type="password" id="plain-password" class="form-control" autocomplete="new-password" required />
                                 <small id="emailHelp" class="form-text text-muted">Make sure the password has at least 8 characters.</small>
                             </div>
                         </div>
 
                         <!-- Verify Password -->
-                        <div class="row">
-                            <label for="verify-plain-password" class="col-sm-4 col-form-label">Verify Password</label>
-                            <div class="col-sm-8">
+                        <div class="row mb-2">
+                            <label for="verify-plain-password" class="col-4 col-form-label">Verify Password</label>
+                            <div class="col-8">
                                 <input type="password" id="verify-plain-password" class="form-control" autocomplete="new-password" required />
                             </div>
                         </div>
@@ -54,7 +52,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary btn" id="create-user-button">Create</button>
-                <button type="button" class="btn btn-danger btn" id="cancel-create-user-button" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger btn" id="cancel-create-user-button" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

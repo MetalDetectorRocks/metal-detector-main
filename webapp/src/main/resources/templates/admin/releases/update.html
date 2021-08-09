@@ -8,18 +8,16 @@
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">Update Release</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="update-release-form-close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <div id="releases-validation-area" class="small" role="alert">
+            <div id="update-release-validation-area" class="small" role="alert">
             </div>
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                    <a class="nav-item nav-link active" id="nav-master-data-tab" data-toggle="tab" href="#nav-master-data" role="tab" aria-controls="nav-home" aria-selected="true">Master data</a>
-                    <a class="nav-item nav-link" id="nav-cover-tab" data-toggle="tab" href="#nav-cover" role="tab" aria-controls="nav-home">Cover</a>
-                    <a class="nav-item nav-link" id="nav-details-tab" data-toggle="tab" href="#nav-details" role="tab" aria-controls="nav-home">Details</a>
+                    <a class="nav-item nav-link active" id="nav-master-data-tab" data-bs-toggle="tab" href="#nav-master-data" role="tab" aria-controls="nav-home" aria-selected="true">Master data</a>
+                    <a class="nav-item nav-link" id="nav-cover-tab" data-bs-toggle="tab" href="#nav-cover" role="tab" aria-controls="nav-home">Cover</a>
+                    <a class="nav-item nav-link" id="nav-details-tab" data-bs-toggle="tab" href="#nav-details" role="tab" aria-controls="nav-home">Details</a>
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
@@ -29,57 +27,57 @@
                         <fieldset>
                              <!-- Id -->
                             <div class="row" hidden>
-                                <label for="release-id" class="col-sm-4 col-form-label">Id</label>
-                                <div class="col-sm-8">
+                                <label for="release-id" class="col-4 col-form-label">Id</label>
+                                <div class="col-8">
                                     <input type="text" id="release-id" readonly class="form-control-plaintext"/>
                                 </div>
                             </div>
 
                             <!-- Artist -->
-                            <div class="row">
-                                <label for="artist" class="col-sm-4 col-form-label">Artist</label>
-                                <div class="col-sm-8">
+                            <div class="row mb-2">
+                                <label for="artist" class="col-4 col-form-label">Artist</label>
+                                <div class="col-8">
                                     <p id="artist" class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
                             <!-- Additional Artist -->
-                            <div class="row" id="additional-artist-row">
-                                <label for="additional-artist" class="col-sm-4 col-form-label">Additional Artist</label>
-                                <div class="col-sm-8">
+                            <div class="row mb-2" id="additional-artist-row">
+                                <label for="additional-artist" class="col-4 col-form-label">Additional Artist</label>
+                                <div class="col-8">
                                     <p id="additional-artist" class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
                             <!-- Album Title -->
-                            <div class="row">
-                                <label for="album-title" class="col-sm-4 col-form-label">Album Title</label>
-                                <div class="col-sm-8">
+                            <div class="row mb-2">
+                                <label for="album-title" class="col-4 col-form-label">Album Title</label>
+                                <div class="col-8">
                                     <p id="album-title" class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
                             <!-- Release Date -->
-                            <div class="row">
-                                <label for="release-date" class="col-sm-4 col-form-label">Release Date</label>
-                                <div class="col-sm-8">
-                                    <p id="release-date" readonly class="form-control-plaintext"></p>
+                            <div class="row mb-2">
+                                <label for="release-date" class="col-4 col-form-label">Release Date</label>
+                                <div class="col-8">
+                                    <p id="release-date" class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
                             <!-- Estimated Release Date -->
-                            <div class="row">
-                                <label for="estimated-release-date" class="col-sm-4 col-form-label">Estimated Release Date</label>
-                                <div class="col-sm-8">
-                                    <p id="estimated-release-date" readonly class="form-control-plaintext"></p>
+                            <div class="row mb-2">
+                                <label for="estimated-release-date" class="col-4 col-form-label">Estimated Release Date</label>
+                                <div class="col-8">
+                                    <p id="estimated-release-date" class="form-control-plaintext"></p>
                                 </div>
                             </div>
 
                             <!-- Status -->
-                            <div class="row">
-                                <label for="release-state" class="col-sm-4 col-form-label">State</label>
-                                <div class="col-sm-6">
-                                    <select class="form-control" id="release-state">
+                            <div class="row mb-2">
+                                <label for="release-state" class="col-4 col-form-label">State</label>
+                                <div class="col-6">
+                                    <select class="form-select" id="release-state">
                                         <option>Ok</option>
                                         <option>Demo</option>
                                         <option>Faulty</option>
@@ -90,8 +88,8 @@
 
                             <!-- Current Row -->
                             <div class="row" hidden>
-                                <label for="current-row-index" class="col-sm-4 col-form-label">Id</label>
-                                <div class="col-sm-8">
+                                <label for="current-row-index" class="col-4 col-form-label">Id</label>
+                                <div class="col-8">
                                     <input type="text" id="current-row-index" readonly class="form-control-plaintext"/>
                                 </div>
                             </div>
@@ -102,47 +100,47 @@
                 <!-- Cover -->
                 <div class="tab-pane fade mt-3 ms-2" id="nav-cover" role="tabpanel" aria-labelledby="nav-profile-tab">
                     <!-- Cover -->
-                    <img id="cover" src="#" alt="Release Cover" width="500" class="img-thumbnail rounded mx-auto d-block">
+                    <img id="cover" src="#" alt="Release Cover" class="img-thumbnail rounded mx-auto d-block">
                 </div>
 
                 <!-- Details -->
                 <div class="tab-pane fade mt-3 ms-2" id="nav-details" role="tabpanel" aria-labelledby="nav-details-tab">
                     <!-- Genre -->
-                    <div class="row">
-                        <label for="genre" class="col-sm-4 col-form-label">Genre</label>
-                        <div class="col-sm-8">
+                    <div class="row mb-2">
+                        <label for="genre" class="col-4 col-form-label">Genre</label>
+                        <div class="col-8">
                             <p id="genre" class="form-control-plaintext"></p>
                         </div>
                     </div>
 
                     <!-- Type -->
-                    <div class="row">
-                        <label for="type" class="col-sm-4 col-form-label">Type</label>
-                        <div class="col-sm-8">
-                            <p id="type" readonly class="form-control-plaintext"></p>
+                    <div class="row mb-2">
+                        <label for="type" class="col-4 col-form-label">Type</label>
+                        <div class="col-8">
+                            <p id="type" class="form-control-plaintext"></p>
                         </div>
                     </div>
 
                     <!-- Artist Details -->
-                    <div class="row">
-                        <label for="artist-details" class="col-sm-4 col-form-label">Artist Details</label>
-                        <div class="col-sm-8">
-                            <p readonly class="form-control-plaintext"><a id="artist-details" target="_blank"></a></p>
+                    <div class="row mb-2">
+                        <label for="artist-details" class="col-4 col-form-label">Artist Details</label>
+                        <div class="col-8">
+                            <p class="form-control-plaintext"><a id="artist-details" target="_blank"></a></p>
                         </div>
                     </div>
 
                     <!-- Release Details -->
-                    <div class="row">
-                        <label for="release-details" class="col-sm-4 col-form-label">Release Details</label>
-                        <div class="col-sm-8">
-                            <p readonly class="form-control-plaintext"><a id="release-details" target="_blank"></a></p>
+                    <div class="row mb-2">
+                        <label for="release-details" class="col-4 col-form-label">Release Details</label>
+                        <div class="col-8">
+                            <p class="form-control-plaintext"><a id="release-details" target="_blank"></a></p>
                         </div>
                     </div>
 
                     <!-- Source -->
-                    <div class="row">
-                        <label for="source" class="col-sm-4 col-form-label">Source</label>
-                        <div class="col-sm-8">
+                    <div class="row mb-2">
+                        <label for="source" class="col-4 col-form-label">Source</label>
+                        <div class="col-8">
                             <p id="source" class="form-control-plaintext"></p>
                         </div>
                     </div>
@@ -150,8 +148,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary btn" id="update-release-button" data-dismiss="modal">Update</button>
-            <button type="button" class="btn btn-danger btn" id="cancel-update-release-button" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary btn" id="update-release-button">Update</button>
+            <button type="button" class="btn btn-danger btn" id="cancel-update-release-button" data-bs-dismiss="modal">Cancel</button>
         </div>
     </div>
 </div>
