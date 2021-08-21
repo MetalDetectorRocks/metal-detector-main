@@ -27,7 +27,7 @@ buildscript {
     set("postgresqlVersion", "42.2.23")
     set("restAssuredVersion", "4.4.0")
     set("servletApiVersion", "4.0.1")
-    set("springBootVersion", "2.5.3")
+    set("springBootVersion", "2.5.4")
     set("springJdbcVersion", "5.3.9")
     set("springSecurityVersion", "5.5.1")
     set("thymeleafDialectVersion", "2.5.3")
@@ -62,7 +62,7 @@ val dependencyGroupVersions = mapOf(
 plugins {
   id("java-library")
   id("org.siouan.frontend-jdk11") version "5.3.0"
-  id("org.springframework.boot") version "2.5.3"
+  id("org.springframework.boot") version "2.5.4"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
 }
 
