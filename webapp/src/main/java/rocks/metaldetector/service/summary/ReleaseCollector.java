@@ -12,7 +12,9 @@ import rocks.metaldetector.support.TimeRange;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
@@ -25,31 +27,36 @@ import static rocks.metaldetector.support.DetectorSort.Direction.DESC;
 public class ReleaseCollector {
 
   private final ReleaseService releaseService;
+  private final ArtistCollector artistCollector;
 
   public List<ReleaseDto> collectUpcomingReleases(List<ArtistDto> artists) {
     LocalDate tomorrow = LocalDate.now().plusDays(1);
     TimeRange timeRange = new TimeRange(tomorrow, tomorrow.plusMonths(TIME_RANGE_MONTHS));
     DetectorSort sort = new DetectorSort("releaseDate", ASC);
-    return collectPaginatedReleases(artists, timeRange, sort);
+    return collectReleases(artists, timeRange, sort);
   }
 
   public List<ReleaseDto> collectRecentReleases(List<ArtistDto> artists) {
     LocalDate now = LocalDate.now();
     TimeRange timeRange = new TimeRange(now.minusMonths(TIME_RANGE_MONTHS), now);
     DetectorSort sort = new DetectorSort("releaseDate", DESC);
-    return collectPaginatedReleases(artists, timeRange, sort);
+    return collectReleases(artists, timeRange, sort);
   }
 
-  public List<ReleaseDto> collectReleases(List<ArtistDto> artists, TimeRange timeRange) {
-    if (artists.isEmpty()) {
-      return Collections.emptyList();
-    }
-
-    List<String> artistNames = artists.stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
-    return releaseService.findAllReleases(artistNames, timeRange);
+  public List<ReleaseDto> collectTopReleases(TimeRange timeRange, int minFollower, int maxReleases) {
+    List<ArtistDto> artists = artistCollector.collectTopFollowedArtists(minFollower);
+    Map<String, Integer> followersPerArtist = artists.stream()
+        .collect(Collectors.groupingBy(artistDto -> artistDto.getArtistName().toLowerCase(),
+                                       Collectors.summingInt(ArtistDto::getFollower)));
+    return collectReleases(artists, timeRange, new DetectorSort("artist", ASC)).stream()
+        .sorted(Comparator.comparingInt(
+                (ReleaseDto release) -> followersPerArtist.get(release.getArtist().toLowerCase()))
+                    .reversed())
+        .limit(maxReleases)
+        .collect(Collectors.toList());
   }
 
-  private List<ReleaseDto> collectPaginatedReleases(List<ArtistDto> artists, TimeRange timeRange, DetectorSort sort) {
+  private List<ReleaseDto> collectReleases(List<ArtistDto> artists, TimeRange timeRange, DetectorSort sort) {
     if (artists.isEmpty()) {
       return Collections.emptyList();
     }
