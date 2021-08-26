@@ -15,5 +15,6 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 11
+          cache: 'gradle'
       - name: Execute all tests
         run: ./gradlew clean test --no-daemon --info --stacktrace
