@@ -49,6 +49,7 @@ public class NotificationConfigServiceImpl implements NotificationConfigService 
     notificationConfig.setNotificationAtAnnouncementDate(notificationConfigDto.isNotificationAtAnnouncementDate());
     notificationConfig.setNotificationAtReleaseDate(notificationConfigDto.isNotificationAtReleaseDate());
     notificationConfig.setNotify(notificationConfigDto.isNotify());
+    notificationConfig.setNotifyReissues(notificationConfigDto.isNotifyReissues());
 
     notificationConfigRepository.save(notificationConfig);
   }

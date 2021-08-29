@@ -54,6 +54,11 @@ public class NotificationConfigEntity extends BaseEntity {
   @Builder.Default
   private Boolean notificationAtAnnouncementDate = false;
 
+  @Column(name = "notify_reissues", nullable = false, columnDefinition = "boolean default false")
+  @Setter
+  @Builder.Default
+  private Boolean notifyReissues = false;
+
   @Column(name = "last_notification_date")
   @Setter
   private LocalDate lastNotificationDate;

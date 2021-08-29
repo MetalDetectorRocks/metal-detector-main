@@ -7,6 +7,7 @@ export interface DefaultNotificationConfig {
     readonly frequencyInWeeks: number;
     readonly notificationAtReleaseDate: boolean;
     readonly notificationAtAnnouncementDate: boolean;
+    readonly notifyReissues: boolean;
 }
 export interface TelegramNotificationConfig extends DefaultNotificationConfig {
     readonly notificationsActivated: boolean;
