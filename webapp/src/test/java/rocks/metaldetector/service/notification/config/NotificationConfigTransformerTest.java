@@ -21,6 +21,7 @@ class NotificationConfigTransformerTest implements WithAssertions {
         .notificationAtReleaseDate(true)
         .notify(true)
         .channel(EMAIL)
+        .notifyReissues(true)
         .build();
 
     // when
@@ -31,6 +32,7 @@ class NotificationConfigTransformerTest implements WithAssertions {
     assertThat(result.getFrequencyInWeeks()).isEqualTo(notificationConfigEntity.getFrequencyInWeeks());
     assertThat(result.isNotificationAtAnnouncementDate()).isEqualTo(notificationConfigEntity.getNotificationAtAnnouncementDate());
     assertThat(result.isNotificationAtReleaseDate()).isEqualTo(notificationConfigEntity.getNotificationAtReleaseDate());
+    assertThat(result.isNotifyReissues()).isEqualTo(notificationConfigEntity.getNotifyReissues());
     assertThat(result.getChannel()).isEqualTo(EMAIL.name());
   }
 }

@@ -47,7 +47,7 @@ public class NotificationScheduler {
   }
 
   private void frequencyNotification(NotificationConfigEntity notificationConfig, LocalDate now) {
-    NotificationReleaseCollector.ReleaseContainer releaseContainer = notificationReleaseCollector.fetchReleasesForUserAndFrequency(notificationConfig.getUser(), notificationConfig.getFrequencyInWeeks());
+    NotificationReleaseCollector.ReleaseContainer releaseContainer = notificationReleaseCollector.fetchReleasesForUserAndFrequency(notificationConfig.getUser(), notificationConfig.getFrequencyInWeeks(), notificationConfig.getNotifyReissues());
 
     if (!(releaseContainer.getUpcomingReleases().isEmpty() && releaseContainer.getRecentReleases().isEmpty())) {
       NotificationSender notificationSender = notificationSenderSupplier.apply(notificationConfig.getChannel());
@@ -59,7 +59,7 @@ public class NotificationScheduler {
   }
 
   private void releaseDateNotification(NotificationConfigEntity notificationConfig) {
-    List<ReleaseDto> todaysReleases = notificationReleaseCollector.fetchTodaysReleaseForUser(notificationConfig.getUser());
+    List<ReleaseDto> todaysReleases = notificationReleaseCollector.fetchTodaysReleaseForUser(notificationConfig.getUser(), notificationConfig.getNotifyReissues());
 
     if (!todaysReleases.isEmpty()) {
       NotificationSender notificationSender = notificationSenderSupplier.apply(notificationConfig.getChannel());
@@ -68,7 +68,7 @@ public class NotificationScheduler {
   }
 
   private void announcementDateNotification(NotificationConfigEntity notificationConfig) {
-    List<ReleaseDto> todaysAnnouncements = notificationReleaseCollector.fetchTodaysAnnouncementsForUser(notificationConfig.getUser());
+    List<ReleaseDto> todaysAnnouncements = notificationReleaseCollector.fetchTodaysAnnouncementsForUser(notificationConfig.getUser(), notificationConfig.getNotifyReissues());
 
     if (!todaysAnnouncements.isEmpty()) {
       NotificationSender notificationSender = notificationSenderSupplier.apply(notificationConfig.getChannel());

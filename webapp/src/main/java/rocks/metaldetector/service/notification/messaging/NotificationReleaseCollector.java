@@ -26,7 +26,7 @@ public class NotificationReleaseCollector {
   private final ReleaseService releaseService;
   private final FollowArtistService followArtistService;
 
-  public NotificationReleaseCollector.ReleaseContainer fetchReleasesForUserAndFrequency(AbstractUserEntity user, int frequency) {
+  public NotificationReleaseCollector.ReleaseContainer fetchReleasesForUserAndFrequency(AbstractUserEntity user, int frequency, boolean notifyReissues) {
     List<String> followedArtistNames = getFollowedArtistNames(user);
 
     List<ReleaseDto> upcomingReleases = new ArrayList<>();
@@ -34,33 +34,40 @@ public class NotificationReleaseCollector {
 
     if (!followedArtistNames.isEmpty()) {
       var now = LocalDate.now();
-      upcomingReleases = releaseService.findAllReleases(followedArtistNames, new TimeRange(now, now.plusWeeks(frequency)))
-          .stream().filter(release -> release.getState().equals(RELEASE_STATE_OK)).collect(Collectors.toList());
-      recentReleases = releaseService.findAllReleases(followedArtistNames, new TimeRange(now.minusWeeks(frequency), now.minusDays(1)))
-          .stream().filter(release -> release.getState().equals(RELEASE_STATE_OK)).collect(Collectors.toList());
+      upcomingReleases = releaseService.findAllReleases(followedArtistNames, new TimeRange(now, now.plusWeeks(frequency))).stream()
+          .filter(release -> release.getState().equals(RELEASE_STATE_OK))
+          .filter(release -> !release.isReissue() || notifyReissues)
+          .collect(Collectors.toList());
+      recentReleases = releaseService.findAllReleases(followedArtistNames, new TimeRange(now.minusWeeks(frequency), now.minusDays(1))).stream()
+          .filter(release -> release.getState().equals(RELEASE_STATE_OK))
+          .filter(release -> !release.isReissue() || notifyReissues)
+          .collect(Collectors.toList());
     }
     return new ReleaseContainer(upcomingReleases, recentReleases);
   }
 
-  public List<ReleaseDto> fetchTodaysReleaseForUser(AbstractUserEntity user) {
+  public List<ReleaseDto> fetchTodaysReleaseForUser(AbstractUserEntity user, boolean notifyReissues) {
     List<String> followedArtistNames = getFollowedArtistNames(user);
 
     if (!followedArtistNames.isEmpty()) {
       var now = LocalDate.now();
-      return releaseService.findAllReleases(followedArtistNames, new TimeRange(now, now))
-          .stream().filter(release -> release.getState().equals(RELEASE_STATE_OK)).collect(Collectors.toList());
+      return releaseService.findAllReleases(followedArtistNames, new TimeRange(now, now)).stream()
+          .filter(release -> release.getState().equals(RELEASE_STATE_OK))
+          .filter(release -> !release.isReissue() || notifyReissues)
+          .collect(Collectors.toList());
     }
     return Collections.emptyList();
   }
 
-  public List<ReleaseDto> fetchTodaysAnnouncementsForUser(AbstractUserEntity user) {
+  public List<ReleaseDto> fetchTodaysAnnouncementsForUser(AbstractUserEntity user, boolean notifyReissues) {
     List<String> followedArtistNames = getFollowedArtistNames(user);
 
     if (!followedArtistNames.isEmpty()) {
       var now = LocalDate.now();
       return releaseService.findAllReleases(followedArtistNames, new TimeRange(now, null)).stream()
-          .filter(release -> release.getAnnouncementDate().equals(now) &&
-                             release.getState().equals(RELEASE_STATE_OK))
+          .filter(release -> release.getAnnouncementDate().equals(now))
+          .filter(release -> release.getState().equals(RELEASE_STATE_OK))
+          .filter(release -> !release.isReissue() || notifyReissues)
           .collect(Collectors.toList());
     }
     return Collections.emptyList();

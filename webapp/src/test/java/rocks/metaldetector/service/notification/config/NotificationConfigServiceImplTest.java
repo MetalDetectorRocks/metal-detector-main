@@ -193,6 +193,7 @@ class NotificationConfigServiceImplTest implements WithAssertions {
           .frequencyInWeeks(4)
           .notify(true)
           .channel("EMAIL")
+          .notifyReissues(true)
           .build();
       doReturn(userEntity).when(currentUserSupplier).get();
       doReturn(Optional.of(notificationConfig)).when(notificationConfigRepository).findByUserAndChannel(any(), any());

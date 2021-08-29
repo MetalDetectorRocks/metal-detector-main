@@ -12,6 +12,7 @@ public class NotificationConfigTransformer {
         .notificationAtReleaseDate(notificationConfig.getNotificationAtReleaseDate())
         .notificationAtAnnouncementDate(notificationConfig.getNotificationAtAnnouncementDate())
         .frequencyInWeeks(notificationConfig.getFrequencyInWeeks())
+        .notifyReissues(notificationConfig.getNotifyReissues())
         .channel(notificationConfig.getChannel().name())
         .build();
   }

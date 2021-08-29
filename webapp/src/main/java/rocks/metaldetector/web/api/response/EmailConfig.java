@@ -15,4 +15,5 @@ public class EmailConfig {
   private int frequencyInWeeks;
   private boolean notificationAtReleaseDate;
   private boolean notificationAtAnnouncementDate;
+  private boolean notifyReissues;
 }
