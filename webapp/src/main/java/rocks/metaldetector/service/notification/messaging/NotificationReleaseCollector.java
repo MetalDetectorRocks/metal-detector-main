@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class NotificationReleaseCollector {
 
+  private static final String RELEASE_STATE_OK = "OK";
+
   private final ReleaseService releaseService;
   private final FollowArtistService followArtistService;
 
@@ -32,8 +34,10 @@ public class NotificationReleaseCollector {
 
     if (!followedArtistNames.isEmpty()) {
       var now = LocalDate.now();
-      upcomingReleases = releaseService.findAllReleases(followedArtistNames, new TimeRange(now, now.plusWeeks(frequency)));
-      recentReleases = releaseService.findAllReleases(followedArtistNames, new TimeRange(now.minusWeeks(frequency), now.minusDays(1)));
+      upcomingReleases = releaseService.findAllReleases(followedArtistNames, new TimeRange(now, now.plusWeeks(frequency)))
+          .stream().filter(release -> release.getState().equals(RELEASE_STATE_OK)).collect(Collectors.toList());
+      recentReleases = releaseService.findAllReleases(followedArtistNames, new TimeRange(now.minusWeeks(frequency), now.minusDays(1)))
+          .stream().filter(release -> release.getState().equals(RELEASE_STATE_OK)).collect(Collectors.toList());
     }
     return new ReleaseContainer(upcomingReleases, recentReleases);
   }
@@ -43,7 +47,8 @@ public class NotificationReleaseCollector {
 
     if (!followedArtistNames.isEmpty()) {
       var now = LocalDate.now();
-      return releaseService.findAllReleases(followedArtistNames, new TimeRange(now, now));
+      return releaseService.findAllReleases(followedArtistNames, new TimeRange(now, now))
+          .stream().filter(release -> release.getState().equals(RELEASE_STATE_OK)).collect(Collectors.toList());
     }
     return Collections.emptyList();
   }
@@ -54,7 +59,8 @@ public class NotificationReleaseCollector {
     if (!followedArtistNames.isEmpty()) {
       var now = LocalDate.now();
       return releaseService.findAllReleases(followedArtistNames, new TimeRange(now, null)).stream()
-          .filter(release -> release.getAnnouncementDate().equals(now))
+          .filter(release -> release.getAnnouncementDate().equals(now) &&
+                             release.getState().equals(RELEASE_STATE_OK))
           .collect(Collectors.toList());
     }
     return Collections.emptyList();

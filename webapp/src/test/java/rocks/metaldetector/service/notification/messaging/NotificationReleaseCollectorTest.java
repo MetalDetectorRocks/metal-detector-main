@@ -123,6 +123,25 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       // then
       assertThat(result).isEqualTo(expectedReleaseContainer);
     }
+
+    @Test
+    @DisplayName("only releases with state 'OK' are returned")
+    void test_release_state_ok() {
+      // given
+      var defaultRelease = ReleaseDtoFactory.createDefault();
+      var duplicateRelease = ReleaseDtoFactory.createDefault();
+      duplicateRelease.setState("DUPLICATE");
+      var releases = List.of(defaultRelease, duplicateRelease);
+      doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
+      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
+
+      // when
+      var result = underTest.fetchReleasesForUserAndFrequency(USER, 666);
+
+      // then
+      assertThat(result.getRecentReleases()).containsExactly(defaultRelease);
+      assertThat(result.getUpcomingReleases()).containsExactly(defaultRelease);
+    }
   }
 
   @Nested
@@ -186,6 +205,24 @@ class NotificationReleaseCollectorTest implements WithAssertions {
 
       // then
       assertThat(result).isEqualTo(releases);
+    }
+
+    @Test
+    @DisplayName("only releases with state 'OK' are returned")
+    void test_release_state_ok() {
+      // given
+      var defaultRelease = ReleaseDtoFactory.createDefault();
+      var duplicateRelease = ReleaseDtoFactory.createDefault();
+      duplicateRelease.setState("DUPLICATE");
+      var releases = List.of(defaultRelease, duplicateRelease);
+      doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
+      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
+
+      // when
+      var result = underTest.fetchTodaysReleaseForUser(USER);
+
+      // then
+      assertThat(result).containsExactly(defaultRelease);
     }
   }
 
@@ -255,7 +292,30 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       }
 
       // then
-      assertThat(result).isEqualTo(List.of(todaysAnnouncement));
+      assertThat(result).containsExactly(todaysAnnouncement);
+    }
+
+    @Test
+    @DisplayName("today's announcements with state 'OK' are returned")
+    void test_release_state_ok() {
+      // given
+      var now = LocalDate.now();
+      var todaysAnnouncement = ReleaseDtoFactory.withAnnouncementDate(now);
+      var duplicateAnnouncement = ReleaseDtoFactory.withAnnouncementDate(now);
+      duplicateAnnouncement.setState("DUPLICATE");
+      var releases = List.of(todaysAnnouncement, ReleaseDtoFactory.withAnnouncementDate(now.minusDays(1)), duplicateAnnouncement);
+      doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
+      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
+
+      // when
+      List<ReleaseDto> result;
+      try (MockedStatic<LocalDate> mock = mockStatic(LocalDate.class)) {
+        mock.when(LocalDate::now).thenReturn(now);
+        result = underTest.fetchTodaysAnnouncementsForUser(USER);
+      }
+
+      // then
+      assertThat(result).containsExactly(todaysAnnouncement);
     }
   }
 }
