@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestOperations;
@@ -15,8 +13,6 @@ import rocks.metaldetector.spotify.api.search.SpotifyArtistsContainer;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
-import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +44,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
       return SpotifyArtistSearchResultContainer.builder().build();
     }
 
-    HttpEntity<Object> httpEntity = createQueryHttpEntity();
+    HttpEntity<Object> httpEntity = new HttpEntity<>(null);
     int offset = pageSize * (pageNumber - 1);
 
     ResponseEntity<SpotifyArtistSearchResultContainer> responseEntity = spotifyOAuthClientCredentialsRestTemplate.exchange(
@@ -76,7 +72,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
       throw new IllegalArgumentException("externalId must not be empty");
     }
 
-    HttpEntity<Object> httpEntity = createQueryHttpEntity();
+    HttpEntity<Object> httpEntity = new HttpEntity<>(null);
     ResponseEntity<SpotifyArtist> responseEntity = spotifyOAuthClientCredentialsRestTemplate.exchange(
         spotifyProperties.getRestBaseUrl() + GET_ARTIST_ENDPOINT,
         GET,
@@ -100,7 +96,7 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
       throw new IllegalArgumentException("artistIds must not be empty");
     }
 
-    HttpEntity<Object> httpEntity = createQueryHttpEntity();
+    HttpEntity<Object> httpEntity = new HttpEntity<>(null);
     String artistIdsString = String.join(",", artistIds);
     ResponseEntity<SpotifyArtistsContainer> responseEntity = spotifyOAuthClientCredentialsRestTemplate.exchange(
         spotifyProperties.getRestBaseUrl() + GET_ARTISTS_ENDPOINT,
@@ -117,12 +113,5 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
     }
 
     return spotifyArtistsContainer;
-  }
-
-  private HttpEntity<Object> createQueryHttpEntity() {
-    HttpHeaders headers = new HttpHeaders();
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
-    return new HttpEntity<>(headers);
   }
 }

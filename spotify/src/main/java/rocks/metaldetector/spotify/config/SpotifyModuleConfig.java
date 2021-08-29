@@ -10,6 +10,8 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
+import rocks.metaldetector.support.DefaultRequestLoggingInterceptor;
+import rocks.metaldetector.support.GetHeaderInterceptor;
 import rocks.metaldetector.support.infrastructure.CustomClientErrorHandler;
 import rocks.metaldetector.support.oauth.OAuth2AccessTokenAuthorizationCodeClient;
 import rocks.metaldetector.support.oauth.OAuth2AccessTokenClientCredentialsClient;
@@ -54,7 +56,7 @@ public class SpotifyModuleConfig {
     return restTemplateBuilder
         .requestFactory(() -> clientHttpRequestFactory)
         .errorHandler(new CustomClientErrorHandler())
-        .interceptors(new SpotifyRequestInterceptor())
+        .interceptors(new DefaultRequestLoggingInterceptor(), new GetHeaderInterceptor())
         .messageConverters(List.of(jackson2HttpMessageConverter, stringHttpMessageConverter, formHttpMessageConverter))
         .build();
   }

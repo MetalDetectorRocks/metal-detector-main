@@ -17,9 +17,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestOperations;
 import rocks.metaldetector.spotify.api.SpotifyArtist;
@@ -28,7 +26,6 @@ import rocks.metaldetector.spotify.api.search.SpotifyArtistsContainer;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -125,24 +122,6 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
 
       // then
       verify(restTemplate).exchange(any(), eq(GET), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
-    }
-
-    @Test
-    @DisplayName("correct standard headers are set")
-    void test_correct_standard_headers() {
-      // given
-      SpotifyArtistSearchResultContainer responseMock = SpotifyArtistSearchResultContainerFactory.createDefault();
-      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
-
-      // when
-      underTest.searchByName("query", 1, 10);
-
-      // then
-      verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
-      HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
-      HttpHeaders headers = httpEntity.getHeaders();
-      assertThat(headers.getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
-      assertThat(headers.getAcceptCharset()).isEqualTo(Collections.singletonList(Charset.defaultCharset()));
     }
 
     @Test
@@ -304,24 +283,6 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("correct standard headers are set")
-    void test_correct_standard_headers() {
-      // given
-      var responseMock = SpotfiyArtistFactory.withArtistName("Slayer");
-      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), spotifyArtistClass(), anyMap());
-
-      // when
-      underTest.searchById("666");
-
-      // then
-      verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), spotifyArtistClass(), anyMap());
-      HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
-      HttpHeaders headers = httpEntity.getHeaders();
-      assertThat(headers.getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
-      assertThat(headers.getAcceptCharset()).isEqualTo(Collections.singletonList(Charset.defaultCharset()));
-    }
-
-    @Test
     @DisplayName("correct response type is requested")
     void test_correct_response_type() {
       // given
@@ -459,26 +420,6 @@ class SpotifyArtistSearchClientImplTest implements WithAssertions {
 
       // then
       verify(restTemplate).exchange(any(), eq(GET), any(), spotifyArtistContainerClass(), anyMap());
-    }
-
-    @Test
-    @DisplayName("correct standard headers are set")
-    void test_correct_standard_headers() {
-      // given
-      var responseMock = SpotifyArtistsContainer.builder()
-          .artists(List.of(SpotfiyArtistFactory.withArtistName("Slayer")))
-          .build();
-      doReturn(ResponseEntity.ok(responseMock)).when(restTemplate).exchange(any(), any(), any(), spotifyArtistContainerClass(), anyMap());
-
-      // when
-      underTest.searchByIds(List.of("666"));
-
-      // then
-      verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), spotifyArtistContainerClass(), anyMap());
-      HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
-      HttpHeaders headers = httpEntity.getHeaders();
-      assertThat(headers.getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
-      assertThat(headers.getAcceptCharset()).isEqualTo(Collections.singletonList(Charset.defaultCharset()));
     }
 
     @Test

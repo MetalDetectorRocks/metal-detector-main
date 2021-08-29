@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -17,8 +15,6 @@ import rocks.metaldetector.butler.api.ButlerUpdateReleaseStateRequest;
 import rocks.metaldetector.butler.config.ButlerConfig;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
-import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +33,7 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
 
   @Override
   public ButlerReleasesResponse queryAllReleases(ButlerReleasesRequest request) {
-    HttpEntity<ButlerReleasesRequest> requestEntity = createQueryHttpEntity(request);
+    HttpEntity<ButlerReleasesRequest> requestEntity = new HttpEntity<>(request);
 
     ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(
         butlerConfig.getUnpaginatedReleasesUrl(),
@@ -50,7 +46,7 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
 
   @Override
   public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request, String sort) {
-    HttpEntity<ButlerReleasesRequest> requestEntity = createQueryHttpEntity(request);
+    HttpEntity<ButlerReleasesRequest> requestEntity = new HttpEntity<>(request);
     ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(
         createReleaseUrlWithParameter(sort),
         requestEntity,
@@ -120,13 +116,5 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
     if (shouldNotHappen) {
       throw new ExternalServiceException("Could not update release state (Response code: " + responseEntity.getStatusCode() + ")");
     }
-  }
-
-  private HttpEntity<ButlerReleasesRequest> createQueryHttpEntity(ButlerReleasesRequest request) {
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
-    return new HttpEntity<>(request, headers);
   }
 }
