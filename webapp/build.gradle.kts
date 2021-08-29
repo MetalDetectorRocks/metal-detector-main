@@ -48,6 +48,7 @@ dependencies {
   testImplementation("io.rest-assured:json-path:${rootProject.extra["restAssuredVersion"]}")
   testImplementation("io.rest-assured:xml-path:${rootProject.extra["restAssuredVersion"]}")
   testImplementation("io.rest-assured:spring-mock-mvc:${rootProject.extra["restAssuredVersion"]}")
+  testImplementation("org.simplify4u:slf4j-mock:${rootProject.extra["slf4jMockVersion"]}")
 }
 
 description = "webapp"
