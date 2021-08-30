@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 @Data
@@ -14,6 +15,7 @@ import javax.validation.constraints.Min;
 public class TopReleasesRequest extends ReleasesRequest {
 
   @Min(1L)
+  @Max(50L)
   private int maxReleases;
 
   @Min(1L)

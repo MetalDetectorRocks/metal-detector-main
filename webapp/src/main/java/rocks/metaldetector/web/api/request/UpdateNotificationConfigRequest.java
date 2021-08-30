@@ -17,6 +17,7 @@ public class UpdateNotificationConfigRequest {
   private boolean notify;
   private boolean notificationAtReleaseDate;
   private boolean notificationAtAnnouncementDate;
+  private boolean notifyReissues;
 
   @Min(0)
   private int frequencyInWeeks;

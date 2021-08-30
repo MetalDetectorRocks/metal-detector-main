@@ -30,6 +30,7 @@ public class NotificationConfigResponseTransformer {
         .notificationAtAnnouncementDate(request.isNotificationAtAnnouncementDate())
         .notificationAtReleaseDate(request.isNotificationAtReleaseDate())
         .notify(request.isNotify())
+        .notifyReissues(request.isNotifyReissues())
         .build();
   }
 
@@ -44,6 +45,7 @@ public class NotificationConfigResponseTransformer {
       emailConfig.setFrequencyInWeeks(notificationConfig.getFrequencyInWeeks());
       emailConfig.setNotificationAtReleaseDate(notificationConfig.isNotificationAtReleaseDate());
       emailConfig.setNotificationAtAnnouncementDate(notificationConfig.isNotificationAtAnnouncementDate());
+      emailConfig.setNotifyReissues(notificationConfig.isNotifyReissues());
     }
     return emailConfig;
   }
@@ -59,6 +61,7 @@ public class NotificationConfigResponseTransformer {
       telegramConfig.setFrequencyInWeeks(notificationConfig.getFrequencyInWeeks());
       telegramConfig.setNotificationAtReleaseDate(notificationConfig.isNotificationAtReleaseDate());
       telegramConfig.setNotificationAtAnnouncementDate(notificationConfig.isNotificationAtAnnouncementDate());
+      telegramConfig.setNotifyReissues(notificationConfig.isNotifyReissues());
       telegramConfig.setRegistrationId(telegramConfigDto.getRegistrationId());
       telegramConfig.setNotificationsActivated(telegramConfigDto.getChatId() != null);
     }

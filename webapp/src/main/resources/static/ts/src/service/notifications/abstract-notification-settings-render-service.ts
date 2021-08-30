@@ -19,6 +19,7 @@ export abstract class AbstractNotificationSettingsRenderService<
     private fourWeeklyFrequencyRb!: HTMLInputElement;
     private releaseDateNotificationToggle!: HTMLInputElement;
     private announcementDateNotificationToggle!: HTMLInputElement;
+    private notifyReissuesToggle!: HTMLInputElement;
 
     protected constructor(
         notificationSettingsRestClient: NotificationSettingsRestClient,
@@ -49,6 +50,7 @@ export abstract class AbstractNotificationSettingsRenderService<
         this.fourWeeklyFrequencyRb = getHtmlInputElement("4-weekly-rb");
         this.releaseDateNotificationToggle = getHtmlInputElement("release-date-notification-toggle");
         this.announcementDateNotificationToggle = getHtmlInputElement("announcement-date-notification-toggle");
+        this.notifyReissuesToggle = getHtmlInputElement("reissue-notification-toggle");
     }
 
     protected addEventListener(): void {
@@ -57,6 +59,7 @@ export abstract class AbstractNotificationSettingsRenderService<
         this.fourWeeklyFrequencyRb.addEventListener("change", this.onAnyValueChange.bind(this));
         this.releaseDateNotificationToggle.addEventListener("change", this.onAnyValueChange.bind(this));
         this.announcementDateNotificationToggle.addEventListener("change", this.onAnyValueChange.bind(this));
+        this.notifyReissuesToggle.addEventListener("change", this.onAnyValueChange.bind(this));
     }
 
     protected onRendering(notificationSettings: NotificationSettings): void {
@@ -68,6 +71,7 @@ export abstract class AbstractNotificationSettingsRenderService<
         }
         this.releaseDateNotificationToggle.checked = config.notificationAtReleaseDate;
         this.announcementDateNotificationToggle.checked = config.notificationAtAnnouncementDate;
+        this.notifyReissuesToggle.checked = config.notifyReissues;
     }
 
     private onAnyValueChange(): void {
@@ -81,6 +85,7 @@ export abstract class AbstractNotificationSettingsRenderService<
                 frequencyInWeeks: this.evaluateFrequency(),
                 notificationAtReleaseDate: this.releaseDateNotificationToggle.checked,
                 notificationAtAnnouncementDate: this.announcementDateNotificationToggle.checked,
+                notifyReissues: this.notifyReissuesToggle.checked,
                 channel: this.getChannel(),
             })
             .catch(() => {

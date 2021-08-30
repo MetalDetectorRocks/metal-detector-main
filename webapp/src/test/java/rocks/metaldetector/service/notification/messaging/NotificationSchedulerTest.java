@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -83,13 +84,13 @@ class NotificationSchedulerTest implements WithAssertions {
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
       doReturn(new NotificationReleaseCollector.ReleaseContainer(Collections.emptyList(), Collections.emptyList()))
-          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt());
+          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt(), anyBoolean());
 
       // when
       underTest.notifyOnFrequency();
 
       // then
-      verify(notificationReleaseCollector).fetchReleasesForUserAndFrequency(notificationConfig.getUser(), notificationConfig.getFrequencyInWeeks());
+      verify(notificationReleaseCollector).fetchReleasesForUserAndFrequency(notificationConfig.getUser(), notificationConfig.getFrequencyInWeeks(), notificationConfig.getNotifyReissues());
     }
 
     @Test
@@ -99,7 +100,7 @@ class NotificationSchedulerTest implements WithAssertions {
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
       doReturn(new NotificationReleaseCollector.ReleaseContainer(List.of(ReleaseDtoFactory.createDefault()), Collections.emptyList()))
-          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt());
+          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt(), anyBoolean());
 
       // when
       underTest.notifyOnFrequency();
@@ -116,7 +117,7 @@ class NotificationSchedulerTest implements WithAssertions {
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
       doReturn(new NotificationReleaseCollector.ReleaseContainer(Collections.emptyList(), Collections.emptyList()))
-          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt());
+          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt(), anyBoolean());
 
       // when
       underTest.notifyOnFrequency();
@@ -136,7 +137,7 @@ class NotificationSchedulerTest implements WithAssertions {
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
       doReturn(new NotificationReleaseCollector.ReleaseContainer(upcomingReleases, recentReleases))
-          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt());
+          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt(), anyBoolean());
 
       // when
       underTest.notifyOnFrequency();
@@ -153,7 +154,7 @@ class NotificationSchedulerTest implements WithAssertions {
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
       doReturn(new NotificationReleaseCollector.ReleaseContainer(Collections.emptyList(), Collections.emptyList()))
-          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt());
+          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt(), anyBoolean());
 
       // when
       LocalDate now = LocalDate.of(2000, 1, 1);
@@ -177,13 +178,13 @@ class NotificationSchedulerTest implements WithAssertions {
       doReturn(List.of(notificationConfig, notificationConfig2)).when(notificationConfigRepository).findAllActive();
       doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
       doReturn(new NotificationReleaseCollector.ReleaseContainer(List.of(ReleaseDtoFactory.createDefault()), Collections.emptyList()))
-          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt());
+          .when(notificationReleaseCollector).fetchReleasesForUserAndFrequency(any(), anyInt(), anyBoolean());
 
       // when
       underTest.notifyOnFrequency();
 
       // then
-      verify(notificationReleaseCollector, times(2)).fetchReleasesForUserAndFrequency(any(), anyInt());
+      verify(notificationReleaseCollector, times(2)).fetchReleasesForUserAndFrequency(any(), anyInt(), anyBoolean());
       verify(notificationSenderSupplier, times(2)).apply(any());
       verify(notificationConfigRepository, times(2)).save(any());
       verify(notificationServiceMock, times(2)).sendFrequencyMessage(any(), any(), any());
@@ -231,13 +232,13 @@ class NotificationSchedulerTest implements WithAssertions {
       // given
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
-      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any());
+      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any(), anyBoolean());
 
       // when
       underTest.notifyOnReleaseDate();
 
       // then
-      verify(notificationReleaseCollector).fetchTodaysReleaseForUser(notificationConfig.getUser());
+      verify(notificationReleaseCollector).fetchTodaysReleaseForUser(notificationConfig.getUser(), notificationConfig.getNotifyReissues());
     }
 
     @Test
@@ -246,7 +247,7 @@ class NotificationSchedulerTest implements WithAssertions {
       // given
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
-      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any());
+      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any(), anyBoolean());
 
       // when
       underTest.notifyOnReleaseDate();
@@ -262,7 +263,7 @@ class NotificationSchedulerTest implements WithAssertions {
       var notificationServiceMock = mock(NotificationSender.class);
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
-      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any());
+      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any(), anyBoolean());
 
       // when
       underTest.notifyOnReleaseDate();
@@ -280,7 +281,7 @@ class NotificationSchedulerTest implements WithAssertions {
       var todaysReleases = List.of(ReleaseDtoFactory.createDefault());
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
-      doReturn(todaysReleases).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any());
+      doReturn(todaysReleases).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any(), anyBoolean());
 
       // when
       underTest.notifyOnReleaseDate();
@@ -297,13 +298,13 @@ class NotificationSchedulerTest implements WithAssertions {
       var notificationServiceMock = mock(NotificationSender.class);
       doReturn(List.of(notificationConfig, notificationConfig2)).when(notificationConfigRepository).findAllActive();
       doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
-      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any());
+      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(notificationReleaseCollector).fetchTodaysReleaseForUser(any(), anyBoolean());
 
       // when
       underTest.notifyOnReleaseDate();
 
       // then
-      verify(notificationReleaseCollector, times(2)).fetchTodaysReleaseForUser(any());
+      verify(notificationReleaseCollector, times(2)).fetchTodaysReleaseForUser(any(), anyBoolean());
       verify(notificationSenderSupplier, times(2)).apply(any());
       verify(notificationServiceMock, times(2)).sendReleaseDateMessage(any(), any());
     }
@@ -350,13 +351,13 @@ class NotificationSchedulerTest implements WithAssertions {
       // given
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
-      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any());
+      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any(), anyBoolean());
 
       // when
       underTest.notifyOnAnnouncementDate();
 
       // then
-      verify(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(notificationConfig.getUser());
+      verify(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(notificationConfig.getUser(), notificationConfig.getNotifyReissues());
     }
 
     @Test
@@ -365,7 +366,7 @@ class NotificationSchedulerTest implements WithAssertions {
       // given
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(mock(NotificationSender.class)).when(notificationSenderSupplier).apply(any());
-      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any());
+      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any(), anyBoolean());
 
       // when
       underTest.notifyOnAnnouncementDate();
@@ -381,7 +382,7 @@ class NotificationSchedulerTest implements WithAssertions {
       var notificationServiceMock = mock(NotificationSender.class);
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
-      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any());
+      doReturn(Collections.emptyList()).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any(), anyBoolean());
 
       // when
       underTest.notifyOnAnnouncementDate();
@@ -399,7 +400,7 @@ class NotificationSchedulerTest implements WithAssertions {
       var todaysAnnouncements = List.of(ReleaseDtoFactory.createDefault());
       doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
       doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
-      doReturn(todaysAnnouncements).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any());
+      doReturn(todaysAnnouncements).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any(), anyBoolean());
 
       // when
       underTest.notifyOnAnnouncementDate();
@@ -416,13 +417,13 @@ class NotificationSchedulerTest implements WithAssertions {
       var notificationServiceMock = mock(NotificationSender.class);
       doReturn(List.of(notificationConfig, notificationConfig2)).when(notificationConfigRepository).findAllActive();
       doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
-      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any());
+      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(notificationReleaseCollector).fetchTodaysAnnouncementsForUser(any(), anyBoolean());
 
       // when
       underTest.notifyOnAnnouncementDate();
 
       // then
-      verify(notificationReleaseCollector, times(2)).fetchTodaysAnnouncementsForUser(any());
+      verify(notificationReleaseCollector, times(2)).fetchTodaysAnnouncementsForUser(any(), anyBoolean());
       verify(notificationSenderSupplier, times(2)).apply(any());
       verify(notificationServiceMock, times(2)).sendAnnouncementDateMessage(any(), any());
     }
