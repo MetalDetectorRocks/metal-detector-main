@@ -9,9 +9,8 @@ import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.web.api.response.SummaryResponse;
 
-import java.util.Comparator;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SummaryServiceImpl implements SummaryService {
 
-  public static final int MIN_FOLLOWER = 2;
+  public static final int MIN_FOLLOWER = 1;
   public static final int RESULT_LIMIT = 4;
   public static final int TIME_RANGE_MONTHS = 6;
 
@@ -35,7 +34,9 @@ public class SummaryServiceImpl implements SummaryService {
 
     List<ReleaseDto> upcomingReleases = releaseCollector.collectUpcomingReleases(currentUsersFollowedArtists);
     List<ReleaseDto> recentReleases = releaseCollector.collectRecentReleases(currentUsersFollowedArtists);
-    List<ReleaseDto> mostExpectedReleases = releaseCollector.collectUpcomingReleases(mostFollowedArtists);
+
+    var now = LocalDate.now();
+    List<ReleaseDto> mostExpectedReleases = releaseCollector.collectTopReleases(new TimeRange(now, now.plusMonths(TIME_RANGE_MONTHS)), MIN_FOLLOWER, RESULT_LIMIT);
 
     return SummaryResponse.builder()
         .upcomingReleases(upcomingReleases)
@@ -48,15 +49,6 @@ public class SummaryServiceImpl implements SummaryService {
 
   @Override
   public List<ReleaseDto> findTopReleases(TimeRange timeRange, int minFollower, int maxReleases) {
-    List<ArtistDto> artists = artistCollector.collectTopFollowedArtists(minFollower);
-    Map<String, Integer> followersPerArtist = artists.stream()
-        .collect(Collectors.groupingBy(artistDto -> artistDto.getArtistName().toLowerCase(),
-                                       Collectors.summingInt(ArtistDto::getFollower)));
-    return releaseCollector.collectReleases(artists, timeRange).stream()
-        .sorted(Comparator.comparingInt(
-            (ReleaseDto release) -> followersPerArtist.get(release.getArtist().toLowerCase()))
-                    .reversed())
-        .limit(maxReleases)
-        .collect(Collectors.toList());
+    return releaseCollector.collectTopReleases(timeRange, minFollower, maxReleases);
   }
 }

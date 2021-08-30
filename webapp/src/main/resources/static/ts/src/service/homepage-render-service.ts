@@ -53,6 +53,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
         this.renderRecentlyFollowedArtistsRow(response);
         this.renderFavoriteCommunityArtistsRow(response);
+        this.renderMostExpectedReleasesRow(response);
     }
 
     private renderUpcomingReleasesRow(response: HomepageResponse) {
@@ -116,6 +117,13 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
                 this.attachCard(artistDivElement, recentlyFollowedRowElement);
             });
         }
+    }
+
+    private renderMostExpectedReleasesRow(response: HomepageResponse) {
+        this.insertHeadingElement("The community's most expected releases");
+        const mostExpectedReleasesRowElement = this.insertRowElement();
+        this.renderReleaseCards(response.mostExpectedReleases, mostExpectedReleasesRowElement);
+        this.insertPlaceholder(response.mostExpectedReleases.length, mostExpectedReleasesRowElement);
     }
 
     private renderArtistCard(artist: Artist): HTMLDivElement {

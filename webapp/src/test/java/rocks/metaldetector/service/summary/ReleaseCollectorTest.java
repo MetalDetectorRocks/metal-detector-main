@@ -1,6 +1,7 @@
 package rocks.metaldetector.service.summary;
 
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,8 +22,10 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
@@ -36,8 +39,16 @@ class ReleaseCollectorTest implements WithAssertions {
   @Mock
   private ReleaseService releaseService;
 
+  @Mock
+  private ArtistCollector artistCollector;
+
   @InjectMocks
   private ReleaseCollector underTest;
+
+  @AfterEach
+  void tearDown() {
+    reset(releaseService, artistCollector);
+  }
 
   @Test
   @DisplayName("collecting upcoming releases does not call releaseService when no artists are given")
@@ -197,52 +208,131 @@ class ReleaseCollectorTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("collectReleases: returns empty list if artists are empty")
-  void test_collect_releases_returns_empty_list() {
+  @DisplayName("collecting top releases calls artistCollector")
+  void test_top_releases_calls_artist_collector() {
+    // given
+    var minFollower = 66;
+
     // when
-    var result = underTest.collectReleases(Collections.emptyList(), new TimeRange());
+    underTest.collectTopReleases(new TimeRange(), minFollower, 10);
 
     // then
-    assertThat(result).isEmpty();
+    verify(artistCollector).collectTopFollowedArtists(minFollower);
   }
 
   @Test
-  @DisplayName("collectReleases: releaseService is not called if artists are empty")
-  void test_collect_releases_not_calling_release_service() {
+  @DisplayName("collecting top releases does not call releaseService when no artists are given")
+  void test_top_releases_does_not_call_release_service() {
     // when
-    underTest.collectReleases(Collections.emptyList(), new TimeRange());
+    underTest.collectTopReleases(new TimeRange(), 1, 10);
 
     // then
     verifyNoInteractions(releaseService);
   }
 
   @Test
-  @DisplayName("collectReleases: releaseService is called with artist names and time range")
-  void test_collect_releases_called_correctly() {
+  @DisplayName("collecting top releases calls releaseService with top followed artists' names")
+  void test_top_releases_calls_release_service_with_top_artist_names() {
     // given
-    var timeRange = new TimeRange(LocalDate.now(), LocalDate.now());
-    var artist = ArtistDtoFactory.withName("a");
-    var expectedArtistNames = List.of("a");
+    var expectedArtistNames = List.of("A");
+    var artists = List.of(ArtistDtoFactory.withName("A"));
+    doReturn(artists).when(artistCollector).collectTopFollowedArtists(anyInt());
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
-    underTest.collectReleases(List.of(artist), timeRange);
+    underTest.collectTopReleases(new TimeRange(), 1, 10);
 
     // then
-    verify(releaseService).findAllReleases(expectedArtistNames, timeRange);
+    verify(releaseService).findReleases(eq(expectedArtistNames), any(), any(), any());
   }
 
   @Test
-  @DisplayName("collectReleases: returns releaseDtos")
-  void test_collect_releases_returns_dtos() {
+  @DisplayName("collecting top releases calls releaseService with given time range")
+  void test_top_releases_calls_release_service_with_time_range() {
     // given
-    var releases = List.of(ReleaseDtoFactory.createDefault());
-    var artist = ArtistDtoFactory.createDefault();
-    doReturn(releases).when(releaseService).findAllReleases(any(), any());
+    var now = LocalDate.now();
+    var timeRange = new TimeRange(now, now.plusDays(666));
+    doReturn(List.of(ArtistDtoFactory.createDefault())).when(artistCollector).collectTopFollowedArtists(anyInt());
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
-    var result = underTest.collectReleases(List.of(artist), new TimeRange());
+    underTest.collectTopReleases(timeRange, 1, 10);
 
     // then
-    assertThat(result).containsAll(releases);
+    verify(releaseService).findReleases(any(), eq(timeRange), any(), any());
+  }
+
+  @Test
+  @DisplayName("collecting top releases calls releaseService without query")
+  void test_top_releases_calls_release_service_without_query() {
+    // given
+    doReturn(List.of(ArtistDtoFactory.createDefault())).when(artistCollector).collectTopFollowedArtists(anyInt());
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
+
+    // when
+    underTest.collectTopReleases(new TimeRange(), 1, 10);
+
+    // then
+    verify(releaseService).findReleases(any(), any(), eq(null), any());
+  }
+
+  @Test
+  @DisplayName("collecting top releases calls releaseService with correct page request and sorting")
+  void test_top_releases_calls_release_service_with_page_request() {
+    // given
+    var sorting = new DetectorSort("artist", ASC);
+    var expectedPageRequest = new PageRequest(1, RESULT_LIMIT, sorting);
+    doReturn(List.of(ArtistDtoFactory.createDefault())).when(artistCollector).collectTopFollowedArtists(anyInt());
+    doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
+
+    // when
+    underTest.collectTopReleases(new TimeRange(), 1, 10);
+
+    // then
+    verify(releaseService).findReleases(any(), any(), any(), eq(expectedPageRequest));
+  }
+
+  @Test
+  @DisplayName("collecting top releases sorts by followers")
+  void test_top_releases_sorted() {
+    // given
+    var artist1 = ArtistDtoFactory.withName("a");
+    var artist2 = ArtistDtoFactory.withName("b");
+    artist1.setFollower(2);
+    artist2.setFollower(1);
+    var release1 = ReleaseDtoFactory.withArtistName(artist1.getArtistName());
+    var release2 = ReleaseDtoFactory.withArtistName(artist2.getArtistName());
+    doReturn(List.of(artist1, artist2)).when(artistCollector).collectTopFollowedArtists(anyInt());
+    doReturn(new Page<>(List.of(release2, release1), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
+
+    // when
+    var result = underTest.collectTopReleases(new TimeRange(), 1, 10);
+
+    // then
+    assertThat(result).hasSize(2);
+    assertThat(result.get(0)).isEqualTo(release1);
+    assertThat(result.get(1)).isEqualTo(release2);
+  }
+
+  @Test
+  @DisplayName("collecting top releases limits to given value")
+  void test_top_releases_limited() {
+    // given
+    var maxReleases = 1;
+    var artist1 = ArtistDtoFactory.withName("a");
+    var artist2 = ArtistDtoFactory.withName("b");
+    artist1.setFollower(2);
+    artist2.setFollower(1);
+    var release1 = ReleaseDtoFactory.withArtistName(artist1.getArtistName());
+    var release2 = ReleaseDtoFactory.withArtistName(artist2.getArtistName());
+    doReturn(List.of(artist1, artist2)).when(artistCollector).collectTopFollowedArtists(anyInt());
+    doReturn(new Page<>(List.of(release2, release1), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
+
+    // when
+    var result = underTest.collectTopReleases(new TimeRange(), 1, maxReleases);
+
+    // then
+    assertThat(result).hasSize(maxReleases);
+    assertThat(result).containsExactly(release1);
   }
 }
