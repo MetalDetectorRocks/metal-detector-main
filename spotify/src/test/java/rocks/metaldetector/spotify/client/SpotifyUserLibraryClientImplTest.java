@@ -17,9 +17,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestOperations;
 import rocks.metaldetector.spotify.api.imports.SpotifyFollowedArtistsPage;
@@ -29,8 +27,6 @@ import rocks.metaldetector.spotify.api.search.SpotifyArtistSearchResultContainer
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
-import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -49,8 +45,6 @@ import static rocks.metaldetector.spotify.client.SpotifyUserLibraryClientImpl.OF
 
 @ExtendWith(MockitoExtension.class)
 class SpotifyUserLibraryClientImplTest implements WithAssertions {
-
-  private static final String AUTHORIZATION_HEADER_PREFIX = "Bearer ";
 
   @Mock
   private RestOperations restTemplate;
@@ -120,23 +114,6 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
 
       // then
       verify(restTemplate).exchange(any(), eq(GET), any(), ArgumentMatchers.<Class<SpotifySavedAlbumsPage>>any(), anyMap());
-    }
-
-    @Test
-    @DisplayName("correct standard headers are set")
-    void test_correct_standard_headers() {
-      // given
-      doReturn(ResponseEntity.ok(new SpotifySavedAlbumsPage())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
-
-      // when
-      underTest.fetchLikedAlbums(666);
-
-      // then
-      verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
-      HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
-      HttpHeaders headers = httpEntity.getHeaders();
-      assertThat(headers.getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
-      assertThat(headers.getAcceptCharset()).isEqualTo(Collections.singletonList(Charset.defaultCharset()));
     }
 
     @Test
@@ -272,23 +249,6 @@ class SpotifyUserLibraryClientImplTest implements WithAssertions {
 
       // then
       verify(restTemplate).exchange(any(), eq(GET), any(), ArgumentMatchers.<Class<SpotifySavedAlbumsPage>>any(), anyMap());
-    }
-
-    @Test
-    @DisplayName("correct standard headers are set")
-    void test_correct_standard_headers() {
-      // given
-      doReturn(ResponseEntity.ok(new SpotifyFollowedArtistsPageContainer())).when(restTemplate).exchange(any(), any(), any(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
-
-      // when
-      underTest.fetchFollowedArtists("666");
-
-      // then
-      verify(restTemplate).exchange(any(), any(), httpEntityCaptor.capture(), ArgumentMatchers.<Class<SpotifyArtistSearchResultContainer>>any(), anyMap());
-      HttpEntity<Object> httpEntity = httpEntityCaptor.getValue();
-      HttpHeaders headers = httpEntity.getHeaders();
-      assertThat(headers.getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
-      assertThat(headers.getAcceptCharset()).isEqualTo(Collections.singletonList(Charset.defaultCharset()));
     }
 
     @Test

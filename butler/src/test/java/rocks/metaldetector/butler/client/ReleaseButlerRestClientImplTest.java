@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory;
@@ -29,8 +28,6 @@ import rocks.metaldetector.butler.api.ButlerUpdateReleaseStateRequest;
 import rocks.metaldetector.butler.config.ButlerConfig;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
-import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -112,9 +109,6 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
 
       HttpEntity<ButlerReleasesRequest> httpEntity = argumentCaptorReleases.getValue();
       assertThat(httpEntity.getBody()).isEqualTo(request);
-      assertThat(httpEntity.getHeaders().getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
-      assertThat(httpEntity.getHeaders().getContentType()).isEqualByComparingTo(MediaType.APPLICATION_JSON);
-      assertThat(httpEntity.getHeaders().getAcceptCharset()).isEqualTo(Collections.singletonList(Charset.defaultCharset()));
     }
 
     @Test
@@ -227,9 +221,6 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
 
       HttpEntity<ButlerReleasesRequest> httpEntity = argumentCaptorReleases.getValue();
       assertThat(httpEntity.getBody()).isEqualTo(request);
-      assertThat(httpEntity.getHeaders().getAccept()).isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
-      assertThat(httpEntity.getHeaders().getContentType()).isEqualByComparingTo(MediaType.APPLICATION_JSON);
-      assertThat(httpEntity.getHeaders().getAcceptCharset()).isEqualTo(Collections.singletonList(Charset.defaultCharset()));
     }
 
     @Test

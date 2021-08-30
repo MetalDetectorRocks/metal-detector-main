@@ -27,6 +27,7 @@ buildscript {
     set("postgresqlVersion", "42.2.23")
     set("restAssuredVersion", "4.4.0")
     set("servletApiVersion", "4.0.1")
+    set("slf4jMockVersion", "2.1.1")
     set("springBootVersion", "2.5.4")
     set("springJdbcVersion", "5.3.9")
     set("springSecurityVersion", "5.5.1")

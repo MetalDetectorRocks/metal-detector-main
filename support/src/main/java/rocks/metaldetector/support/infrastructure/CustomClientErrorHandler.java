@@ -21,8 +21,8 @@ public class CustomClientErrorHandler implements ResponseErrorHandler {
   }
 
   @Override
-  public void handleError(URI url, HttpMethod method, ClientHttpResponse response) throws IOException {
-    var logMessage = "URL: " + url.toString() + " | " +
+  public void handleError(URI uri, HttpMethod method, ClientHttpResponse response) throws IOException {
+    var logMessage = "URL: " + uri.toString() + " | " +
             "Method: " + method.name() + " | " +
             "Status code: " + response.getStatusCode().value() + " | " +
             "Status text: " + response.getStatusText();

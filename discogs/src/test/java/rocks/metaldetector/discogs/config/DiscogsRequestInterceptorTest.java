@@ -12,13 +12,11 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 
 import java.io.IOException;
-import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static rocks.metaldetector.discogs.config.DiscogsRequestInterceptor.TOKEN_PREFIX;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,19 +36,6 @@ class DiscogsRequestInterceptorTest implements WithAssertions {
 
   @InjectMocks
   private DiscogsRequestInterceptor underTest;
-
-  @Test
-  @DisplayName("should set accept header always to 'application/json'")
-  void accept_header_is_set() throws IOException {
-    // given
-    doReturn(httpHeadersMock).when(httpRequestMock).getHeaders();
-
-    // when
-    underTest.intercept(httpRequestMock, new byte[]{}, clientHttpRequestExecutionMock);
-
-    // then
-    verify(httpHeadersMock).setAccept(List.of(APPLICATION_JSON));
-  }
 
   @Test
   @DisplayName("should set user agent with value from DiscogsConfig")

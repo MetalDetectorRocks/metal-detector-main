@@ -9,6 +9,8 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestOperations;
+import rocks.metaldetector.support.DefaultRequestLoggingInterceptor;
+import rocks.metaldetector.support.PostHeaderInterceptor;
 import rocks.metaldetector.support.infrastructure.CustomClientErrorHandler;
 
 import java.util.List;
@@ -27,7 +29,7 @@ public class TelegramModuleConfig {
     return restTemplateBuilder
         .requestFactory(() -> clientHttpRequestFactory)
         .errorHandler(new CustomClientErrorHandler())
-        .interceptors(new TelegramRequestInterceptor())
+        .interceptors(new DefaultRequestLoggingInterceptor(), new PostHeaderInterceptor())
         .messageConverters(List.of(jackson2HttpMessageConverter, stringHttpMessageConverter, formHttpMessageConverter))
         .build();
   }

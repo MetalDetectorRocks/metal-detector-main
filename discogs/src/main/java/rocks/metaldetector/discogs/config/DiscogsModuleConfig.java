@@ -8,6 +8,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+import rocks.metaldetector.support.DefaultRequestLoggingInterceptor;
+import rocks.metaldetector.support.GetHeaderInterceptor;
 import rocks.metaldetector.support.infrastructure.CustomClientErrorHandler;
 
 import java.util.List;
@@ -26,7 +28,7 @@ public class DiscogsModuleConfig {
     return new RestTemplateBuilder()
             .requestFactory(() -> clientHttpRequestFactory)
             .errorHandler(new CustomClientErrorHandler())
-            .interceptors(new DiscogsRequestInterceptor(discogsConfig))
+            .interceptors(new DiscogsRequestInterceptor(discogsConfig), new DefaultRequestLoggingInterceptor(), new GetHeaderInterceptor())
             .messageConverters(List.of(jackson2HttpMessageConverter, stringHttpMessageConverter))
             .build();
   }

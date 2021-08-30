@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestOperations;
@@ -15,8 +13,6 @@ import rocks.metaldetector.spotify.api.imports.SpotifySavedAlbumsPage;
 import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 
-import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.Map;
 
 import static org.springframework.http.HttpMethod.GET;
@@ -39,7 +35,7 @@ public class SpotifyUserLibraryClientImpl implements SpotifyUserLibraryClient {
 
   @Override
   public SpotifySavedAlbumsPage fetchLikedAlbums(int offset) {
-    HttpEntity<Object> httpEntity = createHttpEntity();
+    HttpEntity<Object> httpEntity = new HttpEntity<>(null);
     ResponseEntity<SpotifySavedAlbumsPage> responseEntity = spotifyOAuthAuthorizationCodeRestTemplate.exchange(
         spotifyProperties.getRestBaseUrl() + MY_ALBUMS_ENDPOINT,
         GET,
@@ -60,7 +56,7 @@ public class SpotifyUserLibraryClientImpl implements SpotifyUserLibraryClient {
   @Override
   public SpotifyFollowedArtistsPage fetchFollowedArtists(String nextPage) {
     var endpoint = nextPage == null ? spotifyProperties.getRestBaseUrl() + FOLLOWED_ARTISTS_FIRST_PAGE_ENDPOINT : nextPage;
-    HttpEntity<Object> httpEntity = createHttpEntity();
+    HttpEntity<Object> httpEntity = new HttpEntity<>(null);
     ResponseEntity<SpotifyFollowedArtistsPageContainer> responseEntity = spotifyOAuthAuthorizationCodeRestTemplate.exchange(
         endpoint,
         GET,
@@ -75,12 +71,5 @@ public class SpotifyUserLibraryClientImpl implements SpotifyUserLibraryClient {
       throw new ExternalServiceException("Could not get artists from Spotify (Response code: " + responseEntity.getStatusCode() + ")");
     }
     return result.getArtistsPage();
-  }
-
-  private HttpEntity<Object> createHttpEntity() {
-    HttpHeaders headers = new HttpHeaders();
-    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    headers.setAcceptCharset(Collections.singletonList(Charset.defaultCharset()));
-    return new HttpEntity<>(headers);
   }
 }

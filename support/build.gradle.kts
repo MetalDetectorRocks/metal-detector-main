@@ -4,6 +4,7 @@ dependencies {
   implementation("org.springframework:spring-jdbc:${rootProject.extra["springJdbcVersion"]}")
   api("org.springframework.security:spring-security-oauth2-client:${rootProject.extra["springSecurityVersion"]}")
   api("io.jsonwebtoken:jjwt:${rootProject.extra["jsonwebtokenVersion"]}")
+  testImplementation("org.simplify4u:slf4j-mock:${rootProject.extra["slf4jMockVersion"]}")
 }
 
 description = "support"
