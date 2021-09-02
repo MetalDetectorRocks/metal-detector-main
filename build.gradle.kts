@@ -9,29 +9,29 @@ buildscript {
     set("cacheApiVersion", "1.1.1")
     set("commonsCodecVersion", "1.15")
     set("datatablesVersion", "1.10.25")
-    set("ehcacheVersion", "3.9.4")
+    set("ehcacheVersion", "3.9.6")
     set("esapiVersion", "2.2.3.1")
-    set("flywayVersion", "7.11.2")
+    set("flywayVersion", "7.14.1")
     set("h2Version", "1.4.200")
     set("httpClientVersion", "4.5.13")
     set("jacksonVersion", "2.12.4")
     set("jacocoVersion", "0.8.7")
     set("jaxbApiVersion", "2.3.1")
     set("jsonwebtokenVersion", "0.9.1")
-    set("jsoupVersion", "1.14.1")
+    set("jsoupVersion", "1.14.2")
     set("junitVersion", "5.7.2")
     set("lombokVersion", "1.18.20")
-    set("micrometerVersion", "1.7.2")
-    set("mockitoVersion", "3.11.2")
+    set("micrometerVersion", "1.7.3")
+    set("mockitoVersion", "3.12.4")
     set("modelmapperVersion", "2.4.4")
     set("postgresqlVersion", "42.2.23")
     set("restAssuredVersion", "4.4.0")
     set("servletApiVersion", "4.0.1")
     set("slf4jMockVersion", "2.1.1")
     set("springBootVersion", "2.5.4")
-    set("springJdbcVersion", "5.3.9")
-    set("springSecurityVersion", "5.5.1")
-    set("thymeleafDialectVersion", "2.5.3")
+    set("springVersion", "5.3.9")
+    set("springSecurityVersion", "5.5.2")
+    set("thymeleafDialectVersion", "3.0.0")
     set("thymeleafExtrasVersion", "3.0.4.RELEASE")
   }
 }
@@ -51,7 +51,7 @@ val dependencyVersions = listOf(
   "commons-io:commons-io:2.11.0"
 )
 val dependencyGroupVersions = mapOf(
-  "org.springframework" to "5.3.9",
+  "org.springframework" to extra["springVersion"] as String,
   "org.springframework.security" to extra["springSecurityVersion"] as String,
   "org.springframework.boot" to extra["springBootVersion"] as String,
   "com.fasterxml.jackson.core" to extra["jacksonVersion"] as String,
@@ -132,7 +132,7 @@ subprojects {
     }
   }
 
-  configure<JavaPluginConvention> {
+  configure<JavaPluginExtension> {
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
   }
@@ -144,8 +144,8 @@ subprojects {
     }
     withType<JacocoReport> {
       reports {
-        xml.isEnabled = true
-        html.isEnabled = false
+        xml.required.set(true)
+        html.required.set(false)
       }
     }
     withType<JavaCompile> {
@@ -156,7 +156,7 @@ subprojects {
 
 tasks {
   wrapper {
-    gradleVersion = "7.0.2"
+    gradleVersion = "7.2"
     distributionType = Wrapper.DistributionType.ALL
   }
 
