@@ -293,15 +293,34 @@ class ReleaseCollectorTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("collecting top releases sorts by followers")
+  @DisplayName("collecting top releases fetches releases with most followers first")
+  void test_top_releases_most_followed() {
+    // given
+    var artist1 = ArtistDtoFactory.withName("a");
+    var artist2 = ArtistDtoFactory.withName("b");
+    artist1.setFollower(5);
+    artist2.setFollower(10);
+    var release1 = ReleaseDtoFactory.withArtistName(artist1.getArtistName());
+    var release2 = ReleaseDtoFactory.withArtistName(artist2.getArtistName());
+    doReturn(List.of(artist1, artist2)).when(artistCollector).collectTopFollowedArtists(anyInt());
+    doReturn(new Page<>(List.of(release2, release1), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
+
+    // when
+    var result = underTest.collectTopReleases(new TimeRange(), 1, 1);
+
+    // then
+    assertThat(result).containsExactly(release2);
+  }
+
+  @Test
+  @DisplayName("collecting top releases sorts by release date")
   void test_top_releases_sorted() {
     // given
     var artist1 = ArtistDtoFactory.withName("a");
     var artist2 = ArtistDtoFactory.withName("b");
-    artist1.setFollower(2);
-    artist2.setFollower(1);
     var release1 = ReleaseDtoFactory.withArtistName(artist1.getArtistName());
     var release2 = ReleaseDtoFactory.withArtistName(artist2.getArtistName());
+    release2.setReleaseDate(LocalDate.now().minusDays(10));
     doReturn(List.of(artist1, artist2)).when(artistCollector).collectTopFollowedArtists(anyInt());
     doReturn(new Page<>(List.of(release2, release1), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
@@ -310,8 +329,8 @@ class ReleaseCollectorTest implements WithAssertions {
 
     // then
     assertThat(result).hasSize(2);
-    assertThat(result.get(0)).isEqualTo(release1);
-    assertThat(result.get(1)).isEqualTo(release2);
+    assertThat(result.get(0)).isEqualTo(release2);
+    assertThat(result.get(1)).isEqualTo(release1);
   }
 
   @Test

@@ -53,6 +53,7 @@ public class ReleaseCollector {
                 (ReleaseDto release) -> followersPerArtist.get(release.getArtist().toLowerCase()))
                     .reversed())
         .limit(maxReleases)
+        .sorted(Comparator.comparing(ReleaseDto::getReleaseDate))
         .collect(Collectors.toList());
   }
 
