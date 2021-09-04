@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
@@ -39,15 +38,12 @@ class ReleaseCollectorTest implements WithAssertions {
   @Mock
   private ReleaseService releaseService;
 
-  @Mock
-  private ArtistCollector artistCollector;
-
   @InjectMocks
   private ReleaseCollector underTest;
 
   @AfterEach
   void tearDown() {
-    reset(releaseService, artistCollector);
+    reset(releaseService);
   }
 
   @Test
@@ -208,23 +204,10 @@ class ReleaseCollectorTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("collecting top releases calls artistCollector")
-  void test_top_releases_calls_artist_collector() {
-    // given
-    var minFollower = 66;
-
-    // when
-    underTest.collectTopReleases(new TimeRange(), minFollower, 10);
-
-    // then
-    verify(artistCollector).collectTopFollowedArtists(minFollower);
-  }
-
-  @Test
   @DisplayName("collecting top releases does not call releaseService when no artists are given")
   void test_top_releases_does_not_call_release_service() {
     // when
-    underTest.collectTopReleases(new TimeRange(), 1, 10);
+    underTest.collectTopReleases(new TimeRange(), Collections.emptyList(), 10);
 
     // then
     verifyNoInteractions(releaseService);
@@ -236,11 +219,10 @@ class ReleaseCollectorTest implements WithAssertions {
     // given
     var expectedArtistNames = List.of("A");
     var artists = List.of(ArtistDtoFactory.withName("A"));
-    doReturn(artists).when(artistCollector).collectTopFollowedArtists(anyInt());
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
-    underTest.collectTopReleases(new TimeRange(), 1, 10);
+    underTest.collectTopReleases(new TimeRange(), artists, 10);
 
     // then
     verify(releaseService).findReleases(eq(expectedArtistNames), any(), any(), any());
@@ -252,11 +234,11 @@ class ReleaseCollectorTest implements WithAssertions {
     // given
     var now = LocalDate.now();
     var timeRange = new TimeRange(now, now.plusDays(666));
-    doReturn(List.of(ArtistDtoFactory.createDefault())).when(artistCollector).collectTopFollowedArtists(anyInt());
+    var artists = List.of(ArtistDtoFactory.withName("A"));
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
-    underTest.collectTopReleases(timeRange, 1, 10);
+    underTest.collectTopReleases(timeRange, artists, 10);
 
     // then
     verify(releaseService).findReleases(any(), eq(timeRange), any(), any());
@@ -266,11 +248,11 @@ class ReleaseCollectorTest implements WithAssertions {
   @DisplayName("collecting top releases calls releaseService without query")
   void test_top_releases_calls_release_service_without_query() {
     // given
-    doReturn(List.of(ArtistDtoFactory.createDefault())).when(artistCollector).collectTopFollowedArtists(anyInt());
+    var artists = List.of(ArtistDtoFactory.withName("A"));
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
-    underTest.collectTopReleases(new TimeRange(), 1, 10);
+    underTest.collectTopReleases(new TimeRange(), artists, 10);
 
     // then
     verify(releaseService).findReleases(any(), any(), eq(null), any());
@@ -282,11 +264,11 @@ class ReleaseCollectorTest implements WithAssertions {
     // given
     var sorting = new DetectorSort("artist", ASC);
     var expectedPageRequest = new PageRequest(1, RESULT_LIMIT, sorting);
-    doReturn(List.of(ArtistDtoFactory.createDefault())).when(artistCollector).collectTopFollowedArtists(anyInt());
+    var artists = List.of(ArtistDtoFactory.withName("A"));
     doReturn(new Page<>(Collections.emptyList(), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
-    underTest.collectTopReleases(new TimeRange(), 1, 10);
+    underTest.collectTopReleases(new TimeRange(), artists, 10);
 
     // then
     verify(releaseService).findReleases(any(), any(), any(), eq(expectedPageRequest));
@@ -302,11 +284,11 @@ class ReleaseCollectorTest implements WithAssertions {
     artist2.setFollower(10);
     var release1 = ReleaseDtoFactory.withArtistName(artist1.getArtistName());
     var release2 = ReleaseDtoFactory.withArtistName(artist2.getArtistName());
-    doReturn(List.of(artist1, artist2)).when(artistCollector).collectTopFollowedArtists(anyInt());
+    var artists = List.of(artist1, artist2);
     doReturn(new Page<>(List.of(release2, release1), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
-    var result = underTest.collectTopReleases(new TimeRange(), 1, 1);
+    var result = underTest.collectTopReleases(new TimeRange(), artists, 1);
 
     // then
     assertThat(result).containsExactly(release2);
@@ -321,11 +303,11 @@ class ReleaseCollectorTest implements WithAssertions {
     var release1 = ReleaseDtoFactory.withArtistName(artist1.getArtistName());
     var release2 = ReleaseDtoFactory.withArtistName(artist2.getArtistName());
     release2.setReleaseDate(LocalDate.now().minusDays(10));
-    doReturn(List.of(artist1, artist2)).when(artistCollector).collectTopFollowedArtists(anyInt());
+    var artists = List.of(artist1, artist2);
     doReturn(new Page<>(List.of(release2, release1), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
-    var result = underTest.collectTopReleases(new TimeRange(), 1, 10);
+    var result = underTest.collectTopReleases(new TimeRange(), artists, 10);
 
     // then
     assertThat(result).hasSize(2);
@@ -344,11 +326,11 @@ class ReleaseCollectorTest implements WithAssertions {
     artist2.setFollower(1);
     var release1 = ReleaseDtoFactory.withArtistName(artist1.getArtistName());
     var release2 = ReleaseDtoFactory.withArtistName(artist2.getArtistName());
-    doReturn(List.of(artist1, artist2)).when(artistCollector).collectTopFollowedArtists(anyInt());
+    var artists = List.of(artist1, artist2);
     doReturn(new Page<>(List.of(release2, release1), new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
     // when
-    var result = underTest.collectTopReleases(new TimeRange(), 1, maxReleases);
+    var result = underTest.collectTopReleases(new TimeRange(), artists, maxReleases);
 
     // then
     assertThat(result).hasSize(maxReleases);
