@@ -45,6 +45,7 @@ public class ArtistDtoTransformer {
             .externalId(topArtist.getExternalId())
             .artistName(topArtist.getArtistName())
             .source(topArtist.getSource().getDisplayName())
+            .follower(topArtist.getFollower())
             .images(transformImages(topArtist))
             .build();
   }

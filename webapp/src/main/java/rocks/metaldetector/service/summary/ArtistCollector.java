@@ -26,7 +26,6 @@ public class ArtistCollector {
   public List<ArtistDto> collectTopFollowedArtists(int minFollower) {
     return artistRepository.findTopArtists(minFollower).stream()
         .map(artistDtoTransformer::transformTopArtist)
-        .peek(artist -> artist.setFollower(artistRepository.countArtistFollower(artist.getExternalId())))
         .collect(Collectors.toList());
   }
 
