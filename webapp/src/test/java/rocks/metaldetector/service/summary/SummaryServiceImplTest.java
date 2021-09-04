@@ -101,12 +101,14 @@ class SummaryServiceImplTest implements WithAssertions {
       TemporalUnitLessThanOffset offset = new TemporalUnitLessThanOffset(1, DAYS);
       var now = LocalDate.now();
       var expectedTimeRange = new TimeRange(now, now.plusMonths(TIME_RANGE_MONTHS));
+      var artists = List.of(ArtistDtoFactory.createDefault());
+      doReturn(artists).when(artistCollector).collectTopFollowedArtists(anyInt());
 
       // when
       underTest.createSummaryResponse();
 
       // then
-      verify(releaseCollector).collectTopReleases(argumentCaptor.capture(), eq(MIN_FOLLOWER), eq(RESULT_LIMIT));
+      verify(releaseCollector).collectTopReleases(argumentCaptor.capture(), eq(artists), eq(RESULT_LIMIT));
       var timeRange = argumentCaptor.getValue();
       assertThat(timeRange.getDateFrom()).isCloseTo(expectedTimeRange.getDateFrom(), offset);
       assertThat(timeRange.getDateTo()).isCloseTo(expectedTimeRange.getDateTo(), offset);
@@ -180,7 +182,7 @@ class SummaryServiceImplTest implements WithAssertions {
     void test_most_expected_releases_returned() {
       // given
       var releases = List.of(ReleaseDtoFactory.createDefault());
-      doReturn(releases).when(releaseCollector).collectTopReleases(any(), anyInt(), anyInt());
+      doReturn(releases).when(releaseCollector).collectTopReleases(any(), any(), anyInt());
 
       // when
       var result = underTest.createSummaryResponse();
@@ -209,18 +211,32 @@ class SummaryServiceImplTest implements WithAssertions {
   class TopReleasesTest {
 
     @Test
+    @DisplayName("artistCollector is called")
+    void test_artist_collector_called() {
+      // given
+      var minFollower = 55;
+
+      // when
+      underTest.findTopReleases(new TimeRange(LocalDate.now(), LocalDate.now()), minFollower, 66);
+
+      // then
+      verify(artistCollector).collectTopFollowedArtists(minFollower);
+    }
+
+    @Test
     @DisplayName("releaseCollector is called")
     void test_release_collector_called() {
       // given
       var timeRange = new TimeRange(LocalDate.now(), LocalDate.now());
-      var minFollower = 55;
+      var artists = List.of(ArtistDtoFactory.createDefault());
       var maxReleases = 66;
+      doReturn(artists).when(artistCollector).collectTopFollowedArtists(anyInt());
 
       // when
-      underTest.findTopReleases(timeRange, minFollower, maxReleases);
+      underTest.findTopReleases(timeRange, 55, maxReleases);
 
       // then
-      verify(releaseCollector).collectTopReleases(timeRange, minFollower, maxReleases);
+      verify(releaseCollector).collectTopReleases(timeRange, artists, maxReleases);
     }
 
     @Test
@@ -228,7 +244,7 @@ class SummaryServiceImplTest implements WithAssertions {
     void test_releases_returned() {
       // given
       var releases = List.of(ReleaseDtoFactory.createDefault());
-      doReturn(releases).when(releaseCollector).collectTopReleases(any(), anyInt(), anyInt());
+      doReturn(releases).when(releaseCollector).collectTopReleases(any(), any(), anyInt());
 
       // when
       var result = underTest.findTopReleases(new TimeRange(), 1, 10);
