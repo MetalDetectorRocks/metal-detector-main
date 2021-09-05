@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -233,6 +234,7 @@ class RegistrationControllerTest implements WithAssertions {
     private Stream<Arguments> registerUserRequestProvider() {
       return Stream.of(
           // invalid username
+          Arguments.of(RegisterUserRequestFactory.withUsername(StringUtils.repeat('A', 51)), 1, new String[] {PARAM_USERNAME}),
           Arguments.of(RegisterUserRequestFactory.withUsername(""), 1, new String[] {PARAM_USERNAME}),
           Arguments.of(RegisterUserRequestFactory.withUsername("    "), 1, new String[] {PARAM_USERNAME}),
           Arguments.of(RegisterUserRequestFactory.withUsername(null), 1, new String[] {PARAM_USERNAME}),

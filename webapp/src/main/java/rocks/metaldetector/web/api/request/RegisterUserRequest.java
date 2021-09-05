@@ -20,6 +20,7 @@ import javax.validation.constraints.Size;
 public class RegisterUserRequest {
 
   @NotBlank
+  @Size(max=50, message="Username length must be at most 50 characters")
   private String username;
 
   @NotBlank
