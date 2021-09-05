@@ -24,7 +24,7 @@ jobs:
           cache: 'gradle'
 
       - name: Build with gradle
-        run: ./gradlew build --no-daemon --info --stacktrace
+        run: ./gradlew clean build --no-daemon --info --stacktrace
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
