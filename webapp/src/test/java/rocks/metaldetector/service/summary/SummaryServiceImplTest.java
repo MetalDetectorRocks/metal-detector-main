@@ -101,7 +101,8 @@ class SummaryServiceImplTest implements WithAssertions {
       TemporalUnitLessThanOffset offset = new TemporalUnitLessThanOffset(1, DAYS);
       var now = LocalDate.now();
       var expectedTimeRange = new TimeRange(now, now.plusMonths(TIME_RANGE_MONTHS));
-      var artists = List.of(ArtistDtoFactory.createDefault());
+      var artist = ArtistDtoFactory.createDefault();
+      var artists = List.of(artist, artist, artist, artist, artist);
       doReturn(artists).when(artistCollector).collectTopFollowedArtists(anyInt());
 
       // when
