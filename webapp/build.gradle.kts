@@ -28,7 +28,7 @@ tasks {
     packageJsonDirectory.set(file("${projectDir}/src/main/resources/static/ts"))
   }
 
-  processResources {
+  build {
     dependsOn("assembleFrontend")
   }
 }
