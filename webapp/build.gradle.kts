@@ -1,5 +1,6 @@
 plugins {
   id("org.springframework.boot")
+  id("org.siouan.frontend-jdk11")
 }
 
 tasks {
@@ -10,6 +11,25 @@ tasks {
 
   jar {
     enabled = false
+  }
+
+  frontend {
+    nodeDistributionProvided.set(false)
+    nodeVersion.set("14.15.3")
+    nodeDistributionUrlRoot.set("https://nodejs.org/dist/")
+    nodeDistributionUrlPathPattern.set("vVERSION/node-vVERSION-ARCH.TYPE")
+    nodeInstallDirectory.set(file("${projectDir}/node"))
+
+    installScript.set("install")
+    cleanScript.set("run clean")
+    assembleScript.set("run assemble")
+    checkScript.set("run test")
+
+    packageJsonDirectory.set(file("${projectDir}/src/main/resources/static/ts"))
+  }
+
+  processResources {
+    dependsOn("assembleFrontend")
   }
 }
 
