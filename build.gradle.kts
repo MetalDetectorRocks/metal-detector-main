@@ -61,8 +61,8 @@ val dependencyGroupVersions = mapOf(
 )
 
 plugins {
-  id("java-library")
-  id("org.siouan.frontend-jdk11") version "5.3.0"
+  id("java")
+  id("org.siouan.frontend-jdk11") version "5.3.0" apply false
   id("org.springframework.boot") version "2.5.4"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
 }
@@ -158,20 +158,5 @@ tasks {
   wrapper {
     gradleVersion = "7.2"
     distributionType = Wrapper.DistributionType.ALL
-  }
-
-  frontend {
-    nodeDistributionProvided.set(false)
-    nodeVersion.set("14.15.3")
-    nodeDistributionUrlRoot.set("https://nodejs.org/dist/")
-    nodeDistributionUrlPathPattern.set("vVERSION/node-vVERSION-ARCH.TYPE")
-    nodeInstallDirectory.set(file("${projectDir}/node"))
-
-    installScript.set("install")
-    cleanScript.set("run clean")
-    assembleScript.set("run assemble")
-    checkScript.set("run test")
-
-    packageJsonDirectory.set(file("${projectDir}/webapp/src/main/resources/static/ts"))
   }
 }

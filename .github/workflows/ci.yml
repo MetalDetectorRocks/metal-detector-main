@@ -17,4 +17,4 @@ jobs:
           java-version: 11
           cache: 'gradle'
       - name: Execute all tests
-        run: ./gradlew clean test --no-daemon --info --stacktrace
+        run: ./gradlew clean check --no-daemon --info --stacktrace
