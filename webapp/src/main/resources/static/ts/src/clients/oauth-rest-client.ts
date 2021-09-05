@@ -14,7 +14,8 @@ export class OauthRestClient {
     }
 
     public authenticate(clientRegistrationId: string): void {
-        window.location.href = `${OauthRestClient.OAUTH2_AUTHORIZATION_CODE_FLOW_ENDPOINT}/${clientRegistrationId}`;
+        window.location.replace(`${OauthRestClient.OAUTH2_AUTHORIZATION_CODE_FLOW_ENDPOINT}/${clientRegistrationId}`);
+        return;
     }
 
     public async existsAuthorization(registrationId: string): Promise<boolean> {
