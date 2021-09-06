@@ -25,27 +25,27 @@
         </rollingPolicy>
     </appender>
 
-    <!-- LOG everything at INFO level -->
-    <root level="info">
+    <!-- LOG everything at TRACE level -->
+    <root level="trace">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </root>
 
-    <!-- LOG "rocks.metaldetector.*" at TRACE level -->
-    <logger name="rocks.metaldetector" level="trace" additivity="false">
-        <appender-ref ref="RollingFile" />
-        <appender-ref ref="Console" />
-    </logger>
+<!--    &lt;!&ndash; LOG "rocks.metaldetector.*" at TRACE level &ndash;&gt;-->
+<!--    <logger name="rocks.metaldetector" level="trace" additivity="false">-->
+<!--        <appender-ref ref="RollingFile" />-->
+<!--        <appender-ref ref="Console" />-->
+<!--    </logger>-->
 
-    <!-- LOG "org.springframework.web.*" at ERROR level -->
-    <logger name="logging.level.org.springframework.web" level="error" additivity="false">
-        <appender-ref ref="RollingFile" />
-        <appender-ref ref="Console" />
-    </logger>
+<!--    &lt;!&ndash; LOG "org.springframework.web.*" at ERROR level &ndash;&gt;-->
+<!--    <logger name="logging.level.org.springframework.web" level="error" additivity="false">-->
+<!--        <appender-ref ref="RollingFile" />-->
+<!--        <appender-ref ref="Console" />-->
+<!--    </logger>-->
 
-    <!-- LOG "logging.level.org.hibernate.*" at ERROR level -->
-    <logger name="logging.level.org.hibernate" level="error" additivity="false">
-        <appender-ref ref="RollingFile" />
-        <appender-ref ref="Console" />
-    </logger>
+<!--    &lt;!&ndash; LOG "logging.level.org.hibernate.*" at ERROR level &ndash;&gt;-->
+<!--    <logger name="logging.level.org.hibernate" level="error" additivity="false">-->
+<!--        <appender-ref ref="RollingFile" />-->
+<!--        <appender-ref ref="Console" />-->
+<!--    </logger>-->
 </configuration>
