@@ -29,19 +29,20 @@ public class SummaryServiceImpl implements SummaryService {
   @Override
   public SummaryResponse createSummaryResponse() {
     List<ArtistDto> currentUsersFollowedArtists = followArtistService.getFollowedArtistsOfCurrentUser();
-    List<ArtistDto> mostFollowedArtists = artistCollector.collectTopFollowedArtists(MIN_FOLLOWER).stream().limit(RESULT_LIMIT).collect(Collectors.toList());
+    List<ArtistDto> allTopFollowedArtists = artistCollector.collectTopFollowedArtists(MIN_FOLLOWER);
+    List<ArtistDto> homepageTopFollowedArtists = allTopFollowedArtists.stream().limit(RESULT_LIMIT).collect(Collectors.toList());
     List<ArtistDto> recentlyFollowedArtists = artistCollector.collectRecentlyFollowedArtists(RESULT_LIMIT);
 
     List<ReleaseDto> upcomingReleases = releaseCollector.collectUpcomingReleases(currentUsersFollowedArtists);
     List<ReleaseDto> recentReleases = releaseCollector.collectRecentReleases(currentUsersFollowedArtists);
 
     var now = LocalDate.now();
-    List<ReleaseDto> mostExpectedReleases = releaseCollector.collectTopReleases(new TimeRange(now, now.plusMonths(TIME_RANGE_MONTHS)), MIN_FOLLOWER, RESULT_LIMIT);
+    List<ReleaseDto> mostExpectedReleases = releaseCollector.collectTopReleases(new TimeRange(now, now.plusMonths(TIME_RANGE_MONTHS)), allTopFollowedArtists, RESULT_LIMIT);
 
     return SummaryResponse.builder()
         .upcomingReleases(upcomingReleases)
         .recentReleases(recentReleases)
-        .favoriteCommunityArtists(mostFollowedArtists)
+        .favoriteCommunityArtists(homepageTopFollowedArtists)
         .mostExpectedReleases(mostExpectedReleases)
         .recentlyFollowedArtists(recentlyFollowedArtists)
         .build();
@@ -49,6 +50,7 @@ public class SummaryServiceImpl implements SummaryService {
 
   @Override
   public List<ReleaseDto> findTopReleases(TimeRange timeRange, int minFollower, int maxReleases) {
-    return releaseCollector.collectTopReleases(timeRange, minFollower, maxReleases);
+    List<ArtistDto> topFollowedArtists = artistCollector.collectTopFollowedArtists(minFollower);
+    return releaseCollector.collectTopReleases(timeRange, topFollowedArtists, maxReleases);
   }
 }

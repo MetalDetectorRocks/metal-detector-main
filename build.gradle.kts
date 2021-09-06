@@ -9,29 +9,29 @@ buildscript {
     set("cacheApiVersion", "1.1.1")
     set("commonsCodecVersion", "1.15")
     set("datatablesVersion", "1.10.25")
-    set("ehcacheVersion", "3.9.4")
+    set("ehcacheVersion", "3.9.6")
     set("esapiVersion", "2.2.3.1")
-    set("flywayVersion", "7.11.2")
+    set("flywayVersion", "7.14.1")
     set("h2Version", "1.4.200")
     set("httpClientVersion", "4.5.13")
     set("jacksonVersion", "2.12.4")
     set("jacocoVersion", "0.8.7")
     set("jaxbApiVersion", "2.3.1")
     set("jsonwebtokenVersion", "0.9.1")
-    set("jsoupVersion", "1.14.1")
+    set("jsoupVersion", "1.14.2")
     set("junitVersion", "5.7.2")
     set("lombokVersion", "1.18.20")
-    set("micrometerVersion", "1.7.2")
-    set("mockitoVersion", "3.11.2")
+    set("micrometerVersion", "1.7.3")
+    set("mockitoVersion", "3.12.4")
     set("modelmapperVersion", "2.4.4")
     set("postgresqlVersion", "42.2.23")
     set("restAssuredVersion", "4.4.0")
     set("servletApiVersion", "4.0.1")
     set("slf4jMockVersion", "2.1.1")
     set("springBootVersion", "2.5.4")
-    set("springJdbcVersion", "5.3.9")
-    set("springSecurityVersion", "5.5.1")
-    set("thymeleafDialectVersion", "2.5.3")
+    set("springVersion", "5.3.9")
+    set("springSecurityVersion", "5.5.2")
+    set("thymeleafDialectVersion", "3.0.0")
     set("thymeleafExtrasVersion", "3.0.4.RELEASE")
   }
 }
@@ -46,12 +46,12 @@ val dependencyVersions = listOf(
   "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3",
   "jakarta.activation:jakarta.activation-api:2.0.1",
   "org.jboss.logging:jboss-logging:3.4.2.Final",
-  "net.bytebuddy:byte-buddy:1.11.13",
+  "net.bytebuddy:byte-buddy:1.11.15",
   "org.javassist:javassist:3.28.0-GA",
   "commons-io:commons-io:2.11.0"
 )
 val dependencyGroupVersions = mapOf(
-  "org.springframework" to "5.3.9",
+  "org.springframework" to extra["springVersion"] as String,
   "org.springframework.security" to extra["springSecurityVersion"] as String,
   "org.springframework.boot" to extra["springBootVersion"] as String,
   "com.fasterxml.jackson.core" to extra["jacksonVersion"] as String,
@@ -61,8 +61,8 @@ val dependencyGroupVersions = mapOf(
 )
 
 plugins {
-  id("java-library")
-  id("org.siouan.frontend-jdk11") version "5.3.0"
+  id("java")
+  id("org.siouan.frontend-jdk11") version "5.3.0" apply false
   id("org.springframework.boot") version "2.5.4"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
 }
@@ -132,7 +132,7 @@ subprojects {
     }
   }
 
-  configure<JavaPluginConvention> {
+  configure<JavaPluginExtension> {
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
   }
@@ -144,8 +144,8 @@ subprojects {
     }
     withType<JacocoReport> {
       reports {
-        xml.isEnabled = true
-        html.isEnabled = false
+        xml.required.set(true)
+        html.required.set(false)
       }
     }
     withType<JavaCompile> {
@@ -156,22 +156,7 @@ subprojects {
 
 tasks {
   wrapper {
-    gradleVersion = "7.0.2"
+    gradleVersion = "7.2"
     distributionType = Wrapper.DistributionType.ALL
-  }
-
-  frontend {
-    nodeDistributionProvided.set(false)
-    nodeVersion.set("14.15.3")
-    nodeDistributionUrlRoot.set("https://nodejs.org/dist/")
-    nodeDistributionUrlPathPattern.set("vVERSION/node-vVERSION-ARCH.TYPE")
-    nodeInstallDirectory.set(file("${projectDir}/node"))
-
-    installScript.set("install")
-    cleanScript.set("run clean")
-    assembleScript.set("run assemble")
-    checkScript.set("run test")
-
-    packageJsonDirectory.set(file("${projectDir}/webapp/src/main/resources/static/ts"))
   }
 }

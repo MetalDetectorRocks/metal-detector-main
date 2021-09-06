@@ -19,7 +19,8 @@ public interface ArtistRepository extends JpaRepository<ArtistEntity, Long> {
   boolean existsByExternalIdAndSource(String externalId, ArtistSource source);
 
   @Query(value = "select a.artist_name as artistName, a.external_id as externalId, a.source as source," +
-                 "a.image_xs as imageXs, a.image_s as imageS, a.image_m as imageM, a.image_l as imageL " +
+                 "a.image_xs as imageXs, a.image_s as imageS, a.image_m as imageM, a.image_l as imageL, " +
+                 "count(a.external_id) as follower " +
                  "from follow_actions as fa left join artists as a on a.id = fa.artist_id " +
                  "group by a.artist_name, a.external_id, a.source, a.image_xs, a.image_s, a.image_m, a.image_l " +
                  "having count(a.id) >= :minFollower " +

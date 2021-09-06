@@ -20,7 +20,7 @@ jobs:
           java-version: 11
           cache: 'gradle'
       - name: Generate coverage report
-        run: ./gradlew clean test jacocoTestReport --no-daemon --info --stacktrace
+        run: ./gradlew clean check jacocoTestReport --no-daemon --info --stacktrace
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2.0.3
         with:

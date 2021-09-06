@@ -27,7 +27,6 @@ import static rocks.metaldetector.support.DetectorSort.Direction.DESC;
 public class ReleaseCollector {
 
   private final ReleaseService releaseService;
-  private final ArtistCollector artistCollector;
 
   public List<ReleaseDto> collectUpcomingReleases(List<ArtistDto> artists) {
     LocalDate tomorrow = LocalDate.now().plusDays(1);
@@ -43,8 +42,7 @@ public class ReleaseCollector {
     return collectReleases(artists, timeRange, sort);
   }
 
-  public List<ReleaseDto> collectTopReleases(TimeRange timeRange, int minFollower, int maxReleases) {
-    List<ArtistDto> artists = artistCollector.collectTopFollowedArtists(minFollower);
+  public List<ReleaseDto> collectTopReleases(TimeRange timeRange, List<ArtistDto> artists, int maxReleases) {
     Map<String, Integer> followersPerArtist = artists.stream()
         .collect(Collectors.groupingBy(artistDto -> artistDto.getArtistName().toLowerCase(),
                                        Collectors.summingInt(ArtistDto::getFollower)));
@@ -53,6 +51,7 @@ public class ReleaseCollector {
                 (ReleaseDto release) -> followersPerArtist.get(release.getArtist().toLowerCase()))
                     .reversed())
         .limit(maxReleases)
+        .sorted(Comparator.comparing(ReleaseDto::getReleaseDate))
         .collect(Collectors.toList());
   }
 
