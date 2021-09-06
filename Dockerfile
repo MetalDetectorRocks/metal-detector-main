@@ -1,6 +1,7 @@
 FROM openjdk:11-slim-buster
 
 ENV TZ=Europe/Berlin
+EXPOSE 8080
 
 RUN apt-get update && apt-get install -y \
   curl \
