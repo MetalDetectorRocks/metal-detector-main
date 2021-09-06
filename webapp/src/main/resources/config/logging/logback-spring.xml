@@ -25,8 +25,8 @@
         </rollingPolicy>
     </appender>
 
-    <!-- LOG everything at TRACE level -->
-    <root level="trace">
+    <!-- LOG everything at DEBUG level -->
+    <root level="debug">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </root>
