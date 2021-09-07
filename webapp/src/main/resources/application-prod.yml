@@ -42,6 +42,7 @@ server:
     session:
       cookie:
         secure: true
+  forward-headers-strategy: FRAMEWORK
 
 management:
   endpoints:
