@@ -15,12 +15,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SpotifySynchronizationControllerTest {
 
   private RestAssuredMockMvcUtils restAssuredUtils;
-  private RestAssuredMockMvcUtils callbackRestAssuredUtils;
 
   @BeforeEach
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Frontend.SPOTIFY_SYNCHRONIZATION);
-    callbackRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Frontend.SPOTIFY_SYNCHRONIZATION + Endpoints.Frontend.SPOTIFY_CALLBACK);
     RestAssuredMockMvc.standaloneSetup(new SpotifySynchronizationController());
   }
 
@@ -39,28 +37,6 @@ class SpotifySynchronizationControllerTest {
   void get_search_should_return_profile_view() {
     // when
     var validatableResponse = restAssuredUtils.doGet();
-
-    // then
-    validatableResponse.assertThat(view().name(ViewNames.Frontend.SPOTIFY_SYNCHRONIZATION))
-        .assertThat(model().size(0))
-        .assertThat(model().hasNoErrors());
-  }
-
-  @Test
-  @DisplayName("Requesting '" + Endpoints.Frontend.SPOTIFY_SYNCHRONIZATION + Endpoints.Frontend.SPOTIFY_CALLBACK + "' should be ok")
-  void get_callback_should_return_200() {
-    // when
-    var validatableResponse = callbackRestAssuredUtils.doGet();
-
-    // then
-    validatableResponse.assertThat(status().isOk());
-  }
-
-  @Test
-  @DisplayName("Requesting '" + Endpoints.Frontend.SPOTIFY_SYNCHRONIZATION + Endpoints.Frontend.SPOTIFY_CALLBACK + "' should return the spotify synchronization view")
-  void get_callback_should_return_profile_view() {
-    // when
-    var validatableResponse = callbackRestAssuredUtils.doGet();
 
     // then
     validatableResponse.assertThat(view().name(ViewNames.Frontend.SPOTIFY_SYNCHRONIZATION))
