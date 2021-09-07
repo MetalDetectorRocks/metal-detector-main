@@ -46,18 +46,16 @@ public class Endpoints {
     public static final String SPOTIFY_SYNCHRONIZATION     = "/settings/spotify-synchronization";
     public static final String NOTIFICATION_SETTINGS       = "/settings/notification-settings";
     public static final String TEST                        = "/only-for-testing";
-    public static final String SPOTIFY_CALLBACK            = "/spotify-callback";
     public static final List<String> ALL_FRONTEND_PAGES    = List.of(HOME, ARTISTS, SETTINGS, PROFILE, RELEASES, MY_ARTISTS,
                                                                      BLOG, BLOG_POST_WE_ARE_ONLINE, BLOG_POST_FUTURE_PLANS, BLOG_POST_TOP_RELEASES_2020,
-                                                                     IMPRINT, PRIVACY_POLICY, STATUS, TEST, SPOTIFY_CALLBACK,ACCOUNT_DETAILS,
-                                                                     SPOTIFY_SYNCHRONIZATION,NOTIFICATION_SETTINGS);
+                                                                     IMPRINT, PRIVACY_POLICY, STATUS, TEST, ACCOUNT_DETAILS,
+                                                                     SPOTIFY_SYNCHRONIZATION, NOTIFICATION_SETTINGS);
   }
 
   public static class Rest {
     public static final String HOME                           = "/rest/v1/home";
     public static final String ARTISTS                        = "/rest/v1/artists";
     public static final String MY_ARTISTS                     = "/rest/v1/my-artists";
-    public static final String SPOTIFY_AUTHORIZATION          = "/rest/v1/spotify/auth";
     public static final String SPOTIFY_ARTIST_SYNCHRONIZATION = "/rest/v1/spotify/synchronize";
     public static final String SPOTIFY_SAVED_ARTISTS          = "/rest/v1/spotify/saved-artists";
     public static final String ALL_RELEASES                   = "/rest/v1/releases/all";
