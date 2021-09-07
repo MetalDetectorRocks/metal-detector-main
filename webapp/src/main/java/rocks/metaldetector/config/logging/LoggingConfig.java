@@ -8,8 +8,12 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 public class LoggingConfig {
 
   @Bean
-  public CommonsRequestLoggingFilter logFilter() {
+  public CommonsRequestLoggingFilter restLoggingFilter() {
     return new RestRequestLoggingFilter();
   }
 
+  @Bean
+  public CommonsRequestLoggingFilter spotifyLoggingFilter() {
+    return new SpotifyRequestLoggingFilter();
+  }
 }
