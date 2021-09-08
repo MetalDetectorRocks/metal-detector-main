@@ -49,9 +49,9 @@ public class ReleaseCollector {
     return collectReleases(artists, timeRange, new DetectorSort("artist", ASC)).stream()
         .sorted(Comparator.comparingInt(
                 (ReleaseDto release) -> followersPerArtist.get(release.getArtist().toLowerCase()))
-                    .reversed())
+                    .reversed()
+                    .thenComparing(ReleaseDto::getReleaseDate))
         .limit(maxReleases)
-        .sorted(Comparator.comparing(ReleaseDto::getReleaseDate))
         .collect(Collectors.toList());
   }
 

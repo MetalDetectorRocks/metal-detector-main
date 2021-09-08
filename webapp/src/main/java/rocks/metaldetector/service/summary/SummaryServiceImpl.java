@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SummaryServiceImpl implements SummaryService {
 
-  public static final int MIN_FOLLOWER = 1;
+  public static final int MIN_FOLLOWER = 2;
   public static final int RESULT_LIMIT = 4;
   public static final int TIME_RANGE_MONTHS = 6;
 
