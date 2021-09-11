@@ -75,7 +75,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(RESOURCES).permitAll()
         .antMatchers(GUEST_PAGES).permitAll()
         .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
-        .antMatchers(Endpoints.Rest.CSP_VIOLATION_REPORT).permitAll()
         .antMatchers(Endpoints.Rest.NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
         .anyRequest().authenticated()
       .and()
@@ -137,14 +136,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   public FilterRegistrationBean<XSSFilter> xssFilterRegistrationBean(XSSFilter xssFilter) {
     return new FilterRegistrationBean<>(xssFilter);
-  }
-
-  @Bean
-  public FilterRegistrationBean<CspNonceFilter> nonceFilterRegistrationBean(CspNonceFilter cspNonceFilter) {
-    FilterRegistrationBean<CspNonceFilter> filterRegistrationBean = new FilterRegistrationBean<>(cspNonceFilter);
-    filterRegistrationBean.addUrlPatterns(Endpoints.Frontend.ALL_FRONTEND_PAGES.toArray(new String[0]));
-    filterRegistrationBean.addUrlPatterns(Endpoints.Guest.ALL_GUEST_INDEX_PAGES.toArray(new String[0]));
-    filterRegistrationBean.addUrlPatterns(Endpoints.Guest.ALL_AUTH_PAGES.toArray(new String[0]));
-    return filterRegistrationBean;
   }
 }
