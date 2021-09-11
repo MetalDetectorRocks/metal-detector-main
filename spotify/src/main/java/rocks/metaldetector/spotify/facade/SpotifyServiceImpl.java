@@ -13,7 +13,6 @@ import rocks.metaldetector.spotify.client.SpotifyUserLibraryClient;
 import rocks.metaldetector.spotify.client.transformer.SpotifyAlbumTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistSearchResultTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistTransformer;
-import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.spotify.facade.dto.SpotifyAlbumDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
@@ -36,7 +35,6 @@ public class SpotifyServiceImpl implements SpotifyService {
   private final SpotifyArtistSearchResultTransformer searchResultTransformer;
   private final SpotifyArtistTransformer artistTransformer;
   private final SpotifyAlbumTransformer albumTransformer;
-  private final SpotifyProperties spotifyProperties;
   private final SlicingService slicingService;
 
   @Override
