@@ -26,7 +26,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import rocks.metaldetector.persistence.domain.token.TokenEntity;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.token.TokenType;
-import rocks.metaldetector.persistence.domain.user.OAuthUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
@@ -37,6 +36,7 @@ import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.token.TokenFactory;
 import rocks.metaldetector.service.token.TokenService;
+import rocks.metaldetector.service.user.events.UserCreationEvent;
 import rocks.metaldetector.service.user.events.UserDeletionEvent;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
@@ -184,6 +184,26 @@ class UserServiceImplTest implements WithAssertions {
       verify(userRepository, times(2)).existsByUsername(anyString());
     }
 
+    @Test
+    @DisplayName("Creation event is published")
+    void creation_event_published() {
+      // given
+      ArgumentCaptor<UserCreationEvent> argumentCaptor = ArgumentCaptor.forClass(UserCreationEvent.class);
+      UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
+      doReturn(user).when(userRepository).save(any(UserEntity.class));
+
+      // when
+      underTest.createUser(userDto);
+
+      // then
+      verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+      UserCreationEvent userCreationEvent = argumentCaptor.getValue();
+
+      assertThat(userCreationEvent.getSource()).isEqualTo(underTest);
+      assertThat(userCreationEvent.getUserEntity()).isEqualTo(user);
+    }
+
     @ParameterizedTest(name = "[{index}] => Username <{0}> | Email <{1}>")
     @MethodSource("userDtoProvider")
     @DisplayName("Creating a new user with a username and email that already exists should throw exception")
@@ -274,6 +294,26 @@ class UserServiceImplTest implements WithAssertions {
       assertThat(passedUserEntity.getPassword()).isNotEmpty();
       assertThat(passedUserEntity.getUserRoles()).containsExactly(ROLE_ADMINISTRATOR);
       assertThat(passedUserEntity.isEnabled()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Creation event is published")
+    void creation_event_published() {
+      // given
+      ArgumentCaptor<UserCreationEvent> argumentCaptor = ArgumentCaptor.forClass(UserCreationEvent.class);
+      UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
+      doReturn(user).when(userRepository).save(any(UserEntity.class));
+
+      // when
+      underTest.createAdministrator(userDto);
+
+      // then
+      verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+      UserCreationEvent userCreationEvent = argumentCaptor.getValue();
+
+      assertThat(userCreationEvent.getSource()).isEqualTo(underTest);
+      assertThat(userCreationEvent.getUserEntity()).isEqualTo(user);
     }
   }
 

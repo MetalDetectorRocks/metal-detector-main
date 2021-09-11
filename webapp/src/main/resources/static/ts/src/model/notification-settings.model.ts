@@ -3,7 +3,6 @@ export interface NotificationSettings {
     readonly telegramConfig: TelegramNotificationConfig;
 }
 export interface DefaultNotificationConfig {
-    readonly notify: boolean;
     readonly frequencyInWeeks: number;
     readonly notificationAtReleaseDate: boolean;
     readonly notificationAtAnnouncementDate: boolean;

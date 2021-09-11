@@ -24,12 +24,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.EMAIL;
 import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.TELEGRAM;
 import static rocks.metaldetector.service.notification.config.TelegramConfigServiceImpl.REGISTRATION_FAILED_ID_NOT_FOUND;
 import static rocks.metaldetector.service.notification.config.TelegramConfigServiceImpl.REGISTRATION_FAILED_MESSAGE_NOT_READABLE;
@@ -299,8 +301,8 @@ class TelegramConfigServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("generateRegistrationId: user's notification config is fetched")
-    void test_users_notification_config_fetched_on_id_generation() {
+    @DisplayName("generateRegistrationId: user's telegram config is fetched")
+    void test_users_config_fetched_on_id_generation() {
       // given
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
       var user = UserEntityFactory.createUser("user", "mail@mail.mail");
@@ -318,8 +320,8 @@ class TelegramConfigServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("generateRegistrationId: existing notification config is fetched if no telegram config exists")
-    void test_fetch_existing_notification_config() {
+    @DisplayName("generateRegistrationId: existing telegram notification config is fetched if no telegram config exists")
+    void test_fetch_existing_telegram_notification_config() {
       // given
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
       var user = UserEntityFactory.createUser("user", "mail@mail.mail");
@@ -337,15 +339,63 @@ class TelegramConfigServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("generateRegistrationId: notification config for telegram channel is created if it does not exist")
-    void test_create_new_notification_config() {
+    @DisplayName("generateRegistrationId: existing email notification config is fetched if no telegram config exists")
+    void test_fetch_existing_email_notification_config() {
+      // given
+      var threadLocalRandomMock = mock(ThreadLocalRandom.class);
+      var user = UserEntityFactory.createUser("user", "mail@mail.mail");
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
+      doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), eq(TELEGRAM));
+
+      // when
+      try (MockedStatic<ThreadLocalRandom> mock = mockStatic(ThreadLocalRandom.class)) {
+        mock.when(ThreadLocalRandom::current).thenReturn(threadLocalRandomMock);
+        underTest.generateRegistrationId();
+      }
+
+      // then
+      verify(notificationConfigRepository).findByUserAndChannel(user, EMAIL);
+    }
+
+    @Test
+    @DisplayName("generateRegistrationId: default email notification config values are used if no email notification config telegram config exist (legacy for existing users without email config)")
+    void test_default_email_notification_config() {
       // given
       ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
       var user = UserEntityFactory.createUser("user", "mail@mail.mail");
       doReturn(user).when(currentUserSupplier).get();
       doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
-      doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), any());
+      doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), eq(TELEGRAM));
+      doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), eq(EMAIL));
+
+      // when
+      try (MockedStatic<ThreadLocalRandom> mock = mockStatic(ThreadLocalRandom.class)) {
+        mock.when(ThreadLocalRandom::current).thenReturn(threadLocalRandomMock);
+        underTest.generateRegistrationId();
+      }
+
+      // then
+      verify(notificationConfigRepository).save(argumentCaptor.capture());
+      assertThat(argumentCaptor.getValue().getNotificationAtAnnouncementDate()).isTrue();
+      assertThat(argumentCaptor.getValue().getNotificationAtReleaseDate()).isTrue();
+      assertThat(argumentCaptor.getValue().getFrequencyInWeeks()).isEqualTo(4);
+      assertThat(argumentCaptor.getValue().getNotifyReissues()).isFalse();
+    }
+
+    @Test
+    @DisplayName("generateRegistrationId: telegram notification config is created with values from email notification config if it does not exist")
+    void test_create_new_notification_config() {
+      // given
+      ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
+      var threadLocalRandomMock = mock(ThreadLocalRandom.class);
+      var user = UserEntityFactory.createUser("user", "mail@mail.mail");
+      var emailNotificationConfig = NotificationConfigEntity.builder().build();
+      doReturn(user).when(currentUserSupplier).get();
+      doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
+      doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), eq(TELEGRAM));
+      doReturn(Optional.of(emailNotificationConfig)).when(notificationConfigRepository).findByUserAndChannel(any(), eq(EMAIL));
 
       // when
       try (MockedStatic<ThreadLocalRandom> mock = mockStatic(ThreadLocalRandom.class)) {
@@ -357,6 +407,10 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       verify(notificationConfigRepository).save(argumentCaptor.capture());
       assertThat(argumentCaptor.getValue().getUser()).isEqualTo(user);
       assertThat(argumentCaptor.getValue().getChannel()).isEqualTo(TELEGRAM);
+      assertThat(argumentCaptor.getValue().getNotificationAtAnnouncementDate()).isEqualTo(emailNotificationConfig.getNotificationAtAnnouncementDate());
+      assertThat(argumentCaptor.getValue().getNotificationAtReleaseDate()).isEqualTo(emailNotificationConfig.getNotificationAtReleaseDate());
+      assertThat(argumentCaptor.getValue().getFrequencyInWeeks()).isEqualTo(emailNotificationConfig.getFrequencyInWeeks());
+      assertThat(argumentCaptor.getValue().getNotifyReissues()).isEqualTo(emailNotificationConfig.getNotifyReissues());
     }
 
     @Test

@@ -14,7 +14,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class UpdateNotificationConfigRequest {
 
-  private boolean notify;
   private boolean notificationAtReleaseDate;
   private boolean notificationAtAnnouncementDate;
   private boolean notifyReissues;

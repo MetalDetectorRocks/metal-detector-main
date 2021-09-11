@@ -15,6 +15,7 @@ import rocks.metaldetector.telegram.facade.TelegramMessagingService;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.EMAIL;
 import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.TELEGRAM;
 
 @Service
@@ -100,10 +101,16 @@ public class TelegramConfigServiceImpl implements TelegramConfigService {
       return notificationConfigOptional.get();
     }
     else {
+      var emailNotificationConfig = notificationConfigRepository.findByUserAndChannel(user, EMAIL)
+          .orElseGet(() -> NotificationConfigEntity.builder().user(user).channel(EMAIL).build());
       var notificationConfig = NotificationConfigEntity.builder()
-              .user(user)
-              .channel(TELEGRAM)
-              .build();
+          .user(user)
+          .channel(TELEGRAM)
+          .notifyReissues(emailNotificationConfig.getNotifyReissues())
+          .frequencyInWeeks(emailNotificationConfig.getFrequencyInWeeks())
+          .notificationAtAnnouncementDate(emailNotificationConfig.getNotificationAtAnnouncementDate())
+          .notificationAtReleaseDate(emailNotificationConfig.getNotificationAtReleaseDate())
+          .build();
       return notificationConfigRepository.save(notificationConfig);
     }
   }

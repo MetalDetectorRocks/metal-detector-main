@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class EmailConfig {
 
-  private boolean notify;
   private int frequencyInWeeks;
   private boolean notificationAtReleaseDate;
   private boolean notificationAtAnnouncementDate;

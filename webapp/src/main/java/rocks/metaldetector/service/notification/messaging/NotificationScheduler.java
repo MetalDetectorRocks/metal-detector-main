@@ -77,7 +77,8 @@ public class NotificationScheduler {
   }
 
   private boolean notificationIsDue(NotificationConfigEntity notificationConfig, LocalDate now) {
-    return notificationConfig.getLastNotificationDate() == null ||
-           WEEKS.between(notificationConfig.getLastNotificationDate(), now) >= notificationConfig.getFrequencyInWeeks();
+    return notificationConfig.getFrequencyInWeeks() > 0 &&
+           (notificationConfig.getLastNotificationDate() == null ||
+            WEEKS.between(notificationConfig.getLastNotificationDate(), now) >= notificationConfig.getFrequencyInWeeks());
   }
 }

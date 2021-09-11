@@ -191,7 +191,6 @@ class NotificationConfigServiceImplTest implements WithAssertions {
           .build();
       var notificationConfigDto = NotificationConfigDto.builder()
           .frequencyInWeeks(4)
-          .notify(true)
           .channel("EMAIL")
           .notifyReissues(true)
           .build();
@@ -211,7 +210,7 @@ class NotificationConfigServiceImplTest implements WithAssertions {
       // given
       ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
       var mockUser = mock(UserEntity.class);
-      var request = NotificationConfigDto.builder().channel("EMAIL").notify(true).build();
+      var request = NotificationConfigDto.builder().channel("EMAIL").build();
       doReturn(mockUser).when(currentUserSupplier).get();
       doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), any());
 
@@ -223,7 +222,6 @@ class NotificationConfigServiceImplTest implements WithAssertions {
       var savedEntity = argumentCaptor.getValue();
       assertThat(savedEntity.getUser()).isEqualTo(mockUser);
       assertThat(savedEntity.getChannel()).isEqualTo(EMAIL);
-      assertThat(savedEntity.getNotify()).isTrue();
     }
   }
 }

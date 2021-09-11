@@ -3,34 +3,20 @@ package rocks.metaldetector.service.user;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import rocks.metaldetector.persistence.domain.user.OAuthUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
-import rocks.metaldetector.testutil.DtoFactory;
-
-import java.time.Instant;
-import java.util.Collections;
-import java.util.Map;
-import java.util.stream.Stream;
+import rocks.metaldetector.service.user.events.UserCreationEvent;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -38,11 +24,7 @@ import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
-import static org.springframework.security.oauth2.core.OAuth2AccessToken.TokenType.BEARER;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,12 +36,15 @@ class CustomOidcUserServiceTest implements WithAssertions {
   @Mock
   private OidcUserService oidcUserService;
 
+  @Mock
+  private ApplicationEventPublisher applicationEventPublisher;
+
   @InjectMocks
   private CustomOidcUserService underTest;
 
   @AfterEach
   private void tearDown() {
-    reset(userRepository, oidcUserService);
+    reset(userRepository, oidcUserService, applicationEventPublisher);
   }
 
   @DisplayName("Calls oidcUserService with request")
@@ -144,5 +129,30 @@ class CustomOidcUserServiceTest implements WithAssertions {
 
     // then
     assertThat(result).isEqualTo(mockResponse);
+  }
+
+  @Test
+  @DisplayName("Creation event is published")
+  void creation_event_published() {
+    // given
+    ArgumentCaptor<UserCreationEvent> argumentCaptor = ArgumentCaptor.forClass(UserCreationEvent.class);
+    OAuthUserEntity user = OAuthUserFactory.createUser("user", "user@user.user");
+    var mockResponse = mock(OidcUser.class);
+    var mockUserInfo = mock(OidcUserInfo.class);
+    doReturn(user).when(userRepository).save(any(OAuthUserEntity.class));
+    doReturn(mockResponse).when(oidcUserService).loadUser(any());
+    doReturn(mockUserInfo).when(mockResponse).getUserInfo();
+    doReturn(user.getUsername()).when(mockUserInfo).getGivenName();
+    doReturn(user.getEmail()).when(mockUserInfo).getEmail();
+
+    // when
+    underTest.loadUser(mock(OidcUserRequest.class));
+
+    // then
+    verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+    UserCreationEvent userCreationEvent = argumentCaptor.getValue();
+
+    assertThat(userCreationEvent.getSource()).isEqualTo(underTest);
+    assertThat(userCreationEvent.getUserEntity()).isEqualTo(user);
   }
 }

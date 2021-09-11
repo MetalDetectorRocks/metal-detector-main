@@ -1,6 +1,7 @@
 package rocks.metaldetector.service.user;
 
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -10,6 +11,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.persistence.domain.user.OAuthUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
+import rocks.metaldetector.service.user.events.UserCreationEvent;
 
 @Service
 @AllArgsConstructor
@@ -17,6 +19,7 @@ public class CustomOidcUserService implements OAuth2UserService<OidcUserRequest,
 
   private final UserRepository userRepository;
   private final OidcUserService oidcUserService;
+  private final ApplicationEventPublisher applicationEventPublisher;
 
   @Override
   public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
@@ -37,7 +40,8 @@ public class CustomOidcUserService implements OAuth2UserService<OidcUserRequest,
         .email(userInfo.getEmail())
         .build();
 
-    userRepository.save(oAuthUserEntity);
+    OAuthUserEntity savedUserEntity = userRepository.save(oAuthUserEntity);
+    applicationEventPublisher.publishEvent(new UserCreationEvent(this, savedUserEntity));
   }
 
   private boolean userAlreadyExistsByEmail(String username, String email) {

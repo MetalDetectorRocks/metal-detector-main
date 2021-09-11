@@ -64,7 +64,6 @@ class NotificationSchedulerTest implements WithAssertions {
         .user(USER)
         .channel(EMAIL)
         .frequencyInWeeks(2)
-        .notify(true)
         .build();
 
     @Test
@@ -173,7 +172,7 @@ class NotificationSchedulerTest implements WithAssertions {
     @DisplayName("services are called for each active config")
     void test_services_called_for_each_config() {
       // given
-      var notificationConfig2 = NotificationConfigEntity.builder().user(USER).notify(true).channel(TELEGRAM).build();
+      var notificationConfig2 = NotificationConfigEntity.builder().user(USER).channel(TELEGRAM).build();
       var notificationServiceMock = mock(NotificationSender.class);
       doReturn(List.of(notificationConfig, notificationConfig2)).when(notificationConfigRepository).findAllActive();
       doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
@@ -203,6 +202,20 @@ class NotificationSchedulerTest implements WithAssertions {
       // then
       verifyNoInteractions(notificationReleaseCollector);
     }
+
+    @Test
+    @DisplayName("nothing is called if frequency is 0")
+    void test_nothing_called_if_frequency_zero() {
+      // given
+      notificationConfig.setFrequencyInWeeks(0);
+      doReturn(List.of(notificationConfig)).when(notificationConfigRepository).findAllActive();
+
+      // when
+      underTest.notifyOnFrequency();
+
+      // then
+      verifyNoInteractions(notificationReleaseCollector);
+    }
   }
 
   @Nested
@@ -213,7 +226,6 @@ class NotificationSchedulerTest implements WithAssertions {
         .user(USER)
         .channel(EMAIL)
         .notificationAtReleaseDate(true)
-        .notify(true)
         .build();
 
     @Test
@@ -294,7 +306,7 @@ class NotificationSchedulerTest implements WithAssertions {
     @DisplayName("services are called for each active config")
     void test_services_called_for_each_config() {
       // given
-      var notificationConfig2 = NotificationConfigEntity.builder().user(USER).notify(true).notificationAtReleaseDate(true).channel(TELEGRAM).build();
+      var notificationConfig2 = NotificationConfigEntity.builder().user(USER).notificationAtReleaseDate(true).channel(TELEGRAM).build();
       var notificationServiceMock = mock(NotificationSender.class);
       doReturn(List.of(notificationConfig, notificationConfig2)).when(notificationConfigRepository).findAllActive();
       doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());
@@ -332,7 +344,6 @@ class NotificationSchedulerTest implements WithAssertions {
         .user(USER)
         .channel(EMAIL)
         .notificationAtAnnouncementDate(true)
-        .notify(true)
         .build();
 
     @Test
@@ -413,7 +424,7 @@ class NotificationSchedulerTest implements WithAssertions {
     @DisplayName("services are called for each active config")
     void test_services_called_for_each_config() {
       // given
-      var notificationConfig2 = NotificationConfigEntity.builder().user(USER).notify(true).notificationAtAnnouncementDate(true).channel(TELEGRAM).build();
+      var notificationConfig2 = NotificationConfigEntity.builder().user(USER).notificationAtAnnouncementDate(true).channel(TELEGRAM).build();
       var notificationServiceMock = mock(NotificationSender.class);
       doReturn(List.of(notificationConfig, notificationConfig2)).when(notificationConfigRepository).findAllActive();
       doReturn(notificationServiceMock).when(notificationSenderSupplier).apply(any());

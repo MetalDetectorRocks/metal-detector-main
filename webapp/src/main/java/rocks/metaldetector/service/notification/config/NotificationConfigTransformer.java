@@ -8,7 +8,6 @@ public class NotificationConfigTransformer {
 
   public NotificationConfigDto transform(NotificationConfigEntity notificationConfig) {
     return NotificationConfigDto.builder()
-        .notify(notificationConfig.getNotify())
         .notificationAtReleaseDate(notificationConfig.getNotificationAtReleaseDate())
         .notificationAtAnnouncementDate(notificationConfig.getNotificationAtAnnouncementDate())
         .frequencyInWeeks(notificationConfig.getFrequencyInWeeks())
