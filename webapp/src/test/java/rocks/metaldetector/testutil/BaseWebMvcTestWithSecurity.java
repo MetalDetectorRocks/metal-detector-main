@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.test.web.servlet.MockMvc;
-import rocks.metaldetector.security.NonceSupplier;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.SecurityProperties;
@@ -45,9 +44,6 @@ public abstract class BaseWebMvcTestWithSecurity implements WithSecurityConfig {
 
   @MockBean
   protected SecurityProperties securityProperties;
-
-  @MockBean
-  protected NonceSupplier nonceSupplier;
 
   @MockBean
   protected HttpSecurity httpSecurity;

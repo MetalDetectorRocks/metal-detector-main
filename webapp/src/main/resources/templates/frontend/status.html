@@ -18,7 +18,7 @@
         <form id="logout-form" method="POST" action="#" th:action="@{/logout}">
         </form>
 
-        <script th:nonce="${random}">
+        <script>
             $(document).ready( function() {
                 registerLogoutListener();
             });
