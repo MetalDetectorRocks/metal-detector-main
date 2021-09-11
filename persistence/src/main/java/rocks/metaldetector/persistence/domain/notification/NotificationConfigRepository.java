@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface NotificationConfigRepository extends JpaRepository<NotificationConfigEntity, Long> {
 
-  @Query("select n from notificationConfigs n where n.user.enabled = true and n.notify = true")
+  @Query("select n from notificationConfigs n where n.user.enabled = true")
   List<NotificationConfigEntity> findAllActive();
 
   List<NotificationConfigEntity> findAllByUser(AbstractUserEntity user);

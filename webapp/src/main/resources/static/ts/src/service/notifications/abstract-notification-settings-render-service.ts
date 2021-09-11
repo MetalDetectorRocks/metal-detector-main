@@ -64,8 +64,9 @@ export abstract class AbstractNotificationSettingsRenderService<
 
     protected onRendering(notificationSettings: NotificationSettings): void {
         const config = this.getNotificationConfig(notificationSettings);
-        this.nonePeriodicNotificationsRb.checked = !config.notify;
-        if (config.notify) {
+        const periodicNotification = config.frequencyInWeeks !== 0;
+        this.nonePeriodicNotificationsRb.checked = !periodicNotification;
+        if (periodicNotification) {
             this.twoWeeklyFrequencyRb.checked = config.frequencyInWeeks === 2;
             this.fourWeeklyFrequencyRb.checked = config.frequencyInWeeks === 4;
         }
@@ -81,7 +82,6 @@ export abstract class AbstractNotificationSettingsRenderService<
     private persistCurrentSettings(): void {
         this.notificationSettingsRestClient
             .updateNotificationSettings({
-                notify: !this.nonePeriodicNotificationsRb.checked,
                 frequencyInWeeks: this.evaluateFrequency(),
                 notificationAtReleaseDate: this.releaseDateNotificationToggle.checked,
                 notificationAtAnnouncementDate: this.announcementDateNotificationToggle.checked,

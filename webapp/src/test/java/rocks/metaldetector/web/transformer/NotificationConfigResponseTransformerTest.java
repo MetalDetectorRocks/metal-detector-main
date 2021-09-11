@@ -27,11 +27,9 @@ class NotificationConfigResponseTransformerTest implements WithAssertions {
         .frequencyInWeeks(4)
         .notificationAtAnnouncementDate(true)
         .notificationAtReleaseDate(true)
-        .notify(true)
         .notifyReissues(true)
         .build();
     var expectedEmailConfig = EmailConfig.builder()
-        .notify(true)
         .frequencyInWeeks(4)
         .notificationAtAnnouncementDate(true)
         .notificationAtReleaseDate(true)
@@ -54,7 +52,6 @@ class NotificationConfigResponseTransformerTest implements WithAssertions {
         .frequencyInWeeks(4)
         .notificationAtAnnouncementDate(true)
         .notificationAtReleaseDate(true)
-        .notify(true)
         .notifyReissues(true)
         .build();
     var telegramConfigDto = TelegramConfigDto.builder()
@@ -62,7 +59,6 @@ class NotificationConfigResponseTransformerTest implements WithAssertions {
         .chatId(555)
         .build();
     var expectedTelegramConfig = TelegramConfig.builder()
-        .notify(true)
         .frequencyInWeeks(4)
         .notificationAtAnnouncementDate(true)
         .notificationAtReleaseDate(true)
@@ -86,13 +82,11 @@ class NotificationConfigResponseTransformerTest implements WithAssertions {
         .channel("channel")
         .notificationAtReleaseDate(true)
         .notificationAtAnnouncementDate(true)
-        .notify(true)
         .frequencyInWeeks(4)
         .notifyReissues(true)
         .build();
     var expectedDto = NotificationConfigDto.builder()
         .channel("channel")
-        .notify(true)
         .notificationAtReleaseDate(true)
         .notificationAtAnnouncementDate(true)
         .frequencyInWeeks(4)

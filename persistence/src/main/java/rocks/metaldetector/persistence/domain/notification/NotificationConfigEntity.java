@@ -34,25 +34,20 @@ public class NotificationConfigEntity extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private NotificationChannel channel;
 
-  @Column(name = "notify", nullable = false, columnDefinition = "boolean default false")
-  @Setter
-  @Builder.Default
-  private Boolean notify = false;
-
   @Column(name = "frequency_in_weeks", nullable = false, columnDefinition = "integer default 4")
   @Setter
   @Builder.Default
   private Integer frequencyInWeeks = 4;
 
-  @Column(name = "notification_at_release_date", nullable = false, columnDefinition = "boolean default false")
+  @Column(name = "notification_at_release_date", nullable = false, columnDefinition = "boolean default true")
   @Setter
   @Builder.Default
-  private Boolean notificationAtReleaseDate = false;
+  private Boolean notificationAtReleaseDate = true;
 
-  @Column(name = "notification_at_announcement_date", nullable = false, columnDefinition = "boolean default false")
+  @Column(name = "notification_at_announcement_date", nullable = false, columnDefinition = "boolean default true")
   @Setter
   @Builder.Default
-  private Boolean notificationAtAnnouncementDate = false;
+  private Boolean notificationAtAnnouncementDate = true;
 
   @Column(name = "notify_reissues", nullable = false, columnDefinition = "boolean default false")
   @Setter

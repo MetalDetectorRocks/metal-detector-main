@@ -11,8 +11,6 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserFactory;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 
-import java.util.List;
-
 import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.EMAIL;
 import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.TELEGRAM;
 
@@ -36,7 +34,6 @@ class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAsse
     USER_2 = UserFactory.createUser("user2", "user2@example.com");
     NOTIFICATION_CONFIG_1 = NotificationConfigEntity.builder()
         .user(USER_1)
-        .notify(true)
         .notificationAtReleaseDate(true)
         .notificationAtAnnouncementDate(true)
         .frequencyInWeeks(4)
@@ -45,7 +42,6 @@ class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAsse
 
     NOTIFICATION_CONFIG_2 = NotificationConfigEntity.builder()
         .user(USER_1)
-        .notify(true)
         .notificationAtReleaseDate(true)
         .notificationAtAnnouncementDate(true)
         .frequencyInWeeks(4)
@@ -54,7 +50,6 @@ class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAsse
 
     NOTIFICATION_CONFIG_3 = NotificationConfigEntity.builder()
         .user(USER_2)
-        .notify(true)
         .notificationAtReleaseDate(true)
         .notificationAtAnnouncementDate(true)
         .frequencyInWeeks(4)
@@ -130,15 +125,14 @@ class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAsse
   }
 
   @Test
-  @DisplayName("findAllActive finds all configs with enabled user and notify = true")
+  @DisplayName("findAllActive finds all configs with enabled user")
   void test_find_all_active() {
     // given
     var deactivatedUser = UserFactory.createUser("deactivated", "deactivated@mail.mail");
     deactivatedUser.setEnabled(false);
-    var deactivatedNotificationConfig = NotificationConfigEntity.builder().user(USER_1).notify(false).channel(EMAIL).build();
-    var notificationConfigWithDeactivatedUser = NotificationConfigEntity.builder().user(deactivatedUser).notify(true).channel(EMAIL).build();
+    var notificationConfigWithDeactivatedUser = NotificationConfigEntity.builder().user(deactivatedUser).channel(EMAIL).build();
     userRepository.save(deactivatedUser);
-    underTest.saveAll(List.of(deactivatedNotificationConfig, notificationConfigWithDeactivatedUser));
+    underTest.save(notificationConfigWithDeactivatedUser);
 
     // when
     var result = underTest.findAllActive();
