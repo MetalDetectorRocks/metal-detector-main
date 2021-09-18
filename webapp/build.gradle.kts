@@ -3,6 +3,10 @@ plugins {
   id("org.siouan.frontend-jdk11")
 }
 
+springBoot {
+  mainClass.set("rocks.metaldetector.MetalDetectorApplication")
+}
+
 tasks {
   bootJar {
     archiveClassifier.set("boot")
@@ -48,9 +52,14 @@ dependencies {
   implementation("org.modelmapper:modelmapper:${rootProject.extra["modelmapperVersion"]}")
   implementation("org.ehcache:ehcache:${rootProject.extra["ehcacheVersion"]}")
   implementation("org.jsoup:jsoup:${rootProject.extra["jsoupVersion"]}")
+  implementation("org.projectlombok:lombok:${rootProject.extra["lombokVersion"]}")
   implementation("org.owasp.esapi:esapi:${rootProject.extra["esapiVersion"]}") {
     exclude(group = "org.slf4j", module = "slf4j-simple")
   }
+
+  annotationProcessor("org.projectlombok:lombok:${rootProject.extra["lombokVersion"]}")
+
+  developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   runtimeOnly("org.webjars:datatables:${rootProject.extra["datatablesVersion"]}")
   runtimeOnly("org.flywaydb:flyway-core:${rootProject.extra["flywayVersion"]}")
@@ -64,6 +73,11 @@ dependencies {
   implementation(project(":persistence"))
   implementation(project(":telegram"))
 
+  testImplementation("org.springframework.boot:spring-boot-starter-test") {
+    exclude(group = "junit", module = "junit")
+  }
+  testImplementation("org.springframework.security:spring-security-test:${rootProject.extra["springSecurityVersion"]}")
+  testImplementation("com.h2database:h2:${rootProject.extra["h2Version"]}")
   testImplementation("io.rest-assured:rest-assured:${rootProject.extra["restAssuredVersion"]}")
   testImplementation("io.rest-assured:json-path:${rootProject.extra["restAssuredVersion"]}")
   testImplementation("io.rest-assured:xml-path:${rootProject.extra["restAssuredVersion"]}")

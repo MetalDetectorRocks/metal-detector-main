@@ -1,9 +1,16 @@
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-web")
 
+  implementation("org.projectlombok:lombok:${rootProject.extra["lombokVersion"]}")
+
+  annotationProcessor("org.projectlombok:lombok:${rootProject.extra["lombokVersion"]}")
+
   implementation(project(":support"))
 
-  testImplementation("org.apache.commons:commons-text")
+  testImplementation("org.apache.commons:commons-text:${rootProject.extra["apacheCommonsTextVersion"]}")
+  testImplementation("org.springframework.boot:spring-boot-starter-test") {
+    exclude(group = "junit", module = "junit")
+  }
 }
 
 description = "butler"
