@@ -61,24 +61,6 @@ class DiscogsArtistSearchRestClientTest implements WithAssertions {
   @DisplayName("Tests for method searchByName()")
   class SearchByNameTest {
 
-    @ParameterizedTest(name = "An empty response is returned when query string is [{0}].")
-    @MethodSource("nullOrEmptyQueryProvider")
-    @DisplayName("An empty response is returned on null or empty query string.")
-    void test_invalid_query_string(String queryString) {
-      // when
-      var response = underTest.searchByName(queryString, 1, 1);
-
-      // then
-      assertThat(response).isEqualTo(DiscogsArtistSearchResultContainerFactory.withEmptyResult());
-    }
-
-    private Stream<Arguments> nullOrEmptyQueryProvider() {
-      return Stream.of(
-              Arguments.of((String) null),
-              Arguments.of("")
-      );
-    }
-
     @Test
     @DisplayName("A GET call is made on Discogs search url.")
     void test_get_on_search_url() {
