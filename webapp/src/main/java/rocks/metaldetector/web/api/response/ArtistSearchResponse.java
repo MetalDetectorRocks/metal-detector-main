@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import rocks.metaldetector.support.Pagination;
 
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -18,4 +19,11 @@ public class ArtistSearchResponse {
   private Pagination pagination;
   private List<ArtistSearchResponseEntryDto> searchResults;
 
+  public static ArtistSearchResponse empty() {
+    return ArtistSearchResponse.builder()
+        .searchResults(Collections.emptyList())
+        .pagination(Pagination.builder().currentPage(1).build())
+        .query("")
+        .build();
+  }
 }
