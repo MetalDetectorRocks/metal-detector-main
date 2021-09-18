@@ -3,6 +3,10 @@ plugins {
   id("org.siouan.frontend-jdk11")
 }
 
+springBoot {
+  mainClass.set("rocks.metaldetector.MetalDetectorApplication")
+}
+
 tasks {
   bootJar {
     archiveClassifier.set("boot")
@@ -41,33 +45,43 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-validation")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
-  implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity5:${rootProject.extra["thymeleafExtrasVersion"]}")
-  implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${rootProject.extra["thymeleafDialectVersion"]}")
-  implementation("org.apache.commons:commons-lang3:${rootProject.extra["apacheCommonsLang3Version"]}")
-  implementation("commons-codec:commons-codec:${rootProject.extra["commonsCodecVersion"]}")
-  implementation("org.modelmapper:modelmapper:${rootProject.extra["modelmapperVersion"]}")
-  implementation("org.ehcache:ehcache:${rootProject.extra["ehcacheVersion"]}")
-  implementation("org.jsoup:jsoup:${rootProject.extra["jsoupVersion"]}")
-  implementation("org.owasp.esapi:esapi:${rootProject.extra["esapiVersion"]}") {
+  implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity5:${libs.versions.thymeleafExtras.get()}")
+  implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${libs.versions.thymeleafDialect.get()}")
+  implementation("org.apache.commons:commons-lang3:${libs.versions.apacheCommonsLang3.get()}")
+  implementation("commons-codec:commons-codec:${libs.versions.commonsCodec.get()}")
+  implementation("org.modelmapper:modelmapper:${libs.versions.modelmapper.get()}")
+  implementation("org.ehcache:ehcache:${libs.versions.ehcache.get()}")
+  implementation("org.jsoup:jsoup:${libs.versions.jsoup.get()}")
+  implementation("org.projectlombok:lombok:${libs.versions.lombok.get()}")
+  implementation("org.owasp.esapi:esapi:${libs.versions.esapi.get()}") {
     exclude(group = "org.slf4j", module = "slf4j-simple")
   }
 
-  runtimeOnly("org.webjars:datatables:${rootProject.extra["datatablesVersion"]}")
-  runtimeOnly("org.flywaydb:flyway-core:${rootProject.extra["flywayVersion"]}")
-  runtimeOnly("io.micrometer:micrometer-registry-prometheus:${rootProject.extra["micrometerVersion"]}")
-  runtimeOnly("javax.cache:cache-api:${rootProject.extra["cacheApiVersion"]}")
+  annotationProcessor("org.projectlombok:lombok:${libs.versions.lombok.get()}")
 
-  implementation(project(":support"))
-  implementation(project(":spotify"))
-  implementation(project(":discogs"))
-  implementation(project(":butler"))
-  implementation(project(":persistence"))
-  implementation(project(":telegram"))
+  developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-  testImplementation("io.rest-assured:rest-assured:${rootProject.extra["restAssuredVersion"]}")
-  testImplementation("io.rest-assured:json-path:${rootProject.extra["restAssuredVersion"]}")
-  testImplementation("io.rest-assured:xml-path:${rootProject.extra["restAssuredVersion"]}")
-  testImplementation("io.rest-assured:spring-mock-mvc:${rootProject.extra["restAssuredVersion"]}")
+  runtimeOnly("org.webjars:datatables:${libs.versions.datatables.get()}")
+  runtimeOnly("org.flywaydb:flyway-core:${libs.versions.flyway.get()}")
+  runtimeOnly("io.micrometer:micrometer-registry-prometheus:${libs.versions.micrometer.get()}")
+  runtimeOnly("javax.cache:cache-api:${libs.versions.cacheApi.get()}")
+
+  implementation(rootProject.projects.support)
+  implementation(rootProject.projects.spotify)
+  implementation(rootProject.projects.discogs)
+  implementation(rootProject.projects.butler)
+  implementation(rootProject.projects.persistence)
+  implementation(rootProject.projects.telegram)
+
+  testImplementation("org.springframework.boot:spring-boot-starter-test") {
+    exclude(group = "junit", module = "junit")
+  }
+  testImplementation("org.springframework.security:spring-security-test:${libs.versions.springSecurity.get()}")
+  testImplementation("com.h2database:h2:${libs.versions.h2.get()}")
+  testImplementation("io.rest-assured:rest-assured:${libs.versions.restAssured.get()}")
+  testImplementation("io.rest-assured:json-path:${libs.versions.restAssured.get()}")
+  testImplementation("io.rest-assured:xml-path:${libs.versions.restAssured.get()}")
+  testImplementation("io.rest-assured:spring-mock-mvc:${libs.versions.restAssured.get()}")
 }
 
 description = "webapp"
