@@ -11,7 +11,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -22,9 +27,11 @@ import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
+import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -170,6 +177,41 @@ class ArtistsRestControllerTest implements WithAssertions {
       String searchResponse = validatableResponse.extract().asString();
       var expectedSearchResultAsJson = jsonMapper.writeValueAsString(expectedSearchResult);
       assertThat(searchResponse).isEqualTo(expectedSearchResultAsJson);
+    }
+
+    @ParameterizedTest
+    @MethodSource("faultyInputQueryProvider")
+    @DisplayName("Should return empty response for empty or missing query")
+    void test_faulty_query(String query) throws JsonProcessingException {
+      // given
+      var jsonMapper = new JsonMapper();
+      var expectedSearchResult = ArtistSearchResponse.empty();
+      Map<String, Object> requestParams = Map.of(
+          "query", query,
+          "page", DEFAULT_PAGE,
+          "size", DEFAULT_SIZE
+      );
+
+      try(MockedStatic<ArtistSearchResponse> mock = Mockito.mockStatic(ArtistSearchResponse.class)) {
+        mock.when(ArtistSearchResponse::empty).thenReturn(expectedSearchResult);
+
+        // when
+        var validatableResponse = restAssuredUtils.doGet(requestParams);
+
+        // then
+        mock.verify(ArtistSearchResponse::empty);
+
+        String searchResponse = validatableResponse.extract().asString();
+        var expectedSearchResultAsJson = jsonMapper.writeValueAsString(expectedSearchResult);
+        assertThat(searchResponse).isEqualTo(expectedSearchResultAsJson);
+      }
+    }
+
+    private Stream<Arguments> faultyInputQueryProvider() {
+      return Stream.of(
+          Arguments.of(""),
+          Arguments.of("   ")
+      );
     }
   }
 

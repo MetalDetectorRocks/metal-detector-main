@@ -40,6 +40,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     registry.addViewController(Endpoints.Frontend.SPOTIFY_SYNCHRONIZATION).setViewName(ViewNames.Frontend.SPOTIFY_SYNCHRONIZATION);
     registry.addViewController(Endpoints.Frontend.NOTIFICATION_SETTINGS).setViewName(ViewNames.Frontend.NOTIFICATION_SETTINGS);
     registry.addViewController(Endpoints.Frontend.STATUS).setViewName(ViewNames.Frontend.STATUS);
+    registry.addViewController(Endpoints.Frontend.ARTISTS).setViewName(ViewNames.Frontend.SEARCH);
+    registry.addViewController(Endpoints.Frontend.MY_ARTISTS).setViewName(ViewNames.Frontend.MY_ARTISTS);
 
     // Backend pages
     registry.addViewController(Endpoints.AdminArea.IMPORT).setViewName(ViewNames.AdminArea.IMPORT);
@@ -47,6 +49,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     registry.addViewController(Endpoints.AdminArea.SETTINGS).setViewName(ViewNames.AdminArea.SETTINGS);
     registry.addViewController(Endpoints.AdminArea.PROFILE).setViewName(ViewNames.AdminArea.PROFILE);
     registry.addViewController(Endpoints.AdminArea.NOTIFICATIONS).setViewName(ViewNames.AdminArea.NOTIFICATIONS);
+    registry.addViewController(Endpoints.AdminArea.INDEX).setViewName(ViewNames.AdminArea.INDEX);
+    registry.addViewController(Endpoints.AdminArea.RELEASES).setViewName(ViewNames.AdminArea.RELEASES);
+    registry.addViewController(Endpoints.AdminArea.USERS).setViewName(ViewNames.AdminArea.USERS);
   }
 
   @Override

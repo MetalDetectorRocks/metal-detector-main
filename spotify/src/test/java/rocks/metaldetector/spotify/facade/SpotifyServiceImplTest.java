@@ -20,7 +20,6 @@ import rocks.metaldetector.spotify.client.SpotifyUserLibraryClient;
 import rocks.metaldetector.spotify.client.transformer.SpotifyAlbumTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistSearchResultTransformer;
 import rocks.metaldetector.spotify.client.transformer.SpotifyArtistTransformer;
-import rocks.metaldetector.spotify.config.SpotifyProperties;
 import rocks.metaldetector.spotify.facade.dto.SpotifyAlbumDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
@@ -57,9 +56,6 @@ class SpotifyServiceImplTest implements WithAssertions {
   private SpotifyArtistTransformer artistTransformer;
 
   @Mock
-  private SpotifyProperties spotifyProperties;
-
-  @Mock
   private SpotifyAlbumTransformer albumTransformer;
 
   @Mock
@@ -73,7 +69,7 @@ class SpotifyServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(searchClient, resultTransformer, artistTransformer, spotifyProperties, importClient, albumTransformer, slicingService);
+    reset(searchClient, resultTransformer, artistTransformer, importClient, albumTransformer, slicingService);
   }
 
   @Nested

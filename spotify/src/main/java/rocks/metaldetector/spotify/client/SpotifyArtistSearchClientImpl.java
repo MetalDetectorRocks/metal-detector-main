@@ -40,10 +40,6 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
 
   @Override
   public SpotifyArtistSearchResultContainer searchByName(String artistQueryString, int pageNumber, int pageSize) {
-    if (artistQueryString == null || artistQueryString.isEmpty()) {
-      return SpotifyArtistSearchResultContainer.builder().build();
-    }
-
     HttpEntity<Object> httpEntity = new HttpEntity<>(null);
     int offset = pageSize * (pageNumber - 1);
 
