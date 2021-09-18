@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.oauth.CurrentOAuthUserIdSupplier;
+import rocks.metaldetector.web.api.response.OAuth2UserAuthorizationExistsResponse;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -23,13 +24,13 @@ public class OAuth2AuthorizationRestController {
   private final CurrentOAuthUserIdSupplier currentOAuthUserIdSupplier;
 
   @GetMapping(path = "/{registration-id}", produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<Void> checkAuthorization(@PathVariable("registration-id") String registrationId) {
+  public ResponseEntity<OAuth2UserAuthorizationExistsResponse> checkAuthorization(@PathVariable("registration-id") String registrationId) {
     String userId = currentOAuthUserIdSupplier.get();
     OAuth2AuthorizedClient authorizedClient = oAuth2AuthorizedClientService.loadAuthorizedClient(registrationId, userId);
     if (authorizedClient != null) {
-      return ResponseEntity.ok().build();
+      return ResponseEntity.ok(new OAuth2UserAuthorizationExistsResponse(true));
     }
-    return ResponseEntity.notFound().build();
+    return ResponseEntity.ok(new OAuth2UserAuthorizationExistsResponse(false));
   }
 
   @DeleteMapping(path = "/{registration-id}")
