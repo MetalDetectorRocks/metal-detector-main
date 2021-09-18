@@ -77,12 +77,13 @@ security:
 server:
   port: 8080
   error:
-    whitelabel:
-      enabled: true
-    path: /error
+    include-message: always
+    include-binding-errors: never
+    include-exception: false
   tomcat:
     accesslog:
       enabled: true
+  shutdown: graceful
 
 logging:
   config: classpath:config/logging/logback-spring.xml
