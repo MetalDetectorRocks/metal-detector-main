@@ -1,70 +1,27 @@
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-
-  extra.apply {
-    set("apacheCommonsLang3Version", "3.12.0")
-    set("apacheCommonsTextVersion", "1.9")
-    set("cacheApiVersion", "1.1.1")
-    set("commonsCodecVersion", "1.15")
-    set("datatablesVersion", "1.10.25")
-    set("ehcacheVersion", "3.9.6")
-    set("esapiVersion", "2.2.3.1")
-    set("flywayVersion", "7.14.1")
-    set("h2Version", "1.4.200")
-    set("httpClientVersion", "4.5.13")
-    set("jacksonVersion", "2.12.4")
-    set("jacocoVersion", "0.8.7")
-    set("jaxbApiVersion", "2.3.1")
-    set("jsonwebtokenVersion", "0.9.1")
-    set("jsoupVersion", "1.14.2")
-    set("junitVersion", "5.7.2")
-    set("lombokVersion", "1.18.20")
-    set("micrometerVersion", "1.7.3")
-    set("mockitoVersion", "3.12.4")
-    set("modelmapperVersion", "2.4.4")
-    set("postgresqlVersion", "42.2.23")
-    set("restAssuredVersion", "4.4.0")
-    set("servletApiVersion", "4.0.1")
-    set("slf4jMockVersion", "2.1.1")
-    set("springBootVersion", "2.5.4")
-    set("springVersion", "5.3.9")
-    set("springSecurityVersion", "5.5.2")
-    set("thymeleafDialectVersion", "3.0.0")
-    set("thymeleafExtrasVersion", "3.0.4.RELEASE")
-  }
-}
-
 val javaVersion: JavaVersion = JavaVersion.VERSION_11
+
 val dependencyVersions = listOf(
-  "org.junit.jupiter:junit-jupiter:${extra["junitVersion"]}",
-  "org.junit.jupiter:junit-jupiter-api:${extra["junitVersion"]}",
   "org.slf4j:slf4j-api:1.7.32",
-  "org.junit:junit-bom:${extra["junitVersion"]}",
-  "junit:junit:4.13.2",
-  "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3",
-  "jakarta.activation:jakarta.activation-api:2.0.1",
   "org.jboss.logging:jboss-logging:3.4.2.Final",
   "net.bytebuddy:byte-buddy:1.11.16",
-  "org.javassist:javassist:3.28.0-GA",
-  "commons-io:commons-io:2.11.0"
+  "org.javassist:javassist:3.28.0-GA"
 )
+
 val dependencyGroupVersions = mapOf(
-  "org.springframework" to extra["springVersion"] as String,
-  "org.springframework.security" to extra["springSecurityVersion"] as String,
-  "org.springframework.boot" to extra["springBootVersion"] as String,
-  "com.fasterxml.jackson.core" to extra["jacksonVersion"] as String,
-  "com.fasterxml.jackson.datatype" to extra["jacksonVersion"] as String,
-  "com.fasterxml.jackson.module" to extra["jacksonVersion"] as String,
-  "org.mockito" to extra["mockitoVersion"] as String
+  "org.springframework" to libs.versions.spring.get(),
+  "org.springframework.security" to libs.versions.springSecurity.get(),
+  "org.springframework.boot" to libs.versions.springBoot.get(),
+  "com.fasterxml.jackson.core" to libs.versions.jackson.get(),
+  "com.fasterxml.jackson.datatype" to libs.versions.jackson.get(),
+  "com.fasterxml.jackson.module" to libs.versions.jackson.get(),
+  "org.mockito" to libs.versions.mockito.get()
 )
 
 plugins {
   id("java")
   id("org.siouan.frontend-jdk11") version "5.3.0" apply false
-  id("org.springframework.boot") version "2.5.4"
-  id("io.spring.dependency-management") version "1.0.11.RELEASE"
+  id("org.springframework.boot") version "2.5.4" apply false
+  id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
 }
 
 allprojects {
@@ -75,16 +32,8 @@ allprojects {
   }
 }
 
-springBoot {
-  mainClass.set("rocks.metaldetector.MetalDetectorApplication")
-}
-
-dependencies {
-  developmentOnly("org.springframework.boot:spring-boot-devtools")
-}
-
 subprojects {
-  project.apply(plugin = "java-library")
+  project.apply(plugin = "java")
   project.apply(plugin = "io.spring.dependency-management")
   project.apply(plugin = "jacoco")
 
@@ -101,34 +50,6 @@ subprojects {
             }
         cacheDynamicVersionsFor(0, "seconds")
       }
-    }
-  }
-
-  dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("org.springframework.boot:spring-boot-configuration-processor")
-
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${rootProject.extra["jacksonVersion"]}")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${rootProject.extra["jacksonVersion"]}")
-    implementation("org.projectlombok:lombok:${rootProject.extra["lombokVersion"]}")
-
-    annotationProcessor("org.projectlombok:lombok:${rootProject.extra["lombokVersion"]}")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-      exclude(group = "junit", module = "junit")
-    }
-    testImplementation("org.springframework.security:spring-security-test:${rootProject.extra["springSecurityVersion"]}")
-    testImplementation("org.junit.jupiter:junit-jupiter:${rootProject.extra["junitVersion"]}")
-    testImplementation("org.junit.vintage:junit-vintage-engine:${rootProject.extra["junitVersion"]}")
-    testImplementation("org.mockito:mockito-junit-jupiter:${rootProject.extra["mockitoVersion"]}")
-    testImplementation("org.mockito:mockito-inline:${rootProject.extra["mockitoVersion"]}")
-    testImplementation("com.h2database:h2:${rootProject.extra["h2Version"]}")
-  }
-
-  dependencyManagement {
-    dependencies {
-      dependency("org.apache.commons:commons-text:${rootProject.extra["apacheCommonsTextVersion"]}")
     }
   }
 

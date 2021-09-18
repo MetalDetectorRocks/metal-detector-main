@@ -33,6 +33,10 @@ public class ArtistsRestController {
   public ResponseEntity<ArtistSearchResponse> handleNameSearch(@RequestParam(value = "query", defaultValue = "") String query,
                                                                @RequestParam(value = "page", defaultValue = "1") int page,
                                                                @RequestParam(value = "size", defaultValue = "40") int size) {
+    if (query.isBlank()) {
+      return ResponseEntity.ok(ArtistSearchResponse.empty());
+    }
+
     ArtistSearchResponse searchResponse = artistSearchService.searchSpotifyByName(query, PageRequest.of(page, size));
 
     if (page == 1 && searchResponse.getSearchResults().isEmpty()) {

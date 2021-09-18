@@ -82,7 +82,7 @@ export class SpotifySynchronizationRenderService {
             SpotifySynchronizationRenderService.OAUTH2_CLIENT_REGISTRATION_ID,
         );
         response.then((response) => {
-            if (response) {
+            if (response.exists) {
                 this.onConnected();
             } else {
                 this.onDisconnected();

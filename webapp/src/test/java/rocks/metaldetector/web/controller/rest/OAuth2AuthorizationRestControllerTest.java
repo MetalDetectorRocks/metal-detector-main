@@ -12,8 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.oauth.CurrentOAuthUserIdSupplier;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
@@ -24,7 +22,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith(MockitoExtension.class)
@@ -94,7 +91,7 @@ class OAuth2AuthorizationRestControllerTest implements WithAssertions {
     @DisplayName("200 is returned if client is present")
     void test_200_if_present() {
       // given
-      doReturn(mock(OAuth2AuthorizedClient.class)).when(oAuth2AuthorizedClientService).loadAuthorizedClient(any(), any());;
+      doReturn(mock(OAuth2AuthorizedClient.class)).when(oAuth2AuthorizedClientService).loadAuthorizedClient(any(), any());
 
       // when
       var result = restAssuredUtils.doGet("/registrationId");
@@ -104,13 +101,38 @@ class OAuth2AuthorizationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("404 is returned if client is not present")
+    @DisplayName("result is true if client is present")
+    void test_true_if_present() {
+      // given
+      doReturn(mock(OAuth2AuthorizedClient.class)).when(oAuth2AuthorizedClientService).loadAuthorizedClient(any(), any());
+
+      // when
+      var result = restAssuredUtils.doGet("/registrationId");
+
+      // then
+      var resultObject = result.extract().body().jsonPath().getObject("exists", Boolean.class);
+      assertThat(resultObject).isTrue();
+    }
+
+    @Test
+    @DisplayName("200 is returned if client is not present")
     void test_200_if_not_present() {
       // when
       var result = restAssuredUtils.doGet("/registrationId");
 
       // then
-      assertThat(result.status(NOT_FOUND));
+      assertThat(result.status(OK));
+    }
+
+    @Test
+    @DisplayName("result is false if client is present")
+    void test_false_if_present() {
+      // when
+      var result = restAssuredUtils.doGet("/registrationId");
+
+      // then
+      var resultObject = result.extract().body().jsonPath().getObject("exists", Boolean.class);
+      assertThat(resultObject).isFalse();
     }
   }
 
