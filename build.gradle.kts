@@ -1,8 +1,4 @@
 buildscript {
-  repositories {
-    mavenCentral()
-  }
-
   extra.apply {
     set("apacheCommonsLang3Version", "3.12.0")
     set("apacheCommonsTextVersion", "1.9")
@@ -19,7 +15,6 @@ buildscript {
     set("jaxbApiVersion", "2.3.1")
     set("jsonwebtokenVersion", "0.9.1")
     set("jsoupVersion", "1.14.2")
-    set("junitVersion", "5.7.2")
     set("lombokVersion", "1.18.20")
     set("micrometerVersion", "1.7.3")
     set("mockitoVersion", "3.12.4")
@@ -38,17 +33,10 @@ buildscript {
 
 val javaVersion: JavaVersion = JavaVersion.VERSION_11
 val dependencyVersions = listOf(
-  "org.junit.jupiter:junit-jupiter:${extra["junitVersion"]}",
-  "org.junit.jupiter:junit-jupiter-api:${extra["junitVersion"]}",
   "org.slf4j:slf4j-api:1.7.32",
-  "org.junit:junit-bom:${extra["junitVersion"]}",
-  "junit:junit:4.13.2",
-  "jakarta.xml.bind:jakarta.xml.bind-api:2.3.3",
-  "jakarta.activation:jakarta.activation-api:2.0.1",
   "org.jboss.logging:jboss-logging:3.4.2.Final",
   "net.bytebuddy:byte-buddy:1.11.16",
-  "org.javassist:javassist:3.28.0-GA",
-  "commons-io:commons-io:2.11.0"
+  "org.javassist:javassist:3.28.0-GA"
 )
 val dependencyGroupVersions = mapOf(
   "org.springframework" to extra["springVersion"] as String,
@@ -63,8 +51,8 @@ val dependencyGroupVersions = mapOf(
 plugins {
   id("java")
   id("org.siouan.frontend-jdk11") version "5.3.0" apply false
-  id("org.springframework.boot") version "2.5.4"
-  id("io.spring.dependency-management") version "1.0.11.RELEASE"
+  id("org.springframework.boot") version "2.5.4" apply false
+  id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
 }
 
 allprojects {
@@ -75,16 +63,8 @@ allprojects {
   }
 }
 
-springBoot {
-  mainClass.set("rocks.metaldetector.MetalDetectorApplication")
-}
-
-dependencies {
-  developmentOnly("org.springframework.boot:spring-boot-devtools")
-}
-
 subprojects {
-  project.apply(plugin = "java-library")
+  project.apply(plugin = "java")
   project.apply(plugin = "io.spring.dependency-management")
   project.apply(plugin = "jacoco")
 
@@ -101,34 +81,6 @@ subprojects {
             }
         cacheDynamicVersionsFor(0, "seconds")
       }
-    }
-  }
-
-  dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("org.springframework.boot:spring-boot-configuration-processor")
-
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${rootProject.extra["jacksonVersion"]}")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${rootProject.extra["jacksonVersion"]}")
-    implementation("org.projectlombok:lombok:${rootProject.extra["lombokVersion"]}")
-
-    annotationProcessor("org.projectlombok:lombok:${rootProject.extra["lombokVersion"]}")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-      exclude(group = "junit", module = "junit")
-    }
-    testImplementation("org.springframework.security:spring-security-test:${rootProject.extra["springSecurityVersion"]}")
-    testImplementation("org.junit.jupiter:junit-jupiter:${rootProject.extra["junitVersion"]}")
-    testImplementation("org.junit.vintage:junit-vintage-engine:${rootProject.extra["junitVersion"]}")
-    testImplementation("org.mockito:mockito-junit-jupiter:${rootProject.extra["mockitoVersion"]}")
-    testImplementation("org.mockito:mockito-inline:${rootProject.extra["mockitoVersion"]}")
-    testImplementation("com.h2database:h2:${rootProject.extra["h2Version"]}")
-  }
-
-  dependencyManagement {
-    dependencies {
-      dependency("org.apache.commons:commons-text:${rootProject.extra["apacheCommonsTextVersion"]}")
     }
   }
 
