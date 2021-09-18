@@ -1,51 +1,20 @@
-buildscript {
-  extra.apply {
-    set("apacheCommonsLang3Version", "3.12.0")
-    set("apacheCommonsTextVersion", "1.9")
-    set("cacheApiVersion", "1.1.1")
-    set("commonsCodecVersion", "1.15")
-    set("datatablesVersion", "1.10.25")
-    set("ehcacheVersion", "3.9.6")
-    set("esapiVersion", "2.2.3.1")
-    set("flywayVersion", "7.14.1")
-    set("h2Version", "1.4.200")
-    set("httpClientVersion", "4.5.13")
-    set("jacksonVersion", "2.12.4")
-    set("jacocoVersion", "0.8.7")
-    set("jaxbApiVersion", "2.3.1")
-    set("jsonwebtokenVersion", "0.9.1")
-    set("jsoupVersion", "1.14.2")
-    set("lombokVersion", "1.18.20")
-    set("micrometerVersion", "1.7.3")
-    set("mockitoVersion", "3.12.4")
-    set("modelmapperVersion", "2.4.4")
-    set("postgresqlVersion", "42.2.23")
-    set("restAssuredVersion", "4.4.0")
-    set("servletApiVersion", "4.0.1")
-    set("slf4jMockVersion", "2.1.1")
-    set("springBootVersion", "2.5.4")
-    set("springVersion", "5.3.9")
-    set("springSecurityVersion", "5.5.2")
-    set("thymeleafDialectVersion", "3.0.0")
-    set("thymeleafExtrasVersion", "3.0.4.RELEASE")
-  }
-}
-
 val javaVersion: JavaVersion = JavaVersion.VERSION_11
+
 val dependencyVersions = listOf(
   "org.slf4j:slf4j-api:1.7.32",
   "org.jboss.logging:jboss-logging:3.4.2.Final",
   "net.bytebuddy:byte-buddy:1.11.16",
   "org.javassist:javassist:3.28.0-GA"
 )
+
 val dependencyGroupVersions = mapOf(
-  "org.springframework" to extra["springVersion"] as String,
-  "org.springframework.security" to extra["springSecurityVersion"] as String,
-  "org.springframework.boot" to extra["springBootVersion"] as String,
-  "com.fasterxml.jackson.core" to extra["jacksonVersion"] as String,
-  "com.fasterxml.jackson.datatype" to extra["jacksonVersion"] as String,
-  "com.fasterxml.jackson.module" to extra["jacksonVersion"] as String,
-  "org.mockito" to extra["mockitoVersion"] as String
+  "org.springframework" to libs.versions.spring.get(),
+  "org.springframework.security" to libs.versions.springSecurity.get(),
+  "org.springframework.boot" to libs.versions.springBoot.get(),
+  "com.fasterxml.jackson.core" to libs.versions.jackson.get(),
+  "com.fasterxml.jackson.datatype" to libs.versions.jackson.get(),
+  "com.fasterxml.jackson.module" to libs.versions.jackson.get(),
+  "org.mockito" to libs.versions.mockito.get()
 )
 
 plugins {
