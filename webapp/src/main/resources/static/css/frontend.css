@@ -217,6 +217,12 @@ footer .footer-icon:hover {
 .offcanvas-header {
     border-bottom: 1px solid var(--grey-border-color);
 }
+.release-card {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid var(--grey-border-color);
+    border-radius: .25rem;
+}
 .release-cover-img {
     height: 20rem;
     width: 20rem;
@@ -549,6 +555,16 @@ footer .footer-icon:hover {
 
     .vertical-card-img {
         min-height: 27.5rem;
+    }
+
+    .release-card {
+        flex-direction: column;
+    }
+    .release-card .release-cover {
+        margin: 10px auto auto;
+    }
+    .release-card .release-details {
+        text-align: center;
     }
 
     #spotify-artists-container .checkbox {
