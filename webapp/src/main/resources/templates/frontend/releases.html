@@ -88,11 +88,11 @@
                     </div>
                     <form id="sorting-form">
                         <div class="form-check mb-1">
-                            <input type="radio" id="sort-asc-rb" name="releases" class="form-check-input" checked="">
+                            <input type="radio" id="sort-asc-rb" name="sorting" class="form-check-input" checked="">
                             <label class="form-check-label" for="sort-asc-rb">Ascending</label>
                         </div>
                         <div class="form-check mb-1">
-                            <input type="radio" id="sort-desc-rb" name="releases" class="form-check-input">
+                            <input type="radio" id="sort-desc-rb" name="sorting" class="form-check-input">
                             <label class="form-check-label" for="sort-desc-rb">Descending</label>
                         </div>
                     </form>
@@ -125,6 +125,9 @@
                         <label class="form-check-label" for="time-last-month-rb">Last 30 days</label>
                     </div>
                 </fieldset>
+                <button class="btn btn-outline-success d-xl-none" id="filter-apply-button">
+                    <span class="material-icons">task_alt</span> Apply
+                </button>
             </div>
         </template>
 

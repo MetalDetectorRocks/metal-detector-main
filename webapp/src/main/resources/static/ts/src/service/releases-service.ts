@@ -38,6 +38,7 @@ export class ReleasesService {
     private timeAllUpcomingRb!: HTMLInputElement;
     private timeNextMonthRb!: HTMLInputElement;
     private timeLastMonthRb!: HTMLInputElement;
+    private filterApplyBtn!: HTMLButtonElement;
 
     constructor(
         releasesRestClient: ReleasesRestClient,
@@ -52,12 +53,7 @@ export class ReleasesService {
         this.initReleasesFilter();
         this.initDocumentElements();
         this.initFilterValuesFromUrl();
-        this.addSortPropertyEventListener();
-        this.addSortingEventListener();
-        this.addReleaseFilterEventListener();
-        this.addSearchEventListener();
-        this.addTimeEventListener();
-        this.addWindowEventListener();
+        this.addEventListener();
     }
 
     private initReleasesFilter(): void {
@@ -104,14 +100,7 @@ export class ReleasesService {
         this.timeAllUpcomingRb = document.getElementById("time-all-upcoming-rb") as HTMLInputElement;
         this.timeNextMonthRb = document.getElementById("time-next-month-rb") as HTMLInputElement;
         this.timeLastMonthRb = document.getElementById("time-last-month-rb") as HTMLInputElement;
-    }
-
-    private addWindowEventListener() {
-        window.addEventListener("resize", this.onWindowResize.bind(this));
-    }
-
-    private onWindowResize(): void {
-        this.moveReleasesFilterContentIfNecessary();
+        this.filterApplyBtn = document.getElementById("filter-apply-button") as HTMLButtonElement;
     }
 
     private initFilterValuesFromUrl(): void {
@@ -151,37 +140,47 @@ export class ReleasesService {
         this.releasesRenderService.render(response);
     }
 
-    private addReleaseFilterEventListener(): void {
+    private addEventListener(): void {
+        const sortingForm = document.getElementById("sorting-form") as HTMLFormElement;
+        const sortingOptions = sortingForm.elements.namedItem("sorting") as RadioNodeList;
+        sortingOptions.forEach((option) => {
+            option.addEventListener("change", this.onAnyValueChange.bind(this));
+        });
+
         const releaseFilterForm = document.getElementById("release-filter-form") as HTMLFormElement;
         const releaseFilterOptions = releaseFilterForm.elements.namedItem("releases") as RadioNodeList;
         releaseFilterOptions.forEach((option) => {
             option.addEventListener("change", this.onAnyValueChange.bind(this));
         });
+
+        [
+            this.sortPropertySelector,
+            this.searchField,
+            this.timeAllUpcomingRb,
+            this.timeNextMonthRb,
+            this.timeLastMonthRb,
+        ].forEach((item) => item.addEventListener("change", this.onAnyValueChange.bind(this)));
+        this.filterApplyBtn.addEventListener("click", this.sendRequest.bind(this));
+        window.addEventListener("resize", this.onWindowResize.bind(this));
     }
 
-    private addSortingEventListener(): void {
-        const releaseFilterForm = document.getElementById("sorting-form") as HTMLFormElement;
-        const releaseFilterOptions = releaseFilterForm.elements.namedItem("releases") as RadioNodeList;
-        releaseFilterOptions.forEach((option) => {
-            option.addEventListener("change", this.onAnyValueChange.bind(this));
-        });
-    }
-
-    private addSortPropertyEventListener(): void {
-        this.sortPropertySelector.addEventListener("change", this.onAnyValueChange.bind(this));
-    }
-
-    private addSearchEventListener(): void {
-        this.searchField.addEventListener("change", this.onAnyValueChange.bind(this));
-    }
-
-    private addTimeEventListener(): void {
-        this.timeAllUpcomingRb.addEventListener("change", this.onAnyValueChange.bind(this));
-        this.timeNextMonthRb.addEventListener("change", this.onAnyValueChange.bind(this));
-        this.timeLastMonthRb.addEventListener("change", this.onAnyValueChange.bind(this));
+    private onWindowResize(): void {
+        this.moveReleasesFilterContentIfNecessary();
     }
 
     private onAnyValueChange(): void {
+        const currentWidth = window.innerWidth;
+        if (currentWidth >= ReleasesService.FILTER_CANVAS_WINDOW_MIN_SIZE) {
+            this.sendRequest();
+        }
+    }
+
+    private sendRequest(): void {
+        const urlSearchParams = this.buildRequestParams();
+        window.location.href = "?" + urlSearchParams.toString();
+    }
+
+    private buildRequestParams(): string {
         const releasesFilterValue = this.allArtistsRb.checked
             ? ReleasesService.ALL_RELEASES_PARAM_VALUE
             : ReleasesService.MY_RELEASES_PARAM_VALUE;
@@ -208,6 +207,6 @@ export class ReleasesService {
         urlSearchParams.set(ReleasesService.DATE_FROM_PARAM_VALUE, dateFrom);
         urlSearchParams.set(ReleasesService.DATE_TO_PARAM_VALUE, dateTo);
 
-        window.location.href = "?" + urlSearchParams.toString();
+        return urlSearchParams.toString();
     }
 }
