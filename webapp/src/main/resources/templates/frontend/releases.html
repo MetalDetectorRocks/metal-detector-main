@@ -130,9 +130,17 @@
             </div>
         </template>
 
-        <h1 class="h4">Releases</h1>
+        <div class="row">
+            <div class="col-auto me-auto">
+                <h1 class="h4">Releases</h1>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-sm btn-outline-light d-xl-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas">
+                    <span class="material-icons">tune</span>
+                </button>
+            </div>
+        </div>
 
-        <button class="btn btn-primary d-xl-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas">Toggle right offcanvas</button>
         <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvas" aria-labelledby="offcanvas-label">
             <div class="offcanvas-header">
                 <h5 id="offcanvas-label">Filtering and sorting</h5>
@@ -141,7 +149,7 @@
             <div class="offcanvas-body" id="releases-filter-offcanvas"></div>
         </div>
 
-        <div class="row">
+        <div class="row mt-3">
             <div id="releases-wrapper">
                 <div id="releases-container"></div>
                 <div id="pagination-wrapper"></div>
