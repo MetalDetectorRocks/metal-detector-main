@@ -202,6 +202,20 @@ footer .footer-icon:hover {
 }
 
 /* Releases */
+#releases-wrapper {
+    width: 75%;
+}
+#releases-filter-canvas {
+    width: 25%;
+    display: block;
+}
+#offcanvas {
+    background: var(--dark-background-color);
+    border-left: 1px solid var(--grey-border-color);
+}
+.offcanvas-header {
+    border-bottom: 1px solid var(--grey-border-color);
+}
 .release-cover-img {
     height: 20rem;
     width: 20rem;
@@ -479,6 +493,14 @@ footer .footer-icon:hover {
 }
 
 /* Responsive */
+@media screen and (max-width: 1200px) {
+    #releases-wrapper {
+        width: 100%;
+    }
+    #releases-filter-canvas {
+        display: none;
+    }
+}
 @media screen and (max-width: 1050px) {
     footer .flex-wrapper {
         flex-direction: column-reverse;

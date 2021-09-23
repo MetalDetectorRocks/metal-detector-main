@@ -9,6 +9,7 @@ export class ReleasesService {
     private static readonly MY_RELEASES_PARAM_VALUE = "my";
     private static readonly DATE_FROM_PARAM_VALUE = "dateFrom";
     private static readonly DATE_TO_PARAM_VALUE = "dateTo";
+    private static readonly QUERY_PARAM_VALUE = "query";
 
     private static readonly SORT_BY_RELEASE_DATE_OPTION_VALUE = "Release date";
     static readonly SORT_BY_ANNOUNCEMENT_DATE_OPTION_VALUE = "Announcement date";
@@ -19,7 +20,7 @@ export class ReleasesService {
     private static readonly SORT_DIRECTION_ASC_PARAM_VALUE = "asc";
     private static readonly SORT_DIRECTION_DESC_PARAM_VALUE = "desc";
 
-    private static readonly QUERY_PARAM_VALUE = "query";
+    private static readonly FILTER_CANVAS_WINDOW_MIN_SIZE = 1200;
 
     private readonly releasesRestClient: ReleasesRestClient;
     private readonly releasesRenderService: ReleasesRenderService;
@@ -46,6 +47,8 @@ export class ReleasesService {
         this.releasesRenderService = releasesRenderService;
         this.urlService = urlService;
         this.dateService = dateService;
+        this.renderReleasesFilter();
+        this.addWindowEventListener();
         this.initDocumentElements();
         this.initFilterValuesFromUrl();
         this.addSortPropertyEventListener();
@@ -53,6 +56,30 @@ export class ReleasesService {
         this.addReleaseFilterEventListener();
         this.addSearchEventListener();
         this.addTimeEventListener();
+    }
+
+    private renderReleasesFilter(): void {
+        const releasesFilterCanvas = document.getElementById("releases-filter-canvas") as HTMLDivElement;
+        const releasesFilterOffCanvas = document.getElementById("releases-filter-offcanvas") as HTMLDivElement;
+        const currentWidth = window.innerWidth;
+        if (
+            currentWidth < ReleasesService.FILTER_CANVAS_WINDOW_MIN_SIZE &&
+            releasesFilterOffCanvas.children.length === 0
+        ) {
+            this.toggleReleasesFilterCanvas(releasesFilterOffCanvas, releasesFilterCanvas);
+        } else if (
+            currentWidth >= ReleasesService.FILTER_CANVAS_WINDOW_MIN_SIZE &&
+            releasesFilterCanvas.children.length === 0
+        ) {
+            this.toggleReleasesFilterCanvas(releasesFilterCanvas, releasesFilterOffCanvas);
+        }
+    }
+
+    private toggleReleasesFilterCanvas(newActive: HTMLDivElement, newDisabled: HTMLDivElement): void {
+        const releasesFilterTemplate = document.getElementById("releases-filter") as HTMLTemplateElement;
+        const releasesFilter = document.importNode(releasesFilterTemplate.content, true);
+        newActive.insertAdjacentElement("beforeend", releasesFilter.firstElementChild as HTMLDivElement);
+        newDisabled.innerHTML = "";
     }
 
     private initDocumentElements(): void {
@@ -65,6 +92,14 @@ export class ReleasesService {
         this.timeAllUpcomingRb = document.getElementById("time-all-upcoming-rb") as HTMLInputElement;
         this.timeNextMonthRb = document.getElementById("time-next-month-rb") as HTMLInputElement;
         this.timeLastMonthRb = document.getElementById("time-last-month-rb") as HTMLInputElement;
+    }
+
+    private addWindowEventListener() {
+        window.addEventListener("resize", this.onWindowResize.bind(this));
+    }
+
+    private onWindowResize(): void {
+        this.renderReleasesFilter();
     }
 
     private initFilterValuesFromUrl(): void {

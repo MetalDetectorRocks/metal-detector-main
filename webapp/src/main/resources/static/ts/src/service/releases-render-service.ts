@@ -12,7 +12,6 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
     private readonly dateService: DateService;
     private readonly paginationComponent: PaginationComponent;
     private readonly releaseTemplateElement: HTMLTemplateElement;
-    private readonly sortPropertySelector!: HTMLSelectElement;
     private readonly paginationWrapper: HTMLDivElement;
 
     constructor(
@@ -24,7 +23,6 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
         this.dateService = dateService;
         this.paginationComponent = new PaginationComponent();
         this.releaseTemplateElement = document.getElementById("detailed-release-card") as HTMLTemplateElement;
-        this.sortPropertySelector = document.getElementById("sort-property-selector") as HTMLSelectElement;
         this.paginationWrapper = document.getElementById("pagination-wrapper") as HTMLDivElement;
     }
 
@@ -79,7 +77,8 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
                 ? this.dateService.format(release.releaseDate, DateFormat.LONG)
                 : release.estimatedReleaseDate;
 
-        this.sortPropertySelector.value === ReleasesService.SORT_BY_ANNOUNCEMENT_DATE_OPTION_VALUE
+        const sortPropertySelector = document.getElementById("sort-property-selector") as HTMLSelectElement;
+        sortPropertySelector.value === ReleasesService.SORT_BY_ANNOUNCEMENT_DATE_OPTION_VALUE
             ? (announcementDateElement.textContent = this.dateService.format(release.announcementDate, DateFormat.LONG))
             : releaseDivElement.querySelector("#announcement-date-wrapper")?.remove();
 
