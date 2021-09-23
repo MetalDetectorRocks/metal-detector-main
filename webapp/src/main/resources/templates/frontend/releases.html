@@ -67,75 +67,86 @@
                 </div>
             </div>
         </template>
+        <template id="releases-filter">
+            <div>
+                <fieldset class="mb-4">
+                    <legend>Search</legend>
+                    <label>
+                        <input id="release-search" type="text" class="form-control custom-form-control" placeholder="Artist or release title">
+                    </label>
+                </fieldset>
+                <fieldset class="mb-4">
+                    <legend>Sort</legend>
+                    <div class="row mb-3">
+                        <div class="col-auto col-form-label">
+                            <label for="sort-property-selector">by</label>
+                        </div>
+                        <div class="col-auto ps-0">
+                            <select class="form-select" id="sort-property-selector">
+                                <option selected>Release date</option>
+                                <option>Announcement date</option>
+                            </select>
+                        </div>
+                    </div>
+                    <form id="sorting-form">
+                        <div class="form-check mb-1">
+                            <input type="radio" id="sort-asc-rb" name="releases" class="form-check-input" checked="">
+                            <label class="form-check-label" for="sort-asc-rb">Ascending</label>
+                        </div>
+                        <div class="form-check mb-1">
+                            <input type="radio" id="sort-desc-rb" name="releases" class="form-check-input">
+                            <label class="form-check-label" for="sort-desc-rb">Descending</label>
+                        </div>
+                    </form>
+                </fieldset>
+                <fieldset class="mb-4">
+                    <legend>Artists</legend>
+                    <form id="release-filter-form">
+                        <div class="form-check mb-1">
+                            <input type="radio" id="all-artists-rb" name="releases" class="form-check-input" checked="">
+                            <label class="form-check-label" for="all-artists-rb">All artists</label>
+                        </div>
+                        <div class="form-check mb-1">
+                            <input type="radio" id="followed-artists-rb" name="releases" class="form-check-input">
+                            <label class="form-check-label" for="followed-artists-rb">Only followed artists</label>
+                        </div>
+                    </form>
+                </fieldset>
+                <fieldset class="mb-4">
+                    <legend>Time</legend>
+                    <div class="form-check mb-1">
+                        <input type="radio" id="time-all-upcoming-rb" name="time" class="form-check-input" checked="">
+                        <label class="form-check-label" for="time-all-upcoming-rb">All upcoming</label>
+                    </div>
+                    <div class="form-check mb-1">
+                        <input type="radio" id="time-next-month-rb" name="time" class="form-check-input">
+                        <label class="form-check-label" for="time-next-month-rb">Next 30 days</label>
+                    </div>
+                    <div class="form-check mb-1">
+                        <input type="radio" id="time-last-month-rb" name="time" class="form-check-input">
+                        <label class="form-check-label" for="time-last-month-rb">Last 30 days</label>
+                    </div>
+                </fieldset>
+            </div>
+        </template>
 
         <h1 class="h4">Releases</h1>
+
+        <button class="btn btn-primary d-xl-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas">Toggle right offcanvas</button>
+        <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvas" aria-labelledby="offcanvas-label">
+            <div class="offcanvas-header">
+                <h5 id="offcanvas-label">Filtering and sorting</h5>
+                <span class="material-icons material-icons md-light pointer" data-bs-dismiss="offcanvas" aria-label="Close">close</span>
+            </div>
+            <div class="offcanvas-body" id="releases-filter-offcanvas"></div>
+        </div>
+
         <div class="row">
-            <div class="col-9" id="releases-wrapper">
+            <div id="releases-wrapper">
                 <div id="releases-container"></div>
                 <div id="pagination-wrapper"></div>
             </div>
-            <div class="col-3 custom-border-left">
-                <div class="sticky" id="release-filter">
-                    <fieldset class="mb-4">
-                        <legend>Search</legend>
-                        <label>
-                            <input id="release-search" type="text" class="form-control custom-form-control" placeholder="Artist or release title">
-                        </label>
-                    </fieldset>
-                    <fieldset class="mb-4">
-                        <legend>Sort</legend>
-                        <div class="row mb-3">
-                            <div class="col-auto col-form-label">
-                                <label for="sort-property-selector">by</label>
-                            </div>
-                            <div class="col-auto ps-0">
-                                <select class="form-select" id="sort-property-selector">
-                                    <option selected>Release date</option>
-                                    <option>Announcement date</option>
-                                </select>
-                            </div>
-                        </div>
-                        <form id="sorting-form">
-                            <div class="form-check mb-1">
-                                <input type="radio" id="sort-asc-rb" name="releases" class="form-check-input" checked="">
-                                <label class="form-check-label" for="sort-asc-rb">Ascending</label>
-                            </div>
-                            <div class="form-check mb-1">
-                                <input type="radio" id="sort-desc-rb" name="releases" class="form-check-input">
-                                <label class="form-check-label" for="sort-desc-rb">Descending</label>
-                            </div>
-                        </form>
-                    </fieldset>
-                    <fieldset class="mb-4">
-                        <legend>Artists</legend>
-                        <form id="release-filter-form">
-                            <div class="form-check mb-1">
-                                <input type="radio" id="all-artists-rb" name="releases" class="form-check-input" checked="">
-                                <label class="form-check-label" for="all-artists-rb">All artists</label>
-                            </div>
-                            <div class="form-check mb-1">
-                                <input type="radio" id="followed-artists-rb" name="releases" class="form-check-input">
-                                <label class="form-check-label" for="followed-artists-rb">Only followed artists</label>
-                            </div>
-                        </form>
-                    </fieldset>
-                    <fieldset class="mb-4">
-                        <legend>Time</legend>
-                        <div class="form-check mb-1">
-                            <input type="radio" id="time-all-upcoming-rb" name="time" class="form-check-input" checked="">
-                            <label class="form-check-label" for="time-all-upcoming-rb">All upcoming</label>
-                        </div>
-                        <div class="form-check mb-1">
-                            <input type="radio" id="time-next-month-rb" name="time" class="form-check-input">
-                            <label class="form-check-label" for="time-next-month-rb">Next 30 days</label>
-                        </div>
-                        <div class="form-check mb-1">
-                            <input type="radio" id="time-last-month-rb" name="time" class="form-check-input">
-                            <label class="form-check-label" for="time-last-month-rb">Last 30 days</label>
-                        </div>
-                    </fieldset>
-                </div>
-            </div>
+            <div class="sticky" id="releases-filter-canvas"></div>
         </div>
     </section>
 </body>
