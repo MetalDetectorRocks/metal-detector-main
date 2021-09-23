@@ -27,6 +27,8 @@ export class ReleasesService {
     private readonly urlService: UrlService;
     private readonly dateService: DateService;
 
+    private releasesFilterCanvas!: HTMLDivElement;
+    private releasesFilterOffCanvas!: HTMLDivElement;
     private allArtistsRb!: HTMLInputElement;
     private followedArtistsRb!: HTMLInputElement;
     private sortPropertySelector!: HTMLSelectElement;
@@ -47,8 +49,7 @@ export class ReleasesService {
         this.releasesRenderService = releasesRenderService;
         this.urlService = urlService;
         this.dateService = dateService;
-        this.renderReleasesFilter();
-        this.addWindowEventListener();
+        this.initReleasesFilter();
         this.initDocumentElements();
         this.initFilterValuesFromUrl();
         this.addSortPropertyEventListener();
@@ -56,30 +57,41 @@ export class ReleasesService {
         this.addReleaseFilterEventListener();
         this.addSearchEventListener();
         this.addTimeEventListener();
+        this.addWindowEventListener();
     }
 
-    private renderReleasesFilter(): void {
-        const releasesFilterCanvas = document.getElementById("releases-filter-canvas") as HTMLDivElement;
-        const releasesFilterOffCanvas = document.getElementById("releases-filter-offcanvas") as HTMLDivElement;
+    private initReleasesFilter(): void {
+        const releasesFilterTemplate = document.getElementById("releases-filter") as HTMLTemplateElement;
+        const releasesFilter = document.importNode(releasesFilterTemplate.content, true);
+        this.releasesFilterCanvas = document.getElementById("releases-filter-canvas") as HTMLDivElement;
+        this.releasesFilterOffCanvas = document.getElementById("releases-filter-offcanvas") as HTMLDivElement;
         const currentWidth = window.innerWidth;
-        if (
-            currentWidth < ReleasesService.FILTER_CANVAS_WINDOW_MIN_SIZE &&
-            releasesFilterOffCanvas.children.length === 0
-        ) {
-            this.toggleReleasesFilterCanvas(releasesFilterOffCanvas, releasesFilterCanvas);
-        } else if (
-            currentWidth >= ReleasesService.FILTER_CANVAS_WINDOW_MIN_SIZE &&
-            releasesFilterCanvas.children.length === 0
-        ) {
-            this.toggleReleasesFilterCanvas(releasesFilterCanvas, releasesFilterOffCanvas);
+        if (currentWidth < ReleasesService.FILTER_CANVAS_WINDOW_MIN_SIZE) {
+            this.releasesFilterOffCanvas.insertAdjacentElement(
+                "beforeend",
+                releasesFilter.firstElementChild as HTMLDivElement,
+            );
+        } else {
+            this.releasesFilterCanvas.insertAdjacentElement(
+                "beforeend",
+                releasesFilter.firstElementChild as HTMLDivElement,
+            );
         }
     }
 
-    private toggleReleasesFilterCanvas(newActive: HTMLDivElement, newDisabled: HTMLDivElement): void {
-        const releasesFilterTemplate = document.getElementById("releases-filter") as HTMLTemplateElement;
-        const releasesFilter = document.importNode(releasesFilterTemplate.content, true);
-        newActive.insertAdjacentElement("beforeend", releasesFilter.firstElementChild as HTMLDivElement);
-        newDisabled.innerHTML = "";
+    private moveReleasesFilterContentIfNecessary(): void {
+        const currentWidth = window.innerWidth;
+        if (
+            currentWidth < ReleasesService.FILTER_CANVAS_WINDOW_MIN_SIZE &&
+            this.releasesFilterOffCanvas.children.length === 0
+        ) {
+            this.releasesFilterOffCanvas.insertAdjacentElement("beforeend", this.releasesFilterCanvas.children[0]);
+        } else if (
+            currentWidth >= ReleasesService.FILTER_CANVAS_WINDOW_MIN_SIZE &&
+            this.releasesFilterCanvas.children.length === 0
+        ) {
+            this.releasesFilterCanvas.insertAdjacentElement("beforeend", this.releasesFilterOffCanvas.children[0]);
+        }
     }
 
     private initDocumentElements(): void {
@@ -99,7 +111,7 @@ export class ReleasesService {
     }
 
     private onWindowResize(): void {
-        this.renderReleasesFilter();
+        this.moveReleasesFilterContentIfNecessary();
     }
 
     private initFilterValuesFromUrl(): void {

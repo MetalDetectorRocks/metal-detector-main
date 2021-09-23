@@ -207,6 +207,7 @@ footer .footer-icon:hover {
 }
 #releases-filter-canvas {
     width: 25%;
+    border-left: 2px solid var(--grey-border-color);
     display: block;
 }
 #offcanvas {
@@ -221,9 +222,6 @@ footer .footer-icon:hover {
     width: 20rem;
     object-fit: cover;
     border-right: 1px solid var(--grey-border-color);
-}
-.custom-border-left {
-    border-left: 2px solid var(--grey-border-color);
 }
 
 /* Notification Settings */

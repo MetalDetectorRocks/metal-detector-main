@@ -12,10 +12,10 @@
         <template id="detailed-release-card">
             <div class="card dark-card-body mb-3">
                 <div class="row">
-                    <div class="col-md-auto">
+                    <div class="col-auto">
                         <img class="release-cover-img" src="#" alt="#" id="release-cover">
                     </div>
-                    <div class="col-7">
+                    <div class="col-auto me-auto">
                         <p class="h5 card-title mt-3 mb-4" id="release-title"></p>
                         <div class="row" id="additional-artists-wrapper">
                             <div class="col">
@@ -68,7 +68,7 @@
             </div>
         </template>
         <template id="releases-filter">
-            <div>
+            <div class="sticky">
                 <fieldset class="mb-4">
                     <legend>Search</legend>
                     <label>
@@ -154,7 +154,7 @@
                 <div id="releases-container"></div>
                 <div id="pagination-wrapper"></div>
             </div>
-            <div class="sticky" id="releases-filter-canvas"></div>
+            <div id="releases-filter-canvas"></div>
         </div>
     </section>
 </body>
