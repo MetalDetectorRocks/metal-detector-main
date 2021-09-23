@@ -3,7 +3,7 @@ val javaVersion: JavaVersion = JavaVersion.VERSION_11
 val dependencyVersions = listOf(
   "org.slf4j:slf4j-api:1.7.32",
   "org.jboss.logging:jboss-logging:3.4.2.Final",
-  "net.bytebuddy:byte-buddy:1.11.16",
+  "net.bytebuddy:byte-buddy:1.11.18",
   "org.javassist:javassist:3.28.0-GA"
 )
 
@@ -20,7 +20,7 @@ val dependencyGroupVersions = mapOf(
 plugins {
   id("java")
   id("org.siouan.frontend-jdk11") version "5.3.0" apply false
-  id("org.springframework.boot") version "2.5.4" apply false
+  id("org.springframework.boot") version "2.5.5" apply false
   id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
 }
 
