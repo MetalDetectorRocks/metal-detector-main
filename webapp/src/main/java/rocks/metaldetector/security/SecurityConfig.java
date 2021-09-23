@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
@@ -61,6 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
   private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
   private final OAuth2UserService<OidcUserRequest, OidcUser> customOidcUserService;
+  private final OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver;
 
   @Value("${telegram.bot-id}")
   private String botId;
@@ -90,6 +92,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           .failureHandler(new CustomAuthenticationFailureHandler())
           .userInfoEndpoint()
             .oidcUserService(customOidcUserService)
+        .and()
+          .authorizationEndpoint()
+            .authorizationRequestResolver(oAuth2AuthorizationRequestResolver)
           .and()
       .and()
         .oauth2Client()
