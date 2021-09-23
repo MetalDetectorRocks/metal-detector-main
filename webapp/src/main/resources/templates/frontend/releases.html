@@ -10,58 +10,56 @@
 <body>
     <section layout:fragment="content">
         <template id="detailed-release-card">
-            <div class="card dark-card-body mb-3">
-                <div class="row">
-                    <div class="col-auto">
-                        <img class="release-cover-img" src="#" alt="#" id="release-cover">
+            <div class="release-card dark-card-body mb-3">
+                <div class="release-cover">
+                    <img class="release-cover-img" src="#" alt="#" id="release-cover">
+                </div>
+                <div class="release-details px-3">
+                    <p class="h5 card-title mt-3 mb-4" id="release-title"></p>
+                    <div class="row d-md-none" id="additional-artists-wrapper">
+                        <div class="col">
+                            <p>
+                                <strong>Additional artists</strong><br />
+                                <span id="additional-artists"></span>
+                            </p>
+                        </div>
                     </div>
-                    <div class="col-auto me-auto">
-                        <p class="h5 card-title mt-3 mb-4" id="release-title"></p>
-                        <div class="row" id="additional-artists-wrapper">
-                            <div class="col">
-                                <p>
-                                    <strong>Additional artists</strong><br />
-                                    <span id="additional-artists"></span>
-                                </p>
-                            </div>
+                    <div class="row">
+                        <div class="col">
+                            <p>
+                                <strong>Release date</strong><br />
+                                <span id="release-date"></span>
+                            </p>
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <p>
-                                    <strong>Release date</strong><br />
-                                    <span id="release-date"></span>
-                                </p>
-                            </div>
-                            <div class="col" id="announcement-date-wrapper">
-                                <p>
-                                    <strong>Announcement date</strong><br />
-                                    <span id="announcement-date"></span>
-                                </p>
-                            </div>
+                        <div class="col" id="announcement-date-wrapper">
+                            <p>
+                                <strong>Announcement date</strong><br />
+                                <span id="announcement-date"></span>
+                            </p>
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <p>
-                                    <strong>Type</strong><br />
-                                    <span id="release-type"></span>
-                                </p>
-                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p>
+                                <strong>Type</strong><br />
+                                <span id="release-type"></span>
+                            </p>
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <p>
-                                    <strong>Genre</strong><br />
-                                    <span id="release-genre"></span>
-                                </p>
-                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p>
+                                <strong>Genre</strong><br />
+                                <span id="release-genre"></span>
+                            </p>
                         </div>
-                        <div class="row" id="reissue-wrapper">
-                            <div class="col">
-                                <p>
-                                    <strong>Reissue</strong><br />
-                                    <span id="reissue-text"></span>
-                                </p>
-                            </div>
+                    </div>
+                    <div class="row" id="reissue-wrapper">
+                        <div class="col">
+                            <p>
+                                <strong>Reissue</strong><br />
+                                <span id="reissue-text"></span>
+                            </p>
                         </div>
                     </div>
                 </div>
