@@ -21,6 +21,7 @@ public class OAuth2ClientConfig {
     OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
         .clientCredentials()
         .authorizationCode()
+        .refreshToken()
         .build();
     var manager = new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientRepository);
     manager.setAuthorizedClientProvider(authorizedClientProvider);
