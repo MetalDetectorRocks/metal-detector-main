@@ -239,7 +239,7 @@ public class DtoFactory {
           .artist(artistName)
           .albumTitle("Heavy Release")
           .releaseDate(LocalDate.now().plusDays(10))
-          .state("OK")
+          .state("Ok")
           .build();
     }
 
@@ -249,7 +249,7 @@ public class DtoFactory {
           .albumTitle("Heavy Release")
           .releaseDate(LocalDate.now().plusDays(10))
           .announcementDate(announcementDate)
-          .state("OK")
+          .state("Ok")
           .build();
     }
   }
