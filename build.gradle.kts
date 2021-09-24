@@ -24,14 +24,6 @@ plugins {
   id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
 }
 
-allprojects {
-  group = "rocks.metaldetector"
-
-  repositories {
-    mavenCentral()
-  }
-}
-
 subprojects {
   project.apply(plugin = "java")
   project.apply(plugin = "io.spring.dependency-management")
@@ -56,6 +48,10 @@ subprojects {
   configure<JavaPluginExtension> {
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
+  }
+
+  repositories {
+    mavenCentral()
   }
 
   tasks {
