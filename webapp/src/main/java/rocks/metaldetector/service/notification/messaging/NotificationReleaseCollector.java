@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class NotificationReleaseCollector {
 
-  private static final String RELEASE_STATE_OK = "OK";
+  private static final String RELEASE_STATE_OK = "Ok";
 
   private final ReleaseService releaseService;
   private final FollowArtistService followArtistService;
