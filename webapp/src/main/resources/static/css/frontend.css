@@ -536,6 +536,9 @@ footer .footer-icon:hover {
     #my-artists-wrapper .flex-item {
         width: 80%;
     }
+    #my-artists-wrapper .vertical-card-img {
+        min-height: 27.5rem;
+    }
     #my-artists-wrapper .card-body,
     #my-artists-wrapper .card-footer {
         text-align: center;
@@ -551,10 +554,6 @@ footer .footer-icon:hover {
 
     #pagination-wrapper {
         justify-content: center;
-    }
-
-    .vertical-card-img {
-        min-height: 27.5rem;
     }
 
     .release-card {
@@ -580,5 +579,13 @@ footer .footer-icon:hover {
     }
     #spotify-artists-container p {
         margin-bottom: 2px;
+    }
+}
+@media screen and (max-width: 500px) {
+    #my-artists-wrapper .flex-item {
+        width: 100%;
+    }
+    #my-artists-wrapper .vertical-card-img {
+        min-height: 22.5rem;
     }
 }

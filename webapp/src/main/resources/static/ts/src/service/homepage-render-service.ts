@@ -6,6 +6,7 @@ import { Artist } from "../model/artist.model";
 import { Release } from "../model/release.model";
 import { DateFormat, DateService } from "./date-service";
 import { FollowArtistService } from "./follow-artist-service";
+import { SliderComponent } from "../components/card-slider/slider-component";
 
 interface HomepageCard {
     readonly divElement: HTMLDivElement;
@@ -20,6 +21,8 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     private readonly followArtistService: FollowArtistService;
     private readonly artistTemplateElement: HTMLTemplateElement;
     private readonly releaseTemplateElement: HTMLTemplateElement;
+
+    // ToDo: Check this constants
     private readonly MAX_CARDS_PER_ROW: number = 4;
     private readonly MIN_CARDS_PER_ROW: number = this.MAX_CARDS_PER_ROW - 1;
 
@@ -57,17 +60,19 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     }
 
     private renderUpcomingReleasesRow(response: HomepageResponse) {
-        this.insertHeadingElement("Upcoming releases");
-        const upcomingReleasesRowElement = this.insertRowElement();
-        this.renderReleaseCards(response.upcomingReleases, upcomingReleasesRowElement);
-        this.insertPlaceholder(response.upcomingReleases.length, upcomingReleasesRowElement);
+        const title = "Upcoming releases";
+        this.renderReleaseCards(title, response.upcomingReleases);
+
+        // ToDo: Handle placeholder
+        // this.insertPlaceholder(response.upcomingReleases.length, upcomingReleasesRowElement);
     }
 
     private renderRecentReleasesRow(response: HomepageResponse): void {
-        this.insertHeadingElement("Recent releases");
-        const recentReleasesRowElement = this.insertRowElement();
-        this.renderReleaseCards(response.recentReleases, recentReleasesRowElement);
-        this.insertPlaceholder(response.recentReleases.length, recentReleasesRowElement);
+        const title = "Recent releases";
+        this.renderReleaseCards(title, response.recentReleases);
+
+        // ToDo: Handle placeholder
+        // this.insertPlaceholder(response.recentReleases.length, recentReleasesRowElement);
     }
 
     private renderReleaseRow(response: HomepageResponse): void {
@@ -77,17 +82,17 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         const releases = recentReleases.concat(response.upcomingReleases).splice(0, this.MAX_CARDS_PER_ROW);
 
         if (releases.length) {
-            this.insertHeadingElement("Releases");
-            const releasesRow = this.insertRowElement();
-            this.renderReleaseCards(releases, releasesRow);
-            this.insertPlaceholder(releases.length, releasesRow);
+            const title = "Releases";
+            this.renderReleaseCards(title, releases);
+            // ToDo: Handle placeholder
+            // this.insertPlaceholder(releases.length, releasesRow);
         }
     }
 
     private renderRecentlyFollowedArtistsRow(response: HomepageResponse): void {
         if (response.recentlyFollowedArtists.length) {
-            this.insertHeadingElement("Recently followed artists");
-            const recentlyFollowedRowElement = this.insertRowElement();
+            const title = "Recently followed artists";
+            const cards: HTMLDivElement[] = [];
 
             response.recentlyFollowedArtists.forEach((artist) => {
                 const artistDivElement = this.renderArtistCard(artist);
@@ -100,30 +105,33 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
                         )}</span>
                     </div>
                 `;
-                this.attachCard(artistDivElement, recentlyFollowedRowElement);
+                cards.push(artistDivElement);
             });
+            this.attachSlider(title, cards);
         }
     }
 
     private renderFavoriteCommunityArtistsRow(response: HomepageResponse): void {
         if (response.favoriteCommunityArtists.length) {
-            this.insertHeadingElement("The community's favorite artists");
-            const recentlyFollowedRowElement = this.insertRowElement();
+            const title = "The community's favorite artists";
+            const cards: HTMLDivElement[] = [];
 
             response.favoriteCommunityArtists.forEach((artist) => {
                 const artistDivElement = this.renderArtistCard(artist);
                 const followerElement = artistDivElement.querySelector("#artist-sub-title") as HTMLDivElement;
                 followerElement.innerHTML = artist.follower + " follower";
-                this.attachCard(artistDivElement, recentlyFollowedRowElement);
+                cards.push(artistDivElement);
             });
+            this.attachSlider(title, cards);
         }
     }
 
     private renderMostExpectedReleasesRow(response: HomepageResponse) {
-        this.insertHeadingElement("The community's most expected releases");
-        const mostExpectedReleasesRowElement = this.insertRowElement();
-        this.renderReleaseCards(response.mostExpectedReleases, mostExpectedReleasesRowElement);
-        this.insertPlaceholder(response.mostExpectedReleases.length, mostExpectedReleasesRowElement);
+        const title = "The community's most expected releases";
+        this.renderReleaseCards(title, response.mostExpectedReleases);
+
+        // ToDo: Handle placeholder
+        // this.insertPlaceholder(response.mostExpectedReleases.length, mostExpectedReleasesRowElement);
     }
 
     private renderArtistCard(artist: Artist): HTMLDivElement {
@@ -141,11 +149,13 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         return artistDivElement;
     }
 
-    private renderReleaseCards(releases: Release[], rowElement: HTMLDivElement): void {
+    private renderReleaseCards(title: string, releases: Release[]): void {
+        const cards: HTMLDivElement[] = [];
         releases.forEach((release) => {
-            const releaseDivElement = this.renderReleaseCard(release);
-            this.attachCard(releaseDivElement, rowElement);
+            const card = this.renderReleaseCard(release);
+            cards.push(card);
         });
+        this.attachSlider(title, cards);
     }
 
     private renderReleaseCard(release: Release): HTMLDivElement {
@@ -184,30 +194,23 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         };
     }
 
-    private attachCard(divElement: HTMLDivElement, rowElement: HTMLDivElement): void {
-        rowElement.insertAdjacentElement("beforeend", divElement);
-    }
-
-    private insertHeadingElement(heading: string): void {
-        const headingElement = document.createElement("p") as HTMLParagraphElement;
-        headingElement.className = "h5 mt-4 mb-2";
-        headingElement.textContent = heading;
-        this.hostElement.insertAdjacentElement("beforeend", headingElement);
-    }
-
-    private insertRowElement(): HTMLDivElement {
-        const recentlyFollowedRowElement = document.createElement("div") as HTMLDivElement;
-        recentlyFollowedRowElement.className = "row";
-        this.hostElement.insertAdjacentElement("beforeend", recentlyFollowedRowElement);
-        return recentlyFollowedRowElement;
-    }
-
-    private insertPlaceholder(elementCount: number, rowElement: HTMLDivElement): void {
-        if (elementCount < this.MAX_CARDS_PER_ROW) {
-            const placeholderDivElement = this.renderPlaceholderCard();
-            this.attachCard(placeholderDivElement, rowElement);
+    private attachSlider(title: string, cards: HTMLDivElement[]): void {
+        const sliderComponent = new SliderComponent({
+            title,
+            items: cards,
+        });
+        const sliderHtml = sliderComponent.render();
+        if (sliderHtml) {
+            this.hostElement.insertAdjacentElement("beforeend", sliderHtml);
         }
     }
+
+    // private insertPlaceholder(elementCount: number, rowElement: HTMLDivElement): void {
+    //     if (elementCount < this.MAX_CARDS_PER_ROW) {
+    //         const placeholderDivElement = this.renderPlaceholderCard();
+    //         this.attachCard(placeholderDivElement, rowElement);
+    //     }
+    // }
 
     private handleFollowIconClick(followIconElement: HTMLImageElement, artist: Artist): void {
         this.followArtistService.handleFollowIconClick(followIconElement, {

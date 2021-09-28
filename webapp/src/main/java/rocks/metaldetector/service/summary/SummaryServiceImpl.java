@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class SummaryServiceImpl implements SummaryService {
 
   public static final int MIN_FOLLOWER = 2;
-  public static final int RESULT_LIMIT = 4;
+  public static final int RESULT_LIMIT = 10;
   public static final int TIME_RANGE_MONTHS = 6;
 
   private final ReleaseCollector releaseCollector;
