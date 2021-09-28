@@ -10,30 +10,26 @@
 <body>
     <section layout:fragment="content">
         <template id="artist-card">
-            <div class="col-lg-3">
-                <div class="card dark-card mb-3">
-                    <img class="vertical-card-img" src="#" alt="" id="artist-thumb">
-                    <div id="follow-icon" class="top-right follow-icon-my-artists">
-                        <img src="#" th:src="@{/images/pommesgabel.svg}" alt="follow" width="32">
-                    </div>
-                    <div class="card-body dark-card-body">
-                        <p class="h5 card-title" id="artist-name"></p>
-                    </div>
-                    <div class="card-footer dark-card-footer text-muted" id="artist-sub-title">
-                    </div>
+            <div class="card dark-card mb-3">
+                <img class="vertical-card-img" src="#" alt="" id="artist-thumb">
+                <div id="follow-icon" class="top-right follow-icon-my-artists">
+                    <img src="#" th:src="@{/images/pommesgabel.svg}" alt="follow" width="32">
+                </div>
+                <div class="card-body dark-card-body">
+                    <p class="h5 card-title" id="artist-name"></p>
+                </div>
+                <div class="card-footer dark-card-footer text-muted" id="artist-sub-title">
                 </div>
             </div>
         </template>
         <template id="release-card">
-            <div class="col-lg-3">
-                <div class="card dark-card mb-3">
-                    <img class="vertical-card-img" src="#" alt="" id="release-cover">
-                    <div class="card-body dark-card-body">
-                        <p class="h5 card-title" id="release-artist-name"></p>
-                        <p class="card-subtitle font-size-s" id="release-title"></p>
-                    </div>
-                    <div class="card-footer dark-card-footer text-muted" id="release-date">
-                    </div>
+            <div class="card dark-card mb-3">
+                <img class="vertical-card-img" src="#" alt="" id="release-cover">
+                <div class="card-body dark-card-body">
+                    <p class="h5 card-title" id="release-artist-name"></p>
+                    <p class="card-subtitle font-size-s" id="release-title"></p>
+                </div>
+                <div class="card-footer dark-card-footer text-muted" id="release-date">
                 </div>
             </div>
         </template>

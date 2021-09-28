@@ -213,3 +213,24 @@
   position: sticky;
   top: 0;
 }
+
+/* Slider */
+.slider {
+  display: flex;
+  justify-content: left;
+}
+
+.slider-content {
+  position: relative;
+  width: 100%;
+  height: 450px;
+  overflow: hidden;
+}
+
+.slider-items {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  grid-gap: 15px;
+}
