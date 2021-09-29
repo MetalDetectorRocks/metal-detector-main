@@ -203,6 +203,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         if (sliderHtml) {
             this.hostElement.insertAdjacentElement("beforeend", sliderHtml);
         }
+        sliderComponent.finalize();
     }
 
     // private insertPlaceholder(elementCount: number, rowElement: HTMLDivElement): void {
