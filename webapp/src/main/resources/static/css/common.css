@@ -221,45 +221,7 @@
   top: 0;
 }
 
-/* Slider */
-.slider-header {
-  display: flex;
-  justify-content: space-between;
-}
-.slider {
-  display: flex;
-  justify-content: left;
-}
-.slider-content {
-  position: relative;
-  width: 100%;
-  height: 450px;
-  overflow: hidden;
-}
-.slider-items {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: grid;
-  grid-gap: 15px;
-  -webkit-transition: all 0.3s ease-in;
-  transition: all 0.3s ease-in;
-}
-
-@media screen and (max-width: 700px) {
-  .grabbable {
-    cursor: url(openhand.cur), default !important;
-  }
-  .grabbing {
-    cursor: grabbing;
-  }
-  .slider-items {
-    -webkit-transition: off;
-    transition: off;
-    pointer-events: none;
-  }
-}
-/* End Slider */
+/* Swiper /*
 .swiper-header {
   display: flex;
   justify-content: space-between;
