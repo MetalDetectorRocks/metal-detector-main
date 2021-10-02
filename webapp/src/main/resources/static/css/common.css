@@ -259,3 +259,14 @@
     pointer-events: none;
   }
 }
+/* End Slider */
+.swiper-header {
+  display: flex;
+  justify-content: space-between;
+}
+@media screen and (max-width: 1050px) {
+  .swiper-button-prev,
+  .swiper-button-next {
+    display: none !important;
+  }
+}

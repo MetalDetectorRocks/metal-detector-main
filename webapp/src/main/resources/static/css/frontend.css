@@ -580,6 +580,11 @@ footer .footer-icon:hover {
     #spotify-artists-container p {
         margin-bottom: 2px;
     }
+
+    #home-container {
+        margin-right: 25px;
+        margin-left: 25px;
+    }
 }
 @media screen and (max-width: 500px) {
     #my-artists-wrapper .flex-item {

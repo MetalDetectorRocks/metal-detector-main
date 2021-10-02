@@ -6,7 +6,7 @@ import { Artist } from "../model/artist.model";
 import { Release } from "../model/release.model";
 import { DateFormat, DateService } from "./date-service";
 import { FollowArtistService } from "./follow-artist-service";
-import { SliderComponent } from "../components/card-slider/slider-component";
+import { SwiperComponent } from "../components/card-slider/swiper-component";
 
 interface HomepageCard {
     readonly divElement: HTMLDivElement;
@@ -59,18 +59,12 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
     private renderUpcomingReleasesRow(response: HomepageResponse) {
         const title = "Upcoming releases";
-        this.renderReleaseCards(title, response.upcomingReleases);
-
-        // ToDo: Handle placeholder
-        // this.insertPlaceholder(response.upcomingReleases.length, upcomingReleasesRowElement);
+        this.renderReleaseCards("swiper-upcoming-release", title, response.upcomingReleases);
     }
 
     private renderRecentReleasesRow(response: HomepageResponse): void {
         const title = "Recent releases";
-        this.renderReleaseCards(title, response.recentReleases);
-
-        // ToDo: Handle placeholder
-        // this.insertPlaceholder(response.recentReleases.length, recentReleasesRowElement);
+        this.renderReleaseCards("swiper-recent-releases", title, response.recentReleases);
     }
 
     private renderReleaseRow(response: HomepageResponse): void {
@@ -81,9 +75,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
 
         if (releases.length) {
             const title = "Releases";
-            this.renderReleaseCards(title, releases);
-            // ToDo: Handle placeholder
-            // this.insertPlaceholder(releases.length, releasesRow);
+            this.renderReleaseCards("swiper-releases", title, releases);
         }
     }
 
@@ -105,7 +97,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
                 `;
                 cards.push(artistDivElement);
             });
-            this.attachSlider(title, cards);
+            this.createSwiper("swiper-recently-followed-artists", title, cards);
         }
     }
 
@@ -120,16 +112,13 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
                 followerElement.innerHTML = artist.follower + " follower";
                 cards.push(artistDivElement);
             });
-            this.attachSlider(title, cards);
+            this.createSwiper("swiper-community-favorite-artists", title, cards);
         }
     }
 
     private renderMostExpectedReleasesRow(response: HomepageResponse) {
         const title = "The community's most expected releases";
-        this.renderReleaseCards(title, response.mostExpectedReleases);
-
-        // ToDo: Handle placeholder
-        // this.insertPlaceholder(response.mostExpectedReleases.length, mostExpectedReleasesRowElement);
+        this.renderReleaseCards("swiper-community-most-expected-releases", title, response.mostExpectedReleases, false);
     }
 
     private renderArtistCard(artist: Artist): HTMLDivElement {
@@ -147,13 +136,16 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         return artistDivElement;
     }
 
-    private renderReleaseCards(title: string, releases: Release[]): void {
+    private renderReleaseCards(uniqueId: string, title: string, releases: Release[], addPlaceholder = true): void {
         const cards: HTMLDivElement[] = [];
         releases.forEach((release) => {
             const card = this.renderReleaseCard(release);
             cards.push(card);
         });
-        this.attachSlider(title, cards);
+        if (cards.length <= this.MIN_CARDS_PER_ROW && addPlaceholder) {
+            cards.push(this.renderPlaceholderCard());
+        }
+        this.createSwiper(uniqueId, title, cards);
     }
 
     private renderReleaseCard(release: Release): HTMLDivElement {
@@ -192,16 +184,15 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         };
     }
 
-    private attachSlider(title: string, cards: HTMLDivElement[]): void {
-        const sliderComponent = new SliderComponent({
-            title,
-            items: cards,
-        });
-        const sliderHtml = sliderComponent.render();
-        if (sliderHtml) {
-            this.hostElement.insertAdjacentElement("beforeend", sliderHtml);
+    private createSwiper(uniqueCssClassSelector: string, title: string, items: HTMLDivElement[]): void {
+        if (items.length > 0) {
+            new SwiperComponent({
+                uniqueCssClassSelector,
+                title,
+                items,
+                host: this.hostElement,
+            });
         }
-        sliderComponent.finalize();
     }
 
     // private insertPlaceholder(elementCount: number, rowElement: HTMLDivElement): void {
