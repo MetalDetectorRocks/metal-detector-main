@@ -6,7 +6,7 @@ import { Artist } from "../model/artist.model";
 import { Release } from "../model/release.model";
 import { DateFormat, DateService } from "./date-service";
 import { FollowArtistService } from "./follow-artist-service";
-import { SwiperComponent } from "../components/card-slider/swiper-component";
+import { SwiperComponent } from "../components/swiper/swiper-component";
 
 interface HomepageCard {
     readonly divElement: HTMLDivElement;
