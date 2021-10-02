@@ -24,7 +24,7 @@ export class SwiperComponent {
         Swiper.use([Navigation]);
         new Swiper(`.${this.props.uniqueCssClassSelector}`, {
             spaceBetween: 15,
-            loop: true,
+            loop: this.props.items.length >= 4,
             loopFillGroupWithBlank: true,
             grabCursor: true,
             navigation: {

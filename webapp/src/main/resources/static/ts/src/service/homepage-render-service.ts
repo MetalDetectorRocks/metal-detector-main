@@ -195,13 +195,6 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         }
     }
 
-    // private insertPlaceholder(elementCount: number, rowElement: HTMLDivElement): void {
-    //     if (elementCount < this.MAX_CARDS_PER_ROW) {
-    //         const placeholderDivElement = this.renderPlaceholderCard();
-    //         this.attachCard(placeholderDivElement, rowElement);
-    //     }
-    // }
-
     private handleFollowIconClick(followIconElement: HTMLImageElement, artist: Artist): void {
         this.followArtistService.handleFollowIconClick(followIconElement, {
             externalId: artist.externalId,
