@@ -21,10 +21,12 @@ export class SliderComponent {
     private readonly sliderItems: HTMLDivElement = document.createElement("div") as HTMLDivElement;
 
     private isMobile = false;
+    private isFullDesktop = false;
     private isMouseDown = false;
     private cursorXSpace = 0;
 
-    private static readonly NAV_ITEMS_MAX_WINDOW_WIDTH_IN_PX = 700;
+    private static readonly MAX_MOBILE_WIDTH_IN_PX = 700;
+    private static readonly MIN_FULL_DESKTOP_WIDTH_IN_PX = 1280;
     private static readonly SLIDING_STEP_IN_PX = 315;
 
     constructor(props: SliderComponentProps) {
@@ -37,19 +39,24 @@ export class SliderComponent {
         this.createSliderMain();
         this.host.insertAdjacentElement("beforeend", this.sliderHeader);
         this.host.insertAdjacentElement("beforeend", this.slider);
-        this.isMobile = window.innerWidth < SliderComponent.NAV_ITEMS_MAX_WINDOW_WIDTH_IN_PX;
+        this.checkWindowWidth();
 
         window.addEventListener("mouseup", () => {
             this.isMouseDown = false;
         });
         window.addEventListener("resize", () => {
             // ToDo: left neu ausrichten (Bsp: auf kleinem Monitor bis ans Ende scrollen und dann Fenster maximieren)
-            this.isMobile = window.innerWidth < SliderComponent.NAV_ITEMS_MAX_WINDOW_WIDTH_IN_PX;
-            this.handleMobileDragging();
+            this.checkWindowWidth();
+            this.toggleSlidingBehavior();
         });
     }
 
-    private handleMobileDragging(): void {
+    private checkWindowWidth(): void {
+        this.isMobile = window.innerWidth < SliderComponent.MAX_MOBILE_WIDTH_IN_PX;
+        this.isFullDesktop = window.innerWidth >= SliderComponent.MIN_FULL_DESKTOP_WIDTH_IN_PX;
+    }
+
+    private toggleSlidingBehavior(): void {
         if (this.isMobile) {
             this.sliderContent.addEventListener("mousedown", (event) => this.onSliderContentMouseDown(event));
             this.sliderContent.addEventListener("mouseup", this.onSliderContentMouseUp.bind(this));
@@ -77,7 +84,7 @@ export class SliderComponent {
 
         this.sliderNavigation.insertAdjacentElement("beforeend", this.prevItem);
         this.sliderNavigation.insertAdjacentElement("beforeend", this.nextItem);
-        if (window.innerWidth < SliderComponent.NAV_ITEMS_MAX_WINDOW_WIDTH_IN_PX) {
+        if (window.innerWidth < SliderComponent.MAX_MOBILE_WIDTH_IN_PX) {
             this.sliderNavigation.classList.add("d-none");
         }
 
@@ -112,21 +119,58 @@ export class SliderComponent {
         const itemsRect = this.sliderItems.getBoundingClientRect();
         const currentLeft = parseInt(this.sliderItems.style.left) || 0;
 
+        // ToDo: Feinjustierung wenn window.width > 700 und < 1280
         if (direction === SLIDE_DIRECTION.NEXT) {
-            const stepWidth = Math.min(SliderComponent.SLIDING_STEP_IN_PX, itemsRect.right - sliderContentRect.width);
+            const stepWidth = this.isFullDesktop
+                ? SliderComponent.SLIDING_STEP_IN_PX
+                : Math.min(SliderComponent.SLIDING_STEP_IN_PX, itemsRect.right - sliderContentRect.width);
             this.sliderItems.style.left = `${currentLeft - stepWidth}px`;
         } else if (direction === SLIDE_DIRECTION.PREV) {
-            const stepWidth = Math.min(SliderComponent.SLIDING_STEP_IN_PX, itemsRect.right - sliderContentRect.width);
-            // ToDo: Feinjustierung
-            // console.log(`itemsRect.right: ${itemsRect.right}`);
-            // console.log(`sliderContentRect.width: ${sliderContentRect.width}`);
-            // console.log(`stepWidth: ${stepWidth}`);
+            const stepWidth = this.isFullDesktop
+                ? SliderComponent.SLIDING_STEP_IN_PX
+                : Math.min(SliderComponent.SLIDING_STEP_IN_PX, itemsRect.right - sliderContentRect.width);
             this.sliderItems.style.left = `${currentLeft + stepWidth}px`;
         }
 
-        this.boundCards();
         this.finalize();
     }
+
+    public render(): HTMLDivElement | null {
+        if (this.props.items.length > 0) {
+            this.props.items.forEach((item) => {
+                this.sliderItems.insertAdjacentElement("beforeend", item);
+            });
+
+            return this.host;
+        }
+        return null;
+    }
+
+    public finalize(): void {
+        const sliderContentRect = this.sliderContent.getBoundingClientRect();
+        const itemsRect = this.sliderItems.getBoundingClientRect();
+        const sliderItemsLeft = parseInt(this.sliderItems.style.left) || 0;
+
+        // disable 'move next' if all items are visible
+        if (sliderContentRect.width + sliderItemsLeft * -1 >= itemsRect.width) {
+            this.nextItem.classList.add("md-inactive");
+            this.nextItem.classList.remove("pointer");
+        } else {
+            this.nextItem.classList.remove("md-inactive");
+            this.nextItem.classList.add("pointer");
+        }
+
+        // disable 'move prev' if all items are visible or there are no items in overflow section
+        if (itemsRect.width <= sliderContentRect.width || sliderItemsLeft === 0) {
+            this.prevItem.classList.add("md-inactive");
+            this.prevItem.classList.remove("pointer");
+        } else {
+            this.prevItem.classList.remove("md-inactive");
+            this.prevItem.classList.add("pointer");
+        }
+    }
+
+    /************************** MOBILE SPECIFIC METHODS ******************************/
 
     private onSliderContentMouseDown(event: MouseEvent): void {
         if (this.isMobile) {
@@ -166,55 +210,6 @@ export class SliderComponent {
         } else if (itemsRect.right < sliderContentRect.right) {
             // prevent sliding to the left for the last item
             this.sliderItems.style.left = `-${itemsRect.width - sliderContentRect.width}px`;
-        }
-    }
-
-    public render(): HTMLDivElement | null {
-        if (this.props.items.length > 0) {
-            this.props.items.forEach((item) => {
-                this.sliderItems.insertAdjacentElement("beforeend", item);
-            });
-
-            return this.host;
-        }
-        return null;
-    }
-
-    // ToDo: Remove when done
-    private debug(): void {
-        const sliderContentRect = this.sliderContent.getBoundingClientRect();
-        const itemsRect = this.sliderItems.getBoundingClientRect();
-
-        console.log(`sliderContentRectWidth: ${sliderContentRect.width}`); // the width of the visible slider content container
-        console.log(`sliderContentRectRight: ${sliderContentRect.right}`);
-        console.log(`itemsRectWidth: ${itemsRect.width}`); // the width of all items
-        console.log(`itemsRectRight: ${itemsRect.right}`);
-        console.log(`sliderItemsLeft: ${this.sliderItems.style.left}`); // can be negative
-        console.log(`sliderItemsOffsetLeft: ${this.sliderItems.offsetLeft}`);
-    }
-
-    public finalize(): void {
-        // this.debug();
-        const sliderContentRect = this.sliderContent.getBoundingClientRect();
-        const itemsRect = this.sliderItems.getBoundingClientRect();
-        const sliderItemsLeft = parseInt(this.sliderItems.style.left) || 0;
-
-        // disable 'move next' if all items are visible
-        if (sliderContentRect.width + sliderItemsLeft * -1 >= itemsRect.width) {
-            this.nextItem.classList.add("md-inactive");
-            this.nextItem.classList.remove("pointer");
-        } else {
-            this.nextItem.classList.remove("md-inactive");
-            this.nextItem.classList.add("pointer");
-        }
-
-        // disable 'move prev' if all items are visible or there are no items in overflow section
-        if (itemsRect.width <= sliderContentRect.width || sliderItemsLeft === 0) {
-            this.prevItem.classList.add("md-inactive");
-            this.prevItem.classList.remove("pointer");
-        } else {
-            this.prevItem.classList.remove("md-inactive");
-            this.prevItem.classList.add("pointer");
         }
     }
 }

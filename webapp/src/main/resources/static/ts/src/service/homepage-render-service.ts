@@ -22,9 +22,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     private readonly artistTemplateElement: HTMLTemplateElement;
     private readonly releaseTemplateElement: HTMLTemplateElement;
 
-    // ToDo: Check this constants
-    private readonly MAX_CARDS_PER_ROW: number = 4;
-    private readonly MIN_CARDS_PER_ROW: number = this.MAX_CARDS_PER_ROW - 1;
+    private readonly MIN_CARDS_PER_ROW: number = 3;
 
     constructor(
         alertService: AlertService,
@@ -79,7 +77,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         const recentReleases = response.recentReleases.sort((r1, r2) =>
             this.dateService.compare(r1.releaseDate, r2.releaseDate),
         );
-        const releases = recentReleases.concat(response.upcomingReleases).splice(0, this.MAX_CARDS_PER_ROW);
+        const releases = recentReleases.concat(response.upcomingReleases);
 
         if (releases.length) {
             const title = "Releases";
