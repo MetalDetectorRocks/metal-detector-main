@@ -164,7 +164,7 @@ class SummaryServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("top followed artists are filtered and returned")
+    @DisplayName("top followed artists are returned")
     void test_top_followed_artists_returned() {
       // given
       var artist = ArtistDtoFactory.createDefault();
@@ -175,7 +175,7 @@ class SummaryServiceImplTest implements WithAssertions {
       var result = underTest.createSummaryResponse();
 
       // then
-      assertThat(result.getFavoriteCommunityArtists()).isEqualTo(artists.subList(0, RESULT_LIMIT));
+      assertThat(result.getFavoriteCommunityArtists()).isEqualTo(artists);
     }
 
     @Test
