@@ -3,23 +3,29 @@ export interface SliderComponentProps {
     readonly items: HTMLDivElement[];
 }
 
+export enum SLIDE_DIRECTION {
+    NEXT,
+    PREV,
+}
+
 export class SliderComponent {
     private readonly props: SliderComponentProps;
 
     private readonly host: HTMLDivElement = document.createElement("div") as HTMLDivElement;
     private readonly sliderHeader: HTMLHeadElement = document.createElement("div") as HTMLHeadElement;
+    private readonly sliderNavigation: HTMLHeadElement = document.createElement("div") as HTMLHeadElement;
     private readonly prevItem: HTMLSpanElement = document.createElement("span") as HTMLSpanElement;
     private readonly nextItem: HTMLSpanElement = document.createElement("span") as HTMLSpanElement;
     private readonly slider: HTMLDivElement = document.createElement("div") as HTMLDivElement;
     private readonly sliderContent: HTMLDivElement = document.createElement("div") as HTMLDivElement;
     private readonly sliderItems: HTMLDivElement = document.createElement("div") as HTMLDivElement;
 
+    private isMobile = false;
     private isMouseDown = false;
     private cursorXSpace = 0;
 
+    private static readonly NAV_ITEMS_MAX_WINDOW_WIDTH_IN_PX = 700;
     private static readonly SLIDING_STEP_IN_PX = 315;
-
-    // ToDo: Navigation arrows should be disabled if there are no items
 
     constructor(props: SliderComponentProps) {
         this.props = props;
@@ -31,13 +37,28 @@ export class SliderComponent {
         this.createSliderMain();
         this.host.insertAdjacentElement("beforeend", this.sliderHeader);
         this.host.insertAdjacentElement("beforeend", this.slider);
+        this.isMobile = window.innerWidth < SliderComponent.NAV_ITEMS_MAX_WINDOW_WIDTH_IN_PX;
+
         window.addEventListener("mouseup", () => {
             this.isMouseDown = false;
         });
         window.addEventListener("resize", () => {
-            // ToDo: left neu ausrichten
-            this.finalize();
+            // ToDo: left neu ausrichten (Bsp: auf kleinem Monitor bis ans Ende scrollen und dann Fenster maximieren)
+            this.isMobile = window.innerWidth < SliderComponent.NAV_ITEMS_MAX_WINDOW_WIDTH_IN_PX;
+            this.handleMobileDragging();
         });
+    }
+
+    private handleMobileDragging(): void {
+        if (this.isMobile) {
+            this.sliderContent.addEventListener("mousedown", (event) => this.onSliderContentMouseDown(event));
+            this.sliderContent.addEventListener("mouseup", this.onSliderContentMouseUp.bind(this));
+            this.sliderContent.addEventListener("mousemove", (event) => this.onSliderContentMouseMove(event));
+            this.sliderNavigation.classList.add("d-none");
+        } else {
+            this.sliderNavigation.classList.remove("d-none");
+            this.finalize();
+        }
     }
 
     private createSliderHeader(): void {
@@ -54,62 +75,77 @@ export class SliderComponent {
         this.nextItem.innerText = "navigate_next";
         this.nextItem.addEventListener("click", this.onClickNext.bind(this));
 
-        const sliderNavigation = document.createElement("div") as HTMLDivElement;
-        sliderNavigation.insertAdjacentElement("beforeend", this.prevItem);
-        sliderNavigation.insertAdjacentElement("beforeend", this.nextItem);
+        this.sliderNavigation.insertAdjacentElement("beforeend", this.prevItem);
+        this.sliderNavigation.insertAdjacentElement("beforeend", this.nextItem);
+        if (window.innerWidth < SliderComponent.NAV_ITEMS_MAX_WINDOW_WIDTH_IN_PX) {
+            this.sliderNavigation.classList.add("d-none");
+        }
 
         this.sliderHeader.insertAdjacentElement("beforeend", sliderTitle);
-        this.sliderHeader.insertAdjacentElement("beforeend", sliderNavigation);
+        this.sliderHeader.insertAdjacentElement("beforeend", this.sliderNavigation);
     }
 
     private createSliderMain(): void {
         this.slider.classList.add("slider");
-        this.sliderContent.classList.add("slider-content");
+        this.sliderContent.classList.add("slider-content", "grabbable");
         this.sliderItems.classList.add("slider-items");
         this.sliderItems.style.gridTemplateColumns = `repeat(${this.props.items.length}, 300px)`;
 
         this.slider.insertAdjacentElement("beforeend", this.sliderContent);
         this.sliderContent.insertAdjacentElement("beforeend", this.sliderItems);
-
-        // ToDo: add dragging functionality for mobile devices
-        // this.sliderItems.style.pointerEvents = "none";
-        // this.sliderContent.addEventListener("mousedown", (event) => this.onSliderContentMouseDown(event));
-        // this.sliderContent.addEventListener("mouseup", this.onSliderContentMouseUp.bind(this));
-        // this.sliderContent.addEventListener("mousemove", (event) => this.onSliderContentMouseMove(event));
     }
 
     private onClickPrev(): void {
-        const currentLeft = parseInt(this.sliderItems.style.left);
-        this.sliderItems.style.left = currentLeft ? `${currentLeft + SliderComponent.SLIDING_STEP_IN_PX}px` : "0";
-        this.boundCards();
+        if (!this.prevItem.classList.contains("md-inactive")) {
+            this.move(SLIDE_DIRECTION.PREV);
+        }
     }
 
     private onClickNext(): void {
         if (!this.nextItem.classList.contains("md-inactive")) {
-            const sliderContentRect = this.sliderContent.getBoundingClientRect();
-            const itemsRect = this.sliderItems.getBoundingClientRect();
-            const currentLeft = parseInt(this.sliderItems.style.left) || 0;
-            const stepWidth = Math.min(SliderComponent.SLIDING_STEP_IN_PX, itemsRect.right - sliderContentRect.width);
-            this.sliderItems.style.left = `${currentLeft - stepWidth}px`;
-            this.boundCards();
-            this.finalize();
+            this.move(SLIDE_DIRECTION.NEXT);
         }
     }
 
+    private move(direction: SLIDE_DIRECTION): void {
+        const sliderContentRect = this.sliderContent.getBoundingClientRect();
+        const itemsRect = this.sliderItems.getBoundingClientRect();
+        const currentLeft = parseInt(this.sliderItems.style.left) || 0;
+
+        if (direction === SLIDE_DIRECTION.NEXT) {
+            const stepWidth = Math.min(SliderComponent.SLIDING_STEP_IN_PX, itemsRect.right - sliderContentRect.width);
+            this.sliderItems.style.left = `${currentLeft - stepWidth}px`;
+        } else if (direction === SLIDE_DIRECTION.PREV) {
+            const stepWidth = Math.min(SliderComponent.SLIDING_STEP_IN_PX, itemsRect.right - sliderContentRect.width);
+            // ToDo: Feinjustierung
+            // console.log(`itemsRect.right: ${itemsRect.right}`);
+            // console.log(`sliderContentRect.width: ${sliderContentRect.width}`);
+            // console.log(`stepWidth: ${stepWidth}`);
+            this.sliderItems.style.left = `${currentLeft + stepWidth}px`;
+        }
+
+        this.boundCards();
+        this.finalize();
+    }
+
     private onSliderContentMouseDown(event: MouseEvent): void {
-        this.isMouseDown = true;
-        this.cursorXSpace = event.offsetX - this.sliderItems.offsetLeft;
-        this.sliderContent.classList.add("grabbing");
-        this.sliderContent.classList.remove("grabbable");
+        if (this.isMobile) {
+            this.isMouseDown = true;
+            this.cursorXSpace = event.offsetX - this.sliderItems.offsetLeft;
+            this.sliderContent.classList.add("grabbing");
+            this.sliderContent.classList.remove("grabbable");
+        }
     }
 
     private onSliderContentMouseUp(): void {
-        this.sliderContent.classList.add("grabbable");
-        this.sliderContent.classList.remove("grabbing");
+        if (this.isMobile) {
+            this.sliderContent.classList.add("grabbable");
+            this.sliderContent.classList.remove("grabbing");
+        }
     }
 
     private onSliderContentMouseMove(event: MouseEvent): void {
-        if (!this.isMouseDown) {
+        if (!this.isMouseDown || !this.isMobile) {
             return;
         }
         event.preventDefault();
@@ -144,6 +180,7 @@ export class SliderComponent {
         return null;
     }
 
+    // ToDo: Remove when done
     private debug(): void {
         const sliderContentRect = this.sliderContent.getBoundingClientRect();
         const itemsRect = this.sliderItems.getBoundingClientRect();
@@ -157,18 +194,27 @@ export class SliderComponent {
     }
 
     public finalize(): void {
-        this.debug();
+        // this.debug();
         const sliderContentRect = this.sliderContent.getBoundingClientRect();
         const itemsRect = this.sliderItems.getBoundingClientRect();
         const sliderItemsLeft = parseInt(this.sliderItems.style.left) || 0;
 
         // disable 'move next' if all items are visible
-        if (sliderContentRect.width + (sliderItemsLeft * -1) >= itemsRect.width) {
+        if (sliderContentRect.width + sliderItemsLeft * -1 >= itemsRect.width) {
             this.nextItem.classList.add("md-inactive");
             this.nextItem.classList.remove("pointer");
         } else {
             this.nextItem.classList.remove("md-inactive");
             this.nextItem.classList.add("pointer");
+        }
+
+        // disable 'move prev' if all items are visible or there are no items in overflow section
+        if (itemsRect.width <= sliderContentRect.width || sliderItemsLeft === 0) {
+            this.prevItem.classList.add("md-inactive");
+            this.prevItem.classList.remove("pointer");
+        } else {
+            this.prevItem.classList.remove("md-inactive");
+            this.prevItem.classList.add("pointer");
         }
     }
 }
