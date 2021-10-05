@@ -3,7 +3,7 @@ val javaVersion: JavaVersion = JavaVersion.VERSION_11
 val dependencyVersions = listOf(
   "org.slf4j:slf4j-api:1.7.32",
   "org.jboss.logging:jboss-logging:3.4.2.Final",
-  "net.bytebuddy:byte-buddy:1.11.18",
+  "net.bytebuddy:byte-buddy:1.11.19",
   "org.javassist:javassist:3.28.0-GA"
 )
 
