@@ -1,4 +1,4 @@
-FROM openjdk:11-slim-buster
+FROM openjdk:17-slim-buster
 
 ENV TZ=Europe/Berlin
 EXPOSE 8080

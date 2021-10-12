@@ -96,6 +96,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       requestParams.put("query", VALID_SEARCH_REQUEST);
       requestParams.put("page", DEFAULT_PAGE);
       requestParams.put("size", DEFAULT_SIZE);
+      doReturn(ArtistSearchResponseFactory.empty()).when(artistSearchService).searchSpotifyByName(any(), any());
 
       // when
       restAssuredUtils.doGet(requestParams);

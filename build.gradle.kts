@@ -1,10 +1,11 @@
-val javaVersion: JavaVersion = JavaVersion.VERSION_11
+val javaVersion: JavaVersion = JavaVersion.VERSION_17
 
 val dependencyVersions = listOf(
   "org.slf4j:slf4j-api:1.7.32",
   "org.jboss.logging:jboss-logging:3.4.2.Final",
   "net.bytebuddy:byte-buddy:1.11.20",
-  "org.javassist:javassist:3.28.0-GA"
+  "org.javassist:javassist:3.28.0-GA",
+  "org.junit.jupiter:junit-jupiter:${libs.versions.junit.get()}"
 )
 
 val dependencyGroupVersions = mapOf(
@@ -14,7 +15,8 @@ val dependencyGroupVersions = mapOf(
   "com.fasterxml.jackson.core" to libs.versions.jackson.get(),
   "com.fasterxml.jackson.datatype" to libs.versions.jackson.get(),
   "com.fasterxml.jackson.module" to libs.versions.jackson.get(),
-  "org.mockito" to libs.versions.mockito.get()
+  "org.mockito" to libs.versions.mockito.get(),
+  "org.junit" to libs.versions.junit.get()
 )
 
 plugins {

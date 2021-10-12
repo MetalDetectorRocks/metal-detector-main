@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("org.springframework.boot:spring-boot-starter-security:${libs.versions.springBoot.get()}")
   implementation("org.apache.commons:commons-text:${libs.versions.apacheCommonsText.get()}")
   implementation("org.apache.httpcomponents:httpclient:${libs.versions.httpClient.get()}")
   implementation("org.springframework:spring-jdbc:${libs.versions.spring.get()}")
@@ -16,7 +16,7 @@ dependencies {
   api("io.jsonwebtoken:jjwt:${libs.versions.jsonwebtoken.get()}")
 
   testImplementation("org.simplify4u:slf4j-mock:${libs.versions.slf4jMock.get()}")
-  testImplementation("org.springframework.boot:spring-boot-starter-test") {
+  testImplementation("org.springframework.boot:spring-boot-starter-test:${libs.versions.springBoot.get()}") {
     exclude(group = "junit", module = "junit")
   }
   testImplementation("org.mockito:mockito-inline:${libs.versions.mockito.get()}")
