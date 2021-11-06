@@ -106,6 +106,7 @@ class CleanupServiceImplTest implements WithAssertions {
 
     // then
     verifyNoInteractions(tokenRepository);
+    verifyNoInteractions(notificationConfigRepository);
     verifyNoMoreInteractions(userRepository);
   }
 }
