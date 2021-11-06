@@ -19,34 +19,31 @@ import static rocks.metaldetector.persistence.domain.token.TokenType.EMAIL_VERIF
 
 class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
 
+  private static final String UNKNOWN_USERNAME = "Unknown";
+  private static final String UNKNOWN_EMAIL = "unknown@example.com";
+
   @Autowired
   private UserRepository underTest;
 
   @Autowired
   private TokenRepository tokenRepository;
 
-  private static final String USERNAME = "JohnD";
-  private static final String OAUTH_USERNAME = "OAuthUsername";
-  private static final String EMAIL = "john.doe@example.com";
-  private static final String OAUTH_EMAIL = "oauth@example.com";
-  private static UserEntity JOHN_DOE = UserFactory.createUser(USERNAME, EMAIL);
-  private static UserEntity JANE_DOE = UserFactory.createUser("JaneD", "jane.doe@example.com");
-  private static OAuthUserEntity OAUTH_USER = OAuthUserFactory.createUser(OAUTH_USERNAME, OAUTH_EMAIL);
-  private static final String UNKNOWN_USERNAME = "Unknown";
-  private static final String UNKNOWN_EMAIL = "unknown@example.com";
+  private UserEntity johnDoe = UserFactory.createUser("JohnD", "john.doe@example.com");
+  private UserEntity janeDoe = UserFactory.createUser("JaneD", "jane.doe@example.com");
+  private OAuthUserEntity oAuthUser = OAuthUserFactory.createUser("OAuthUsername", "oauth@example.com");
 
   @BeforeEach
   void setup() {
-    JOHN_DOE = underTest.save(JOHN_DOE);
-    JANE_DOE = underTest.save(JANE_DOE);
-    OAUTH_USER = underTest.save(OAUTH_USER);
+    johnDoe = underTest.save(johnDoe);
+    janeDoe = underTest.save(janeDoe);
+    oAuthUser = underTest.save(oAuthUser);
 
-    TokenEntity token1 = TokenEntity.builder().user(JOHN_DOE)
+    TokenEntity token1 = TokenEntity.builder().user(johnDoe)
         .tokenString("tokenString")
         .expirationDateTime(LocalDateTime.now().plus(1, MINUTES))
         .tokenType(EMAIL_VERIFICATION)
         .build();
-    TokenEntity token2 = TokenEntity.builder().user(JANE_DOE)
+    TokenEntity token2 = TokenEntity.builder().user(janeDoe)
         .tokenString("tokenString2")
         .expirationDateTime(LocalDateTime.now().minus(1, MINUTES))
         .tokenType(EMAIL_VERIFICATION)
@@ -86,10 +83,10 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   @Test
   @DisplayName("findByEmail() should return the correct user entity")
   void find_by_email_should_return_user_entity() {
-    Optional<AbstractUserEntity> user = underTest.findByEmail(EMAIL);
+    Optional<AbstractUserEntity> user = underTest.findByEmail(johnDoe.getEmail());
 
     assertThat(user).isPresent();
-    assertThat(user.get()).isEqualTo(JOHN_DOE);
+    assertThat(user.get()).isEqualTo(johnDoe);
   }
 
   @Test
@@ -103,16 +100,16 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   @Test
   @DisplayName("findByUsername() should return the correct user entity")
   void find_by_username_should_return_user_entity() {
-    Optional<AbstractUserEntity> user = underTest.findByUsername(USERNAME);
+    Optional<AbstractUserEntity> user = underTest.findByUsername(johnDoe.getUsername());
 
     assertThat(user).isPresent();
-    assertThat(user.get()).isEqualTo(JOHN_DOE);
+    assertThat(user.get()).isEqualTo(johnDoe);
   }
 
   @Test
   @DisplayName("findByUsername() should not return oauth user entity")
   void find_by_username_should_not_return_oauth_user_entity() {
-    Optional<AbstractUserEntity> user = underTest.findByUsername(OAUTH_USERNAME);
+    Optional<AbstractUserEntity> user = underTest.findByUsername(oAuthUser.getUsername());
 
     assertThat(user).isEmpty();
   }
@@ -128,10 +125,10 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   @Test
   @DisplayName("findByPublicId() should return the correct user entity")
   void find_by_public_id_should_return_user_entity() {
-    Optional<AbstractUserEntity> user = underTest.findByPublicId(JOHN_DOE.getPublicId());
+    Optional<AbstractUserEntity> user = underTest.findByPublicId(johnDoe.getPublicId());
 
     assertThat(user).isPresent();
-    assertThat(user.get()).isEqualTo(JOHN_DOE);
+    assertThat(user.get()).isEqualTo(johnDoe);
   }
 
   @Test
@@ -145,21 +142,21 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   @Test
   @DisplayName("existsByEmail() should return true for existing users and false for not existing users")
   void exists_by_email_should_return_true_or_false() {
-    assertThat(underTest.existsByEmail(EMAIL)).isTrue();
+    assertThat(underTest.existsByEmail(johnDoe.getEmail())).isTrue();
     assertThat(underTest.existsByEmail(UNKNOWN_EMAIL)).isFalse();
   }
 
   @Test
   @DisplayName("existsByUsername() should return true for existing users and false for not existing users")
   void exists_by_username_should_return_true_or_false() {
-    assertThat(underTest.existsByUsername(USERNAME)).isTrue();
+    assertThat(underTest.existsByUsername(johnDoe.getUsername())).isTrue();
     assertThat(underTest.existsByUsername(UNKNOWN_USERNAME)).isFalse();
   }
 
   @Test
   @DisplayName("existsByUsername() should return false for oauth users")
   void exists_by_username_should_return_false_for_oauth_users() {
-    assertThat(underTest.existsByUsername(OAUTH_USERNAME)).isFalse();
+    assertThat(underTest.existsByUsername(oAuthUser.getUsername())).isFalse();
   }
 
   @Test
@@ -169,6 +166,6 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
     var result = underTest.findAllWithExpiredToken();
 
     // then
-    assertThat(result).containsExactly(JANE_DOE);
+    assertThat(result).containsExactly(janeDoe);
   }
 }

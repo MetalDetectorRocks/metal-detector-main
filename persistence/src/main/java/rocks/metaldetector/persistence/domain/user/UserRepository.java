@@ -23,6 +23,6 @@ public interface UserRepository extends JpaRepository<AbstractUserEntity, Long> 
   @Query("select case when count(u) > 0 then true else false end from users u where dtype = 'native_users' and u.username = :username")
   boolean existsByUsername(@Param("username")String username);
 
-  @Query(value = "select * from tokens as t left join users as u on t.users_id = u.id where t.expiration_date_time < NOW()", nativeQuery = true)
+  @Query(value = "select * from users as u left join tokens as t on u.id = t.users_id where t.expiration_date_time < NOW() and t.token_type = 'EMAIL_VERIFICATION'", nativeQuery = true)
   List<UserEntity> findAllWithExpiredToken();
 }
