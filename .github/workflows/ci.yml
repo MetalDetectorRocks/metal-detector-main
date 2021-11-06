@@ -18,3 +18,9 @@ jobs:
           cache: 'gradle'
       - name: Execute all tests
         run: ./gradlew clean check --no-daemon --info --stacktrace
+      - name: Publish Test Report
+        if: ${{ always() }}
+        uses: scacap/action-surefire-report@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          report_paths: '**/build/test-results/test/TEST-*.xml'
