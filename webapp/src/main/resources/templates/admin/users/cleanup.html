@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Cleanup Users</title>
+</head>
+<body>
+<div th:fragment="dialog" class="modal-dialog default-modal-dialog-width" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Cleanup expired users</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p>This will delete all users with an expired email verification token!</p>
+            <div id="cleanup-users-validation-area" class="small" role="alert">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn" id="cleanup-users-button">Cleanup</button>
+            <button type="button" class="btn btn-danger btn" data-bs-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

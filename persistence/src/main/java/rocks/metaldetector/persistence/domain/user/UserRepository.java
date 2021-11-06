@@ -24,5 +24,5 @@ public interface UserRepository extends JpaRepository<AbstractUserEntity, Long> 
   boolean existsByUsername(@Param("username")String username);
 
   @Query(value = "select * from users as u left join tokens as t on u.id = t.users_id where t.expiration_date_time < NOW() and t.token_type = 'EMAIL_VERIFICATION'", nativeQuery = true)
-  List<UserEntity> findAllWithExpiredToken();
+  List<AbstractUserEntity> findAllWithExpiredToken();
 }

@@ -11,16 +11,12 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserFactory;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 
+import java.util.List;
+
 import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.EMAIL;
 import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.TELEGRAM;
 
 class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAssertions {
-
-  private static UserEntity USER_1;
-  private static UserEntity USER_2;
-  private static NotificationConfigEntity NOTIFICATION_CONFIG_1;
-  private static NotificationConfigEntity NOTIFICATION_CONFIG_2;
-  private static NotificationConfigEntity NOTIFICATION_CONFIG_3;
 
   @Autowired
   private NotificationConfigRepository underTest;
@@ -28,38 +24,45 @@ class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAsse
   @Autowired
   private UserRepository userRepository;
 
+  private UserEntity user1;
+  private UserEntity user2;
+  private NotificationConfigEntity notificationConfig1;
+  private NotificationConfigEntity notificationConfig2;
+  private NotificationConfigEntity notificationConfig3;
+
   @BeforeEach
   void setup() {
-    USER_1 = UserFactory.createUser("user", "user@example.com");
-    USER_2 = UserFactory.createUser("user2", "user2@example.com");
-    NOTIFICATION_CONFIG_1 = NotificationConfigEntity.builder()
-        .user(USER_1)
+    user1 = UserFactory.createUser("user", "user@example.com");
+    user2 = UserFactory.createUser("user2", "user2@example.com");
+    notificationConfig1 = NotificationConfigEntity.builder()
+        .user(user1)
         .notificationAtReleaseDate(true)
         .notificationAtAnnouncementDate(true)
         .frequencyInWeeks(4)
         .channel(EMAIL)
         .build();
 
-    NOTIFICATION_CONFIG_2 = NotificationConfigEntity.builder()
-        .user(USER_1)
+    notificationConfig2 = NotificationConfigEntity.builder()
+        .user(user1)
         .notificationAtReleaseDate(true)
         .notificationAtAnnouncementDate(true)
         .frequencyInWeeks(4)
         .channel(TELEGRAM)
         .build();
 
-    NOTIFICATION_CONFIG_3 = NotificationConfigEntity.builder()
-        .user(USER_2)
+    notificationConfig3 = NotificationConfigEntity.builder()
+        .user(user2)
         .notificationAtReleaseDate(true)
         .notificationAtAnnouncementDate(true)
         .frequencyInWeeks(4)
         .channel(EMAIL)
         .build();
-    userRepository.save(USER_1);
-    userRepository.save(USER_2);
-    underTest.save(NOTIFICATION_CONFIG_1);
-    underTest.save(NOTIFICATION_CONFIG_2);
-    underTest.save(NOTIFICATION_CONFIG_3);
+
+    userRepository.save(user1);
+    userRepository.save(user2);
+    underTest.save(notificationConfig1);
+    underTest.save(notificationConfig2);
+    underTest.save(notificationConfig3);
   }
 
   @AfterEach
@@ -72,30 +75,30 @@ class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAsse
   @DisplayName("should find all notification config entities for a given user")
   void should_find_all_notification_config_entities_by_user() {
     // when
-    var result = underTest.findAllByUser(USER_1);
+    var result = underTest.findAllByUser(user1);
 
     // then
     assertThat(result).hasSize(2);
-    assertThat(result.get(0)).isEqualTo(NOTIFICATION_CONFIG_1);
-    assertThat(result.get(1)).isEqualTo(NOTIFICATION_CONFIG_2);
+    assertThat(result.get(0)).isEqualTo(notificationConfig1);
+    assertThat(result.get(1)).isEqualTo(notificationConfig2);
   }
 
   @Test
   @DisplayName("findByUserAndChannel returns entity if present")
   void test_find_by_user_and_channel_returns_entity() {
     // when
-    var result = underTest.findByUserAndChannel(USER_1, EMAIL);
+    var result = underTest.findByUserAndChannel(user1, EMAIL);
 
     // then
     assertThat(result).isPresent();
-    assertThat(result.get()).isEqualTo(NOTIFICATION_CONFIG_1);
+    assertThat(result.get()).isEqualTo(notificationConfig1);
   }
 
   @Test
   @DisplayName("findByUserAndChannel returns empty optional")
   void test_find_by_user_and_channel() {
     // when
-    var result = underTest.findByUserAndChannel(USER_2, TELEGRAM);
+    var result = underTest.findByUserAndChannel(user2, TELEGRAM);
 
     // then
     assertThat(result).isEmpty();
@@ -105,8 +108,19 @@ class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAsse
   @DisplayName("should delete notification config by user")
   void test_delete_by_user() {
     // when
-    underTest.deleteAllByUser(USER_1);
-    var result = underTest.findAllByUser(USER_1);
+    underTest.deleteAllByUser(user1);
+    var result = underTest.findAllByUser(user1);
+
+    // then
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  @DisplayName("should delete all notification configs by users")
+  void test_delete_by_users() {
+    // when
+    underTest.deleteAllByUserIn(List.of(user1, user2));
+    var result = underTest.findAll();
 
     // then
     assertThat(result).isEmpty();
@@ -116,8 +130,8 @@ class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAsse
   @DisplayName("should delete notification config by user and channel")
   void test_delete_by_user_and_channel() {
     // when
-    underTest.deleteByUserAndChannel(USER_1, TELEGRAM);
-    var result = underTest.findAllByUser(USER_1);
+    underTest.deleteByUserAndChannel(user1, TELEGRAM);
+    var result = underTest.findAllByUser(user1);
 
     // then
     assertThat(result.size()).isEqualTo(1);
@@ -139,8 +153,8 @@ class NotificationConfigRepositoryIT extends BaseDataJpaTest implements WithAsse
 
     // then
     assertThat(result).hasSize(3);
-    assertThat(result.get(0)).isEqualTo(NOTIFICATION_CONFIG_1);
-    assertThat(result.get(1)).isEqualTo(NOTIFICATION_CONFIG_2);
-    assertThat(result.get(2)).isEqualTo(NOTIFICATION_CONFIG_3);
+    assertThat(result.get(0)).isEqualTo(notificationConfig1);
+    assertThat(result.get(1)).isEqualTo(notificationConfig2);
+    assertThat(result.get(2)).isEqualTo(notificationConfig3);
   }
 }

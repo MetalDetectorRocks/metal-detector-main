@@ -20,5 +20,7 @@ public interface NotificationConfigRepository extends JpaRepository<Notification
 
   void deleteAllByUser(AbstractUserEntity user);
 
+  void deleteAllByUserIn(List<AbstractUserEntity> user);
+
   void deleteByUserAndChannel(AbstractUserEntity user, NotificationChannel channel);
 }

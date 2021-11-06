@@ -67,6 +67,7 @@ public class Endpoints {
     public static final String NOTIFICATION_CONFIG            = "/rest/v1/notification-config";
     public static final String TELEGRAM_CONFIG                = "/rest/v1/telegram-config";
     public static final String OAUTH                          = "/rest/v1/oauth";
+    public static final String CLEANUP                        = "/rest/v1/cleanup";
     public static final String SEARCH                         = "/search";
     public static final String FOLLOW                         = "/follow";
     public static final String UNFOLLOW                       = "/unfollow";

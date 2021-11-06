@@ -8,7 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.token.TokenRepository;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.user.UserEntityFactory;
 
@@ -30,12 +32,15 @@ class CleanupServiceImplTest implements WithAssertions {
   @Mock
   private UserRepository userRepository;
 
+  @Mock
+  private NotificationConfigRepository notificationConfigRepository;
+
   @InjectMocks
   private CleanupServiceImpl underTest;
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository);
+    reset(tokenRepository, userRepository, notificationConfigRepository);
   }
 
   @Test
@@ -52,7 +57,7 @@ class CleanupServiceImplTest implements WithAssertions {
   @DisplayName("tokenRepository is called to delete expired tokens")
   void test_token_repository_deletes() {
     // given
-    var users = List.of(UserEntityFactory.createUser("user", "user@user.user"));
+    List<AbstractUserEntity> users = List.of(UserEntityFactory.createUser("user", "user@user.user"));
     doReturn(users).when(userRepository).findAllWithExpiredToken();
 
     // when
@@ -60,6 +65,20 @@ class CleanupServiceImplTest implements WithAssertions {
 
     // then
     verify(tokenRepository).deleteAllByUserIn(users);
+  }
+
+  @Test
+  @DisplayName("notificationConfigRepository is called to delete notification configs")
+  void test_notification_config_repository_deletes() {
+    // given
+    var users = List.of(UserEntityFactory.createUser("user", "user@user.user"));
+    doReturn(users).when(userRepository).findAllWithExpiredToken();
+
+    // when
+    underTest.cleanupUsersWithExpiredToken();
+
+    // then
+    verify(notificationConfigRepository).deleteAllByUserIn(List.of(users.get(0)));
   }
 
   @Test
