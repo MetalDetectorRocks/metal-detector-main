@@ -2,18 +2,7 @@
 [![codecov](https://codecov.io/gh/MetalDetectorRocks/metal-detector-main/branch/master/graph/badge.svg)](https://codecov.io/gh/MetalDetectorRocks/metal-detector-main)
 ![Build and deploy docker container image](https://github.com/MetalDetectorRocks/metal-detector-main/workflows/Build%20and%20deploy%20docker%20container%20image/badge.svg)
 
-## Table of contents
-1. [ Introduction ](#introduction)
-
-2. [ Download source code ](#download-source-code)
-
-3. [ Run application locally (Default profile) ](#run-application-locally-default)
-
-4. [ Run application locally (Preview profile) ](#run-application-locally-preview)
-
-5. [ Start the application ](#start-application)
-
-6. [ Import Postman collection ](#postman-collection)
+![Alt](https://repobeats.axiom.co/api/embed/cb9842a5ae951f4f965972409be5ff2b64ff02b8.svg "Repobeats analytics image")
 
 <a name="introduction"></a>
 ## 1 Introduction
