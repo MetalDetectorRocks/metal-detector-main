@@ -282,7 +282,7 @@ async function resetUpdateUserForm() {
  */
 function cleanupUsers() {
   $.post({
-    url: "/rest/v1/cleanup",
+    url: "/rest/v1/registration-cleanup",
     type: "POST",
     success: function () {
       $("#cleanup-users-dialog").modal("hide");

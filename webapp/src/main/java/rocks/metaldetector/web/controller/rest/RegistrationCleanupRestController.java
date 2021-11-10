@@ -15,7 +15,7 @@ public class RegistrationCleanupRestController {
   private final RegistrationCleanupService registrationCleanupService;
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-  @PostMapping(Endpoints.Rest.CLEANUP)
+  @PostMapping(Endpoints.Rest.REGISTRATION_CLEANUP)
   public ResponseEntity<Void> cleanup() {
     registrationCleanupService.cleanupUsersWithExpiredToken();
     return ResponseEntity.ok().build();
