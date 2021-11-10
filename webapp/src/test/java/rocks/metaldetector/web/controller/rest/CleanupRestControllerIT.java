@@ -33,7 +33,7 @@ public class CleanupRestControllerIT extends BaseWebMvcTestWithSecurity {
   }
 
   @Nested
-  @DisplayName("Users is not allowed to send requests to all endpoints")
+  @DisplayName("User is not allowed to send requests to all endpoints")
   class UserRoleTest {
 
     @Test
