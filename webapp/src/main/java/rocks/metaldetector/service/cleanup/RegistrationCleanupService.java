@@ -1,6 +1,6 @@
 package rocks.metaldetector.service.cleanup;
 
-public interface CleanupService {
+public interface RegistrationCleanupService {
 
   void cleanupUsersWithExpiredToken();
 }

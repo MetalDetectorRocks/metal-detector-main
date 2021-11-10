@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class CleanupServiceImpl implements CleanupService {
+public class RegistrationCleanupServiceImpl implements RegistrationCleanupService {
 
   private final TokenRepository tokenRepository;
   private final UserRepository userRepository;

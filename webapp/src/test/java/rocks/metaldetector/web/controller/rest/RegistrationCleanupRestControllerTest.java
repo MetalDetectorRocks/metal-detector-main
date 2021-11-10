@@ -8,23 +8,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.service.cleanup.CleanupService;
+import rocks.metaldetector.service.cleanup.RegistrationCleanupService;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class CleanupRestControllerTest implements WithAssertions {
+class RegistrationCleanupRestControllerTest implements WithAssertions {
 
   @Mock
-  private CleanupService cleanupService;
+  private RegistrationCleanupService registrationCleanupService;
 
   @InjectMocks
-  private CleanupRestController underTest;
+  private RegistrationCleanupRestController underTest;
 
   @AfterEach
   void tearDown() {
-    reset(cleanupService);
+    reset(registrationCleanupService);
   }
 
   @Test
@@ -34,6 +34,6 @@ class CleanupRestControllerTest implements WithAssertions {
     underTest.cleanup();
 
     // then
-    verify(cleanupService).cleanupUsersWithExpiredToken();
+    verify(registrationCleanupService).cleanupUsersWithExpiredToken();
   }
 }

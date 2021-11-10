@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-class CleanupServiceImplTest implements WithAssertions {
+class RegistrationCleanupServiceImplTest implements WithAssertions {
 
   @Mock
   private TokenRepository tokenRepository;
@@ -36,7 +36,7 @@ class CleanupServiceImplTest implements WithAssertions {
   private NotificationConfigRepository notificationConfigRepository;
 
   @InjectMocks
-  private CleanupServiceImpl underTest;
+  private RegistrationCleanupServiceImpl underTest;
 
   @AfterEach
   void tearDown() {

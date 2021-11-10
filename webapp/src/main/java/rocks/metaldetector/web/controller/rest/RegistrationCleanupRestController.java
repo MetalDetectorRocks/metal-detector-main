@@ -5,19 +5,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import rocks.metaldetector.service.cleanup.CleanupService;
+import rocks.metaldetector.service.cleanup.RegistrationCleanupService;
 import rocks.metaldetector.support.Endpoints;
 
 @RestController
 @AllArgsConstructor
-public class CleanupRestController {
+public class RegistrationCleanupRestController {
 
-  private final CleanupService cleanupService;
+  private final RegistrationCleanupService registrationCleanupService;
 
   @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   @PostMapping(Endpoints.Rest.CLEANUP)
   public ResponseEntity<Void> cleanup() {
-    cleanupService.cleanupUsersWithExpiredToken();
+    registrationCleanupService.cleanupUsersWithExpiredToken();
     return ResponseEntity.ok().build();
   }
 }

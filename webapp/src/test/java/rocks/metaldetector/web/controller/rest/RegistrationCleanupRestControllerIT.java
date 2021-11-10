@@ -6,18 +6,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import rocks.metaldetector.service.cleanup.CleanupService;
+import rocks.metaldetector.service.cleanup.RegistrationCleanupService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static rocks.metaldetector.support.Endpoints.Rest.CLEANUP;
 
-@WebMvcTest(controllers = CleanupRestController.class)
-public class CleanupRestControllerIT extends BaseWebMvcTestWithSecurity {
+@WebMvcTest(controllers = RegistrationCleanupRestController.class)
+public class RegistrationCleanupRestControllerIT extends BaseWebMvcTestWithSecurity {
 
   @MockBean
-  private CleanupService cleanupService;
+  private RegistrationCleanupService registrationCleanupService;
 
   @Nested
   @DisplayName("Administrator is allowed to send requests to all endpoints")
