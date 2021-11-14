@@ -13,6 +13,9 @@ $(document).ready(function () {
   $("#cancel-update-user-button").button().on("click", resetUpdateUserForm);
   $(document).on("click", "#user-table tbody tr", showUpdateUserForm);
   $("#update-user-form-close").button().on("click", resetUpdateUserForm);
+
+  // cleanup users
+  $("#cleanup-users-button").button().on("click", cleanupUsers);
 });
 
 /**
@@ -272,4 +275,20 @@ async function resetUpdateUserForm() {
   await sleep(500);
   $("#update-user-form")[0].reset();
   resetValidationArea("#update-user-validation-area");
+}
+
+/**
+ * Sends the cleanup request to the server.
+ */
+function cleanupUsers() {
+  $.post({
+    url: "/rest/v1/registration-cleanup",
+    type: "POST",
+    success: function () {
+      $("#cleanup-users-dialog").modal("hide");
+    },
+    error: function (errorResponse) {
+      onUpdateError(errorResponse, "#cleanup-users-validation-area");
+    },
+  });
 }

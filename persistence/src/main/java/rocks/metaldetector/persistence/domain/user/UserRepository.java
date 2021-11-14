@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,4 +22,7 @@ public interface UserRepository extends JpaRepository<AbstractUserEntity, Long> 
 
   @Query("select case when count(u) > 0 then true else false end from users u where dtype = 'native_users' and u.username = :username")
   boolean existsByUsername(@Param("username")String username);
+
+  @Query(value = "select * from users as u inner join tokens as t on u.id = t.users_id where t.expiration_date_time < NOW() and t.token_type = 'EMAIL_VERIFICATION'", nativeQuery = true)
+  List<AbstractUserEntity> findAllWithExpiredToken();
 }

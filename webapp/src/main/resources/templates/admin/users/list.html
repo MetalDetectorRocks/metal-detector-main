@@ -18,6 +18,10 @@
             New Administrator
         </button>
 
+        <button type="button" class="btn btn-dark btn-sm mt-2 mb-3" id="cleanup-users-dialog-button" data-bs-toggle="modal" data-bs-target="#cleanup-users-dialog">
+            Cleanup users
+        </button>
+
         <table id="user-table" class="table table-striped table-hover mt-3 clickable-table">
             <thead>
                 <tr>
@@ -43,6 +47,11 @@
         <!-- Update Form -->
         <div id="update-user-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
             <div th:replace="admin/users/update :: dialog"></div>
+        </div>
+
+        <!-- Cleanup users dialog -->
+        <div id="cleanup-users-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div th:replace="admin/users/cleanup :: dialog"></div>
         </div>
     </section>
 </body>

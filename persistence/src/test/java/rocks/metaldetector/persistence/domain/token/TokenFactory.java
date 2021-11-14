@@ -9,18 +9,14 @@ import java.time.temporal.ChronoUnit;
 
 public class TokenFactory {
 
-          static final String DUMMY_TOKEN_STRING = "dummy-token-string";
-  private static final UserEntity userEntity     = UserFactory.createUser("JohnD", "john.d@example.com");
-
-  public static TokenEntity createToken() {
-    return createToken(Duration.ofHours(1).toMillis());
-  }
+  static final String DUMMY_TOKEN_STRING = "dummy-token-string";
+  private static final UserEntity userEntity = UserFactory.createUser("JohnD", "john.d@example.com");
 
   public static TokenEntity createToken(TokenType tokenType, long expireInMillis) {
     return createToken(tokenType, userEntity, expireInMillis);
   }
 
-  static TokenEntity createToken(long expireInMillis) {
+  public static TokenEntity createToken(long expireInMillis) {
     return createToken(TokenType.EMAIL_VERIFICATION, userEntity, expireInMillis);
   }
 
@@ -30,11 +26,10 @@ public class TokenFactory {
 
   private static TokenEntity createToken(TokenType tokenType, UserEntity user, long expireInMillis) {
     return TokenEntity.builder()
-            .tokenString(DUMMY_TOKEN_STRING)
-            .user(user)
-            .tokenType(tokenType)
-            .expirationDateTime(LocalDateTime.now().plus(expireInMillis, ChronoUnit.MILLIS))
-            .build();
+        .tokenString(DUMMY_TOKEN_STRING)
+        .user(user)
+        .tokenType(tokenType)
+        .expirationDateTime(LocalDateTime.now().plus(expireInMillis, ChronoUnit.MILLIS))
+        .build();
   }
-
 }
