@@ -22,7 +22,7 @@ val dependencyGroupVersions = mapOf(
 plugins {
   id("java")
   id("org.siouan.frontend-jdk11") version "6.0.0" apply false
-  id("org.springframework.boot") version "2.5.6" apply false
+  id("org.springframework.boot") version "2.5.7" apply false
   id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
 }
 
