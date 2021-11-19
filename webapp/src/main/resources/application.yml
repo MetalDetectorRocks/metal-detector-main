@@ -68,6 +68,9 @@ spring:
           spotify-user:
             token-uri: https://accounts.spotify.com/api/token
             authorization-uri: https://accounts.spotify.com/authorize
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
 
 security:
   token-issuer: ${JWT_ISSUER}
