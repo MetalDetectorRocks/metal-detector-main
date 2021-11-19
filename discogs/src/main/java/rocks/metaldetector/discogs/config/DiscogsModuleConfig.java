@@ -24,8 +24,8 @@ public class DiscogsModuleConfig {
   private final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory;
 
   @Bean
-  public RestTemplate discogsRestTemplate() {
-    return new RestTemplateBuilder()
+  public RestTemplate discogsRestTemplate(RestTemplateBuilder restTemplateBuilder) {
+    return restTemplateBuilder
             .requestFactory(() -> clientHttpRequestFactory)
             .errorHandler(new CustomClientErrorHandler())
             .interceptors(new DiscogsRequestInterceptor(discogsConfig), new DefaultRequestLoggingInterceptor(), new GetHeaderInterceptor())

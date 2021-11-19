@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.core.OAuth2AuthorizationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -101,9 +102,8 @@ public class RestExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), NOT_FOUND);
   }
 
-  @ExceptionHandler({AccessDeniedException.class})
+  @ExceptionHandler({AccessDeniedException.class, OAuth2AuthorizationException.class})
   public ResponseEntity<ErrorResponse> handleAccessDeniedException(RuntimeException exception, WebRequest webRequest) {
-    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), FORBIDDEN);
   }
 

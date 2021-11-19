@@ -27,6 +27,9 @@ spring:
         registration:
           spotify-user:
             redirect-uri: "https://{baseHost}{basePort}{basePath}/settings/spotify-synchronization"
+        provider:
+          metal-release-butler:
+            issuer-uri: http://localhost:9000
 
 server:
   port: 8080

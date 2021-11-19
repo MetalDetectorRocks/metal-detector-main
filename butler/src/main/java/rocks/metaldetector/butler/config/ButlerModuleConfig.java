@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.support.DefaultRequestLoggingInterceptor;
 import rocks.metaldetector.support.PostHeaderInterceptor;
 import rocks.metaldetector.support.infrastructure.CustomClientErrorHandler;
+import rocks.metaldetector.support.oauth.OAuth2AccessTokenClientCredentialsClient;
 
 import java.util.List;
 
@@ -18,17 +19,20 @@ import java.util.List;
 @AllArgsConstructor
 public class ButlerModuleConfig {
 
-  private final ButlerConfig butlerConfig;
   private final MappingJackson2HttpMessageConverter jackson2HttpMessageConverter;
   private final StringHttpMessageConverter stringHttpMessageConverter;
   private final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory;
 
   @Bean
-  public RestTemplate releaseButlerRestTemplate() {
-    return new RestTemplateBuilder()
+  public RestTemplate releaseButlerRestTemplate(RestTemplateBuilder restTemplateBuilder,
+                                                OAuth2AccessTokenClientCredentialsClient userTokenClient,
+                                                OAuth2AccessTokenClientCredentialsClient adminTokenClient) {
+    userTokenClient.setRegistrationId("metal-release-butler-user");
+    adminTokenClient.setRegistrationId("metal-release-butler-admin");
+    return restTemplateBuilder
         .requestFactory(() -> clientHttpRequestFactory)
         .errorHandler(new CustomClientErrorHandler())
-        .interceptors(new ButlerRequestInterceptor(butlerConfig), new DefaultRequestLoggingInterceptor(), new PostHeaderInterceptor())
+        .interceptors(new ButlerOAuth2ClientInterceptor(userTokenClient, adminTokenClient), new DefaultRequestLoggingInterceptor(), new PostHeaderInterceptor())
         .messageConverters(List.of(jackson2HttpMessageConverter, stringHttpMessageConverter))
         .build();
   }

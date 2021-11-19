@@ -43,6 +43,9 @@ spring:
     suffix: .html
     mode: HTML
     cache: false
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
   security:
     oauth2:
       client:
@@ -62,15 +65,26 @@ spring:
             redirect-uri: "{baseUrl}/settings/spotify-synchronization"
             scope: user-library-read, user-follow-read
             provider: spotify-user
+          metal-release-butler-user:
+            client-id: ${BUTLER_USER_CLIENT_ID}
+            client-secret: ${BUTLER_USER_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+            scope: user
+            provider: metal-release-butler
+          metal-release-butler-admin:
+            client-id: ${BUTLER_ADMIN_CLIENT_ID}
+            client-secret: ${BUTLER_ADMIN_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+            scope: admin
+            provider: metal-release-butler
         provider:
           spotify-app:
             token-uri: https://accounts.spotify.com/api/token
           spotify-user:
             token-uri: https://accounts.spotify.com/api/token
             authorization-uri: https://accounts.spotify.com/authorize
-  mvc:
-    pathmatch:
-      matching-strategy: ANT_PATH_MATCHER
+          metal-release-butler:
+            issuer-uri: http://localhost:9000
 
 security:
   token-issuer: ${JWT_ISSUER}
