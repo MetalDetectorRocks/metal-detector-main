@@ -8,6 +8,12 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      checks: write
+      contents: read
+      issues: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 17
