@@ -38,13 +38,13 @@
     </logger>
 
     <!-- LOG "org.springframework.web.*" at ERROR level -->
-    <logger name="logging.level.org.springframework.web" level="error" additivity="false">
+    <logger name="org.springframework.web" level="error" additivity="false">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </logger>
 
     <!-- LOG "logging.level.org.hibernate.*" at ERROR level -->
-    <logger name="logging.level.org.hibernate" level="error" additivity="false">
+    <logger name="org.hibernate" level="error" additivity="false">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </logger>
