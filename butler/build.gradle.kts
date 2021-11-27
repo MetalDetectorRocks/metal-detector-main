@@ -8,6 +8,7 @@ dependencies {
   annotationProcessor("org.projectlombok:lombok:${libs.versions.lombok.get()}")
 
   testImplementation("org.apache.commons:commons-text:${libs.versions.apacheCommonsText.get()}")
+  testImplementation("org.mockito:mockito-inline:${libs.versions.mockito.get()}")
   testImplementation("org.springframework.boot:spring-boot-starter-test:${libs.versions.springBoot.get()}") {
     exclude(group = "junit", module = "junit")
   }
