@@ -4,17 +4,19 @@
 
 ![Alt](https://repobeats.axiom.co/api/embed/cb9842a5ae951f4f965972409be5ff2b64ff02b8.svg "Repobeats analytics image")
 
-<a name="introduction"></a>
 ## 1 Introduction
-This repository contains the source code for the Metal Detector application. The application is a Spring Boot application and currently under development. 
 
-The following features are planned:
-- Mark your favorite metal bands
-- Receive regular email alerts about upcoming and recently released albums from your favorite bands
+This repository contains the source code for the Metal Detector application. The application is a Java based Spring Boot application.
 
-The application uses the REST API from Discogs.
+Metal Detector is a metal release calendar that is 100% tailored to you and your listening habits. The application has the following features:
 
-<a name="download-source-code"></a>
+- Search, follow and unfollow metal bands
+- Synchronization of your followed bands from Spotify
+- An overview of bands you are currently following
+- A nicely designed release page that gives you a comprehensive overview of upcoming releases
+- You also have the possibility to filter this release page to those bands you are currently following
+- Release notifications via email or telegram
+
 ## 2 Download source code
 
 Clone the source code via:
@@ -23,14 +25,13 @@ Clone the source code via:
 git clone https://github.com/MetalDetectorRocks/metal-detector-main.git
 ```
 
-<a name="run-application-locally-default"></a>
 ## 3 Run application locally (Default profile)
 
 The following software is required:
 
-- JDK 17 (<https://jdk.java.net/17/>)
-- Docker (<https://docs.docker.com/get-docker/>)
-- Node.js LTS or Latest (<https://nodejs.org/en/>)
+- JDK 17
+- Docker CE
+- Node.js LTS or Latest
 - TypeScript (run `npm install -g typescript` in your terminal after you have installed Node.js)
 
 To start the application locally in default profile, the following preparatory actions are necessary:
@@ -45,13 +46,13 @@ To start the application locally in default profile, the following preparatory a
     - `spring.datasource.password` (password must match `POSTGRES_PASSWORD` of service `detector-db` from `docker-compose.yml` file)
     - `spring.datasource.url` (`jdbc:postgresql://localhost:5432/metal-detector`, database name must match `POSTGRES_DB` of service `detector-db` from `docker-compose.yml` file)
 
-3. Deposit your Discogs Access Token for the property `discogs.access-token` in file `application.yml` (see [Discogs API Documentation](https://www.discogs.com/developers/) for further information).
+3. Deposit your personal Discogs Access Token for the property `discogs.access-token` in file `application.yml` (see [Discogs API Documentation](https://www.discogs.com/developers/) for further information).
 
-4. Deposit your Spotify Client ID and Client Secret in file `application.yml`:
+4. Deposit your personal Spotify Client ID and Client Secret (or use preview credentials from keepass) in file `application.yml`:
     - `spotify.client-id`
     - `spotify.client-secret`
 
-5. Deposit your Google Client ID and Client Secret in file `application.yml`:
+5. Deposit your personal Google Client ID and Client Secret (or use preview credentials from keepass) in file `application.yml`:
    - `spring.security.oauth2.client.registration.google.client-id`
    - `spring.security.oauth2.client.registration.google.client-secret`
 
@@ -60,19 +61,16 @@ To start the application locally in default profile, the following preparatory a
     - `security.token-secret` for JWT
     - `security.remember-me-secret` for remember me functionality
 
-7. Compile the frontend initially. To do this you have to execute the following commands from the root directory of the project:
+7. Define a dummy value for `telegram.bot-id` in file `application.yml`.
+
+8. Compile the frontend initially. To do this you have to execute the following commands from the root directory of the project:
     - `npm --prefix webapp/src/main/resources/static/ts/ install`
-    - `npm --prefix webapp/src/main/resources/static/ts/ run prod-build`
+    - `npm --prefix webapp/src/main/resources/static/ts/ run dev-build`
 
-It is also possible to define all mentioned connection details and secrets as environment variables. In this case no variables in
-`application.yml` need to be changed. The names of the environment variables are already in the `application.yml` file. You can
-define the environment variables for example within a Run Configuration in IntelliJ.
+It is also possible to define all mentioned connection details and secrets as environment variables. In this case no variables in `application.yml` need to be changed. The names of the environment variables are already in the `application.yml` file. You can  define the environment variables for example within a Run Configuration in IntelliJ.
 
-If you start the application with the default Spring profile, all emails sent by the application will be displayed on the console.
-No emails are sent via an SMTP server. If you want the application to send emails via an SMTP server, you must start the application
-with the Spring profile 'preview'.
+If you start the application with the default Spring profile, all emails sent by the application will be displayed on the console.  No emails are sent via an SMTP server. If you want the application to send emails via an SMTP server, you must start the application with the Spring profile 'preview'.
 
-<a name="run-application-locally-preview"></a>
 ## 4 Run application locally (Preview profile)
 
 To start the application locally in PROD profile, the following preparatory actions are necessary:
@@ -87,15 +85,12 @@ To start the application locally in PROD profile, the following preparatory acti
     
 3. Configure the profile `preview` for example via your IntelliJ Run Configuration or via `spring.profiles.active=preview` in the file `application.yml`
 
-It is also possible to define all mentioned connection details and secrets as environment variables. In this case no variables in
-`application-preview.yml` file need to be changed. The names of the environment variables are already in the `application-preview.yml`.
-You can define the environment variables for example within a Run Configuration in IntelliJ.
+It is also possible to define all mentioned connection details and secrets as environment variables. In this case no variables in `application-preview.yml` file need to be changed. The names of the environment variables are already in the `application-preview.yml`. You can define the environment variables for example within a Run Configuration in IntelliJ.
 
-<a name="start-application"></a>
 ## 5 Start the application
 
-via Maven
-- Execute command `mvn clean package spring-boot:run` in root directory
+via gradle
+- Execute command `./gradlew bootRun` in root directory
 
 via your IDE
 - Execute main class `rocks.metaldetector.MetalDetectorApplication`
@@ -111,8 +106,16 @@ There are three example users with the following credentials:
 | MariaT         | maria.thompson | USER           |
 | Administrator  | simsalabim     | ADMINISTRATOR  |
 
-<a name="postman-collection"></a>
-## 6 Import Postman collection
+## 6 Execute tests locally
+
+via gradle
+- Execute command `./gradlew clean test` in root directory
+
+via your IDE
+- Execute the task `test` from folder `verification`
+- Please note: You might get the message "Test events were not received" if you do this via IntelliJ. This is intentional behaviour of gradle. If nothing changes in the tests themselves, they will not be executed repeatedly. If you still want to run the tests, you have to execute `clean` before.
+
+## 7 Import Postman collection
 
 Click the button below to import a Postman collection holding some of the most important requests. Please follow this tutorial to import a [Postman collection](https://www.getpostman.com/docs/collections).
 
