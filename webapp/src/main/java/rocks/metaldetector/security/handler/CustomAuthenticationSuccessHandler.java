@@ -38,7 +38,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     if (savedRequest == null) {
       // redirect to home page for authenticated users
-      httpServletResponse.sendRedirect(Endpoints.Frontend.HOME);
+      httpServletResponse.sendRedirect(Endpoints.Frontend.DASHBOARD);
     }
     else {
       // redirect to requested page

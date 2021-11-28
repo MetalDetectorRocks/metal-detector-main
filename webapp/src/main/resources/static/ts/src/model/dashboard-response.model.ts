@@ -1,7 +1,7 @@
 import { Artist } from "./artist.model";
 import { Release } from "./release.model";
 
-export interface HomepageResponse {
+export interface DashboardResponse {
     readonly upcomingReleases: Release[];
     readonly recentReleases: Release[];
     readonly mostExpectedReleases: Release[];

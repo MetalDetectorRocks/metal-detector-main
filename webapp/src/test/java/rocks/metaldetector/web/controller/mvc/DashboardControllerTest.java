@@ -23,19 +23,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(MockitoExtension.class)
-class HomeControllerTest {
+class DashboardControllerTest {
 
   @Mock
   private CurrentUserSupplier currentUserSupplier;
 
   @InjectMocks
-  private HomeController underTest;
+  private DashboardController underTest;
 
   private RestAssuredMockMvcUtils restAssuredUtils;
 
   @BeforeEach
   void setup() {
-    restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Frontend.HOME);
+    restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Frontend.DASHBOARD);
     RestAssuredMockMvc.standaloneSetup(underTest);
     doReturn(UserEntityFactory.createUser("user", "mail@test.de")).when(currentUserSupplier).get();
   }
@@ -46,7 +46,7 @@ class HomeControllerTest {
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Frontend.HOME + "' should be ok")
+  @DisplayName("Requesting '" + Endpoints.Frontend.DASHBOARD + "' should be ok")
   void get_should_return_200() {
     // when
     var validatableResponse = restAssuredUtils.doGet();
@@ -56,32 +56,32 @@ class HomeControllerTest {
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Frontend.HOME + "' should return the home view")
+  @DisplayName("Requesting '" + Endpoints.Frontend.DASHBOARD + "' should return the home view")
   void get_should_return_home_view() {
     // when
     var validatableResponse = restAssuredUtils.doGet();
 
     // then
-    validatableResponse.assertThat(view().name(ViewNames.Frontend.HOME))
+    validatableResponse.assertThat(view().name(ViewNames.Frontend.DASHBOARD))
         .assertThat(model().size(1))
         .assertThat(model().hasNoErrors());
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Frontend.HOME + "' should return the model containing the username")
+  @DisplayName("Requesting '" + Endpoints.Frontend.DASHBOARD + "' should return the model containing the username")
   void get_should_return_correct_model() {
     // when
     var validatableResponse = restAssuredUtils.doGet();
 
     // then
-    validatableResponse.assertThat(view().name(ViewNames.Frontend.HOME))
+    validatableResponse.assertThat(view().name(ViewNames.Frontend.DASHBOARD))
         .assertThat(model().size(1))
         .assertThat(model().attribute("username", "user"))
         .assertThat(model().hasNoErrors());
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Frontend.HOME + "' should call CurrentUserSupplier")
+  @DisplayName("Requesting '" + Endpoints.Frontend.DASHBOARD + "' should call CurrentUserSupplier")
   void test_current_user_supplier_called() {
     // when
     restAssuredUtils.doGet();

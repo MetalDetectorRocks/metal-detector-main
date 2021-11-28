@@ -44,7 +44,7 @@ class CustomAuthenticationSuccessHandlerTest implements WithAssertions {
 
     // then
     assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.FOUND.value());
-    assertThat(httpServletResponse.getRedirectedUrl()).isEqualTo(Endpoints.Frontend.HOME);
+    assertThat(httpServletResponse.getRedirectedUrl()).isEqualTo(Endpoints.Frontend.DASHBOARD);
   }
 
   @Test

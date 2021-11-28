@@ -1,5 +1,5 @@
-import { HomepageRestClient } from "../clients/homepage-rest-client";
-import { HomepageRenderService } from "../service/homepage-render-service";
+import { DashboardRestClient } from "../clients/dashboard-rest-client";
+import { DashboardRenderService } from "../service/dashboard-render-service";
 import { AlertService } from "../service/alert-service";
 import { LoadingIndicatorService } from "../service/loading-indicator-service";
 import { DateService } from "../service/date-service";
@@ -11,12 +11,12 @@ import { ToastService } from "../service/toast-service";
 const alertService = new AlertService();
 const loadingIndicatorService = new LoadingIndicatorService();
 const dateService = new DateService();
-const homepageRestClient = new HomepageRestClient();
+const homepageRestClient = new DashboardRestClient();
 const urlService = new UrlService();
 const toastService = new ToastService();
 const artistsRestClient = new ArtistsRestClient(urlService, toastService);
 const followArtistService = new FollowArtistService(artistsRestClient, toastService);
-const homepageRenderService = new HomepageRenderService(
+const homepageRenderService = new DashboardRenderService(
     alertService,
     loadingIndicatorService,
     dateService,

@@ -12,14 +12,14 @@ import rocks.metaldetector.support.Endpoints;
 import java.util.Map;
 
 @Controller
-@RequestMapping(Endpoints.Frontend.HOME)
+@RequestMapping(Endpoints.Frontend.DASHBOARD)
 @RequiredArgsConstructor
-public class HomeController {
+public class DashboardController {
 
   private final CurrentUserSupplier currentUserSupplier;
 
   @GetMapping
-  public ModelAndView showHome() {
-    return new ModelAndView(ViewNames.Frontend.HOME, Map.of("username", currentUserSupplier.get().getUsername()));
+  public ModelAndView showDashboard() {
+    return new ModelAndView(ViewNames.Frontend.DASHBOARD, Map.of("username", currentUserSupplier.get().getUsername()));
   }
 }

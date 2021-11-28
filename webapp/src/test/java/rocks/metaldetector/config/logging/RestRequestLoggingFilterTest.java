@@ -55,7 +55,7 @@ class RestRequestLoggingFilterTest implements WithAssertions {
   }
 
   private static Stream<Arguments> restCallProvider() {
-    var mockHttpRequest1 = new MockHttpServletRequest(GET.name(), "/rest/v1/home");
+    var mockHttpRequest1 = new MockHttpServletRequest(GET.name(), "/rest/v1/dashboard");
     var mockHttpRequest2 = new MockHttpServletRequest(GET.name(), "/rest/v1/me");
     var mockHttpRequest3 = new MockHttpServletRequest(GET.name(), "/rest/v1/releases");
     return Stream.of(
@@ -68,7 +68,7 @@ class RestRequestLoggingFilterTest implements WithAssertions {
   private static Stream<Arguments> otherCallProvider() {
     var mockHttpRequest1 = new MockHttpServletRequest(GET.name(), "/index");
     var mockHttpRequest2 = new MockHttpServletRequest(GET.name(), "/login");
-    var mockHttpRequest3 = new MockHttpServletRequest(GET.name(), "/home");
+    var mockHttpRequest3 = new MockHttpServletRequest(GET.name(), "/dashboard");
     var mockHttpRequest4 = new MockHttpServletRequest(GET.name(), "/admin");
     return Stream.of(
         Arguments.of(mockHttpRequest1),

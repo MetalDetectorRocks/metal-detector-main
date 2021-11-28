@@ -48,19 +48,22 @@
                 </form>
                 <ul class="links">
                     <li>
-                        <a th:classappend="${#request.requestURI == '/home' ? 'active':''}" href="#" th:href="@{/home}">Home</a>
+                        <a th:classappend="${#request.requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Home</a>
+                    </li>
+                    <li sec:authorize="isAuthenticated()">
+                        <a th:classappend="${#request.requestURI == '/dashboard' ? 'active':''}" href="#" th:href="@{/dashboard}">Dashboard</a>
                     </li>
                     <li >
                         <a th:classappend="${#request.requestURI == '/blog' ? 'active':''}" href="#" th:href="@{/blog}">Blog</a>
                     </li>
-                    <li>
+                    <li sec:authorize="isAuthenticated()">
                         <a th:classappend="${#request.requestURI == '/my-artists' ? 'active':''}" href="#" th:href="@{/my-artists}">My Artists</a>
                     </li>
                     <li>
                         <a th:classappend="${#request.requestURI == '/releases' ? 'active':''}" href="#" th:href="@{/releases}">Releases</a>
                     </li>
                     <!-- This item is only displayed in the mobile menu. -->
-                    <li>
+                    <li sec:authorize="isAuthenticated()">
                         <input type="checkbox" id="show-profile-and-settings">
                         <label for="show-profile-and-settings">Profile and Settings</label>
                         <ul>
@@ -85,7 +88,7 @@
                     <input id="mobile-query" autocomplete="off" th:name="query" type="text" placeholder="Search for your favourite artist..." required>
                     <button type="submit" class="go-icon"><span class="material-icons">double_arrow</span></button>
                 </form>
-                <ul class="setting-links desktop-link">
+                <ul class="setting-links desktop-link" sec:authorize="isAuthenticated()">
                     <li class="dropdown">
                         <a class="dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Profile photo" class="avatar avatar-xs" />

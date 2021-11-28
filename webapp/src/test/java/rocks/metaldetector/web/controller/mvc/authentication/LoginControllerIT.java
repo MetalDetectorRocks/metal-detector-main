@@ -80,7 +80,7 @@ class LoginControllerIT extends BaseWebMvcTestWithSecurity {
 
     // then
     resultActions.andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl(Endpoints.Frontend.HOME));
+        .andExpect(redirectedUrl(Endpoints.Frontend.DASHBOARD));
   }
 
   @Test

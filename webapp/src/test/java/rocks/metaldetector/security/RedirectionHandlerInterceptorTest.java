@@ -67,7 +67,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
     underTest.preHandle(request, response, null);
 
     // then
-    assertThat(response.getHeader("Location")).isEqualTo(Endpoints.Frontend.HOME);
+    assertThat(response.getHeader("Location")).isEqualTo(Endpoints.Frontend.DASHBOARD);
   }
 
   @Test

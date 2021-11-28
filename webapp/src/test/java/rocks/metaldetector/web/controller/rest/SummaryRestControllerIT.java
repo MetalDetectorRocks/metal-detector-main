@@ -11,7 +11,7 @@ import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static rocks.metaldetector.support.Endpoints.Rest.HOME;
+import static rocks.metaldetector.support.Endpoints.Rest.DASHBOARD;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_RELEASES;
 
 @WebMvcTest(controllers = SummaryRestController.class)
@@ -25,10 +25,10 @@ class SummaryRestControllerIT extends BaseWebMvcTestWithSecurity {
   class AdministratorRoleTest {
 
     @Test
-    @DisplayName("Administrator is allowed to GET on endpoint " + HOME + "'")
+    @DisplayName("Administrator is allowed to GET on endpoint " + DASHBOARD + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_get_summary() throws Exception {
-      mockMvc.perform(get(HOME))
+      mockMvc.perform(get(DASHBOARD))
           .andExpect(status().isOk());
     }
 
@@ -48,10 +48,10 @@ class SummaryRestControllerIT extends BaseWebMvcTestWithSecurity {
   class UserRoleTest {
 
     @Test
-    @DisplayName("User is allowed to GET on endpoint " + HOME + "'")
+    @DisplayName("User is allowed to GET on endpoint " + DASHBOARD + "'")
     @WithMockUser(roles = "USER")
     void user_is_allowed_to_get_summary() throws Exception {
-      mockMvc.perform(get(HOME))
+      mockMvc.perform(get(DASHBOARD))
           .andExpect(status().isOk());
     }
 

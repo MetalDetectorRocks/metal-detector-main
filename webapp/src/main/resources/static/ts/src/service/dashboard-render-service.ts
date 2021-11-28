@@ -1,6 +1,6 @@
 import { LoadingIndicatorService } from "./loading-indicator-service";
 import { AlertService } from "./alert-service";
-import { HomepageResponse } from "../model/homepage-response.model";
+import { DashboardResponse } from "../model/dashboard-response.model";
 import { AbstractRenderService } from "./abstract-render-service";
 import { Artist } from "../model/artist.model";
 import { Release } from "../model/release.model";
@@ -16,7 +16,7 @@ interface HomepageCard {
     readonly footerElement: HTMLDivElement;
 }
 
-export class HomepageRenderService extends AbstractRenderService<HomepageResponse> {
+export class DashboardRenderService extends AbstractRenderService<DashboardResponse> {
     private readonly dateService: DateService;
     private readonly followArtistService: FollowArtistService;
     private readonly artistTemplateElement: HTMLTemplateElement;
@@ -38,10 +38,10 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
     }
 
     protected getHostElementId(): string {
-        return "home-container";
+        return "dashboard-container";
     }
 
-    protected onRendering(response: HomepageResponse): void {
+    protected onRendering(response: DashboardResponse): void {
         if (
             response.upcomingReleases.length >= this.MIN_CARDS_PER_ROW &&
             response.recentReleases.length >= this.MIN_CARDS_PER_ROW
@@ -57,17 +57,17 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         this.renderMostExpectedReleasesRow(response);
     }
 
-    private renderUpcomingReleasesRow(response: HomepageResponse) {
+    private renderUpcomingReleasesRow(response: DashboardResponse) {
         const title = "Upcoming releases";
         this.renderReleaseCards("swiper-upcoming-release", title, response.upcomingReleases);
     }
 
-    private renderRecentReleasesRow(response: HomepageResponse): void {
+    private renderRecentReleasesRow(response: DashboardResponse): void {
         const title = "Recent releases";
         this.renderReleaseCards("swiper-recent-releases", title, response.recentReleases);
     }
 
-    private renderReleaseRow(response: HomepageResponse): void {
+    private renderReleaseRow(response: DashboardResponse): void {
         const recentReleases = response.recentReleases.sort((r1, r2) =>
             this.dateService.compare(r1.releaseDate, r2.releaseDate),
         );
@@ -79,7 +79,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         }
     }
 
-    private renderRecentlyFollowedArtistsRow(response: HomepageResponse): void {
+    private renderRecentlyFollowedArtistsRow(response: DashboardResponse): void {
         if (response.recentlyFollowedArtists.length) {
             const title = "Recently followed artists";
             const cards: HTMLDivElement[] = [];
@@ -101,7 +101,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         }
     }
 
-    private renderFavoriteCommunityArtistsRow(response: HomepageResponse): void {
+    private renderFavoriteCommunityArtistsRow(response: DashboardResponse): void {
         if (response.favoriteCommunityArtists.length) {
             const title = "The community's favorite artists";
             const cards: HTMLDivElement[] = [];
@@ -116,7 +116,7 @@ export class HomepageRenderService extends AbstractRenderService<HomepageRespons
         }
     }
 
-    private renderMostExpectedReleasesRow(response: HomepageResponse) {
+    private renderMostExpectedReleasesRow(response: DashboardResponse) {
         const title = "The community's most expected releases";
         this.renderReleaseCards("swiper-community-most-expected-releases", title, response.mostExpectedReleases, false);
     }

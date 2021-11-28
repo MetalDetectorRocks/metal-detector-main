@@ -11,6 +11,6 @@ public class IndexController {
 
   @GetMapping({Endpoints.Guest.INDEX, Endpoints.Guest.EMPTY_INDEX, Endpoints.Guest.SLASH_INDEX})
   public ModelAndView showIndex() {
-    return new ModelAndView(ViewNames.Guest.INDEX);
+    return new ModelAndView(ViewNames.Frontend.INDEX);
   }
 }

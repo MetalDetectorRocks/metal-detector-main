@@ -54,7 +54,7 @@ class IndexControllerTest {
     var validatableResponse = restAssuredUtils.doGet();
 
     // then
-    validatableResponse.assertThat(view().name(ViewNames.Guest.INDEX))
+    validatableResponse.assertThat(view().name(ViewNames.Frontend.INDEX))
         .assertThat(model().size(0))
         .assertThat(model().hasNoErrors());
   }

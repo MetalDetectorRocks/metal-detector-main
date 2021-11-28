@@ -7,7 +7,7 @@ module.exports = {
         search: "./src/bundles/search.ts",
         my_artists: "./src/bundles/my-artists.ts",
         releases: "./src/bundles/releases.ts",
-        homepage: "./src/bundles/homepage.ts",
+        dashboard: "./src/bundles/dashboard.ts",
         spotify_synchronization: "./src/bundles/spotify-synchronization.ts",
         account_details: "./src/bundles/account-details.ts",
         notification_settings: "./src/bundles/notification-settings.ts",

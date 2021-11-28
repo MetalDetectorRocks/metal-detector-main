@@ -33,7 +33,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
       // redirect to frontend home page if guest homepage is requested
       if (Endpoints.Guest.ALL_GUEST_INDEX_PAGES.contains(requestURI)) {
         httpServletResponse.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
-        httpServletResponse.setHeader(HttpHeaders.LOCATION, httpServletRequest.getContextPath() + Endpoints.Frontend.HOME);
+        httpServletResponse.setHeader(HttpHeaders.LOCATION, httpServletRequest.getContextPath() + Endpoints.Frontend.DASHBOARD);
       }
       // redirect to status page if an authentication page is requested
       else if (Endpoints.Guest.ALL_AUTH_PAGES.contains(requestURI)) {

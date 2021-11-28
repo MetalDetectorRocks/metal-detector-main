@@ -4,7 +4,6 @@ public class ViewNames {
 
   public static class Guest {
     // Authentication
-    public static final String INDEX                = "guest/index";
     public static final String LOGIN                = "guest/auth/login";
     public static final String LOGIN_WITHOUT_OAUTH  = "guest/auth/login-without-oauth";
     public static final String REGISTER             = "guest/auth/register";
@@ -23,7 +22,8 @@ public class ViewNames {
   }
 
   public static class Frontend {
-    public static final String HOME                         = "frontend/home";
+    public static final String INDEX                        = "frontend/index";
+    public static final String DASHBOARD                    = "frontend/dashboard";
     public static final String SEARCH                       = "frontend/search";
     public static final String RELEASES                     = "frontend/releases";
     public static final String BLOG                         = "frontend/blog";

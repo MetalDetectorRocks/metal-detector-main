@@ -23,7 +23,7 @@ public class SummaryRestController {
 
   private final SummaryService summaryService;
 
-  @GetMapping(path = Endpoints.Rest.HOME, produces = APPLICATION_JSON_VALUE)
+  @GetMapping(path = Endpoints.Rest.DASHBOARD, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<SummaryResponse> handleSummaryRequest() {
     SummaryResponse summaryResponse = summaryService.createSummaryResponse();
     return ResponseEntity.ok(summaryResponse);

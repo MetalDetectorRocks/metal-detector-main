@@ -50,7 +50,7 @@ class SummaryRestControllerTest implements WithAssertions {
 
   @BeforeEach
   void setUp() {
-    summaryRestAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.HOME);
+    summaryRestAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.DASHBOARD);
     topReleasesRestAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.TOP_RELEASES);
     RestAssuredMockMvc.standaloneSetup(underTest);
   }
