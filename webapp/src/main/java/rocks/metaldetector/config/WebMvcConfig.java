@@ -63,7 +63,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(redirectionHandlerInterceptor).addPathPatterns(Endpoints.AntPattern.GUEST_PAGES);
+    registry.addInterceptor(redirectionHandlerInterceptor).addPathPatterns(Endpoints.AntPattern.GUEST_ONLY_PAGES);
   }
 
   @Bean

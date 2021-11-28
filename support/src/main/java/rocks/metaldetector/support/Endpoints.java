@@ -13,9 +13,7 @@ public class Endpoints {
     public static final String        EMPTY_INDEX            = "";
     public static final String        SLASH_INDEX            = "/";
     public static final String        LOGOUT                 = "/logout";
-    public static final String        IMPRINT                = "/guest/imprint";
-    public static final String        PRIVACY_POLICY         = "/guest/privacy-policy";
-    public static final List<String>  ALL_GUEST_INDEX_PAGES  = List.of(INDEX, EMPTY_INDEX, SLASH_INDEX, IMPRINT, PRIVACY_POLICY);
+    public static final List<String>  ALL_GUEST_INDEX_PAGES  = List.of(INDEX, EMPTY_INDEX, SLASH_INDEX);
 
     // Authentication
     public static final String       LOGIN                     = "/login";
@@ -102,11 +100,23 @@ public class Endpoints {
            static final String[] RESEND_VERIFICATION_TOKEN = {"/resend-verification-token", "/resend-verification-token/"};
            static final String[] FORGOT_PASSWORD           = {"/forgot-password", "/forgot-password/"};
            static final String[] RESET_PASSWORD            = {"/reset-password", "/reset-password/"};
-           static final String[] GUEST_IMPRINT             = {"/guest/imprint", "/guest/imprint/"};
-           static final String[] GUEST_PRIVACY_POLICY      = {"/guest/privacy-policy", "/guest/privacy-policy/"};
+           static final String[] IMPRINT                   = {"/imprint", "/imprint/"};
+           static final String[] PRIVACY_POLICY            = {"/privacy-policy", "/privacy-policy/"};
     public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**", "/webjars/**"};
 
-    public static final String[] GUEST_PAGES = Stream.of(INDEX, LOGIN, REGISTER, REGISTRATION_VERIFICATION,
-            RESEND_VERIFICATION_TOKEN, FORGOT_PASSWORD, RESET_PASSWORD, GUEST_IMPRINT, GUEST_PRIVACY_POLICY).flatMap(Stream::of).toArray(String[]::new);
+    public static final String[] GUEST_ONLY_PAGES = Stream.of(
+            LOGIN,
+            REGISTER,
+            REGISTRATION_VERIFICATION,
+            RESEND_VERIFICATION_TOKEN,
+            FORGOT_PASSWORD,
+            RESET_PASSWORD
+    ).flatMap(Stream::of).toArray(String[]::new);
+
+    public static final String[] PUBLIC_PAGES = Stream.of(
+            INDEX,
+            IMPRINT,
+            PRIVACY_POLICY
+    ).flatMap(Stream::of).toArray(String[]::new);
   }
 }

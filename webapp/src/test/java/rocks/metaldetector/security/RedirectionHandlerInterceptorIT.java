@@ -75,7 +75,7 @@ class RedirectionHandlerInterceptorIT implements WithAssertions, WithIntegration
   }
 
   private static Stream<Arguments> inputProviderWithHandler() {
-    return Arrays.stream(Endpoints.AntPattern.GUEST_PAGES).map(Arguments::of);
+    return Arrays.stream(Endpoints.AntPattern.GUEST_ONLY_PAGES).map(Arguments::of);
   }
 
   private static Stream<Arguments> inputProviderWithoutHandler() {

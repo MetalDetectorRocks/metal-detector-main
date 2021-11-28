@@ -39,7 +39,8 @@ import java.time.Duration;
 
 import static rocks.metaldetector.support.Endpoints.AntPattern.ACTUATOR_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ADMIN;
-import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_PAGES;
+import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
+import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
 
@@ -74,7 +75,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .authorizeRequests()
         .antMatchers(ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
         .antMatchers(RESOURCES).permitAll()
-        .antMatchers(GUEST_PAGES).permitAll()
+        .antMatchers(GUEST_ONLY_PAGES).permitAll()
+        .antMatchers(PUBLIC_PAGES).permitAll()
         .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
         .antMatchers(Endpoints.Rest.NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
         .anyRequest().authenticated()
