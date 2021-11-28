@@ -1,6 +1,6 @@
 version: '3.7'
 
-services: 
+services:
   detector-db:
     container_name: detector-db
     image: postgres:13.1-alpine
@@ -15,7 +15,7 @@ services:
         source: detector-db-volume
         target: /var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - "5432:5432"
     restart: on-failure:3
 
   butler-db:
@@ -32,7 +32,7 @@ services:
         source: butler-db-volume
         target: /var/lib/postgresql/data
     ports:
-      - 5433:5432
+      - "5433:5432"
     restart: on-failure:3
 
   butler-app:
@@ -54,7 +54,7 @@ services:
         source: butler-logs-volume
         target: /app/logs
     ports:
-      - 8095:8080
+      - "8095:8080"
     restart: on-failure:3
 
 volumes:
