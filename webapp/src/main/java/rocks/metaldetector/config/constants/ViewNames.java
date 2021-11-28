@@ -10,8 +10,6 @@ public class ViewNames {
     public static final String DISABLED_REGISTER    = "guest/auth/disabled-register";
     public static final String FORGOT_PASSWORD      = "guest/auth/forgot-password";
     public static final String RESET_PASSWORD       = "guest/auth/reset-password";
-    public static final String IMPRINT              = "guest/imprint";
-    public static final String PRIVACY_POLICY       = "guest/privacy-policy";
 
     // Error pages
     public static final String ERROR       = "error/default";
