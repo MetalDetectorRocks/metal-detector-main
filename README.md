@@ -15,7 +15,7 @@ Metal Detector is a metal release calendar that is 100% tailored to you and your
 - An overview of bands you are currently following
 - A nicely designed release page that gives you a comprehensive overview of upcoming releases
 - You also have the possibility to filter this release page to those bands you are currently following
-- Release notifications via email or telegram
+- Release and announcement notifications as well as regular notifications via email or telegram
 
 ## 2 Download source code
 
