@@ -29,8 +29,8 @@ export class ReleasesService {
 
     private releasesFilterCanvas!: HTMLDivElement;
     private releasesFilterOffCanvas!: HTMLDivElement;
-    private allArtistsRb!: HTMLInputElement;
-    private followedArtistsRb!: HTMLInputElement;
+    private allArtistsRb?: HTMLInputElement;
+    private followedArtistsRb?: HTMLInputElement;
     private sortPropertySelector!: HTMLSelectElement;
     private sortAscRb!: HTMLInputElement;
     private sortDescRb!: HTMLInputElement;
@@ -111,8 +111,10 @@ export class ReleasesService {
         const dateFromParamValue = this.urlService.getParameterFromUrl(ReleasesService.DATE_FROM_PARAM_VALUE);
         const dateToParamValue = this.urlService.getParameterFromUrl(ReleasesService.DATE_TO_PARAM_VALUE);
 
-        this.followedArtistsRb.checked = releasesParamValue === ReleasesService.MY_RELEASES_PARAM_VALUE;
-        this.allArtistsRb.checked = !this.followedArtistsRb.checked;
+        if (this.followedArtistsRb && this.allArtistsRb) {
+            this.followedArtistsRb.checked = releasesParamValue === ReleasesService.MY_RELEASES_PARAM_VALUE;
+            this.allArtistsRb.checked = !this.followedArtistsRb.checked;
+        }
         this.sortPropertySelector.value =
             sortParamValue.length === 0 || sortParamValue === ReleasesService.SORT_BY_RELEASE_DATE_PARAM_VALUE
                 ? ReleasesService.SORT_BY_RELEASE_DATE_OPTION_VALUE
@@ -127,7 +129,7 @@ export class ReleasesService {
     }
 
     public fetchReleases(): void {
-        this.allArtistsRb.checked ? this.fetchAllReleases() : this.fetchMyReleases();
+        this.shouldFetchAllReleases() ? this.fetchAllReleases() : this.fetchMyReleases();
     }
 
     private fetchAllReleases(): void {
@@ -148,10 +150,12 @@ export class ReleasesService {
         });
 
         const releaseFilterForm = document.getElementById("release-filter-form") as HTMLFormElement;
-        const releaseFilterOptions = releaseFilterForm.elements.namedItem("releases") as RadioNodeList;
-        releaseFilterOptions.forEach((option) => {
-            option.addEventListener("change", this.onAnyValueChange.bind(this));
-        });
+        if (releaseFilterForm) {
+            const releaseFilterOptions = releaseFilterForm.elements.namedItem("releases") as RadioNodeList;
+            releaseFilterOptions.forEach((option) => {
+                option.addEventListener("change", this.onAnyValueChange.bind(this));
+            });
+        }
 
         [
             this.sortPropertySelector,
@@ -181,7 +185,7 @@ export class ReleasesService {
     }
 
     private buildRequestParams(): string {
-        const releasesFilterValue = this.allArtistsRb.checked
+        const releasesFilterValue = this.shouldFetchAllReleases()
             ? ReleasesService.ALL_RELEASES_PARAM_VALUE
             : ReleasesService.MY_RELEASES_PARAM_VALUE;
         const sortBy =
@@ -208,5 +212,11 @@ export class ReleasesService {
         urlSearchParams.set(ReleasesService.DATE_TO_PARAM_VALUE, dateTo);
 
         return urlSearchParams.toString();
+    }
+
+    private shouldFetchAllReleases() {
+        return this.allArtistsRb !== undefined && this.allArtistsRb !== null
+            ? this.allArtistsRb.checked
+            : true;
     }
 }

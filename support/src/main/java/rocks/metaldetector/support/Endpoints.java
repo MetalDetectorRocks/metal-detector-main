@@ -103,7 +103,8 @@ public class Endpoints {
            static final String[] IMPRINT                   = {"/imprint", "/imprint/"};
            static final String[] PRIVACY_POLICY            = {"/privacy-policy", "/privacy-policy/"};
            static final String[] BLOG                      = {"/blog", "/blog/**"};
-    public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**", "/webjars/**"};
+           static final String[] RELEASES                  = {"/releases", "/releases/"};
+    public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**", "/webjars/**", "/ts/dist/**"};
 
     public static final String[] GUEST_ONLY_PAGES = Stream.of(
             LOGIN,
@@ -118,7 +119,8 @@ public class Endpoints {
             INDEX,
             IMPRINT,
             PRIVACY_POLICY,
-            BLOG
+            BLOG,
+            RELEASES
     ).flatMap(Stream::of).toArray(String[]::new);
   }
 }

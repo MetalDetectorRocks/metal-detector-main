@@ -37,12 +37,15 @@ import rocks.metaldetector.support.SecurityProperties;
 import javax.sql.DataSource;
 import java.time.Duration;
 
+import static org.springframework.http.HttpMethod.GET;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ACTUATOR_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ADMIN;
 import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
+import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
 
 @Configuration
 @EnableWebSecurity
@@ -77,8 +80,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(RESOURCES).permitAll()
         .antMatchers(GUEST_ONLY_PAGES).permitAll()
         .antMatchers(PUBLIC_PAGES).permitAll()
+        .antMatchers(GET, RELEASES).permitAll()
         .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
-        .antMatchers(Endpoints.Rest.NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
+        .antMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
         .anyRequest().authenticated()
       .and()
       .formLogin()

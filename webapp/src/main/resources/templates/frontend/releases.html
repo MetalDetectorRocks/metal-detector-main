@@ -2,6 +2,7 @@
 <html layout:decorate="~{frontend/fragments/layout}"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
       lang="en">
 <head>
     <title>Releases</title>
@@ -97,7 +98,7 @@
                         </div>
                     </form>
                 </fieldset>
-                <fieldset class="mb-4">
+                <fieldset class="mb-4" sec:authorize="isAuthenticated()">
                     <legend>Artists</legend>
                     <form id="release-filter-form">
                         <div class="form-check mb-1">
