@@ -48,14 +48,14 @@ public class RegistrationController {
 
   @GetMapping(Endpoints.Guest.REGISTER)
   public ModelAndView showRegistrationForm() {
-    return new ModelAndView(ViewNames.Guest.REGISTER);
+    return new ModelAndView(ViewNames.Authentication.REGISTER);
   }
 
   @PostMapping(Endpoints.Guest.REGISTER)
   public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult) {
     // show registration form if there are validation errors
     if (bindingResult.hasErrors()) {
-      return new ModelAndView(ViewNames.Guest.REGISTER, HttpStatus.BAD_REQUEST);
+      return new ModelAndView(ViewNames.Authentication.REGISTER, HttpStatus.BAD_REQUEST);
     }
 
     // create user
@@ -73,7 +73,7 @@ public class RegistrationController {
         bindingResult.rejectValue("email", "userAlreadyExists", e.getMessage());
       }
 
-      return new ModelAndView(ViewNames.Guest.REGISTER, HttpStatus.BAD_REQUEST); // show registration form with validation errors
+      return new ModelAndView(ViewNames.Authentication.REGISTER, HttpStatus.BAD_REQUEST); // show registration form with validation errors
     }
 
     eventPublisher.publishEvent(new OnRegistrationCompleteEvent(this, createdUserDto));
@@ -82,7 +82,7 @@ public class RegistrationController {
     viewModel.put("isSuccessful", true);
     viewModel.put("registerUserRequest", new RegisterUserRequest()); // to clear the register form
 
-    return new ModelAndView(ViewNames.Guest.REGISTER, viewModel, HttpStatus.OK);
+    return new ModelAndView(ViewNames.Authentication.REGISTER, viewModel, HttpStatus.OK);
   }
 
   @GetMapping(Endpoints.Guest.REGISTRATION_VERIFICATION)

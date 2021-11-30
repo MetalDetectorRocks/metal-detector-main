@@ -50,7 +50,7 @@ public class RestExceptionsHandler {
       return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), BAD_REQUEST);
     }
     else {
-      return new ModelAndView(ViewNames.Guest.ERROR_400);
+      return new ModelAndView(ViewNames.Error.ERROR_400);
     }
   }
 

@@ -55,7 +55,7 @@ public class ResetPasswordController {
         model.addAttribute(ChangePasswordRequest.builder().tokenString(tokenString).build());
       }
 
-      return new ModelAndView(ViewNames.Guest.RESET_PASSWORD, HttpStatus.OK);
+      return new ModelAndView(ViewNames.Authentication.RESET_PASSWORD, HttpStatus.OK);
     }
   }
 

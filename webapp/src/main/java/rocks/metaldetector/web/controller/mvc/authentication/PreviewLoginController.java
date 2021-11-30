@@ -15,6 +15,6 @@ public class PreviewLoginController {
 
   @GetMapping
   public ModelAndView showLoginForm() {
-    return new ModelAndView(ViewNames.Guest.LOGIN_WITHOUT_OAUTH);
+    return new ModelAndView(ViewNames.Authentication.LOGIN_WITHOUT_OAUTH);
   }
 }

@@ -41,7 +41,7 @@ class PreviewLoginControllerTest {
     var validatableResponse = restAssuredUtils.doGet();
 
     // then
-    validatableResponse.assertThat(view().name(ViewNames.Guest.LOGIN_WITHOUT_OAUTH))
+    validatableResponse.assertThat(view().name(ViewNames.Authentication.LOGIN_WITHOUT_OAUTH))
         .assertThat(model().size(0))
         .assertThat(model().hasNoErrors());
   }

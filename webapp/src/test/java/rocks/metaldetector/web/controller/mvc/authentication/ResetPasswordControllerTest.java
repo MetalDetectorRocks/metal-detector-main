@@ -160,7 +160,7 @@ class ResetPasswordControllerTest implements WithAssertions {
         .assertThat(model().hasNoErrors())
         .assertThat(model().attributeExists(ResetPasswordController.FORM_DTO))
         .assertThat(status().isOk())
-        .assertThat(view().name(ViewNames.Guest.RESET_PASSWORD));
+        .assertThat(view().name(ViewNames.Authentication.RESET_PASSWORD));
   }
 
   @Test

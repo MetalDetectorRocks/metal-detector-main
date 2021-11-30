@@ -35,6 +35,6 @@ class PreviewRegistrationControllerTest implements WithAssertions {
     // then
     validatableResponse
         .assertThat(status().isOk())
-        .assertThat(view().name(ViewNames.Guest.DISABLED_REGISTER));
+        .assertThat(view().name(ViewNames.Authentication.DISABLED_REGISTER));
   }
 }

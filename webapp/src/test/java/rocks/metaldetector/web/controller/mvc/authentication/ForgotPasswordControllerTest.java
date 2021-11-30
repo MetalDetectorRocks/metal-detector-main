@@ -71,7 +71,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
     // then
     validatableResponse
         .assertThat(status().isOk())
-        .assertThat(view().name(ViewNames.Guest.FORGOT_PASSWORD))
+        .assertThat(view().name(ViewNames.Authentication.FORGOT_PASSWORD))
         .assertThat(model().attributeExists(ForgotPasswordController.FORM_DTO))
         .assertThat(model().hasNoErrors());
   }
@@ -89,7 +89,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
     // then
     validatableResponse
         .assertThat(status().isOk())
-        .assertThat(view().name(ViewNames.Guest.FORGOT_PASSWORD))
+        .assertThat(view().name(ViewNames.Authentication.FORGOT_PASSWORD))
         .assertThat(model().attributeExists(ForgotPasswordController.FORM_DTO, "isSuccessful"))
         .assertThat(model().hasNoErrors());
   }
@@ -149,7 +149,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
         .assertThat(model().errorCount(1))
         .assertThat(model().attributeHasFieldErrorCode(ForgotPasswordController.FORM_DTO, "emailOrUsername", "NotBlank"))
         .assertThat(status().isBadRequest())
-        .assertThat(view().name(ViewNames.Guest.FORGOT_PASSWORD));
+        .assertThat(view().name(ViewNames.Authentication.FORGOT_PASSWORD));
   }
 
   @Test
@@ -186,7 +186,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
         .assertThat(model().errorCount(1))
         .assertThat(model().attributeHasFieldErrorCode(ForgotPasswordController.FORM_DTO, "emailOrUsername", "UserDoesNotExist"))
         .assertThat(status().isBadRequest())
-        .assertThat(view().name(ViewNames.Guest.FORGOT_PASSWORD));
+        .assertThat(view().name(ViewNames.Authentication.FORGOT_PASSWORD));
   }
 
   @Test

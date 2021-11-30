@@ -5,7 +5,7 @@
     --grey-border-color-highlight: #5a5a5a;
     --grey-hover-color: #323232;
     --menu-foreground-color: #fcfcfc;
-    --menu-foreground-hover-color: #767676;
+    --menu-foreground-hover-color: #a5a5a5;
     --dark-field-background-color: #212121;
     --light-font-color: #adafae;
     --dark-muted-font-color: #5c5c5c;
@@ -388,6 +388,14 @@ footer .footer-icon:hover {
     position: absolute;
     top: 8px;
     right: 16px;
+}
+.btn-white {
+    color: var(--menu-foreground-color);
+    border-color: var(--menu-foreground-color);
+}
+.btn-white:hover {
+    color: var(--menu-foreground-hover-color);
+    border-color: var(--menu-foreground-hover-color);
 }
 
 /* Form Controls */

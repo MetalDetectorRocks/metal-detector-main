@@ -113,7 +113,7 @@ class RegistrationControllerTest implements WithAssertions {
     validatableResponse.assertThat(model().hasNoErrors())
         .assertThat(model().attributeExists(RegistrationController.FORM_DTO))
         .assertThat(status().isOk())
-        .assertThat(view().name(ViewNames.Guest.REGISTER));
+        .assertThat(view().name(ViewNames.Authentication.REGISTER));
   }
 
   @Nested
@@ -135,7 +135,7 @@ class RegistrationControllerTest implements WithAssertions {
       validatableResponse.assertThat(model().hasNoErrors())
           .assertThat(model().attributeExists(RegistrationController.FORM_DTO, "isSuccessful"))
           .assertThat(status().isOk())
-          .assertThat(view().name(ViewNames.Guest.REGISTER));
+          .assertThat(view().name(ViewNames.Authentication.REGISTER));
     }
 
     @Test
@@ -227,7 +227,7 @@ class RegistrationControllerTest implements WithAssertions {
           .assertThat(model().errorCount(expectedErrorCount))
           .assertThat(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, incorrectFieldNames))
           .assertThat(status().isBadRequest())
-          .assertThat(view().name(ViewNames.Guest.REGISTER));
+          .assertThat(view().name(ViewNames.Authentication.REGISTER));
       verifyNoInteractions(userService);
     }
 
@@ -268,7 +268,7 @@ class RegistrationControllerTest implements WithAssertions {
           .assertThat(model().errorCount(1))
           .assertThat(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, PARAM_USERNAME))
           .assertThat(status().isBadRequest())
-          .assertThat(view().name(ViewNames.Guest.REGISTER));
+          .assertThat(view().name(ViewNames.Authentication.REGISTER));
     }
 
     @Test
@@ -285,7 +285,7 @@ class RegistrationControllerTest implements WithAssertions {
           .assertThat(model().errorCount(1))
           .assertThat(model().attributeHasFieldErrors(RegistrationController.FORM_DTO, PARAM_EMAIL))
           .assertThat(status().isBadRequest())
-          .assertThat(view().name(ViewNames.Guest.REGISTER));
+          .assertThat(view().name(ViewNames.Authentication.REGISTER));
     }
   }
 

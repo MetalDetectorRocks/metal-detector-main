@@ -15,6 +15,6 @@ public class PreviewRegistrationController {
 
   @GetMapping(Endpoints.Guest.REGISTER)
   public ModelAndView showRegistrationForm() {
-    return new ModelAndView(ViewNames.Guest.DISABLED_REGISTER);
+    return new ModelAndView(ViewNames.Authentication.DISABLED_REGISTER);
   }
 }

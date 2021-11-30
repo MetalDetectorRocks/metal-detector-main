@@ -41,21 +41,21 @@ public class ForgotPasswordController {
 
   @GetMapping
   public ModelAndView showForgotPasswordForm() {
-    return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD);
+    return new ModelAndView(ViewNames.Authentication.FORGOT_PASSWORD);
   }
 
   @PostMapping
   public ModelAndView requestPasswordReset(@Valid @ModelAttribute ForgotPasswordRequest forgotPasswordRequest, BindingResult bindingResult) {
     // show forgot password form if there are validation errors
     if (bindingResult.hasErrors()) {
-      return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
+      return new ModelAndView(ViewNames.Authentication.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
     }
 
     Optional<UserDto> userDto = userService.getUserByEmailOrUsername(forgotPasswordRequest.getEmailOrUsername());
 
     if (userDto.isEmpty()) {
       bindingResult.rejectValue("emailOrUsername", "UserDoesNotExist");
-      return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
+      return new ModelAndView(ViewNames.Authentication.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
     }
 
     eventPublisher.publishEvent(new OnResetPasswordRequestCompleteEvent(this, userDto.get()));
@@ -64,6 +64,6 @@ public class ForgotPasswordController {
     viewModel.put("isSuccessful", true);
     viewModel.put("forgotPasswordRequest", new ForgotPasswordRequest()); // to clear the form
 
-    return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, viewModel, HttpStatus.OK);
+    return new ModelAndView(ViewNames.Authentication.FORGOT_PASSWORD, viewModel, HttpStatus.OK);
   }
 }

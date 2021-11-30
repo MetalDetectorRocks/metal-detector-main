@@ -15,6 +15,6 @@ public class LoginController {
 
   @GetMapping
   public ModelAndView showLoginForm() {
-    return new ModelAndView(ViewNames.Guest.LOGIN);
+    return new ModelAndView(ViewNames.Authentication.LOGIN);
   }
 }

@@ -57,7 +57,7 @@ class CustomErrorControllerTest {
 
     // then
     validatableResponse.assertThat(model().attribute("requestedURI", REQUEST_URI))
-        .assertThat(view().name(ViewNames.Guest.ERROR_404));
+        .assertThat(view().name(ViewNames.Error.ERROR_404));
   }
 
   @Test
@@ -86,7 +86,7 @@ class CustomErrorControllerTest {
 
     // then
     validatableResponse.assertThat(model().attribute("requestedURI", REQUEST_URI))
-        .assertThat(view().name(ViewNames.Guest.ERROR_403));
+        .assertThat(view().name(ViewNames.Error.ERROR_403));
   }
 
   @Test
@@ -115,7 +115,7 @@ class CustomErrorControllerTest {
 
     // then
     validatableResponse.assertThat(model().attribute("requestedURI", REQUEST_URI))
-        .assertThat(view().name(ViewNames.Guest.ERROR_500));
+        .assertThat(view().name(ViewNames.Error.ERROR_500));
   }
 
   @Test
@@ -131,6 +131,6 @@ class CustomErrorControllerTest {
     // then
     validatableResponse.assertThat(status().isBadGateway())
         .assertThat(model().attribute("requestedURI", REQUEST_URI))
-        .assertThat(view().name(ViewNames.Guest.ERROR));
+        .assertThat(view().name(ViewNames.Error.ERROR));
   }
 }

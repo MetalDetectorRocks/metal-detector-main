@@ -41,7 +41,7 @@ class LoginControllerTest {
     var validatableResponse = restAssuredUtils.doGet();
 
     // then
-    validatableResponse.assertThat(view().name(ViewNames.Guest.LOGIN))
+    validatableResponse.assertThat(view().name(ViewNames.Authentication.LOGIN))
         .assertThat(model().size(0))
         .assertThat(model().hasNoErrors());
   }
