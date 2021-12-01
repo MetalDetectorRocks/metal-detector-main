@@ -161,6 +161,10 @@ nav li {
     position: relative;
 }
 
+.nav-wrapper .mobile-only {
+    display: none;
+}
+
 /* Responsive navigation */
 @media screen and (max-width: 1250px) {
     .nav-wrapper nav {
@@ -179,8 +183,11 @@ nav li {
         display: none;
     }
     .nav-wrapper .search-box,
-    .nav-wrapper .desktop-link {
+    .nav-wrapper .desktop-only {
         display: none;
+    }
+    .nav-wrapper .mobile-only {
+        display: block;
     }
     .nav-wrapper .search-icon,
     .nav-wrapper .menu-icon {

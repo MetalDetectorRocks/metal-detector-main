@@ -80,6 +80,10 @@
                             <li><a class="dropdown-item logout-link" href="#" th:href="@{/logout}">Logout</a></li>
                         </ul>
                     </li>
+                    <form class="justify-content-start mobile-only mt-4" sec:authorize="!isAuthenticated()">
+                        <a class="btn btn-white ms-2 me-2" href="#" th:href="@{/login}">Sign in</a>
+                        <a class="btn btn-white" href="#" th:href="@{/register}">Sign up</a>
+                    </form>
                 </ul>
                 <label for="show-search" class="search-icon">
                     <span class="material-icons"></span>
@@ -88,7 +92,7 @@
                     <input id="mobile-query" autocomplete="off" th:name="query" type="text" placeholder="Search for your favourite artist..." required>
                     <button type="submit" class="go-icon"><span class="material-icons">double_arrow</span></button>
                 </form>
-                <ul class="setting-links desktop-link" sec:authorize="isAuthenticated()">
+                <ul class="setting-links desktop-only" sec:authorize="isAuthenticated()">
                     <li class="dropdown">
                         <a class="dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Profile photo" class="avatar avatar-xs" />
@@ -103,7 +107,7 @@
                         </div>
                     </li>
                 </ul>
-                <form class="justify-content-end desktop-link" sec:authorize="!isAuthenticated()">
+                <form class="justify-content-end desktop-only" sec:authorize="!isAuthenticated()">
                     <a class="btn btn-sm btn-white ms-4 me-2" href="#" th:href="@{/login}">Sign in</a>
                     <a class="btn btn-sm btn-white" href="#" th:href="@{/register}">Sign up</a>
                 </form>
