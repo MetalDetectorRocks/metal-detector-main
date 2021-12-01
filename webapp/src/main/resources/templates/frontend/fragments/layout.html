@@ -103,7 +103,7 @@
                         </div>
                     </li>
                 </ul>
-                <form class="justify-content-end" sec:authorize="!isAuthenticated()">
+                <form class="justify-content-end desktop-link" sec:authorize="!isAuthenticated()">
                     <a class="btn btn-sm btn-white ms-4 me-2" href="#" th:href="@{/login}">Sign in</a>
                     <a class="btn btn-sm btn-white" href="#" th:href="@{/register}">Sign up</a>
                 </form>
