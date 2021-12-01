@@ -215,8 +215,6 @@ export class ReleasesService {
     }
 
     private shouldFetchAllReleases() {
-        return this.allArtistsRb !== undefined && this.allArtistsRb !== null
-            ? this.allArtistsRb.checked
-            : true;
+        return this.allArtistsRb !== undefined && this.allArtistsRb !== null ? this.allArtistsRb.checked : true;
     }
 }
