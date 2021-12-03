@@ -70,20 +70,20 @@ spring:
             client-secret: ${BUTLER_USER_CLIENT_SECRET}
             authorization-grant-type: client_credentials
             scope: user
-            provider: metal-release-butler
+            provider: metal-detector-auth
           metal-release-butler-admin:
             client-id: ${BUTLER_ADMIN_CLIENT_ID}
             client-secret: ${BUTLER_ADMIN_CLIENT_SECRET}
             authorization-grant-type: client_credentials
             scope: admin
-            provider: metal-release-butler
+            provider: metal-detector-auth
         provider:
           spotify-app:
             token-uri: https://accounts.spotify.com/api/token
           spotify-user:
             token-uri: https://accounts.spotify.com/api/token
             authorization-uri: https://accounts.spotify.com/authorize
-          metal-release-butler:
+          metal-detector-auth:
             issuer-uri: http://localhost:9000
 
 security:
