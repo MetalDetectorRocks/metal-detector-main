@@ -29,7 +29,7 @@ spring:
             redirect-uri: "https://{baseHost}{basePort}{basePath}/settings/spotify-synchronization"
         provider:
           metal-release-butler:
-            issuer-uri: http://localhost:9000
+            issuer-uri: https://metal-detector-auth-preview.herokuapp.com
 
 server:
   port: 8080

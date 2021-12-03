@@ -39,7 +39,9 @@ To start the application locally in default profile, the following preparatory a
 1. Run `docker-compose.yml` via command `docker-compose up -d --no-recreate`. This starts all peripheral docker containers that are needed locally to run the Metal Detector Application:
     - `detector-db`: The database for Metal Detector application (currently PostgreSQL)
     - `butler-db`: The database for Metal Release Butler application
+    - `auth-db`: The database for Metal Detector auth application
     - `butler-app`: Metal Release Butler Spring Boot application
+    - `auth-app`: Metal Detector Auth Spring Boot application
 
 2. Define the data source connection details in file `application.yml`:
     - `spring.datasource.username` (you have to use user `postgres`)
@@ -56,9 +58,7 @@ To start the application locally in default profile, the following preparatory a
    - `spring.security.oauth2.client.registration.google.client-id`
    - `spring.security.oauth2.client.registration.google.client-secret`
 
-6. Define JWT Issuer and secrets (you can choose any value you want) in file `application.yml`:
-    - `security.token-issuer` for JWT
-    - `security.token-secret` for JWT
+6. Define remember-me secret (you can choose any value you want) in file `application.yml`:
     - `security.remember-me-secret` for remember me functionality
 
 7. Define a dummy value for `telegram.bot-id` in file `application.yml`.
@@ -109,7 +109,7 @@ There are three example users with the following credentials:
 ## 6 Execute tests locally
 
 via gradle
-- Execute command `./gradlew clean test` in root directory
+- Execute command `./gradlew clean check` in root directory
 
 via your IDE
 - Execute the task `test` from folder `verification`
