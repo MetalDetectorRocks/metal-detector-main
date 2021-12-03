@@ -30,7 +30,7 @@ spring:
           spotify-user:
             redirect-uri: "https://{baseHost}{basePort}{basePath}/settings/spotify-synchronization"
         provider:
-          metal-release-butler:
+          metal-detector-auth:
             issuer-uri: http://auth-app:8080
 
 server:
