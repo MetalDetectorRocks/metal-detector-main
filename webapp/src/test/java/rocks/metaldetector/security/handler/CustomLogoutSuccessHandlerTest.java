@@ -4,13 +4,14 @@ import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import rocks.metaldetector.support.Endpoints;
+
+import static org.springframework.http.HttpStatus.FOUND;
+import static rocks.metaldetector.support.Endpoints.Guest.EMPTY_INDEX;
 
 class CustomLogoutSuccessHandlerTest implements WithAssertions {
 
@@ -31,8 +32,7 @@ class CustomLogoutSuccessHandlerTest implements WithAssertions {
     Authentication authentication = new TestingAuthenticationToken("principal", "credentials");
     logoutSuccessHandler.onLogoutSuccess(httpServletRequest, httpServletResponse, authentication);
 
-    assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.FOUND.value());
-    assertThat(httpServletResponse.getRedirectedUrl()).isEqualTo(Endpoints.Guest.LOGIN + "?logout");
+    assertThat(httpServletResponse.getStatus()).isEqualTo(FOUND.value());
+    assertThat(httpServletResponse.getRedirectedUrl()).isEqualTo(EMPTY_INDEX);
   }
-
 }
