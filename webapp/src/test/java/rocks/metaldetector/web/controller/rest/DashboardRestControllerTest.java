@@ -14,14 +14,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
-import rocks.metaldetector.service.summary.SummaryService;
+import rocks.metaldetector.service.dashboard.DashboardService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.testutil.DtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.TopReleasesRequest;
-import rocks.metaldetector.web.api.response.SummaryResponse;
+import rocks.metaldetector.web.api.response.DashboardResponse;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -37,68 +37,68 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-class SummaryRestControllerTest implements WithAssertions {
+class DashboardRestControllerTest implements WithAssertions {
 
   @Mock
-  private SummaryService summaryService;
+  private DashboardService dashboardService;
 
   @InjectMocks
-  private SummaryRestController underTest;
+  private DashboardRestController underTest;
 
-  private RestAssuredMockMvcUtils summaryRestAssuredMockMvcUtils;
+  private RestAssuredMockMvcUtils dashboardRestAssuredMockMvcUtils;
   private RestAssuredMockMvcUtils topReleasesRestAssuredMockMvcUtils;
 
   @BeforeEach
   void setUp() {
-    summaryRestAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.DASHBOARD);
+    dashboardRestAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.DASHBOARD);
     topReleasesRestAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.TOP_RELEASES);
     RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @AfterEach
   void tearDown() {
-    reset(summaryService);
+    reset(dashboardService);
   }
 
   @Test
-  @DisplayName("summaryService is called on GET")
-  void test_get_summary_calls_summary_service() {
+  @DisplayName("dashboardService is called on GET")
+  void test_get_dashboard_calls_dashboard_service() {
     // when
-    summaryRestAssuredMockMvcUtils.doGet();
+    dashboardRestAssuredMockMvcUtils.doGet();
 
     // then
-    verify(summaryService).createSummaryResponse();
+    verify(dashboardService).createDashboardResponse();
   }
 
   @Test
-  @DisplayName("httpStatus OK is returned on GET summary")
-  void test_get_summary_http_200() {
+  @DisplayName("httpStatus OK is returned on GET dashboard")
+  void test_get_dashboard_http_200() {
     // when
-    var result = summaryRestAssuredMockMvcUtils.doGet();
+    var result = dashboardRestAssuredMockMvcUtils.doGet();
 
     // then
     result.assertThat(status().isOk());
   }
 
   @Test
-  @DisplayName("upcoming releases are returned on GET summary")
-  void test_get_summary_response() {
+  @DisplayName("upcoming releases are returned on GET dashboard")
+  void test_get_dashboard_response() {
     // given
     var upcomingReleases = List.of(ReleaseDtoFactory.withArtistName("A"), ReleaseDtoFactory.withArtistName("B"));
-    var responseMock = SummaryResponse.builder().upcomingReleases(upcomingReleases).build();
-    doReturn(responseMock).when(summaryService).createSummaryResponse();
+    var responseMock = DashboardResponse.builder().upcomingReleases(upcomingReleases).build();
+    doReturn(responseMock).when(dashboardService).createDashboardResponse();
 
     // when
-    var result = summaryRestAssuredMockMvcUtils.doGet();
+    var result = dashboardRestAssuredMockMvcUtils.doGet();
 
     // then
-    var responseBody = (SummaryResponse) result.extract().as(SummaryResponse.class);
+    var responseBody = (DashboardResponse) result.extract().as(DashboardResponse.class);
     assertThat(responseBody.getUpcomingReleases()).isEqualTo(upcomingReleases);
   }
 
   @Test
-  @DisplayName("summaryService is called on GET top releases")
-  void test_get_top_releases_calls_summary_service() {
+  @DisplayName("dashboardService is called on GET top releases")
+  void test_get_top_releases_calls_dashboard_service() {
     // given
     var request = DtoFactory.TopReleasesRequestFactory.createDefault();
     var expectedTimeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
@@ -107,7 +107,7 @@ class SummaryRestControllerTest implements WithAssertions {
     topReleasesRestAssuredMockMvcUtils.doGet(toMap(request));
 
     // then
-    verify(summaryService).findTopReleases(expectedTimeRange, request.getMinFollowers(), request.getMaxReleases());
+    verify(dashboardService).findTopReleases(expectedTimeRange, request.getMinFollowers(), request.getMaxReleases());
   }
 
   @Test
@@ -140,7 +140,7 @@ class SummaryRestControllerTest implements WithAssertions {
     // given
     var request = DtoFactory.TopReleasesRequestFactory.createDefault();
     var releases = List.of(ReleaseDtoFactory.withArtistName("A"), ReleaseDtoFactory.withArtistName("B"));
-    doReturn(releases).when(summaryService).findTopReleases(any(), anyInt(), anyInt());
+    doReturn(releases).when(dashboardService).findTopReleases(any(), anyInt(), anyInt());
 
     // when
     var result = topReleasesRestAssuredMockMvcUtils.doGet(toMap(request));

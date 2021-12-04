@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.summary;
+package rocks.metaldetector.service.dashboard;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
-import static rocks.metaldetector.service.summary.SummaryServiceImpl.TIME_RANGE_MONTHS;
+import static rocks.metaldetector.service.dashboard.DashboardServiceImpl.RESULT_LIMIT;
+import static rocks.metaldetector.service.dashboard.DashboardServiceImpl.TIME_RANGE_MONTHS;
 import static rocks.metaldetector.support.DetectorSort.Direction.ASC;
 import static rocks.metaldetector.support.DetectorSort.Direction.DESC;
 

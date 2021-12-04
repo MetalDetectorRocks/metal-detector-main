@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.summary;
+package rocks.metaldetector.service.dashboard;
 
 import org.assertj.core.api.WithAssertions;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
@@ -27,12 +27,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static rocks.metaldetector.service.summary.SummaryServiceImpl.MIN_FOLLOWER;
-import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
-import static rocks.metaldetector.service.summary.SummaryServiceImpl.TIME_RANGE_MONTHS;
+import static rocks.metaldetector.service.dashboard.DashboardServiceImpl.MIN_FOLLOWER;
+import static rocks.metaldetector.service.dashboard.DashboardServiceImpl.RESULT_LIMIT;
+import static rocks.metaldetector.service.dashboard.DashboardServiceImpl.TIME_RANGE_MONTHS;
 
 @ExtendWith(MockitoExtension.class)
-class SummaryServiceImplTest implements WithAssertions {
+class DashboardServiceImplTest implements WithAssertions {
 
   @Mock
   private ReleaseCollector releaseCollector;
@@ -44,7 +44,7 @@ class SummaryServiceImplTest implements WithAssertions {
   private FollowArtistService followArtistService;
 
   @InjectMocks
-  private SummaryServiceImpl underTest;
+  private DashboardServiceImpl underTest;
 
   @AfterEach
   void tearDown() {
@@ -52,14 +52,14 @@ class SummaryServiceImplTest implements WithAssertions {
   }
 
   @Nested
-  @DisplayName("Tests for getting summary")
-  class SummaryTest {
+  @DisplayName("Tests for getting dashboard")
+  class DashboardTest {
 
     @Test
     @DisplayName("followArtistService is called to get current user's followed artists")
     void test_follow_artist_service_called() {
       // when
-      underTest.createSummaryResponse();
+      underTest.createDashboardResponse();
 
       // then
       verify(followArtistService).getFollowedArtistsOfCurrentUser();
@@ -73,7 +73,7 @@ class SummaryServiceImplTest implements WithAssertions {
       doReturn(artists).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
       // when
-      underTest.createSummaryResponse();
+      underTest.createDashboardResponse();
 
       // then
       verify(releaseCollector).collectUpcomingReleases(eq(artists));
@@ -87,7 +87,7 @@ class SummaryServiceImplTest implements WithAssertions {
       doReturn(artists).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
       // when
-      underTest.createSummaryResponse();
+      underTest.createDashboardResponse();
 
       // then
       verify(releaseCollector).collectRecentReleases(eq(artists));
@@ -106,7 +106,7 @@ class SummaryServiceImplTest implements WithAssertions {
       doReturn(artists).when(artistCollector).collectTopFollowedArtists(anyInt());
 
       // when
-      underTest.createSummaryResponse();
+      underTest.createDashboardResponse();
 
       // then
       verify(releaseCollector).collectTopReleases(argumentCaptor.capture(), eq(artists), eq(RESULT_LIMIT));
@@ -119,7 +119,7 @@ class SummaryServiceImplTest implements WithAssertions {
     @DisplayName("artistCollector is called to get top followed artists")
     void test_artist_collector_top_artists() {
       // when
-      underTest.createSummaryResponse();
+      underTest.createDashboardResponse();
 
       // then
       verify(artistCollector).collectTopFollowedArtists(MIN_FOLLOWER);
@@ -129,7 +129,7 @@ class SummaryServiceImplTest implements WithAssertions {
     @DisplayName("artistCollector is called to get recently followed artists")
     void test_artist_collector_recently_artists() {
       // when
-      underTest.createSummaryResponse();
+      underTest.createDashboardResponse();
 
       // then
       verify(artistCollector).collectRecentlyFollowedArtists(RESULT_LIMIT);
@@ -143,7 +143,7 @@ class SummaryServiceImplTest implements WithAssertions {
       doReturn(releases).when(releaseCollector).collectUpcomingReleases(anyList());
 
       // when
-      var result = underTest.createSummaryResponse();
+      var result = underTest.createDashboardResponse();
 
       // then
       assertThat(result.getUpcomingReleases()).isEqualTo(releases);
@@ -157,7 +157,7 @@ class SummaryServiceImplTest implements WithAssertions {
       doReturn(releases).when(releaseCollector).collectRecentReleases(anyList());
 
       // when
-      var result = underTest.createSummaryResponse();
+      var result = underTest.createDashboardResponse();
 
       // then
       assertThat(result.getRecentReleases()).isEqualTo(releases);
@@ -172,7 +172,7 @@ class SummaryServiceImplTest implements WithAssertions {
       doReturn(artists).when(artistCollector).collectTopFollowedArtists(anyInt());
 
       // when
-      var result = underTest.createSummaryResponse();
+      var result = underTest.createDashboardResponse();
 
       // then
       assertThat(result.getFavoriteCommunityArtists()).isEqualTo(artists);
@@ -186,7 +186,7 @@ class SummaryServiceImplTest implements WithAssertions {
       doReturn(releases).when(releaseCollector).collectTopReleases(any(), any(), anyInt());
 
       // when
-      var result = underTest.createSummaryResponse();
+      var result = underTest.createDashboardResponse();
 
       // then
       assertThat(result.getMostExpectedReleases()).isEqualTo(releases);
@@ -200,7 +200,7 @@ class SummaryServiceImplTest implements WithAssertions {
       doReturn(artists).when(artistCollector).collectRecentlyFollowedArtists(anyInt());
 
       // when
-      var result = underTest.createSummaryResponse();
+      var result = underTest.createDashboardResponse();
 
       // then
       assertThat(result.getRecentlyFollowedArtists()).isEqualTo(artists);

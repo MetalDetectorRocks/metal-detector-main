@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import rocks.metaldetector.service.summary.SummaryService;
+import rocks.metaldetector.service.dashboard.DashboardService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,11 +14,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static rocks.metaldetector.support.Endpoints.Rest.DASHBOARD;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_RELEASES;
 
-@WebMvcTest(controllers = SummaryRestController.class)
-class SummaryRestControllerIT extends BaseWebMvcTestWithSecurity {
+@WebMvcTest(controllers = DashboardRestController.class)
+class DashboardRestControllerIT extends BaseWebMvcTestWithSecurity {
 
   @MockBean
-  private SummaryService summaryService;
+  private DashboardService dashboardService;
 
   @Nested
   @DisplayName("Administrator is allowed to send requests to all endpoints")
@@ -27,7 +27,7 @@ class SummaryRestControllerIT extends BaseWebMvcTestWithSecurity {
     @Test
     @DisplayName("Administrator is allowed to GET on endpoint " + DASHBOARD + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
-    void admin_is_allowed_to_get_summary() throws Exception {
+    void admin_is_allowed_to_get_dashboard() throws Exception {
       mockMvc.perform(get(DASHBOARD))
           .andExpect(status().isOk());
     }
@@ -50,7 +50,7 @@ class SummaryRestControllerIT extends BaseWebMvcTestWithSecurity {
     @Test
     @DisplayName("User is allowed to GET on endpoint " + DASHBOARD + "'")
     @WithMockUser(roles = "USER")
-    void user_is_allowed_to_get_summary() throws Exception {
+    void user_is_allowed_to_get_dashboard() throws Exception {
       mockMvc.perform(get(DASHBOARD))
           .andExpect(status().isOk());
     }

@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.summary;
+package rocks.metaldetector.service.dashboard;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

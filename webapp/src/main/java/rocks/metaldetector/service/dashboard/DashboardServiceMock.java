@@ -1,11 +1,11 @@
-package rocks.metaldetector.service.summary;
+package rocks.metaldetector.service.dashboard;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.support.TimeRange;
-import rocks.metaldetector.web.api.response.SummaryResponse;
+import rocks.metaldetector.web.api.response.DashboardResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,16 +17,16 @@ import static rocks.metaldetector.support.ImageSize.S;
 
 @Service
 @Profile("mockmode")
-public class SummaryServiceMock implements SummaryService {
+public class DashboardServiceMock implements DashboardService {
 
   @Override
-  public SummaryResponse createSummaryResponse() {
+  public DashboardResponse createDashboardResponse() {
     LocalDateTime now = LocalDateTime.now();
     List<ReleaseDto> upcomingReleases = createUpcomingReleases(now.toLocalDate());
     List<ReleaseDto> recentReleases = createRecentReleases(now.toLocalDate());
     List<ArtistDto> recentlyFollowedArtists = createRecentlyFollowedArtists(now);
 
-    return SummaryResponse.builder()
+    return DashboardResponse.builder()
         .upcomingReleases(upcomingReleases)
         .recentReleases(recentReleases)
         .mostExpectedReleases(upcomingReleases)

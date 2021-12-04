@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.summary;
+package rocks.metaldetector.service.dashboard;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static rocks.metaldetector.service.summary.SummaryServiceImpl.RESULT_LIMIT;
+import static rocks.metaldetector.service.dashboard.DashboardServiceImpl.RESULT_LIMIT;
 
 @ExtendWith(MockitoExtension.class)
 class ArtistCollectorTest implements WithAssertions {

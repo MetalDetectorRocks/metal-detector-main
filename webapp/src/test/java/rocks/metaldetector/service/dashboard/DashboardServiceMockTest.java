@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.summary;
+package rocks.metaldetector.service.dashboard;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -7,15 +7,15 @@ import rocks.metaldetector.support.TimeRange;
 
 import java.time.LocalDate;
 
-class SummaryServiceMockTest implements WithAssertions {
+class DashboardServiceMockTest implements WithAssertions {
 
-  SummaryServiceMock underTest = new SummaryServiceMock();
+  DashboardServiceMock underTest = new DashboardServiceMock();
 
   @Test
   @DisplayName("homepageResponse with mock results is created")
   void test_response() {
     // when
-    var result = underTest.createSummaryResponse();
+    var result = underTest.createDashboardResponse();
 
     // then
     assertThat(result).isNotNull();
