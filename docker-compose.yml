@@ -70,7 +70,7 @@ services:
         source: auth-db-volume
         target: /var/lib/postgresql/data
     ports:
-      - 5434:5432
+      - "5434:5432"
     restart: on-failure:3
 
   auth-app:
