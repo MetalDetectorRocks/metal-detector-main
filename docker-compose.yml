@@ -89,7 +89,7 @@ services:
     networks:
       - auth-network
     ports:
-      - 9000:8080
+      - "9000:8080"
     restart: on-failure:3
 
 volumes:
