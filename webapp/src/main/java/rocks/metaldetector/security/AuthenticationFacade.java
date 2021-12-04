@@ -2,7 +2,9 @@ package rocks.metaldetector.security;
 
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 
-import java.util.function.Supplier;
+public interface AuthenticationFacade {
 
-public interface CurrentUserSupplier extends Supplier<AbstractUserEntity> {
+  boolean isAuthenticated();
+
+  AbstractUserEntity getCurrentUser();
 }

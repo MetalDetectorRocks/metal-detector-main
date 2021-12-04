@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.support.Endpoints;
 
 import java.util.Map;
@@ -16,10 +16,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DashboardController {
 
-  private final CurrentUserSupplier currentUserSupplier;
+  private final AuthenticationFacade authenticationFacade;
 
   @GetMapping
   public ModelAndView showDashboard() {
-    return new ModelAndView(ViewNames.Frontend.DASHBOARD, Map.of("username", currentUserSupplier.get().getUsername()));
+    return new ModelAndView(ViewNames.Frontend.DASHBOARD, Map.of("username", authenticationFacade.getCurrentUser().getUsername()));
   }
 }

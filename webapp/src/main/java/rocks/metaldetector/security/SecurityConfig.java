@@ -44,8 +44,10 @@ import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
+import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.SEARCH;
 
 @Configuration
 @EnableWebSecurity
@@ -81,6 +83,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(GUEST_ONLY_PAGES).permitAll()
         .antMatchers(PUBLIC_PAGES).permitAll()
         .antMatchers(GET, RELEASES).permitAll()
+        .antMatchers(GET, SEARCH).permitAll()
+        .antMatchers(GET, AUTHENTICATION).permitAll()
         .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
         .antMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
         .anyRequest().authenticated()

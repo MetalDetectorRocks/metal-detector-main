@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 class RedirectionHandlerInterceptorTest implements WithAssertions {
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private AuthenticationFacade authenticationFacade;
 
   @Mock
   private UserEntity userEntity;
@@ -41,14 +41,14 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(currentUserSupplier, userEntity);
+    reset(authenticationFacade, userEntity);
   }
 
   @Test
   @DisplayName("preHandle() should give false for logged in user")
   void pre_handle_should_return_false() {
     // given
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
 
     // when
     boolean result = underTest.preHandle(request, response, null);
@@ -61,7 +61,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
   @DisplayName("preHandle() should set home page as redirection target")
   void pre_handle_should_set_endpoint() {
     // given
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
 
     // when
     underTest.preHandle(request, response, null);
@@ -74,7 +74,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
   @DisplayName("preHandle() should set http status 307")
   void pre_handle_should_set_http_status() {
     // given
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
 
     // when
     underTest.preHandle(request, response, null);

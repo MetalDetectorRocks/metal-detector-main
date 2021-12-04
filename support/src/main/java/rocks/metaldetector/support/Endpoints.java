@@ -28,7 +28,7 @@ public class Endpoints {
 
   public static class Frontend {
     public static final String DASHBOARD                   = "/dashboard";
-    public static final String ARTISTS                     = "/artists/search";
+    public static final String SEARCH                      = "/artists/search";
     public static final String RELEASES                    = "/releases";
     public static final String MY_ARTISTS                  = "/my-artists";
     public static final String BLOG                        = "/blog";
@@ -46,7 +46,6 @@ public class Endpoints {
 
   public static class Rest {
     public static final String DASHBOARD                      = "/rest/v1/dashboard";
-    public static final String ARTISTS                        = "/rest/v1/artists";
     public static final String MY_ARTISTS                     = "/rest/v1/my-artists";
     public static final String SPOTIFY_ARTIST_SYNCHRONIZATION = "/rest/v1/spotify/synchronize";
     public static final String SPOTIFY_SAVED_ARTISTS          = "/rest/v1/spotify/saved-artists";
@@ -60,15 +59,15 @@ public class Endpoints {
     public static final String TELEGRAM_CONFIG                = "/rest/v1/telegram-config";
     public static final String OAUTH                          = "/rest/v1/oauth";
     public static final String REGISTRATION_CLEANUP           = "/rest/v1/registration-cleanup";
-    public static final String SEARCH                         = "/search";
-    public static final String FOLLOW                         = "/follow";
-    public static final String UNFOLLOW                       = "/unfollow";
+    public static final String SEARCH                         = "/rest/v1/artists/search";
+    public static final String FOLLOW                         = "/rest/v1/artists/follow";
+    public static final String UNFOLLOW                       = "/rest/v1/artists/unfollow";
 
-    public static final String USERS = "/rest/v1/users";
-
-    public static final String CURRENT_USER       = "/rest/v1/me";
-    public static final String CURRENT_USER_EMAIL = "/rest/v1/me/email";
+    public static final String USERS                 = "/rest/v1/users";
+    public static final String CURRENT_USER          = "/rest/v1/me";
+    public static final String CURRENT_USER_EMAIL    = "/rest/v1/me/email";
     public static final String CURRENT_USER_PASSWORD = "/rest/v1/me/password";
+    public static final String AUTHENTICATION        = "/rest/v1/authentication";
 
     public static final String NOTIFICATION_ON_FREQUENCY = "/rest/v1/notify/frequency";
     public static final String NOTIFICATION_ON_RELEASE_DATE = "/rest/v1/notify/release-date";
@@ -104,6 +103,7 @@ public class Endpoints {
            static final String[] PRIVACY_POLICY            = {"/privacy-policy", "/privacy-policy/"};
            static final String[] BLOG                      = {"/blog", "/blog/**"};
            static final String[] RELEASES                  = {"/releases", "/releases/"};
+           static final String[] SEARCH                    = {"/artists/search", "/artists/search/"};
     public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**", "/webjars/**", "/ts/dist/**"};
 
     public static final String[] GUEST_ONLY_PAGES = Stream.of(
@@ -120,7 +120,8 @@ public class Endpoints {
             IMPRINT,
             PRIVACY_POLICY,
             BLOG,
-            RELEASES
+            RELEASES,
+            SEARCH
     ).flatMap(Stream::of).toArray(String[]::new);
   }
 }

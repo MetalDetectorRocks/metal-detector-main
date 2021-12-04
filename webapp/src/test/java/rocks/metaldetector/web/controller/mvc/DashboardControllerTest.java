@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DashboardControllerTest {
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private AuthenticationFacade authenticationFacade;
 
   @InjectMocks
   private DashboardController underTest;
@@ -37,12 +37,12 @@ class DashboardControllerTest {
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Frontend.DASHBOARD);
     RestAssuredMockMvc.standaloneSetup(underTest);
-    doReturn(UserEntityFactory.createUser("user", "mail@test.de")).when(currentUserSupplier).get();
+    doReturn(UserEntityFactory.createUser("user", "mail@test.de")).when(authenticationFacade).getCurrentUser();
   }
 
   @AfterEach
   void tearDown() {
-    reset(currentUserSupplier);
+    reset(authenticationFacade);
   }
 
   @Test
@@ -87,6 +87,6 @@ class DashboardControllerTest {
     restAssuredUtils.doGet();
 
     // then
-    verify(currentUserSupplier).get();
+    verify(authenticationFacade).getCurrentUser();
   }
 }

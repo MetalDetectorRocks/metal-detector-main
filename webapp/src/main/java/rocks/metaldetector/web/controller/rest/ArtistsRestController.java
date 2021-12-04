@@ -18,7 +18,6 @@ import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping(Endpoints.Rest.ARTISTS)
 @AllArgsConstructor
 public class ArtistsRestController {
 

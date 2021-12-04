@@ -40,7 +40,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     registry.addViewController(Endpoints.Frontend.SPOTIFY_SYNCHRONIZATION).setViewName(ViewNames.Frontend.SPOTIFY_SYNCHRONIZATION);
     registry.addViewController(Endpoints.Frontend.NOTIFICATION_SETTINGS).setViewName(ViewNames.Frontend.NOTIFICATION_SETTINGS);
     registry.addViewController(Endpoints.Frontend.STATUS).setViewName(ViewNames.Frontend.STATUS);
-    registry.addViewController(Endpoints.Frontend.ARTISTS).setViewName(ViewNames.Frontend.SEARCH);
+    registry.addViewController(Endpoints.Frontend.SEARCH).setViewName(ViewNames.Frontend.SEARCH);
     registry.addViewController(Endpoints.Frontend.MY_ARTISTS).setViewName(ViewNames.Frontend.MY_ARTISTS);
 
     // Backend pages

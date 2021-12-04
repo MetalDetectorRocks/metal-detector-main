@@ -27,13 +27,13 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class CurrentUserSupplierImplTest implements WithAssertions {
+class AuthenticationFacadeImplTest implements WithAssertions {
 
   @Mock
   private UserRepository userRepository;
 
   @InjectMocks
-  private CurrentUserSupplierImpl underTest;
+  private AuthenticationFacadeImpl underTest;
 
   @Mock
   private SecurityContext securityContext;
@@ -56,6 +56,41 @@ class CurrentUserSupplierImplTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("should return true if user is authenticated")
+  void should_return_true_if_user_is_authenticated() {
+    // given
+    doReturn(true).when(authentication).isAuthenticated();
+    doReturn(authentication).when(securityContext).getAuthentication();
+
+    // when
+    boolean result;
+    try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
+      mock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+      result = underTest.isAuthenticated();
+    }
+
+    // then
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  @DisplayName("should return false if user is not authenticated")
+  void should_return_false_if_user_is_not_authenticated() {
+    // given
+    doReturn(null).when(securityContext).getAuthentication();
+
+    // when
+    boolean result;
+    try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
+      mock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+      result = underTest.isAuthenticated();
+    }
+
+    // then
+    assertThat(result).isFalse();
+  }
+
+  @Test
   @DisplayName("should call user repository with public Id from principal to re-fetch the user entity")
   void should_call_user_repository_for_user_entity() {
     // given
@@ -68,7 +103,7 @@ class CurrentUserSupplierImplTest implements WithAssertions {
     // when
     try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
       mock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
-      underTest.get();
+      underTest.getCurrentUser();
     }
 
     // then
@@ -87,7 +122,7 @@ class CurrentUserSupplierImplTest implements WithAssertions {
     AbstractUserEntity result;
     try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
       mock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
-      result = underTest.get();
+      result = underTest.getCurrentUser();
     }
 
     // then
@@ -106,7 +141,7 @@ class CurrentUserSupplierImplTest implements WithAssertions {
     Throwable throwable;
     try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
       mock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
-      throwable = catchThrowable(() -> underTest.get());
+      throwable = catchThrowable(() -> underTest.getCurrentUser());
     }
 
     // then
@@ -126,7 +161,7 @@ class CurrentUserSupplierImplTest implements WithAssertions {
     // when
     try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
       mock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
-      underTest.get();
+      underTest.getCurrentUser();
     }
 
     // then
@@ -144,7 +179,7 @@ class CurrentUserSupplierImplTest implements WithAssertions {
     // when
     try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
       mock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
-      underTest.get();
+      underTest.getCurrentUser();
     }
 
     // then
@@ -163,7 +198,7 @@ class CurrentUserSupplierImplTest implements WithAssertions {
     AbstractUserEntity result;
     try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
       mock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
-      result = underTest.get();
+      result = underTest.getCurrentUser();
     }
 
     // then
@@ -182,7 +217,7 @@ class CurrentUserSupplierImplTest implements WithAssertions {
     Throwable throwable;
     try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
       mock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
-      throwable = catchThrowable(() -> underTest.get());
+      throwable = catchThrowable(() -> underTest.getCurrentUser());
     }
 
     // then
@@ -200,7 +235,7 @@ class CurrentUserSupplierImplTest implements WithAssertions {
     AbstractUserEntity result;
     try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
       mock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
-      result = underTest.get();
+      result = underTest.getCurrentUser();
     }
 
     // then

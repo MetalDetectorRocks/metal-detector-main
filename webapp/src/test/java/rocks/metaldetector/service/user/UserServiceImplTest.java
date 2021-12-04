@@ -29,7 +29,7 @@ import rocks.metaldetector.persistence.domain.token.TokenType;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
@@ -101,7 +101,7 @@ class UserServiceImplTest implements WithAssertions {
   private JwtsSupport jwtsSupport;
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private AuthenticationFacade authenticationFacade;
 
   @Mock
   private LoginAttemptService loginAttemptService;
@@ -120,12 +120,12 @@ class UserServiceImplTest implements WithAssertions {
   @BeforeEach
   void setup() {
     underTest = new UserServiceImpl(userRepository, passwordEncoder, tokenRepository, jwtsSupport, userTransformer,
-                                    tokenService, currentUserSupplier, loginAttemptService, applicationEventPublisher, request);
+                                    tokenService, authenticationFacade, loginAttemptService, applicationEventPublisher, request);
   }
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, currentUserSupplier, userTransformer, loginAttemptService, request, applicationEventPublisher);
+    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, authenticationFacade, userTransformer, loginAttemptService, request, applicationEventPublisher);
   }
 
   @DisplayName("Create user entity tests")
@@ -529,13 +529,13 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("currentUserSupplier is called")
     void test_get_current_user_calls_supplier() {
       // given
-      doReturn(UserEntityFactory.createUser("user", "mail@mail.de")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "mail@mail.de")).when(authenticationFacade).getCurrentUser();
 
       // when
       underTest.getCurrentUser();
 
       // then
-      verify(currentUserSupplier).get();
+      verify(authenticationFacade).getCurrentUser();
     }
 
     @Test
@@ -543,7 +543,7 @@ class UserServiceImplTest implements WithAssertions {
     void test_get_current_user_is_transformed() {
       // given
       var user = UserEntityFactory.createUser("user", "mail@mail.de");
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
 
       // when
       underTest.getCurrentUser();
@@ -586,7 +586,7 @@ class UserServiceImplTest implements WithAssertions {
       userDtoForUpdate.setRole("Administrator");
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
 
-      when(currentUserSupplier.get()).thenReturn(user);
+      when(authenticationFacade.getCurrentUser()).thenReturn(user);
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
       // return the same user without changing the mail is ok here, we don't want to concentrate on the DTO conversion in this test
       when(userRepository.save(any())).thenReturn(user);
@@ -598,7 +598,7 @@ class UserServiceImplTest implements WithAssertions {
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
       verify(userRepository).save(userEntityCaptor.capture());
-      verify(currentUserSupplier).get();
+      verify(authenticationFacade).getCurrentUser();
       assertThat(userDto).isNotNull();
       assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
       assertThat(userEntityCaptor.getValue().getUserRoles()).containsExactly(ROLE_ADMINISTRATOR);
@@ -613,7 +613,7 @@ class UserServiceImplTest implements WithAssertions {
       userDtoForUpdate.setEnabled(false);
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
 
-      when(currentUserSupplier.get()).thenReturn(user);
+      when(authenticationFacade.getCurrentUser()).thenReturn(user);
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
       // return the same user without changing the mail is ok here, we don't want to concentrate on the DTO conversion in this test
       when(userRepository.save(any())).thenReturn(user);
@@ -625,7 +625,7 @@ class UserServiceImplTest implements WithAssertions {
       // then
       verify(userRepository).findByPublicId(PUBLIC_ID);
       verify(userRepository).save(userEntityCaptor.capture());
-      verify(currentUserSupplier).get();
+      verify(authenticationFacade).getCurrentUser();
       assertThat(userDto).isNotNull();
       assertThat(userEntityCaptor.getValue().getUsername()).isEqualTo(userDtoForUpdate.getUsername());
       assertThat(userEntityCaptor.getValue().isEnabled()).isFalse();
@@ -658,7 +658,7 @@ class UserServiceImplTest implements WithAssertions {
       user.setPublicId(PUBLIC_ID);
       user.setUserRoles(UserRole.createAdministratorRole());
 
-      when(currentUserSupplier.get()).thenReturn(user);
+      when(authenticationFacade.getCurrentUser()).thenReturn(user);
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
 
       // when
@@ -679,7 +679,7 @@ class UserServiceImplTest implements WithAssertions {
       user.setPublicId(PUBLIC_ID);
       user.setUserRoles(UserRole.createAdministratorRole());
 
-      when(currentUserSupplier.get()).thenReturn(user);
+      when(authenticationFacade.getCurrentUser()).thenReturn(user);
       when(userRepository.findByPublicId(PUBLIC_ID)).thenReturn(Optional.of(user));
 
       // when
@@ -745,21 +745,21 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("Updating the current user's email address calls currentUserSupplier")
     void test_updating_email_calls_current_user_supplier() {
       // given
-      doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "email")).when(authenticationFacade).getCurrentUser();
       doReturn(null).when(userTransformer).transform(any());
 
       // when
       underTest.updateCurrentEmail("email");
 
       // then
-      verify(currentUserSupplier).get();
+      verify(authenticationFacade).getCurrentUser();
     }
 
     @Test
     @DisplayName("should check if email already exists")
     void should_check_if_email_already_exists() {
       // given
-      doReturn(UserEntityFactory.createUser("user", "mail@example.com")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "mail@example.com")).when(authenticationFacade).getCurrentUser();
       doReturn(null).when(userTransformer).transform(any());
 
       // when
@@ -773,7 +773,7 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("should throw IllegalArgumentException if new email address already exists")
     void should_throw_exception_if_new_email_address_already_exists() {
       // given
-      doReturn(UserEntityFactory.createUser("user", "mail@example.com")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "mail@example.com")).when(authenticationFacade).getCurrentUser();
       doReturn(true).when(userRepository).existsByEmail(anyString());
       doReturn(null).when(userTransformer).transform(any());
 
@@ -788,7 +788,7 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("should throw IllegalUserActionException if current user is oauth user")
     void should_throw_exception_if_user_is_oauth_user() {
       // given
-      doReturn(OAuthUserFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
+      doReturn(OAuthUserFactory.createUser("user", "mail@mail.mail")).when(authenticationFacade).getCurrentUser();
 
       // when
       Throwable throwable = catchThrowable(() -> underTest.updateCurrentEmail("new-mail@example.com"));
@@ -802,7 +802,7 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("should not throw IllegalArgumentException if the new email already exists and if it is the user's current email")
     void should_not_throw_exception_if_new_email_address_already_exists() {
       // given
-      doReturn(UserEntityFactory.createUser("user", "new-mail@example.com")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "new-mail@example.com")).when(authenticationFacade).getCurrentUser();
       doReturn(true).when(userRepository).existsByEmail(anyString());
       doReturn(null).when(userTransformer).transform(any());
 
@@ -818,7 +818,7 @@ class UserServiceImplTest implements WithAssertions {
     void test_new_email_set() {
       // given
       ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
-      doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "email")).when(authenticationFacade).getCurrentUser();
       doReturn(null).when(userTransformer).transform(any());
       var newEmail = "newEmail";
 
@@ -836,7 +836,7 @@ class UserServiceImplTest implements WithAssertions {
     void test_updated_user_is_transformed() {
       // given
       var user = UserEntityFactory.createUser("user", "email");
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
       doReturn(user).when(userRepository).save(any());
       doReturn(null).when(userTransformer).transform(any());
 
@@ -853,7 +853,7 @@ class UserServiceImplTest implements WithAssertions {
       // given
       var user = UserEntityFactory.createUser("user", "email");
       var userDto = UserDtoFactory.createDefault();
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
       doReturn(userDto).when(userTransformer).transform(any());
 
       // when
@@ -867,14 +867,14 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("Updating the current user's password calls currentUserSupplier")
     void test_updating_password_calls_current_user_supplier() {
       // given
-      doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "email")).when(authenticationFacade).getCurrentUser();
       doReturn(true).when(passwordEncoder).matches(any(), any());
 
       // when
       underTest.updateCurrentPassword("oldPassword", "newPassword");
 
       // then
-      verify(currentUserSupplier).get();
+      verify(authenticationFacade).getCurrentUser();
     }
 
     @Test
@@ -882,7 +882,7 @@ class UserServiceImplTest implements WithAssertions {
     void test_updating_password_matches_old_password() {
       // given
       var user = UserEntityFactory.createUser("user", "email");
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
       doReturn(true).when(passwordEncoder).matches(any(), any());
       var oldPassword = "oldPassword";
       var oldEncryptedPassword = user.getPassword();
@@ -898,7 +898,7 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("Updating the current user's password encodes new password")
     void test_updating_password_encodes_new_password() {
       // given
-      doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "email")).when(authenticationFacade).getCurrentUser();
       doReturn(true).when(passwordEncoder).matches(any(), any());
       var newPassword = "newPassword";
 
@@ -914,7 +914,7 @@ class UserServiceImplTest implements WithAssertions {
     void test_updating_password_saves_user() {
       // given
       ArgumentCaptor<UserEntity> argumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
-      doReturn(UserEntityFactory.createUser("user", "email")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "email")).when(authenticationFacade).getCurrentUser();
       doReturn(true).when(passwordEncoder).matches(any(), any());
       doReturn(NEW_ENCRYPTED_PASSWORD).when(passwordEncoder).encode(any());
 
@@ -933,7 +933,7 @@ class UserServiceImplTest implements WithAssertions {
     void test_updating_password_throws_exception() {
       // given
       var user = UserEntityFactory.createUser("user", "email");
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
       doReturn(false).when(passwordEncoder).matches(any(), any());
 
       // when
@@ -948,7 +948,7 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("Updating the current user's password throws Exception when user is oauth user")
     void test_updating_password_throws_exception_for_oauth_user() {
       // given
-      doReturn(OAuthUserFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
+      doReturn(OAuthUserFactory.createUser("user", "mail@mail.mail")).when(authenticationFacade).getCurrentUser();
 
       // when
       var throwable = catchThrowable(() -> underTest.updateCurrentPassword("oldPassword", "newPassword"));
@@ -968,13 +968,13 @@ class UserServiceImplTest implements WithAssertions {
     void delete_user_for_existing_user() {
       // given
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
 
       // when
       underTest.deleteCurrentUser();
 
       // then
-      verify(currentUserSupplier).get();
+      verify(authenticationFacade).getCurrentUser();
     }
 
     @Test
@@ -983,7 +983,7 @@ class UserServiceImplTest implements WithAssertions {
       // given
       ArgumentCaptor<UserDeletionEvent> argumentCaptor = ArgumentCaptor.forClass(UserDeletionEvent.class);
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
 
       // when
       underTest.deleteCurrentUser();

@@ -1,5 +1,5 @@
 // equivalent of jQuerys '$(document).ready()' (doesn't work in older IEs)
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener("DOMContentLoaded", function() {
   registerLogoutListener();
   registerSearchIconClickListener();
   setupScrollToTop();

@@ -14,7 +14,7 @@ import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.artist.TopArtist;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.artist.ArtistEntityFactory;
 import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
 import rocks.metaldetector.service.user.UserEntityFactory;
@@ -46,7 +46,7 @@ class ArtistCollectorTest implements WithAssertions {
   private ArtistRepository artistRepository;
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private AuthenticationFacade authenticationFacade;
 
   @Mock
   private FollowActionRepository followActionRepository;
@@ -58,7 +58,7 @@ class ArtistCollectorTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(artistDtoTransformer, artistRepository, currentUserSupplier, followActionRepository);
+    reset(artistDtoTransformer, artistRepository, authenticationFacade, followActionRepository);
   }
 
   @Test
@@ -112,20 +112,20 @@ class ArtistCollectorTest implements WithAssertions {
   @DisplayName("collectRecentlyFollowedArtists: currentUserSupplier is called")
   void test_current_user_id_supplier_called() {
     // given
-    doReturn(userEntity).when(currentUserSupplier).get();
+    doReturn(userEntity).when(authenticationFacade).getCurrentUser();
 
     // when
     underTest.collectRecentlyFollowedArtists(RESULT_LIMIT);
 
     // then
-    verify(currentUserSupplier).get();
+    verify(authenticationFacade).getCurrentUser();
   }
 
   @Test
   @DisplayName("collectRecentlyFollowedArtists: followActionRepository is called with user")
   void test_follow_action_repository_called() {
     // given
-    doReturn(userEntity).when(currentUserSupplier).get();
+    doReturn(userEntity).when(authenticationFacade).getCurrentUser();
 
     // when
     underTest.collectRecentlyFollowedArtists(RESULT_LIMIT);

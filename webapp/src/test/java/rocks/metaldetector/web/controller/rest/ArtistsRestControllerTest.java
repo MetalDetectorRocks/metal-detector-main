@@ -25,7 +25,6 @@ import rocks.metaldetector.service.artist.ArtistSearchService;
 import rocks.metaldetector.service.artist.ArtistService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 
@@ -39,6 +38,9 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
+import static rocks.metaldetector.support.Endpoints.Rest.FOLLOW;
+import static rocks.metaldetector.support.Endpoints.Rest.SEARCH;
+import static rocks.metaldetector.support.Endpoints.Rest.UNFOLLOW;
 import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseFactory;
 import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFAULT_DISCOGS_PAGE;
 import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFAULT_DISCOGS_SIZE;
@@ -79,7 +81,7 @@ class ArtistsRestControllerTest implements WithAssertions {
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.SEARCH);
+      restAssuredUtils = new RestAssuredMockMvcUtils(SEARCH);
       RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
     }
 
@@ -226,8 +228,8 @@ class ArtistsRestControllerTest implements WithAssertions {
 
     @BeforeEach
     void setUp() {
-      followArtistRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.FOLLOW);
-      unfollowArtistRestAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ARTISTS + Endpoints.Rest.UNFOLLOW);
+      followArtistRestAssuredUtils = new RestAssuredMockMvcUtils(FOLLOW);
+      unfollowArtistRestAssuredUtils = new RestAssuredMockMvcUtils(UNFOLLOW);
       RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
     }
 

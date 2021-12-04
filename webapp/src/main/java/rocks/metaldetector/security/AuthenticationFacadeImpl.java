@@ -10,12 +10,18 @@ import rocks.metaldetector.persistence.domain.user.UserRepository;
 
 @Component
 @AllArgsConstructor
-public class CurrentUserSupplierImpl implements CurrentUserSupplier {
+public class AuthenticationFacadeImpl implements AuthenticationFacade {
 
   private final UserRepository userRepository;
 
   @Override
-  public AbstractUserEntity get() {
+  public boolean isAuthenticated() {
+    var authentication = SecurityContextHolder.getContext().getAuthentication();
+    return authentication != null && authentication.isAuthenticated();
+  }
+
+  @Override
+  public AbstractUserEntity getCurrentUser() {
     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     if (principal instanceof UserEntity) {
       return userRepository.findByPublicId(((UserEntity) principal).getPublicId()).orElseThrow(
