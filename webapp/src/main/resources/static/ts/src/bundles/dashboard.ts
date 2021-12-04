@@ -23,5 +23,5 @@ const homepageRenderService = new DashboardRenderService(
     followArtistService,
 );
 
-const response = homepageRestClient.fetchHomepage();
+const response = homepageRestClient.fetchDashboard();
 homepageRenderService.render(response);

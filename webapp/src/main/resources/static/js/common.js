@@ -32,8 +32,8 @@ function setupScrollToTop() {
     scrollTopButton.addEventListener("click", () => {
       window.scrollTo(0, 0);
     });
+    window.onscroll = () => showScrollToTopButton(scrollTopButton);
   }
-  window.onscroll = () => showScrollToTopButton(scrollTopButton);
 }
 
 function showScrollToTopButton(scrollTopButton) {

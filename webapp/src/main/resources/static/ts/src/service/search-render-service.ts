@@ -7,27 +7,37 @@ import { SearchResponse } from "../model/search-response.model";
 import { Pagination } from "../model/pagination.model";
 import { SearchResponseEntry } from "../model/search-response-entry.model";
 import { FollowState } from "../model/follow-state.model";
+import { AuthenticationRestClient } from "../clients/authentication-rest-client";
+import { ToastService } from "./toast-service";
 
 export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     private static readonly MAX_NAME_LENGTH = 50;
 
     private readonly followArtistService: FollowArtistService;
+    private readonly authenticationRestClient: AuthenticationRestClient;
+    private readonly toastService: ToastService;
     private readonly paginationComponent: PaginationComponent;
     private readonly topSearchResultTemplateElement: HTMLTemplateElement;
     private readonly searchResultTemplateElement: HTMLTemplateElement;
     private readonly paginationWrapper: HTMLDivElement;
+    private authenticated = false;
 
     constructor(
         followArtistService: FollowArtistService,
+        authenticationRestClient: AuthenticationRestClient,
+        toastService: ToastService,
         alertService: AlertService,
         loadingIndicatorService: LoadingIndicatorService,
     ) {
         super(alertService, loadingIndicatorService);
         this.followArtistService = followArtistService;
+        this.authenticationRestClient = authenticationRestClient;
+        this.toastService = toastService;
         this.paginationComponent = new PaginationComponent();
         this.topSearchResultTemplateElement = document.getElementById("top-search-result") as HTMLTemplateElement;
         this.searchResultTemplateElement = document.getElementById("search-result") as HTMLTemplateElement;
         this.paginationWrapper = document.getElementById("pagination-wrapper") as HTMLDivElement;
+        authenticationRestClient.getAuthentication().then((response) => (this.authenticated = response.authenticated));
     }
 
     protected getHostElementId(): string {
@@ -141,11 +151,15 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     }
 
     private handleFollowIconClick(followIconElement: HTMLImageElement, entry: SearchResponseEntry) {
-        this.followArtistService.handleFollowIconClick(followIconElement, {
-            externalId: entry.id,
-            artistName: entry.name,
-            source: entry.source,
-        });
+        if (this.authenticated) {
+            this.followArtistService.handleFollowIconClick(followIconElement, {
+                externalId: entry.id,
+                artistName: entry.name,
+                source: entry.source,
+            });
+        } else {
+            this.toastService.createInfoToast("Please sign in to follow artists.");
+        }
     }
 
     private attachPagination(paginationData: Pagination) {

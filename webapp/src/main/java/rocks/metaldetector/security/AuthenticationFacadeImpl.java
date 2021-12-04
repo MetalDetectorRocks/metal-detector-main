@@ -1,6 +1,7 @@
 package rocks.metaldetector.security;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ public class AuthenticationFacadeImpl implements AuthenticationFacade {
   @Override
   public boolean isAuthenticated() {
     var authentication = SecurityContextHolder.getContext().getAuthentication();
-    return authentication != null && authentication.isAuthenticated();
+    return !authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
   }
 
   @Override
