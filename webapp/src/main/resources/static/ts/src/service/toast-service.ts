@@ -23,7 +23,7 @@ export class ToastService {
         toastElement.classList.add("show");
         toastElement.textContent = text;
         setTimeout(() => {
-            toastElement.classList.remove("show");
+            this.toastWrapperElement.innerHTML = "";
         }, 3000);
 
         return toastElement;

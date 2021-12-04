@@ -52,14 +52,15 @@ function showScrollToTopButton(scrollTopButton) {
  * @param text The toast text
  */
 function createToast(text) {
+  const toastWrapper = document.getElementById("toast-wrapper");
   const toast = document.createElement("div");
   toast.id = "toast";
   toast.textContent = text;
   toast.classList.add("show", "success");
   setTimeout(function () {
-    toast.classList.remove("show");
+    toastWrapper.innerHTML = "";
   }, 2900);
-  document.getElementById("toast-wrapper").append(toast);
+  toastWrapper.append(toast);
 }
 
 /**
