@@ -9,6 +9,7 @@ springBoot {
 
 tasks {
   bootJar {
+    dependsOn("assembleFrontend")
     archiveClassifier.set("boot")
     enabled = true
   }
@@ -30,10 +31,6 @@ tasks {
     checkScript.set("run test")
 
     packageJsonDirectory.set(file("${projectDir}/src/main/resources/static/ts"))
-  }
-
-  build {
-    dependsOn("assembleFrontend")
   }
 }
 
