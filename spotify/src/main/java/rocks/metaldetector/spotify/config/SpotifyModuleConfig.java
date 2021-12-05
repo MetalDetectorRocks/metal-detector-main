@@ -32,11 +32,6 @@ public class SpotifyModuleConfig {
   private final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory;
 
   @Bean
-  public RestOperations spotifyRestTemplate(RestTemplateBuilder restTemplateBuilder) {
-    return restTemplate(restTemplateBuilder);
-  }
-
-  @Bean
   public RestOperations spotifyOAuthClientCredentialsRestTemplate(RestTemplateBuilder restTemplateBuilder, OAuth2AccessTokenClientCredentialsClient tokenClient) {
     tokenClient.setRegistrationId(REGISTRATION_ID_APP);
     RestTemplate restTemplate = restTemplate(restTemplateBuilder);

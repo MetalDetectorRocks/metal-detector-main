@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
@@ -17,7 +16,7 @@ import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import rocks.metaldetector.support.Endpoints;
-import rocks.metaldetector.testutil.WithIntegrationTestConfig;
+import rocks.metaldetector.testutil.BaseSpringBootTest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,12 +24,11 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {
     "spring.datasource.url=jdbc:h2:mem:test-prod;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
 })
 @ExtendWith(MockitoExtension.class)
-class RedirectionHandlerInterceptorIT implements WithAssertions, WithIntegrationTestConfig {
+class RedirectionHandlerInterceptorIT extends BaseSpringBootTest implements WithAssertions {
 
   @Autowired
   private ApplicationContext applicationContext;

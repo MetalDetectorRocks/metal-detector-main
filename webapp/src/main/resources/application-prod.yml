@@ -29,6 +29,9 @@ spring:
             redirect-uri: "https://{baseHost}{basePort}{basePath}/login/oauth2/code/{registrationId}"
           spotify-user:
             redirect-uri: "https://{baseHost}{basePort}{basePath}/settings/spotify-synchronization"
+        provider:
+          metal-detector-auth:
+            issuer-uri: https://auth.metal-detector.rocks
 
 server:
   port: 8080
@@ -53,4 +56,4 @@ management:
       path-mapping.flyway: ${ACTUATOR_FLYWAY_PATH}
 
 metal-release-butler:
-  host: http://butler-app:8080
+  host: https://butler.metal-detector.rocks

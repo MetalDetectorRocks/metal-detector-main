@@ -27,6 +27,9 @@ spring:
         registration:
           spotify-user:
             redirect-uri: "https://{baseHost}{basePort}{basePath}/settings/spotify-synchronization"
+        provider:
+          metal-detector-auth:
+            issuer-uri: https://metal-detector-auth-preview.herokuapp.com
 
 server:
   port: 8080

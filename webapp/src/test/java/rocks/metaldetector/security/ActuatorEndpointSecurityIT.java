@@ -6,13 +6,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import rocks.metaldetector.testutil.WithIntegrationTestConfig;
+import rocks.metaldetector.testutil.BaseSpringBootTest;
 
 import java.util.stream.Stream;
 
@@ -20,12 +19,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @TestPropertySource(properties = {
     "management.health.mail.enabled=false"
 })
 @AutoConfigureMockMvc
-public class ActuatorEndpointSecurityIT implements WithIntegrationTestConfig {
+public class ActuatorEndpointSecurityIT extends BaseSpringBootTest {
 
   @Autowired
   private MockMvc mockMvc;

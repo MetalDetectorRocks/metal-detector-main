@@ -3,15 +3,15 @@ package rocks.metaldetector.spotify.config;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 import rocks.metaldetector.support.ApplicationProperties;
 
 import java.util.Arrays;
 import java.util.List;
 
-@Configuration
+@Component
 @PropertySource(value = "classpath:application.yml")
 @ConfigurationProperties(prefix = "spotify")
 @Data

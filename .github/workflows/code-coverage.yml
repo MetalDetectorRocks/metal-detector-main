@@ -11,9 +11,10 @@ on:
 jobs:
   code-coverage:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v2.4.0
         with:
           distribution: 'zulu'
