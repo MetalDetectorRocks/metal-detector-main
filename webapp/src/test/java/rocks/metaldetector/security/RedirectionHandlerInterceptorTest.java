@@ -9,14 +9,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.support.Endpoints;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.TEMPORARY_REDIRECT;
+import static rocks.metaldetector.support.Endpoints.Frontend.SLASH_HOME;
 
 @ExtendWith(MockitoExtension.class)
 class RedirectionHandlerInterceptorTest implements WithAssertions {
@@ -67,7 +67,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
     underTest.preHandle(request, response, null);
 
     // then
-    assertThat(response.getHeader("Location")).isEqualTo(Endpoints.Frontend.DASHBOARD);
+    assertThat(response.getHeader("Location")).isEqualTo(SLASH_HOME);
   }
 
   @Test
@@ -80,7 +80,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
     underTest.preHandle(request, response, null);
 
     // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.TEMPORARY_REDIRECT.value());
+    assertThat(response.getStatus()).isEqualTo(TEMPORARY_REDIRECT.value());
   }
 
   @Test

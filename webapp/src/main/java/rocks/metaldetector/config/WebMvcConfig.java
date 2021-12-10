@@ -16,6 +16,8 @@ import rocks.metaldetector.support.Endpoints;
 
 import java.util.Locale;
 
+import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
+
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
@@ -63,7 +65,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(redirectionHandlerInterceptor).addPathPatterns(Endpoints.AntPattern.GUEST_ONLY_PAGES);
+    registry.addInterceptor(redirectionHandlerInterceptor).addPathPatterns(GUEST_ONLY_PAGES);
   }
 
   @Bean

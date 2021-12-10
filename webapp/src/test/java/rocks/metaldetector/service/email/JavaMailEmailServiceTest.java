@@ -78,7 +78,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
   void should_call_template_engine() {
     // given
     final String TOKEN = "token";
-    final String EXPECTED_VERIFICATION_URL = mailProperties.getApplicationHostUrl() + Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + TOKEN;
+    final String EXPECTED_VERIFICATION_URL = mailProperties.getApplicationHostUrl() + Endpoints.Authentication.REGISTRATION_VERIFICATION + "?token=" + TOKEN;
     ArgumentCaptor<Context> contextCaptor = ArgumentCaptor.forClass(Context.class);
     ArgumentCaptor<String> templateNameCaptor = ArgumentCaptor.forClass(String.class);
     AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", "username", TOKEN);

@@ -32,7 +32,6 @@ import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.OnRegistrationCompleteEvent;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
@@ -53,6 +52,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
+import static rocks.metaldetector.support.Endpoints.Authentication.REGISTER;
+import static rocks.metaldetector.support.Endpoints.Authentication.REGISTRATION_VERIFICATION;
+import static rocks.metaldetector.support.Endpoints.Authentication.RESEND_VERIFICATION_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
 class RegistrationControllerTest implements WithAssertions {
@@ -84,7 +87,7 @@ class RegistrationControllerTest implements WithAssertions {
   @BeforeEach
   void setup() {
     RegistrationController underTest = new RegistrationController(eventPublisher, userService, tokenService, modelMapper);
-    restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.REGISTER);
+    restAssuredUtils = new RestAssuredMockMvcUtils(REGISTER);
     RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
 
     objectMapper = new ObjectMapper();
@@ -104,7 +107,7 @@ class RegistrationControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Guest.REGISTER + "' should return the view to register")
+  @DisplayName("Requesting '" + REGISTER + "' should return the view to register")
   void given_register_uri_should_return_register_view() {
     // when
     var validatableResponse = restAssuredUtils.doGet();
@@ -295,11 +298,11 @@ class RegistrationControllerTest implements WithAssertions {
 
     @BeforeEach
     void setup() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.REGISTRATION_VERIFICATION);
+      restAssuredUtils = new RestAssuredMockMvcUtils(REGISTRATION_VERIFICATION);
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with valid token should return the login view with success message")
+    @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with valid token should return the login view with success message")
     void given_valid_token_on_registration_verification_uri_should_redirect_to_login_view() {
       // when
       var validatableResponse = restAssuredUtils.doGet("?token=valid_token");
@@ -308,11 +311,11 @@ class RegistrationControllerTest implements WithAssertions {
       validatableResponse
           .assertThat(model().hasNoErrors())
           .assertThat(status().is3xxRedirection())
-          .assertThat(redirectedUrl(Endpoints.Guest.LOGIN + "?verificationSuccess"));
+          .assertThat(redirectedUrl(LOGIN + "?verificationSuccess"));
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with valid token should call UserService")
+    @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with valid token should call UserService")
     void given_valid_token_on_registration_verification_uri_should_call_user_service() {
       //given
       String token = "valid_token";
@@ -325,7 +328,7 @@ class RegistrationControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with not existing token should return the login view login with error message")
+    @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with not existing token should return the login view login with error message")
     void given_not_existing_token_on_registration_verification_uri_should_redirect_to_login_view() {
       // given
       doThrow(ResourceNotFoundException.class).when(userService).verifyEmailToken(NOT_EXISTING_TOKEN);
@@ -336,11 +339,11 @@ class RegistrationControllerTest implements WithAssertions {
       // then
       validatableResponse
           .assertThat(status().is3xxRedirection())
-          .assertThat(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenNotFound"));
+          .assertThat(redirectedUrl(LOGIN + "?tokenNotFound"));
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with not existing token should call UserService")
+    @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with not existing token should call UserService")
     void given_not_existing_token_on_registration_verification_uri_should_call_user_service() {
       // given
       doThrow(ResourceNotFoundException.class).when(userService).verifyEmailToken(NOT_EXISTING_TOKEN);
@@ -353,7 +356,7 @@ class RegistrationControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with expired token should return the login view with error message")
+    @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with expired token should return the login view with error message")
     void given_expired_token_on_registration_verification_uri_should_redirect_to_login_view() {
       // given
       doThrow(TokenExpiredException.class).when(userService).verifyEmailToken(EXPIRED_TOKEN);
@@ -364,11 +367,11 @@ class RegistrationControllerTest implements WithAssertions {
       // then
       validatableResponse
           .assertThat(status().is3xxRedirection())
-          .assertThat(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenExpired&token=" + EXPIRED_TOKEN));
+          .assertThat(redirectedUrl(LOGIN + "?tokenExpired&token=" + EXPIRED_TOKEN));
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.REGISTRATION_VERIFICATION + "' with expired token should call UserService")
+    @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with expired token should call UserService")
     void given_expired_token_on_registration_verification_uri_should_call_user_service() {
       // given
       doThrow(TokenExpiredException.class).when(userService).verifyEmailToken(EXPIRED_TOKEN);
@@ -387,11 +390,11 @@ class RegistrationControllerTest implements WithAssertions {
 
     @BeforeEach
     void setup() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.RESEND_VERIFICATION_TOKEN);
+      restAssuredUtils = new RestAssuredMockMvcUtils(RESEND_VERIFICATION_TOKEN);
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "' with valid token should return the login view with success message")
+    @DisplayName("Requesting '" + RESEND_VERIFICATION_TOKEN + "' with valid token should return the login view with success message")
     void given_valid_token_on_resend_verification_token_uri_should_redirect_to_login_view() {
       // when
       var validatableResponse = restAssuredUtils.doGet("?token=valid-token");
@@ -399,11 +402,11 @@ class RegistrationControllerTest implements WithAssertions {
       // then
       validatableResponse
           .assertThat(status().is3xxRedirection())
-          .assertThat(redirectedUrl(Endpoints.Guest.LOGIN + "?resendVerificationTokenSuccess"));
+          .assertThat(redirectedUrl(LOGIN + "?resendVerificationTokenSuccess"));
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "' with valid token should call TokenService")
+    @DisplayName("Requesting '" + RESEND_VERIFICATION_TOKEN + "' with valid token should call TokenService")
     void given_valid_token_on_resend_verification_token_uri_should_call_token_service() {
       // given
       String token = "valid-token";
@@ -416,7 +419,7 @@ class RegistrationControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "' with not existing token should return the login view with token not found message")
+    @DisplayName("Requesting '" + RESEND_VERIFICATION_TOKEN + "' with not existing token should return the login view with token not found message")
     void given_not_existing_token_on_resend_verification_token_uri_should_redirect_to_login_view() {
       // given
       doThrow(ResourceNotFoundException.class).when(tokenService).resendExpiredEmailVerificationToken(NOT_EXISTING_TOKEN);
@@ -427,11 +430,11 @@ class RegistrationControllerTest implements WithAssertions {
       // then
       validatableResponse
           .assertThat(status().is3xxRedirection())
-          .assertThat(redirectedUrl(Endpoints.Guest.LOGIN + "?tokenNotFound"));
+          .assertThat(redirectedUrl(LOGIN + "?tokenNotFound"));
     }
 
     @Test
-    @DisplayName("Requesting '" + Endpoints.Guest.RESEND_VERIFICATION_TOKEN + "' with not existing should call TokenService")
+    @DisplayName("Requesting '" + RESEND_VERIFICATION_TOKEN + "' with not existing should call TokenService")
     void given_not_existing_token_on_resend_verification_token_uri_should_call_token_service() {
       // given
       doThrow(ResourceNotFoundException.class).when(tokenService).resendExpiredEmailVerificationToken(NOT_EXISTING_TOKEN);

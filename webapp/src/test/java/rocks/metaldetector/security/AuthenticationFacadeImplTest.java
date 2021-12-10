@@ -5,13 +5,19 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.OAuthUserEntity;
@@ -19,9 +25,11 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -55,11 +63,11 @@ class AuthenticationFacadeImplTest implements WithAssertions {
     reset(userRepository, securityContext, authentication, user, oAuthPrincipal, oauthUser);
   }
 
-  @Test
+  @ParameterizedTest(name = "should return true if user is authenticated")
+  @MethodSource("authenticationProvider")
   @DisplayName("should return true if user is authenticated")
-  void should_return_true_if_user_is_authenticated() {
+  void should_return_true_if_user_is_authenticated(Authentication authentication) {
     // given
-    doReturn(true).when(authentication).isAuthenticated();
     doReturn(authentication).when(securityContext).getAuthentication();
 
     // when
@@ -73,11 +81,19 @@ class AuthenticationFacadeImplTest implements WithAssertions {
     assertThat(result).isTrue();
   }
 
+  private static Stream<Arguments> authenticationProvider() {
+    return Stream.of(
+        Arguments.of(mock(UsernamePasswordAuthenticationToken.class)),
+        Arguments.of(mock(OAuth2AuthenticationToken.class))
+    );
+  }
+
   @Test
   @DisplayName("should return false if user is not authenticated")
   void should_return_false_if_user_is_not_authenticated() {
     // given
-    doReturn(null).when(securityContext).getAuthentication();
+    var anonymousAuthentication = mock(AnonymousAuthenticationToken.class);
+    doReturn(anonymousAuthentication).when(securityContext).getAuthentication();
 
     // when
     boolean result;

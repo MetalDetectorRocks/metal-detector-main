@@ -19,7 +19,6 @@ import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.OnRegistrationCompleteEvent;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
@@ -27,6 +26,11 @@ import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+
+import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
+import static rocks.metaldetector.support.Endpoints.Authentication.REGISTER;
+import static rocks.metaldetector.support.Endpoints.Authentication.REGISTRATION_VERIFICATION;
+import static rocks.metaldetector.support.Endpoints.Authentication.RESEND_VERIFICATION_TOKEN;
 
 @Controller
 @AllArgsConstructor
@@ -46,12 +50,12 @@ public class RegistrationController {
     return new RegisterUserRequest();
   }
 
-  @GetMapping(Endpoints.Guest.REGISTER)
+  @GetMapping(REGISTER)
   public ModelAndView showRegistrationForm() {
     return new ModelAndView(ViewNames.Authentication.REGISTER);
   }
 
-  @PostMapping(Endpoints.Guest.REGISTER)
+  @PostMapping(REGISTER)
   public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult) {
     // show registration form if there are validation errors
     if (bindingResult.hasErrors()) {
@@ -85,7 +89,7 @@ public class RegistrationController {
     return new ModelAndView(ViewNames.Authentication.REGISTER, viewModel, HttpStatus.OK);
   }
 
-  @GetMapping(Endpoints.Guest.REGISTRATION_VERIFICATION)
+  @GetMapping(REGISTRATION_VERIFICATION)
   public ModelAndView verifyRegistration(@RequestParam(value = "token") String tokenString) {
     String param = "verificationSuccess";
 
@@ -99,10 +103,10 @@ public class RegistrationController {
       param = "tokenNotFound";
     }
 
-    return new ModelAndView("redirect:" + Endpoints.Guest.LOGIN + "?" + param);
+    return new ModelAndView("redirect:" + LOGIN + "?" + param);
   }
 
-  @GetMapping(Endpoints.Guest.RESEND_VERIFICATION_TOKEN)
+  @GetMapping(RESEND_VERIFICATION_TOKEN)
   public ModelAndView resendEmailVerificationToken(@RequestParam(value = "token") String tokenString) {
     String param = "resendVerificationTokenSuccess";
 
@@ -113,6 +117,6 @@ public class RegistrationController {
       param = "tokenNotFound";
     }
 
-    return new ModelAndView("redirect:" + Endpoints.Guest.LOGIN + "?" + param);
+    return new ModelAndView("redirect:" + LOGIN + "?" + param);
   }
 }

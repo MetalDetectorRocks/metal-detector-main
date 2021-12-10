@@ -18,7 +18,6 @@ import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.user.OnResetPasswordRequestCompleteEvent;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
@@ -33,6 +32,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static rocks.metaldetector.support.Endpoints.Authentication.FORGOT_PASSWORD;
 
 @ExtendWith(MockitoExtension.class)
 class ForgotPasswordControllerTest implements WithAssertions {
@@ -53,7 +53,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.FORGOT_PASSWORD);
+    restAssuredUtils = new RestAssuredMockMvcUtils(FORGOT_PASSWORD);
     RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
   }
 
@@ -63,7 +63,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("GET on '" + Endpoints.Guest.FORGOT_PASSWORD + "' should return the view to request a new password")
+  @DisplayName("GET on '" + FORGOT_PASSWORD + "' should return the view to request a new password")
   void get_should_return_forgot_password_view() {
     // when
     var validatableResponse = restAssuredUtils.doGet();
@@ -77,7 +77,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("POST on '" + Endpoints.Guest.FORGOT_PASSWORD + "' should return a model with correct attributes")
+  @DisplayName("POST on '" + FORGOT_PASSWORD + "' should return a model with correct attributes")
   void post_should_return_attributes() {
     // given
     UserDto userDto = UserDtoFactory.withUsernameAndEmail("JohnD", EXISTING_EMAIL);
@@ -95,7 +95,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("POST on '" + Endpoints.Guest.FORGOT_PASSWORD + "' should call UserService")
+  @DisplayName("POST on '" + FORGOT_PASSWORD + "' should call UserService")
   void post_should_call_user_service() {
     // given
     UserDto userDto = UserDtoFactory.withUsernameAndEmail("JohnD", EXISTING_EMAIL);
@@ -109,7 +109,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("POST on '" + Endpoints.Guest.FORGOT_PASSWORD + "' should call EventPublisher")
+  @DisplayName("POST on '" + FORGOT_PASSWORD + "' should call EventPublisher")
   void post_should_call_event_publisher() {
     // given
     UserDto userDto = UserDtoFactory.withUsernameAndEmail("JohnD", EXISTING_EMAIL);
@@ -123,7 +123,7 @@ class ForgotPasswordControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("POST on '" + Endpoints.Guest.FORGOT_PASSWORD + "' should return correct user dto")
+  @DisplayName("POST on '" + FORGOT_PASSWORD + "' should return correct user dto")
   void post_should_return_dto() {
     // given
     ArgumentCaptor<OnResetPasswordRequestCompleteEvent> eventCaptor = ArgumentCaptor.forClass(OnResetPasswordRequestCompleteEvent.class);

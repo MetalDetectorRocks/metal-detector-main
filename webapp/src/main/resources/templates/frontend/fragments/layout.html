@@ -47,11 +47,11 @@
                   <input id="query" autocomplete="off" type="text" class="form-control" th:name="query" placeholder="Search artist" required>
                 </form>
                 <ul class="links">
-                    <li>
+                    <li sec:authorize="!isAuthenticated()">
                         <a th:classappend="${#request.requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Home</a>
                     </li>
                     <li sec:authorize="isAuthenticated()">
-                        <a th:classappend="${#request.requestURI == '/dashboard' ? 'active':''}" href="#" th:href="@{/dashboard}">Dashboard</a>
+                        <a th:classappend="${#request.requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Dashboard</a>
                     </li>
                     <li >
                         <a th:classappend="${#request.requestURI == '/blog' ? 'active':''}" href="#" th:href="@{/blog}">Blog</a>

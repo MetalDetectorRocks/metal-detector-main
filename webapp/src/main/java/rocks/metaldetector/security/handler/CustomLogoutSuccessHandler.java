@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static rocks.metaldetector.support.Endpoints.Guest.EMPTY_INDEX;
+import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 
 public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler implements LogoutSuccessHandler {
 
@@ -18,6 +18,6 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
      * Maybe track the last page the user has visited and show this page again after next login
      * String refererUrl = request.getHeader("Referer");
      */
-    response.sendRedirect(EMPTY_INDEX);
+    response.sendRedirect(HOME);
   }
 }

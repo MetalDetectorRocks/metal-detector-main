@@ -27,6 +27,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
+import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 
 @WebMvcTest(controllers = LoginController.class)
 class LoginControllerIT extends BaseWebMvcTestWithSecurity {
@@ -62,14 +64,14 @@ class LoginControllerIT extends BaseWebMvcTestWithSecurity {
 
     //then
     resultActions.andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrlPattern("**/" + Endpoints.Guest.LOGIN));
+        .andExpect(redirectedUrlPattern("**/" + LOGIN));
   }
 
   @Test
   @DisplayName("Login with valid credentials should redirect to home page")
   void login_with_valid_credentials_should_redirect_to_home_page() throws Exception {
     // given
-    MockHttpServletRequestBuilder requestBuilder = post(Endpoints.Guest.LOGIN)
+    MockHttpServletRequestBuilder requestBuilder = post(LOGIN)
         .with(SecurityMockMvcRequestPostProcessors.csrf())
         .param(PARAM_USERNAME, USERNAME)
         .param(PARAM_PASSWORD, PASSWORD)
@@ -79,15 +81,16 @@ class LoginControllerIT extends BaseWebMvcTestWithSecurity {
     var resultActions = mockMvc.perform(requestBuilder);
 
     // then
-    resultActions.andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl(Endpoints.Frontend.DASHBOARD));
+    resultActions
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(HOME));
   }
 
   @Test
   @DisplayName("Login with valid credentials should call user service")
   void login_with_valid_credentials_should_call_user_service() throws Exception {
     // given
-    MockHttpServletRequestBuilder requestBuilder = post(Endpoints.Guest.LOGIN)
+    MockHttpServletRequestBuilder requestBuilder = post(LOGIN)
         .with(SecurityMockMvcRequestPostProcessors.csrf())
         .param(PARAM_USERNAME, USERNAME)
         .param(PARAM_PASSWORD, PASSWORD)
@@ -105,7 +108,7 @@ class LoginControllerIT extends BaseWebMvcTestWithSecurity {
   @DisplayName("Login with bad credentials should redirect to login page")
   void login_with_bad_credentials_should_redirect_to_login_page(String username, String plainPassword) throws Exception {
     // given
-    var request = post(Endpoints.Guest.LOGIN)
+    var request = post(LOGIN)
         .with(SecurityMockMvcRequestPostProcessors.csrf())
         .param(PARAM_USERNAME, username)
         .param(PARAM_PASSWORD, plainPassword);
@@ -115,7 +118,7 @@ class LoginControllerIT extends BaseWebMvcTestWithSecurity {
 
     // then
     resultActions.andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl(Endpoints.Guest.LOGIN + "?badCredentials"));
+        .andExpect(redirectedUrl(LOGIN + "?badCredentials"));
   }
 
   @ParameterizedTest(name = "[{index}]: Username <{0}> and Password <{1}>")
@@ -123,7 +126,7 @@ class LoginControllerIT extends BaseWebMvcTestWithSecurity {
   @DisplayName("Login with bad credentials should call user service")
   void login_with_bad_credentials_should_call_user_service(String username, String plainPassword) throws Exception {
     // given
-    var request = post(Endpoints.Guest.LOGIN)
+    var request = post(LOGIN)
         .with(SecurityMockMvcRequestPostProcessors.csrf())
         .param(PARAM_USERNAME, username)
         .param(PARAM_PASSWORD, plainPassword);

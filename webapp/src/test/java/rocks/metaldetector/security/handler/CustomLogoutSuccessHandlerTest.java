@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import static org.springframework.http.HttpStatus.FOUND;
-import static rocks.metaldetector.support.Endpoints.Guest.EMPTY_INDEX;
+import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 
 class CustomLogoutSuccessHandlerTest implements WithAssertions {
 
@@ -33,6 +33,6 @@ class CustomLogoutSuccessHandlerTest implements WithAssertions {
     logoutSuccessHandler.onLogoutSuccess(httpServletRequest, httpServletResponse, authentication);
 
     assertThat(httpServletResponse.getStatus()).isEqualTo(FOUND.value());
-    assertThat(httpServletResponse.getRedirectedUrl()).isEqualTo(EMPTY_INDEX);
+    assertThat(httpServletResponse.getRedirectedUrl()).isEqualTo(HOME);
   }
 }

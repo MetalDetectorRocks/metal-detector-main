@@ -3,7 +3,6 @@ package rocks.metaldetector.security;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.stereotype.Controller;
@@ -14,9 +13,11 @@ import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.springframework.http.HttpHeaders.LOCATION;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
 
 @WebMvcTest(controllers = {SimpleRestController.class, SimpleMvcController.class})
 class SecurityConfigIT extends BaseWebMvcTestWithSecurity {
@@ -35,7 +36,7 @@ class SecurityConfigIT extends BaseWebMvcTestWithSecurity {
   void test_mvc_endpoint_security() throws Exception {
     mockMvc.perform(get(Endpoints.Frontend.TEST))
             .andExpect(status().is3xxRedirection())
-            .andExpect(header().string(HttpHeaders.LOCATION, containsString(Endpoints.Guest.LOGIN)));
+            .andExpect(header().string(LOCATION, containsString(LOGIN)));
   }
 }
 

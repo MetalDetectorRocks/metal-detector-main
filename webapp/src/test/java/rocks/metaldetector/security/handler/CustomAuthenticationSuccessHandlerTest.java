@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -15,10 +14,11 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
-import rocks.metaldetector.support.Endpoints;
 
 import static org.mockito.Mockito.verify;
+import static org.springframework.http.HttpStatus.FOUND;
 import static rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler.SAVED_REQUEST_ATTRIBUTE;
+import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 
 @ExtendWith(MockitoExtension.class)
 class CustomAuthenticationSuccessHandlerTest implements WithAssertions {
@@ -29,9 +29,9 @@ class CustomAuthenticationSuccessHandlerTest implements WithAssertions {
   @InjectMocks
   private CustomAuthenticationSuccessHandler underTest;
 
-  private MockHttpServletRequest  httpServletRequest  = new MockHttpServletRequest();
-  private MockHttpServletResponse httpServletResponse = new MockHttpServletResponse();
-  private Authentication          authentication      = new TestingAuthenticationToken("principal", "credentials");
+  private final MockHttpServletRequest  httpServletRequest  = new MockHttpServletRequest();
+  private final MockHttpServletResponse httpServletResponse = new MockHttpServletResponse();
+  private final Authentication          authentication      = new TestingAuthenticationToken("principal", "credentials");
 
   @Test
   @DisplayName("Forward user to frontend home on successful authentication")
@@ -43,8 +43,8 @@ class CustomAuthenticationSuccessHandlerTest implements WithAssertions {
     underTest.onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
 
     // then
-    assertThat(httpServletResponse.getStatus()).isEqualTo(HttpStatus.FOUND.value());
-    assertThat(httpServletResponse.getRedirectedUrl()).isEqualTo(Endpoints.Frontend.DASHBOARD);
+    assertThat(httpServletResponse.getStatus()).isEqualTo(FOUND.value());
+    assertThat(httpServletResponse.getRedirectedUrl()).isEqualTo(HOME);
   }
 
   @Test

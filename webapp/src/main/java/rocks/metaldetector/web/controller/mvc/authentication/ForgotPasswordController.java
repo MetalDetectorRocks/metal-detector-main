@@ -14,7 +14,6 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.user.OnResetPasswordRequestCompleteEvent;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 import rocks.metaldetector.web.api.request.ForgotPasswordRequest;
 
@@ -23,8 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static rocks.metaldetector.support.Endpoints.Authentication.FORGOT_PASSWORD;
+
 @Controller
-@RequestMapping(Endpoints.Guest.FORGOT_PASSWORD)
+@RequestMapping(FORGOT_PASSWORD)
 @AllArgsConstructor
 public class ForgotPasswordController {
 

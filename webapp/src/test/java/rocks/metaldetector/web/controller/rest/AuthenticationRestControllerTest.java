@@ -3,6 +3,7 @@ package rocks.metaldetector.web.controller.rest;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.response.AuthenticationResponse;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
 import static org.springframework.http.HttpStatus.OK;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 
@@ -34,6 +36,11 @@ class AuthenticationRestControllerTest implements WithAssertions {
   void setup() {
     restAssuredUtils = new RestAssuredMockMvcUtils(AUTHENTICATION);
     RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
+  }
+
+  @AfterEach
+  void tearDown() {
+    reset(authenticationFacade);
   }
 
   @Test

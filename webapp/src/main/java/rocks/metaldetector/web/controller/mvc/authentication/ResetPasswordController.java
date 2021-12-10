@@ -22,8 +22,11 @@ import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 import javax.validation.Valid;
 import java.util.Optional;
 
+import static rocks.metaldetector.support.Endpoints.Authentication.FORGOT_PASSWORD;
+import static rocks.metaldetector.support.Endpoints.Authentication.RESET_PASSWORD;
+
 @Controller
-@RequestMapping(Endpoints.Guest.RESET_PASSWORD)
+@RequestMapping(RESET_PASSWORD)
 @AllArgsConstructor
 public class ResetPasswordController {
 
@@ -39,12 +42,12 @@ public class ResetPasswordController {
     // check whether token exists
     if (tokenEntity.isEmpty()) {
       redirectAttributes.addFlashAttribute("tokenNotExistingError", true);
-      return new ModelAndView("redirect:" + Endpoints.Guest.FORGOT_PASSWORD);
+      return new ModelAndView("redirect:" + FORGOT_PASSWORD);
     }
     // check whether token is expired
     else if (tokenEntity.get().isExpired()) {
       redirectAttributes.addFlashAttribute("tokenExpiredError", true);
-      return new ModelAndView("redirect:" + Endpoints.Guest.FORGOT_PASSWORD);
+      return new ModelAndView("redirect:" + FORGOT_PASSWORD);
     }
     // everything is OK here, set token as hidden input field
     else {
@@ -65,11 +68,11 @@ public class ResetPasswordController {
     if (bindingResult.hasErrors()) {
       redirectAttributes.addFlashAttribute(BindingResult.class.getName() + "." + FORM_DTO, bindingResult);
       redirectAttributes.addFlashAttribute(FORM_DTO, changePasswordRequest);
-      return new ModelAndView("redirect:" + Endpoints.Guest.RESET_PASSWORD + "?token=" + changePasswordRequest.getTokenString());
+      return new ModelAndView("redirect:" + RESET_PASSWORD + "?token=" + changePasswordRequest.getTokenString());
     }
 
     userService.resetPasswordWithToken(changePasswordRequest.getTokenString(), changePasswordRequest.getNewPlainPassword());
 
-    return new ModelAndView("redirect:" + Endpoints.Guest.LOGIN + "?resetSuccess");
+    return new ModelAndView("redirect:" + Endpoints.Authentication.LOGIN + "?resetSuccess");
   }
 }

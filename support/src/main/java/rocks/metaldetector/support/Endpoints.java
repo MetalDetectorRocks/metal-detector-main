@@ -7,15 +7,7 @@ public class Endpoints {
 
   public static final String ERROR = "/error";
 
-  public static class Guest {
-    // General
-    public static final String        INDEX                  = "/index";
-    public static final String        EMPTY_INDEX            = "";
-    public static final String        SLASH_INDEX            = "/";
-    public static final String        LOGOUT                 = "/logout";
-    public static final List<String>  ALL_GUEST_INDEX_PAGES  = List.of(INDEX, EMPTY_INDEX, SLASH_INDEX);
-
-    // Authentication
+  public static class Authentication {
     public static final String       LOGIN                     = "/login";
     public static final String       REGISTER                  = "/register";
     public static final String       REGISTRATION_VERIFICATION = "/registration-verification";
@@ -27,21 +19,24 @@ public class Endpoints {
   }
 
   public static class Frontend {
-    public static final String DASHBOARD                   = "/dashboard";
-    public static final String SEARCH                      = "/artists/search";
-    public static final String RELEASES                    = "/releases";
-    public static final String MY_ARTISTS                  = "/my-artists";
-    public static final String BLOG                        = "/blog";
-    public static final String BLOG_POST_WE_ARE_ONLINE     = "/blog/we-are-online";
-    public static final String BLOG_POST_TOP_RELEASES_2020 = "/blog/top-6-releases-2020";
-    public static final String BLOG_POST_FUTURE_PLANS      = "/blog/future-plans";
-    public static final String IMPRINT                     = "/imprint";
-    public static final String PRIVACY_POLICY              = "/privacy-policy";
-    public static final String STATUS                      = "/status";
-    public static final String ACCOUNT_DETAILS             = "/settings/account-details";
-    public static final String SPOTIFY_SYNCHRONIZATION     = "/settings/spotify-synchronization";
-    public static final String NOTIFICATION_SETTINGS       = "/settings/notification-settings";
-    public static final String TEST                        = "/only-for-testing";
+    public static final String        HOME                   = "";
+    public static final String        INDEX                  = "/index";
+    public static final String        SLASH_HOME             = "/";
+    public static final String        LOGOUT                 = "/logout";
+    public static final String SEARCH                        = "/artists/search";
+    public static final String RELEASES                      = "/releases";
+    public static final String MY_ARTISTS                    = "/my-artists";
+    public static final String BLOG                          = "/blog";
+    public static final String BLOG_POST_WE_ARE_ONLINE       = "/blog/we-are-online";
+    public static final String BLOG_POST_TOP_RELEASES_2020   = "/blog/top-6-releases-2020";
+    public static final String BLOG_POST_FUTURE_PLANS        = "/blog/future-plans";
+    public static final String IMPRINT                       = "/imprint";
+    public static final String PRIVACY_POLICY                = "/privacy-policy";
+    public static final String STATUS                        = "/status";
+    public static final String ACCOUNT_DETAILS               = "/settings/account-details";
+    public static final String SPOTIFY_SYNCHRONIZATION       = "/settings/spotify-synchronization";
+    public static final String NOTIFICATION_SETTINGS         = "/settings/notification-settings";
+    public static final String TEST                          = "/only-for-testing";
   }
 
   public static class Rest {
