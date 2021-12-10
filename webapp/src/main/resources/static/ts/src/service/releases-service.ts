@@ -35,6 +35,8 @@ export class ReleasesService {
     private sortAscRb!: HTMLInputElement;
     private sortDescRb!: HTMLInputElement;
     private searchField!: HTMLInputElement;
+    private searchGoBtn!: HTMLButtonElement;
+    private searchResetBtn!: HTMLButtonElement;
     private timeAllUpcomingRb!: HTMLInputElement;
     private timeNextMonthRb!: HTMLInputElement;
     private timeLastMonthRb!: HTMLInputElement;
@@ -97,6 +99,8 @@ export class ReleasesService {
         this.sortAscRb = document.getElementById("sort-asc-rb") as HTMLInputElement;
         this.sortDescRb = document.getElementById("sort-desc-rb") as HTMLInputElement;
         this.searchField = document.getElementById("release-search") as HTMLInputElement;
+        this.searchGoBtn = document.getElementById("release-search-go-button") as HTMLButtonElement;
+        this.searchResetBtn = document.getElementById("release-search-reset-button") as HTMLButtonElement;
         this.timeAllUpcomingRb = document.getElementById("time-all-upcoming-rb") as HTMLInputElement;
         this.timeNextMonthRb = document.getElementById("time-next-month-rb") as HTMLInputElement;
         this.timeLastMonthRb = document.getElementById("time-last-month-rb") as HTMLInputElement;
@@ -157,15 +161,26 @@ export class ReleasesService {
             });
         }
 
-        [
-            this.sortPropertySelector,
-            this.searchField,
-            this.timeAllUpcomingRb,
-            this.timeNextMonthRb,
-            this.timeLastMonthRb,
-        ].forEach((item) => item.addEventListener("change", this.onAnyValueChange.bind(this)));
-        this.filterApplyBtn.addEventListener("click", this.sendRequest.bind(this));
+        [this.sortPropertySelector, this.timeAllUpcomingRb, this.timeNextMonthRb, this.timeLastMonthRb].forEach(
+            (item) => item.addEventListener("change", this.onAnyValueChange.bind(this)),
+        );
+
+        [this.searchGoBtn, this.filterApplyBtn].forEach((item) =>
+            item.addEventListener("click", this.sendRequest.bind(this)),
+        );
+        this.searchField.addEventListener("keypress", (event) => this.onEnterPressedInSearchInput(event));
+        this.searchResetBtn.addEventListener("click", this.onResetSearch.bind(this));
         window.addEventListener("resize", this.onWindowResize.bind(this));
+    }
+
+    private onEnterPressedInSearchInput(event: KeyboardEvent): void {
+        if (event.key === "Enter") {
+            this.sendRequest();
+        }
+    }
+
+    private onResetSearch(): void {
+        this.searchField.value = "";
     }
 
     private onWindowResize(): void {
