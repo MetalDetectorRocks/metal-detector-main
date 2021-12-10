@@ -16,7 +16,7 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.TEMPORARY_REDIRECT;
-import static rocks.metaldetector.support.Endpoints.Frontend.SLASH_HOME;
+import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 
 @ExtendWith(MockitoExtension.class)
 class RedirectionHandlerInterceptorTest implements WithAssertions {
@@ -67,7 +67,7 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
     underTest.preHandle(request, response, null);
 
     // then
-    assertThat(response.getHeader("Location")).isEqualTo(SLASH_HOME);
+    assertThat(response.getHeader("Location")).isEqualTo(HOME);
   }
 
   @Test

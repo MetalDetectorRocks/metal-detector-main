@@ -19,10 +19,9 @@ public class Endpoints {
   }
 
   public static class Frontend {
-    public static final String        HOME                   = "";
-    public static final String        INDEX                  = "/index";
-    public static final String        SLASH_HOME             = "/";
-    public static final String        LOGOUT                 = "/logout";
+    public static final String HOME                          = "/";
+    public static final String INDEX                         = "/index";
+    public static final String LOGOUT                        = "/logout";
     public static final String SEARCH                        = "/artists/search";
     public static final String RELEASES                      = "/releases";
     public static final String MY_ARTISTS                    = "/my-artists";

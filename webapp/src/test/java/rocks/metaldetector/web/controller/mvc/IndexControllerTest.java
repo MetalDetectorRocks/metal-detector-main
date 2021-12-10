@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static rocks.metaldetector.config.constants.ViewNames.Frontend.DASHBOARD;
 import static rocks.metaldetector.config.constants.ViewNames.Frontend.INDEX;
-import static rocks.metaldetector.support.Endpoints.Frontend.SLASH_HOME;
+import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 
 @ExtendWith(MockitoExtension.class)
 class IndexControllerTest {
@@ -39,7 +39,7 @@ class IndexControllerTest {
 
   @BeforeEach
   void setup() {
-    restAssuredUtils = new RestAssuredMockMvcUtils(SLASH_HOME);
+    restAssuredUtils = new RestAssuredMockMvcUtils(HOME);
     RestAssuredMockMvc.standaloneSetup(underTest);
     doReturn(UserEntityFactory.createUser("user", "mail@test.de")).when(authenticationFacade).getCurrentUser();
   }
@@ -50,7 +50,7 @@ class IndexControllerTest {
   }
 
   @ParameterizedTest(name = "[{index}] => Endpoint <{0}>")
-  @ValueSource(strings = {Endpoints.Frontend.INDEX, SLASH_HOME})
+  @ValueSource(strings = {Endpoints.Frontend.INDEX, HOME})
   @DisplayName("GET on index should be ok")
   void given_index_uri_then_return_200(String endpoint) {
     // given
@@ -79,7 +79,7 @@ class IndexControllerTest {
   }
 
   @ParameterizedTest(name = "[{index}] => Endpoint <{0}>")
-  @ValueSource(strings = {Endpoints.Frontend.INDEX, SLASH_HOME})
+  @ValueSource(strings = {Endpoints.Frontend.INDEX, HOME})
   @DisplayName("should return the home/index view for unauthenticated user")
   void given_index_uri_then_return_index_view(String endpoint) {
     // given

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.springframework.http.HttpStatus.TEMPORARY_REDIRECT;
-import static rocks.metaldetector.support.Endpoints.Frontend.SLASH_HOME;
+import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 
 @Component
 @AllArgsConstructor
@@ -38,7 +38,7 @@ public class RedirectionHandlerInterceptor implements HandlerInterceptor {
   }
 
   private void sendRedirect(HttpServletRequest request, HttpServletResponse response) {
-    String encodedRedirectURL = response.encodeRedirectURL(request.getContextPath() + SLASH_HOME);
+    String encodedRedirectURL = response.encodeRedirectURL(request.getContextPath() + HOME);
     response.setStatus(TEMPORARY_REDIRECT.value());
     response.setHeader("Location", encodedRedirectURL);
   }

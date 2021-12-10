@@ -45,7 +45,7 @@ import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
 import static rocks.metaldetector.support.Endpoints.Frontend.LOGOUT;
-import static rocks.metaldetector.support.Endpoints.Frontend.SLASH_HOME;
+import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
@@ -129,7 +129,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .and()
       .exceptionHandling()
         .accessDeniedHandler(new CustomAccessDeniedHandler(() -> SecurityContextHolder.getContext().getAuthentication()))
-        .defaultAuthenticationEntryPointFor(new LoginUrlAuthenticationEntryPoint(LOGIN), new AntPathRequestMatcher(SLASH_HOME))
+        .defaultAuthenticationEntryPointFor(new LoginUrlAuthenticationEntryPoint(LOGIN), new AntPathRequestMatcher(HOME))
         .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher(REST_ENDPOINTS));
   }
 

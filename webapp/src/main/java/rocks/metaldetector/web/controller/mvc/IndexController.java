@@ -18,7 +18,7 @@ public class IndexController {
 
   private final AuthenticationFacade authenticationFacade;
 
-  @GetMapping({Endpoints.Frontend.INDEX, Endpoints.Frontend.HOME, Endpoints.Frontend.SLASH_HOME})
+  @GetMapping({Endpoints.Frontend.INDEX, Endpoints.Frontend.HOME})
   public ModelAndView showIndex() {
     if (authenticationFacade.isAuthenticated()) {
       var username = authenticationFacade.getCurrentUser().getUsername();
