@@ -62,8 +62,7 @@
                     <li>
                         <a th:classappend="${#request.requestURI == '/releases' ? 'active':''}" href="#" th:href="@{/releases}">Releases</a>
                     </li>
-                    <!-- This item is only displayed in the mobile menu. -->
-                    <li sec:authorize="isAuthenticated()">
+                    <li class="mobile-only" sec:authorize="isAuthenticated()">
                         <input type="checkbox" id="show-profile-and-settings">
                         <label for="show-profile-and-settings">Profile and Settings</label>
                         <ul>
@@ -80,10 +79,12 @@
                             <li><a class="dropdown-item logout-link" href="#" th:href="@{/logout}">Logout</a></li>
                         </ul>
                     </li>
-                    <form class="justify-content-start mobile-only mt-4" sec:authorize="!isAuthenticated()">
-                        <a class="btn btn-white ms-2 me-2" href="#" th:href="@{/login}">Sign in</a>
-                        <a class="btn btn-white" href="#" th:href="@{/register}">Sign up</a>
-                    </form>
+                    <li class="mobile-only">
+                        <div class="d-flex justify-content-start mobile-only mt-4" sec:authorize="!isAuthenticated()">
+                            <a class="btn btn-sm btn-white ms-2 me-2" href="#" th:href="@{/login}">Sign in</a>
+                            <a class="btn btn-sm btn-white" href="#" th:href="@{/register}">Sign up</a>
+                        </div>
+                    </li>
                 </ul>
                 <label for="show-search" class="search-icon">
                     <span class="material-icons"></span>
