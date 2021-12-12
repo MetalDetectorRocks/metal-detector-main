@@ -13,11 +13,13 @@ import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.support.DefaultRequestLoggingInterceptor;
 import rocks.metaldetector.support.GetHeaderInterceptor;
 import rocks.metaldetector.support.infrastructure.CustomClientErrorHandler;
-import rocks.metaldetector.support.oauth.OAuth2AccessTokenAuthorizationCodeClient;
-import rocks.metaldetector.support.oauth.OAuth2AccessTokenClientCredentialsClient;
+import rocks.metaldetector.support.oauth.OAuth2AccessTokenClient;
 import rocks.metaldetector.support.oauth.OAuth2ClientInterceptor;
 
 import java.util.List;
+
+import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
+import static org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS;
 
 @Configuration
 @AllArgsConstructor
@@ -32,18 +34,20 @@ public class SpotifyModuleConfig {
   private final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory;
 
   @Bean
-  public RestOperations spotifyOAuthClientCredentialsRestTemplate(RestTemplateBuilder restTemplateBuilder, OAuth2AccessTokenClientCredentialsClient tokenClient) {
-    tokenClient.setRegistrationId(REGISTRATION_ID_APP);
+  public RestOperations spotifyOAuthClientCredentialsRestTemplate(RestTemplateBuilder restTemplateBuilder, OAuth2AccessTokenClient accessTokenClient) {
+    accessTokenClient.setRegistrationId(REGISTRATION_ID_APP);
+    accessTokenClient.setAuthorizationGrantType(CLIENT_CREDENTIALS);
     RestTemplate restTemplate = restTemplate(restTemplateBuilder);
-    restTemplate.getInterceptors().add(new OAuth2ClientInterceptor(tokenClient));
+    restTemplate.getInterceptors().add(new OAuth2ClientInterceptor(accessTokenClient));
     return restTemplate;
   }
 
   @Bean
-  public RestOperations spotifyOAuthAuthorizationCodeRestTemplate(RestTemplateBuilder restTemplateBuilder, OAuth2AccessTokenAuthorizationCodeClient tokenClient) {
-    tokenClient.setRegistrationId(REGISTRATION_ID_USER);
+  public RestOperations spotifyOAuthAuthorizationCodeRestTemplate(RestTemplateBuilder restTemplateBuilder, OAuth2AccessTokenClient accessTokenClient) {
+    accessTokenClient.setRegistrationId(REGISTRATION_ID_USER);
+    accessTokenClient.setAuthorizationGrantType(AUTHORIZATION_CODE);
     RestTemplate restTemplate = restTemplate(restTemplateBuilder);
-    restTemplate.getInterceptors().add(new OAuth2ClientInterceptor(tokenClient));
+    restTemplate.getInterceptors().add(new OAuth2ClientInterceptor(accessTokenClient));
     return restTemplate;
   }
 

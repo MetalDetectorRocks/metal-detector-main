@@ -104,6 +104,7 @@ public class RestExceptionsHandler {
 
   @ExceptionHandler({AccessDeniedException.class, OAuth2AuthorizationException.class})
   public ResponseEntity<ErrorResponse> handleAccessDeniedException(RuntimeException exception, WebRequest webRequest) {
+    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(exception), new HttpHeaders(), FORBIDDEN);
   }
 

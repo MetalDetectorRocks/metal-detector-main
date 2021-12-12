@@ -9,15 +9,15 @@ import java.io.IOException;
 
 public class OAuth2ClientInterceptor implements ClientHttpRequestInterceptor {
 
-  private final OAuth2AccessTokenClient tokenClient;
+  private final OAuth2AccessTokenClient accessTokenClient;
 
-  public OAuth2ClientInterceptor(OAuth2AccessTokenClient tokenClient) {
-    this.tokenClient = tokenClient;
+  public OAuth2ClientInterceptor(OAuth2AccessTokenClient accessTokenClient) {
+    this.accessTokenClient = accessTokenClient;
   }
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-    String accessTokenValue = tokenClient.getAccessToken();
+    String accessTokenValue = accessTokenClient.getAccessToken();
     request.getHeaders().setBearerAuth(accessTokenValue);
     return execution.execute(request, body);
   }

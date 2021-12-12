@@ -16,8 +16,7 @@ val dependencyGroupVersions = mapOf(
   "com.fasterxml.jackson.datatype" to libs.versions.jackson.get(),
   "com.fasterxml.jackson.module" to libs.versions.jackson.get(),
   "org.mockito" to libs.versions.mockito.get(),
-  "org.junit" to libs.versions.junit.get(),
-  "org.apache.logging.log4j" to "2.15.0"
+  "org.junit" to libs.versions.junit.get()
 )
 
 plugins {

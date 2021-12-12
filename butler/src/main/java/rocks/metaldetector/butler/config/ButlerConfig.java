@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 public class ButlerConfig {
 
   private String host;
-  private String accessToken;
   private String releasesUrl;
   private String unpaginatedReleasesUrl;
   private String importUrl;
