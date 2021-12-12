@@ -7,17 +7,17 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import rocks.metaldetector.support.oauth.OAuth2AccessTokenClient;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ButlerOAuth2ClientInterceptor implements ClientHttpRequestInterceptor {
 
-  protected static final SimpleGrantedAuthority ADMINISTRATOR_AUTHORITY = new SimpleGrantedAuthority("ROLE_ADMINISTRATOR");
-  protected static final SimpleGrantedAuthority USER_AUTHORITY = new SimpleGrantedAuthority("ROLE_USER");
+  protected static final String ADMINISTRATOR_AUTHORITY = "ROLE_ADMINISTRATOR";
+  protected static final String USER_AUTHORITY = "ROLE_USER";
 
   private final OAuth2AccessTokenClient userTokenClient;
   private final OAuth2AccessTokenClient adminTokenClient;
@@ -30,7 +30,9 @@ public class ButlerOAuth2ClientInterceptor implements ClientHttpRequestIntercept
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
     Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
-    Collection<? extends GrantedAuthority> grantedAuthorities = currentAuthentication.getAuthorities();
+    Set<String> grantedAuthorities = currentAuthentication.getAuthorities().stream()
+        .map(GrantedAuthority::getAuthority)
+        .collect(Collectors.toSet());
     String accessTokenValue;
     if (grantedAuthorities.contains(ADMINISTRATOR_AUTHORITY)) {
       accessTokenValue = adminTokenClient.getAccessToken();

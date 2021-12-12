@@ -11,9 +11,11 @@ import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.support.DefaultRequestLoggingInterceptor;
 import rocks.metaldetector.support.PostHeaderInterceptor;
 import rocks.metaldetector.support.infrastructure.CustomClientErrorHandler;
-import rocks.metaldetector.support.oauth.OAuth2AccessTokenClientCredentialsClient;
+import rocks.metaldetector.support.oauth.OAuth2AccessTokenClient;
 
 import java.util.List;
+
+import static org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS;
 
 @Configuration
 @AllArgsConstructor
@@ -25,14 +27,16 @@ public class ButlerModuleConfig {
 
   @Bean
   public RestTemplate releaseButlerRestTemplate(RestTemplateBuilder restTemplateBuilder,
-                                                OAuth2AccessTokenClientCredentialsClient userTokenClient,
-                                                OAuth2AccessTokenClientCredentialsClient adminTokenClient) {
-    userTokenClient.setRegistrationId("metal-release-butler-user");
-    adminTokenClient.setRegistrationId("metal-release-butler-admin");
+                                                OAuth2AccessTokenClient userAccessTokenClient,
+                                                OAuth2AccessTokenClient adminAccessTokenClient) {
+    userAccessTokenClient.setRegistrationId("metal-release-butler-user");
+    userAccessTokenClient.setAuthorizationGrantType(CLIENT_CREDENTIALS);
+    adminAccessTokenClient.setRegistrationId("metal-release-butler-admin");
+    adminAccessTokenClient.setAuthorizationGrantType(CLIENT_CREDENTIALS);
     return restTemplateBuilder
         .requestFactory(() -> clientHttpRequestFactory)
         .errorHandler(new CustomClientErrorHandler())
-        .interceptors(new ButlerOAuth2ClientInterceptor(userTokenClient, adminTokenClient), new DefaultRequestLoggingInterceptor(), new PostHeaderInterceptor())
+        .interceptors(new ButlerOAuth2ClientInterceptor(userAccessTokenClient, adminAccessTokenClient), new DefaultRequestLoggingInterceptor(), new PostHeaderInterceptor())
         .messageConverters(List.of(jackson2HttpMessageConverter, stringHttpMessageConverter))
         .build();
   }
