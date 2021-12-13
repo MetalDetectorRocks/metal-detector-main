@@ -13,6 +13,7 @@ jobs:
       - name: Update Gradle Wrapper
         uses: gradle-update/update-gradle-wrapper-action@v1
         with:
+          repo-token: ${{ secrets.ACTION_TOKEN }}
           labels: dependencies
           reviewers: hedgehog1833, DanielW1987
       - uses: gradle/wrapper-validation-action@v1
