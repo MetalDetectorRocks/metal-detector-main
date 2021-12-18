@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,7 +47,7 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
   void test(Function<ReleaseButlerRestClientMock, ButlerReleasesResponse> function) throws Exception {
     // given
     when(resourceLoader.getResource(anyString())).thenReturn(new ClassPathResource(""));
-    when(objectMapper.readValue(any(Reader.class), any(Class.class))).thenReturn(null);
+    when(objectMapper.readValue(any(Reader.class), eq(ButlerReleasesResponse.class))).thenReturn(null);
 
     // when
     function.apply(underTest);
@@ -62,13 +63,13 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
     // given
     ButlerReleasesResponse expectedResult = ButlerReleasesResponseFactory.createDefault();
     when(resourceLoader.getResource(anyString())).thenReturn(new ClassPathResource(""));
-    when(objectMapper.readValue(any(Reader.class), any(Class.class))).thenReturn(expectedResult);
+    when(objectMapper.readValue(any(Reader.class), eq(ButlerReleasesResponse.class))).thenReturn(expectedResult);
 
     // when
     ButlerReleasesResponse response = function.apply(underTest);
 
     // then
-    verify(objectMapper).readValue(any(Reader.class), any(Class.class));
+    verify(objectMapper).readValue(any(Reader.class), eq(ButlerReleasesResponse.class));
     assertThat(response).isEqualTo(expectedResult);
   }
 

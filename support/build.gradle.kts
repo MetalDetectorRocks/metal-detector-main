@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security:${libs.versions.springBoot.get()}")
-  implementation("org.apache.commons:commons-text:${libs.versions.apacheCommonsText.get()}")
+  implementation("org.apache.commons:commons-text:${libs.versions.commonsText.get()}")
   implementation("org.apache.httpcomponents:httpclient:${libs.versions.httpClient.get()}")
   implementation("org.springframework:spring-jdbc:${libs.versions.spring.get()}")
   implementation("org.projectlombok:lombok:${libs.versions.lombok.get()}")

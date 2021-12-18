@@ -10,6 +10,7 @@ import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -23,7 +24,8 @@ public class SynchronizeArtistsRequest {
   @JsonProperty("data")
   @ArtifactForFramework
   private void unpackNested(Map<String, Object> data) {
-    //noinspection unchecked: Cast is safe here
-    this.artistIds = (List<String>) data.get("artistIds");
+    this.artistIds = ((List<?>) data.get("artistIds")).stream()
+        .map(String::valueOf)
+        .collect(Collectors.toList());
   }
 }
