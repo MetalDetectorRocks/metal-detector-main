@@ -44,7 +44,7 @@ dependencies {
 
   implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity5:${libs.versions.thymeleafExtras.get()}")
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${libs.versions.thymeleafDialect.get()}")
-  implementation("org.apache.commons:commons-lang3:${libs.versions.apacheCommonsLang3.get()}")
+  implementation("org.apache.commons:commons-lang3:${libs.versions.commonsLang3.get()}")
   implementation("commons-codec:commons-codec:${libs.versions.commonsCodec.get()}")
   implementation("org.modelmapper:modelmapper:${libs.versions.modelmapper.get()}")
   implementation("org.ehcache:ehcache:${libs.versions.ehcache.get()}")
