@@ -45,6 +45,7 @@ services:
       ROCKS_METALDETECTOR_AUTHENTICATION_ENABLED: 'false'
     networks:
       - butler-network
+      - service-network
     volumes:
       - type: volume
         source: butler-image-volume
@@ -88,6 +89,7 @@ services:
       METAL_DETECTOR_ADMIN_CLIENT_SECRET: adminSecret
     networks:
       - auth-network
+      - service-network
     ports:
       - "9000:8080"
     restart: on-failure:3
@@ -111,3 +113,5 @@ networks:
     name: butler-network
   auth-network:
     name: auth-network
+  service-network:
+    name: service-network
