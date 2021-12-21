@@ -38,10 +38,10 @@ To start the application locally in default profile, the following preparatory a
 
 1. Run `docker-compose.yml` via command `docker-compose up -d --no-recreate`. This starts all peripheral docker containers that are needed locally to run the Metal Detector Application:
     - `detector-db`: The database for Metal Detector application (currently PostgreSQL)
-    - `butler-db`: The database for Metal Release Butler application
-    - `auth-db`: The database for Metal Detector auth application
     - `butler-app`: Metal Release Butler Spring Boot application
+    - `butler-db`: The database for Metal Release Butler application
     - `auth-app`: Metal Detector Auth Spring Boot application
+    - `auth-db`: The database for Metal Detector auth application
 
 2. Define the data source connection details in file `application.yml`:
     - `spring.datasource.username` (you have to use user `postgres`)
@@ -58,14 +58,20 @@ To start the application locally in default profile, the following preparatory a
    - `spring.security.oauth2.client.registration.google.client-id`
    - `spring.security.oauth2.client.registration.google.client-secret`
 
-6. Define remember-me secret (you can choose any value you want) in file `application.yml`:
-    - `security.remember-me-secret` for remember me functionality
+6. Deposit the Metal Detector client id and client secret (see environment variables of auth-app service in `docker-compose.yml`) in file `application.yml`:
+   - `spring.security.oauth2.client.registration.metal-release-butler-user.client-id`
+   - `spring.security.oauth2.client.registration.metal-release-butler-user.client-secret`
+   - `spring.security.oauth2.client.registration.metal-release-butler-admin.client-id`
+   - `spring.security.oauth2.client.registration.metal-release-butler-admin.client-secret`
 
-7. Define a dummy value for `telegram.bot-id` in file `application.yml`.
+7. Define remember-me secret (you can choose any value you want) in file `application.yml`:
+   - `security.remember-me-secret` for remember me functionality
 
-8. Compile the frontend initially. To do this you have to execute the following commands from the root directory of the project:
-    - `npm --prefix webapp/src/main/resources/static/ts/ install`
-    - `npm --prefix webapp/src/main/resources/static/ts/ run dev-build`
+8. Define a dummy value for `telegram.bot-id` in file `application.yml`.
+
+9. Compile the frontend initially. To do this you have to execute the following commands from the root directory of the project:
+   - `npm --prefix webapp/src/main/resources/static/ts/ install`
+   - `npm --prefix webapp/src/main/resources/static/ts/ run dev-build`
 
 It is also possible to define all mentioned connection details and secrets as environment variables. In this case no variables in `application.yml` need to be changed. The names of the environment variables are already in the `application.yml` file. You can  define the environment variables for example within a Run Configuration in IntelliJ.
 
