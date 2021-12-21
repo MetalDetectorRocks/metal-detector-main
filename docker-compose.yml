@@ -16,10 +16,15 @@ services:
         target: /var/lib/postgresql/data
     ports:
       - "5432:5432"
-    restart: on-failure:3
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 
   butler-db:
-    container_name: butler-db
+    container_name: detector-butler-db
     image: postgres:13.1-alpine
     environment:
       POSTGRES_PASSWORD: secret
@@ -33,7 +38,12 @@ services:
         target: /var/lib/postgresql/data
     ports:
       - "5433:5432"
-    restart: on-failure:3
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 
   butler-app:
     container_name: butler-app
@@ -42,7 +52,6 @@ services:
       DATASOURCE_URL: jdbc:postgresql://butler-db:5432/metal-release-butler
       DATASOURCE_USERNAME: postgres
       DATASOURCE_PASSWORD: secret
-      ROCKS_METALDETECTOR_AUTHENTICATION_ENABLED: 'false'
     networks:
       - butler-network
       - service-network
@@ -55,10 +64,15 @@ services:
         target: /app/logs
     ports:
       - "8095:8080"
-    restart: on-failure:3
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 
   auth-db:
-    container_name: auth-db
+    container_name: detector-auth-db
     image: postgres:13.1-alpine
     environment:
       POSTGRES_PASSWORD: secret
@@ -72,10 +86,15 @@ services:
         target: /var/lib/postgresql/data
     ports:
       - "5434:5432"
-    restart: on-failure:3
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 
   auth-app:
-    container_name: auth-app
+    container_name: detector-auth-app
     image: metaldetector/metal-detector-auth
     environment:
       DATASOURCE_URL: jdbc:postgresql://auth-db:5432/metal-detector-auth
@@ -92,19 +111,24 @@ services:
       - service-network
     ports:
       - "9000:8080"
-    restart: on-failure:3
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 
 volumes:
   detector-db-volume:
     name: detector-db
   butler-db-volume:
-    name: butler-db
+    name: detector-butler-db
   butler-image-volume:
-    name: butler-images
+    name: detector-butler-images
   butler-logs-volume:
-    name: butler-logs
+    name: detector-butler-logs
   auth-db-volume:
-    name: auth-db
+    name: detector-auth-db
 
 networks:
   detector-network:
