@@ -73,6 +73,13 @@ To start the application locally in default profile, the following preparatory a
    - `npm --prefix webapp/src/main/resources/static/ts/ install`
    - `npm --prefix webapp/src/main/resources/static/ts/ run dev-build`
 
+10. Add the following snippet to `/etc/hosts`:
+
+```
+# Metal Release Butler
+127.0.0.1 auth-app
+```
+
 It is also possible to define all mentioned connection details and secrets as environment variables. In this case no variables in `application.yml` need to be changed. The names of the environment variables are already in the `application.yml` file. You can  define the environment variables for example within a Run Configuration in IntelliJ.
 
 If you start the application with the default Spring profile, all emails sent by the application will be displayed on the console.  No emails are sent via an SMTP server. If you want the application to send emails via an SMTP server, you must start the application with the Spring profile 'preview'.

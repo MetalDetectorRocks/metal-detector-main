@@ -84,7 +84,7 @@ spring:
             token-uri: https://accounts.spotify.com/api/token
             authorization-uri: https://accounts.spotify.com/authorize
           metal-detector-auth:
-            issuer-uri: http://localhost:9000
+            issuer-uri: http://auth-app:9000
 
 security:
   token-issuer: ${JWT_ISSUER}
