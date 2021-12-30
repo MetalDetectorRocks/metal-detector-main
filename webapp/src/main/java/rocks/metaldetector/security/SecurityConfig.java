@@ -115,6 +115,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .and()
         .cors()
       .and()
+        // These headers are set in the proxy, so disabled here
+        .headers()
+          .frameOptions().disable()
+          .xssProtection().disable()
+          .contentTypeOptions().disable()
+          .httpStrictTransportSecurity().disable()
+      .and()
       .exceptionHandling()
         .accessDeniedHandler(new CustomAccessDeniedHandler(() -> SecurityContextHolder.getContext().getAuthentication()))
         .defaultAuthenticationEntryPointFor(new LoginUrlAuthenticationEntryPoint(Endpoints.Guest.LOGIN), new AntPathRequestMatcher(Endpoints.Guest.SLASH_INDEX))
