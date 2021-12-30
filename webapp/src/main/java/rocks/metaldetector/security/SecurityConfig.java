@@ -115,6 +115,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .and()
         .cors()
       .and()
+        // These headers are set in the proxy, so disabled here
         .headers()
           .frameOptions().disable()
           .xssProtection().disable()
