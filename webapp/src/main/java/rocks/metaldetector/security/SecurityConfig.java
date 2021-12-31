@@ -115,8 +115,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .and()
         .cors()
       .and()
-        // These headers are set in the proxy, so disabled here
         .headers()
+          // Permission policy is the new feature policy but not yet supported everywhere, so we set both
+          .permissionsPolicy().policy("interest-cohort=()").and()
+          .featurePolicy("interest-cohort=()").and()
+          // These headers are set in the proxy, so disabled here
           .frameOptions().disable()
           .xssProtection().disable()
           .contentTypeOptions().disable()
