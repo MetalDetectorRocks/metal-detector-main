@@ -69,13 +69,13 @@ spring:
             client-id: ${BUTLER_USER_CLIENT_ID}
             client-secret: ${BUTLER_USER_CLIENT_SECRET}
             authorization-grant-type: client_credentials
-            scope: user
+            scope: releases-read
             provider: metal-detector-auth
           metal-release-butler-admin:
             client-id: ${BUTLER_ADMIN_CLIENT_ID}
             client-secret: ${BUTLER_ADMIN_CLIENT_SECRET}
             authorization-grant-type: client_credentials
-            scope: admin
+            scope: releases-read, releases-write, releases-read-all, import
             provider: metal-detector-auth
         provider:
           spotify-app:
