@@ -58,12 +58,34 @@ class ButlerOAuth2ClientInterceptorTest implements WithAssertions {
   @ParameterizedTest
   @DisplayName("userClient is called for users")
   @MethodSource(value = "authorityProvider")
-  void test_user_client_called(GrantedAuthority authority) throws IOException {
+  void test_user_client_called_for_user(GrantedAuthority authority) throws IOException {
     // given
     var securityContextMock = mock(SecurityContext.class);
     var authenticationMock = mock(Authentication.class);
     doReturn(authenticationMock).when(securityContextMock).getAuthentication();
     doReturn(List.of(authority)).when(authenticationMock).getAuthorities();
+
+    try (MockedStatic<SecurityContextHolder> securityContextHolderMock = Mockito.mockStatic(SecurityContextHolder.class)) {
+      // given
+      securityContextHolderMock.when(SecurityContextHolder::getContext).thenReturn(securityContextMock);
+
+      // when
+      underTest.intercept(new MockClientHttpRequest(), new byte[0], mock(ClientHttpRequestExecution.class));
+    }
+
+    // then
+    verify(userClient).getAccessToken();
+  }
+
+  @Test
+  @DisplayName("userClient is called for anonymous users")
+  void test_user_client_called_for_anon() throws IOException {
+    // given
+    var securityContextMock = mock(SecurityContext.class);
+    var authenticationMock = mock(Authentication.class);
+    var authorities = List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
+    doReturn(authenticationMock).when(securityContextMock).getAuthentication();
+    doReturn(authorities).when(authenticationMock).getAuthorities();
 
     try (MockedStatic<SecurityContextHolder> securityContextHolderMock = Mockito.mockStatic(SecurityContextHolder.class)) {
       // given

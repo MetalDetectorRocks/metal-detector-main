@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.stereotype.Component;
@@ -24,7 +23,7 @@ public class OAuth2AccessTokenClient {
 
   static final long TOKEN_EXPIRATION_GRACE_PERIOD = 15;
 
-  private final OAuth2AuthorizedClientManager authorizedClientManager;
+  private final OAuth2ClientManagerProvider managerProvider;
   private final OAuth2AuthorizedClientService authorizedClientService;
   private final OAuth2AuthorizeRequestProvider authorizeRequestProvider;
   private final OAuth2AuthenticationProvider authenticationProvider;
@@ -40,7 +39,7 @@ public class OAuth2AccessTokenClient {
 
     if (isAuthorizationRequired(authorizedClient)) {
       OAuth2AuthorizeRequest authorizedRequest = authorizeRequestProvider.provideForGrant(authorizationGrantType, authorizedClient, registrationId);
-      authorizedClient = authorizedClientManager.authorize(authorizedRequest);
+      authorizedClient = managerProvider.provide().authorize(authorizedRequest);
       validateAuthorizedClient(authorizedClient, currentAuthentication);
       authorizedClientService.saveAuthorizedClient(authorizedClient, currentAuthentication);
     }

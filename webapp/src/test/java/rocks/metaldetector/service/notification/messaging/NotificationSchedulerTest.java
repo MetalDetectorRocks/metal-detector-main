@@ -7,10 +7,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
@@ -33,6 +37,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.EMAIL;
 import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.TELEGRAM;
+import static rocks.metaldetector.service.notification.messaging.NotificationScheduler.PRINCIPAL;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationSchedulerTest implements WithAssertions {
@@ -216,6 +221,29 @@ class NotificationSchedulerTest implements WithAssertions {
       // then
       verifyNoInteractions(notificationReleaseCollector);
     }
+
+    @Test
+    @DisplayName("current authentication is set to anonymous and then to null again")
+    void test_current_authentication_set_to_anonymous() {
+      // given
+      var securityContextMock = mock(SecurityContext.class);
+
+      try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
+        //given
+        mock.when(SecurityContextHolder::getContext).thenReturn(securityContextMock);
+
+        //when
+        underTest.notifyOnFrequency();
+
+        //then
+        mock.verify(SecurityContextHolder::getContext, times(2));
+      }
+
+      // then
+      InOrder order = Mockito.inOrder(securityContextMock);
+      order.verify(securityContextMock).setAuthentication(PRINCIPAL);
+      order.verify(securityContextMock).setAuthentication(null);
+    }
   }
 
   @Nested
@@ -334,6 +362,29 @@ class NotificationSchedulerTest implements WithAssertions {
       // then
       verifyNoInteractions(notificationReleaseCollector);
     }
+
+    @Test
+    @DisplayName("current authentication is set to anonymous and then to null again")
+    void test_current_authentication_set_to_anonymous() {
+      // given
+      var securityContextMock = mock(SecurityContext.class);
+
+      try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
+        //given
+        mock.when(SecurityContextHolder::getContext).thenReturn(securityContextMock);
+
+        //when
+        underTest.notifyOnReleaseDate();
+
+        //then
+        mock.verify(SecurityContextHolder::getContext, times(2));
+      }
+
+      // then
+      InOrder order = Mockito.inOrder(securityContextMock);
+      order.verify(securityContextMock).setAuthentication(PRINCIPAL);
+      order.verify(securityContextMock).setAuthentication(null);
+    }
   }
 
   @Nested
@@ -451,6 +502,29 @@ class NotificationSchedulerTest implements WithAssertions {
 
       // then
       verifyNoInteractions(notificationReleaseCollector);
+    }
+
+    @Test
+    @DisplayName("current authentication is set to anonymous and then to null again")
+    void test_current_authentication_set_to_anonymous() {
+      // given
+      var securityContextMock = mock(SecurityContext.class);
+
+      try (MockedStatic<SecurityContextHolder> mock = mockStatic(SecurityContextHolder.class)) {
+        //given
+        mock.when(SecurityContextHolder::getContext).thenReturn(securityContextMock);
+
+        //when
+        underTest.notifyOnAnnouncementDate();
+
+        //then
+        mock.verify(SecurityContextHolder::getContext, times(2));
+      }
+
+      // then
+      InOrder order = Mockito.inOrder(securityContextMock);
+      order.verify(securityContextMock).setAuthentication(PRINCIPAL);
+      order.verify(securityContextMock).setAuthentication(null);
     }
   }
 }
