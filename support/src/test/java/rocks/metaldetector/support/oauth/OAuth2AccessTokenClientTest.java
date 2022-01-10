@@ -49,7 +49,7 @@ class OAuth2AccessTokenClientTest implements WithAssertions {
   private static final Instant EXPIRED_EXPIRATION_DATE = LocalDateTime.now().minusDays(1).toInstant(ZoneOffset.ofHoursMinutes(1, 0));
 
   @Mock
-  private OAuth2AuthorizedClientManager authorizedClientManager;
+  private OAuth2ClientManagerProvider managerProvider;
 
   @Mock
   private OAuth2AuthorizedClientService authorizedClientService;
@@ -64,7 +64,7 @@ class OAuth2AccessTokenClientTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    underTest = new OAuth2AccessTokenClient(authorizedClientManager, authorizedClientService, authorizeRequestProvider, authenticationProvider);
+    underTest = new OAuth2AccessTokenClient(managerProvider, authorizedClientService, authorizeRequestProvider, authenticationProvider);
     underTest.setRegistrationId(REGISTRATION_ID);
     underTest.setAuthorizationGrantType(GRANT_TYPE);
 
@@ -73,7 +73,7 @@ class OAuth2AccessTokenClientTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(authorizedClientManager, authorizedClientService, authorizeRequestProvider, authenticationProvider);
+    reset(managerProvider, authorizedClientService, authorizeRequestProvider, authenticationProvider);
   }
 
   @Nested
@@ -119,7 +119,7 @@ class OAuth2AccessTokenClientTest implements WithAssertions {
       verify(authorizedClientService).loadAuthorizedClient(any(), any());
       verifyNoMoreInteractions(authorizedClientService);
       verifyNoInteractions(authorizeRequestProvider);
-      verifyNoInteractions(authorizedClientManager);
+      verifyNoInteractions(managerProvider);
     }
 
     @Test
@@ -138,11 +138,20 @@ class OAuth2AccessTokenClientTest implements WithAssertions {
   @DisplayName("(Re-)authorization required tests")
   class AuthNotPresentTests {
 
+    @Mock
+    private OAuth2AuthorizedClientManager authorizedClientManager;
+
     @BeforeEach
     void setup() {
+      doReturn(authorizedClientManager).when(managerProvider).provide();
       doReturn(AUTHORIZED_CLIENT).when(authorizedClientManager).authorize(any());
       doReturn(ACCESS_TOKEN).when(AUTHORIZED_CLIENT).getAccessToken();
       doReturn(ACCESS_TOKEN_VALUE).when(ACCESS_TOKEN).getTokenValue();
+    }
+
+    @AfterEach
+    void tearDown() {
+      reset(authorizedClientManager);
     }
 
     @Test
@@ -156,6 +165,19 @@ class OAuth2AccessTokenClientTest implements WithAssertions {
 
       // then
       verify(authorizeRequestProvider).provideForGrant(GRANT_TYPE, AUTHORIZED_CLIENT, REGISTRATION_ID);
+    }
+
+    @Test
+    @DisplayName("managerProvider is called to fetch manager")
+    void test_manager_provider_called() {
+      // given
+      doReturn(AUTHORIZED_CLIENT).when(authorizedClientService).loadAuthorizedClient(any(), any());
+
+      // when
+      underTest.getAccessToken();
+
+      // then
+      verify(managerProvider).provide();
     }
 
     @Test

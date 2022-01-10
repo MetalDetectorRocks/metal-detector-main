@@ -17,6 +17,9 @@ import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.user.UserEntityFactory;
+import rocks.metaldetector.support.Page;
+import rocks.metaldetector.support.PageRequest;
+import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.support.TimeRange;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
@@ -35,6 +38,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static rocks.metaldetector.service.notification.messaging.NotificationReleaseCollector.PAGE_SIZE;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationReleaseCollectorTest implements WithAssertions {
@@ -80,14 +84,16 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       var followedArtist = ArtistDtoFactory.createDefault();
       var timeRangeUpcoming = new TimeRange(now, now.plusWeeks(frequency));
       var timeRangeRecent = new TimeRange(now.minusWeeks(frequency), now.minusDays(1));
+      var expectedPageRequest = new PageRequest(1, PAGE_SIZE, null);
       doReturn(List.of(followedArtist)).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(releaseService).findAllReleases(anyList(), any());
+      doReturn(new Page<>(List.of(ReleaseDtoFactory.createDefault()), new Pagination()))
+          .when(releaseService).findReleases(anyList(), any(), any(), any());
 
       // when
       underTest.fetchReleasesForUserAndFrequency(USER, frequency, false);
 
       // then
-      verify(releaseService, times(2)).findAllReleases(eq(List.of(followedArtist.getArtistName())), argumentCaptor.capture());
+      verify(releaseService, times(2)).findReleases(eq(List.of(followedArtist.getArtistName())), argumentCaptor.capture(), eq(null), eq(expectedPageRequest));
       var timeRanges = argumentCaptor.getAllValues();
       assertThat(timeRanges.get(0).getDateFrom()).isCloseTo(timeRangeUpcoming.getDateFrom(), offset);
       assertThat(timeRanges.get(0).getDateTo()).isCloseTo(timeRangeUpcoming.getDateTo(), offset);
@@ -96,7 +102,25 @@ class NotificationReleaseCollectorTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("releaseService is not called if not followed artists exist")
+    @DisplayName("releaseService is called again for user's current and recent releases")
+    void test_release_service_called_again_for_current_releases() {
+      // given
+      var expectedPageRequest1 = new PageRequest(1, PAGE_SIZE, null);
+      var expectedPageRequest2 = new PageRequest(2, PAGE_SIZE, null);
+      doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
+      doReturn(new Page<>(List.of(ReleaseDtoFactory.createDefault()), new Pagination(2, 1, 1)))
+          .when(releaseService).findReleases(anyList(), any(), any(), any());
+
+      // when
+      underTest.fetchReleasesForUserAndFrequency(USER, 6, false);
+
+      // then
+      verify(releaseService, times(2)).findReleases(any(), any(), any(), eq(expectedPageRequest1));
+      verify(releaseService, times(2)).findReleases(any(), any(), any(), eq(expectedPageRequest2));
+    }
+
+    @Test
+    @DisplayName("releaseService is not called if no followed artists exist")
     void test_release_service_not_called() {
       // given
       doReturn(Collections.emptyList()).when(followArtistService).getFollowedArtistsOfUser(any());
@@ -115,32 +139,13 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       var releases = List.of(ReleaseDtoFactory.createDefault());
       var expectedReleaseContainer = new NotificationReleaseCollector.ReleaseContainer(releases, releases);
       doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
+      doReturn(new Page<>(releases, new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
       // when
       var result = underTest.fetchReleasesForUserAndFrequency(USER, 666, false);
 
       // then
       assertThat(result).isEqualTo(expectedReleaseContainer);
-    }
-
-    @Test
-    @DisplayName("only releases with state 'OK' are returned")
-    void test_release_state_ok() {
-      // given
-      var defaultRelease = ReleaseDtoFactory.createDefault();
-      var duplicateRelease = ReleaseDtoFactory.createDefault();
-      duplicateRelease.setState("DUPLICATE");
-      var releases = List.of(defaultRelease, duplicateRelease);
-      doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
-
-      // when
-      var result = underTest.fetchReleasesForUserAndFrequency(USER, 666, false);
-
-      // then
-      assertThat(result.getRecentReleases()).containsExactly(defaultRelease);
-      assertThat(result.getUpcomingReleases()).containsExactly(defaultRelease);
     }
 
     @Test
@@ -152,7 +157,7 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       reissue.setReissue(true);
       var releases = List.of(defaultRelease, reissue);
       doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
+      doReturn(new Page<>(releases, new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
       // when
       var result = underTest.fetchReleasesForUserAndFrequency(USER, 666, true);
@@ -171,7 +176,7 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       reissue.setReissue(true);
       var releases = List.of(defaultRelease, reissue);
       doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
+      doReturn(new Page<>(releases, new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
       // when
       var result = underTest.fetchReleasesForUserAndFrequency(USER, 666, false);
@@ -204,17 +209,35 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       TemporalUnitLessThanOffset offset = new TemporalUnitLessThanOffset(1, DAYS);
       var now = LocalDate.now();
       var followedArtist = ArtistDtoFactory.createDefault();
+      var expectedPageRequest = new PageRequest(1, PAGE_SIZE, null);
       doReturn(List.of(followedArtist)).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(List.of(ReleaseDtoFactory.createDefault())).when(releaseService).findAllReleases(anyList(), any());
+      doReturn(new Page<>(List.of(ReleaseDtoFactory.createDefault()), new Pagination())).when(releaseService).findReleases(anyList(), any(), any(), any());
 
       // when
       underTest.fetchTodaysReleaseForUser(USER, false);
 
       // then
-      verify(releaseService).findAllReleases(eq(List.of(followedArtist.getArtistName())), argumentCaptor.capture());
+      verify(releaseService).findReleases(eq(List.of(followedArtist.getArtistName())), argumentCaptor.capture(), eq(null), eq(expectedPageRequest));
       var timeRange = argumentCaptor.getValue();
       assertThat(timeRange.getDateFrom()).isCloseTo(now, offset);
       assertThat(timeRange.getDateTo()).isCloseTo(now, offset);
+    }
+
+    @Test
+    @DisplayName("releaseService is called again for user's todays releases")
+    void test_release_service_called_again() {
+      // given
+      var expectedPageRequest1 = new PageRequest(1, PAGE_SIZE, null);
+      var expectedPageRequest2 = new PageRequest(2, PAGE_SIZE, null);
+      doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
+      doReturn(new Page<>(List.of(ReleaseDtoFactory.createDefault()), new Pagination(2, 1, 1))).when(releaseService).findReleases(anyList(), any(), any(), any());
+
+      // when
+      underTest.fetchTodaysReleaseForUser(USER, false);
+
+      // then
+      verify(releaseService).findReleases(any(), any(), any(), eq(expectedPageRequest1));
+      verify(releaseService).findReleases(any(), any(), any(), eq(expectedPageRequest2));
     }
 
     @Test
@@ -236,31 +259,13 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       // given
       var releases = List.of(ReleaseDtoFactory.createDefault());
       doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
+      doReturn(new Page<>(releases, new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
       // when
       var result = underTest.fetchTodaysReleaseForUser(USER, false);
 
       // then
       assertThat(result).isEqualTo(releases);
-    }
-
-    @Test
-    @DisplayName("only releases with state 'OK' are returned")
-    void test_release_state_ok() {
-      // given
-      var defaultRelease = ReleaseDtoFactory.createDefault();
-      var duplicateRelease = ReleaseDtoFactory.createDefault();
-      duplicateRelease.setState("DUPLICATE");
-      var releases = List.of(defaultRelease, duplicateRelease);
-      doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
-
-      // when
-      var result = underTest.fetchTodaysReleaseForUser(USER, false);
-
-      // then
-      assertThat(result).containsExactly(defaultRelease);
     }
 
     @Test
@@ -272,7 +277,7 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       reissue.setReissue(true);
       var releases = List.of(defaultRelease, reissue);
       doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
+      doReturn(new Page<>(releases, new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
       // when
       var result = underTest.fetchTodaysReleaseForUser(USER, true);
@@ -290,7 +295,7 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       reissue.setReissue(true);
       var releases = List.of(defaultRelease, reissue);
       doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
+      doReturn(new Page<>(releases, new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
       // when
       var result = underTest.fetchTodaysReleaseForUser(USER, false);
@@ -322,17 +327,35 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       TemporalUnitLessThanOffset offset = new TemporalUnitLessThanOffset(1, DAYS);
       var now = LocalDate.now();
       var followedArtist = ArtistDtoFactory.createDefault();
+      var expectedPageRequest = new PageRequest(1, PAGE_SIZE, null);
       doReturn(List.of(followedArtist)).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(List.of(ReleaseDtoFactory.withAnnouncementDate(now))).when(releaseService).findAllReleases(anyList(), any());
+      doReturn(new Page<>(List.of(ReleaseDtoFactory.withAnnouncementDate(now)), new Pagination())).when(releaseService).findReleases(anyList(), any(), any(), any());
 
       // when
       underTest.fetchTodaysAnnouncementsForUser(USER, false);
 
       // then
-      verify(releaseService).findAllReleases(eq(List.of(followedArtist.getArtistName())), argumentCaptor.capture());
+      verify(releaseService).findReleases(eq(List.of(followedArtist.getArtistName())), argumentCaptor.capture(), eq(null), eq(expectedPageRequest));
       var timeRange = argumentCaptor.getValue();
       assertThat(timeRange.getDateFrom()).isCloseTo(now, offset);
       assertThat(timeRange.getDateTo()).isNull();
+    }
+
+    @Test
+    @DisplayName("releaseService is called again for user's todays releases")
+    void test_release_service_called_again() {
+      // given
+      var expectedPageRequest1 = new PageRequest(1, PAGE_SIZE, null);
+      var expectedPageRequest2 = new PageRequest(1, PAGE_SIZE, null);
+      doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
+      doReturn(new Page<>(List.of(ReleaseDtoFactory.withAnnouncementDate(LocalDate.now())), new Pagination(2, 1, 1))).when(releaseService).findReleases(anyList(), any(), any(), any());
+
+      // when
+      underTest.fetchTodaysAnnouncementsForUser(USER, false);
+
+      // then
+      verify(releaseService).findReleases(any(), any(), any(), eq(expectedPageRequest1));
+      verify(releaseService).findReleases(any(), any(), any(), eq(expectedPageRequest2));
     }
 
     @Test
@@ -356,30 +379,7 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       var todaysAnnouncement = ReleaseDtoFactory.withAnnouncementDate(now);
       var releases = List.of(todaysAnnouncement, ReleaseDtoFactory.withAnnouncementDate(now.minusDays(1)));
       doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
-
-      // when
-      List<ReleaseDto> result;
-      try (MockedStatic<LocalDate> mock = mockStatic(LocalDate.class)) {
-        mock.when(LocalDate::now).thenReturn(now);
-        result = underTest.fetchTodaysAnnouncementsForUser(USER, false);
-      }
-
-      // then
-      assertThat(result).containsExactly(todaysAnnouncement);
-    }
-
-    @Test
-    @DisplayName("today's announcements with state 'OK' are returned")
-    void test_release_state_ok() {
-      // given
-      var now = LocalDate.now();
-      var todaysAnnouncement = ReleaseDtoFactory.withAnnouncementDate(now);
-      var duplicateAnnouncement = ReleaseDtoFactory.withAnnouncementDate(now);
-      duplicateAnnouncement.setState("DUPLICATE");
-      var releases = List.of(todaysAnnouncement, ReleaseDtoFactory.withAnnouncementDate(now.minusDays(1)), duplicateAnnouncement);
-      doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
+      doReturn(new Page<>(releases, new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
       // when
       List<ReleaseDto> result;
@@ -402,7 +402,7 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       reissue.setReissue(true);
       var releases = List.of(todaysAnnouncement, ReleaseDtoFactory.withAnnouncementDate(now.minusDays(1)), reissue);
       doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
+      doReturn(new Page<>(releases, new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
       // when
       List<ReleaseDto> result;
@@ -425,7 +425,7 @@ class NotificationReleaseCollectorTest implements WithAssertions {
       reissue.setReissue(true);
       var releases = List.of(todaysAnnouncement, ReleaseDtoFactory.withAnnouncementDate(now.minusDays(1)), reissue);
       doReturn(List.of(ArtistDtoFactory.createDefault())).when(followArtistService).getFollowedArtistsOfUser(any());
-      doReturn(releases).when(releaseService).findAllReleases(anyList(), any());
+      doReturn(new Page<>(releases, new Pagination())).when(releaseService).findReleases(any(), any(), any(), any());
 
       // when
       List<ReleaseDto> result;

@@ -18,6 +18,7 @@ public class ButlerOAuth2ClientInterceptor implements ClientHttpRequestIntercept
 
   protected static final String ADMINISTRATOR_AUTHORITY = "ROLE_ADMINISTRATOR";
   protected static final String USER_AUTHORITY = "ROLE_USER";
+  protected static final String ANONYMOUS_AUTHORITY = "ROLE_ANONYMOUS";
 
   private final OAuth2AccessTokenClient userTokenClient;
   private final OAuth2AccessTokenClient adminTokenClient;
@@ -37,7 +38,7 @@ public class ButlerOAuth2ClientInterceptor implements ClientHttpRequestIntercept
     if (grantedAuthorities.contains(ADMINISTRATOR_AUTHORITY)) {
       accessTokenValue = adminTokenClient.getAccessToken();
     }
-    else if (grantedAuthorities.contains(USER_AUTHORITY)) {
+    else if (grantedAuthorities.contains(USER_AUTHORITY) || grantedAuthorities.contains(ANONYMOUS_AUTHORITY)) {
       accessTokenValue = userTokenClient.getAccessToken();
     } else {
       throw new AccessDeniedException("No authorities present for principal '" + currentAuthentication.getName() + "'");

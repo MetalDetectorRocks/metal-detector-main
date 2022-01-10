@@ -9,6 +9,8 @@ import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.support.Page;
+import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.TimeRange;
 
 import java.time.LocalDate;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class NotificationReleaseCollector {
 
-  private static final String RELEASE_STATE_OK = "Ok";
+  static final int PAGE_SIZE = 50;
 
   private final ReleaseService releaseService;
   private final FollowArtistService followArtistService;
@@ -34,12 +36,10 @@ public class NotificationReleaseCollector {
 
     if (!followedArtistNames.isEmpty()) {
       var now = LocalDate.now();
-      upcomingReleases = releaseService.findAllReleases(followedArtistNames, new TimeRange(now, now.plusWeeks(frequency))).stream()
-          .filter(release -> release.getState().equals(RELEASE_STATE_OK))
+      upcomingReleases = findReleases(followedArtistNames, new TimeRange(now, now.plusWeeks(frequency))).stream()
           .filter(release -> !release.isReissue() || notifyReissues)
           .collect(Collectors.toList());
-      recentReleases = releaseService.findAllReleases(followedArtistNames, new TimeRange(now.minusWeeks(frequency), now.minusDays(1))).stream()
-          .filter(release -> release.getState().equals(RELEASE_STATE_OK))
+      recentReleases = findReleases(followedArtistNames, new TimeRange(now.minusWeeks(frequency), now.minusDays(1))).stream()
           .filter(release -> !release.isReissue() || notifyReissues)
           .collect(Collectors.toList());
     }
@@ -51,8 +51,7 @@ public class NotificationReleaseCollector {
 
     if (!followedArtistNames.isEmpty()) {
       var now = LocalDate.now();
-      return releaseService.findAllReleases(followedArtistNames, new TimeRange(now, now)).stream()
-          .filter(release -> release.getState().equals(RELEASE_STATE_OK))
+      return findReleases(followedArtistNames, new TimeRange(now, now)).stream()
           .filter(release -> !release.isReissue() || notifyReissues)
           .collect(Collectors.toList());
     }
@@ -64,9 +63,8 @@ public class NotificationReleaseCollector {
 
     if (!followedArtistNames.isEmpty()) {
       var now = LocalDate.now();
-      return releaseService.findAllReleases(followedArtistNames, new TimeRange(now, null)).stream()
+      return findReleases(followedArtistNames, new TimeRange(now, null)).stream()
           .filter(release -> release.getAnnouncementDate().equals(now))
-          .filter(release -> release.getState().equals(RELEASE_STATE_OK))
           .filter(release -> !release.isReissue() || notifyReissues)
           .collect(Collectors.toList());
     }
@@ -77,6 +75,20 @@ public class NotificationReleaseCollector {
     return followArtistService.getFollowedArtistsOfUser(user).stream()
         .map(ArtistDto::getArtistName)
         .collect(Collectors.toList());
+  }
+
+  private List<ReleaseDto> findReleases(List<String> artistNames, TimeRange timeRange) {
+    List<ReleaseDto> releases = new ArrayList<>();
+    int currentPage = 1;
+    Page<ReleaseDto> releasePage;
+
+    do {
+      PageRequest pageRequest = new PageRequest(currentPage, PAGE_SIZE, null);
+      releasePage = releaseService.findReleases(artistNames, timeRange, null, pageRequest);
+      releases.addAll(releasePage.getItems());
+    } while (currentPage++ < releasePage.getPagination().getTotalPages());
+
+    return releases;
   }
 
   @AllArgsConstructor
