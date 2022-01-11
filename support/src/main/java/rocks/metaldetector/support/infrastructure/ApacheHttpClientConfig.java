@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
@@ -26,10 +25,10 @@ import java.time.Duration;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @Configuration
-@EnableScheduling
 @Slf4j
 public class ApacheHttpClientConfig {
 
+  public static final String SCHEDULED_TASK_NAME_PREFIX = "threadPoolTaskScheduler";
   private static final int MAX_ROUTE_CONNECTIONS     = 40;
   private static final int MAX_TOTAL_CONNECTIONS     = 40;
   private static final int MAX_LOCALHOST_CONNECTIONS = 80;
@@ -94,7 +93,7 @@ public class ApacheHttpClientConfig {
   @Bean
   public TaskScheduler taskScheduler() {
     ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-    scheduler.setThreadNamePrefix("idleMonitor");
+    scheduler.setThreadNamePrefix(SCHEDULED_TASK_NAME_PREFIX);
     scheduler.setPoolSize(5);
     return scheduler;
   }
