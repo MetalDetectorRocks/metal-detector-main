@@ -44,7 +44,7 @@ public class NotificationScheduler {
   }
 
   @Scheduled(cron = "0 0 7 * * *")
-  @Transactional(readOnly = true)
+  @Transactional
   public void notifyOnReleaseDate() {
     setSecurityContext(PRINCIPAL);
     try {
@@ -58,7 +58,7 @@ public class NotificationScheduler {
   }
 
   @Scheduled(cron = "0 0 7 * * *")
-  @Transactional(readOnly = true)
+  @Transactional
   public void notifyOnAnnouncementDate() {
     setSecurityContext(PRINCIPAL);
     try {
