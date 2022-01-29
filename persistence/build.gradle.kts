@@ -16,6 +16,7 @@ dependencies {
     exclude(group = "junit", module = "junit")
   }
   testImplementation("com.h2database:h2:${libs.versions.h2.get()}")
+  testImplementation("org.mockito:mockito-inline:${libs.versions.mockito.get()}")
 }
 
 description = "persistence"

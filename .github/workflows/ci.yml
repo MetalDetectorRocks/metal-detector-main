@@ -16,14 +16,14 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2.3.1
+      - name: Set up JDK
+        uses: actions/setup-java@v2.5.0
         with:
           distribution: 'zulu'
           java-version: 17
           cache: 'gradle'
-      - name: Execute all tests
-        run: ./gradlew clean check --no-daemon --info --stacktrace
+      - name: Execute clean build
+        run: ./gradlew clean build --no-daemon --info --stacktrace
       - name: Publish Test Report
         if: ${{ always() }}
         uses: scacap/action-surefire-report@v1

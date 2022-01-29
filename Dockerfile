@@ -25,7 +25,7 @@ ARG VCS_REF
 LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.build-date=$BUILD_DATE
 LABEL org.label-schema.name="metaldetector/metal-detector"
-LABEL org.label-schema.description="Mark your favorite metal bands and receive regular email alerts about upcoming and recently released albums from your favorite bands."
+LABEL org.label-schema.description="Mark your favorite metal bands and receive regular notifications about upcoming and recently released albums."
 LABEL org.label-schema.maintainer="https://github.com/MetalDetectorRocks"
 LABEL org.label-schema.url="https://metal-detector.rocks"
 LABEL org.label-schema.vcs-url="https://github.com/MetalDetectorRocks/metal-detector-main"

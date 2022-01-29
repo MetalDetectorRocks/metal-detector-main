@@ -1,9 +1,9 @@
 val javaVersion: JavaVersion = JavaVersion.VERSION_17
 
 val dependencyVersions = listOf(
-  "org.slf4j:slf4j-api:1.7.32",
-  "org.jboss.logging:jboss-logging:3.4.2.Final",
-  "net.bytebuddy:byte-buddy:1.12.2",
+  "org.slf4j:slf4j-api:1.7.35",
+  "org.jboss.logging:jboss-logging:3.4.3.Final",
+  "net.bytebuddy:byte-buddy:1.12.7",
   "org.javassist:javassist:3.28.0-GA",
   "org.junit.jupiter:junit-jupiter:${libs.versions.junit.get()}"
 )
@@ -22,7 +22,7 @@ val dependencyGroupVersions = mapOf(
 plugins {
   id("java")
   id("org.siouan.frontend-jdk11") version "6.0.0" apply false
-  id("org.springframework.boot") version "2.6.0" apply false
+  id("org.springframework.boot") version "2.6.3" apply false
   id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
 }
 
@@ -70,12 +70,5 @@ subprojects {
     withType<JavaCompile> {
       options.encoding = "UTF-8"
     }
-  }
-}
-
-tasks {
-  wrapper {
-    gradleVersion = "7.3"
-    distributionType = Wrapper.DistributionType.ALL
   }
 }

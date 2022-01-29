@@ -1,6 +1,6 @@
 version: '3.7'
 
-services: 
+services:
   detector-db:
     container_name: detector-db
     image: postgres:13.1-alpine
@@ -15,11 +15,16 @@ services:
         source: detector-db-volume
         target: /var/lib/postgresql/data
     ports:
-      - 5432:5432
-    restart: on-failure:3
+      - "5432:5432"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 
   butler-db:
-    container_name: butler-db
+    container_name: detector-butler-db
     image: postgres:13.1-alpine
     environment:
       POSTGRES_PASSWORD: secret
@@ -32,8 +37,13 @@ services:
         source: butler-db-volume
         target: /var/lib/postgresql/data
     ports:
-      - 5433:5432
-    restart: on-failure:3
+      - "5433:5432"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 
   butler-app:
     container_name: butler-app
@@ -42,10 +52,9 @@ services:
       DATASOURCE_URL: jdbc:postgresql://butler-db:5432/metal-release-butler
       DATASOURCE_USERNAME: postgres
       DATASOURCE_PASSWORD: secret
-      JWT_SECRET: secret
-      ROCKS_METALDETECTOR_AUTHENTICATION_ENABLED: 'false'
     networks:
       - butler-network
+      - service-network
     volumes:
       - type: volume
         source: butler-image-volume
@@ -54,21 +63,82 @@ services:
         source: butler-logs-volume
         target: /app/logs
     ports:
-      - 8095:8080
-    restart: on-failure:3
+      - "8095:8080"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  auth-db:
+    container_name: detector-auth-db
+    image: postgres:13.1-alpine
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: metal-detector-auth
+      PGDATA: /var/lib/postgresql/data/db-files/
+    networks:
+      - auth-network
+    volumes:
+      - type: volume
+        source: auth-db-volume
+        target: /var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  auth-app:
+    container_name: detector-auth-app
+    image: metaldetector/metal-detector-auth
+    environment:
+      SERVER_PORT: 9000
+      DATASOURCE_URL: jdbc:postgresql://auth-db:5432/metal-detector-auth
+      DATASOURCE_USERNAME: postgres
+      DATASOURCE_PASSWORD: secret
+      AUTHORIZATION_SERVER_PRIVATE_KEY:
+      AUTHORIZATION_SERVER_PUBLIC_KEY:
+      METAL_DETECTOR_USER_CLIENT_ID: metal-detector-user
+      METAL_DETECTOR_USER_CLIENT_SECRET: userSecret
+      METAL_DETECTOR_ADMIN_CLIENT_ID: metal-detector-admin
+      METAL_DETECTOR_ADMIN_CLIENT_SECRET: adminSecret
+      IMPORT_JOB_CLIENT_ID: import-job
+      IMPORT_JOB_CLIENT_SECRET: importJobSecret
+    networks:
+      - auth-network
+      - service-network
+    ports:
+      - "9000:9000"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 
 volumes:
   detector-db-volume:
     name: detector-db
   butler-db-volume:
-    name: butler-db
+    name: detector-butler-db
   butler-image-volume:
-    name: butler-images
+    name: detector-butler-images
   butler-logs-volume:
-    name: butler-logs
+    name: detector-butler-logs
+  auth-db-volume:
+    name: detector-auth-db
 
 networks:
   detector-network:
     name: detector-network
   butler-network:
     name: butler-network
+  auth-network:
+    name: auth-network
+  service-network:
+    name: service-network

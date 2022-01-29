@@ -24,24 +24,24 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 class OAuth2ClientInterceptorTest implements WithAssertions {
 
   @Mock
-  private OAuth2AccessTokenClientCredentialsClient tokenSupplier;
+  private OAuth2AccessTokenClient accessTokenClient;
 
   @InjectMocks
   private OAuth2ClientInterceptor underTest;
 
   @AfterEach
   void tearDown() {
-    reset(tokenSupplier);
+    reset(accessTokenClient);
   }
 
   @Test
-  @DisplayName("tokenSupplier is called")
+  @DisplayName("accessTokenClient is called")
   void test_token_supplier_called() throws IOException {
     // when
     underTest.intercept(new MockClientHttpRequest(), "body".getBytes(), mock(ClientHttpRequestExecution.class));
 
     // then
-    verify(tokenSupplier).getAccessToken();
+    verify(accessTokenClient).getAccessToken();
   }
 
   @Test
@@ -50,7 +50,7 @@ class OAuth2ClientInterceptorTest implements WithAssertions {
     // given
     var requestMock = new MockClientHttpRequest();
     var token = "token";
-    doReturn(token).when(tokenSupplier).getAccessToken();
+    doReturn(token).when(accessTokenClient).getAccessToken();
 
     // when
     underTest.intercept(requestMock, "body".getBytes(), mock(ClientHttpRequestExecution.class));

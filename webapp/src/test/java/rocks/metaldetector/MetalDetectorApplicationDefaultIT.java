@@ -1,13 +1,11 @@
 package rocks.metaldetector;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import rocks.metaldetector.testutil.WithIntegrationTestConfig;
+import rocks.metaldetector.testutil.BaseSpringBootTest;
 
-@SpringBootTest
 @ActiveProfiles("default")
-class MetalDetectorApplicationDefaultIT implements WithIntegrationTestConfig {
+class MetalDetectorApplicationDefaultIT extends BaseSpringBootTest {
 
   @Test
   void contextLoads() {

@@ -7,7 +7,8 @@ on:
 
 jobs:
   build-image:
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Create version string
         id: version
@@ -16,8 +17,8 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@v2
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2.3.1
+      - name: Set up JDK
+        uses: actions/setup-java@v2.5.0
         with:
           distribution: 'zulu'
           java-version: 17

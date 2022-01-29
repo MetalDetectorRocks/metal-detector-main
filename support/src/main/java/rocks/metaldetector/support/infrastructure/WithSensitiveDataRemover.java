@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,8 +40,7 @@ public interface WithSensitiveDataRemover {
 
       ObjectMapper mapper = new ObjectMapper();
       try {
-        TypeReference<LinkedHashMap<String, String>> typeRef = new TypeReference<>() {};
-        Map<String, String> payloadAsMap = mapper.readValue(payload, typeRef);
+        Map<String, Object> payloadAsMap = mapper.readValue(payload, new TypeReference<>() {});
         SENSITIVE_DATA_FIELD_NAME.forEach(fieldName -> {
           if (payloadAsMap.containsKey(fieldName)) {
             payloadAsMap.put(fieldName, REMOVED_FOR_LOGGING_STRING);

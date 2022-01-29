@@ -6,13 +6,13 @@ jobs:
   run-linters:
     name: Run linters
     runs-on: ubuntu-latest
-
+    timeout-minutes: 5
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2.4.1
+        uses: actions/setup-node@v2.5.1
         with:
           node-version: 14
 

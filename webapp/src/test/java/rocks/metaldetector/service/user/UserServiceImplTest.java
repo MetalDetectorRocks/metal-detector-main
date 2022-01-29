@@ -66,10 +66,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static rocks.metaldetector.persistence.domain.token.TokenType.EMAIL_VERIFICATION;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
+import static rocks.metaldetector.service.exceptions.UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS;
+import static rocks.metaldetector.service.exceptions.UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS;
 import static rocks.metaldetector.service.user.UserErrorMessages.OAUTH_USER_CANNOT_CHANGE_EMAIL;
 import static rocks.metaldetector.service.user.UserErrorMessages.OAUTH_USER_CANNOT_CHANGE_PASSWORD;
+import static rocks.metaldetector.service.user.UserErrorMessages.TOKEN_EXPIRED;
+import static rocks.metaldetector.service.user.UserErrorMessages.TOKEN_NOT_FOUND;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_NOT_FOUND;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
@@ -233,10 +238,10 @@ class UserServiceImplTest implements WithAssertions {
 
     private Stream<Arguments> userDtoProvider() {
       return Stream.of(
-          Arguments.of(DUPLICATE_USERNAME, EMAIL, UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS),
-          Arguments.of(DUPLICATE_EMAIL, EMAIL, UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS),
-          Arguments.of(USERNAME, DUPLICATE_EMAIL, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS),
-          Arguments.of(USERNAME, DUPLICATE_USERNAME, UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS)
+          Arguments.of(DUPLICATE_USERNAME, EMAIL, USERNAME_ALREADY_EXISTS),
+          Arguments.of(DUPLICATE_EMAIL, EMAIL, USERNAME_ALREADY_EXISTS),
+          Arguments.of(USERNAME, DUPLICATE_EMAIL, EMAIL_ALREADY_EXISTS),
+          Arguments.of(USERNAME, DUPLICATE_USERNAME, EMAIL_ALREADY_EXISTS)
       );
     }
   }
@@ -722,7 +727,7 @@ class UserServiceImplTest implements WithAssertions {
 
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString());
+      assertThat(throwable).hasMessageContaining(TOKEN_NOT_FOUND.toDisplayString());
     }
 
     @Test
@@ -733,12 +738,15 @@ class UserServiceImplTest implements WithAssertions {
       when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
 
       // when
-      Thread.sleep(1); // wait 1ms so that the token can expire
-      Throwable throwable = catchThrowable(() -> underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD));
+      var now = LocalDateTime.now().plusHours(1);
+      try (MockedStatic<LocalDateTime> mock = mockStatic(LocalDateTime.class)) {
+        mock.when(LocalDateTime::now).thenReturn(now);
+        Throwable throwable = catchThrowable(() -> underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD));
 
-      // then
-      assertThat(throwable).isInstanceOf(TokenExpiredException.class);
-      assertThat(throwable).hasMessageContaining(UserErrorMessages.TOKEN_EXPIRED.toDisplayString());
+        // then
+        assertThat(throwable).isInstanceOf(TokenExpiredException.class);
+        assertThat(throwable).hasMessageContaining(TOKEN_EXPIRED.toDisplayString());
+      }
     }
 
     @Test
@@ -1089,7 +1097,7 @@ class UserServiceImplTest implements WithAssertions {
       // given
       ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
       String TOKEN_STRING = "token";
-      TokenEntity tokenEntity = TokenFactory.createToken(TokenType.EMAIL_VERIFICATION, Duration.ofHours(1).toMillis());
+      TokenEntity tokenEntity = TokenFactory.createToken(EMAIL_VERIFICATION, Duration.ofHours(1).toMillis());
       tokenEntity.getUser().setEnabled(false); // should be set to true within verification process
       when(tokenRepository.findEmailVerificationToken(TOKEN_STRING)).thenReturn(Optional.of(tokenEntity));
 
@@ -1114,23 +1122,26 @@ class UserServiceImplTest implements WithAssertions {
 
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString());
+      assertThat(throwable).hasMessageContaining(TOKEN_NOT_FOUND.toDisplayString());
     }
 
     @Test
     @DisplayName("Verifying the registration with an expired token should throw exception")
-    void verify_registration_with_expired_token() throws InterruptedException {
+    void verify_registration_with_expired_token() {
       // given
-      TokenEntity tokenEntity = TokenFactory.createToken(TokenType.EMAIL_VERIFICATION, 1);
+      TokenEntity tokenEntity = TokenFactory.createToken(EMAIL_VERIFICATION, 1);
       when(tokenRepository.findEmailVerificationToken(TOKEN)).thenReturn(Optional.of(tokenEntity));
 
       // when
-      Thread.sleep(1); // wait 1ms so that the token can expire
-      Throwable throwable = catchThrowable(() -> underTest.verifyEmailToken(TOKEN));
+      var now = LocalDateTime.now().plusHours(1);
+      try (MockedStatic<LocalDateTime> mock = mockStatic(LocalDateTime.class)) {
+        mock.when(LocalDateTime::now).thenReturn(now);
+        Throwable throwable = catchThrowable(() -> underTest.verifyEmailToken(TOKEN));
 
-      // then
-      assertThat(throwable).isInstanceOf(TokenExpiredException.class);
-      assertThat(throwable).hasMessageContaining(UserErrorMessages.TOKEN_EXPIRED.toDisplayString());
+        // then
+        assertThat(throwable).isInstanceOf(TokenExpiredException.class);
+        assertThat(throwable).hasMessageContaining(TOKEN_EXPIRED.toDisplayString());
+      }
     }
   }
 

@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -23,10 +22,12 @@ import static javax.validation.constraints.Pattern.Flag.CASE_INSENSITIVE;
 public class PaginatedReleasesRequest implements WithTimeRangeValidation {
 
   @Min(value = 1, message = "'page' must be greater than zero!")
+  @Builder.Default
   private int page = 1;
 
   @Min(value = 1, message = "'size' must be greater than zero!")
   @Max(value = 50, message = "'size' must be equal or less than 50!")
+  @Builder.Default
   private int size = 40;
 
   @NotNull
@@ -35,17 +36,15 @@ public class PaginatedReleasesRequest implements WithTimeRangeValidation {
 
   @NotNull
   @Pattern(regexp = "asc|desc", flags = CASE_INSENSITIVE)
+  @Builder.Default
   private String direction = "asc";
 
-  @Nullable
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate dateFrom;
 
-  @Nullable
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate dateTo;
 
-  @Nullable
   private String query;
 
 }
