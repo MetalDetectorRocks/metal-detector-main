@@ -190,7 +190,7 @@
 .material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
 .material-icons.md-success { color: #155724; }
 .material-icons.md-red { color:darkred; }
-.material-icons.md-light { color: var(--light-font-color)}
+.material-icons.md-light { color: var(--menu-foreground-color)}
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 
 /* Fade-in / Fade-out */

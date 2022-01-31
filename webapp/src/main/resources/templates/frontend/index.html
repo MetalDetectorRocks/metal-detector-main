@@ -4,10 +4,284 @@
       lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <title>Home</title>
+    <script type="module" th:src="@{/ts/dist/home.bundle.js}" src="#"></script>
 </head>
 <body>
+    <section layout:fragment="jumbotron">
+        <div class="jumbotron">
+            <div class="container jumbotron-text pt-4">
+                <h1>Built for <br />Metal Heads.</h1>
+                <p>
+                    Metal Detector is a metal release calendar that is 100% tailored to you.
+                    Follow your favorite artists and get notified when they announce or
+                    release a new album.
+                </p>
+                <a class="btn btn-white mt-3" href="#" th:href="@{/releases}">Explore Upcoming Releases</a>
+            </div>
+        </div>
+    </section>
     <section layout:fragment="content">
-        <h1>Built for Metal Heads.</h1>
+        <div id="homepage-wrapper">
+            <div class="mt-5 section">
+                <h2>About</h2>
+                <div class="headline-separator"></div>
+                <div class="features">
+                    <div class="feature-item">
+                        <i class="material-icons md-42 md-light">search</i>
+                        <p class="feature-text mt-2">
+                            Search and follow your favorite bands to
+                            stay up to date when a new album is coming out.
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="material-icons md-42 md-light">filter_alt</i>
+                        <p class="feature-text mt-2">
+                            A clearly arranged release page with many filter
+                            options gives you a comprehensive overview of
+                            recently and soon released albums.
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="material-icons md-42 md-light">notifications_active</i>
+                        <p class="feature-text mt-2">
+                            You will receive a notification via email or
+                            Telegram when a new album is announced or released.
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <img src="#" th:src="@{/images/spotify-icon.png}" alt="Spotify Icon" height="42">
+                        <p class="feature-text mt-2">
+                            Don't want to follow every band manually? Easily
+                            sync your favorite bands that you already follow
+                            on Spotify.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Most Followed Artists</h2>
+                <div class="headline-separator"></div>
+                <div class="swiper">
+                    <div class="swiper-navigation">
+                        <i class="material-icons md-30 md-light pointer">arrow_back_ios_new</i>
+                    </div>
+                    <div class="swiper-items">
+                        <div class="swiper-item">
+                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
+                            <div class="mt-2">
+                                <span class="swiper-title">Slipknot</span>
+                            </div>
+                            <div>
+                                <span class="text-muted font-size-s">128 Follower</span>
+                            </div>
+                        </div>
+                        <div class="swiper-item">
+                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
+                            <div class="mt-2">
+                                <span class="swiper-title">Slipknot</span>
+                            </div>
+                            <div>
+                                <span class="text-muted font-size-s">128 Follower</span>
+                            </div>
+                        </div>
+                        <div class="swiper-item">
+                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
+                            <div class="mt-2">
+                                <span class="swiper-title">Slipknot</span>
+                            </div>
+                            <div>
+                                <span class="text-muted font-size-s">128 Follower</span>
+                            </div>
+                        </div>
+                        <div class="swiper-item">
+                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
+                            <div class="mt-2">
+                                <span class="swiper-title">Slipknot</span>
+                            </div>
+                            <div>
+                                <span class="text-muted font-size-s">128 Follower</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-navigation">
+                        <i class="material-icons md-30 md-light pointer">arrow_forward_ios_new</i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Most Expected Releases</h2>
+                <div class="headline-separator"></div>
+                <div class="swiper">
+                    <div class="swiper-navigation">
+                        <i class="material-icons md-30 md-light pointer">arrow_back_ios_new</i>
+                    </div>
+                    <div class="swiper-items">
+                        <div class="swiper-item">
+                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
+                            <div class="mt-2">
+                                <span class="swiper-title">Slipknot</span>
+                            </div>
+                            <div>
+                                <span class="swiper-subtitle font-size-s">Slipknot</span>
+                            </div>
+                            <div>
+                                <span class="text-muted font-size-s">in 8 days</span>
+                            </div>
+                        </div>
+                        <div class="swiper-item">
+                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
+                            <div class="mt-2">
+                                <span class="swiper-title">Slipknot</span>
+                            </div>
+                            <div>
+                                <span class="swiper-subtitle font-size-s">Slipknot</span>
+                            </div>
+                            <div>
+                                <span class="text-muted font-size-s">in 22 days</span>
+                            </div>
+                        </div>
+                        <div class="swiper-item">
+                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
+                            <div class="mt-2">
+                                <span class="swiper-title">Slipknot</span>
+                            </div>
+                            <div>
+                                <span class="swiper-subtitle font-size-s">Slipknot</span>
+                            </div>
+                            <div>
+                                <span class="text-muted font-size-s">in a month</span>
+                            </div>
+                        </div>
+                        <div class="swiper-item">
+                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
+                            <div class="mt-2">
+                                <span class="swiper-title">Slipknot</span>
+                            </div>
+                            <div>
+                                <span class="swiper-subtitle font-size-s">Slipknot</span>
+                            </div>
+                            <div>
+                                <span class="text-muted font-size-s">in 2 months</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-navigation">
+                        <i class="material-icons md-30 md-light pointer">arrow_forward_ios_new</i>
+                    </div>
+                </div>
+            </div>
+
+            <div id="home-container"></div>
+
+            <div class="section">
+                <h2>Latest News</h2>
+                <div class="headline-separator"></div>
+                <div class="blog-posts">
+                    <div class="blog-post-item">
+                        <a href="#" th:href="@{/blog/future-plans}">
+                            <div class="blog-post-cover">
+                                <img src="#" th:src="@{/images/blog/feature-images/metal-detector.png}" alt="Future plans photo">
+                                <div class="blog-post-date">
+                                    <span class="day">01</span>
+                                    <div class="month-and-year">
+                                        <span class="month">Feb</span>
+                                        <span class="year">2021</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="mt-3 font-metal-mania">
+                                Future plans
+                            </h3>
+                            <p>
+                                The Metal Detector has been online for a few days now (Closed beta). We want to share with you
+                                what we have planned for the current year.
+                            </p>
+                        </a>
+                    </div>
+                    <div class="blog-post-item">
+                        <a href="#" th:href="@{/blog/top-6-releases-2020}">
+                            <div class="blog-post-cover">
+                                <img src="#" th:src="@{/images/blog/feature-images/top-releases-2020.jpg}" alt="Top releases 2020 photo">
+                                <div class="blog-post-date">
+                                    <span class="day">10</span>
+                                    <div class="month-and-year">
+                                        <span class="month">Jan</span>
+                                        <span class="year">2021</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="mt-3 font-metal-mania">
+                                Top Releases of 2020
+                            </h3>
+                            <p>
+                                It is now 2021 and we have taken the time to look back at the pandemic year of 2020 to bring you
+                                our top 6 metal releases.
+                            </p>
+                        </a>
+                    </div>
+                    <div class="blog-post-item">
+                        <a href="#" th:href="@{/blog/we-are-online}">
+                            <div class="blog-post-cover">
+                                <img src="#" th:src="@{/images/blog/feature-images/we-are-online.jpg}" alt="We are online photo">
+                                <div class="blog-post-date">
+                                    <span class="day">09</span>
+                                    <div class="month-and-year">
+                                        <span class="month">Jan</span>
+                                        <span class="year">2021</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="mt-3 font-metal-mania">
+                                We Are Online!
+                            </h3>
+                            <p>
+                                After many months of development, we can finally go online with Metal Detector in early 2021.
+                                Learn more about the initial features in this blog post.
+                            </p>
+                        </a>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <a class="btn btn-white mt-3" href="#" th:href="@{/blog}">View More Posts</a>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Who We Are</h2>
+                <div class="headline-separator"></div>
+                <div class="profile">
+                    <div class="img-round">
+                        <img src="#" th:src="@{/images/daniel.jpeg}" alt="Photo of Daniel" class="img-round img-greyscale">
+                    </div>
+                    <div class="ms-5">
+                        <h3 class="mt-3 font-metal-mania">Daniel</h3>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                        </p>
+                        <p>
+                            <b>Favorite bands:</b> Karg, Harakiri for the Sky, Alcest, Waldgeflüster, Ruadh
+                        </p>
+                    </div>
+                </div>
+                <div class="profile">
+                    <div class="me-5">
+                        <h3 class="mt-3 font-metal-mania">Nils</h3>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                        </p>
+                    </div>
+                    <div class="img-round">
+                        <img src="#" th:src="@{/images/nils.jpeg}" alt="Photo of Nils" class="img-round">
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 </body>
 </html>

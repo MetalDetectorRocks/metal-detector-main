@@ -1,5 +1,5 @@
 .nav-wrapper {
-    background-color: var(--dark-background-color);
+    background-color: var(--secondary-background-color);
     border-bottom: 1px solid var(--grey-border-color);
     width: 100%;
     padding: 0 2%;
@@ -22,7 +22,7 @@
 .search-box input {
     height: 3rem;
     background-color: var(--dark-field-background-color);
-    color: var(--light-font-color) !important;
+    color: var(--font-color) !important;
     border-color: var(--grey-border-color);
     font-size: 1.5rem;
     font-family: 'Metal Mania', cursive;
@@ -33,7 +33,7 @@
     background-color: var(--dark-field-background-color);
 }
 .search-box input::placeholder {
-    color: var(--dark-muted-font-color);
+    color: var(--muted-font-color);
 }
 nav ul {
     margin: 0;
@@ -49,8 +49,8 @@ nav li {
 .links li a,
 .links li label {
     color: var(--menu-foreground-color);
-    font-size: 16px;
-    font-weight: 650;
+    font-size: 14px;
+    font-weight: 600;
     padding: 0 15px;
     transition: all 0.5s ease;
 }
@@ -68,11 +68,11 @@ nav li {
     top: 15px !important;
 }
 .setting-links a {
-    color: var(--light-font-color);
+    color: var(--font-color);
 }
 .nav-wrapper .search-icon,
 .nav-wrapper .menu-icon {
-    color: var(--light-font-color);
+    color: var(--font-color);
     font-size: 20px;
     cursor: pointer;
     line-height: 60px;
@@ -95,14 +95,14 @@ nav li {
     height: 100%;
     border: none;
     outline: none;
-    color: var(--light-font-color);
+    color: var(--font-color);
     font-family: 'Metal Mania', cursive;
     font-size: 1.5rem;
-    background: var(--dark-background-color);
+    background: var(--secondary-background-color);
     padding: 0 100px 0 15px;
 }
 .mobile-search-box input::placeholder {
-    color: var(--dark-muted-font-color);
+    color: var(--muted-font-color);
     font-family: 'Metal Mania', cursive;
     font-size: 1.5rem;
 }
@@ -113,10 +113,10 @@ nav li {
     transform: translateY(-50%);
     line-height: 60px;
     width: 70px;
-    background: var(--dark-background-color);
+    background: var(--secondary-background-color);
     border: none;
     outline: none;
-    color: var(--light-font-color);
+    color: var(--font-color);
     font-size: 20px;
     cursor: pointer;
 }
@@ -131,7 +131,7 @@ nav li {
 /* Dropdown menu */
 .links ul {
     position: absolute;
-    background: var(--dark-background-color);
+    background: var(--secondary-background-color);
     top: 80px;
     z-index: -1;
     opacity: 0;
@@ -212,7 +212,7 @@ nav li {
     .links {
         display: block;
         position: fixed;
-        background: var(--dark-background-color);
+        background: var(--secondary-background-color);
         height: 100%;
         width: 100%;
         top: 81px;

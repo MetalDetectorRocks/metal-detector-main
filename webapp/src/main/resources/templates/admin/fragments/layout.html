@@ -32,8 +32,8 @@
                 <img alt="Logo" th:src="@{/images/logo.png}" src="#" width="300" />
             </a>
             <ul class="nav justify-content-end me-3">
-                <li class="nav-item"><a th:href="@{/admin/notifications}" href="#" class="nav-link"><i class="material-icons" style="padding-top: 0.2rem">notifications</i></a></li>
-                <li class="nav-item"><a th:href="@{/}" href="#" target="_blank" class="nav-link"><i class="material-icons" style="padding-top: 0.2rem">public</i></a></li>
+                <li class="nav-item"><a th:href="@{/admin/notifications}" href="#" class="nav-link"><i class="material-icons pt-1">notifications</i></a></li>
+                <li class="nav-item"><a th:href="@{/}" href="#" target="_blank" class="nav-link"><i class="material-icons pt-1">public</i></a></li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img src="#" th:src="@{/images/dummy-profile-picture.jpg}" alt="Profile photo" class="avatar avatar-xs" />
@@ -104,11 +104,5 @@
     <footer></footer>
 
     <div id="toast-wrapper"></div>
-
-    <script>
-        $(document).ready( function() {
-            registerLogoutListener();
-        });
-    </script>
 </body>
 </html>
