@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { axiosConfig } from "../config/axios.config";
-import { ToastService } from "../service/toast-service";
+import { ToastService } from "../service/util/toast-service";
 import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
 import { UserAuthorizationExistsResponse } from "../model/user-authorization-exist-response.model";
 

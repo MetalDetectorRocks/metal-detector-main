@@ -1,6 +1,6 @@
-import { AlertService } from "./alert-service";
-import { LoadingIndicatorService } from "./loading-indicator-service";
-import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
+import { AlertService } from "../util/alert-service";
+import { LoadingIndicatorService } from "../util/loading-indicator-service";
+import { UNKNOWN_ERROR_MESSAGE } from "../../config/messages.config";
 
 export abstract class AbstractRenderService<T> {
     protected readonly alertService: AlertService;

@@ -1,8 +1,8 @@
-import { AccountDetailsRestClient } from "../clients/account-details-rest-client";
-import { AlertService } from "./alert-service";
-import { ToastService } from "./toast-service";
-import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
-import { UserResponse } from "../model/user-response.model";
+import { AccountDetailsRestClient } from "../../clients/account-details-rest-client";
+import { AlertService } from "../util/alert-service";
+import { ToastService } from "../util/toast-service";
+import { UNKNOWN_ERROR_MESSAGE } from "../../config/messages.config";
+import { UserResponse } from "../../model/user-response.model";
 
 export class AccountDetailsRenderService {
     private readonly toastService: ToastService;

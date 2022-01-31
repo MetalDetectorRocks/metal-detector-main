@@ -1,9 +1,9 @@
-import { SpotifySynchronizationRenderService } from "../service/spotify-synchronization-render-service";
-import { ToastService } from "../service/toast-service";
+import { SpotifySynchronizationRenderService } from "../service/render/spotify-synchronization-render-service";
+import { ToastService } from "../service/util/toast-service";
 import { SpotifyRestClient } from "../clients/spotify-rest-client";
-import { UrlService } from "../service/url-service";
-import { LoadingIndicatorService } from "../service/loading-indicator-service";
-import { AlertService } from "../service/alert-service";
+import { UrlService } from "../service/util/url-service";
+import { LoadingIndicatorService } from "../service/util/loading-indicator-service";
+import { AlertService } from "../service/util/alert-service";
 import { OauthRestClient } from "../clients/oauth-rest-client";
 
 const toastService = new ToastService();

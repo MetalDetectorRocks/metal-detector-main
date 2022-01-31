@@ -1,11 +1,11 @@
 import { ArtistsRestClient } from "../clients/artists-rest-client";
-import { MyArtistsRenderService } from "../service/my-artists-render-service";
+import { MyArtistsRenderService } from "../service/render/my-artists-render-service";
 import { FollowArtistService } from "../service/follow-artist-service";
-import { ToastService } from "../service/toast-service";
-import { AlertService } from "../service/alert-service";
-import { LoadingIndicatorService } from "../service/loading-indicator-service";
-import { DateService } from "../service/date-service";
-import { UrlService } from "../service/url-service";
+import { ToastService } from "../service/util/toast-service";
+import { AlertService } from "../service/util/alert-service";
+import { LoadingIndicatorService } from "../service/util/loading-indicator-service";
+import { DateService } from "../service/util/date-service";
+import { UrlService } from "../service/util/url-service";
 
 const urlService = new UrlService();
 const toastService = new ToastService();

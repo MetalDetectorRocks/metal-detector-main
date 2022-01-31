@@ -2,9 +2,9 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { axiosConfig } from "../config/axios.config";
 import { MyArtistsResponse } from "../model/my-artists-response.model";
 import { SearchResponse } from "../model/search-response.model";
-import { ToastService } from "../service/toast-service";
+import { ToastService } from "../service/util/toast-service";
 import { UNKNOWN_ERROR_MESSAGE } from "../config/messages.config";
-import { UrlService } from "../service/url-service";
+import { UrlService } from "../service/util/url-service";
 
 export class ArtistsRestClient {
     private readonly SEARCH_URL = "/rest/v1/artists/search";

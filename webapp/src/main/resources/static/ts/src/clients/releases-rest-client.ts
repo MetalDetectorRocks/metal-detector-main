@@ -1,8 +1,8 @@
 import { axiosConfig } from "../config/axios.config";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ReleasesResponse } from "../model/releases-response.model";
-import { DateService } from "../service/date-service";
-import { UrlService } from "../service/url-service";
+import { DateService } from "../service/util/date-service";
+import { UrlService } from "../service/util/url-service";
 
 export class ReleasesRestClient {
     private readonly RELEASES_URL = "/rest/v1/releases";

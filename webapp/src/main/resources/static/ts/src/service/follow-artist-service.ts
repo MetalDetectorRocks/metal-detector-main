@@ -1,5 +1,5 @@
 import { ArtistsRestClient } from "../clients/artists-rest-client";
-import { ToastService } from "./toast-service";
+import { ToastService } from "./util/toast-service";
 import { FollowState } from "../model/follow-state.model";
 
 export interface FollowArtistInfo {

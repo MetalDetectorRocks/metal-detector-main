@@ -1,12 +1,12 @@
 import { AbstractRenderService } from "./abstract-render-service";
-import { ReleasesResponse } from "../model/releases-response.model";
-import { PaginationComponent } from "../components/pagination/pagination-component";
-import { AlertService } from "./alert-service";
-import { LoadingIndicatorService } from "./loading-indicator-service";
-import { Pagination } from "../model/pagination.model";
-import { Release } from "../model/release.model";
-import { DateFormat, DateService } from "./date-service";
-import { ReleasesService } from "./releases-service";
+import { ReleasesResponse } from "../../model/releases-response.model";
+import { PaginationComponent } from "../../components/pagination/pagination-component";
+import { AlertService } from "../util/alert-service";
+import { LoadingIndicatorService } from "../util/loading-indicator-service";
+import { Pagination } from "../../model/pagination.model";
+import { Release } from "../../model/release.model";
+import { DateFormat, DateService } from "../util/date-service";
+import { ReleasesService } from "../releases-service";
 
 export class ReleasesRenderService extends AbstractRenderService<ReleasesResponse> {
     private readonly dateService: DateService;

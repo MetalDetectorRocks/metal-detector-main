@@ -1,6 +1,6 @@
-import { AbstractRenderService } from "../abstract-render-service";
-import { AlertService } from "../alert-service";
-import { LoadingIndicatorService } from "../loading-indicator-service";
+import { AbstractRenderService } from "../render/abstract-render-service";
+import { AlertService } from "../util/alert-service";
+import { LoadingIndicatorService } from "../util/loading-indicator-service";
 import {
     DefaultNotificationConfig,
     NotificationChannel,

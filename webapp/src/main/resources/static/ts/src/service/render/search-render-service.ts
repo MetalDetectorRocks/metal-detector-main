@@ -1,14 +1,14 @@
-import { FollowArtistService } from "./follow-artist-service";
-import { LoadingIndicatorService } from "./loading-indicator-service";
-import { PaginationComponent } from "../components/pagination/pagination-component";
-import { AlertService } from "./alert-service";
+import { FollowArtistService } from "../follow-artist-service";
+import { LoadingIndicatorService } from "../util/loading-indicator-service";
+import { PaginationComponent } from "../../components/pagination/pagination-component";
+import { AlertService } from "../util/alert-service";
 import { AbstractRenderService } from "./abstract-render-service";
-import { SearchResponse } from "../model/search-response.model";
-import { Pagination } from "../model/pagination.model";
-import { SearchResponseEntry } from "../model/search-response-entry.model";
-import { FollowState } from "../model/follow-state.model";
-import { AuthenticationRestClient } from "../clients/authentication-rest-client";
-import { ToastService } from "./toast-service";
+import { SearchResponse } from "../../model/search-response.model";
+import { Pagination } from "../../model/pagination.model";
+import { SearchResponseEntry } from "../../model/search-response-entry.model";
+import { FollowState } from "../../model/follow-state.model";
+import { AuthenticationRestClient } from "../../clients/authentication-rest-client";
+import { ToastService } from "../util/toast-service";
 
 export class SearchRenderService extends AbstractRenderService<SearchResponse> {
     private static readonly MAX_NAME_LENGTH = 50;

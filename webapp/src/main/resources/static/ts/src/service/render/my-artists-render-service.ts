@@ -1,12 +1,12 @@
-import { MyArtistsResponse } from "../model/my-artists-response.model";
-import { FollowArtistService } from "./follow-artist-service";
-import { Artist } from "../model/artist.model";
-import { AlertService } from "./alert-service";
-import { Pagination } from "../model/pagination.model";
-import { LoadingIndicatorService } from "./loading-indicator-service";
-import { PaginationComponent } from "../components/pagination/pagination-component";
+import { MyArtistsResponse } from "../../model/my-artists-response.model";
+import { FollowArtistService } from "../follow-artist-service";
+import { Artist } from "../../model/artist.model";
+import { AlertService } from "../util/alert-service";
+import { Pagination } from "../../model/pagination.model";
+import { LoadingIndicatorService } from "../util/loading-indicator-service";
+import { PaginationComponent } from "../../components/pagination/pagination-component";
 import { AbstractRenderService } from "./abstract-render-service";
-import { DateFormat, DateService } from "./date-service";
+import { DateFormat, DateService } from "../util/date-service";
 
 export class MyArtistsRenderService extends AbstractRenderService<MyArtistsResponse> {
     private readonly followArtistService: FollowArtistService;

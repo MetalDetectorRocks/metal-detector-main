@@ -1,11 +1,11 @@
-import { SpotifyRestClient } from "../clients/spotify-rest-client";
-import { ToastService } from "./toast-service";
-import { UrlService } from "./url-service";
-import { LoadingIndicatorService } from "./loading-indicator-service";
-import { SpotifyArtist } from "../model/spotify-artist.model";
-import { AlertService } from "./alert-service";
+import { SpotifyRestClient } from "../../clients/spotify-rest-client";
+import { ToastService } from "../util/toast-service";
+import { UrlService } from "../util/url-service";
+import { LoadingIndicatorService } from "../util/loading-indicator-service";
+import { SpotifyArtist } from "../../model/spotify-artist.model";
+import { AlertService } from "../util/alert-service";
 import { AxiosError } from "axios";
-import { OauthRestClient } from "../clients/oauth-rest-client";
+import { OauthRestClient } from "../../clients/oauth-rest-client";
 
 export class SpotifySynchronizationRenderService {
     private static readonly OAUTH2_CLIENT_REGISTRATION_ID = "spotify-user";

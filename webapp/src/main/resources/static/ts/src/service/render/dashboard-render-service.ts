@@ -1,12 +1,12 @@
-import { LoadingIndicatorService } from "./loading-indicator-service";
-import { AlertService } from "./alert-service";
-import { DashboardResponse } from "../model/dashboard-response.model";
+import { LoadingIndicatorService } from "../util/loading-indicator-service";
+import { AlertService } from "../util/alert-service";
+import { DashboardResponse } from "../../model/dashboard-response.model";
 import { AbstractRenderService } from "./abstract-render-service";
-import { Artist } from "../model/artist.model";
-import { Release } from "../model/release.model";
-import { DateFormat, DateService } from "./date-service";
-import { FollowArtistService } from "./follow-artist-service";
-import { SwiperComponent } from "../components/swiper/swiper-component";
+import { Artist } from "../../model/artist.model";
+import { Release } from "../../model/release.model";
+import { DateFormat, DateService } from "../util/date-service";
+import { FollowArtistService } from "../follow-artist-service";
+import { SwiperComponent } from "../../components/swiper/swiper-component";
 
 interface HomepageCard {
     readonly divElement: HTMLDivElement;

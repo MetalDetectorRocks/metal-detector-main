@@ -1,7 +1,7 @@
 import { ReleasesRestClient } from "../clients/releases-rest-client";
-import { ReleasesRenderService } from "./releases-render-service";
-import { UrlService } from "./url-service";
-import { DateService } from "./date-service";
+import { ReleasesRenderService } from "./render/releases-render-service";
+import { UrlService } from "./util/url-service";
+import { DateService } from "./util/date-service";
 
 export class ReleasesService {
     private static readonly RELEASES_PARAM_NAME = "releases";
