@@ -3,7 +3,6 @@ import "swiper/css";
 
 export interface SwiperComponentProps {
     readonly uniqueCssClassSelector: string;
-    readonly title: string;
     readonly items: HTMLDivElement[];
     readonly host: HTMLDivElement;
 }
@@ -11,18 +10,13 @@ export interface SwiperComponentProps {
 export class SwiperComponent {
     private readonly props: SwiperComponentProps;
 
-    private readonly swiperHeader = document.createElement("div") as HTMLHeadElement;
-    private readonly swiperNavigation = document.createElement("div") as HTMLHeadElement;
-    private readonly prevItem = document.createElement("span") as HTMLSpanElement;
-    private readonly nextItem = document.createElement("span") as HTMLSpanElement;
-    private readonly swiperDiv = document.createElement("div") as HTMLDivElement;
-    private readonly swiperWrapper = document.createElement("div") as HTMLDivElement;
-
     constructor(props: SwiperComponentProps) {
         this.props = props;
         this.attach();
         Swiper.use([Navigation]);
         new Swiper(`.${this.props.uniqueCssClassSelector}`, {
+            slidesPerView: 1,
+            slidesPerGroup: 1,
             spaceBetween: 15,
             loop: this.props.items.length >= 4,
             loopFillGroupWithBlank: true,
@@ -46,54 +40,38 @@ export class SwiperComponent {
     }
 
     private attach(): void {
-        this.createSwiperHeader();
-        this.createSwiperMain();
-        const wrapper = document.createElement("div") as HTMLDivElement;
-        wrapper.insertAdjacentElement("beforeend", this.swiperHeader);
-        wrapper.insertAdjacentElement("beforeend", this.swiperDiv);
-        this.props.host.insertAdjacentElement("beforeend", wrapper);
+        this.props.host.insertAdjacentHTML("beforeend", this.createPrevNavigation());
+        this.props.host.insertAdjacentElement("beforeend", this.createSwiperDiv());
+        this.props.host.insertAdjacentHTML("beforeend", this.createNextNavigation());
     }
 
-    private createSwiperHeader(): void {
-        this.swiperHeader.classList.add("swiper-header", "mt-3");
+    private createSwiperDiv(): HTMLElement {
+        const swiperDiv = document.createElement("div") as HTMLDivElement;
+        swiperDiv.classList.add("swiper", this.props.uniqueCssClassSelector);
 
-        const swiperTitle = document.createElement("h5") as HTMLHeadingElement;
-        swiperTitle.textContent = this.props.title;
-        swiperTitle.classList.add("mb-2");
-
-        this.prevItem.classList.add(
-            "material-icons",
-            "md-light",
-            "md-30",
-            "pointer",
-            "unselectable",
-            "swiper-button-prev",
-            `${this.props.uniqueCssClassSelector}-prev`,
-        );
-        this.prevItem.innerText = "navigate_before";
-        this.nextItem.classList.add(
-            "material-icons",
-            "md-light",
-            "md-30",
-            "pointer",
-            "unselectable",
-            "swiper-button-next",
-            `${this.props.uniqueCssClassSelector}-next`,
-        );
-        this.nextItem.innerText = "navigate_next";
-
-        this.swiperNavigation.insertAdjacentElement("beforeend", this.prevItem);
-        this.swiperNavigation.insertAdjacentElement("beforeend", this.nextItem);
-        this.swiperHeader.insertAdjacentElement("beforeend", swiperTitle);
-        this.swiperHeader.insertAdjacentElement("beforeend", this.swiperNavigation);
-    }
-
-    private createSwiperMain(): void {
-        this.swiperDiv.classList.add("swiper", this.props.uniqueCssClassSelector);
-        this.swiperWrapper.classList.add("swiper-wrapper");
+        const swiperWrapper = document.createElement("div") as HTMLDivElement;
+        swiperWrapper.classList.add("swiper-wrapper");
         this.props.items.forEach((item) => {
-            this.swiperWrapper.insertAdjacentElement("beforeend", item);
+            swiperWrapper.insertAdjacentElement("beforeend", item);
         });
-        this.swiperDiv.insertAdjacentElement("beforeend", this.swiperWrapper);
+        swiperDiv.insertAdjacentElement("beforeend", swiperWrapper);
+
+        return swiperDiv;
+    }
+
+    private createPrevNavigation(): string {
+        return `
+            <div class="swiper-navigation">
+                <i class="material-icons md-30 md-light pointer ${this.props.uniqueCssClassSelector}-prev">arrow_back_ios_new</i>
+            </div>
+        `.trim();
+    }
+
+    private createNextNavigation(): string {
+        return `
+            <div class="swiper-navigation">
+                <i class="material-icons md-30 md-light pointer ${this.props.uniqueCssClassSelector}-next">arrow_forward_ios_new</i>
+            </div>
+        `.trim();
     }
 }

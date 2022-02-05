@@ -131,7 +131,7 @@ footer .footer-icon:hover {
     margin-bottom: 10px;
 }
 #homepage-wrapper .section {
-    margin-bottom: 60px;
+    margin-bottom: 75px;
 }
 
 /* Features */
@@ -145,30 +145,30 @@ footer .footer-icon:hover {
 }
 
 /* Swiper */
-.swiper {
+.detector__swiper {
     display: flex;
 }
-.swiper .swiper-items {
+.detector__swiper .swiper-wrapper {
     display: flex;
     justify-content: space-between;
     flex-grow: 1;
 }
-.swiper .swiper-navigation {
+.detector__swiper .swiper-navigation {
     width: 50px;
     margin-top: 100px;
 }
-.swiper .swiper-item {
+.detector__swiper .swiper-item {
     width: 23%;
     text-align: center;
 }
-.swiper img {
+.detector__swiper img {
     width: 230px;
 }
-.swiper .swiper-title {
+.detector__swiper .swiper-title {
     color: var(--font-color);
     font-size: 150%;
 }
-.swiper .swiper-subtitle {
+.detector__swiper .swiper-subtitle {
     color: var(--font-color);
 }
 

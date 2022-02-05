@@ -1,5 +1,4 @@
 const path = require("path");
-const webpack = require("webpack");
 
 module.exports = {
     mode: "development",
@@ -11,6 +10,7 @@ module.exports = {
         spotify_synchronization: "./src/bundles/spotify-synchronization.ts",
         account_details: "./src/bundles/account-details.ts",
         notification_settings: "./src/bundles/notification-settings.ts",
+        home: "./src/bundles/home.ts",
     },
     watchOptions: {
         aggregateTimeout: 200,

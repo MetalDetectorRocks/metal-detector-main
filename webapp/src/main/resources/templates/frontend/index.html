@@ -8,6 +8,32 @@
 </head>
 <body>
     <section layout:fragment="jumbotron">
+        <!-- TEMPLATES -->
+        <template id="artist-template">
+            <div class="swiper-item swiper-slide">
+                <img src="#" alt="" id="artist-image" class="img-round">
+                <div class="mt-2">
+                    <span class="swiper-title" id="artist-name"></span>
+                </div>
+                <div>
+                    <span class="text-muted font-size-s" id="follower"></span>
+                </div>
+            </div>
+        </template>
+        <template id="release-template">
+            <div class="swiper-item swiper-slide">
+                <img src="#" alt="" id="release-cover" class="img-round">
+                <div class="mt-2">
+                    <span class="swiper-title" id="release-artist"></span>
+                </div>
+                <div>
+                    <span class="swiper-subtitle font-size-s" id="release-title"></span>
+                </div>
+                <div class="text-muted font-size-s" id="release-date"></div>
+            </div>
+        </template>
+        <!-- TEMPLATES END -->
+
         <div class="jumbotron">
             <div class="container jumbotron-text pt-4">
                 <h1>Built for <br />Metal Heads.</h1>
@@ -62,118 +88,14 @@
             <div class="section">
                 <h2>Most Followed Artists</h2>
                 <div class="headline-separator"></div>
-                <div class="swiper">
-                    <div class="swiper-navigation">
-                        <i class="material-icons md-30 md-light pointer">arrow_back_ios_new</i>
-                    </div>
-                    <div class="swiper-items">
-                        <div class="swiper-item">
-                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
-                            <div class="mt-2">
-                                <span class="swiper-title">Slipknot</span>
-                            </div>
-                            <div>
-                                <span class="text-muted font-size-s">128 Follower</span>
-                            </div>
-                        </div>
-                        <div class="swiper-item">
-                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
-                            <div class="mt-2">
-                                <span class="swiper-title">Slipknot</span>
-                            </div>
-                            <div>
-                                <span class="text-muted font-size-s">128 Follower</span>
-                            </div>
-                        </div>
-                        <div class="swiper-item">
-                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
-                            <div class="mt-2">
-                                <span class="swiper-title">Slipknot</span>
-                            </div>
-                            <div>
-                                <span class="text-muted font-size-s">128 Follower</span>
-                            </div>
-                        </div>
-                        <div class="swiper-item">
-                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
-                            <div class="mt-2">
-                                <span class="swiper-title">Slipknot</span>
-                            </div>
-                            <div>
-                                <span class="text-muted font-size-s">128 Follower</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-navigation">
-                        <i class="material-icons md-30 md-light pointer">arrow_forward_ios_new</i>
-                    </div>
-                </div>
+                <div class="detector__swiper" id="most-followed-artists-container"></div>
             </div>
 
             <div class="section">
                 <h2>Most Expected Releases</h2>
                 <div class="headline-separator"></div>
-                <div class="swiper">
-                    <div class="swiper-navigation">
-                        <i class="material-icons md-30 md-light pointer">arrow_back_ios_new</i>
-                    </div>
-                    <div class="swiper-items">
-                        <div class="swiper-item">
-                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
-                            <div class="mt-2">
-                                <span class="swiper-title">Slipknot</span>
-                            </div>
-                            <div>
-                                <span class="swiper-subtitle font-size-s">Slipknot</span>
-                            </div>
-                            <div>
-                                <span class="text-muted font-size-s">in 8 days</span>
-                            </div>
-                        </div>
-                        <div class="swiper-item">
-                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
-                            <div class="mt-2">
-                                <span class="swiper-title">Slipknot</span>
-                            </div>
-                            <div>
-                                <span class="swiper-subtitle font-size-s">Slipknot</span>
-                            </div>
-                            <div>
-                                <span class="text-muted font-size-s">in 22 days</span>
-                            </div>
-                        </div>
-                        <div class="swiper-item">
-                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
-                            <div class="mt-2">
-                                <span class="swiper-title">Slipknot</span>
-                            </div>
-                            <div>
-                                <span class="swiper-subtitle font-size-s">Slipknot</span>
-                            </div>
-                            <div>
-                                <span class="text-muted font-size-s">in a month</span>
-                            </div>
-                        </div>
-                        <div class="swiper-item">
-                            <img src="#" th:src="@{/images/dummy/karg_traktat.jpg}" alt="artist image" class="img-round">
-                            <div class="mt-2">
-                                <span class="swiper-title">Slipknot</span>
-                            </div>
-                            <div>
-                                <span class="swiper-subtitle font-size-s">Slipknot</span>
-                            </div>
-                            <div>
-                                <span class="text-muted font-size-s">in 2 months</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-navigation">
-                        <i class="material-icons md-30 md-light pointer">arrow_forward_ios_new</i>
-                    </div>
-                </div>
+                <div class="detector__swiper" id="most-expected-releases-container"></div>
             </div>
-
-            <div id="home-container"></div>
 
             <div class="section">
                 <h2>Latest News</h2>

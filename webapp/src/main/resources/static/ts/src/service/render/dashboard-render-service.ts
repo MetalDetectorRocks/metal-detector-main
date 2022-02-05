@@ -6,7 +6,7 @@ import { Artist } from "../../model/artist.model";
 import { Release } from "../../model/release.model";
 import { DateFormat, DateService } from "../util/date-service";
 import { FollowArtistService } from "../follow-artist-service";
-import { SwiperComponent } from "../../components/swiper/swiper-component";
+import { LegacySwiperComponent } from "../../components/swiper/legacy-swiper-component";
 
 interface HomepageCard {
     readonly divElement: HTMLDivElement;
@@ -186,7 +186,7 @@ export class DashboardRenderService extends AbstractRenderService<DashboardRespo
 
     private createSwiper(uniqueCssClassSelector: string, title: string, items: HTMLDivElement[]): void {
         if (items.length > 0) {
-            new SwiperComponent({
+            new LegacySwiperComponent({
                 uniqueCssClassSelector,
                 title,
                 items,
