@@ -21,26 +21,33 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
+import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.ArtistSearchService;
-import rocks.metaldetector.service.artist.ArtistService;
 import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.service.dashboard.ArtistCollector;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
+import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.http.HttpStatus.OK;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
-import static rocks.metaldetector.support.Endpoints.Rest.FOLLOW;
-import static rocks.metaldetector.support.Endpoints.Rest.SEARCH;
-import static rocks.metaldetector.support.Endpoints.Rest.UNFOLLOW;
+import static rocks.metaldetector.support.Endpoints.Rest.FOLLOW_ARTIST;
+import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
+import static rocks.metaldetector.support.Endpoints.Rest.TOP_ARTISTS;
+import static rocks.metaldetector.support.Endpoints.Rest.UNFOLLOW_ARTIST;
 import static rocks.metaldetector.testutil.DtoFactory.ArtistSearchResponseFactory;
 import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFAULT_DISCOGS_PAGE;
 import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFAULT_DISCOGS_SIZE;
@@ -54,13 +61,13 @@ class ArtistsRestControllerTest implements WithAssertions {
   private static final ArtistSource ARTIST_SOURCE = DISCOGS;
 
   @Mock
-  private ArtistService artistService;
-
-  @Mock
   private ArtistSearchService artistSearchService;
 
   @Mock
   private FollowArtistService followArtistService;
+
+  @Mock
+  private ArtistCollector artistCollector;
 
   private ArtistsRestController underTest;
 
@@ -68,11 +75,11 @@ class ArtistsRestControllerTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    underTest = new ArtistsRestController(artistSearchService, followArtistService);
+    underTest = new ArtistsRestController(artistSearchService, followArtistService, artistCollector);
   }
 
   @Nested
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @TestInstance(PER_CLASS)
   @DisplayName("Test artist name search endpoint")
   class ArtistNameSearchTest {
 
@@ -81,13 +88,13 @@ class ArtistsRestControllerTest implements WithAssertions {
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(SEARCH);
+      restAssuredUtils = new RestAssuredMockMvcUtils(SEARCH_ARTIST);
       RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
     }
 
     @AfterEach
     void tearDown() {
-      reset(artistService, artistSearchService, followArtistService);
+      reset(artistSearchService, followArtistService);
     }
 
     @Test
@@ -157,7 +164,7 @@ class ArtistsRestControllerTest implements WithAssertions {
 
       // then
       validatableResponse
-          .statusCode(HttpStatus.OK.value());
+          .statusCode(OK.value());
     }
 
     @Test
@@ -219,7 +226,7 @@ class ArtistsRestControllerTest implements WithAssertions {
   }
 
   @Nested
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @TestInstance(PER_CLASS)
   @DisplayName("Test follow/unfollow endpoints")
   class FollowArtistTest {
 
@@ -228,14 +235,14 @@ class ArtistsRestControllerTest implements WithAssertions {
 
     @BeforeEach
     void setUp() {
-      followArtistRestAssuredUtils = new RestAssuredMockMvcUtils(FOLLOW);
-      unfollowArtistRestAssuredUtils = new RestAssuredMockMvcUtils(UNFOLLOW);
+      followArtistRestAssuredUtils = new RestAssuredMockMvcUtils(FOLLOW_ARTIST);
+      unfollowArtistRestAssuredUtils = new RestAssuredMockMvcUtils(UNFOLLOW_ARTIST);
       RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
     }
 
     @AfterEach
     void tearDown() {
-      reset(artistService, followArtistService);
+      reset(followArtistService);
     }
 
     @Test
@@ -248,7 +255,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       var validatableResponse = followArtistRestAssuredUtils.doPost(url);
 
       // then
-      validatableResponse.statusCode(HttpStatus.OK.value());
+      validatableResponse.statusCode(OK.value());
     }
 
     @Test
@@ -288,7 +295,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       var validatableResponse = unfollowArtistRestAssuredUtils.doPost(url);
 
       // then
-      validatableResponse.statusCode(HttpStatus.OK.value());
+      validatableResponse.statusCode(OK.value());
     }
 
     @Test
@@ -316,6 +323,66 @@ class ArtistsRestControllerTest implements WithAssertions {
 
       // then
       result.status(HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Nested
+  @DisplayName("Test fetch top artist endpoint")
+  class FetchTopArtistsTest {
+
+    @BeforeEach
+    void setUp() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(TOP_ARTISTS);
+      RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+      reset(artistCollector);
+    }
+
+    @Test
+    @DisplayName("should call artist collector")
+    void should_call_artist_collector() {
+      // given
+      var minFollower = 10;
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("minFollower", minFollower);
+
+      // when
+      restAssuredUtils.doGet(requestParams);
+
+      // then
+      verify(artistCollector).collectTopFollowedArtists(minFollower);
+    }
+
+    @Test
+    @DisplayName("should return limited result of artist collector")
+    void should_return_result_of_artist_collector() {
+      // given
+      var limit = 1;
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("limit", limit);
+      var artist1 = ArtistDtoFactory.withName("A");
+      var artist2 = ArtistDtoFactory.withName("B");
+      doReturn(List.of(artist1, artist2)).when(artistCollector).collectTopFollowedArtists(anyInt());
+
+      // when
+      var validatableResponse = restAssuredUtils.doGet(requestParams);
+
+      // then
+      var responseBody = validatableResponse.extract().as(ArtistDto[].class);
+      assertThat(responseBody).containsExactly(artist1);
+    }
+
+    @Test
+    @DisplayName("should return status code 200")
+    void should_return_200() {
+      // when
+      var validatableResponse = restAssuredUtils.doGet();
+
+      // then
+      validatableResponse.statusCode(OK.value());
     }
   }
 }

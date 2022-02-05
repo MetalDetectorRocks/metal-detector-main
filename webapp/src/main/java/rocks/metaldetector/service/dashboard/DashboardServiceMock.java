@@ -35,11 +35,6 @@ public class DashboardServiceMock implements DashboardService {
         .build();
   }
 
-  @Override
-  public List<ReleaseDto> findTopReleases(TimeRange timeRange, int minFollower, int maxReleases) {
-    return List.of(ReleaseDto.builder().albumTitle("Sons of Northern Darkness").artist("Immortal").releaseDate(LocalDate.now()).build());
-  }
-
   private List<ReleaseDto> createUpcomingReleases(LocalDate now) {
     ReleaseDto waldvolk = ReleaseDto.builder().albumTitle("Waldvolk").artist("XIV Dark Centuries").releaseDate(now.plusDays(11)).coverUrl("/images/dummy/xiv-dark-centuries_waldvolk.jpg").build();
     ReleaseDto transilvanianHunger = ReleaseDto.builder().albumTitle("Transilvanian Hunger").artist("Darkthrone").releaseDate(now.plusDays(21)).coverUrl("/images/dummy/darkthrone_transilvanian-hunger.jpg").build();

@@ -8,6 +8,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.service.dashboard.ArtistCollector;
+import rocks.metaldetector.service.dashboard.ReleaseCollector;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
 
@@ -18,15 +20,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.MY_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
 
 @WebMvcTest(controllers = ReleasesRestController.class)
 public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
 
   @MockBean
+  @SuppressWarnings("unused")
   private ReleaseService releaseService;
 
   @MockBean
+  @SuppressWarnings("unused")
   private FollowArtistService followArtistService;
+
+  @MockBean
+  @SuppressWarnings("unused")
+  private ArtistCollector artistCollector;
+
+  @MockBean
+  @SuppressWarnings("unused")
+  private ReleaseCollector releaseCollector;
 
   @Nested
   @DisplayName("Administrator is allowed to send requests to all endpoints")
@@ -109,6 +122,18 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
                         .content(objectMapper.writeValueAsString(ReleaseUpdateRequest.builder().state("state").build()))
                         .contentType(APPLICATION_JSON))
           .andExpect(status().isForbidden());
+    }
+  }
+
+  @Nested
+  class AnonymousRoleTest {
+
+    @Test
+    @DisplayName("Anonymous user is allowed to GET on endpoint " + TOP_UPCOMING_RELEASES + "'")
+    @WithMockUser(roles = "ANONYMOUS")
+    void anonymous_user_is_allowed_to_get_top_upcoming_releases() throws Exception {
+      mockMvc.perform(get(TOP_UPCOMING_RELEASES))
+          .andExpect(status().isOk());
     }
   }
 }

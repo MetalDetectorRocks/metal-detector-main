@@ -16,7 +16,6 @@ import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
-import rocks.metaldetector.web.api.request.TopReleasesRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
@@ -148,17 +147,6 @@ public class DtoFactory {
     }
   }
 
-  public static class TopReleasesRequestFactory {
-
-    public static TopReleasesRequest createDefault() {
-      LocalDate now = LocalDate.now();
-      TopReleasesRequest request = new TopReleasesRequest(10, 2);
-      request.setDateFrom(now);
-      request.setDateTo(now.plusDays(7));
-      return request;
-    }
-  }
-
   public static class DiscogsArtistSearchResultDtoFactory {
 
     public static DiscogsArtistSearchResultDto createDefault() {
@@ -205,7 +193,7 @@ public class DtoFactory {
     public static DiscogsArtistSearchResultEntryDto withArtistName(String artistName) {
       return DiscogsArtistSearchResultEntryDto.builder()
           .id("abcdef12345")
-          .imageUrl("http://example.com/image-m.jpg")
+          .imageUrl("https://example.com/image-m.jpg")
           .name(artistName)
           .uri("/uri")
           .build();
@@ -217,13 +205,13 @@ public class DtoFactory {
     public static DiscogsArtistDto createDefault() {
       return DiscogsArtistDto.builder()
           .id(EXTERNAL_ID)
-          .url("http://example.com/" + ARTIST_NAME)
+          .url("https://example.com/" + ARTIST_NAME)
           .uri("uri")
           .name(ARTIST_NAME)
-          .images(Map.of(XS, "http://example.com/image-xs.jpg"))
-          .images(Map.of(S, "http://example.com/image-s.jpg"))
-          .images(Map.of(M, "http://example.com/image-m.jpg"))
-          .images(Map.of(L, "http://example.com/image-l.jpg"))
+          .images(Map.of(XS, "https://example.com/image-xs.jpg"))
+          .images(Map.of(S, "https://example.com/image-s.jpg"))
+          .images(Map.of(M, "https://example.com/image-m.jpg"))
+          .images(Map.of(L, "https://example.com/image-l.jpg"))
           .build();
     }
   }
@@ -304,15 +292,15 @@ public class DtoFactory {
           .id(artistName)
           .name(artistName)
           .uri("uri")
-          .url("http://example.com/" + artistName)
+          .url("https://example.com/" + artistName)
           .genres(List.of("Black Metal"))
           .popularity(100)
           .follower(666)
           .images(Map.of(
-                  XS, "http://example.com/image-xs.jpg",
-                  S, "http://example.com/image-s.jpg",
-                  M, "http://example.com/image-m.jpg",
-                  L, "http://example.com/image-l.jpg"
+                  XS, "https://example.com/image-xs.jpg",
+                  S, "https://example.com/image-s.jpg",
+                  M, "https://example.com/image-m.jpg",
+                  L, "https://example.com/image-l.jpg"
           ))
           .build();
     }
@@ -341,10 +329,10 @@ public class DtoFactory {
           .genres(List.of("Black Metal"))
           .id(artistName)
           .images(Map.of(
-                  XS, "http://example.com/image-xs.jpg",
-                  S, "http://example.com/image-s.jpg",
-                  M, "http://example.com/image-m.jpg",
-                  L, "http://example.com/image-l.jpg"
+                  XS, "https://example.com/image-xs.jpg",
+                  S, "https://example.com/image-s.jpg",
+                  M, "https://example.com/image-m.jpg",
+                  L, "https://example.com/image-l.jpg"
           ))
           .name(artistName)
           .uri("uri")
@@ -357,9 +345,9 @@ public class DtoFactory {
     public static ArtistSearchResponseEntryDto discogsWithArtistName(String artistName) {
       return ArtistSearchResponseEntryDto.builder()
           .id("abcdef12345")
-          .images(Map.of(M, "http://example.com/image-m.jpg"))
+          .images(Map.of(M, "https://example.com/image-m.jpg"))
           .name(artistName)
-          .uri("http://discogs.com/uri")
+          .uri("https://discogs.com/uri")
           .followed(false)
           .source(DISCOGS.getDisplayName())
           .build();

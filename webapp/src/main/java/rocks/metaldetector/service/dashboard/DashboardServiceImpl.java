@@ -47,10 +47,4 @@ public class DashboardServiceImpl implements DashboardService {
         .recentlyFollowedArtists(recentlyFollowedArtists)
         .build();
   }
-
-  @Override
-  public List<ReleaseDto> findTopReleases(TimeRange timeRange, int minFollower, int maxReleases) {
-    List<ArtistDto> topFollowedArtists = artistCollector.collectTopFollowedArtists(minFollower);
-    return releaseCollector.collectTopReleases(timeRange, topFollowedArtists, maxReleases);
-  }
 }

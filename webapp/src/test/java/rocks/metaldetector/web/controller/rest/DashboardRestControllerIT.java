@@ -12,12 +12,12 @@ import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static rocks.metaldetector.support.Endpoints.Rest.DASHBOARD;
-import static rocks.metaldetector.support.Endpoints.Rest.TOP_RELEASES;
 
 @WebMvcTest(controllers = DashboardRestController.class)
 class DashboardRestControllerIT extends BaseWebMvcTestWithSecurity {
 
   @MockBean
+  @SuppressWarnings("unused")
   private DashboardService dashboardService;
 
   @Nested
@@ -29,16 +29,6 @@ class DashboardRestControllerIT extends BaseWebMvcTestWithSecurity {
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_get_dashboard() throws Exception {
       mockMvc.perform(get(DASHBOARD))
-          .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("Administrator is allowed to GET on endpoint " + TOP_RELEASES + "'")
-    @WithMockUser(roles = "ADMINISTRATOR")
-    void admin_is_allowed_to_get_top_releases() throws Exception {
-      mockMvc.perform(get(TOP_RELEASES)
-                          .param("maxReleases", "10")
-                          .param("minFollowers", "1"))
           .andExpect(status().isOk());
     }
   }
@@ -53,16 +43,6 @@ class DashboardRestControllerIT extends BaseWebMvcTestWithSecurity {
     void user_is_allowed_to_get_dashboard() throws Exception {
       mockMvc.perform(get(DASHBOARD))
           .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("User is not allowed to GET on endpoint " + TOP_RELEASES + "'")
-    @WithMockUser(roles = "USER")
-    void user_is_not_allowed_to_get_top_releases() throws Exception {
-      mockMvc.perform(get(TOP_RELEASES)
-                          .param("maxReleases", "10")
-                          .param("minFollowers", "1"))
-          .andExpect(status().isForbidden());
     }
   }
 }

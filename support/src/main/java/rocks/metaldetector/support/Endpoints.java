@@ -46,16 +46,17 @@ public class Endpoints {
     public static final String ALL_RELEASES                   = "/rest/v1/releases/all";
     public static final String MY_RELEASES                    = "/rest/v1/releases/my";
     public static final String RELEASES                       = "/rest/v1/releases";
-    public static final String TOP_RELEASES                   = "/rest/v1/releases/top";
+    public static final String TOP_UPCOMING_RELEASES          = "/rest/v1/releases/top";
     public static final String IMPORT_JOB                     = "/rest/v1/releases/import";
     public static final String COVER_JOB                      = "/rest/v1/releases/cover-reload";
     public static final String NOTIFICATION_CONFIG            = "/rest/v1/notification-config";
     public static final String TELEGRAM_CONFIG                = "/rest/v1/telegram-config";
     public static final String OAUTH                          = "/rest/v1/oauth";
     public static final String REGISTRATION_CLEANUP           = "/rest/v1/registration-cleanup";
-    public static final String SEARCH                         = "/rest/v1/artists/search";
-    public static final String FOLLOW                         = "/rest/v1/artists/follow";
-    public static final String UNFOLLOW                       = "/rest/v1/artists/unfollow";
+    public static final String SEARCH_ARTIST                  = "/rest/v1/artists/search";
+    public static final String FOLLOW_ARTIST                  = "/rest/v1/artists/follow";
+    public static final String UNFOLLOW_ARTIST                = "/rest/v1/artists/unfollow";
+    public static final String TOP_ARTISTS                    = "/rest/v1/artists/top";
 
     public static final String USERS                 = "/rest/v1/users";
     public static final String CURRENT_USER          = "/rest/v1/me";

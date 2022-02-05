@@ -49,7 +49,9 @@ import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
-import static rocks.metaldetector.support.Endpoints.Rest.SEARCH;
+import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
+import static rocks.metaldetector.support.Endpoints.Rest.TOP_ARTISTS;
+import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
 
 @Configuration
 @EnableWebSecurity
@@ -85,7 +87,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(GUEST_ONLY_PAGES).permitAll()
         .antMatchers(PUBLIC_PAGES).permitAll()
         .antMatchers(GET, RELEASES).permitAll()
-        .antMatchers(GET, SEARCH).permitAll()
+        .antMatchers(GET, TOP_UPCOMING_RELEASES).permitAll()
+        .antMatchers(GET, SEARCH_ARTIST).permitAll()
+        .antMatchers(GET, TOP_ARTISTS).permitAll()
         .antMatchers(GET, AUTHENTICATION).permitAll()
         .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
         .antMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()

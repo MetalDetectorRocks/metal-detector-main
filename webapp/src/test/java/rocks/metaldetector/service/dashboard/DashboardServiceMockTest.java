@@ -3,9 +3,6 @@ package rocks.metaldetector.service.dashboard;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import rocks.metaldetector.support.TimeRange;
-
-import java.time.LocalDate;
 
 class DashboardServiceMockTest implements WithAssertions {
 
@@ -24,18 +21,5 @@ class DashboardServiceMockTest implements WithAssertions {
     assertThat(result.getMostExpectedReleases()).isNotEmpty();
     assertThat(result.getRecentlyFollowedArtists()).isNotEmpty();
     assertThat(result.getFavoriteCommunityArtists()).isNotEmpty();
-  }
-
-  @Test
-  @DisplayName("release is returned for top releases")
-  void test_top_releases() {
-    // given
-    var timeRange = new TimeRange(LocalDate.now(), null);
-
-    // when
-    var result = underTest.findTopReleases(timeRange, 1, 10);
-
-    // then
-    assertThat(result).isNotNull().isNotEmpty();
   }
 }
