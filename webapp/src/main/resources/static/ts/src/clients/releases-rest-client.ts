@@ -3,10 +3,12 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { ReleasesResponse } from "../model/releases-response.model";
 import { DateService } from "../service/util/date-service";
 import { UrlService } from "../service/util/url-service";
+import { Release } from "../model/release.model";
 
 export class ReleasesRestClient {
     private readonly RELEASES_URL = "/rest/v1/releases";
     private readonly MY_RELEASES_URL = "/rest/v1/releases/my";
+    private readonly TOP_RELEASES_URL = "/rest/v1/releases/top";
 
     private readonly urlService: UrlService;
     private readonly dateService: DateService;
@@ -43,6 +45,18 @@ export class ReleasesRestClient {
         return axios
             .get(url, axiosConfig)
             .then((response: AxiosResponse<ReleasesResponse>) => {
+                return response.data;
+            })
+            .catch((error: AxiosError) => {
+                console.error(error);
+                throw error;
+            });
+    }
+
+    public async fetchTopReleases(): Promise<Release[]> {
+        return axios
+            .get(this.TOP_RELEASES_URL)
+            .then((response: AxiosResponse<Release[]>) => {
                 return response.data;
             })
             .catch((error: AxiosError) => {

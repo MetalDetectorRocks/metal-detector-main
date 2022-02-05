@@ -1,12 +1,11 @@
 import { AbstractRenderService } from "./abstract-render-service";
-import { HomeResponse } from "../../model/home-response.model";
 import { AlertService } from "../util/alert-service";
 import { LoadingIndicatorService } from "../util/loading-indicator-service";
 import { SwiperComponent } from "../../components/swiper/swiper-component";
 import { Release } from "../../model/release.model";
 import { DateFormat, DateService } from "../util/date-service";
 
-export class MostExpectedReleasesSwiperRenderer extends AbstractRenderService<HomeResponse> {
+export class MostExpectedReleasesSwiperRenderer extends AbstractRenderService<Release[]> {
     private readonly dateService: DateService;
     private readonly releaseTemplateElement: HTMLTemplateElement;
 
@@ -24,15 +23,19 @@ export class MostExpectedReleasesSwiperRenderer extends AbstractRenderService<Ho
         return "most-expected-releases-container";
     }
 
-    protected onRendering(data: HomeResponse): void {
-        const releases = data.mostExpectedReleases;
-        if (releases.length > 0) {
+    protected onRendering(releases: Release[]): void {
+        if (releases && releases.length > 0) {
             const items = this.renderReleaseItems(releases);
             new SwiperComponent({
                 uniqueCssClassSelector: "most-expected-releases-swiper",
                 items,
                 host: this.hostElement,
             });
+        } else {
+            const hint = document.createElement("p");
+            hint.textContent = "There are currently no releases available";
+            hint.classList.add("font-color-red");
+            this.hostElement.insertAdjacentElement("beforeend", hint);
         }
     }
 

@@ -1,11 +1,10 @@
 import { AbstractRenderService } from "./abstract-render-service";
-import { HomeResponse } from "../../model/home-response.model";
 import { AlertService } from "../util/alert-service";
 import { LoadingIndicatorService } from "../util/loading-indicator-service";
 import { Artist } from "../../model/artist.model";
 import { SwiperComponent } from "../../components/swiper/swiper-component";
 
-export class MostFollowedArtistsSwiperRenderer extends AbstractRenderService<HomeResponse> {
+export class MostFollowedArtistsSwiperRenderer extends AbstractRenderService<Artist[]> {
     private readonly artistTemplateElement: HTMLTemplateElement;
 
     constructor(alertService: AlertService, loadingIndicatorService: LoadingIndicatorService) {
@@ -17,15 +16,19 @@ export class MostFollowedArtistsSwiperRenderer extends AbstractRenderService<Hom
         return "most-followed-artists-container";
     }
 
-    protected onRendering(data: HomeResponse): void {
-        const artists = data.mostFollowedArtists;
-        if (artists.length > 0) {
+    protected onRendering(artists: Artist[]): void {
+        if (artists && artists.length > 0) {
             const items = this.renderArtistItems(artists);
             new SwiperComponent({
                 uniqueCssClassSelector: "most-followed-artists-swiper",
                 items,
                 host: this.hostElement,
             });
+        } else {
+            const hint = document.createElement("p");
+            hint.textContent = "There are currently no artists available";
+            hint.classList.add("font-color-red");
+            this.hostElement.insertAdjacentElement("beforeend", hint);
         }
     }
 
@@ -46,7 +49,7 @@ export class MostFollowedArtistsSwiperRenderer extends AbstractRenderService<Hom
         const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
         const followerElement = artistDivElement.querySelector("#follower") as HTMLDivElement;
 
-        artistThumbElement.src = artist.thumbnailImage;
+        artistThumbElement.src = artist.mediumImage;
         artistNameElement.textContent = artist.artistName;
         followerElement.innerText = `${artist.follower} Follower`;
 
