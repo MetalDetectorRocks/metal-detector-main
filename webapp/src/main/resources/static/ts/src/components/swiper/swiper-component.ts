@@ -62,7 +62,7 @@ export class SwiperComponent {
     private createPrevNavigation(): string {
         return `
             <div class="swiper-navigation">
-                <i class="material-icons md-30 md-light pointer ${this.props.uniqueCssClassSelector}-prev">arrow_back_ios_new</i>
+                <i class="material-icons md-30 md-light pointer ${this.props.uniqueCssClassSelector}-prev">arrow_back_ios</i>
             </div>
         `.trim();
     }
@@ -70,7 +70,7 @@ export class SwiperComponent {
     private createNextNavigation(): string {
         return `
             <div class="swiper-navigation">
-                <i class="material-icons md-30 md-light pointer ${this.props.uniqueCssClassSelector}-next">arrow_forward_ios_new</i>
+                <i class="material-icons md-30 md-light pointer ${this.props.uniqueCssClassSelector}-next">arrow_forward_ios</i>
             </div>
         `.trim();
     }
