@@ -50,6 +50,7 @@ ul, ol, p, legend, label {
 }
 h1, h2 {
     font-family: 'Metal Mania', cursive;
+    text-shadow: 2px 2px var(--grey-border-color);
 }
 h5, .h5 {
     font-size: 1.3rem;
@@ -86,13 +87,15 @@ a:hover,
     background-repeat: no-repeat;
     background-size: cover;
     position: relative;
-    height: 400px;
+    height: 100%;
 }
 .jumbotron-text h1 {
     font-size: 400%;
+    text-shadow: 2px 2px var(--grey-border-color);
 }
 .jumbotron-text p {
     font-size: 155%;
+    text-shadow: 2px 2px var(--grey-border-color);
     width: 650px;
 }
 
@@ -137,10 +140,12 @@ footer .footer-icon:hover {
 /* Features */
 .features {
     display: flex;
+    flex-wrap: wrap;
+    gap: 1.25%;
     justify-content: space-between;
 }
 .feature-item {
-    width: 23%;
+    width: 24%;
     text-align: center;
 }
 
@@ -681,6 +686,10 @@ footer .footer-icon:hover {
     }
 }
 @media screen and (max-width: 1050px) {
+    .feature-item {
+        width: 45%;
+    }
+
     footer .flex-wrapper {
         flex-direction: column-reverse;
     }
@@ -705,6 +714,22 @@ footer .footer-icon:hover {
     }
 }
 @media screen and (max-width: 700px) {
+    .jumbotron-text h1 {
+        font-size: 300%;
+    }
+    .jumbotron-text p {
+        font-size: 120%;
+        width: 80%;
+    }
+
+    .features {
+        justify-content: center;
+    }
+    .feature-item {
+        margin-top: 20px;
+        width: 70%;
+    }
+
     #my-artists-wrapper.flex-wrapper {
         justify-content: space-evenly;
     }
@@ -762,6 +787,14 @@ footer .footer-icon:hover {
     }
 }
 @media screen and (max-width: 500px) {
+    .jumbotron-text p {
+        width: 100%;
+    }
+
+    .feature-item {
+        width: 90%;
+    }
+
     #my-artists-wrapper .flex-item {
         width: 100%;
     }

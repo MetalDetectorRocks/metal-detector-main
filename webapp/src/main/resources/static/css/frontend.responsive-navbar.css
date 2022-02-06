@@ -2,7 +2,7 @@
     background-color: var(--secondary-background-color);
     border-bottom: 1px solid var(--grey-border-color);
     width: 100%;
-    padding: 0 2%;
+    padding: 0 .75rem;
 }
 .nav-wrapper nav {
     display: flex;
@@ -76,7 +76,7 @@ nav li {
     font-size: 20px;
     cursor: pointer;
     line-height: 60px;
-    width: 70px;
+    width: 25px;
     text-align: center;
     margin: 0;
     display: none;
