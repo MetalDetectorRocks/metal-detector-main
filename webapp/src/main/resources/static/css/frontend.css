@@ -184,7 +184,16 @@ footer .footer-icon:hover {
     justify-content: space-between;
     margin: auto auto 40px;
 }
-.profile p {
+.profile h3 {
+    margin-top: 10px;
+}
+.profile-text {
+    margin-left: 30px;
+}
+.profile-text-reverse {
+    margin-right: 30px;
+}
+.profile-text p {
     line-height: 28px;
 }
 
@@ -680,6 +689,10 @@ footer .footer-icon:hover {
 
 /* Responsive */
 @media screen and (max-width: 1200px) {
+    .profile {
+        width: 80%;
+    }
+
     #releases-wrapper {
         width: 100%;
     }
@@ -699,6 +712,13 @@ footer .footer-icon:hover {
     #homepage-wrapper .blog-posts .blog-post-item {
         width: 400px;
         margin-bottom: 20px;
+    }
+
+    .profile {
+        width: 95%;
+    }
+    .profile h3 {
+        margin-top: 0;
     }
 
     footer .flex-wrapper {
@@ -739,6 +759,24 @@ footer .footer-icon:hover {
     .feature-item {
         margin-top: 20px;
         width: 70%;
+    }
+
+    .profile {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .profile h3 {
+        margin-top: 15px;
+    }
+    .profile-reverse {
+        flex-direction: column-reverse;
+    }
+    .profile-text {
+        margin-left: 0;
+    }
+    .profile-text-reverse {
+        margin-right: 0;
     }
 
     #my-artists-wrapper.flex-wrapper {
