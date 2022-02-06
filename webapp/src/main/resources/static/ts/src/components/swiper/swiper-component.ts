@@ -18,7 +18,7 @@ export class SwiperComponent {
             slidesPerView: 1,
             slidesPerGroup: 1,
             spaceBetween: 15,
-            loop: this.props.items.length >= 4,
+            loop: true,
             loopFillGroupWithBlank: true,
             grabCursor: true,
             navigation: {
@@ -27,13 +27,13 @@ export class SwiperComponent {
             },
             breakpoints: {
                 1280: {
-                    slidesPerView: 4,
+                    slidesPerView: Math.min(4, this.props.items.length),
                 },
                 925: {
-                    slidesPerView: 3,
+                    slidesPerView: Math.min(3, this.props.items.length),
                 },
                 600: {
-                    slidesPerView: 2,
+                    slidesPerView: Math.min(2, this.props.items.length),
                 },
             },
         });
