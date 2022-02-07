@@ -4,7 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import rocks.metaldetector.service.artist.ArtistSearchService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.dashboard.ArtistCollector;
@@ -31,7 +31,7 @@ class ArtistsRestControllerIT extends BaseWebMvcTestWithSecurity {
 
   @Test
   @DisplayName("Anonymous user is allowed to GET on endpoint " + TOP_ARTISTS + "'")
-  @WithMockUser(roles = "ANONYMOUS")
+  @WithAnonymousUser
   void anonymous_user_is_allowed_to_get_top_artists() throws Exception {
     mockMvc.perform(get(TOP_ARTISTS))
         .andExpect(status().isOk());
