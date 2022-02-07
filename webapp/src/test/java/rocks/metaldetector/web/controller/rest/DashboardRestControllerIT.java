@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import rocks.metaldetector.service.dashboard.DashboardService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
@@ -21,7 +22,7 @@ class DashboardRestControllerIT extends BaseWebMvcTestWithSecurity {
   private DashboardService dashboardService;
 
   @Nested
-  @DisplayName("Administrator is allowed to send requests to all endpoints")
+  @DisplayName("Tests for user with ADMINISTRATOR role")
   class AdministratorRoleTest {
 
     @Test
@@ -34,7 +35,7 @@ class DashboardRestControllerIT extends BaseWebMvcTestWithSecurity {
   }
 
   @Nested
-  @DisplayName("User is not allowed to send requests to all endpoints")
+  @DisplayName("Tests for user with USER role")
   class UserRoleTest {
 
     @Test
@@ -43,6 +44,19 @@ class DashboardRestControllerIT extends BaseWebMvcTestWithSecurity {
     void user_is_allowed_to_get_dashboard() throws Exception {
       mockMvc.perform(get(DASHBOARD))
           .andExpect(status().isOk());
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests for anonymous user")
+  class AnonymousUserTest {
+
+    @Test
+    @DisplayName("Anonymous user is not allowed to GET on endpoint " + DASHBOARD + "'")
+    @WithAnonymousUser
+    void anonymous_user_is_not_allowed_to_get_dashboard() throws Exception {
+      mockMvc.perform(get(DASHBOARD))
+          .andExpect(status().isUnauthorized());
     }
   }
 }

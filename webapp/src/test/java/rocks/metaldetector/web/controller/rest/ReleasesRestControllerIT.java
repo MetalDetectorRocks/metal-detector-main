@@ -43,7 +43,7 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
   private ReleaseCollector releaseCollector;
 
   @Nested
-  @DisplayName("Administrator is allowed to send requests to all endpoints")
+  @DisplayName("Tests for user with ADMINISTRATOR role")
   class AdministratorRoleTest {
 
     @Test
@@ -85,7 +85,7 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
   }
 
   @Nested
-  @DisplayName("Users is not allowed to send requests to all endpoints")
+  @DisplayName("Tests for user with USER role")
   class UserRoleTest {
 
     @Test
@@ -118,7 +118,7 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
     @Test
     @DisplayName("User is not allowed to PUT on endpoint " + RELEASES + "'")
     @WithMockUser(roles = "USER")
-    void user_not_is_allowed_to_update_release_state() throws Exception {
+    void user_is_not_allowed_to_update_release_state() throws Exception {
       mockMvc.perform(put(RELEASES + "/1")
                         .content(objectMapper.writeValueAsString(ReleaseUpdateRequest.builder().state("state").build()))
                         .contentType(APPLICATION_JSON))
@@ -127,6 +127,7 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
   }
 
   @Nested
+  @DisplayName("Tests for anonymous user")
   class AnonymousRoleTest {
 
     @Test
@@ -135,6 +136,43 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
     void anonymous_user_is_allowed_to_get_top_upcoming_releases() throws Exception {
       mockMvc.perform(get(TOP_UPCOMING_RELEASES))
           .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Anonymous user is allowed to GET on endpoint " + RELEASES + "'")
+    @WithAnonymousUser
+    void anonymous_user_is_allowed_to_query_releases() throws Exception {
+      mockMvc.perform(get(RELEASES).param("sort", "fieldName")
+              .contentType(APPLICATION_JSON))
+          .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Anonymous user is not allowed to GET on endpoint " + ALL_RELEASES + "'")
+    @WithAnonymousUser
+    void anonymous_user_is_not_allowed_to_query_all_releases() throws Exception {
+      mockMvc.perform(get(ALL_RELEASES)
+              .contentType(APPLICATION_JSON))
+          .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("Anonymous user is not allowed to GET on endpoint " + MY_RELEASES + "'")
+    @WithAnonymousUser
+    void anonymous_user_is_not_allowed_to_query_my_releases() throws Exception {
+      mockMvc.perform(get(MY_RELEASES).param("sort", "fieldName")
+              .contentType(APPLICATION_JSON))
+          .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("Anonymous user is not allowed to PUT on endpoint " + RELEASES + "'")
+    @WithAnonymousUser
+    void anonymous_user_is_not_allowed_to_update_release_state() throws Exception {
+      mockMvc.perform(put(RELEASES + "/1")
+              .content(objectMapper.writeValueAsString(ReleaseUpdateRequest.builder().state("state").build()))
+              .contentType(APPLICATION_JSON))
+          .andExpect(status().isUnauthorized());
     }
   }
 }
