@@ -16,8 +16,7 @@ public class AuthenticationRestController {
 
   private final AuthenticationFacade authenticationFacade;
 
-  @GetMapping(path = AUTHENTICATION,
-              produces = APPLICATION_JSON_VALUE)
+  @GetMapping(path = AUTHENTICATION, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<AuthenticationResponse> authenticated() {
     return ResponseEntity.ok(
         AuthenticationResponse.builder()
