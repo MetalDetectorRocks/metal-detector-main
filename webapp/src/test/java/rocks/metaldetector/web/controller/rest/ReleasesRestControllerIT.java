@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.service.artist.FollowArtistService;
@@ -130,7 +131,7 @@ public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
 
     @Test
     @DisplayName("Anonymous user is allowed to GET on endpoint " + TOP_UPCOMING_RELEASES + "'")
-    @WithMockUser(roles = "ANONYMOUS")
+    @WithAnonymousUser
     void anonymous_user_is_allowed_to_get_top_upcoming_releases() throws Exception {
       mockMvc.perform(get(TOP_UPCOMING_RELEASES))
           .andExpect(status().isOk());
