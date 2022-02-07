@@ -69,7 +69,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
 
     // then
     var authenticationResponse = response.extract().as(AuthenticationResponse.class);
-    response.statusCode(OK.value());
+    response.status(OK);
     assertThat(authenticationResponse.isAuthenticated()).isTrue();
   }
 }

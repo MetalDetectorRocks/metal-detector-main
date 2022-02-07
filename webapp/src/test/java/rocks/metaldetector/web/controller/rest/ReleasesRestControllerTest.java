@@ -591,7 +591,6 @@ class ReleasesRestControllerTest implements WithAssertions {
       verify(releaseCollector).collectTopReleases(any(), any(), eq(limit));
     }
 
-
     @Test
     @DisplayName("should return releases from release collector")
     void should_return_releases_from_release_collector() {

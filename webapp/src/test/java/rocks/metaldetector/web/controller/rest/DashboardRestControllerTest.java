@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.service.dashboard.DashboardService;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.DtoFactory.ReleaseDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.response.DashboardResponse;
@@ -22,6 +21,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static rocks.metaldetector.support.Endpoints.Rest.DASHBOARD;
 
 @ExtendWith(MockitoExtension.class)
 class DashboardRestControllerTest implements WithAssertions {
@@ -32,11 +32,11 @@ class DashboardRestControllerTest implements WithAssertions {
   @InjectMocks
   private DashboardRestController underTest;
 
-  private RestAssuredMockMvcUtils dashboardRestAssuredMockMvcUtils;
+  private RestAssuredMockMvcUtils restAssuredUtils;
 
   @BeforeEach
   void setUp() {
-    dashboardRestAssuredMockMvcUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.DASHBOARD);
+    restAssuredUtils = new RestAssuredMockMvcUtils(DASHBOARD);
     RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
@@ -49,7 +49,7 @@ class DashboardRestControllerTest implements WithAssertions {
   @DisplayName("dashboardService is called on GET")
   void test_get_dashboard_calls_dashboard_service() {
     // when
-    dashboardRestAssuredMockMvcUtils.doGet();
+    restAssuredUtils.doGet();
 
     // then
     verify(dashboardService).createDashboardResponse();
@@ -59,7 +59,7 @@ class DashboardRestControllerTest implements WithAssertions {
   @DisplayName("httpStatus OK is returned on GET dashboard")
   void test_get_dashboard_http_200() {
     // when
-    var result = dashboardRestAssuredMockMvcUtils.doGet();
+    var result = restAssuredUtils.doGet();
 
     // then
     result.assertThat(status().isOk());
@@ -74,7 +74,7 @@ class DashboardRestControllerTest implements WithAssertions {
     doReturn(responseMock).when(dashboardService).createDashboardResponse();
 
     // when
-    var result = dashboardRestAssuredMockMvcUtils.doGet();
+    var result = restAssuredUtils.doGet();
 
     // then
     var responseBody = (DashboardResponse) result.extract().as(DashboardResponse.class);
