@@ -200,7 +200,7 @@ export class SpotifySynchronizationRenderService {
     private buildSpotifyFollowerElement(artist: SpotifyArtist): HTMLSpanElement {
         const followerCount = new Intl.NumberFormat("en-us", { minimumFractionDigits: 0 }).format(artist.follower);
         const followerElement = document.createElement("span");
-        followerElement.innerText = `${followerCount} followers on Spotify`;
+        followerElement.innerText = `${followerCount} followers`;
         return followerElement;
     }
 
