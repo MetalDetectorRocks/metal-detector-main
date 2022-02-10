@@ -168,6 +168,8 @@ footer .footer-icon:hover {
 }
 .detector__swiper img {
     width: 230px;
+    height: 230px;
+    object-fit: cover;
 }
 .detector__swiper .swiper-title {
     color: var(--font-color);
