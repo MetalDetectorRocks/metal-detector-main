@@ -140,9 +140,12 @@ export class SearchRenderService extends AbstractRenderService<SearchResponse> {
         followInfoElement.textContent = this.determineFollowerAmountStatement(entry.metalDetectorFollower);
 
         const genreElement = searchResultDivElement.querySelector("#genres") as HTMLParagraphElement;
-        entry.genres.splice(0, 3).forEach((genre) => {
+        entry.genres.splice(0, 4).forEach((genre, index) => {
             const genreBadge = document.createElement("span");
-            genreBadge.classList.add("badge", "badge-dark", "me-2");
+            genreBadge.classList.add("badge", "badge-dark", "me-1", "me-sm-2");
+            if (index >= 2) {
+                genreBadge.classList.add("d-none", "d-sm-inline");
+            }
             genreBadge.textContent = genre;
             genreElement.insertAdjacentElement("beforeend", genreBadge);
         });
