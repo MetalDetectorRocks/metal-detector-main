@@ -10,16 +10,16 @@
 <body>
     <section layout:fragment="content">
         <template id="search-result">
-            <div id="search-result-item-wrapper" class="mb-3">
+            <div id="search-result-item-wrapper" class="mb-4">
                 <div class="search-result-item">
                     <img id="thumb" class="search-card-img" src="#" alt="#">
                 </div>
                 <div class="search-result-item">
-                    <p id="name" class="h4 card-title mt-3"></p>
+                    <p id="name" class="h4 card-title mt-1"></p>
                     <div id="genres"></div>
                     <p id="follow-info" class="h6 card-subtitle mt-2"></p>
                 </div>
-                <div id="follow-icon" class="search-result-item follow-icon-search mt-2 me-1">
+                <div id="follow-icon" class="search-result-item follow-icon-search">
                     <img src="#" th:src="@{/images/pommesgabel.svg}" alt="follow" width="30">
                 </div>
             </div>
