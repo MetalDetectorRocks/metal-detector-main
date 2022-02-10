@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html layout:decorate="~{auth/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Register</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <div class="auth-container rounded">
+            <h1 class="mb-3 h4">Registration</h1>
+            <p>The registration of a new user account is currently not possible. We are currently in a closed beta phase.</p>
+            <!-- Username-->
+            <div class="form-floating mb-3">
+                <input type="text" id="username" class="form-control" name="username" disabled placeholder="Username" autocomplete="username">
+                <label for="username">Username</label>
+            </div>
+
+            <!-- Email-->
+            <div class="form-floating mb-3">
+                <input type="email" id="email" class="form-control" name="email" disabled placeholder="name@example.com" required>
+                <label for="email">Email address</label>
+            </div>
+
+            <!-- Password -->
+            <div class="small ms-1">Make sure your password has at least 8 characters.</div>
+            <div class="form-floating mb-3">
+                <input type="password" id="plainPassword" class="form-control" name="plainPassword" disabled placeholder="Password" autocomplete="new-password">
+                <label for="plainPassword">Password</label>
+            </div>
+
+            <!-- Verify Password -->
+            <div class="form-floating mb-3">
+                <input type="password" id="verifyPlainPassword" class="form-control" name="verifyPlainPassword" disabled placeholder="Password" autocomplete="new-password">
+                <label for="verifyPlainPassword">Verify Password</label>
+            </div>
+
+            <!-- Register -->
+            <div class="d-grid gap-2 mt-4">
+                <button class="btn btn-lg btn-secondary" type="submit" disabled>Join Metal Detector</button>
+            </div>
+
+            <p class="my-2">
+                Already registered? <a href="#" th:href="@{/login}">Login</a>
+            </p>
+        </div>
+    </section>
+</body>
+</html>

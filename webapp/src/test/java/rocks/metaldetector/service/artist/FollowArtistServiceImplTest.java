@@ -18,7 +18,7 @@ import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
 import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
 import rocks.metaldetector.spotify.facade.SpotifyService;
@@ -61,7 +61,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
   private ArtistService artistService;
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private AuthenticationFacade authenticationFacade;
 
   @Mock
   private DiscogsService discogsService;
@@ -80,7 +80,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(artistDtoTransformer, artistEntityTransformer, artistRepository, artistService, currentUserSupplier,
+    reset(artistDtoTransformer, artistEntityTransformer, artistRepository, artistService, authenticationFacade,
           discogsService, followActionRepository, spotifyService, userEntity);
   }
 
@@ -90,7 +90,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     // given
     when(artistRepository.existsByExternalIdAndSource(anyString(), any())).thenReturn(true);
     when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
 
     // when
     underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
@@ -107,13 +107,13 @@ class FollowArtistServiceImplTest implements WithAssertions {
     // given
     when(artistRepository.existsByExternalIdAndSource(anyString(), any())).thenReturn(true);
     when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
 
     // when
     underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(currentUserSupplier).get();
+    verify(authenticationFacade).getCurrentUser();
   }
 
   @Test
@@ -121,7 +121,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
   void follow_should_search_spotify() {
     // given
     when(spotifyService.searchArtistById(anyString())).thenReturn(SpotifyArtistDtoFactory.createDefault());
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
     when(artistRepository.save(any())).thenReturn(ArtistEntityFactory.withExternalId(EXTERNAL_ID));
 
     // when
@@ -137,7 +137,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
   void follow_should_search_discogs() {
     // given
     when(discogsService.searchArtistById(anyString())).thenReturn(DiscogsArtistDtoFactory.createDefault());
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
     when(artistRepository.save(any())).thenReturn(ArtistEntityFactory.withExternalId(EXTERNAL_ID));
 
     // when
@@ -154,7 +154,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     // given
     when(artistRepository.existsByExternalIdAndSource(anyString(), any())).thenReturn(true);
     when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(ArtistEntityFactory.withExternalId(EXTERNAL_ID)));
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
 
     // when
     underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
@@ -170,7 +170,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     // given
     var spotifyArtist = SpotifyArtistDtoFactory.createDefault();
     when(spotifyService.searchArtistById(anyString())).thenReturn(spotifyArtist);
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
     when(artistRepository.save(any())).thenReturn(ArtistEntityFactory.withExternalId(EXTERNAL_ID));
 
     // when
@@ -186,7 +186,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     // given
     var discogsArtist = DiscogsArtistDtoFactory.createDefault();
     when(discogsService.searchArtistById(anyString())).thenReturn(discogsArtist);
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
     when(artistRepository.save(any())).thenReturn(ArtistEntityFactory.withExternalId(EXTERNAL_ID));
 
     // when
@@ -203,7 +203,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     var artistEntity = ArtistEntityFactory.withExternalId(EXTERNAL_ID);
     when(discogsService.searchArtistById(anyString())).thenReturn(DiscogsArtistDtoFactory.createDefault());
     when(artistEntityTransformer.transformDiscogsArtistDto(any())).thenReturn(artistEntity);
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
     when(artistRepository.save(any())).thenReturn(artistEntity);
 
     // when
@@ -220,7 +220,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     ArtistEntity artist = ArtistEntityFactory.withExternalId(EXTERNAL_ID);
     when(artistRepository.existsByExternalIdAndSource(anyString(), any())).thenReturn(true);
     when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(artist));
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
 
     // when
     underTest.follow(EXTERNAL_ID, ARTIST_SOURCE);
@@ -253,7 +253,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.unfollow(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(currentUserSupplier).get();
+    verify(authenticationFacade).getCurrentUser();
   }
 
   @Test
@@ -262,7 +262,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     // given
     ArtistEntity artist = ArtistEntityFactory.withExternalId(EXTERNAL_ID);
     when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(artist));
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
 
     // when
     underTest.unfollow(EXTERNAL_ID, ARTIST_SOURCE);
@@ -275,7 +275,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @DisplayName("isCurrentUserFollowing(): should fetch user entity")
   void isCurrentUserFollowing_should_fetch_user_entity() {
     // given
-    doReturn(userEntity).when(currentUserSupplier).get();
+    doReturn(userEntity).when(authenticationFacade).getCurrentUser();
     ArtistEntity artist = ArtistEntityFactory.withExternalId(EXTERNAL_ID);
     when(artistRepository.findByExternalIdAndSource(anyString(), any())).thenReturn(Optional.of(artist));
 
@@ -283,7 +283,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.isCurrentUserFollowing(EXTERNAL_ID, ARTIST_SOURCE);
 
     // then
-    verify(currentUserSupplier).get();
+    verify(authenticationFacade).getCurrentUser();
   }
 
   @Test
@@ -310,7 +310,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @DisplayName("isCurrentUserFollowing(): should call FollowActionRepository if artist entity exists")
   void isCurrentUserFollowing_should_call_follow_action_repository() {
     var artistEntity = mock(ArtistEntity.class);
-    doReturn(userEntity).when(currentUserSupplier).get();
+    doReturn(userEntity).when(authenticationFacade).getCurrentUser();
     doReturn(Optional.of(artistEntity)).when(artistRepository).findByExternalIdAndSource(any(), any());
 
     // when
@@ -324,7 +324,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
   @ValueSource(booleans = {true, false})
   @DisplayName("isCurrentUserFollowing(): should return result from FollowActionRepository")
   void isCurrentUserFollowing_should_result_from_follow_action_repository(boolean existsByUserIdAndArtistId) {
-    doReturn(userEntity).when(currentUserSupplier).get();
+    doReturn(userEntity).when(authenticationFacade).getCurrentUser();
     doReturn(Optional.of(mock(ArtistEntity.class))).when(artistRepository).findByExternalIdAndSource(any(), any());
     doReturn(existsByUserIdAndArtistId).when(followActionRepository).existsByUserAndArtist(any(), any());
 
@@ -342,14 +342,14 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.getFollowedArtistsOfCurrentUser();
 
     // then
-    verify(currentUserSupplier).get();
+    verify(authenticationFacade).getCurrentUser();
   }
 
   @Test
   @DisplayName("Getting followed artists should call FollowActionRepository to fetch all follow actions")
   void get_followed_should_call_follow_action_repository() {
     // given
-    doReturn(userEntity).when(currentUserSupplier).get();
+    doReturn(userEntity).when(authenticationFacade).getCurrentUser();
 
     // when
     underTest.getFollowedArtistsOfCurrentUser();
@@ -462,7 +462,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     underTest.followSpotifyArtists(Collections.emptyList());
 
     // then
-    verify(currentUserSupplier).get();
+    verify(authenticationFacade).getCurrentUser();
   }
 
   @Test
@@ -471,7 +471,7 @@ class FollowArtistServiceImplTest implements WithAssertions {
     // given
     var artistEntity = ArtistEntityFactory.withExternalId("a");
     var expectedFollowActionEntities = List.of(FollowActionEntity.builder().artist(artistEntity).user(userEntity).build());
-    doReturn(userEntity).when(currentUserSupplier).get();
+    doReturn(userEntity).when(authenticationFacade).getCurrentUser();
     doReturn(List.of(artistEntity)).when(artistRepository).findAllByExternalIdIn(any());
 
     // when

@@ -3,11 +3,12 @@ package rocks.metaldetector.security.handler;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
-import rocks.metaldetector.support.Endpoints;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 
 public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler implements LogoutSuccessHandler {
 
@@ -17,6 +18,6 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
      * Maybe track the last page the user has visited and show this page again after next login
      * String refererUrl = request.getHeader("Referer");
      */
-    response.sendRedirect(Endpoints.Guest.LOGIN + "?logout");
+    response.sendRedirect(HOME);
   }
 }

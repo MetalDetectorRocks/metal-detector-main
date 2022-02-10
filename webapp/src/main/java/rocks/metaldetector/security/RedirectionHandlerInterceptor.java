@@ -1,24 +1,25 @@
 package rocks.metaldetector.security;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import rocks.metaldetector.support.Endpoints;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static org.springframework.http.HttpStatus.TEMPORARY_REDIRECT;
+import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 
 @Component
 @AllArgsConstructor
 public class RedirectionHandlerInterceptor implements HandlerInterceptor {
 
-  private final CurrentUserSupplier currentUserSupplier;
+  private final AuthenticationFacade authenticationFacade;
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-    if (currentUserSupplier.get() != null) {
+    if (authenticationFacade.getCurrentUser() != null) {
       response.setContentType("text/plain");
       sendRedirect(request, response);
       return false;
@@ -37,8 +38,8 @@ public class RedirectionHandlerInterceptor implements HandlerInterceptor {
   }
 
   private void sendRedirect(HttpServletRequest request, HttpServletResponse response) {
-    String encodedRedirectURL = response.encodeRedirectURL(request.getContextPath() + Endpoints.Frontend.HOME);
-    response.setStatus(HttpStatus.TEMPORARY_REDIRECT.value());
+    String encodedRedirectURL = response.encodeRedirectURL(request.getContextPath() + HOME);
+    response.setStatus(TEMPORARY_REDIRECT.value());
     response.setHeader("Location", encodedRedirectURL);
   }
 }

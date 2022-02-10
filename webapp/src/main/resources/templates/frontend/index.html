@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html layout:decorate="~{frontend/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Home</title>
+    <script type="module" th:src="@{/ts/dist/home.bundle.js}" src="#"></script>
+</head>
+<body>
+    <section layout:fragment="jumbotron">
+        <!-- TEMPLATES -->
+        <template id="artist-template">
+            <div class="swiper-item swiper-slide">
+                <img src="#" alt="" id="artist-image" class="img-round">
+                <div class="mt-2">
+                    <span class="swiper-title" id="artist-name"></span>
+                </div>
+                <div>
+                    <span class="text-muted font-size-s" id="follower"></span>
+                </div>
+            </div>
+        </template>
+        <template id="release-template">
+            <div class="swiper-item swiper-slide">
+                <img src="#" alt="" id="release-cover" class="img-round">
+                <div class="mt-2">
+                    <span class="swiper-title" id="release-artist"></span>
+                </div>
+                <div>
+                    <span class="swiper-subtitle font-size-s" id="release-title"></span>
+                </div>
+                <div class="text-muted font-size-s" id="release-date"></div>
+            </div>
+        </template>
+        <!-- TEMPLATES END -->
+
+        <div class="jumbotron">
+            <div class="container jumbotron-text pt-4 pb-4">
+                <h1>Built for <br />Metal Heads.</h1>
+                <p>
+                    Metal Detector is a metal release calendar that is 100% tailored to you.
+                    Follow your favorite artists and get notified when they announce or
+                    release a new album.
+                </p>
+                <a class="btn btn-white mt-3" href="#" th:href="@{/releases}">Explore Upcoming Releases</a>
+            </div>
+        </div>
+    </section>
+    <section layout:fragment="content">
+        <div id="homepage-wrapper">
+            <div class="mt-5 section">
+                <h2>About</h2>
+                <div class="headline-separator"></div>
+                <div class="features">
+                    <div class="feature-item">
+                        <i class="material-icons md-42 md-light">search</i>
+                        <p class="feature-text mt-2">
+                            Search and follow your favorite bands to
+                            stay up to date when a new album is issued.
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="material-icons md-42 md-light">filter_alt</i>
+                        <p class="feature-text mt-2">
+                            A clearly arranged release page with many filter
+                            options gives you a comprehensive overview of
+                            recent and upcoming albums.
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="material-icons md-42 md-light">notifications_active</i>
+                        <p class="feature-text mt-2">
+                            You will receive a notification via email or
+                            Telegram when a new album is announced or released.
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <img src="#" th:src="@{/images/spotify-icon.png}" alt="Spotify Icon" height="42">
+                        <p class="feature-text mt-2">
+                            Don't want to follow every band manually? Easily
+                            sync your favorite bands that you already follow
+                            on Spotify.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Most Followed Artists</h2>
+                <div class="headline-separator"></div>
+                <div class="detector__swiper" id="most-followed-artists-container"></div>
+            </div>
+
+            <div class="section">
+                <h2>Most Expected Releases</h2>
+                <div class="headline-separator"></div>
+                <div class="detector__swiper" id="most-expected-releases-container"></div>
+            </div>
+
+            <div class="section">
+                <h2>Latest News</h2>
+                <div class="headline-separator"></div>
+                <div class="blog-posts">
+                    <div class="blog-post-item">
+                        <a href="#" th:href="@{/blog/future-plans}">
+                            <div class="blog-post-cover">
+                                <img src="#" th:src="@{/images/blog/feature-images/metal-detector.png}" alt="Future plans photo">
+                                <div class="blog-post-date">
+                                    <span class="day">01</span>
+                                    <div class="month-and-year">
+                                        <span class="month">Feb</span>
+                                        <span class="year">2021</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="mt-3 font-metal-mania">
+                                Future plans
+                            </h3>
+                            <p>
+                                The Metal Detector has been online for a few days now (Closed beta). We want to share with you
+                                what we have planned for the current year.
+                            </p>
+                        </a>
+                    </div>
+                    <div class="blog-post-item">
+                        <a href="#" th:href="@{/blog/top-6-releases-2020}">
+                            <div class="blog-post-cover">
+                                <img src="#" th:src="@{/images/blog/feature-images/top-releases-2020.jpg}" alt="Top releases 2020 photo">
+                                <div class="blog-post-date">
+                                    <span class="day">10</span>
+                                    <div class="month-and-year">
+                                        <span class="month">Jan</span>
+                                        <span class="year">2021</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="mt-3 font-metal-mania">
+                                Top Releases of 2020
+                            </h3>
+                            <p>
+                                It is now 2021 and we have taken the time to look back at the pandemic year of 2020 to bring you
+                                our top 6 metal releases.
+                            </p>
+                        </a>
+                    </div>
+                    <div class="blog-post-item">
+                        <a href="#" th:href="@{/blog/we-are-online}">
+                            <div class="blog-post-cover">
+                                <img src="#" th:src="@{/images/blog/feature-images/we-are-online.jpg}" alt="We are online photo">
+                                <div class="blog-post-date">
+                                    <span class="day">09</span>
+                                    <div class="month-and-year">
+                                        <span class="month">Jan</span>
+                                        <span class="year">2021</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="mt-3 font-metal-mania">
+                                We Are Online!
+                            </h3>
+                            <p>
+                                After many months of development, we can finally go online with Metal Detector in early 2021.
+                                Learn more about the initial features in this blog post.
+                            </p>
+                        </a>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <a class="btn btn-white mt-3" href="#" th:href="@{/blog}">View More Posts</a>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Who We Are</h2>
+                <div class="headline-separator"></div>
+                <div class="profile">
+                    <div class="img-round">
+                        <img src="#" th:src="@{/images/daniel.jpeg}" alt="Photo of Daniel" class="img-round img-greyscale">
+                    </div>
+                    <div class="profile-text">
+                        <h3 class="font-metal-mania">Daniel</h3>
+                        <p>
+                            I have been faithful to metal since my youth. Since those days, the problem of keeping up to date with new
+                            releases of my favorite artists has accompanied me. Before I started the "Metal Detector" with Nils, I used
+                            social media to keep myself informed about new releases of my favorite bands. But the ads are annoying, and I
+                            have to actively scroll through the feed. I wanted to create a solution that would notify me as soon as one of
+                            my favorite bands released or announced a new album.
+                        </p>
+                    </div>
+                </div>
+                <div class="profile profile-reverse">
+                    <div class="profile-text-reverse">
+                        <h3 class="font-metal-mania">Nils</h3>
+                        <p>
+                            As I have never been keen on social media, finding out about new releases of my favorite bands has always
+                            been a messy, time-consuming task of browsing various sites with huge ugly tables, seeing the same releases
+                            again and again. There was no way of tailoring that to my listening habits. Seeing lots of friends having
+                            the same problem as Daniel and me, I wanted to solve this once and for all and also give something back to
+                            the amazing community.
+                        </p>
+                    </div>
+                    <div class="img-round">
+                        <img src="#" th:src="@{/images/nils.jpeg}" alt="Photo of Nils" class="img-round">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

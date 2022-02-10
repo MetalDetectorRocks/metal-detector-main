@@ -1,5 +1,5 @@
 // equivalent of jQuerys '$(document).ready()' (doesn't work in older IEs)
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener("DOMContentLoaded", function() {
   registerLogoutListener();
   registerSearchIconClickListener();
   setupScrollToTop();
@@ -32,8 +32,8 @@ function setupScrollToTop() {
     scrollTopButton.addEventListener("click", () => {
       window.scrollTo(0, 0);
     });
+    window.onscroll = () => showScrollToTopButton(scrollTopButton);
   }
-  window.onscroll = () => showScrollToTopButton(scrollTopButton);
 }
 
 function showScrollToTopButton(scrollTopButton) {
@@ -52,14 +52,15 @@ function showScrollToTopButton(scrollTopButton) {
  * @param text The toast text
  */
 function createToast(text) {
+  const toastWrapper = document.getElementById("toast-wrapper");
   const toast = document.createElement("div");
   toast.id = "toast";
   toast.textContent = text;
   toast.classList.add("show", "success");
   setTimeout(function () {
-    toast.classList.remove("show");
+    toastWrapper.innerHTML = "";
   }, 2900);
-  document.getElementById("toast-wrapper").append(toast);
+  toastWrapper.append(toast);
 }
 
 /**

@@ -15,7 +15,7 @@ import rocks.metaldetector.persistence.domain.notification.NotificationConfigEnt
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.telegram.facade.TelegramMessagingService;
 
@@ -47,7 +47,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
   private TelegramConfigTransformer telegramConfigTransformer;
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private AuthenticationFacade authenticationFacade;
 
   @Mock
   private TelegramMessagingService telegramMessagingService;
@@ -60,7 +60,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(telegramConfigRepository, telegramConfigTransformer, currentUserSupplier, telegramMessagingService, notificationConfigRepository);
+    reset(telegramConfigRepository, telegramConfigTransformer, authenticationFacade, telegramMessagingService, notificationConfigRepository);
   }
 
   @DisplayName("Tests for the fetching the configuration")
@@ -74,7 +74,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       underTest.getCurrentUserTelegramConfig();
 
       // then
-      verify(currentUserSupplier).get();
+      verify(authenticationFacade).getCurrentUser();
     }
 
     @Test
@@ -82,7 +82,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
     void test_repository_called() {
       // given
       var user = UserEntityFactory.createUser("user", "mail@mail.mail");
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
 
       // when
       underTest.getCurrentUserTelegramConfig();
@@ -249,7 +249,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       var unusedId = 777_777;
       doReturn(usedId1, usedId2, unusedId).when(threadLocalRandomMock).nextInt(anyInt(), anyInt());
       doReturn(true, true, false).when(telegramConfigRepository).existsByRegistrationId(any());
-      doReturn(UserEntityFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "mail@mail.mail")).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.of(TelegramConfigEntity.builder().build())).when(telegramConfigRepository).findByUser(any());
 
       // when
@@ -269,7 +269,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
     void test_current_user_fetched_on_id_generation() {
       // given
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
-      doReturn(UserEntityFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "mail@mail.mail")).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.of(TelegramConfigEntity.builder().build())).when(telegramConfigRepository).findByUser(any());
 
       // when
@@ -279,7 +279,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       }
 
       // then
-      verify(currentUserSupplier).get();
+      verify(authenticationFacade).getCurrentUser();
     }
 
     @Test
@@ -306,7 +306,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       // given
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
       var user = UserEntityFactory.createUser("user", "mail@mail.mail");
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.of(TelegramConfigEntity.builder().build())).when(telegramConfigRepository).findByUser(any());
 
       // when
@@ -325,7 +325,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       // given
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
       var user = UserEntityFactory.createUser("user", "mail@mail.mail");
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
 
       // when
@@ -344,7 +344,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       // given
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
       var user = UserEntityFactory.createUser("user", "mail@mail.mail");
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
       doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), eq(TELEGRAM));
 
@@ -365,7 +365,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
       var user = UserEntityFactory.createUser("user", "mail@mail.mail");
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
       doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), eq(TELEGRAM));
       doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), eq(EMAIL));
@@ -392,7 +392,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
       var user = UserEntityFactory.createUser("user", "mail@mail.mail");
       var emailNotificationConfig = NotificationConfigEntity.builder().build();
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
       doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), eq(TELEGRAM));
       doReturn(Optional.of(emailNotificationConfig)).when(notificationConfigRepository).findByUserAndChannel(any(), eq(EMAIL));
@@ -421,7 +421,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
       var user = UserEntityFactory.createUser("user", "mail@mail.mail");
       var notificationConfig = mock(NotificationConfigEntity.class);
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
       doReturn(Optional.of(notificationConfig)).when(notificationConfigRepository).findByUserAndChannel(any(), any());
 
@@ -444,7 +444,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
       var id = 666_666;
       doReturn(id).when(threadLocalRandomMock).nextInt(anyInt(), anyInt());
-      doReturn(UserEntityFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "mail@mail.mail")).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
 
       // when
@@ -466,7 +466,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       var threadLocalRandomMock = mock(ThreadLocalRandom.class);
       var id = 666_666;
       doReturn(id).when(threadLocalRandomMock).nextInt(anyInt(), anyInt());
-      doReturn(UserEntityFactory.createUser("user", "mail@mail.mail")).when(currentUserSupplier).get();
+      doReturn(UserEntityFactory.createUser("user", "mail@mail.mail")).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.of(TelegramConfigEntity.builder().build())).when(telegramConfigRepository).findByUser(any());
 
       // when
@@ -492,7 +492,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
       underTest.deleteCurrentUserTelegramConfig();
 
       // then
-      verify(currentUserSupplier).get();
+      verify(authenticationFacade).getCurrentUser();
     }
 
     @Test
@@ -500,7 +500,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
     void should_delete_the_telegram_config() {
       // given
       var user = UserEntityFactory.createUser("user", "mail@mail.mail");
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
 
       // when
       underTest.deleteCurrentUserTelegramConfig();
@@ -514,7 +514,7 @@ class TelegramConfigServiceImplTest implements WithAssertions {
     void should_delete_the_notification_config() {
       // given
       var user = UserEntityFactory.createUser("user", "mail@mail.mail");
-      doReturn(user).when(currentUserSupplier).get();
+      doReturn(user).when(authenticationFacade).getCurrentUser();
 
       // when
       underTest.deleteCurrentUserTelegramConfig();

@@ -9,7 +9,7 @@ import rocks.metaldetector.persistence.domain.notification.NotificationConfigRep
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.telegram.facade.TelegramMessagingService;
 
 import java.util.Optional;
@@ -32,11 +32,11 @@ public class TelegramConfigServiceImpl implements TelegramConfigService {
   private final TelegramConfigTransformer telegramConfigTransformer;
   private final TelegramMessagingService telegramMessagingService;
   private final NotificationConfigRepository notificationConfigRepository;
-  private final CurrentUserSupplier currentUserSupplier;
+  private final AuthenticationFacade authenticationFacade;
 
   @Override
   public Optional<TelegramConfigDto> getCurrentUserTelegramConfig() {
-    AbstractUserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
     return telegramConfigRepository.findByUser(currentUser).map(telegramConfigTransformer::transform);
   }
 
@@ -83,7 +83,7 @@ public class TelegramConfigServiceImpl implements TelegramConfigService {
       throw new IllegalStateException("could not generate new unique registration id");
     }
 
-    AbstractUserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
     TelegramConfigEntity telegramConfig = telegramConfigRepository.findByUser(currentUser)
         .orElseGet(() -> {
           NotificationConfigEntity notificationConfig = getOrCreateNotificationConfig(currentUser);
@@ -118,7 +118,7 @@ public class TelegramConfigServiceImpl implements TelegramConfigService {
   @Override
   @Transactional
   public void deleteCurrentUserTelegramConfig() {
-    AbstractUserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
     telegramConfigRepository.deleteByUser(currentUser);
     notificationConfigRepository.deleteByUserAndChannel(currentUser, TELEGRAM);
   }

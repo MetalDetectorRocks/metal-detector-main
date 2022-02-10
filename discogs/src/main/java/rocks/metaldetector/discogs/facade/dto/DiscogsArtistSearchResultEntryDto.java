@@ -9,7 +9,7 @@ import lombok.Data;
 @Builder
 public class DiscogsArtistSearchResultEntryDto {
 
-  private static final String DISCOGS_URL = "http://discogs.com";
+  private static final String DISCOGS_URL = "https://discogs.com";
 
   private String id;
   private String name;

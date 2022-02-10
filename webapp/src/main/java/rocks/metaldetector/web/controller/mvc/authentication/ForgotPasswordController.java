@@ -14,7 +14,6 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.user.OnResetPasswordRequestCompleteEvent;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 import rocks.metaldetector.web.api.request.ForgotPasswordRequest;
 
@@ -23,8 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static rocks.metaldetector.support.Endpoints.Authentication.FORGOT_PASSWORD;
+
 @Controller
-@RequestMapping(Endpoints.Guest.FORGOT_PASSWORD)
+@RequestMapping(FORGOT_PASSWORD)
 @AllArgsConstructor
 public class ForgotPasswordController {
 
@@ -41,21 +42,21 @@ public class ForgotPasswordController {
 
   @GetMapping
   public ModelAndView showForgotPasswordForm() {
-    return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD);
+    return new ModelAndView(ViewNames.Authentication.FORGOT_PASSWORD);
   }
 
   @PostMapping
   public ModelAndView requestPasswordReset(@Valid @ModelAttribute ForgotPasswordRequest forgotPasswordRequest, BindingResult bindingResult) {
     // show forgot password form if there are validation errors
     if (bindingResult.hasErrors()) {
-      return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
+      return new ModelAndView(ViewNames.Authentication.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
     }
 
     Optional<UserDto> userDto = userService.getUserByEmailOrUsername(forgotPasswordRequest.getEmailOrUsername());
 
     if (userDto.isEmpty()) {
       bindingResult.rejectValue("emailOrUsername", "UserDoesNotExist");
-      return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
+      return new ModelAndView(ViewNames.Authentication.FORGOT_PASSWORD, HttpStatus.BAD_REQUEST);
     }
 
     eventPublisher.publishEvent(new OnResetPasswordRequestCompleteEvent(this, userDto.get()));
@@ -64,6 +65,6 @@ public class ForgotPasswordController {
     viewModel.put("isSuccessful", true);
     viewModel.put("forgotPasswordRequest", new ForgotPasswordRequest()); // to clear the form
 
-    return new ModelAndView(ViewNames.Guest.FORGOT_PASSWORD, viewModel, HttpStatus.OK);
+    return new ModelAndView(ViewNames.Authentication.FORGOT_PASSWORD, viewModel, HttpStatus.OK);
   }
 }

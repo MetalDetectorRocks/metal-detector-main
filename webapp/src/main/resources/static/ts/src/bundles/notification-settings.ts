@@ -1,5 +1,5 @@
-import { AlertService } from "../service/alert-service";
-import { LoadingIndicatorService } from "../service/loading-indicator-service";
+import { AlertService } from "../service/util/alert-service";
+import { LoadingIndicatorService } from "../service/util/loading-indicator-service";
 import { EmailNotificationSettingsRenderService } from "../service/notifications/email-notification-settings-render-service";
 import { NotificationSettingsRestClient } from "../clients/notification-settings-rest-client";
 import { TelegramNotificationSettingsRenderService } from "../service/notifications/telegram-notification-settings-render-service";

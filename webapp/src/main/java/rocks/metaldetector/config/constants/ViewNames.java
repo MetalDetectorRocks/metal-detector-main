@@ -2,19 +2,17 @@ package rocks.metaldetector.config.constants;
 
 public class ViewNames {
 
-  public static class Guest {
-    // Authentication
-    public static final String INDEX                = "guest/index";
-    public static final String LOGIN                = "guest/auth/login";
-    public static final String LOGIN_WITHOUT_OAUTH  = "guest/auth/login-without-oauth";
-    public static final String REGISTER             = "guest/auth/register";
-    public static final String DISABLED_REGISTER    = "guest/auth/disabled-register";
-    public static final String FORGOT_PASSWORD      = "guest/auth/forgot-password";
-    public static final String RESET_PASSWORD       = "guest/auth/reset-password";
-    public static final String IMPRINT              = "guest/imprint";
-    public static final String PRIVACY_POLICY       = "guest/privacy-policy";
+  public static class Authentication {
+    public static final String LOGIN                = "auth/login";
+    public static final String LOGIN_WITHOUT_OAUTH  = "auth/login-without-oauth";
+    public static final String REGISTER             = "auth/register";
+    public static final String DISABLED_REGISTER    = "auth/disabled-register";
+    public static final String FORGOT_PASSWORD      = "auth/forgot-password";
+    public static final String RESET_PASSWORD       = "auth/reset-password";
+    public static final String PREVIEW_INDEX        = "auth/preview-index";
+  }
 
-    // Error pages
+  public static class Error {
     public static final String ERROR       = "error/default";
     public static final String ERROR_400   = "error/400";
     public static final String ERROR_403   = "error/403";
@@ -23,7 +21,8 @@ public class ViewNames {
   }
 
   public static class Frontend {
-    public static final String HOME                         = "frontend/home";
+    public static final String INDEX                        = "frontend/index";
+    public static final String DASHBOARD                    = "frontend/dashboard";
     public static final String SEARCH                       = "frontend/search";
     public static final String RELEASES                     = "frontend/releases";
     public static final String BLOG                         = "frontend/blog";

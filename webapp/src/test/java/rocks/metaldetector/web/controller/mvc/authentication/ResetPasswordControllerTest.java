@@ -45,6 +45,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static rocks.metaldetector.support.Endpoints.Authentication.FORGOT_PASSWORD;
+import static rocks.metaldetector.support.Endpoints.Authentication.RESET_PASSWORD;
 
 @ExtendWith(MockitoExtension.class)
 class ResetPasswordControllerTest implements WithAssertions {
@@ -67,7 +69,7 @@ class ResetPasswordControllerTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.RESET_PASSWORD);
+    restAssuredUtils = new RestAssuredMockMvcUtils(RESET_PASSWORD);
     RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
     objectMapper = new ObjectMapper();
     objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -79,7 +81,7 @@ class ResetPasswordControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Guest.RESET_PASSWORD + "' with not existing token should return the forgot password view with error message")
+  @DisplayName("Requesting '" + RESET_PASSWORD + "' with not existing token should return the forgot password view with error message")
   void reset_password_with_not_existing_token_should_return_error() {
     // given
     String token = "not-existing-token";
@@ -93,11 +95,11 @@ class ResetPasswordControllerTest implements WithAssertions {
         .assertThat(model().hasNoErrors())
         .assertThat(flash().attributeExists("tokenNotExistingError"))
         .assertThat(status().is3xxRedirection())
-        .assertThat(redirectedUrl(Endpoints.Guest.FORGOT_PASSWORD));
+        .assertThat(redirectedUrl(FORGOT_PASSWORD));
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Guest.RESET_PASSWORD + "' with not existing token should call TokenService")
+  @DisplayName("Requesting '" + RESET_PASSWORD + "' with not existing token should call TokenService")
   void reset_password_with_not_existing_token_should_call_token_service() {
     // given
     String token = "not-existing-token";
@@ -111,7 +113,7 @@ class ResetPasswordControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Guest.RESET_PASSWORD + "' with expired token should return the forgot password view with error message")
+  @DisplayName("Requesting '" + RESET_PASSWORD + "' with expired token should return the forgot password view with error message")
   void reset_password_with_expired_token_should_return_error() {
     // given
     String token = "expired-token";
@@ -126,11 +128,11 @@ class ResetPasswordControllerTest implements WithAssertions {
         .assertThat(model().hasNoErrors())
         .assertThat(flash().attributeExists("tokenExpiredError"))
         .assertThat(status().is3xxRedirection())
-        .assertThat(redirectedUrl(Endpoints.Guest.FORGOT_PASSWORD));
+        .assertThat(redirectedUrl(FORGOT_PASSWORD));
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Guest.RESET_PASSWORD + "' with expired token should call TokenService")
+  @DisplayName("Requesting '" + RESET_PASSWORD + "' with expired token should call TokenService")
   void reset_password_with_expired_token_should_call_token_service() {
     // given
     String token = "expired-token";
@@ -145,7 +147,7 @@ class ResetPasswordControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Guest.RESET_PASSWORD + "' with valid token should return the reset password view")
+  @DisplayName("Requesting '" + RESET_PASSWORD + "' with valid token should return the reset password view")
   void reset_password_with_valid_token_should_return_view() {
     // given
     String token = "valid-token";
@@ -160,11 +162,11 @@ class ResetPasswordControllerTest implements WithAssertions {
         .assertThat(model().hasNoErrors())
         .assertThat(model().attributeExists(ResetPasswordController.FORM_DTO))
         .assertThat(status().isOk())
-        .assertThat(view().name(ViewNames.Guest.RESET_PASSWORD));
+        .assertThat(view().name(ViewNames.Authentication.RESET_PASSWORD));
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Guest.RESET_PASSWORD + "' with valid token should call TokenService")
+  @DisplayName("Requesting '" + RESET_PASSWORD + "' with valid token should call TokenService")
   void reset_password_with_valid_token_should_call_token_service() {
     // given
     String token = "valid-token";
@@ -179,7 +181,7 @@ class ResetPasswordControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with valid change password request should be ok")
+  @DisplayName("POSTing on '" + RESET_PASSWORD + "' with valid change password request should be ok")
   void reset_password_should_work() {
     // given
     String password = "valid-password";
@@ -194,11 +196,11 @@ class ResetPasswordControllerTest implements WithAssertions {
     validatableResponse
         .assertThat(model().errorCount(0))
         .assertThat(status().is3xxRedirection())
-        .assertThat(redirectedUrl(Endpoints.Guest.LOGIN + "?resetSuccess"));
+        .assertThat(redirectedUrl(Endpoints.Authentication.LOGIN + "?resetSuccess"));
   }
 
   @Test
-  @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with valid change password request should call UserService")
+  @DisplayName("POSTing on '" + RESET_PASSWORD + "' with valid change password request should call UserService")
   void reset_password_should_call_user_service() {
     // given
     String token = "valid-token";
@@ -216,7 +218,7 @@ class ResetPasswordControllerTest implements WithAssertions {
 
   @ParameterizedTest(name = "[{index}]: {0}")
   @MethodSource("changePasswordRequestProvider")
-  @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with invalid change password request should fail")
+  @DisplayName("POSTing on '" + RESET_PASSWORD + "' with invalid change password request should fail")
   void reset_password_with_invalid_request_should_fail(ChangePasswordRequest request) {
     // when
     var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);
@@ -226,12 +228,12 @@ class ResetPasswordControllerTest implements WithAssertions {
         .assertThat(flash().attribute(ResetPasswordController.FORM_DTO, instanceOf(ChangePasswordRequest.class)))
         .assertThat(flash().attribute(BindingResult.class.getName() + "." + ResetPasswordController.FORM_DTO, instanceOf(BindingResult.class)))
         .assertThat(status().is3xxRedirection())
-        .assertThat(redirectedUrl(Endpoints.Guest.RESET_PASSWORD + "?token=" + request.getTokenString()));
+        .assertThat(redirectedUrl(RESET_PASSWORD + "?token=" + request.getTokenString()));
   }
 
   @ParameterizedTest(name = "[{index}]: {0}")
   @MethodSource("changePasswordRequestProvider")
-  @DisplayName("POSTing on '" + Endpoints.Guest.RESET_PASSWORD + "' with invalid change password request should not call anything")
+  @DisplayName("POSTing on '" + RESET_PASSWORD + "' with invalid change password request should not call anything")
   void reset_password_with_invalid_request_should_not_call_service_services(ChangePasswordRequest request) {
     // when
     restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);

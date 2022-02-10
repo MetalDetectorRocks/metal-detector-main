@@ -1,5 +1,5 @@
-import { AlertService } from "../alert-service";
-import { LoadingIndicatorService } from "../loading-indicator-service";
+import { AlertService } from "../util/alert-service";
+import { LoadingIndicatorService } from "../util/loading-indicator-service";
 import {
     DefaultNotificationConfig,
     NotificationChannel,

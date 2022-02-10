@@ -4,11 +4,12 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import rocks.metaldetector.support.Endpoints;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
 
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
@@ -17,13 +18,13 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     String redirectURL;
 
     if (exception instanceof DisabledException) {
-      redirectURL = Endpoints.Guest.LOGIN + "?disabled";
+      redirectURL = LOGIN + "?disabled";
     }
     else if (exception instanceof InternalAuthenticationServiceException) {
-      redirectURL = Endpoints.Guest.LOGIN + "?blocked";
+      redirectURL = LOGIN + "?blocked";
     }
     else {
-      redirectURL = Endpoints.Guest.LOGIN + "?badCredentials";
+      redirectURL = LOGIN + "?badCredentials";
     }
 
     response.sendRedirect(redirectURL);

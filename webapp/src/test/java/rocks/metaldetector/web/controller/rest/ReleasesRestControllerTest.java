@@ -4,6 +4,7 @@ import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
 import org.assertj.core.api.WithAssertions;
+import org.assertj.core.data.TemporalUnitWithinOffset;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
@@ -22,9 +24,10 @@ import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 import rocks.metaldetector.service.artist.FollowArtistService;
+import rocks.metaldetector.service.dashboard.ArtistCollector;
+import rocks.metaldetector.service.dashboard.ReleaseCollector;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.support.DetectorSort;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.Page;
 import rocks.metaldetector.support.PageRequest;
 import rocks.metaldetector.support.Pagination;
@@ -45,7 +48,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
@@ -53,6 +59,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.MY_RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
 import static rocks.metaldetector.testutil.DtoFactory.PaginatedReleaseRequestFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,9 +75,15 @@ class ReleasesRestControllerTest implements WithAssertions {
   @Mock
   private FollowArtistService followArtistService;
 
+  @Mock
+  private ArtistCollector artistCollector;
+
+  @Mock
+  private ReleaseCollector releaseCollector;
+
   @BeforeEach
   void setUp() {
-    ReleasesRestController underTest = new ReleasesRestController(releasesService, followArtistService);
+    ReleasesRestController underTest = new ReleasesRestController(releasesService, followArtistService, artistCollector, releaseCollector);
     StandaloneMockMvcBuilder mockMvcBuilder = MockMvcBuilders.standaloneSetup(underTest, RestExceptionsHandler.class)
         .setCustomArgumentResolvers(new SortHandlerMethodArgumentResolver());
     RestAssuredMockMvc.standaloneSetup(mockMvcBuilder);
@@ -74,19 +91,19 @@ class ReleasesRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(releasesService, followArtistService);
+    reset(releasesService, followArtistService, artistCollector, releaseCollector);
   }
 
   @Nested
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  @DisplayName("Tests for endpoint '" + Endpoints.Rest.ALL_RELEASES + "'")
+  @TestInstance(PER_CLASS)
+  @DisplayName("Tests for endpoint '" + ALL_RELEASES + "'")
   class QueryAllReleasesTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.ALL_RELEASES);
+      restAssuredUtils = new RestAssuredMockMvcUtils(ALL_RELEASES);
     }
 
     @Test
@@ -154,15 +171,15 @@ class ReleasesRestControllerTest implements WithAssertions {
   }
 
   @Nested
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  @DisplayName("Tests for endpoint '" + Endpoints.Rest.RELEASES + "'")
+  @TestInstance(PER_CLASS)
+  @DisplayName("Tests for endpoint '" + RELEASES + "'")
   class QueryReleasesTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.RELEASES);
+      restAssuredUtils = new RestAssuredMockMvcUtils(RELEASES);
     }
 
     @Test
@@ -270,15 +287,15 @@ class ReleasesRestControllerTest implements WithAssertions {
   }
 
   @Nested
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  @DisplayName("Tests for endpoint '" + Endpoints.Rest.MY_RELEASES + "'")
+  @TestInstance(PER_CLASS)
+  @DisplayName("Tests for endpoint '" + MY_RELEASES + "'")
   class QueryMyReleasesTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.MY_RELEASES);
+      restAssuredUtils = new RestAssuredMockMvcUtils(MY_RELEASES);
     }
 
     @Test
@@ -470,7 +487,7 @@ class ReleasesRestControllerTest implements WithAssertions {
 
     @BeforeEach
     void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.RELEASES);
+      restAssuredUtils = new RestAssuredMockMvcUtils(RELEASES);
     }
 
     @Test
@@ -495,6 +512,110 @@ class ReleasesRestControllerTest implements WithAssertions {
 
       // then
       validatableResponse.statusCode(OK.value());
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests for endpoint '" + TOP_UPCOMING_RELEASES + "'")
+  class FetchTopUpcomingReleasesTest {
+
+    private RestAssuredMockMvcUtils restAssuredUtils;
+
+    @BeforeEach
+    void setUp() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(TOP_UPCOMING_RELEASES);
+    }
+
+    @Test
+    @DisplayName("should call artist collector")
+    void should_call_artist_collector() {
+      // given
+      var minFollower = 10;
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("minFollower", minFollower);
+
+      // when
+      restAssuredUtils.doGet(requestParams);
+
+      // then
+      verify(artistCollector).collectTopFollowedArtists(minFollower);
+    }
+
+    @Test
+    @DisplayName("should call release collector with fixed time range")
+    void should_call_release_collector_with_fixed_time_range() {
+      // given
+      var expectedFromDate = LocalDate.now();
+      var expectedToDate = expectedFromDate.plusMonths(6);
+      var offset = new TemporalUnitWithinOffset(1, DAYS);
+      ArgumentCaptor<TimeRange> timeRangeCaptor = ArgumentCaptor.forClass(TimeRange.class);
+
+      // when
+      restAssuredUtils.doGet();
+
+      // then
+      verify(releaseCollector).collectTopReleases(timeRangeCaptor.capture(), any(), anyInt());
+      TimeRange timeRange = timeRangeCaptor.getValue();
+      assertThat(timeRange.getDateFrom()).isCloseTo(expectedFromDate, offset);
+      assertThat(timeRange.getDateTo()).isCloseTo(expectedToDate, offset);
+    }
+
+    @Test
+    @DisplayName("should call release collector with top artists")
+    void should_call_release_collector_with_top_artists() {
+      // given
+      var artist1 = DtoFactory.ArtistDtoFactory.withName("A");
+      var artist2 = DtoFactory.ArtistDtoFactory.withName("B");
+      var artists = List.of(artist1, artist2);
+      doReturn(artists).when(artistCollector).collectTopFollowedArtists(anyInt());
+
+      // when
+      restAssuredUtils.doGet();
+
+      // then
+      verify(releaseCollector).collectTopReleases(any(), eq(artists), anyInt());
+    }
+
+    @Test
+    @DisplayName("should call release collector with limit parameter")
+    void should_call_release_collector_with_limit_parameter() {
+      // given
+      var limit = 1;
+      Map<String, Object> requestParams = new HashMap<>();
+      requestParams.put("limit", limit);
+
+      // when
+      restAssuredUtils.doGet(requestParams);
+
+      // then
+      verify(releaseCollector).collectTopReleases(any(), any(), eq(limit));
+    }
+
+    @Test
+    @DisplayName("should return releases from release collector")
+    void should_return_releases_from_release_collector() {
+      // given
+      var release1 = ReleaseDtoFactory.withArtistName("A");
+      var release2 = ReleaseDtoFactory.withArtistName("B");
+      var releases = List.of(release1, release2);
+      doReturn(releases).when(releaseCollector).collectTopReleases(any(), any(), anyInt());
+
+      // when
+      var validatableResponse = restAssuredUtils.doGet();
+
+      // then
+      var responseBody = validatableResponse.extract().as(ReleaseDto[].class);
+      assertThat(responseBody).containsExactly(releases.toArray(new ReleaseDto[0]));
+    }
+
+    @Test
+    @DisplayName("should return status code 200")
+    void should_return_status_code_200() {
+      // when
+      var result = restAssuredUtils.doGet();
+
+      // then
+      result.assertThat(status().isOk());
     }
   }
 }

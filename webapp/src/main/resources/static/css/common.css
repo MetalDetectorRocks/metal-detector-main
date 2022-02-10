@@ -59,35 +59,34 @@
 }
 
 /* Toast */
+#toast-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 #toast {
+  max-width: 80%;
   visibility: hidden;
-  min-width: 250px;
-  margin-left: -125px;
+  min-width: 300px;
   color: #adafae;
   text-align: center;
   padding: 0.8rem;
-  position: fixed;
-  z-index: 1;
-  right: 2rem;
-  bottom: 2rem;
+  border-radius: 5px;
 }
-
 #toast.info {
   background-color: #182030;
-  border: 1px solid #246;
 }
-
 #toast.success {
   color: black;
   background-color: #77B300;
-  border: 1px solid #2f3e0f;
 }
-
 #toast.error {
-  background-color: rgba(85, 6, 6, 0.50);
-  border: 1px solid #ea1717;
+  background-color: #9b0f0f;
 }
-
 #toast.show {
   visibility: visible;
   /* Take 0.5 seconds to fade in and 0.6 seconds (to avoid flickering) to fade out the toast.
@@ -191,7 +190,7 @@
 .material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
 .material-icons.md-success { color: #155724; }
 .material-icons.md-red { color:darkred; }
-.material-icons.md-light { color: var(--light-font-color)}
+.material-icons.md-light { color: var(--menu-foreground-color)}
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 
 /* Fade-in / Fade-out */

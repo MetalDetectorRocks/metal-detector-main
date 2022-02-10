@@ -19,7 +19,7 @@ import rocks.metaldetector.persistence.domain.user.OAuthUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
   private final JwtsSupport jwtsSupport;
   private final UserTransformer userTransformer;
   private final TokenService tokenService;
-  private final CurrentUserSupplier currentUserSupplier;
+  private final AuthenticationFacade authenticationFacade;
   private final LoginAttemptService loginAttemptService;
   private final ApplicationEventPublisher applicationEventPublisher;
   private final HttpServletRequest request;
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
   public UserDto updateUser(String publicId, UserDto userDto) {
     AbstractUserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
-    AbstractUserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
 
     if (publicId.equals(currentUser.getPublicId())) {
       if (!userDto.isEnabled()) { throw IllegalUserActionException.createAdminCannotDisableHimselfException(); }
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public UserDto updateCurrentEmail(String emailAddress) {
-    AbstractUserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
 
     if (currentUser instanceof OAuthUserEntity) {
       throw IllegalUserActionException.createOAuthUserCannotChangeEMailException();
@@ -165,7 +165,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(readOnly = true)
   public UserDto getCurrentUser() {
-    AbstractUserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
     return userTransformer.transform(currentUser);
   }
 
@@ -240,7 +240,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void deleteCurrentUser() {
-    AbstractUserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
     applicationEventPublisher.publishEvent(new UserDeletionEvent(this, currentUser));
 
     HttpSession session = request.getSession(false);
@@ -252,7 +252,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void updateCurrentPassword(String oldPlainPassword, String newPlainPassword) {
-    AbstractUserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
 
     if (currentUser instanceof OAuthUserEntity) {
       throw IllegalUserActionException.createOAuthUserCannotChangePasswordException();

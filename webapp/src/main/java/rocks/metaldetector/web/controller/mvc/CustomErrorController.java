@@ -27,21 +27,21 @@ public class CustomErrorController implements ErrorController {
 
     if (statusCode == HttpStatus.NOT_FOUND.value()) {
       log.warn("Could not find any content for '{}'", requestedURI);
-      return new ModelAndView(ViewNames.Guest.ERROR_404, Map.of("requestedURI", requestedURI), HttpStatus.NOT_FOUND);
+      return new ModelAndView(ViewNames.Error.ERROR_404, Map.of("requestedURI", requestedURI), HttpStatus.NOT_FOUND);
     }
     else if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
       log.error("Internal server error while requesting '{}''", requestedURI);
-      return new ModelAndView(ViewNames.Guest.ERROR_500, Map.of("requestedURI", requestedURI), HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ModelAndView(ViewNames.Error.ERROR_500, Map.of("requestedURI", requestedURI), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     else if (statusCode == HttpStatus.FORBIDDEN.value()) {
       log.warn("Access denied while requesting '{}' for user {}'",
                requestedURI, request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : "[Unknown]");
-      return new ModelAndView(ViewNames.Guest.ERROR_403, Map.of("requestedURI", requestedURI), HttpStatus.FORBIDDEN);
+      return new ModelAndView(ViewNames.Error.ERROR_403, Map.of("requestedURI", requestedURI), HttpStatus.FORBIDDEN);
     }
 
     log.error("Unhandled exception occurred. Status code is {}. Requested URI was {}", statusCode, request);
 
     HttpStatus responseStatus = statusCode != -1 ? HttpStatus.valueOf(statusCode) : HttpStatus.I_AM_A_TEAPOT;
-    return new ModelAndView(ViewNames.Guest.ERROR, Map.of("requestedURI", requestedURI), responseStatus);
+    return new ModelAndView(ViewNames.Error.ERROR, Map.of("requestedURI", requestedURI), responseStatus);
   }
 }

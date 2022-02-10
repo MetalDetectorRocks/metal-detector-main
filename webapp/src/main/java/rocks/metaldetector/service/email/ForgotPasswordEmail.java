@@ -1,7 +1,7 @@
 package rocks.metaldetector.service.email;
 
-import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.support.Endpoints;
+import static rocks.metaldetector.config.constants.ViewNames.EmailTemplates.FORGOT_PASSWORD;
+import static rocks.metaldetector.support.Endpoints.Authentication.RESET_PASSWORD;
 
 public final class ForgotPasswordEmail extends AbstractEmail {
 
@@ -29,7 +29,7 @@ public final class ForgotPasswordEmail extends AbstractEmail {
 
   @Override
   public String getTemplateName() {
-    return ViewNames.EmailTemplates.FORGOT_PASSWORD;
+    return FORGOT_PASSWORD;
   }
 
   @Override
@@ -41,7 +41,7 @@ public final class ForgotPasswordEmail extends AbstractEmail {
 
     addViewModelEntry(ViewModelEntry.builder()
             .name("resetPasswordUrl")
-            .value(Endpoints.Guest.RESET_PASSWORD + "?token=" + resetPasswordToken)
+            .value(RESET_PASSWORD + "?token=" + resetPasswordToken)
             .relativeUrl(true)
             .build());
   }

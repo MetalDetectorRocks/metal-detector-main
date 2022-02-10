@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html layout:decorate="~{auth/fragments/layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <title>Register</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <div class="auth-container rounded">
+            <h1 class="mb-3 h4">Registration</h1>
+            <form id="registrationForm" name="registrationForm" action="#" th:action="@{/register}" th:object="${registerUserRequest}" method="POST">
+                <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger alert-dismissible" role="alert">
+                    <span th:each="err : ${#fields.globalErrors()}" th:text="${err}">global error</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${emailError}" class="alert alert-danger alert-dismissible" role="alert">
+                    <span th:text="${emailError}">Email configuration error</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${isSuccessful}" class="alert alert-success alert-dismissible" role="alert">
+                    <span>Thank you for your registration. You will shortly receive an email with a verification link. After confirmation of your registration you can login.</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Username -->
+                <div class="form-floating mb-3">
+                    <input type="text"
+                           id="username"
+                           class="form-control"
+                           name="username"
+                           th:class="${#fields.hasErrors('username')}? 'form-control is-invalid' : 'form-control'"
+                           th:field="*{username}"
+                           placeholder="Username"
+                           autocomplete="username"
+                           required autofocus>
+                    <div class="invalid-feedback" th:errors="*{username}">Username error</div>
+                    <label for="username" class="dark-foreground">Username</label>
+                </div>
+
+                <!-- Email-->
+                <div class="form-floating mb-3">
+                    <input type="email"
+                           id="email"
+                           class="form-control"
+                           name="email"
+                           th:class="${#fields.hasErrors('email')}? 'form-control is-invalid' : 'form-control'"
+                           th:field="*{email}"
+                           placeholder="name@example.com"
+                           required>
+                    <div class="invalid-feedback" th:errors="*{email}">Email error</div>
+                    <label for="email" class="dark-foreground">Email address</label>
+                </div>
+
+                <!-- Password -->
+                <div class="small ms-1">Make sure your password has at least 8 characters.</div>
+                <div class="form-floating mb-3">
+                    <input type="password"
+                           id="plainPassword"
+                           class="form-control"
+                           name="plainPassword"
+                           th:class="${#fields.hasErrors('plainPassword')}? 'form-control is-invalid' : 'form-control'"
+                           th:field="*{plainPassword}"
+                           placeholder="Password"
+                           autocomplete="new-password"
+                           required>
+                    <div class="invalid-feedback" th:errors="*{plainPassword}">Password error</div>
+                    <label for="plainPassword" class="dark-foreground">Password</label>
+                </div>
+
+                <!-- Verify Password -->
+                <div class="form-floating mb-3">
+                    <input type="password"
+                           id="verifyPlainPassword"
+                           class="form-control"
+                           name="verifyPlainPassword"
+                           th:class="${#fields.hasErrors('verifyPlainPassword')}? 'form-control is-invalid' : 'form-control'"
+                           th:field="*{verifyPlainPassword}"
+                           placeholder="Password"
+                           autocomplete="new-password"
+                           required>
+                    <div class="invalid-feedback" th:errors="*{verifyPlainPassword}">Verify password error</div>
+                    <label for="verifyPlainPassword" class="dark-foreground">Verify Password</label>
+                </div>
+
+                <!-- Register -->
+                <div class="d-grid gap-2 mt-4">
+                    <button class="btn btn-lg btn-secondary" type="submit">Join Metal Detector</button>
+                </div>
+            </form>
+
+            <div class="or-container">
+                <div class="line-separator"></div>
+                <div class="or-label">or</div>
+                <div class="line-separator"></div>
+            </div>
+
+            <div class="d-grid gap-2 mb-3">
+                <a class="btn btn-lg btn-secondary" href="#" th:href="@{/oauth2/authorization/google}">
+                    <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="google-logo" class="mx-1 mb-1">
+                    Sign in with Google
+                </a>
+            </div>
+
+            <p class="my-2">
+                Already registered? <a href="#" th:href="@{/login}">Login</a>
+            </p>
+        </div>
+    </section>
+</body>
+</html>

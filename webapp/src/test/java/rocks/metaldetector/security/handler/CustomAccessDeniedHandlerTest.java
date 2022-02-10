@@ -16,10 +16,15 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import rocks.metaldetector.support.Endpoints;
 
 import java.util.List;
 import java.util.stream.Stream;
+
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.TEMPORARY_REDIRECT;
+import static rocks.metaldetector.support.Endpoints.AdminArea.USERS;
+import static rocks.metaldetector.support.Endpoints.Authentication.ALL_AUTH_PAGES;
+import static rocks.metaldetector.support.Endpoints.Frontend.STATUS;
 
 @ExtendWith(MockitoExtension.class)
 class CustomAccessDeniedHandlerTest implements WithAssertions {
@@ -46,10 +51,8 @@ class CustomAccessDeniedHandlerTest implements WithAssertions {
 
   private static Stream<Arguments> createRequestUris() {
     return Stream.of(
-            Arguments.of(Endpoints.Guest.ALL_GUEST_INDEX_PAGES, HttpStatus.TEMPORARY_REDIRECT, Endpoints.Frontend.HOME, null),
-            Arguments.of(Endpoints.Guest.ALL_AUTH_PAGES, HttpStatus.TEMPORARY_REDIRECT, Endpoints.Frontend.STATUS, null),
-            Arguments.of(List.of(Endpoints.AdminArea.USERS), HttpStatus.FORBIDDEN, null, "Not authorized")
-            );
+            Arguments.of(ALL_AUTH_PAGES, TEMPORARY_REDIRECT, STATUS, null),
+            Arguments.of(List.of(USERS), FORBIDDEN, null, "Not authorized")
+    );
   }
-
 }

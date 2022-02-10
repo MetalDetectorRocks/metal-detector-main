@@ -19,9 +19,7 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
         max_attempts: 3
-        window: 120s
 
   butler-db:
     container_name: detector-butler-db
@@ -41,9 +39,7 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
         max_attempts: 3
-        window: 120s
 
   butler-app:
     container_name: butler-app
@@ -67,9 +63,7 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
         max_attempts: 3
-        window: 120s
 
   auth-db:
     container_name: detector-auth-db
@@ -89,9 +83,7 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
         max_attempts: 3
-        window: 120s
 
   auth-app:
     container_name: detector-auth-app
@@ -117,9 +109,7 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
         max_attempts: 3
-        window: 120s
 
 volumes:
   detector-db-volume:

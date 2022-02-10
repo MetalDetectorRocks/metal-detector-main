@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.telegram.facade.TelegramMessagingService;
 
@@ -39,7 +39,7 @@ class NotificationConfigServiceImplTest implements WithAssertions {
   private NotificationConfigTransformer notificationConfigTransformer;
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private AuthenticationFacade authenticationFacade;
 
   @Mock
   private TelegramMessagingService telegramMessagingService;
@@ -49,7 +49,7 @@ class NotificationConfigServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(notificationConfigRepository, notificationConfigTransformer, currentUserSupplier, telegramMessagingService);
+    reset(notificationConfigRepository, notificationConfigTransformer, authenticationFacade, telegramMessagingService);
   }
 
   @DisplayName("Tests for getting notification config")
@@ -61,14 +61,14 @@ class NotificationConfigServiceImplTest implements WithAssertions {
     void test_get_config_calls_current_user_supplier() {
       // given
       UserEntity userEntity = UserEntityFactory.createUser("name", "mail@mail.mail");
-      doReturn(userEntity).when(currentUserSupplier).get();
+      doReturn(userEntity).when(authenticationFacade).getCurrentUser();
       doReturn(List.of(NotificationConfigEntity.builder().user(userEntity).build())).when(notificationConfigRepository).findAllByUser(any());
 
       // when
       underTest.getCurrentUserNotificationConfigs();
 
       // then
-      verify(currentUserSupplier).get();
+      verify(authenticationFacade).getCurrentUser();
     }
 
     @Test
@@ -76,7 +76,7 @@ class NotificationConfigServiceImplTest implements WithAssertions {
     void test_get_config_calls_notification_repo() {
       // given
       var mockUser = mock(UserEntity.class);
-      doReturn(mockUser).when(currentUserSupplier).get();
+      doReturn(mockUser).when(authenticationFacade).getCurrentUser();
       doReturn(List.of(NotificationConfigEntity.builder().user(mockUser).build())).when(notificationConfigRepository).findAllByUser(any());
 
       // when
@@ -91,7 +91,7 @@ class NotificationConfigServiceImplTest implements WithAssertions {
     void test_get_config_throws_exception() {
       // given
       var mockUser = mock(UserEntity.class);
-      doReturn(mockUser).when(currentUserSupplier).get();
+      doReturn(mockUser).when(authenticationFacade).getCurrentUser();
       doReturn(Collections.emptyList()).when(notificationConfigRepository).findAllByUser(any());
 
       // when
@@ -108,7 +108,7 @@ class NotificationConfigServiceImplTest implements WithAssertions {
       var userEntity = UserEntityFactory.createUser("name", "mail@mail.mail");
       var notificationConfigEntity1 = NotificationConfigEntity.builder().user(userEntity).channel(EMAIL).build();
       var notificationConfigEntity2 = NotificationConfigEntity.builder().user(userEntity).channel(TELEGRAM).build();
-      doReturn(userEntity).when(currentUserSupplier).get();
+      doReturn(userEntity).when(authenticationFacade).getCurrentUser();
       doReturn(List.of(notificationConfigEntity1, notificationConfigEntity2)).when(notificationConfigRepository).findAllByUser(any());
 
       // when
@@ -128,7 +128,7 @@ class NotificationConfigServiceImplTest implements WithAssertions {
       var notificationConfigEntity2 = NotificationConfigEntity.builder().user(userEntity).channel(EMAIL).build();
       var notificationConfigDto1 = NotificationConfigDto.builder().frequencyInWeeks(4).build();
       var notificationConfigDto2 = NotificationConfigDto.builder().frequencyInWeeks(2).build();
-      doReturn(userEntity).when(currentUserSupplier).get();
+      doReturn(userEntity).when(authenticationFacade).getCurrentUser();
       doReturn(List.of(notificationConfigEntity1, notificationConfigEntity2)).when(notificationConfigRepository).findAllByUser(any());
       doReturn(notificationConfigDto1).when(notificationConfigTransformer).transform(notificationConfigEntity1);
       doReturn(notificationConfigDto2).when(notificationConfigTransformer).transform(notificationConfigEntity2);
@@ -153,14 +153,14 @@ class NotificationConfigServiceImplTest implements WithAssertions {
       // given
       var request = NotificationConfigDto.builder().channel("EMAIL").build();
       var userEntity = UserEntityFactory.createUser("name", "mail@mail.mail");
-      doReturn(userEntity).when(currentUserSupplier).get();
+      doReturn(userEntity).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), any());
 
       // when
       underTest.updateCurrentUserNotificationConfig(request);
 
       // then
-      verify(currentUserSupplier).get();
+      verify(authenticationFacade).getCurrentUser();
     }
 
     @Test
@@ -169,7 +169,7 @@ class NotificationConfigServiceImplTest implements WithAssertions {
       // given
       var mockUser = mock(UserEntity.class);
       var request = NotificationConfigDto.builder().channel("EMAIL").build();
-      doReturn(mockUser).when(currentUserSupplier).get();
+      doReturn(mockUser).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), any());
 
       // when
@@ -194,7 +194,7 @@ class NotificationConfigServiceImplTest implements WithAssertions {
           .channel("EMAIL")
           .notifyReissues(true)
           .build();
-      doReturn(userEntity).when(currentUserSupplier).get();
+      doReturn(userEntity).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.of(notificationConfig)).when(notificationConfigRepository).findByUserAndChannel(any(), any());
 
       // when
@@ -211,7 +211,7 @@ class NotificationConfigServiceImplTest implements WithAssertions {
       ArgumentCaptor<NotificationConfigEntity> argumentCaptor = ArgumentCaptor.forClass(NotificationConfigEntity.class);
       var mockUser = mock(UserEntity.class);
       var request = NotificationConfigDto.builder().channel("EMAIL").build();
-      doReturn(mockUser).when(currentUserSupplier).get();
+      doReturn(mockUser).when(authenticationFacade).getCurrentUser();
       doReturn(Optional.empty()).when(notificationConfigRepository).findByUserAndChannel(any(), any());
 
       // when

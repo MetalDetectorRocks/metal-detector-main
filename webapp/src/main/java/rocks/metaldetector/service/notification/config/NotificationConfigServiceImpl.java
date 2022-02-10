@@ -8,7 +8,7 @@ import rocks.metaldetector.persistence.domain.notification.NotificationChannel;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.AuthenticationFacade;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,12 +21,12 @@ public class NotificationConfigServiceImpl implements NotificationConfigService 
 
   private final NotificationConfigRepository notificationConfigRepository;
   private final NotificationConfigTransformer notificationConfigTransformer;
-  private final CurrentUserSupplier currentUserSupplier;
+  private final AuthenticationFacade authenticationFacade;
 
   @Override
   @Transactional(readOnly = true)
   public List<NotificationConfigDto> getCurrentUserNotificationConfigs() {
-    AbstractUserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
     List<NotificationConfigEntity> notificationConfigs = notificationConfigRepository.findAllByUser(currentUser);
     return notificationConfigs.stream()
         .map(notificationConfigTransformer::transform)
@@ -36,7 +36,7 @@ public class NotificationConfigServiceImpl implements NotificationConfigService 
   @Override
   @Transactional
   public void updateCurrentUserNotificationConfig(NotificationConfigDto notificationConfigDto) {
-    AbstractUserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
 
     NotificationChannel channel = NotificationChannel.from(notificationConfigDto.getChannel());
     Optional<NotificationConfigEntity> notificationConfigOptional = notificationConfigRepository.findByUserAndChannel(currentUser, channel);

@@ -9,20 +9,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.support.Endpoints;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.TEMPORARY_REDIRECT;
+import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 
 @ExtendWith(MockitoExtension.class)
 class RedirectionHandlerInterceptorTest implements WithAssertions {
 
   @Mock
-  private CurrentUserSupplier currentUserSupplier;
+  private AuthenticationFacade authenticationFacade;
 
   @Mock
   private UserEntity userEntity;
@@ -41,14 +41,14 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(currentUserSupplier, userEntity);
+    reset(authenticationFacade, userEntity);
   }
 
   @Test
   @DisplayName("preHandle() should give false for logged in user")
   void pre_handle_should_return_false() {
     // given
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
 
     // when
     boolean result = underTest.preHandle(request, response, null);
@@ -61,26 +61,26 @@ class RedirectionHandlerInterceptorTest implements WithAssertions {
   @DisplayName("preHandle() should set home page as redirection target")
   void pre_handle_should_set_endpoint() {
     // given
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
 
     // when
     underTest.preHandle(request, response, null);
 
     // then
-    assertThat(response.getHeader("Location")).isEqualTo(Endpoints.Frontend.HOME);
+    assertThat(response.getHeader("Location")).isEqualTo(HOME);
   }
 
   @Test
   @DisplayName("preHandle() should set http status 307")
   void pre_handle_should_set_http_status() {
     // given
-    when(currentUserSupplier.get()).thenReturn(userEntity);
+    when(authenticationFacade.getCurrentUser()).thenReturn(userEntity);
 
     // when
     underTest.preHandle(request, response, null);
 
     // then
-    assertThat(response.getStatus()).isEqualTo(HttpStatus.TEMPORARY_REDIRECT.value());
+    assertThat(response.getStatus()).isEqualTo(TEMPORARY_REDIRECT.value());
   }
 
   @Test

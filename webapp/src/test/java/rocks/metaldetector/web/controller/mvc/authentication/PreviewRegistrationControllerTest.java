@@ -7,12 +7,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static rocks.metaldetector.config.constants.ViewNames.Authentication.DISABLED_REGISTER;
+import static rocks.metaldetector.support.Endpoints.Authentication.REGISTER;
 
 @ExtendWith(MockitoExtension.class)
 class PreviewRegistrationControllerTest implements WithAssertions {
@@ -22,12 +22,12 @@ class PreviewRegistrationControllerTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Guest.REGISTER);
+    restAssuredUtils = new RestAssuredMockMvcUtils(REGISTER);
     RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @Test
-  @DisplayName("Requesting '" + Endpoints.Guest.REGISTER + "' should return the view to register")
+  @DisplayName("Requesting '" + REGISTER + "' should return the view to register")
   void given_register_uri_should_return_register_view() {
     // when
     var validatableResponse = restAssuredUtils.doGet();
@@ -35,6 +35,6 @@ class PreviewRegistrationControllerTest implements WithAssertions {
     // then
     validatableResponse
         .assertThat(status().isOk())
-        .assertThat(view().name(ViewNames.Guest.DISABLED_REGISTER));
+        .assertThat(view().name(DISABLED_REGISTER));
   }
 }

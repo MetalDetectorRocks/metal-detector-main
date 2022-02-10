@@ -24,6 +24,9 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static rocks.metaldetector.support.Endpoints.AdminArea.INDEX;
+import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
+
 @TestPropertySource(properties = {
     "spring.datasource.url=jdbc:h2:mem:test-prod;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
 })
@@ -73,10 +76,10 @@ class RedirectionHandlerInterceptorIT extends BaseSpringBootTest implements With
   }
 
   private static Stream<Arguments> inputProviderWithHandler() {
-    return Arrays.stream(Endpoints.AntPattern.GUEST_PAGES).map(Arguments::of);
+    return Arrays.stream(Endpoints.AntPattern.GUEST_ONLY_PAGES).map(Arguments::of);
   }
 
   private static Stream<Arguments> inputProviderWithoutHandler() {
-    return Arrays.stream(new String[] {Endpoints.Rest.SEARCH, Endpoints.AdminArea.INDEX}).map(Arguments::of);
+    return Arrays.stream(new String[] {SEARCH_ARTIST, INDEX}).map(Arguments::of);
   }
 }

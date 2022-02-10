@@ -11,7 +11,7 @@ import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
-import rocks.metaldetector.security.CurrentUserSupplier;
+import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
 import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
 import rocks.metaldetector.spotify.facade.SpotifyService;
@@ -31,7 +31,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   private final ArtistEntityTransformer artistEntityTransformer;
   private final ArtistRepository artistRepository;
   private final ArtistService artistService;
-  private final CurrentUserSupplier currentUserSupplier;
+  private final AuthenticationFacade authenticationFacade;
   private final DiscogsService discogsService;
   private final FollowActionRepository followActionRepository;
   private final SpotifyService spotifyService;
@@ -41,7 +41,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   public void follow(String externalArtistId, ArtistSource source) {
     ArtistEntity artist = saveAndFetchArtist(externalArtistId, source);
     FollowActionEntity followAction = FollowActionEntity.builder()
-        .user(currentUserSupplier.get())
+        .user(authenticationFacade.getCurrentUser())
         .artist(artist)
         .build();
 
@@ -53,7 +53,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   public int followSpotifyArtists(List<String> spotifyArtistIds) {
     saveSpotifyArtists(spotifyArtistIds);
     List<ArtistEntity> artistEntitiesToFollow = artistRepository.findAllByExternalIdIn(spotifyArtistIds);
-    AbstractUserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
     List<FollowActionEntity> followActionEntities = artistEntitiesToFollow.stream()
         .map(artistEntity -> FollowActionEntity.builder()
             .user(currentUser)
@@ -68,7 +68,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
   @Transactional
   public void unfollow(String externalArtistId, ArtistSource source) {
     ArtistEntity artistEntity = fetchArtistEntity(externalArtistId, source);
-    followActionRepository.deleteByUserAndArtist(currentUserSupplier.get(), artistEntity);
+    followActionRepository.deleteByUserAndArtist(authenticationFacade.getCurrentUser(), artistEntity);
   }
 
   @Override
@@ -79,14 +79,14 @@ public class FollowArtistServiceImpl implements FollowArtistService {
       return false;
     }
 
-    AbstractUserEntity currentUser = currentUserSupplier.get();
+    AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
     return followActionRepository.existsByUserAndArtist(currentUser, artistOptional.get());
   }
 
   @Override
   @Transactional
   public List<ArtistDto> getFollowedArtistsOfCurrentUser() {
-    return getFollowedArtists(currentUserSupplier.get());
+    return getFollowedArtists(authenticationFacade.getCurrentUser());
   }
 
   @Override
@@ -99,7 +99,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     return followActionRepository.findAllByUser(user).stream()
         .map(artistDtoTransformer::transformFollowActionEntity)
         .sorted(Comparator.comparing(ArtistDto::getArtistName))
-        .collect(Collectors.toUnmodifiableList());
+        .toList();
   }
 
   private ArtistEntity saveAndFetchArtist(String externalId, ArtistSource source) {
@@ -110,18 +110,15 @@ public class FollowArtistServiceImpl implements FollowArtistService {
     ArtistEntity artistEntity;
 
     switch (source) {
-      case DISCOGS: {
+      case DISCOGS -> {
         DiscogsArtistDto artist = discogsService.searchArtistById(externalId);
         artistEntity = artistEntityTransformer.transformDiscogsArtistDto(artist);
-        break;
       }
-      case SPOTIFY: {
+      case SPOTIFY -> {
         SpotifyArtistDto artist = spotifyService.searchArtistById(externalId);
         artistEntity = artistEntityTransformer.transformSpotifyArtistDto(artist);
-        break;
       }
-      default:
-        throw new IllegalArgumentException("Source '" + source + "' not found");
+      default -> throw new IllegalArgumentException("Source '" + source + "' not found");
     }
 
     return artistRepository.save(artistEntity);

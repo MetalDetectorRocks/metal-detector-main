@@ -2,6 +2,7 @@
 <html layout:decorate="~{frontend/fragments/layout}"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
       lang="en">
 <head>
     <title>Releases</title>
@@ -69,9 +70,11 @@
             <div class="sticky">
                 <fieldset class="mb-4">
                     <legend>Search</legend>
-                    <label>
-                        <input id="release-search" type="text" class="form-control custom-form-control" placeholder="Artist or release title">
-                    </label>
+                    <div class="d-flex" id="release-search-wrapper">
+                        <input id="release-search" type="text" class="form-control custom-form-control custom-form-control-borderless" placeholder="Artist or release title">
+                        <button class="btn-sm btn-input" id="release-search-go-button"><i class="material-icons">search</i></button>
+                        <button class="btn-sm btn-input" id="release-search-reset-button"><i class="material-icons">delete</i></button>
+                    </div>
                 </fieldset>
                 <fieldset class="mb-4">
                     <legend>Sort</legend>
@@ -80,7 +83,7 @@
                             <label for="sort-property-selector">by</label>
                         </div>
                         <div class="col-auto ps-0">
-                            <select class="form-select" id="sort-property-selector">
+                            <select class="form-select custom-form-control" id="sort-property-selector">
                                 <option selected>Release date</option>
                                 <option>Announcement date</option>
                             </select>
@@ -97,7 +100,7 @@
                         </div>
                     </form>
                 </fieldset>
-                <fieldset class="mb-4">
+                <fieldset class="mb-4" sec:authorize="isAuthenticated()">
                     <legend>Artists</legend>
                     <form id="release-filter-form">
                         <div class="form-check mb-1">

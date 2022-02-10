@@ -101,7 +101,7 @@ class OAuth2AuthorizationRestControllerTest implements WithAssertions {
       var result = restAssuredUtils.doGet("/registrationId");
 
       // then
-      assertThat(result.status(OK));
+      result.status(OK);
     }
 
     @Test
@@ -125,7 +125,7 @@ class OAuth2AuthorizationRestControllerTest implements WithAssertions {
       var result = restAssuredUtils.doGet("/registrationId");
 
       // then
-      assertThat(result.status(OK));
+      result.status(OK);
     }
 
     @Test
@@ -184,7 +184,7 @@ class OAuth2AuthorizationRestControllerTest implements WithAssertions {
       var result = restAssuredUtils.doDelete("/registrationId");
 
       // then
-      assertThat(result.status(OK));
+      result.status(OK);
     }
   }
 }

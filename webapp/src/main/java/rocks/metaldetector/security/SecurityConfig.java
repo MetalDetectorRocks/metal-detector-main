@@ -31,17 +31,27 @@ import rocks.metaldetector.security.handler.CustomAuthenticationFailureHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
 import rocks.metaldetector.security.handler.CustomLogoutSuccessHandler;
 import rocks.metaldetector.service.user.UserService;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.SecurityProperties;
 
 import javax.sql.DataSource;
 import java.time.Duration;
 
+import static org.springframework.http.HttpMethod.GET;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ACTUATOR_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ADMIN;
-import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_PAGES;
+import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
+import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
+import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
+import static rocks.metaldetector.support.Endpoints.Frontend.LOGOUT;
+import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
+import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
+import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
+import static rocks.metaldetector.support.Endpoints.Rest.TOP_ARTISTS;
+import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
 
 @Configuration
 @EnableWebSecurity
@@ -74,19 +84,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .authorizeRequests()
         .antMatchers(ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
         .antMatchers(RESOURCES).permitAll()
-        .antMatchers(GUEST_PAGES).permitAll()
+        .antMatchers(GUEST_ONLY_PAGES).permitAll()
+        .antMatchers(PUBLIC_PAGES).permitAll()
+        .antMatchers(GET, RELEASES).permitAll()
+        .antMatchers(GET, TOP_UPCOMING_RELEASES).permitAll()
+        .antMatchers(GET, SEARCH_ARTIST).permitAll()
+        .antMatchers(GET, TOP_ARTISTS).permitAll()
+        .antMatchers(GET, AUTHENTICATION).permitAll()
         .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
-        .antMatchers(Endpoints.Rest.NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
+        .antMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
         .anyRequest().authenticated()
       .and()
       .formLogin()
-        .loginPage(Endpoints.Guest.LOGIN)
-        .loginProcessingUrl(Endpoints.Guest.LOGIN)
+        .loginPage(LOGIN)
+        .loginProcessingUrl(LOGIN)
         .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
         .failureHandler(new CustomAuthenticationFailureHandler())
       .and()
         .oauth2Login()
-          .loginPage(Endpoints.Guest.LOGIN)
+          .loginPage(LOGIN)
           .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
           .failureHandler(new CustomAuthenticationFailureHandler())
           .userInfoEndpoint()
@@ -107,7 +123,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .key(securityProperties.getRememberMeSecret())
       .and()
       .logout()
-        .logoutUrl(Endpoints.Guest.LOGOUT).permitAll()
+        .logoutUrl(LOGOUT).permitAll()
         .invalidateHttpSession(true)
         .clearAuthentication(true)
         .deleteCookies("JSESSIONID", "remember-me")
@@ -127,7 +143,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .and()
       .exceptionHandling()
         .accessDeniedHandler(new CustomAccessDeniedHandler(() -> SecurityContextHolder.getContext().getAuthentication()))
-        .defaultAuthenticationEntryPointFor(new LoginUrlAuthenticationEntryPoint(Endpoints.Guest.LOGIN), new AntPathRequestMatcher(Endpoints.Guest.SLASH_INDEX))
+        .defaultAuthenticationEntryPointFor(new LoginUrlAuthenticationEntryPoint(LOGIN), new AntPathRequestMatcher(HOME))
         .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher(REST_ENDPOINTS));
   }
 

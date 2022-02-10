@@ -1,7 +1,8 @@
 package rocks.metaldetector.service.email;
 
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.support.Endpoints;
+
+import static rocks.metaldetector.support.Endpoints.Authentication.REGISTRATION_VERIFICATION;
 
 public final class RegistrationVerificationEmail extends AbstractEmail {
 
@@ -36,7 +37,7 @@ public final class RegistrationVerificationEmail extends AbstractEmail {
 
     addViewModelEntry(ViewModelEntry.builder()
             .name("verificationUrl")
-            .value(Endpoints.Guest.REGISTRATION_VERIFICATION + "?token=" + emailVerificationToken)
+            .value(REGISTRATION_VERIFICATION + "?token=" + emailVerificationToken)
             .relativeUrl(true)
             .build());
   }
