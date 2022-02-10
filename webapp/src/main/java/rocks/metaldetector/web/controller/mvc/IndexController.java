@@ -1,6 +1,7 @@
 package rocks.metaldetector.web.controller.mvc;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -14,6 +15,7 @@ import static rocks.metaldetector.config.constants.ViewNames.Frontend.INDEX;
 
 @Controller
 @RequiredArgsConstructor
+@Profile("!preview")
 public class IndexController {
 
   private final AuthenticationFacade authenticationFacade;
