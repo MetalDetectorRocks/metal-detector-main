@@ -1,21 +1,21 @@
 /* Color variables */
 :root {
     --primary-background-color: #02040A;
-    --secondary-background-color: #0E1117;
-    --grey-border-color: #404040;
-    --grey-border-color-highlight: #5a5a5a;
-    --grey-hover-color: #323232;
+    --secondary-background-color: #0b0e13;
+    --grey-border-color: #2c3138;
+    --grey-border-color-highlight: #424954;
+    --grey-hover-color: rgba(44, 49, 56, 0.35);
     --menu-foreground-color: #fcfcfc;
     --menu-foreground-hover-color: #ccc;
-    --dark-field-background-color: #0E1117;
+    --dark-field-background-color: var(--secondary-background-color);
     --font-color: #d3d3d3;
     --muted-font-color: #818181;
     --muted-highlight-font-color: var(--font-color);
     --dark-font-color: #181818;
     --light-hyperlink-font-color: #2a9fd6;
     --light-hyperlink-font-color-highlight: #1d7097;
-    --dark-card-background-color: #282828;
-    --dark-card-footer-background-color: #262626;
+    --dark-card-background-color: var(--secondary-background-color);
+    --dark-card-footer-background-color: #13181e;
     --light-badge-background-color: #adafae;
 }
 
@@ -321,7 +321,7 @@ footer .footer-icon:hover {
 #search-result-wrapper .search-result-item:nth-child(3) {
     flex-basis: 5%
 }
-.search-card-img {
+#search-result-wrapper .search-card-img {
     height: 9rem;
     width: 9rem;
     object-fit: cover;
@@ -530,6 +530,7 @@ footer .footer-icon:hover {
     width: 50px;
     background: var(--dark-card-background-color);
     border-radius: 10px;
+    border: 1px solid var(--grey-border-color);
     cursor: pointer;
     position: fixed;
     bottom: 20px;
@@ -540,6 +541,7 @@ footer .footer-icon:hover {
     transform: scale(0.9);
     transition: .3s ease-in-out transform;
     animation: fadeinscrolltop 1s;
+    z-index: 1000;
 }
 @keyframes fadeinscrolltop {
     from {opacity: 0;}
@@ -619,6 +621,9 @@ footer .footer-icon:hover {
     background-color: #FF8800;
     color: white;
     border: 0;
+}
+.dropdown-divider {
+    border-top: 1px solid var(--grey-border-color);
 }
 .page-link {
     color: #adafae;
@@ -835,13 +840,25 @@ footer .footer-icon:hover {
         margin-left: 25px;
     }
 }
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 576px) {
     .jumbotron-text p {
         width: 100%;
     }
-
     .feature-item {
         width: 90%;
+    }
+    .badge {
+        padding: 0.25em 0.35em;
+        font-size: .7em;
+        font-weight: 500;
+    }
+
+    #search-result-wrapper .search-card-img {
+        height: 7rem;
+        width: 7rem;
+    }
+    #search-result-wrapper .card-title {
+        font-size: 1rem;
     }
 
     #homepage-wrapper .blog-posts .blog-post-item {
@@ -853,5 +870,12 @@ footer .footer-icon:hover {
     }
     #my-artists-wrapper .vertical-card-img {
         min-height: 22.5rem;
+    }
+
+    #spotify-artists-container .h5 {
+        font-size: 1rem;
+    }
+    #spotify-artists-container .artist-info p {
+        font-size: 0.8rem;
     }
 }
