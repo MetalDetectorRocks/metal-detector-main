@@ -4,15 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import rocks.metaldetector.support.ImageBySizeFetcher;
 import rocks.metaldetector.support.ImageSize;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ArtistDto implements ImageBySizeFetcher {
@@ -26,4 +25,7 @@ public class ArtistDto implements ImageBySizeFetcher {
   @JsonIgnore
   private Map<ImageSize, String> images;
 
+  public ArtistDto() {
+    this.images = new HashMap<>();
+  }
 }

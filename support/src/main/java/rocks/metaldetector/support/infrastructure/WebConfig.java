@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.TEXT_HTML;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
 
@@ -31,7 +32,7 @@ public class WebConfig {
   @Bean
   MappingJackson2HttpMessageConverter jackson2HttpMessageConverter() {
     MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter(objectMapper());
-    jackson2HttpMessageConverter.setSupportedMediaTypes(List.of(MediaType.APPLICATION_JSON, MediaType.valueOf("application/csp-report")));
+    jackson2HttpMessageConverter.setSupportedMediaTypes(List.of(APPLICATION_JSON, MediaType.valueOf("application/csp-report")));
     return jackson2HttpMessageConverter;
   }
 

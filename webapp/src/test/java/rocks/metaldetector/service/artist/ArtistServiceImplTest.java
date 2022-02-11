@@ -20,6 +20,7 @@ import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 import rocks.metaldetector.testutil.DtoFactory.SpotifyArtistDtoFactory;
 import rocks.metaldetector.web.transformer.ArtistSearchResponseTransformer;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,7 +64,7 @@ class ArtistServiceImplTest implements WithAssertions {
   private ArtistServiceImpl underTest;
 
   private final ArtistEntity artistEntity = ArtistEntity.builder().externalId(EXTERNAL_ID).artistName(ARTIST_NAME).source(DISCOGS).build();
-  private final ArtistDto artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, "Discogs", null, 666, null);
+  private final ArtistDto artistDto = new ArtistDto(EXTERNAL_ID, ARTIST_NAME, "Discogs", null, 666, Collections.emptyMap());
 
   @AfterEach
   void tearDown() {

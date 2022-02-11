@@ -17,7 +17,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
@@ -32,6 +31,7 @@ import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.ErrorResponse;
 import rocks.metaldetector.web.api.response.UserResponse;
+import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +56,7 @@ class UserRestControllerTest implements WithAssertions {
   private UserService userService;
 
   @Spy
-  private ModelMapper modelMapper;
+  private UserDtoTransformer userDtoTransformer;
 
   private UserRestController underTest;
 
@@ -64,14 +64,14 @@ class UserRestControllerTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    underTest = new UserRestController(userService, modelMapper);
+    underTest = new UserRestController(userService, userDtoTransformer);
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS);
     RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
   }
 
   @AfterEach
   void tearDown() {
-    reset(userService, modelMapper);
+    reset(userService, userDtoTransformer);
   }
 
   @DisplayName("Get all users tests")
@@ -95,9 +95,9 @@ class UserRestControllerTest implements WithAssertions {
 
       List<UserResponse> userList = response.extract().body().jsonPath().getList(".", UserResponse.class);
       assertThat(userList).hasSize(3);
-      assertThat(userList.get(0)).isEqualTo(modelMapper.map(dto1, UserResponse.class));
-      assertThat(userList.get(1)).isEqualTo(modelMapper.map(dto2, UserResponse.class));
-      assertThat(userList.get(2)).isEqualTo(modelMapper.map(dto3, UserResponse.class));
+      assertThat(userList.get(0)).isEqualTo(userDtoTransformer.transformUserResponse(dto1));
+      assertThat(userList.get(1)).isEqualTo(userDtoTransformer.transformUserResponse(dto2));
+      assertThat(userList.get(2)).isEqualTo(userDtoTransformer.transformUserResponse(dto3));
     }
 
     @Test
@@ -148,7 +148,7 @@ class UserRestControllerTest implements WithAssertions {
       response.statusCode(OK.value());
 
       UserResponse user = response.extract().as(UserResponse.class);
-      assertThat(user).isEqualTo(modelMapper.map(dto, UserResponse.class));
+      assertThat(user).isEqualTo(userDtoTransformer.transformUserResponse(dto));
     }
 
     @Test
@@ -188,7 +188,7 @@ class UserRestControllerTest implements WithAssertions {
     void should_use_user_service() {
       // given
       RegisterUserRequest request = RegisterUserRequestFactory.createDefault();
-      UserDto expectedPassedUserDto = modelMapper.map(request, UserDto.class);
+      UserDto expectedPassedUserDto = userDtoTransformer.transformUserDto(request);
       when(userService.createAdministrator(any())).thenReturn(UserDtoFactory.createDefault());
       ArgumentCaptor<UserDto> userDtoCaptor = ArgumentCaptor.forClass(UserDto.class);
 
@@ -215,7 +215,7 @@ class UserRestControllerTest implements WithAssertions {
       response.statusCode(HttpStatus.CREATED.value());
 
       UserResponse user = response.extract().as(UserResponse.class);
-      assertThat(user).isEqualTo(modelMapper.map(createdUserDto, UserResponse.class));
+      assertThat(user).isEqualTo(userDtoTransformer.transformUserResponse(createdUserDto));
     }
 
     @Test
@@ -288,7 +288,7 @@ class UserRestControllerTest implements WithAssertions {
       UserDto userDto = UserDtoFactory.createDefault();
       userDto.setRole(NEW_ROLE);
       userDto.setEnabled(false);
-      when(userService.updateUser(USER_ID, modelMapper.map(updateUserRequest, UserDto.class))).thenReturn(userDto);
+      when(userService.updateUser(USER_ID, userDtoTransformer.transformUserDto(updateUserRequest))).thenReturn(userDto);
 
       // when
       ValidatableMockMvcResponse response = restAssuredUtils.doPut(updateUserRequest);
