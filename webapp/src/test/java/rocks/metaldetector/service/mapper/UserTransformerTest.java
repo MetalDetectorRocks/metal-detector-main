@@ -1,7 +1,6 @@
 package rocks.metaldetector.service.mapper;
 
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,12 +20,7 @@ class UserTransformerTest implements WithAssertions {
   private static final String USERNAME = "JohnD";
   private static final String EMAIL = "john.doe@example.com";
 
-  private UserTransformer underTest;
-
-  @BeforeEach
-  void setup() {
-    underTest = new UserTransformer();
-  }
+  private final UserTransformer underTest = new UserTransformer();
 
   @Test
   @DisplayName("Should transform a UserEntity to UserDto")

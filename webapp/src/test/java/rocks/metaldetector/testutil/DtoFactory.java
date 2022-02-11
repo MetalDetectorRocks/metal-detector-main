@@ -264,6 +264,7 @@ public class DtoFactory {
           .externalId(name)
           .source("Discogs")
           .follower(666)
+          .images(Collections.emptyMap())
           .build();
     }
   }

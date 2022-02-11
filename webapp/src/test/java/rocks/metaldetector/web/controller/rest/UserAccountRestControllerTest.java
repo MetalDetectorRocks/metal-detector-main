@@ -16,7 +16,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
@@ -24,10 +23,11 @@ import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.UpdateEmailRequest;
 import rocks.metaldetector.web.api.request.UpdatePasswordRequest;
-import rocks.metaldetector.web.api.response.UserResponse;
+import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
@@ -46,19 +46,19 @@ class UserAccountRestControllerTest implements WithAssertions {
   private UserService userService;
 
   @Spy
-  private ModelMapper modelMapper;
+  private UserDtoTransformer userDtoTransformer;
 
   private UserAccountRestController underTest;
 
   @BeforeEach
   void setup() {
-    underTest = new UserAccountRestController(userService, modelMapper);
+    underTest = new UserAccountRestController(userService, userDtoTransformer);
     RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
   }
 
   @AfterEach
   void tearDown() {
-    reset(userService, modelMapper);
+    reset(userService, userDtoTransformer);
   }
 
   @DisplayName("Get current user tests")
@@ -97,12 +97,12 @@ class UserAccountRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet();
 
       // then
-      verify(modelMapper).map(currentUser, UserResponse.class);
+      verify(userDtoTransformer).transformUserResponse(currentUser);
     }
   }
 
   @Nested
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @TestInstance(PER_CLASS)
   @DisplayName("Update current user's email address tests")
   class UpdateCurrentEmailAddressTest {
 
@@ -179,7 +179,7 @@ class UserAccountRestControllerTest implements WithAssertions {
   }
 
   @Nested
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @TestInstance(PER_CLASS)
   @DisplayName("Delete current user")
   class DeleteCurrentUserTest {
 
@@ -212,7 +212,7 @@ class UserAccountRestControllerTest implements WithAssertions {
   }
 
   @Nested
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @TestInstance(PER_CLASS)
   @DisplayName("Update current user's password tests")
   class UpdateCurrentPasswordTest {
 
