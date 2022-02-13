@@ -58,21 +58,15 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
         const releaseCoverElement = releaseDivElement.querySelector("#release-cover") as HTMLImageElement;
         const releaseBlurCoverElement = releaseDivElement.querySelector("#release-cover-blur") as HTMLImageElement;
         const releaseTitleElement = releaseDivElement.querySelector("#release-title") as HTMLParagraphElement;
-        const additionalArtistsElement = releaseDivElement.querySelector("#additional-artists") as HTMLDivElement;
         const releaseDateElement = releaseDivElement.querySelector("#release-date") as HTMLElement;
         const announcementDateElement = releaseDivElement.querySelector("#announcement-date") as HTMLElement;
         const releaseTypeElement = releaseDivElement.querySelector("#release-type") as HTMLElement;
         const releaseGenreElement = releaseDivElement.querySelector("#release-genre") as HTMLElement;
-        const reissueIconElement = releaseDivElement.querySelector("#reissue-icon") as HTMLDivElement;
-        const reissueElement = releaseDivElement.querySelector("#reissue-text") as HTMLDivElement;
+        const reissueElement = releaseDivElement.querySelector("#reissue-text") as HTMLSpanElement;
 
         releaseCoverElement.src = release.coverUrl || "/images/unknown-img.jpg";
         releaseBlurCoverElement.src = release.coverUrl || "/images/unknown-img.jpg";
         releaseTitleElement.textContent = `${release.artist} - ${release.albumTitle}`;
-
-        release.additionalArtists === null || release.additionalArtists.length === 0
-            ? releaseTemplateNode.getElementById("additional-artists-wrapper")?.remove()
-            : (additionalArtistsElement.textContent = release.additionalArtists.join(", "));
 
         releaseDateElement.textContent =
             release.releaseDate?.length > 0
@@ -88,9 +82,8 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
         releaseGenreElement.textContent = release.genre || "n/a";
 
         release.reissue
-            ? (reissueElement.innerHTML =
-                  '<span class="material-icons">report_problem</span>' + " This release might be a reissue/re-release")
-            : releaseTemplateNode.getElementById("reissue-wrapper")?.remove();
+            ? (reissueElement.textContent = "possibly a re-release")
+            : releaseTemplateNode.getElementById("reissue-text")?.remove();
 
         return releaseDivElement;
     }
