@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,7 +24,6 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.handler.CustomAccessDeniedHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationFailureHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
@@ -37,6 +35,8 @@ import javax.sql.DataSource;
 import java.time.Duration;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ACTUATOR_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ADMIN;
 import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
@@ -44,8 +44,8 @@ import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
-import static rocks.metaldetector.support.Endpoints.Frontend.LOGOUT;
 import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
+import static rocks.metaldetector.support.Endpoints.Frontend.LOGOUT;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
@@ -82,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .csrf().ignoringAntMatchers(REST_ENDPOINTS, ACTUATOR_ENDPOINTS)
       .and()
       .authorizeRequests()
-        .antMatchers(ADMIN).hasRole(UserRole.ROLE_ADMINISTRATOR.getName())
+        .antMatchers(ADMIN).hasRole(ROLE_ADMINISTRATOR.getName())
         .antMatchers(RESOURCES).permitAll()
         .antMatchers(GUEST_ONLY_PAGES).permitAll()
         .antMatchers(PUBLIC_PAGES).permitAll()
@@ -132,9 +132,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .cors()
       .and()
         .headers()
-          // Permission policy is the new feature policy but not yet supported everywhere, so we set both
           .permissionsPolicy().policy("interest-cohort=()").and()
-          .featurePolicy("interest-cohort=()").and()
           // These headers are set in the proxy, so disabled here
           .frameOptions().disable()
           .xssProtection().disable()
@@ -144,7 +142,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .exceptionHandling()
         .accessDeniedHandler(new CustomAccessDeniedHandler(() -> SecurityContextHolder.getContext().getAuthentication()))
         .defaultAuthenticationEntryPointFor(new LoginUrlAuthenticationEntryPoint(LOGIN), new AntPathRequestMatcher(HOME))
-        .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher(REST_ENDPOINTS));
+        .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(UNAUTHORIZED), new AntPathRequestMatcher(REST_ENDPOINTS));
   }
 
   @Override
