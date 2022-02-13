@@ -364,6 +364,7 @@ footer .footer-icon:hover {
 #offcanvas {
     background: var(--secondary-background-color);
     border-left: 1px solid var(--grey-border-color);
+    width: 320px;
 }
 .offcanvas-header {
     border-bottom: 1px solid var(--grey-border-color);
