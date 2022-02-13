@@ -34,7 +34,7 @@
         <div class="nav-wrapper">
             <nav>
                 <input type="checkbox" id="show-search">
-                <input type="checkbox" id="show-menu">
+                <input type="checkbox" id="show-menu" data-bs-toggle="offcanvas" data-bs-target="#mobile-navbar" aria-controls="mobile-navbar">
                 <label for="show-menu" class="menu-icon">
                     <span class="material-icons"></span>
                 </label>
@@ -45,9 +45,10 @@
                 </div>
                 <form class="search-box" action="#" th:action="@{/artists/search}" method="GET">
                   <label for="query"></label>
-                  <input id="query" autocomplete="off" type="text" class="form-control" th:name="query" placeholder="Search artist" required>
+                  <input id="query" autocomplete="off" type="text" class="form-control" th:name="query" placeholder="Search artist..." required>
                 </form>
-                <ul class="links">
+                <!-- Desktop Menu -->
+                <ul class="links desktop-only">
                     <li sec:authorize="!isAuthenticated()">
                         <a th:classappend="${#request.requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Home</a>
                     </li>
@@ -63,35 +64,12 @@
                     <li>
                         <a th:classappend="${#request.requestURI == '/releases' ? 'active':''}" href="#" th:href="@{/releases}">Releases</a>
                     </li>
-                    <li class="mobile-only" sec:authorize="isAuthenticated()">
-                        <input type="checkbox" id="show-profile-and-settings">
-                        <label for="show-profile-and-settings">Profile and Settings</label>
-                        <ul>
-                            <li>
-                                <a class="dropdown-item" th:classappend="${#request.requestURI == '/settings/account-details' ? 'active':''}" href="#" th:href="@{/settings/account-details}">Account details</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" th:classappend="${#request.requestURI == '/settings/spotify-synchronization' ? 'active':''}" href="#" th:href="@{/settings/spotify-synchronization}">Spotify synchronization</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" th:classappend="${#request.requestURI == '/settings/notification-settings' ? 'active':''}" href="#" th:href="@{/settings/notification-settings}">Notification settings</a>
-                            </li>
-                            <li><a class="dropdown-item" sec:authorize="hasRole('ROLE_ADMINISTRATOR')">Admin area</a></li>
-                            <li><a class="dropdown-item logout-link" href="#" th:href="@{/logout}">Logout</a></li>
-                        </ul>
-                    </li>
-                    <li class="mobile-only">
-                        <div class="d-flex justify-content-start mobile-only mt-4" sec:authorize="!isAuthenticated()">
-                            <a class="btn btn-sm btn-white ms-2 me-2" href="#" th:href="@{/login}">Sign in</a>
-                            <a class="btn btn-sm btn-white" href="#" th:href="@{/register}">Sign up</a>
-                        </div>
-                    </li>
                 </ul>
                 <label for="show-search" class="search-icon">
                     <span class="material-icons"></span>
                 </label>
                 <form action="#" class="mobile-search-box" th:action="@{/artists/search}" method="GET">
-                    <input id="mobile-query" autocomplete="off" th:name="query" type="text" placeholder="Search for your favourite artist..." required>
+                    <input id="mobile-query" autocomplete="off" th:name="query" type="text" placeholder="Search artist..." required>
                     <button type="submit" class="go-icon"><span class="material-icons">double_arrow</span></button>
                 </form>
                 <ul class="setting-links desktop-only" sec:authorize="isAuthenticated()">
@@ -114,6 +92,78 @@
                     <a class="btn btn-sm btn-white" href="#" th:href="@{/register}">Sign up</a>
                 </form>
             </nav>
+
+            <!-- Mobile Menu -->
+            <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="mobile-navbar">
+                <div class="mt-3 text-end me-3">
+                    <span class="material-icons material-icons md-light pointer" data-bs-dismiss="offcanvas" aria-label="Close">close</span>
+                </div>
+                <div class="offcanvas-body">
+                    <ul>
+                        <li sec:authorize="!isAuthenticated()">
+                            <a th:classappend="${#request.requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Home</a>
+                        </li>
+                        <li sec:authorize="isAuthenticated()">
+                            <a th:classappend="${#request.requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Dashboard</a>
+                        </li>
+                        <li>
+                            <a th:classappend="${#request.requestURI == '/blog' ? 'active':''}" href="#" th:href="@{/blog}">Blog</a>
+                        </li>
+                        <li sec:authorize="isAuthenticated()">
+                            <a th:classappend="${#request.requestURI == '/my-artists' ? 'active':''}" href="#" th:href="@{/my-artists}">My Artists</a>
+                        </li>
+                        <li>
+                            <a th:classappend="${#request.requestURI == '/releases' ? 'active':''}" href="#" th:href="@{/releases}">Releases</a>
+                        </li>
+                        <li sec:authorize="isAuthenticated()">
+                            <a href="#profileAndSettingsCollapsable" data-bs-toggle="collapse" aria-expanded="false" aria-controls="profileAndSettingsCollapsable">
+                                Profile and Settings
+                            </a>
+                            <ul class="collapse" id="profileAndSettingsCollapsable">
+                                <li>
+                                    <a th:classappend="${#request.requestURI == '/settings/account-details' ? 'active':''}"
+                                       href="#"
+                                       th:href="@{/settings/account-details}"
+                                    >
+                                        Account details
+                                    </a>
+                                </li>
+                                <li>
+                                    <a th:classappend="${#request.requestURI == '/settings/spotify-synchronization' ? 'active':''}"
+                                       href="#"
+                                       th:href="@{/settings/spotify-synchronization}"
+                                    >
+                                        Spotify synchronization
+                                    </a>
+                                </li>
+                                <li>
+                                    <a th:classappend="${#request.requestURI == '/settings/notification-settings' ? 'active':''}"
+                                       href="#"
+                                       th:href="@{/settings/notification-settings}"
+                                    >
+                                        Notification settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li sec:authorize="hasRole('ROLE_ADMINISTRATOR')">
+                            <a href="#" target="_blank" th:href="@{/admin}">Admin area</a>
+                        </li>
+                        <li sec:authorize="isAuthenticated()" class="mt-5">
+                            <a class="logout-link" href="#" th:href="@{/logout}">
+                                <span class="material-icons">logout</span>
+                                Logout
+                            </a>
+                        </li>
+                        <li sec:authorize="!isAuthenticated()">
+                            <div class="d-flex justify-content-start mt-5">
+                                <a class="btn btn-sm btn-white me-2" href="#" th:href="@{/login}">Sign in</a>
+                                <a class="btn btn-sm btn-white" href="#" th:href="@{/register}">Sign up</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
         <form id="logout-form" method="POST" action="#" th:action="@{/logout}">
         </form>
