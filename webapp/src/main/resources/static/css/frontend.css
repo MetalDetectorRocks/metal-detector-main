@@ -390,7 +390,10 @@ footer .footer-icon:hover {
     border: 1px solid var(--grey-border-color);
     border-radius: .25rem;
 }
-.release-cover-img {
+.release-card .release-cover .release-cover-blur-img {
+    display: none;
+}
+.release-card .release-cover .release-cover-img {
     height: 20rem;
     width: 20rem;
     object-fit: cover;
@@ -817,7 +820,29 @@ footer .footer-icon:hover {
         flex-direction: column;
     }
     .release-card .release-cover {
-        margin: 10px auto auto;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        top: 0;
+        left: 0;
+    }
+    .release-card .release-cover .release-cover-blur-img {
+        display: block;
+        filter: blur(5px);
+        max-height: 25rem;
+        width: 100%;
+        object-fit: cover;
+        position: relative;
+        top: 0;
+        left: 0;
+    }
+    .release-card .release-cover .release-cover-img {
+        position: absolute;
+        align-self: center;
+        left: auto;
+        right: auto;
+        border: 0;
+        border-radius: 5px;
     }
     .release-card .release-details {
         text-align: center;

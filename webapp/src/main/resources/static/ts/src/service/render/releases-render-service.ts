@@ -56,6 +56,7 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
         const releaseTemplateNode = document.importNode(this.releaseTemplateElement.content, true);
         const releaseDivElement = releaseTemplateNode.firstElementChild as HTMLDivElement;
         const releaseCoverElement = releaseDivElement.querySelector("#release-cover") as HTMLImageElement;
+        const releaseBlurCoverElement = releaseDivElement.querySelector("#release-cover-blur") as HTMLImageElement;
         const releaseTitleElement = releaseDivElement.querySelector("#release-title") as HTMLParagraphElement;
         const additionalArtistsElement = releaseDivElement.querySelector("#additional-artists") as HTMLDivElement;
         const releaseDateElement = releaseDivElement.querySelector("#release-date") as HTMLElement;
@@ -66,6 +67,7 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
         const reissueElement = releaseDivElement.querySelector("#reissue-text") as HTMLDivElement;
 
         releaseCoverElement.src = release.coverUrl || "/images/unknown-img.jpg";
+        releaseBlurCoverElement.src = release.coverUrl || "/images/unknown-img.jpg";
         releaseTitleElement.textContent = `${release.artist} - ${release.albumTitle}`;
 
         release.additionalArtists === null || release.additionalArtists.length === 0
