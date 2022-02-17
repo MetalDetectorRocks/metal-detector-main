@@ -1,10 +1,8 @@
 package rocks.metaldetector.web.controller.mvc.authentication;
 
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +20,16 @@ import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
+import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
+import static rocks.metaldetector.service.exceptions.UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS;
+import static rocks.metaldetector.service.exceptions.UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS;
 import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
 import static rocks.metaldetector.support.Endpoints.Authentication.REGISTER;
 import static rocks.metaldetector.support.Endpoints.Authentication.REGISTRATION_VERIFICATION;
@@ -42,7 +45,7 @@ public class RegistrationController {
   private final ApplicationEventPublisher eventPublisher;
   private final UserService userService;
   private final TokenService tokenService;
-  private final ModelMapper modelMapper;
+  private final UserDtoTransformer userDtoTransformer;
 
   @ModelAttribute(FORM_DTO)
   @ArtifactForFramework
@@ -59,25 +62,25 @@ public class RegistrationController {
   public ModelAndView registerUserAccount(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult) {
     // show registration form if there are validation errors
     if (bindingResult.hasErrors()) {
-      return new ModelAndView(ViewNames.Authentication.REGISTER, HttpStatus.BAD_REQUEST);
+      return new ModelAndView(ViewNames.Authentication.REGISTER, BAD_REQUEST);
     }
 
     // create user
     UserDto createdUserDto;
-    UserDto userDto = modelMapper.map(registerUserRequest, UserDto.class);
+    UserDto userDto = userDtoTransformer.transformUserDto(registerUserRequest);
 
     try {
       createdUserDto = userService.createUser(userDto);
     }
     catch (UserAlreadyExistsException e) {
-      if (e.getReason() == UserAlreadyExistsException.Reason.USERNAME_ALREADY_EXISTS) {
+      if (e.getReason() == USERNAME_ALREADY_EXISTS) {
         bindingResult.rejectValue("username", "userAlreadyExists", e.getMessage());
       }
-      else if (e.getReason() == UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS) {
+      else if (e.getReason() == EMAIL_ALREADY_EXISTS) {
         bindingResult.rejectValue("email", "userAlreadyExists", e.getMessage());
       }
 
-      return new ModelAndView(ViewNames.Authentication.REGISTER, HttpStatus.BAD_REQUEST); // show registration form with validation errors
+      return new ModelAndView(ViewNames.Authentication.REGISTER, BAD_REQUEST); // show registration form with validation errors
     }
 
     eventPublisher.publishEvent(new OnRegistrationCompleteEvent(this, createdUserDto));
@@ -86,7 +89,7 @@ public class RegistrationController {
     viewModel.put("isSuccessful", true);
     viewModel.put("registerUserRequest", new RegisterUserRequest()); // to clear the register form
 
-    return new ModelAndView(ViewNames.Authentication.REGISTER, viewModel, HttpStatus.OK);
+    return new ModelAndView(ViewNames.Authentication.REGISTER, viewModel, OK);
   }
 
   @GetMapping(REGISTRATION_VERIFICATION)

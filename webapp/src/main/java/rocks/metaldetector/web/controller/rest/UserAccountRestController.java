@@ -1,7 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +12,7 @@ import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.api.request.UpdateEmailRequest;
 import rocks.metaldetector.web.api.request.UpdatePasswordRequest;
 import rocks.metaldetector.web.api.response.UserResponse;
+import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
 import javax.validation.Valid;
 
@@ -27,13 +27,13 @@ import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER_PASSWORD;
 public class UserAccountRestController {
 
   private final UserService userService;
-  private final ModelMapper mapper;
+  private final UserDtoTransformer userDtoTransformer;
 
   @GetMapping(path = CURRENT_USER,
               produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<UserResponse> getCurrentUser() {
     UserDto currentUser = userService.getCurrentUser();
-    UserResponse response = mapper.map(currentUser, UserResponse.class);
+    UserResponse response = userDtoTransformer.transformUserResponse(currentUser);
     return ResponseEntity.ok(response);
   }
 

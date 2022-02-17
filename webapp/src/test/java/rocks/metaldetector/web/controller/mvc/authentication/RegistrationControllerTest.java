@@ -3,7 +3,6 @@ package rocks.metaldetector.web.controller.mvc.authentication;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.WithAssertions;
@@ -22,7 +21,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
@@ -37,11 +35,13 @@ import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
+import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static io.restassured.http.ContentType.HTML;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
@@ -79,14 +79,14 @@ class RegistrationControllerTest implements WithAssertions {
   private ApplicationEventPublisher eventPublisher;
 
   @Spy
-  private ModelMapper modelMapper;
+  private UserDtoTransformer userDtoTransformer;
 
   private RestAssuredMockMvcUtils restAssuredUtils;
   private ObjectMapper objectMapper;
 
   @BeforeEach
   void setup() {
-    RegistrationController underTest = new RegistrationController(eventPublisher, userService, tokenService, modelMapper);
+    RegistrationController underTest = new RegistrationController(eventPublisher, userService, tokenService, userDtoTransformer);
     restAssuredUtils = new RestAssuredMockMvcUtils(REGISTER);
     RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
 
@@ -103,7 +103,7 @@ class RegistrationControllerTest implements WithAssertions {
   @AfterEach
   void tearDown() {
     paramValues.clear();
-    reset(userService, tokenService, eventPublisher, modelMapper);
+    reset(userService, tokenService, eventPublisher, userDtoTransformer);
   }
 
   @Test
@@ -132,7 +132,7 @@ class RegistrationControllerTest implements WithAssertions {
       when(userService.createUser(any(UserDto.class))).thenReturn(userDto);
 
       // when
-      var validatableResponse = restAssuredUtils.doPost(paramValues, ContentType.HTML);
+      var validatableResponse = restAssuredUtils.doPost(paramValues, HTML);
 
       // then
       validatableResponse.assertThat(model().hasNoErrors())
@@ -149,7 +149,7 @@ class RegistrationControllerTest implements WithAssertions {
       when(userService.createUser(any(UserDto.class))).thenReturn(userDto);
 
       // when
-      restAssuredUtils.doPost(paramValues, ContentType.HTML);
+      restAssuredUtils.doPost(paramValues, HTML);
 
       // then
       verify(userService).createUser(any());
@@ -163,24 +163,24 @@ class RegistrationControllerTest implements WithAssertions {
       when(userService.createUser(any(UserDto.class))).thenReturn(userDto);
 
       // when
-      restAssuredUtils.doPost(paramValues, ContentType.HTML);
+      restAssuredUtils.doPost(paramValues, HTML);
 
       // when
       verify(eventPublisher).publishEvent(any());
     }
 
     @Test
-    @DisplayName("Register a new user account with a valid request should call ModelMapper")
+    @DisplayName("Register a new user account with a valid request should call UserDtoTransformer")
     void register_new_user_account_should_call_model_mapper() {
       // given
       UserDto userDto = UserDtoFactory.withUsernameAndEmail("JohnD", "john.d@example.com");
       when(userService.createUser(any(UserDto.class))).thenReturn(userDto);
 
       // when
-      restAssuredUtils.doPost(paramValues, ContentType.HTML);
+      restAssuredUtils.doPost(paramValues, HTML);
 
       // when
-      verify(modelMapper).map(objectMapper.convertValue(paramValues, RegisterUserRequest.class), UserDto.class);
+      verify(userDtoTransformer).transformUserDto(objectMapper.convertValue(paramValues, RegisterUserRequest.class));
     }
 
     @Test
@@ -192,7 +192,7 @@ class RegistrationControllerTest implements WithAssertions {
       ArgumentCaptor<UserDto> userDtoCaptor = ArgumentCaptor.forClass(UserDto.class);
 
       // when
-      restAssuredUtils.doPost(paramValues, ContentType.HTML);
+      restAssuredUtils.doPost(paramValues, HTML);
 
       // when
       verify(userService).createUser(userDtoCaptor.capture());
@@ -211,7 +211,7 @@ class RegistrationControllerTest implements WithAssertions {
       ArgumentCaptor<OnRegistrationCompleteEvent> eventCaptor = ArgumentCaptor.forClass(OnRegistrationCompleteEvent.class);
 
       // when
-      restAssuredUtils.doPost(paramValues, ContentType.HTML);
+      restAssuredUtils.doPost(paramValues, HTML);
 
       // when
       verify(eventPublisher).publishEvent(eventCaptor.capture());
@@ -223,7 +223,7 @@ class RegistrationControllerTest implements WithAssertions {
     @DisplayName("Register a new user account with an invalid request dto should fail")
     void register_new_user_account_with_invalid_request_dto_should_fail(RegisterUserRequest request, int expectedErrorCount, String[] incorrectFieldNames) {
       // when
-      var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);
+      var validatableResponse = restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), HTML);
 
       // then
       validatableResponse
@@ -264,7 +264,7 @@ class RegistrationControllerTest implements WithAssertions {
       when(userService.createUser(any(UserDto.class))).thenThrow(UserAlreadyExistsException.createUserWithUsernameAlreadyExistsException());
 
       // when
-      var validatableResponse = restAssuredUtils.doPost(paramValues, ContentType.HTML);
+      var validatableResponse = restAssuredUtils.doPost(paramValues, HTML);
 
       // then
       validatableResponse
@@ -281,7 +281,7 @@ class RegistrationControllerTest implements WithAssertions {
       when(userService.createUser(any(UserDto.class))).thenThrow(UserAlreadyExistsException.createUserWithEmailAlreadyExistsException());
 
       // when
-      var validatableResponse = restAssuredUtils.doPost(paramValues, ContentType.HTML);
+      var validatableResponse = restAssuredUtils.doPost(paramValues, HTML);
 
       // then
       validatableResponse

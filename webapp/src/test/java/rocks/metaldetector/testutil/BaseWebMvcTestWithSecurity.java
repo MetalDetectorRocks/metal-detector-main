@@ -1,7 +1,6 @@
 package rocks.metaldetector.testutil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.SecurityProperties;
+import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
 import javax.sql.DataSource;
 
@@ -44,7 +44,7 @@ public abstract class BaseWebMvcTestWithSecurity implements WithSecurityConfig {
   protected ObjectMapper objectMapper;
 
   @MockBean
-  protected ModelMapper mapper;
+  protected UserDtoTransformer userDtoTransformer;
 
   @MockBean
   protected SecurityProperties securityProperties;

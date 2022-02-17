@@ -1,6 +1,5 @@
 package rocks.metaldetector.service.user;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
@@ -8,16 +7,20 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 @Component
 public class UserTransformer {
 
-  private final ModelMapper mapper;
-
-  public UserTransformer() {
-    this.mapper = new ModelMapper();
-  }
-
   public UserDto transform(AbstractUserEntity entity) {
-    UserDto userDto = mapper.map(entity, UserDto.class);
-    userDto.setRole(entity.getHighestRole().getDisplayName());
-    userDto.setNativeUser(entity instanceof UserEntity);
-    return userDto;
+    return UserDto.builder()
+        .publicId(entity.getPublicId())
+        .username(entity.getUsername())
+        .email(entity.getEmail())
+        .avatar(entity.getAvatar())
+        .enabled(entity.isEnabled())
+        .role(entity.getHighestRole().getDisplayName())
+        .lastLogin(entity.getLastLogin())
+        .createdBy(entity.getCreatedBy())
+        .createdDateTime(entity.getCreatedDateTime())
+        .lastModifiedDateTime(entity.getLastModifiedDateTime())
+        .lastModifiedBy(entity.getLastModifiedBy())
+        .nativeUser(entity instanceof UserEntity)
+        .build();
   }
 }
