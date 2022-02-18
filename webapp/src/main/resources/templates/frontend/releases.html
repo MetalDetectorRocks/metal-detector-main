@@ -13,18 +13,15 @@
         <template id="detailed-release-card">
             <div class="release-card dark-card-body mb-3">
                 <div class="release-cover">
+                    <img class="release-cover-blur-img" src="#" alt="#" id="release-cover-blur">
                     <img class="release-cover-img" src="#" alt="#" id="release-cover">
                 </div>
                 <div class="release-details px-3">
-                    <p class="h5 card-title mt-3 mb-4" id="release-title"></p>
-                    <div class="row d-md-none" id="additional-artists-wrapper">
-                        <div class="col">
-                            <p>
-                                <strong>Additional artists</strong><br />
-                                <span id="additional-artists"></span>
-                            </p>
-                        </div>
-                    </div>
+                    <p class="mt-3 mb-4">
+                        <span class="h5 card-title" id="release-title"></span><br />
+                        <span class="badge bg-secondary mt-2 text-dark" id="release-type"></span>
+                        <span class="badge bg-warning text-dark mt-2" id="reissue-text"></span>
+                    </p>
                     <div class="row">
                         <div class="col">
                             <p>
@@ -32,7 +29,9 @@
                                 <span id="release-date"></span>
                             </p>
                         </div>
-                        <div class="col" id="announcement-date-wrapper">
+                    </div>
+                    <div class="row" id="announcement-date-wrapper">
+                        <div class="col">
                             <p>
                                 <strong>Announcement date</strong><br />
                                 <span id="announcement-date"></span>
@@ -42,24 +41,8 @@
                     <div class="row">
                         <div class="col">
                             <p>
-                                <strong>Type</strong><br />
-                                <span id="release-type"></span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <p>
                                 <strong>Genre</strong><br />
                                 <span id="release-genre"></span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row" id="reissue-wrapper">
-                        <div class="col">
-                            <p>
-                                <strong>Reissue</strong><br />
-                                <span id="reissue-text"></span>
                             </p>
                         </div>
                     </div>
