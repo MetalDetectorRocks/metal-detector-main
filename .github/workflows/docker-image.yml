@@ -20,7 +20,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2.5.0
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: 17
           cache: 'gradle'
 
