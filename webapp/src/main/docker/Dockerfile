@@ -17,7 +17,6 @@ USER service_user
 VOLUME ["/app/logs/"]
 
 # Arguments
-ARG SOURCE_JAR_FILE="webapp/build/libs/*.jar"
 ARG BUILD_DATE
 ARG VCS_REF
 
@@ -33,8 +32,8 @@ LABEL org.label-schema.vcs-ref=$VCS_REF
 
 #HEALTHCHECK --start-period=40s --interval=10s --timeout=5s --retries=3 CMD curl --fail http://localhost:8080/actuator/health || exit 1
 
-COPY $SOURCE_JAR_FILE app.jar
+COPY application.jar /app
 COPY docker-entrypoint.sh /app
 
 ENTRYPOINT ["bash", "/app/docker-entrypoint.sh"]
-CMD ["java", "-Djava.security.egd=file:/dev/./urandom", "-Xmx256m", "-jar", "app.jar"]
+CMD ["java", "-Djava.security.egd=file:/dev/./urandom", "-Xmx256m", "-jar", "application.jar"]

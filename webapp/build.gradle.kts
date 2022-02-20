@@ -1,6 +1,16 @@
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 plugins {
   id("org.springframework.boot")
   id("org.siouan.frontend-jdk11")
+  id("de.europace.docker-publish")
+}
+
+dockerPublish {
+  organisation.set("metaldetector")
+  imageName.set(rootProject.name)
+  imageTag.set(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")))
 }
 
 springBoot {
