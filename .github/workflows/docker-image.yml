@@ -26,5 +26,5 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Execute gradle task 'bootJar' and 'publish'
-        run: ./gradlew clean bootJar publish --no-daemon --info --stacktrace
+      - name: Execute gradle task 'build' and 'publish'
+        run: ./gradlew clean build publish --no-daemon --info --stacktrace
