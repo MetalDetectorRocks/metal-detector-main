@@ -122,19 +122,19 @@ footer .footer-icon:hover {
 }
 
 /* Homepage */
-#homepage-wrapper h2 {
+.section {
+    margin-bottom: 75px;
+}
+.section h2 {
     text-align: center;
     margin-bottom: 0;
 }
-#homepage-wrapper .headline-separator {
+.section .headline-separator {
     background-image: url("/images/headline-separator.png");
     background-position: center;
     background-repeat: no-repeat;
     height: 50px;
     margin-bottom: 10px;
-}
-#homepage-wrapper .section {
-    margin-bottom: 75px;
 }
 
 /* Features */

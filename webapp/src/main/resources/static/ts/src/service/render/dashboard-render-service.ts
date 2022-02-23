@@ -6,9 +6,9 @@ import { Artist } from "../../model/artist.model";
 import { Release } from "../../model/release.model";
 import { DateFormat, DateService } from "../util/date-service";
 import { FollowArtistService } from "../follow-artist-service";
-import { LegacySwiperComponent } from "../../components/swiper/legacy-swiper-component";
+import { SwiperComponent } from "../../components/swiper/swiper-component";
 
-interface HomepageCard {
+interface ReleaseCard {
     readonly divElement: HTMLDivElement;
     readonly coverElement: HTMLImageElement;
     readonly nameElement: HTMLParagraphElement;
@@ -22,7 +22,7 @@ export class DashboardRenderService extends AbstractRenderService<DashboardRespo
     private readonly artistTemplateElement: HTMLTemplateElement;
     private readonly releaseTemplateElement: HTMLTemplateElement;
 
-    private readonly MIN_CARDS_PER_ROW: number = 3;
+    private readonly MIN_CARDS_PER_ROW: number = 2;
 
     constructor(
         alertService: AlertService,
@@ -33,8 +33,8 @@ export class DashboardRenderService extends AbstractRenderService<DashboardRespo
         super(alertService, loadingIndicatorService);
         this.dateService = dateService;
         this.followArtistService = followArtistService;
-        this.artistTemplateElement = document.getElementById("artist-card") as HTMLTemplateElement;
-        this.releaseTemplateElement = document.getElementById("release-card") as HTMLTemplateElement;
+        this.artistTemplateElement = document.getElementById("artist-template") as HTMLTemplateElement;
+        this.releaseTemplateElement = document.getElementById("release-template") as HTMLTemplateElement;
     }
 
     protected getHostElementId(): string {
@@ -58,7 +58,7 @@ export class DashboardRenderService extends AbstractRenderService<DashboardRespo
     }
 
     private renderUpcomingReleasesRow(response: DashboardResponse) {
-        const title = "Upcoming releases";
+        const title = "Your upcoming releases";
         this.renderReleaseCards("swiper-upcoming-release", title, response.upcomingReleases);
     }
 
@@ -74,14 +74,14 @@ export class DashboardRenderService extends AbstractRenderService<DashboardRespo
         const releases = recentReleases.concat(response.upcomingReleases);
 
         if (releases.length) {
-            const title = "Releases";
+            const title = "Your recent releases";
             this.renderReleaseCards("swiper-releases", title, releases);
         }
     }
 
     private renderRecentlyFollowedArtistsRow(response: DashboardResponse): void {
         if (response.recentlyFollowedArtists.length) {
-            const title = "Recently followed artists";
+            const title = "Your recently followed artists";
             const cards: HTMLDivElement[] = [];
 
             response.recentlyFollowedArtists.forEach((artist) => {
@@ -118,17 +118,19 @@ export class DashboardRenderService extends AbstractRenderService<DashboardRespo
 
     private renderMostExpectedReleasesRow(response: DashboardResponse) {
         const title = "The community's most expected releases";
-        this.renderReleaseCards("swiper-community-most-expected-releases", title, response.mostExpectedReleases, false);
+        this.renderReleaseCards("swiper-community-most-expected-releases", title, response.mostExpectedReleases);
     }
 
     private renderArtistCard(artist: Artist): HTMLDivElement {
         const artistTemplateNode = document.importNode(this.artistTemplateElement.content, true);
         const artistDivElement = artistTemplateNode.firstElementChild as HTMLDivElement;
-        const artistThumbElement = artistDivElement.querySelector("#artist-thumb") as HTMLImageElement;
+        const artistThumbElement = artistDivElement.querySelector("#artist-image") as HTMLImageElement;
         const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
-        const followIconElement = artistDivElement.querySelector("#follow-icon") as HTMLDivElement;
-        const followIcon = followIconElement.getElementsByTagName("img").item(0) as HTMLImageElement;
-        followIconElement.addEventListener("click", this.handleFollowIconClick.bind(this, followIcon, artist));
+
+        // ToDo DanielW: follow icon?
+        // const followIconElement = artistDivElement.querySelector("#follow-icon") as HTMLDivElement;
+        // const followIcon = followIconElement.getElementsByTagName("img").item(0) as HTMLImageElement;
+        // followIconElement.addEventListener("click", this.handleFollowIconClick.bind(this, followIcon, artist));
 
         artistThumbElement.src = artist.mediumImage;
         artistNameElement.textContent = artist.artistName;
@@ -136,20 +138,17 @@ export class DashboardRenderService extends AbstractRenderService<DashboardRespo
         return artistDivElement;
     }
 
-    private renderReleaseCards(uniqueId: string, title: string, releases: Release[], addPlaceholder = true): void {
+    private renderReleaseCards(uniqueId: string, title: string, releases: Release[]): void {
         const cards: HTMLDivElement[] = [];
         releases.forEach((release) => {
             const card = this.renderReleaseCard(release);
             cards.push(card);
         });
-        if (cards.length <= this.MIN_CARDS_PER_ROW && addPlaceholder) {
-            cards.push(this.renderPlaceholderCard());
-        }
         this.createSwiper(uniqueId, title, cards);
     }
 
     private renderReleaseCard(release: Release): HTMLDivElement {
-        const homepageCard = this.getHomepageCard();
+        const homepageCard = this.getReleaseCard();
         homepageCard.coverElement.src = release.coverUrl;
         homepageCard.nameElement.textContent = release.artist;
         homepageCard.subtitleElement.textContent = release.albumTitle;
@@ -162,37 +161,50 @@ export class DashboardRenderService extends AbstractRenderService<DashboardRespo
         return homepageCard.divElement;
     }
 
-    private renderPlaceholderCard(): HTMLDivElement {
-        const homepageCard = this.getHomepageCard();
-        homepageCard.coverElement.src = "/images/question-mark.jpg";
-        homepageCard.nameElement.textContent = "Nothing here...";
-        homepageCard.subtitleElement.textContent = "Want to see more?";
-        homepageCard.footerElement.innerHTML = "Follow more artists!";
-
-        return homepageCard.divElement;
-    }
-
-    private getHomepageCard(): HomepageCard {
+    private getReleaseCard(): ReleaseCard {
         const templateNode = document.importNode(this.releaseTemplateElement.content, true);
         const divElement = templateNode.firstElementChild as HTMLDivElement;
         return {
             divElement: divElement,
             coverElement: divElement.querySelector("#release-cover") as HTMLImageElement,
-            nameElement: divElement.querySelector("#release-artist-name") as HTMLParagraphElement,
+            nameElement: divElement.querySelector("#release-artist") as HTMLParagraphElement,
             subtitleElement: divElement.querySelector("#release-title") as HTMLParagraphElement,
             footerElement: divElement.querySelector("#release-date") as HTMLDivElement,
         };
     }
 
     private createSwiper(uniqueCssClassSelector: string, title: string, items: HTMLDivElement[]): void {
-        if (items.length > 0) {
-            new LegacySwiperComponent({
-                uniqueCssClassSelector,
-                title,
-                items,
-                host: this.hostElement,
-            });
+        if (items && items.length >= this.MIN_CARDS_PER_ROW) {
+            const swiperSection = this.createSwiperSection(title);
+            const swiperWrapper = document.createElement("div") as HTMLDivElement;
+            swiperWrapper.classList.add("detector__swiper");
+            swiperSection.insertAdjacentElement("beforeend", swiperWrapper);
+            this.hostElement.insertAdjacentElement("beforeend", swiperSection);
+
+            if (items.length > 0) {
+                new SwiperComponent({
+                    uniqueCssClassSelector,
+                    items,
+                    host: swiperWrapper,
+                });
+            }
         }
+    }
+
+    private createSwiperSection(title: string): HTMLDivElement {
+        const section = document.createElement("div") as HTMLDivElement;
+        section.classList.add("section");
+
+        const sectionTitle = document.createElement("h2") as HTMLHeadingElement;
+        sectionTitle.textContent = title;
+
+        const separator = document.createElement("div") as HTMLDivElement;
+        separator.classList.add("headline-separator");
+
+        section.insertAdjacentElement("beforeend", sectionTitle);
+        section.insertAdjacentElement("beforeend", separator);
+
+        return section;
     }
 
     private handleFollowIconClick(followIconElement: HTMLImageElement, artist: Artist): void {
