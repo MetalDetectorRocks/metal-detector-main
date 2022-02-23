@@ -4,7 +4,7 @@ module.exports = {
         ecmaVersion: 2020,
         sourceType: "module",
     },
-    extends: ["plugin:@typescript-eslint/recommended", "prettier/@typescript-eslint", "plugin:prettier/recommended"],
+    extends: ["plugin:@typescript-eslint/recommended", "eslint-config-prettier", "plugin:prettier/recommended"],
     rules: {
         // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
         // e.g. "@typescript-eslint/explicit-function-return-type": "off",
