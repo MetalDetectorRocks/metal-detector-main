@@ -6,12 +6,10 @@ export const axiosConfig: AxiosRequestConfig = {
     withCredentials: false,
     timeout: 60000,
     headers: {
-        common: {
-            "Cache-Control": "no-cache, no-store, must-revalidate",
-            Pragma: "no-cache",
-            "Content-Type": "application/json",
-            Accept: "application/json",
-        },
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        "Content-Type": "application/json",
+        Accept: "application/json",
     },
     paramsSerializer: (params: PathLike) => qs.stringify(params, { indices: false }),
 };
