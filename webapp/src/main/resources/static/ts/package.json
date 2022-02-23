@@ -18,7 +18,7 @@
   "author": "Daniel Wagner",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/node": "^14.14.22",
+    "@types/node": "^16.11.7",
     "@types/qs": "^6.9.5",
     "@types/source-map": "^0.5.7",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
@@ -36,7 +36,7 @@
     "webpack-cli": "^4.4.0"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.26.0",
     "dayjs": "^1.10.3",
     "faker": "^6.6.6",
     "qs": "^6.9.6",
