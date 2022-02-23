@@ -16,7 +16,6 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.ISpringTemplateEngine;
 import rocks.metaldetector.config.misc.MailProperties;
 import rocks.metaldetector.support.Endpoints;
-import rocks.metaldetector.testutil.CurrentThreadExecutor;
 
 import javax.mail.internet.MimeMessage;
 
@@ -40,7 +39,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
   private MailProperties mailProperties;
 
   @Mock
-  private MimeMessageHelperSupplier messageHelperSupplier;
+  private MimeMessageHelperFunction messageHelperFunction;
 
   @Mock
   private MimeMessageHelper mimeMessageHelperMock;
@@ -50,14 +49,12 @@ class JavaMailEmailServiceTest implements WithAssertions {
 
   @BeforeEach
   void setUp() {
-    underTest.setExecutor(new CurrentThreadExecutor());
-    underTest.setMessageHelperSupplier(messageHelperSupplier);
-    doReturn(mimeMessageHelperMock).when(messageHelperSupplier).apply(any());
+    doReturn(mimeMessageHelperMock).when(messageHelperFunction).apply(any());
   }
 
   @AfterEach
   void tearDown() {
-    reset(emailSender, templateEngine, mailProperties);
+    reset(emailSender, templateEngine, mailProperties, messageHelperFunction);
   }
 
   @Test
@@ -90,6 +87,21 @@ class JavaMailEmailServiceTest implements WithAssertions {
     verify(templateEngine).process(templateNameCaptor.capture(), contextCaptor.capture());
     assertThat(templateNameCaptor.getValue()).isEqualTo(email.getTemplateName());
     assertThat(contextCaptor.getValue().getVariable("verificationUrl")).isEqualTo(EXPECTED_VERIFICATION_URL);
+  }
+
+  @Test
+  @DisplayName("Should call MessageHelperFunction")
+  void should_call_message_helper_function() {
+    // given
+    MimeMessage mimeMessage = mock(MimeMessage.class);
+    doReturn(mimeMessage).when(emailSender).createMimeMessage();
+    AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", "username", "token");
+
+    // when
+    underTest.sendEmail(email);
+
+    // then
+    verify(messageHelperFunction).apply(mimeMessage);
   }
 
   @Test
