@@ -166,7 +166,7 @@ footer .footer-icon:hover {
     width: 23%;
     text-align: center;
 }
-.detector__swiper img {
+.detector__swiper .swiper-image {
     width: 230px;
     height: 230px;
     object-fit: cover;
@@ -249,6 +249,11 @@ footer .footer-icon:hover {
 /* Cards */
 .card {
     border: 1px solid var(--grey-border-color);
+}
+.card:hover > .follow-icon-my-artists {
+    opacity: 1;
+    -webkit-transition: all 0.3s ease-in;
+    transition: all 0.3s ease-in;
 }
 .vertical-card-img {
     height: 18rem;

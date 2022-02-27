@@ -12,7 +12,14 @@
         <!-- TEMPLATES -->
         <template id="artist-template">
             <div class="swiper-item swiper-slide">
-                <img src="#" alt="" id="artist-image" class="img-round">
+                <div class="overlay-container">
+                    <img src="#" alt="" id="artist-image" class="img-round swiper-image">
+                    <div class="overlay">
+                        <div id="follow-icon" class="pointer">
+                            <img src="#" th:src="@{/images/pommesgabel.svg}" alt="follow" width="45">
+                        </div>
+                    </div>
+                </div>
                 <div class="mt-2">
                     <span class="swiper-title" id="artist-name"></span>
                 </div>
@@ -21,7 +28,7 @@
         </template>
         <template id="release-template">
             <div class="swiper-item swiper-slide">
-                <img src="#" alt="" id="release-cover" class="img-round">
+                <img src="#" alt="" id="release-cover" class="img-round swiper-image">
                 <div class="mt-2">
                     <span class="swiper-title" id="release-artist"></span>
                 </div>

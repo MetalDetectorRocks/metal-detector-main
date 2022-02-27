@@ -4,7 +4,7 @@ import { DashboardResponse } from "../../model/dashboard-response.model";
 import { AbstractRenderService } from "./abstract-render-service";
 import { Artist } from "../../model/artist.model";
 import { Release } from "../../model/release.model";
-import { DateFormat, DateService } from "../util/date-service";
+import { DateService } from "../util/date-service";
 import { FollowArtistService } from "../follow-artist-service";
 import { SwiperComponent } from "../../components/swiper/swiper-component";
 
@@ -124,10 +124,9 @@ export class DashboardRenderService extends AbstractRenderService<DashboardRespo
         const artistThumbElement = artistDivElement.querySelector("#artist-image") as HTMLImageElement;
         const artistNameElement = artistDivElement.querySelector("#artist-name") as HTMLParagraphElement;
 
-        // ToDo DanielW: follow icon?
-        // const followIconElement = artistDivElement.querySelector("#follow-icon") as HTMLDivElement;
-        // const followIcon = followIconElement.getElementsByTagName("img").item(0) as HTMLImageElement;
-        // followIconElement.addEventListener("click", this.handleFollowIconClick.bind(this, followIcon, artist));
+        const followIconElement = artistDivElement.querySelector("#follow-icon") as HTMLDivElement;
+        const followIcon = followIconElement.getElementsByTagName("img").item(0) as HTMLImageElement;
+        followIconElement.addEventListener("click", this.handleFollowIconClick.bind(this, followIcon, artist));
 
         artistThumbElement.src = artist.mediumImage;
         artistNameElement.textContent = artist.artistName;
