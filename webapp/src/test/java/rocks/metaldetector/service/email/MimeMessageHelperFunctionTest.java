@@ -9,9 +9,9 @@ import javax.mail.internet.MimeMessage;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.Mockito.mock;
 
-class MimeMessageHelperSupplierTest implements WithAssertions {
+class MimeMessageHelperFunctionTest implements WithAssertions {
 
-  private final MimeMessageHelperSupplier underTest = new MimeMessageHelperSupplier();
+  private final MimeMessageHelperFunction underTest = new MimeMessageHelperFunction();
 
   @Test
   @DisplayName("should create mime message helper")

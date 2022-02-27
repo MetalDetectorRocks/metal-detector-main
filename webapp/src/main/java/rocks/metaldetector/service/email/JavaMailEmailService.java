@@ -1,5 +1,6 @@
 package rocks.metaldetector.service.email;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mail.MailException;
@@ -14,39 +15,23 @@ import rocks.metaldetector.config.misc.MailProperties;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.function.Function;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 @Profile({"preview", "prod"})
 public class JavaMailEmailService implements EmailService {
 
   private final JavaMailSender emailSender;
   private final ISpringTemplateEngine templateEngine;
   private final MailProperties mailProperties;
-  private MimeMessageHelperSupplier messageHelperSupplier;
-  private Executor executor;
-
-  public JavaMailEmailService(JavaMailSender emailSender, ISpringTemplateEngine templateEngine, MailProperties mailProperties) {
-    this.emailSender = emailSender;
-    this.templateEngine = templateEngine;
-    this.mailProperties = mailProperties;
-    this.executor = Executors.newSingleThreadExecutor();
-    this.messageHelperSupplier = new MimeMessageHelperSupplier();
-  }
+  private final MimeMessageHelperFunction messageHelperFunction;
 
   @Async
   @Override
   public void sendEmail(AbstractEmail email) {
-    executor.execute(() -> {
-      MimeMessage mimeMessage = createMimeMessage(email);
-      sendEmail(mimeMessage);
-    });
+    MimeMessage mimeMessage = createMimeMessage(email);
+    sendEmail(mimeMessage);
   }
 
   private void sendEmail(MimeMessage mimeMessage) {
@@ -65,7 +50,7 @@ public class JavaMailEmailService implements EmailService {
     String html = templateEngine.process(email.getTemplateName(), context);
 
     try {
-      MimeMessageHelper helper = messageHelperSupplier.apply(mimeMessage);
+      MimeMessageHelper helper = messageHelperFunction.apply(mimeMessage);
       helper.setTo(email.getRecipient());
       helper.setText(html, true);
       helper.setSubject(email.getSubject());
@@ -77,28 +62,5 @@ public class JavaMailEmailService implements EmailService {
     }
 
     return mimeMessage;
-  }
-
-  void setExecutor(Executor executor) {
-    this.executor = executor;
-  }
-
-  void setMessageHelperSupplier(MimeMessageHelperSupplier messageHelperSupplier) {
-    this.messageHelperSupplier = messageHelperSupplier;
-  }
-}
-
-@Slf4j
-class MimeMessageHelperSupplier implements Function<MimeMessage, MimeMessageHelper> {
-
-  @Override
-  public MimeMessageHelper apply(MimeMessage mimeMessage) {
-    try {
-      return new MimeMessageHelper(mimeMessage, MULTIPART_MODE_MIXED_RELATED, UTF_8.name());
-    }
-    catch (MessagingException me) {
-      log.error("unable to create mime message helper", me);
-      throw new RuntimeException("snh: unable to create mime message helper");
-    }
   }
 }
