@@ -67,6 +67,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index: 1;
 }
 #toast {
   max-width: 80%;
@@ -104,48 +105,6 @@
   opacity: 1;
   -webkit-animation: fadein 0.5s;
   animation: fadein 0.5s;
-}
-
-/* Tooltip */
-.custom-tooltip {
-  position: relative;
-  display: inline-block;
-}
-
-.custom-tooltip .tooltip-text {
-  visibility: hidden;
-  width: 170px;
-  background-color: #1D1D1D;
-  color: #fff;
-  text-align: center;
-  padding: 0.5rem;
-  border-radius: 6px;
-
-  /* Position the tooltip text */
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  margin-left: -120px;
-
-  /* Fade in tooltip */
-  opacity: 0;
-  transition: opacity 0.8s;
-}
-
-.custom-tooltip .tooltip-text::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #1D1D1D transparent transparent transparent;
-}
-
-.custom-tooltip:hover .tooltip-text {
-  visibility: visible;
-  opacity: 0.9;
 }
 
 /*

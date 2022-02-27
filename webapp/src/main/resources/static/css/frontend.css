@@ -250,11 +250,6 @@ footer .footer-icon:hover {
 .card {
     border: 1px solid var(--grey-border-color);
 }
-.card:hover > .follow-icon-my-artists {
-    opacity: 1;
-    -webkit-transition: all 0.3s ease-in;
-    transition: all 0.3s ease-in;
-}
 .vertical-card-img {
     height: 18rem;
     object-fit: cover;

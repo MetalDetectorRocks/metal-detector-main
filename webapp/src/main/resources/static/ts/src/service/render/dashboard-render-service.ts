@@ -88,12 +88,9 @@ export class DashboardRenderService extends AbstractRenderService<DashboardRespo
                 const artistDivElement = this.renderArtistCard(artist);
                 const followedSinceElement = artistDivElement.querySelector("#artist-sub-title") as HTMLDivElement;
                 followedSinceElement.innerHTML = `
-                    <div class="custom-tooltip">${this.dateService.formatRelative(artist.followedSince)}
-                        <span class="tooltip-text">${this.dateService.format(
-                            artist.followedSince,
-                            DateFormat.LONG,
-                        )}</span>
-                    </div>
+                    <span>
+                        ${this.dateService.formatRelative(artist.followedSince)}
+                    </span>
                 `;
                 cards.push(artistDivElement);
             });
@@ -153,9 +150,9 @@ export class DashboardRenderService extends AbstractRenderService<DashboardRespo
         homepageCard.nameElement.textContent = release.artist;
         homepageCard.subtitleElement.textContent = release.albumTitle;
         homepageCard.footerElement.innerHTML = `
-            <div class="custom-tooltip">${this.dateService.formatRelativeInDays(release.releaseDate)}
-                <span class="tooltip-text">${this.dateService.format(release.releaseDate, DateFormat.LONG)}</span>
-            </div>
+            <span>
+                ${this.dateService.formatRelativeInDays(release.releaseDate)}
+            </span>
         `;
 
         return homepageCard.divElement;
