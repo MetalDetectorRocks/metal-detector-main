@@ -125,8 +125,7 @@
   position: absolute;
   z-index: 1;
   bottom: 125%;
-  left: 50%;
-  margin-left: -60px;
+  margin-left: -120px;
 
   /* Fade in tooltip */
   opacity: 0;
@@ -146,7 +145,7 @@
 
 .custom-tooltip:hover .tooltip-text {
   visibility: visible;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 /*
