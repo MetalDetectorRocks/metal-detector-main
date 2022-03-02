@@ -18,7 +18,6 @@ export class SwiperComponent {
             slidesPerView: 1,
             slidesPerGroup: 1,
             spaceBetween: 15,
-            loop: true,
             loopFillGroupWithBlank: true,
             grabCursor: true,
             navigation: {
