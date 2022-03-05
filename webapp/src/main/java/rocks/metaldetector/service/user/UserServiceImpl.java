@@ -12,8 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.comparator.BooleanComparator;
-import rocks.metaldetector.persistence.domain.token.TokenEntity;
-import rocks.metaldetector.persistence.domain.token.TokenRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.OAuthUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
@@ -24,7 +22,6 @@ import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
-import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.events.UserCreationEvent;
 import rocks.metaldetector.service.user.events.UserDeletionEvent;
 import rocks.metaldetector.support.JwtsSupport;
@@ -34,12 +31,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
+import static rocks.metaldetector.service.user.UserErrorMessages.USER_NOT_FOUND;
+import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
 @Service
 @Slf4j
@@ -48,10 +48,8 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
-  private final TokenRepository tokenRepository;
   private final JwtsSupport jwtsSupport;
   private final UserTransformer userTransformer;
-  private final TokenService tokenService;
   private final AuthenticationFacade authenticationFacade;
   private final LoginAttemptService loginAttemptService;
   private final ApplicationEventPublisher applicationEventPublisher;
@@ -93,7 +91,7 @@ public class UserServiceImpl implements UserService {
   @Transactional(readOnly = true)
   public UserDto getUserByPublicId(String publicId) {
     AbstractUserEntity userEntity = userRepository.findByPublicId(publicId)
-        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+        .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
     return userTransformer.transform(userEntity);
   }
@@ -109,12 +107,12 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public UserDto updateUser(String publicId, UserDto userDto) {
     AbstractUserEntity userEntity = userRepository.findByPublicId(publicId)
-        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString()));
+        .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
     AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
 
     if (publicId.equals(currentUser.getPublicId())) {
-      if (!userDto.isEnabled()) { throw IllegalUserActionException.createAdminCannotDisableHimselfException(); }
-      if (userEntity.isAdministrator() && !UserRole.getRoleFromString(userDto.getRole()).contains(ROLE_ADMINISTRATOR)) { throw IllegalUserActionException.createAdminCannotDiscardHisRoleException(); }
+      if (!userDto.isEnabled()) {throw IllegalUserActionException.createAdminCannotDisableHimselfException();}
+      if (userEntity.isAdministrator() && !UserRole.getRoleFromString(userDto.getRole()).contains(ROLE_ADMINISTRATOR)) {throw IllegalUserActionException.createAdminCannotDiscardHisRoleException();}
     }
 
     userEntity.setUserRoles(UserRole.getRoleFromString(userDto.getRole()));
@@ -172,55 +170,27 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(readOnly = true)
   public UserDetails loadUserByUsername(String emailOrUsername) throws UsernameNotFoundException {
-    return findByEmailOrUsername(emailOrUsername).orElseThrow(() -> new UsernameNotFoundException(UserErrorMessages.USER_NOT_FOUND.toDisplayString()));
-  }
-
-  @Override
-  @Transactional
-  public void verifyEmailToken(String tokenString) {
-    // check if token exists
-    TokenEntity tokenEntity = tokenRepository.findEmailVerificationToken(tokenString)
-        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
-
-    // check if token is expired
-    if (tokenEntity.isExpired()) {
-      throw new TokenExpiredException();
-    }
-
-    // get claims to check signature of token
-    jwtsSupport.getClaims(tokenString);
-
-    // verify registration
-    AbstractUserEntity userEntity = tokenEntity.getUser();
-    userEntity.setEnabled(true);
-    userRepository.save(userEntity);
-
-    tokenRepository.delete(tokenEntity);
+    return findByEmailOrUsername(emailOrUsername).orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.toDisplayString()));
   }
 
   @Override
   @Transactional
   public void resetPasswordWithToken(String tokenString, String newPassword) {
-    // 1. get claims to check signature of token
-    jwtsSupport.getClaims(tokenString);
+    // get claims to check signature of token
+    var claims = jwtsSupport.getClaims(tokenString);
 
-    // 2. get user from token if it exists
-    TokenEntity tokenEntity = tokenService.getResetPasswordTokenByTokenString(tokenString)
-        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
-
-    // 3. check if token is expired
-    if (tokenEntity.isExpired()) {
+    // check if token is expired
+    if (claims.getExpiration().before(new Date())) {
       throw new TokenExpiredException();
     }
 
-    UserEntity userEntity = tokenEntity.getUser();
+    // get user from token
+    UserEntity userEntity = (UserEntity) userRepository.findByPublicId(claims.getSubject())
+        .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
 
-    // 4. set new password
+    // set new password
     userEntity.setPassword(passwordEncoder.encode(newPassword));
     userRepository.save(userEntity);
-
-    // 5. remove token from database
-    tokenService.deleteToken(tokenEntity);
   }
 
   @Override

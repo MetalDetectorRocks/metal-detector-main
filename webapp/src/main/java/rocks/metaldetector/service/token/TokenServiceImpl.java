@@ -3,83 +3,66 @@ package rocks.metaldetector.service.token;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rocks.metaldetector.persistence.domain.token.TokenEntity;
-import rocks.metaldetector.persistence.domain.token.TokenRepository;
-import rocks.metaldetector.persistence.domain.token.TokenType;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
-import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
-import rocks.metaldetector.service.user.UserErrorMessages;
+import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Optional;
+import java.util.Date;
+
+import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
 @Service
 @AllArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
-  private final TokenRepository tokenRepository;
   private final UserRepository userRepository;
   private final EmailService emailService;
   private final JwtsSupport jwtsSupport;
 
   @Override
-  @Transactional(readOnly = true)
-  public Optional<TokenEntity> getResetPasswordTokenByTokenString(String tokenString) {
-    return tokenRepository.findResetPasswordToken(tokenString);
-  }
-
-  @Override
-  @Transactional
   public String createEmailVerificationToken(String publicUserId) {
-    return createToken(publicUserId, TokenType.EMAIL_VERIFICATION, Duration.ofDays(10));
+    return createToken(publicUserId, Duration.ofDays(10));
   }
 
   @Override
-  @Transactional
   public String createResetPasswordToken(String publicUserId) {
-    return createToken(publicUserId, TokenType.PASSWORD_RESET, Duration.ofHours(1));
+    return createToken(publicUserId, Duration.ofHours(1));
   }
 
-  private String createToken(String publicUserId, TokenType tokenType, Duration expirationTime) {
-    String tokenString = jwtsSupport.generateToken(publicUserId, expirationTime);
-    AbstractUserEntity userEntity = userRepository.findByPublicId(publicUserId).orElseThrow(
-        () -> new ResourceNotFoundException(UserErrorMessages.USER_WITH_ID_NOT_FOUND.toDisplayString())
-    );
-
-    TokenEntity tokenEntity = TokenEntity.builder()
-        .user((UserEntity) userEntity)
-        .tokenString(tokenString)
-        .expirationDateTime(LocalDateTime.now().plus(expirationTime.toMillis(), ChronoUnit.MILLIS))
-        .tokenType(tokenType)
-        .build();
-
-    tokenRepository.save(tokenEntity);
-
-    return tokenString;
+  private String createToken(String publicUserId, Duration expirationTime) {
+    return jwtsSupport.generateToken(publicUserId, expirationTime);
   }
 
   @Override
   @Transactional
   public void resendExpiredEmailVerificationToken(String tokenString) {
-    TokenEntity tokenEntity = tokenRepository.findEmailVerificationToken(tokenString)
-        .orElseThrow(() -> new ResourceNotFoundException(UserErrorMessages.TOKEN_NOT_FOUND.toDisplayString()));
-    AbstractUserEntity userEntity = tokenEntity.getUser();
-
-    tokenRepository.delete(tokenEntity);
+    var claims = jwtsSupport.getClaims(tokenString);
+    AbstractUserEntity userEntity = userRepository.findByPublicId(claims.getSubject())
+            .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
     String newTokenString = createEmailVerificationToken(userEntity.getPublicId());
     emailService.sendEmail(new RegistrationVerificationEmail(userEntity.getEmail(), userEntity.getUsername(), newTokenString));
   }
 
   @Override
   @Transactional
-  public void deleteToken(TokenEntity tokenEntity) {
-    tokenRepository.delete(tokenEntity);
+  public void verifyEmailToken(String tokenString) {
+    // get claims to check signature of token
+    var claims = jwtsSupport.getClaims(tokenString);
+
+    // check if token is expired
+    if (claims.getExpiration().before(new Date())) {
+      throw new TokenExpiredException();
+    }
+
+    // verify registration
+    AbstractUserEntity userEntity = userRepository.findByPublicId(claims.getSubject())
+        .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
+    userEntity.setEnabled(true);
+    userRepository.save(userEntity);
   }
 }

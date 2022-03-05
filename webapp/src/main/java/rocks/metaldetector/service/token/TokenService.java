@@ -1,12 +1,6 @@
 package rocks.metaldetector.service.token;
 
-import rocks.metaldetector.persistence.domain.token.TokenEntity;
-
-import java.util.Optional;
-
 public interface TokenService {
-
-  Optional<TokenEntity> getResetPasswordTokenByTokenString(String tokenString);
 
   String createEmailVerificationToken(String publicUserId);
 
@@ -14,6 +8,5 @@ public interface TokenService {
 
   void resendExpiredEmailVerificationToken(String tokenString);
 
-  void deleteToken(TokenEntity tokenEntity);
-
+  void verifyEmailToken(String tokenString);
 }

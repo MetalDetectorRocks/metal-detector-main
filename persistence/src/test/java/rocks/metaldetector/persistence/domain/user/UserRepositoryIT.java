@@ -6,16 +6,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcOperations;
 import rocks.metaldetector.persistence.BaseDataJpaTest;
 import rocks.metaldetector.persistence.WithIntegrationTestConfig;
-import rocks.metaldetector.persistence.domain.token.TokenEntity;
-import rocks.metaldetector.persistence.domain.token.TokenRepository;
 
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.Date;
 import java.util.Optional;
-
-import static java.time.temporal.ChronoUnit.MINUTES;
-import static rocks.metaldetector.persistence.domain.token.TokenType.EMAIL_VERIFICATION;
 
 class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
 
@@ -26,7 +24,7 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   private UserRepository underTest;
 
   @Autowired
-  private TokenRepository tokenRepository;
+  private JdbcOperations jdbcOperations;
 
   private UserEntity johnDoe = UserFactory.createUser("JohnD", "john.doe@example.com");
   private UserEntity janeDoe = UserFactory.createUser("JaneD", "jane.doe@example.com");
@@ -37,24 +35,10 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
     johnDoe = underTest.save(johnDoe);
     janeDoe = underTest.save(janeDoe);
     oAuthUser = underTest.save(oAuthUser);
-
-    TokenEntity token1 = TokenEntity.builder().user(johnDoe)
-        .tokenString("tokenString")
-        .expirationDateTime(LocalDateTime.now().plus(1, MINUTES))
-        .tokenType(EMAIL_VERIFICATION)
-        .build();
-    TokenEntity token2 = TokenEntity.builder().user(janeDoe)
-        .tokenString("tokenString2")
-        .expirationDateTime(LocalDateTime.now().minus(1, MINUTES))
-        .tokenType(EMAIL_VERIFICATION)
-        .build();
-    tokenRepository.save(token1);
-    tokenRepository.save(token2);
   }
 
   @AfterEach
   void tearDown() {
-    tokenRepository.deleteAll();
     underTest.deleteAll();
   }
 
@@ -160,12 +144,24 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   }
 
   @Test
-  @DisplayName("findAllWithExpiredToken() returns correct user")
+  @DisplayName("findAllExpiredUsers() returns correct user")
   void test_find_expired_returns_users() {
+    // given
+    var expiredUser = UserFactory.createUser("Expired", "expired@example.com");
+    expiredUser.setEnabled(false);
+    underTest.save(expiredUser);
+    var expiredDate = new Date(System.currentTimeMillis() - Duration.ofDays(12).toMillis());
+    var dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSSSSS");
+    var formattedDate = dateFormat.format(expiredDate);
+    jdbcOperations.execute(
+        "update users set created_date = TO_TIMESTAMP('" + formattedDate + "', 'DD-MM-YYYY HH24:MI:SS.US'), " +
+        "last_modified_date = TO_TIMESTAMP('" + formattedDate + "', 'DD-MM-YYYY HH24:MI:SS.US') " +
+        "where username = 'Expired';");
+
     // when
-    var result = underTest.findAllWithExpiredToken();
+    var result = underTest.findAllExpiredUsers();
 
     // then
-    assertThat(result).containsExactly(janeDoe);
+    assertThat(result).containsExactly(expiredUser);
   }
 }

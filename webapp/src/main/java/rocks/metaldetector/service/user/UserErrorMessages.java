@@ -8,7 +8,6 @@ public enum UserErrorMessages {
   ADMINISTRATOR_DISCARD_ROLE("An administrator cannot discard his role."),
   USER_WITH_ID_NOT_FOUND("User with provided id not found."),
   USER_NOT_FOUND("User with provided email or username not found."),
-  TOKEN_NOT_FOUND("Token not found."),
   TOKEN_EXPIRED("Token is expired."),
   OAUTH_USER_CANNOT_CHANGE_EMAIL("OAUth users cannot change their email address."),
   OAUTH_USER_CANNOT_CHANGE_PASSWORD("OAUth users cannot change their password.");
