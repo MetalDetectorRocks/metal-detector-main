@@ -32,4 +32,6 @@ public interface UserService extends UserDetailsService {
   void deleteCurrentUser();
 
   void updateCurrentPassword(String oldPlainPassword, String newPlainPassword);
+
+  void verifyEmailToken(String tokenString);
 }

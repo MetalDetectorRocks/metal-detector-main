@@ -7,12 +7,10 @@ import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
-import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.time.Duration;
-import java.util.Date;
 
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
@@ -39,30 +37,12 @@ public class TokenServiceImpl implements TokenService {
   }
 
   @Override
-  @Transactional
+  @Transactional(readOnly = true)
   public void resendExpiredEmailVerificationToken(String tokenString) {
     var claims = jwtsSupport.getClaims(tokenString);
     AbstractUserEntity userEntity = userRepository.findByPublicId(claims.getSubject())
             .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
     String newTokenString = createEmailVerificationToken(userEntity.getPublicId());
     emailService.sendEmail(new RegistrationVerificationEmail(userEntity.getEmail(), userEntity.getUsername(), newTokenString));
-  }
-
-  @Override
-  @Transactional
-  public void verifyEmailToken(String tokenString) {
-    // get claims to check signature of token
-    var claims = jwtsSupport.getClaims(tokenString);
-
-    // check if token is expired
-    if (claims.getExpiration().before(new Date())) {
-      throw new TokenExpiredException();
-    }
-
-    // verify registration
-    AbstractUserEntity userEntity = userRepository.findByPublicId(claims.getSubject())
-        .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
-    userEntity.setEnabled(true);
-    userRepository.save(userEntity);
   }
 }

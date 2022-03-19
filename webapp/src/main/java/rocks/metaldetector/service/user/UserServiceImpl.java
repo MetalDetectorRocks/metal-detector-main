@@ -176,17 +176,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void resetPasswordWithToken(String tokenString, String newPassword) {
-    // get claims to check signature of token
-    var claims = jwtsSupport.getClaims(tokenString);
-
-    // check if token is expired
-    if (claims.getExpiration().before(new Date())) {
-      throw new TokenExpiredException();
-    }
-
-    // get user from token
-    UserEntity userEntity = (UserEntity) userRepository.findByPublicId(claims.getSubject())
-        .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
+    UserEntity userEntity = extractUserFromToken(tokenString);
 
     // set new password
     userEntity.setPassword(passwordEncoder.encode(newPassword));
@@ -236,6 +226,14 @@ public class UserServiceImpl implements UserService {
     }
   }
 
+  @Override
+  @Transactional
+  public void verifyEmailToken(String tokenString) {
+    AbstractUserEntity userEntity = extractUserFromToken(tokenString);
+    userEntity.setEnabled(true);
+    userRepository.save(userEntity);
+  }
+
   private Optional<AbstractUserEntity> findByEmailOrUsername(String emailOrUsername) {
     if (loginAttemptService.isBlocked(getClientIPHash())) {
       throw new LockedException("User " + emailOrUsername + " is blocked");
@@ -276,5 +274,16 @@ public class UserServiceImpl implements UserService {
     }
 
     return DigestUtils.md5Hex(clientIp);
+  }
+
+  private UserEntity extractUserFromToken(String token) {
+    var claims = jwtsSupport.getClaims(token);
+
+    if (claims.getExpiration().before(new Date())) {
+      throw new TokenExpiredException();
+    }
+
+    return (UserEntity) userRepository.findByPublicId(claims.getSubject())
+        .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
   }
 }

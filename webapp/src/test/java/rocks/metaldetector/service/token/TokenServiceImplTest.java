@@ -16,13 +16,11 @@ import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.AbstractEmail;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
-import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.time.Duration;
-import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -30,7 +28,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static rocks.metaldetector.service.user.UserErrorMessages.TOKEN_EXPIRED;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
 @ExtendWith(MockitoExtension.class)
@@ -174,104 +171,6 @@ class TokenServiceImplTest implements WithAssertions {
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
       assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
-    }
-  }
-
-  @DisplayName("Tests for verifying tokens")
-  @Nested
-  class VerifyTokenTest {
-
-    @Test
-    @DisplayName("Verifying the registration with an existing and not expired token should call jwts support")
-    void verify_registration_with_valid_token_should_call_jwts_support() {
-      // given
-      var token = "token";
-      var claims = mock(Claims.class);
-      var date = new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis());
-      var user = UserEntityFactory.createUser("JohnD", "johnd@example.com");
-      doReturn(date).when(claims).getExpiration();
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
-
-      // when
-      underTest.verifyEmailToken(token);
-
-      // then
-      verify(jwtsSupport).getClaims(token);
-    }
-
-    @Test
-    @DisplayName("Verifying the registration with an existing and not expired token should call user repository to find user")
-    void verify_registration_with_valid_token_should_call_user_repo() {
-      // given
-      var claims = mock(Claims.class);
-      var date = new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis());
-      var user = UserEntityFactory.createUser("JohnD", "johnd@example.com");
-      doReturn(date).when(claims).getExpiration();
-      doReturn(PUBLIC_USER_ID).when(claims).getSubject();
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
-
-      // when
-      underTest.verifyEmailToken("token");
-
-      // then
-      verify(userRepository).findByPublicId(PUBLIC_USER_ID);
-    }
-
-    @Test
-    @DisplayName("Verifying the registration with an existing and not expired token should throw exception if user is not found")
-    void verify_registration_with_valid_token_should_throw_exception() {
-      // given
-      var claims = mock(Claims.class);
-      var date = new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis());
-      doReturn(date).when(claims).getExpiration();
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-
-      // when
-      Throwable throwable = catchThrowable(() -> underTest.verifyEmailToken("token"));
-
-      // then
-      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
-    }
-
-    @Test
-    @DisplayName("Verifying the registration with an existing and not expired token should save enabled user")
-    void verify_registration_with_valid_token() {
-      // given
-      ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
-      var claims = mock(Claims.class);
-      var date = new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis());
-      var user = UserEntityFactory.createUser("JohnD", "johnd@example.com");
-      doReturn(date).when(claims).getExpiration();
-      doReturn(PUBLIC_USER_ID).when(claims).getSubject();
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
-
-      // when
-      underTest.verifyEmailToken("token");
-
-      // then
-      verify(userRepository).save(userEntityCaptor.capture());
-      assertThat(userEntityCaptor.getValue().isEnabled()).isTrue();
-    }
-
-    @Test
-    @DisplayName("Verifying the registration with an expired token should throw exception")
-    void verify_registration_with_expired_token() {
-      // given
-      var claims = mock(Claims.class);
-      var date = new Date(System.currentTimeMillis() - Duration.ofMinutes(1).toMillis());
-      doReturn(date).when(claims).getExpiration();
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-
-      // when
-      Throwable throwable = catchThrowable(() -> underTest.verifyEmailToken("token"));
-
-      // then
-      assertThat(throwable).isInstanceOf(TokenExpiredException.class);
-      assertThat(throwable).hasMessageContaining(TOKEN_EXPIRED.toDisplayString());
     }
   }
 }

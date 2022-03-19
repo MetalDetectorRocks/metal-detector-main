@@ -7,6 +7,4 @@ public interface TokenService {
   String createResetPasswordToken(String publicUserId);
 
   void resendExpiredEmailVerificationToken(String tokenString);
-
-  void verifyEmailToken(String tokenString);
 }

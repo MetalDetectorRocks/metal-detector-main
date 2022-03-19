@@ -324,14 +324,14 @@ class RegistrationControllerTest implements WithAssertions {
       restAssuredUtils.doGet("?token=" + token);
 
       // then
-      verify(tokenService).verifyEmailToken(token);
+      verify(userService).verifyEmailToken(token);
     }
 
     @Test
     @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with not existing token should return the login view login with error message")
     void given_not_existing_token_on_registration_verification_uri_should_redirect_to_login_view() {
       // given
-      doThrow(ResourceNotFoundException.class).when(tokenService).verifyEmailToken(NOT_EXISTING_TOKEN);
+      doThrow(ResourceNotFoundException.class).when(userService).verifyEmailToken(NOT_EXISTING_TOKEN);
 
       // when
       var validatableResponse = restAssuredUtils.doGet("?token=" + NOT_EXISTING_TOKEN);
@@ -346,20 +346,20 @@ class RegistrationControllerTest implements WithAssertions {
     @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with not existing token should call TokenService")
     void given_not_existing_token_on_registration_verification_uri_should_call_user_service() {
       // given
-      doThrow(ResourceNotFoundException.class).when(tokenService).verifyEmailToken(NOT_EXISTING_TOKEN);
+      doThrow(ResourceNotFoundException.class).when(userService).verifyEmailToken(NOT_EXISTING_TOKEN);
 
       // when
       restAssuredUtils.doGet("?token=" + NOT_EXISTING_TOKEN);
 
       // then
-      verify(tokenService).verifyEmailToken(NOT_EXISTING_TOKEN);
+      verify(userService).verifyEmailToken(NOT_EXISTING_TOKEN);
     }
 
     @Test
     @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with expired token should return the login view with error message")
     void given_expired_token_on_registration_verification_uri_should_redirect_to_login_view() {
       // given
-      doThrow(TokenExpiredException.class).when(tokenService).verifyEmailToken(EXPIRED_TOKEN);
+      doThrow(TokenExpiredException.class).when(userService).verifyEmailToken(EXPIRED_TOKEN);
 
       // when
       var validatableResponse = restAssuredUtils.doGet("?token=" + EXPIRED_TOKEN);
@@ -374,13 +374,13 @@ class RegistrationControllerTest implements WithAssertions {
     @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with expired token should call TokenService")
     void given_expired_token_on_registration_verification_uri_should_call_user_service() {
       // given
-      doThrow(TokenExpiredException.class).when(tokenService).verifyEmailToken(EXPIRED_TOKEN);
+      doThrow(TokenExpiredException.class).when(userService).verifyEmailToken(EXPIRED_TOKEN);
 
       // when
       restAssuredUtils.doGet("?token=" + EXPIRED_TOKEN);
 
       // then
-      verify(tokenService).verifyEmailToken(EXPIRED_TOKEN);
+      verify(userService).verifyEmailToken(EXPIRED_TOKEN);
     }
   }
 

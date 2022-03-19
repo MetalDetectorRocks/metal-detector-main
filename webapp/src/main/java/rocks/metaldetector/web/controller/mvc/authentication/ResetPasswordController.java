@@ -38,7 +38,6 @@ public class ResetPasswordController {
   public ModelAndView showResetPasswordForm(@RequestParam(value = "token") String tokenString, Model model, RedirectAttributes redirectAttributes) {
     var claims = jwtsSupport.getClaims(tokenString);
 
-    // check whether token is expired
     if (claims.getExpiration().before(new Date())) {
       redirectAttributes.addFlashAttribute("tokenExpiredError", true);
       return new ModelAndView("redirect:" + FORGOT_PASSWORD);

@@ -97,7 +97,7 @@ public class RegistrationController {
     String param = "verificationSuccess";
 
     try {
-      tokenService.verifyEmailToken(tokenString);
+      userService.verifyEmailToken(tokenString);
     }
     catch (TokenExpiredException e) {
       param = "tokenExpired&token=" + tokenString;
