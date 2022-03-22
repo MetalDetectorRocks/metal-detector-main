@@ -103,7 +103,7 @@ public class RegistrationController {
       param = "tokenExpired&token=" + tokenString;
     }
     catch (ResourceNotFoundException e) {
-      param = "tokenNotFound";
+      param = "userNotFound";
     }
 
     return new ModelAndView("redirect:" + LOGIN + "?" + param);
@@ -117,7 +117,7 @@ public class RegistrationController {
       tokenService.resendExpiredEmailVerificationToken(tokenString);
     }
     catch (ResourceNotFoundException e) {
-      param = "tokenNotFound";
+      param = "userNotFound";
     }
 
     return new ModelAndView("redirect:" + LOGIN + "?" + param);

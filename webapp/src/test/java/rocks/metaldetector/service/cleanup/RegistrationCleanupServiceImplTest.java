@@ -9,8 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
-import rocks.metaldetector.persistence.domain.token.TokenRepository;
-import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.user.UserEntityFactory;
 
@@ -27,9 +25,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 class RegistrationCleanupServiceImplTest implements WithAssertions {
 
   @Mock
-  private TokenRepository tokenRepository;
-
-  @Mock
   private UserRepository userRepository;
 
   @Mock
@@ -40,7 +35,7 @@ class RegistrationCleanupServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, notificationConfigRepository);
+    reset(userRepository, notificationConfigRepository);
   }
 
   @Test
@@ -50,21 +45,7 @@ class RegistrationCleanupServiceImplTest implements WithAssertions {
     underTest.cleanupUsersWithExpiredToken();
 
     // then
-    verify(userRepository).findAllWithExpiredToken();
-  }
-
-  @Test
-  @DisplayName("tokenRepository is called to delete expired tokens")
-  void test_token_repository_deletes() {
-    // given
-    List<AbstractUserEntity> users = List.of(UserEntityFactory.createUser("user", "user@user.user"));
-    doReturn(users).when(userRepository).findAllWithExpiredToken();
-
-    // when
-    underTest.cleanupUsersWithExpiredToken();
-
-    // then
-    verify(tokenRepository).deleteAllByUserIn(users);
+    verify(userRepository).findAllExpiredUsers();
   }
 
   @Test
@@ -72,7 +53,7 @@ class RegistrationCleanupServiceImplTest implements WithAssertions {
   void test_notification_config_repository_deletes() {
     // given
     var users = List.of(UserEntityFactory.createUser("user", "user@user.user"));
-    doReturn(users).when(userRepository).findAllWithExpiredToken();
+    doReturn(users).when(userRepository).findAllExpiredUsers();
 
     // when
     underTest.cleanupUsersWithExpiredToken();
@@ -86,7 +67,7 @@ class RegistrationCleanupServiceImplTest implements WithAssertions {
   void test_user_repository_deletes() {
     // given
     var users = List.of(UserEntityFactory.createUser("user", "user@user.user"));
-    doReturn(users).when(userRepository).findAllWithExpiredToken();
+    doReturn(users).when(userRepository).findAllExpiredUsers();
 
     // when
     underTest.cleanupUsersWithExpiredToken();
@@ -99,13 +80,12 @@ class RegistrationCleanupServiceImplTest implements WithAssertions {
   @DisplayName("nothing more is called of no users with expired tokens are present")
   void test_deletion_not_called_if_no_users_present() {
     // given
-    doReturn(Collections.emptyList()).when(userRepository).findAllWithExpiredToken();
+    doReturn(Collections.emptyList()).when(userRepository).findAllExpiredUsers();
 
     // when
     underTest.cleanupUsersWithExpiredToken();
 
     // then
-    verifyNoInteractions(tokenRepository);
     verifyNoInteractions(notificationConfigRepository);
     verifyNoMoreInteractions(userRepository);
   }

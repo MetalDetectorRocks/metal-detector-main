@@ -42,8 +42,8 @@
                 <span>You will shortly receive another email with a verification link. After confirming your registration you can login.</span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <div th:if="${param.tokenNotFound}" class="alert alert-danger alert-dismissible" role="alert">
-                <span>Your account may already be activated or another error has occurred. Please try to login.</span>
+            <div th:if="${param.userNotFound}" class="alert alert-danger alert-dismissible" role="alert">
+                <span>The requested user was not found. Please try to register again</span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             <div th:if="${param.tokenExpired}" class="alert alert-danger alert-dismissible" role="alert">

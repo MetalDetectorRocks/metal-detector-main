@@ -3,6 +3,7 @@ package rocks.metaldetector.web.controller.mvc.authentication;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.assertj.core.api.WithAssertions;
@@ -19,27 +20,26 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.BindingResult;
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.persistence.domain.token.TokenEntity;
-import rocks.metaldetector.persistence.domain.token.TokenType;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
-import rocks.metaldetector.service.token.TokenFactory;
-import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.Endpoints;
+import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.testutil.DtoFactory.ChangePasswordRequestFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 
 import java.time.Duration;
+import java.util.Date;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.instanceOf;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -59,7 +59,7 @@ class ResetPasswordControllerTest implements WithAssertions {
   private UserService userService;
 
   @Mock
-  private TokenService tokenService;
+  private JwtsSupport jwtsSupport;
 
   @InjectMocks
   private ResetPasswordController underTest;
@@ -77,51 +77,33 @@ class ResetPasswordControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(userService, tokenService);
+    reset(userService, jwtsSupport);
   }
 
   @Test
-  @DisplayName("Requesting '" + RESET_PASSWORD + "' with not existing token should return the forgot password view with error message")
-  void reset_password_with_not_existing_token_should_return_error() {
-    // given
-    String token = "not-existing-token";
-    when(tokenService.getResetPasswordTokenByTokenString(token)).thenReturn(Optional.empty());
-
-    // when
-    var validatableResponse = restAssuredUtils.doGet("?token=" + token);
-
-    // then
-    validatableResponse
-        .assertThat(model().hasNoErrors())
-        .assertThat(flash().attributeExists("tokenNotExistingError"))
-        .assertThat(status().is3xxRedirection())
-        .assertThat(redirectedUrl(FORGOT_PASSWORD));
-  }
-
-  @Test
-  @DisplayName("Requesting '" + RESET_PASSWORD + "' with not existing token should call TokenService")
+  @DisplayName("Requesting '" + RESET_PASSWORD + "' should call JwtsSupport")
   void reset_password_with_not_existing_token_should_call_token_service() {
     // given
-    String token = "not-existing-token";
-    when(tokenService.getResetPasswordTokenByTokenString(token)).thenReturn(Optional.empty());
+    String token = "token";
 
     // when
     restAssuredUtils.doGet("?token=" + token);
 
     // then
-    verify(tokenService).getResetPasswordTokenByTokenString(token);
+    verify(jwtsSupport).getClaims(token);
   }
 
   @Test
   @DisplayName("Requesting '" + RESET_PASSWORD + "' with expired token should return the forgot password view with error message")
   void reset_password_with_expired_token_should_return_error() {
     // given
-    String token = "expired-token";
-    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, 1);
-    when(tokenService.getResetPasswordTokenByTokenString(token)).thenReturn(Optional.of(tokenEntity));
+    var claims = mock(Claims.class);
+    var now = new Date();
+    doReturn(now).when(claims).getExpiration();
+    doReturn(claims).when(jwtsSupport).getClaims(any());
 
     // when
-    var validatableResponse = restAssuredUtils.doGet("?token=" + token);
+    var validatableResponse = restAssuredUtils.doGet("?token=expired-token");
 
     // then
     validatableResponse
@@ -132,30 +114,15 @@ class ResetPasswordControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Requesting '" + RESET_PASSWORD + "' with expired token should call TokenService")
-  void reset_password_with_expired_token_should_call_token_service() {
-    // given
-    String token = "expired-token";
-    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, 1);
-    when(tokenService.getResetPasswordTokenByTokenString(token)).thenReturn(Optional.of(tokenEntity));
-
-    // when
-    restAssuredUtils.doGet("?token=" + token);
-
-    // then
-    verify(tokenService).getResetPasswordTokenByTokenString(token);
-  }
-
-  @Test
   @DisplayName("Requesting '" + RESET_PASSWORD + "' with valid token should return the reset password view")
   void reset_password_with_valid_token_should_return_view() {
     // given
-    String token = "valid-token";
-    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, Duration.ofHours(1).toMillis());
-    when(tokenService.getResetPasswordTokenByTokenString(token)).thenReturn(Optional.of(tokenEntity));
+    var claims = mock(Claims.class);
+    doReturn(new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis())).when(claims).getExpiration();
+    doReturn(claims).when(jwtsSupport).getClaims(any());
 
     // when
-    var validatableResponse = restAssuredUtils.doGet("?token=" + token);
+    var validatableResponse = restAssuredUtils.doGet("?token=valid-token");
 
     // then
     validatableResponse
@@ -163,21 +130,6 @@ class ResetPasswordControllerTest implements WithAssertions {
         .assertThat(model().attributeExists(ResetPasswordController.FORM_DTO))
         .assertThat(status().isOk())
         .assertThat(view().name(ViewNames.Authentication.RESET_PASSWORD));
-  }
-
-  @Test
-  @DisplayName("Requesting '" + RESET_PASSWORD + "' with valid token should call TokenService")
-  void reset_password_with_valid_token_should_call_token_service() {
-    // given
-    String token = "valid-token";
-    TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, Duration.ofHours(1).toMillis());
-    when(tokenService.getResetPasswordTokenByTokenString(token)).thenReturn(Optional.of(tokenEntity));
-
-    // when
-    restAssuredUtils.doGet("?token=" + token);
-
-    // then
-    verify(tokenService).getResetPasswordTokenByTokenString(token);
   }
 
   @Test
@@ -239,7 +191,7 @@ class ResetPasswordControllerTest implements WithAssertions {
     restAssuredUtils.doPost(objectMapper.convertValue(request, new TypeReference<>() {}), ContentType.HTML);
 
     // then
-    verifyNoInteractions(tokenService, userService);
+    verifyNoInteractions(jwtsSupport, userService);
   }
 
   private static Stream<Arguments> changePasswordRequestProvider() {

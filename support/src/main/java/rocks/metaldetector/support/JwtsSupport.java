@@ -2,7 +2,6 @@ package rocks.metaldetector.support;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -10,6 +9,8 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
+
+import static io.jsonwebtoken.SignatureAlgorithm.HS512;
 
 @Component
 @PropertySource(value = "classpath:application.yml")
@@ -26,7 +27,7 @@ public class JwtsSupport {
                .setIssuedAt(new Date(currentTimeMillis))
                .setIssuer(securityProperties.getTokenIssuer())
                .setExpiration(new Date(currentTimeMillis + expirationTime.toMillis()))
-               .signWith(SignatureAlgorithm.HS512, securityProperties.getTokenSecret())
+               .signWith(HS512, securityProperties.getTokenSecret())
                .compact();
   }
 
@@ -36,5 +37,4 @@ public class JwtsSupport {
                .parseClaimsJws(token)
                .getBody();
   }
-
 }

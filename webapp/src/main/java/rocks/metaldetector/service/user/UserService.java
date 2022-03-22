@@ -25,8 +25,6 @@ public interface UserService extends UserDetailsService {
 
   UserDto getCurrentUser();
 
-  void verifyEmailToken(String tokenString);
-
   void resetPasswordWithToken(String tokenString, String newPassword);
 
   void persistSuccessfulLogin(String publicUserId);
@@ -34,4 +32,6 @@ public interface UserService extends UserDetailsService {
   void deleteCurrentUser();
 
   void updateCurrentPassword(String oldPlainPassword, String newPlainPassword);
+
+  void verifyEmailToken(String tokenString);
 }

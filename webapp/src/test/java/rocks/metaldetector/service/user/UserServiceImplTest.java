@@ -1,5 +1,6 @@
 package rocks.metaldetector.service.user;
 
+import io.jsonwebtoken.Claims;
 import org.assertj.core.api.WithAssertions;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.AfterEach;
@@ -23,9 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import rocks.metaldetector.persistence.domain.token.TokenEntity;
-import rocks.metaldetector.persistence.domain.token.TokenRepository;
-import rocks.metaldetector.persistence.domain.token.TokenType;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.persistence.domain.user.UserRole;
@@ -34,7 +32,6 @@ import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
-import rocks.metaldetector.service.token.TokenFactory;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.events.UserCreationEvent;
 import rocks.metaldetector.service.user.events.UserDeletionEvent;
@@ -48,6 +45,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -66,7 +64,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static rocks.metaldetector.persistence.domain.token.TokenType.EMAIL_VERIFICATION;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
 import static rocks.metaldetector.service.exceptions.UserAlreadyExistsException.Reason.EMAIL_ALREADY_EXISTS;
@@ -74,7 +71,6 @@ import static rocks.metaldetector.service.exceptions.UserAlreadyExistsException.
 import static rocks.metaldetector.service.user.UserErrorMessages.OAUTH_USER_CANNOT_CHANGE_EMAIL;
 import static rocks.metaldetector.service.user.UserErrorMessages.OAUTH_USER_CANNOT_CHANGE_PASSWORD;
 import static rocks.metaldetector.service.user.UserErrorMessages.TOKEN_EXPIRED;
-import static rocks.metaldetector.service.user.UserErrorMessages.TOKEN_NOT_FOUND;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_NOT_FOUND;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
@@ -89,9 +85,6 @@ class UserServiceImplTest implements WithAssertions {
   private final String TOKEN = "user-token";
   private final String NEW_PLAIN_PASSWORD = "new-plain-password";
   private final String NEW_ENCRYPTED_PASSWORD = "encryption".repeat(6); // an encrypted password must be 60 characters long
-
-  @Mock
-  private TokenRepository tokenRepository;
 
   @Mock
   private UserRepository userRepository;
@@ -124,13 +117,13 @@ class UserServiceImplTest implements WithAssertions {
 
   @BeforeEach
   void setup() {
-    underTest = new UserServiceImpl(userRepository, passwordEncoder, tokenRepository, jwtsSupport, userTransformer,
-                                    tokenService, authenticationFacade, loginAttemptService, applicationEventPublisher, request);
+    underTest = new UserServiceImpl(userRepository, passwordEncoder, jwtsSupport, userTransformer, authenticationFacade,
+                                    loginAttemptService, applicationEventPublisher, request);
   }
 
   @AfterEach
   void tearDown() {
-    reset(tokenRepository, userRepository, passwordEncoder, jwtsSupport, tokenService, authenticationFacade, userTransformer, loginAttemptService, request, applicationEventPublisher);
+    reset(userRepository, passwordEncoder, jwtsSupport, tokenService, authenticationFacade, userTransformer, loginAttemptService, request, applicationEventPublisher);
   }
 
   @DisplayName("Create user entity tests")
@@ -696,57 +689,111 @@ class UserServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Changing the password of a user should work")
-    void change_password() {
+    @DisplayName("Changing the password of a user should call JwtsSupport")
+    void change_password_calls_jwts_support() {
       // given
-      ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
-      UserEntity userEntity = UserEntityFactory.createUser(USERNAME, EMAIL);
-      TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, userEntity);
-      when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
-      when(passwordEncoder.encode(NEW_PLAIN_PASSWORD)).thenReturn(NEW_ENCRYPTED_PASSWORD);
+      var token = "token";
+      var claims = mock(Claims.class);
+      var date = new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis());
+      var user = UserEntityFactory.createUser("JohnD", "johnd@example.com");
+      doReturn(date).when(claims).getExpiration();
+      doReturn(claims).when(jwtsSupport).getClaims(any());
+      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
 
       // when
-      underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD);
+      underTest.resetPasswordWithToken(token, "newPW");
 
       // then
-      verify(userRepository).save(userEntityCaptor.capture());
-      verify(tokenService).getResetPasswordTokenByTokenString(TOKEN);
-      verify(tokenService).deleteToken(tokenEntity);
-      verify(jwtsSupport).getClaims(TOKEN);
-      assertThat(userEntityCaptor.getValue().getPassword()).isEqualTo(NEW_ENCRYPTED_PASSWORD);
+      verify(jwtsSupport).getClaims(token);
     }
 
     @Test
-    @DisplayName("Changing the password should throw exception if token does not exist")
-    void change_password_should_throw_resource_not_found() {
+    @DisplayName("Changing the password of a user with valid token should call UserRepository to find user")
+    void change_password_should_call_user_repository_to_find() {
       // given
-      when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.empty());
+      var claims = mock(Claims.class);
+      var publicUserId = "publicUserId";
+      var userEntity = UserEntityFactory.createUser(USERNAME, EMAIL);
+      doReturn(claims).when(jwtsSupport).getClaims(any());
+      doReturn(new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis())).when(claims).getExpiration();
+      doReturn(publicUserId).when(claims).getSubject();
+      doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+
+      // when
+      underTest.resetPasswordWithToken("token", "newPW");
+
+      // then
+      verify(userRepository).findByPublicId(publicUserId);
+    }
+
+    @Test
+    @DisplayName("Changing the password of a user with valid token should call PasswordEncoder")
+    void change_password_should_call_password_encoder() {
+      // given
+      var claims = mock(Claims.class);
+      var newPassword = "newPw";
+      var userEntity = UserEntityFactory.createUser(USERNAME, EMAIL);
+      doReturn(claims).when(jwtsSupport).getClaims(any());
+      doReturn(new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis())).when(claims).getExpiration();
+      doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+
+      // when
+      underTest.resetPasswordWithToken("token", newPassword);
+
+      // then
+      verify(passwordEncoder).encode(newPassword);
+    }
+
+    @Test
+    @DisplayName("Changing the password of a user with valid token should call UserRepository to save user")
+    void change_password_should_call_user_repository_to_save() {
+      // given
+      ArgumentCaptor<UserEntity> argumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
+      var claims = mock(Claims.class);
+      var userEntity = UserEntityFactory.createUser(USERNAME, EMAIL);
+      doReturn(claims).when(jwtsSupport).getClaims(any());
+      doReturn(new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis())).when(claims).getExpiration();
+      doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
+      doReturn(NEW_ENCRYPTED_PASSWORD).when(passwordEncoder).encode(any());
+
+      // when
+      underTest.resetPasswordWithToken("token", "newPW");
+
+      // then
+      verify(userRepository).save(argumentCaptor.capture());
+      assertThat(argumentCaptor.getValue().getPassword()).isEqualTo(NEW_ENCRYPTED_PASSWORD);
+    }
+
+    @Test
+    @DisplayName("Changing the password of a not existing user should throw exception")
+    void change_password_should_throw_user_not_found() {
+      // given
+      var claims = mock(Claims.class);
+      doReturn(claims).when(jwtsSupport).getClaims(any());
+      doReturn(new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis())).when(claims).getExpiration();
 
       // when
       Throwable throwable = catchThrowable(() -> underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD));
 
       // then
       assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(TOKEN_NOT_FOUND.toDisplayString());
+      assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
     }
 
     @Test
     @DisplayName("Changing the password with an expired token should throw exception")
-    void change_password_should_throw_token_expired() throws InterruptedException {
+    void change_password_should_throw_token_expired() {
       // given
-      TokenEntity tokenEntity = TokenFactory.createToken(TokenType.PASSWORD_RESET, 1);
-      when(tokenService.getResetPasswordTokenByTokenString(TOKEN)).thenReturn(Optional.of(tokenEntity));
+      var claims = mock(Claims.class);
+      doReturn(claims).when(jwtsSupport).getClaims(any());
+      doReturn(new Date(System.currentTimeMillis() - Duration.ofMinutes(1).toMillis())).when(claims).getExpiration();
 
       // when
-      var now = LocalDateTime.now().plusHours(1);
-      try (MockedStatic<LocalDateTime> mock = mockStatic(LocalDateTime.class)) {
-        mock.when(LocalDateTime::now).thenReturn(now);
-        Throwable throwable = catchThrowable(() -> underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD));
+      Throwable throwable = catchThrowable(() -> underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD));
 
-        // then
-        assertThat(throwable).isInstanceOf(TokenExpiredException.class);
-        assertThat(throwable).hasMessageContaining(TOKEN_EXPIRED.toDisplayString());
-      }
+      // then
+      assertThat(throwable).isInstanceOf(TokenExpiredException.class);
+      assertThat(throwable).hasMessageContaining(TOKEN_EXPIRED.toDisplayString());
     }
 
     @Test
@@ -967,6 +1014,104 @@ class UserServiceImplTest implements WithAssertions {
     }
   }
 
+  @DisplayName("Tests for verifying tokens")
+  @Nested
+  class VerifyTokenTest {
+
+    @Test
+    @DisplayName("Verifying the registration with an existing and not expired token should call jwts support")
+    void verify_registration_with_valid_token_should_call_jwts_support() {
+      // given
+      var token = "token";
+      var claims = mock(Claims.class);
+      var date = new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis());
+      var user = UserEntityFactory.createUser("JohnD", "johnd@example.com");
+      doReturn(date).when(claims).getExpiration();
+      doReturn(claims).when(jwtsSupport).getClaims(any());
+      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
+
+      // when
+      underTest.verifyEmailToken(token);
+
+      // then
+      verify(jwtsSupport).getClaims(token);
+    }
+
+    @Test
+    @DisplayName("Verifying the registration with an existing and not expired token should call user repository to find user")
+    void verify_registration_with_valid_token_should_call_user_repo() {
+      // given
+      var claims = mock(Claims.class);
+      var date = new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis());
+      var user = UserEntityFactory.createUser("JohnD", "johnd@example.com");
+      doReturn(date).when(claims).getExpiration();
+      doReturn(PUBLIC_ID).when(claims).getSubject();
+      doReturn(claims).when(jwtsSupport).getClaims(any());
+      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
+
+      // when
+      underTest.verifyEmailToken("token");
+
+      // then
+      verify(userRepository).findByPublicId(PUBLIC_ID);
+    }
+
+    @Test
+    @DisplayName("Verifying the registration with an existing and not expired token should throw exception if user is not found")
+    void verify_registration_with_valid_token_should_throw_exception() {
+      // given
+      var claims = mock(Claims.class);
+      var date = new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis());
+      doReturn(date).when(claims).getExpiration();
+      doReturn(claims).when(jwtsSupport).getClaims(any());
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.verifyEmailToken("token"));
+
+      // then
+      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
+      assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
+    }
+
+    @Test
+    @DisplayName("Verifying the registration with an existing and not expired token should save enabled user")
+    void verify_registration_with_valid_token() {
+      // given
+      ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
+      var claims = mock(Claims.class);
+      var date = new Date(System.currentTimeMillis() + Duration.ofMinutes(1).toMillis());
+      var user = UserEntityFactory.createUser("JohnD", "johnd@example.com");
+      doReturn(date).when(claims).getExpiration();
+      doReturn(PUBLIC_ID).when(claims).getSubject();
+      doReturn(claims).when(jwtsSupport).getClaims(any());
+      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
+
+      // when
+      underTest.verifyEmailToken("token");
+
+      // then
+      verify(userRepository).save(userEntityCaptor.capture());
+      assertThat(userEntityCaptor.getValue().isEnabled()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Verifying the registration with an expired token should throw exception")
+    void verify_registration_with_expired_token() {
+      // given
+      var claims = mock(Claims.class);
+      var date = new Date(System.currentTimeMillis() - Duration.ofMinutes(1).toMillis());
+      doReturn(date).when(claims).getExpiration();
+      doReturn(claims).when(jwtsSupport).getClaims(any());
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.verifyEmailToken("token"));
+
+      // then
+      assertThat(throwable).isInstanceOf(TokenExpiredException.class);
+      assertThat(throwable).hasMessageContaining(TOKEN_EXPIRED.toDisplayString());
+    }
+  }
+
   @DisplayName("Delete current user tests")
   @Nested
   class DeleteCurrentUserTest {
@@ -1084,64 +1229,6 @@ class UserServiceImplTest implements WithAssertions {
       verify(userRepository).findByUsername(USERNAME);
       assertThat(throwable).isInstanceOf(UsernameNotFoundException.class);
       assertThat(throwable).hasMessageContaining(USER_NOT_FOUND.toDisplayString());
-    }
-  }
-
-  @DisplayName("Verify user tests")
-  @Nested
-  class VerifyUserTest {
-
-    @Test
-    @DisplayName("Verifying the registration with an existing and not expired token should work")
-    void verify_registration_with_valid_token() {
-      // given
-      ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
-      String TOKEN_STRING = "token";
-      TokenEntity tokenEntity = TokenFactory.createToken(EMAIL_VERIFICATION, Duration.ofHours(1).toMillis());
-      tokenEntity.getUser().setEnabled(false); // should be set to true within verification process
-      when(tokenRepository.findEmailVerificationToken(TOKEN_STRING)).thenReturn(Optional.of(tokenEntity));
-
-      // when
-      underTest.verifyEmailToken(TOKEN_STRING);
-
-      // then
-      verify(userRepository).save(userEntityCaptor.capture());
-      verify(tokenRepository).delete(tokenEntity);
-      assertThat(userEntityCaptor.getValue().isEnabled()).isTrue();
-    }
-
-    @Test
-    @DisplayName("Verifying the registration with a not existing token should throw exception")
-    void verify_registration_with_not_existing_token() {
-      // given
-      String TOKEN_STRING = "token";
-      when(tokenRepository.findEmailVerificationToken(TOKEN_STRING)).thenReturn(Optional.empty());
-
-      // when
-      Throwable throwable = catchThrowable(() -> underTest.verifyEmailToken(TOKEN_STRING));
-
-      // then
-      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(TOKEN_NOT_FOUND.toDisplayString());
-    }
-
-    @Test
-    @DisplayName("Verifying the registration with an expired token should throw exception")
-    void verify_registration_with_expired_token() {
-      // given
-      TokenEntity tokenEntity = TokenFactory.createToken(EMAIL_VERIFICATION, 1);
-      when(tokenRepository.findEmailVerificationToken(TOKEN)).thenReturn(Optional.of(tokenEntity));
-
-      // when
-      var now = LocalDateTime.now().plusHours(1);
-      try (MockedStatic<LocalDateTime> mock = mockStatic(LocalDateTime.class)) {
-        mock.when(LocalDateTime::now).thenReturn(now);
-        Throwable throwable = catchThrowable(() -> underTest.verifyEmailToken(TOKEN));
-
-        // then
-        assertThat(throwable).isInstanceOf(TokenExpiredException.class);
-        assertThat(throwable).hasMessageContaining(TOKEN_EXPIRED.toDisplayString());
-      }
     }
   }
 

@@ -22,8 +22,7 @@ public class RegistrationCompleteListener implements ApplicationListener<OnRegis
 
   private void sendConfirmationEmail(OnRegistrationCompleteEvent event) {
     UserDto userDto = event.getUserDto();
-    String token    = tokenService.createEmailVerificationToken(userDto.getPublicId());
-
+    String token = tokenService.createEmailVerificationToken(userDto.getPublicId());
     emailService.sendEmail(new RegistrationVerificationEmail(userDto.getEmail(), userDto.getUsername(), token));
   }
 }

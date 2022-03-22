@@ -315,7 +315,7 @@ class RegistrationControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with valid token should call UserService")
+    @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with valid token should call TokenService")
     void given_valid_token_on_registration_verification_uri_should_call_user_service() {
       //given
       String token = "valid_token";
@@ -339,11 +339,11 @@ class RegistrationControllerTest implements WithAssertions {
       // then
       validatableResponse
           .assertThat(status().is3xxRedirection())
-          .assertThat(redirectedUrl(LOGIN + "?tokenNotFound"));
+          .assertThat(redirectedUrl(LOGIN + "?userNotFound"));
     }
 
     @Test
-    @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with not existing token should call UserService")
+    @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with not existing token should call TokenService")
     void given_not_existing_token_on_registration_verification_uri_should_call_user_service() {
       // given
       doThrow(ResourceNotFoundException.class).when(userService).verifyEmailToken(NOT_EXISTING_TOKEN);
@@ -371,7 +371,7 @@ class RegistrationControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with expired token should call UserService")
+    @DisplayName("Requesting '" + REGISTRATION_VERIFICATION + "' with expired token should call TokenService")
     void given_expired_token_on_registration_verification_uri_should_call_user_service() {
       // given
       doThrow(TokenExpiredException.class).when(userService).verifyEmailToken(EXPIRED_TOKEN);
@@ -430,7 +430,7 @@ class RegistrationControllerTest implements WithAssertions {
       // then
       validatableResponse
           .assertThat(status().is3xxRedirection())
-          .assertThat(redirectedUrl(LOGIN + "?tokenNotFound"));
+          .assertThat(redirectedUrl(LOGIN + "?userNotFound"));
     }
 
     @Test
