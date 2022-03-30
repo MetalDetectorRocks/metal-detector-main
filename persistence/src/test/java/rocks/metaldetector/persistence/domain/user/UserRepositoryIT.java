@@ -10,9 +10,6 @@ import org.springframework.jdbc.core.JdbcOperations;
 import rocks.metaldetector.persistence.BaseDataJpaTest;
 import rocks.metaldetector.persistence.WithIntegrationTestConfig;
 
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.Date;
 import java.util.Optional;
 
 class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
@@ -150,13 +147,11 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
     var expiredUser = UserFactory.createUser("Expired", "expired@example.com");
     expiredUser.setEnabled(false);
     underTest.save(expiredUser);
-    var expiredDate = new Date(System.currentTimeMillis() - Duration.ofDays(12).toMillis());
-    var dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSSSSS");
-    var formattedDate = dateFormat.format(expiredDate);
     jdbcOperations.execute(
-        "update users set created_date = TO_TIMESTAMP('" + formattedDate + "', 'DD-MM-YYYY HH24:MI:SS.US'), " +
-        "last_modified_date = TO_TIMESTAMP('" + formattedDate + "', 'DD-MM-YYYY HH24:MI:SS.US') " +
-        "where username = 'Expired';");
+        "update users set created_date = CURRENT_DATE - INTERVAL '12' DAY, " +
+        "last_modified_date = CURRENT_DATE - INTERVAL '12' DAY " +
+        "where username = 'Expired';"
+    );
 
     // when
     var result = underTest.findAllExpiredUsers();
