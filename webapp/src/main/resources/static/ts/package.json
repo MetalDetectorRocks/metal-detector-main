@@ -36,7 +36,7 @@
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {
-    "axios": "^0.26.1",
+    "axios": "^0.27.1",
     "dayjs": "^1.11.1",
     "faker": "^6.6.6",
     "qs": "^6.10.3",
