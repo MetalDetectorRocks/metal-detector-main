@@ -1,8 +1,8 @@
-import { AccountDetailsRestClient } from "../../clients/account-details-rest-client";
-import { AlertService } from "../util/alert-service";
-import { ToastService } from "../util/toast-service";
-import { UNKNOWN_ERROR_MESSAGE } from "../../config/messages.config";
-import { UserResponse } from "../../model/user-response.model";
+import {AccountDetailsRestClient} from "../../clients/account-details-rest-client";
+import {AlertService} from "../util/alert-service";
+import {ToastService} from "../util/toast-service";
+import {UNKNOWN_ERROR_MESSAGE} from "../../config/messages.config";
+import {UserResponse} from "../../model/user-response.model";
 
 export class AccountDetailsRenderService {
     private readonly toastService: ToastService;
@@ -82,7 +82,7 @@ export class AccountDetailsRenderService {
             .catch((error) => {
                 this.emailInput.classList.add("is-invalid");
                 this.emailInput.classList.remove("is-valid");
-                this.renderServerError(this.updateEmailErrorMessageHost, error.response.data.messages);
+                this.renderServerError(this.updateEmailErrorMessageHost, error.message);
             });
     }
 
@@ -144,7 +144,7 @@ export class AccountDetailsRenderService {
                 this.newPasswordInput.classList.remove("is-valid");
                 this.confirmPasswordInput.classList.add("is-invalid");
                 this.confirmPasswordInput.classList.remove("is-valid");
-                this.renderServerError(this.updatePasswordErrorMessageHost, error.response.data.messages);
+                this.renderServerError(this.updatePasswordErrorMessageHost, error.message);
             });
     }
 

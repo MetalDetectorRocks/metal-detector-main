@@ -1,6 +1,6 @@
-import { UserResponse } from "../model/user-response.model";
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { axiosConfig } from "../config/axios.config";
+import {UserResponse} from "../model/user-response.model";
+import axios, {AxiosError, AxiosResponse} from "axios";
+import {axiosConfig} from "../config/axios.config";
 
 export class AccountDetailsRestClient {
     private readonly CURRENT_USER_ENDPOINT = "/rest/v1/me";
@@ -14,7 +14,7 @@ export class AccountDetailsRestClient {
                 return response.data;
             })
             .catch((error: AxiosError) => {
-                console.error(error.response?.data.messages);
+                console.error(error.message);
                 throw error;
             });
     }
@@ -29,7 +29,7 @@ export class AccountDetailsRestClient {
                 return response.data;
             })
             .catch((error: AxiosError) => {
-                console.error(error.response?.data.messages);
+                console.error(error.message);
                 throw error;
             });
     }
@@ -41,7 +41,7 @@ export class AccountDetailsRestClient {
                 return;
             })
             .catch((error: AxiosError) => {
-                console.error(error.response?.data.messages);
+                console.error(error.message);
                 throw error;
             });
     }
