@@ -1,6 +1,6 @@
-import { UserResponse } from "../model/user-response.model";
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { axiosConfig } from "../config/axios.config";
+import {UserResponse} from "../model/user-response.model";
+import axios, {AxiosError, AxiosResponse} from "axios";
+import {axiosConfig} from "../config/axios.config";
 
 export class AccountDetailsRestClient {
     private readonly CURRENT_USER_ENDPOINT = "/rest/v1/me";
