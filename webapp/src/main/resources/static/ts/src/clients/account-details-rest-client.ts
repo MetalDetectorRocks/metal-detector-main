@@ -14,7 +14,7 @@ export class AccountDetailsRestClient {
                 return response.data;
             })
             .catch((error: AxiosError) => {
-                console.error(error.response?.data.messages);
+                console.error(error.message);
                 throw error;
             });
     }
@@ -29,7 +29,7 @@ export class AccountDetailsRestClient {
                 return response.data;
             })
             .catch((error: AxiosError) => {
-                console.error(error.response?.data.messages);
+                console.error(error.message);
                 throw error;
             });
     }
@@ -41,7 +41,7 @@ export class AccountDetailsRestClient {
                 return;
             })
             .catch((error: AxiosError) => {
-                console.error(error.response?.data.messages);
+                console.error(error.message);
                 throw error;
             });
     }
