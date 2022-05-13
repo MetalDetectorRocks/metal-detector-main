@@ -4,7 +4,7 @@ val dependencyVersions = listOf(
   "org.slf4j:slf4j-api:1.7.36",
   "org.jboss.logging:jboss-logging:3.5.0.Final",
   "net.bytebuddy:byte-buddy:1.12.10",
-  "org.javassist:javassist:3.28.0-GA"
+  "org.javassist:javassist:3.29.0-GA"
 )
 
 val dependencyGroupVersions = mapOf(
