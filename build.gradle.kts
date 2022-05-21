@@ -1,22 +1,23 @@
 val javaVersion: JavaVersion = JavaVersion.VERSION_17
 
 val dependencyVersions = listOf(
-  "org.slf4j:slf4j-api:1.7.36",
-  "org.jboss.logging:jboss-logging:3.5.0.Final",
-  "net.bytebuddy:byte-buddy:1.12.10",
-  "org.javassist:javassist:3.29.0-GA"
+    "org.slf4j:slf4j-api:1.7.36",
+    "org.jboss.logging:jboss-logging:3.5.0.Final",
+    "net.bytebuddy:byte-buddy:1.12.10",
+    "org.javassist:javassist:3.29.0-GA"
 )
 
 val dependencyGroupVersions = mapOf(
-  "org.springframework" to libs.versions.spring.get(),
-  "org.springframework.security" to libs.versions.springSecurity.get(),
-  "org.springframework.boot" to libs.versions.springBoot.get(),
-  "com.fasterxml.jackson.core" to libs.versions.jackson.get(),
-  "com.fasterxml.jackson.datatype" to libs.versions.jackson.get(),
-  "com.fasterxml.jackson.module" to libs.versions.jackson.get(),
-  "org.mockito" to libs.versions.mockito.get(),
-  "org.junit.jupiter" to libs.versions.junit.get(),
-  "org.junit" to libs.versions.junit.get()
+    "org.springframework" to libs.versions.spring.get(),
+    "org.springframework.security" to libs.versions.springSecurity.get(),
+    "org.springframework.boot" to libs.versions.springBoot.get(),
+    "com.fasterxml.jackson.core" to libs.versions.jackson.get(),
+    "com.fasterxml.jackson.datatype" to libs.versions.jackson.get(),
+    "com.fasterxml.jackson.module" to libs.versions.jackson.get(),
+    "org.mockito" to libs.versions.mockito.get(),
+    "org.junit.jupiter" to libs.versions.junit.get(),
+    "org.junit" to libs.versions.junit.get(),
+    "org.apache.groovy" to "4.0.2"
 )
 
 plugins {
@@ -37,12 +38,12 @@ subprojects {
       resolutionStrategy {
         failOnVersionConflict()
         force(dependencyVersions)
-            eachDependency {
-              val forcedVersion = dependencyGroupVersions[requested.group]
-              if (forcedVersion != null) {
-                useVersion(forcedVersion)
-              }
-            }
+        eachDependency {
+          val forcedVersion = dependencyGroupVersions[requested.group]
+          if (forcedVersion != null) {
+            useVersion(forcedVersion)
+          }
+        }
         cacheDynamicVersionsFor(0, "seconds")
       }
     }
