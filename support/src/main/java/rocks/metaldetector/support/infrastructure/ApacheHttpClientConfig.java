@@ -91,14 +91,6 @@ public class ApacheHttpClientConfig {
   }
 
   @Bean
-  public TaskScheduler taskScheduler() {
-    ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-    scheduler.setThreadNamePrefix(SCHEDULED_TASK_NAME_PREFIX);
-    scheduler.setPoolSize(5);
-    return scheduler;
-  }
-
-  @Bean
   public CloseableHttpClient httpClient() {
     RequestConfig requestConfig = RequestConfig.custom()
             .setConnectTimeout((int) Duration.ofSeconds(20).toMillis()) // the time for waiting until a connection is established
