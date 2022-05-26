@@ -6,8 +6,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,13 +22,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "management.health.mail.enabled=false"
 })
 @AutoConfigureMockMvc
-public class ActuatorEndpointSecurityIT extends BaseSpringBootTest {
+@SpringBootTest
+public class ActuatorEndpointSecurityIntegrationTest extends BaseSpringBootTest {
 
   @Autowired
   private MockMvc mockMvc;
-
-  @MockBean
-  private HttpSecurity httpSecurity;
 
   @ParameterizedTest(name = "actuator endpoint {0} is not secured")
   @MethodSource("actuatorEndpointProvider")

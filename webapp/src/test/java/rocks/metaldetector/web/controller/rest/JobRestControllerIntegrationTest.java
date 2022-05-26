@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import rocks.metaldetector.butler.facade.JobService;
+import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -17,9 +19,11 @@ import static rocks.metaldetector.support.Endpoints.Rest.COVER_JOB;
 import static rocks.metaldetector.support.Endpoints.Rest.IMPORT_JOB;
 
 @WebMvcTest(controllers = JobRestController.class)
-public class JobRestControllerIT extends BaseWebMvcTestWithSecurity {
+@Import({SecurityConfig.class})
+public class JobRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
 
   @MockBean
+  @SuppressWarnings("unused")
   private JobService jobService;
 
   @Nested

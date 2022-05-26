@@ -6,8 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.service.telegram.TelegramUpdateFactory;
 import rocks.metaldetector.service.telegram.TelegramUpdateService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
@@ -20,9 +22,11 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
 
 @WebMvcTest(controllers = TelegramRestController.class,
     properties = "telegram.bot-id=100")
-class TelegramRestControllerIT extends BaseWebMvcTestWithSecurity {
+@Import({SecurityConfig.class})
+class TelegramRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
 
   @MockBean
+  @SuppressWarnings("unused")
   private TelegramUpdateService telegramUpdateService;
 
   private final TelegramUpdate update = TelegramUpdateFactory.createDefault();

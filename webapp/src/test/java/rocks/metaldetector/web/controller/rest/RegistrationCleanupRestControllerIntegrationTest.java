@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
+import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.service.cleanup.RegistrationCleanupService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
@@ -14,9 +16,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
 
 @WebMvcTest(controllers = RegistrationCleanupRestController.class)
-public class RegistrationCleanupRestControllerIT extends BaseWebMvcTestWithSecurity {
+@Import({SecurityConfig.class})
+public class RegistrationCleanupRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
 
   @MockBean
+  @SuppressWarnings("unused")
   private RegistrationCleanupService registrationCleanupService;
 
   @Nested

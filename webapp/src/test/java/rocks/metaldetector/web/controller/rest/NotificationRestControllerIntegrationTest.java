@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
+import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.service.notification.messaging.NotificationScheduler;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
@@ -16,9 +18,11 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_FREQUEN
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE_DATE;
 
 @WebMvcTest(controllers = NotificationRestController.class)
-public class NotificationRestControllerIT extends BaseWebMvcTestWithSecurity {
+@Import({SecurityConfig.class})
+public class NotificationRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
 
   @MockBean
+  @SuppressWarnings("unused")
   private NotificationScheduler notificationScheduler;
 
   @Nested

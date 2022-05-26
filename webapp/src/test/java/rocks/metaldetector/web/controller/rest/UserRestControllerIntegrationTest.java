@@ -4,7 +4,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
+import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UpdateUserRequestFactory;
@@ -17,7 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 
 @WebMvcTest(controllers = UserRestController.class)
-class UserRestControllerIT extends BaseWebMvcTestWithSecurity {
+@Import({SecurityConfig.class})
+class UserRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
 
   @Nested
   @DisplayName("Administrators should have access to all endpoints")

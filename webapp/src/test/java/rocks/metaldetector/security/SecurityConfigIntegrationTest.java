@@ -3,6 +3,7 @@ package rocks.metaldetector.security;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.stereotype.Controller;
@@ -20,7 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
 
 @WebMvcTest(controllers = {SimpleRestController.class, SimpleMvcController.class})
-class SecurityConfigIT extends BaseWebMvcTestWithSecurity {
+@Import({SecurityConfig.class})
+class SecurityConfigIntegrationTest extends BaseWebMvcTestWithSecurity {
 
   @Test
   @DisplayName("All rest controller behind '/rest/**' are secured by default and return a 401")
