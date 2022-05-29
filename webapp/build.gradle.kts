@@ -21,7 +21,7 @@ springBoot {
 
 tasks {
   bootJar {
-    dependsOn("assembleFrontend")
+    dependsOn(assembleFrontend)
     archiveClassifier.set("boot")
     enabled = true
   }
