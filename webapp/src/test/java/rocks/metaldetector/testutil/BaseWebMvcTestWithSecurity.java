@@ -46,9 +46,6 @@ public abstract class BaseWebMvcTestWithSecurity {
   @MockBean
   protected SecurityProperties securityProperties;
 
-//  @MockBean
-//  protected HttpSecurity httpSecurity;
-
   @MockBean
   protected OAuth2UserService<OidcUserRequest, OidcUser> customOidcUserService;
 

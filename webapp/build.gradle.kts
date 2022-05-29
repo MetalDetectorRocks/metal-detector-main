@@ -79,9 +79,7 @@ dependencies {
   implementation(rootProject.projects.persistence)
   implementation(rootProject.projects.telegram)
 
-  testImplementation("org.springframework.boot:spring-boot-starter-test:${libs.versions.springBoot.get()}") {
-    exclude(group = "junit", module = "junit")
-  }
+  testImplementation("org.springframework.boot:spring-boot-starter-test:${libs.versions.springBoot.get()}")
   testImplementation("org.springframework.security:spring-security-test:${libs.versions.springSecurity.get()}")
   testImplementation("com.h2database:h2:${libs.versions.h2.get()}")
   testImplementation("io.rest-assured:rest-assured:${libs.versions.restAssured.get()}")

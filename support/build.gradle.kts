@@ -16,9 +16,7 @@ dependencies {
   api("io.jsonwebtoken:jjwt:${libs.versions.jsonwebtoken.get()}")
 
   testImplementation("org.simplify4u:slf4j-mock:${libs.versions.slf4jMock.get()}")
-  testImplementation("org.springframework.boot:spring-boot-starter-test:${libs.versions.springBoot.get()}") {
-    exclude(group = "junit", module = "junit")
-  }
+  testImplementation("org.springframework.boot:spring-boot-starter-test:${libs.versions.springBoot.get()}")
   testImplementation("org.mockito:mockito-inline:${libs.versions.mockito.get()}")
 }
 
