@@ -22,7 +22,7 @@
     "@types/qs": "^6.9.7",
     "@types/source-map": "^0.5.7",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
-    "@typescript-eslint/parser": "^5.26.0",
+    "@typescript-eslint/parser": "^5.27.0",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^6.7.1",
     "eslint": "^8.16.0",
