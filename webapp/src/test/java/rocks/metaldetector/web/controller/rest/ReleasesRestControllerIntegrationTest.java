@@ -5,9 +5,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import rocks.metaldetector.butler.facade.ReleaseService;
+import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.dashboard.ArtistCollector;
 import rocks.metaldetector.service.dashboard.ReleaseCollector;
@@ -24,7 +26,8 @@ import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
 
 @WebMvcTest(controllers = ReleasesRestController.class)
-public class ReleasesRestControllerIT extends BaseWebMvcTestWithSecurity {
+@Import({SecurityConfig.class})
+public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
 
   @MockBean
   @SuppressWarnings("unused")

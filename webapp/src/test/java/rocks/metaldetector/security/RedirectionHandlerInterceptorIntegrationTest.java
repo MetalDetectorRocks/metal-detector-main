@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
@@ -31,7 +32,8 @@ import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
     "spring.datasource.url=jdbc:h2:mem:test-prod;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
 })
 @ExtendWith(MockitoExtension.class)
-class RedirectionHandlerInterceptorIT extends BaseSpringBootTest implements WithAssertions {
+@SpringBootTest
+class RedirectionHandlerInterceptorIntegrationTest extends BaseSpringBootTest implements WithAssertions {
 
   @Autowired
   private ApplicationContext applicationContext;

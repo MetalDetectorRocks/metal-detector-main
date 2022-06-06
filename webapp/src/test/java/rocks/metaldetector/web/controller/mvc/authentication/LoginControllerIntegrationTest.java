@@ -8,10 +8,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
@@ -31,7 +33,8 @@ import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
 import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 
 @WebMvcTest(controllers = LoginController.class)
-class LoginControllerIT extends BaseWebMvcTestWithSecurity {
+@Import({SecurityConfig.class})
+class LoginControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
 
   private static final String PARAM_USERNAME = "username";
   private static final String PARAM_PASSWORD = "password";

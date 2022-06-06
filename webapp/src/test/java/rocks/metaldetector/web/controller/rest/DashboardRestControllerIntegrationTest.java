@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.service.dashboard.DashboardService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
@@ -15,7 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static rocks.metaldetector.support.Endpoints.Rest.DASHBOARD;
 
 @WebMvcTest(controllers = DashboardRestController.class)
-class DashboardRestControllerIT extends BaseWebMvcTestWithSecurity {
+@Import({SecurityConfig.class})
+class DashboardRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
 
   @MockBean
   @SuppressWarnings("unused")

@@ -6,9 +6,7 @@ dependencies {
 
   implementation(rootProject.projects.support)
 
-  testImplementation("org.springframework.boot:spring-boot-starter-test:${libs.versions.springBoot.get()}") {
-    exclude(group = "junit", module = "junit")
-  }
+  testImplementation("org.springframework.boot:spring-boot-starter-test:${libs.versions.springBoot.get()}")
 }
 
 description = "discogs"

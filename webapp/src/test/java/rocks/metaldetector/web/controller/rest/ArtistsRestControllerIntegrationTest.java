@@ -4,7 +4,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.service.artist.ArtistSearchService;
 import rocks.metaldetector.service.artist.FollowArtistService;
 import rocks.metaldetector.service.dashboard.ArtistCollector;
@@ -15,7 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_ARTISTS;
 
 @WebMvcTest(controllers = ArtistsRestController.class)
-class ArtistsRestControllerIT extends BaseWebMvcTestWithSecurity {
+@Import({SecurityConfig.class})
+class ArtistsRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
 
   @MockBean
   @SuppressWarnings("unused")
