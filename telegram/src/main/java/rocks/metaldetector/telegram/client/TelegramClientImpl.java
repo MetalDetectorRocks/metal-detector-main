@@ -1,6 +1,7 @@
 package rocks.metaldetector.telegram.client;
 
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
@@ -10,6 +11,7 @@ import rocks.metaldetector.telegram.api.TelegramSendMessageRequest;
 import rocks.metaldetector.telegram.config.TelegramProperties;
 
 @Component
+@Profile({"default", "preview", "prod"})
 @AllArgsConstructor
 public class TelegramClientImpl implements TelegramClient {
 
