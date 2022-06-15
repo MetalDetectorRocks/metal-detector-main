@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -22,19 +24,28 @@ public class JwtsSupport {
   public String generateToken(String subject, Duration expirationTime) {
     long currentTimeMillis = System.currentTimeMillis();
     return Jwts.builder()
-               .setSubject(subject)
-               .setId(UUID.randomUUID().toString())
-               .setIssuedAt(new Date(currentTimeMillis))
-               .setIssuer(securityProperties.getTokenIssuer())
-               .setExpiration(new Date(currentTimeMillis + expirationTime.toMillis()))
-               .signWith(HS512, securityProperties.getTokenSecret())
-               .compact();
+        .setSubject(subject)
+        .setId(UUID.randomUUID().toString())
+        .setIssuedAt(new Date(currentTimeMillis))
+        .setIssuer(securityProperties.getTokenIssuer())
+        .setExpiration(new Date(currentTimeMillis + expirationTime.toMillis()))
+        .signWith(HS512, securityProperties.getTokenSecret())
+        .compact();
   }
 
   public Claims getClaims(String token) {
     return Jwts.parser()
-               .setSigningKey(securityProperties.getTokenSecret())
-               .parseClaimsJws(token)
-               .getBody();
+        .setSigningKey(securityProperties.getTokenSecret())
+        .parseClaimsJws(token)
+        .getBody();
+  }
+
+  public HttpCookie createAccessTokenCookie(String token) {
+    return ResponseCookie.from("metal-detector-auth", token)
+        .maxAge(Duration.ofMinutes(5))
+        .secure(true)
+        .httpOnly(true)
+        .path("/")
+        .build();
   }
 }
