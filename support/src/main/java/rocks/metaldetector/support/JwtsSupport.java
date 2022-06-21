@@ -4,8 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.HttpCookie;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -38,14 +36,5 @@ public class JwtsSupport {
         .setSigningKey(securityProperties.getTokenSecret())
         .parseClaimsJws(token)
         .getBody();
-  }
-
-  public HttpCookie createAccessTokenCookie(String token) {
-    return ResponseCookie.from("metal-detector-auth", token)
-        .maxAge(Duration.ofMinutes(5))
-        .secure(true)
-        .httpOnly(true)
-        .path("/")
-        .build();
   }
 }
