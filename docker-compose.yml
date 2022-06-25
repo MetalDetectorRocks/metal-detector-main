@@ -43,7 +43,7 @@ services:
 
   butler-app:
     container_name: butler-app
-    image: metaldetector/metal-release-butler:20220503T163818
+    image: metaldetector/metal-release-butler:20220625T095023
     environment:
       DATASOURCE_URL: jdbc:postgresql://butler-db:5432/metal-release-butler
       DATASOURCE_USERNAME: postgres
@@ -87,7 +87,7 @@ services:
 
   auth-app:
     container_name: detector-auth-app
-    image: metaldetector/metal-detector-auth:20220430T071304
+    image: metaldetector/metal-detector-auth:20220625T094902
     environment:
       SERVER_PORT: 9000
       DATASOURCE_URL: jdbc:postgresql://auth-db:5432/metal-detector-auth
