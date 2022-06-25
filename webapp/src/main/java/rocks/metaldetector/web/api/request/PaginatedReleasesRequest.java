@@ -8,7 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
@@ -30,8 +30,7 @@ public class PaginatedReleasesRequest implements WithTimeRangeValidation {
   @Builder.Default
   private int size = 40;
 
-  @NotNull
-  @NotEmpty
+  @NotBlank
   private String sort;
 
   @NotNull

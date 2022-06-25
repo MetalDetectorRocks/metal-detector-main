@@ -44,8 +44,9 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 @ExtendWith(MockitoExtension.class)
 class UserRestControllerTest implements WithAssertions {
@@ -223,28 +224,27 @@ class UserRestControllerTest implements WithAssertions {
     void should_return_409() {
       // given
       RegisterUserRequest request = RegisterUserRequestFactory.createDefault();
-      when(userService.createAdministrator(any())).thenThrow(UserAlreadyExistsException.class);
+      when(userService.createAdministrator(any())).thenThrow(UserAlreadyExistsException.createUserWithUsernameAlreadyExistsException());
 
       // when
       ValidatableMockMvcResponse response = restAssuredUtils.doPost(request);
 
       // then
-      response.statusCode(HttpStatus.CONFLICT.value())
+      response.statusCode(CONFLICT.value())
           .extract().as(ErrorResponse.class);
     }
 
     @ParameterizedTest
     @MethodSource("createAdministratorRequestProvider")
-    @DisplayName("Should return status 400 if creating of administrator does not pass validation")
-    void should_return_400(RegisterUserRequest request, int expectedErrorCount) {
+    @DisplayName("Should return status 422 if creating of administrator does not pass validation")
+    void should_return_422(RegisterUserRequest request, int expectedErrorCount) {
       // when
       ValidatableMockMvcResponse response = restAssuredUtils.doPost(request);
 
       // then
-      response.statusCode(BAD_REQUEST.value());
+      response.statusCode(UNPROCESSABLE_ENTITY.value());
 
       ErrorResponse errorResponse = response.extract().as(ErrorResponse.class);
-      System.out.println(errorResponse);
       assertThat(errorResponse.getMessages()).hasSize(expectedErrorCount);
     }
 
@@ -304,8 +304,8 @@ class UserRestControllerTest implements WithAssertions {
 
     @ParameterizedTest
     @MethodSource("inputProvider")
-    @DisplayName("Should return 400 for faulty requests")
-    void should_return_400(String userId, String role, boolean enabled) {
+    @DisplayName("Should return 422 for faulty requests")
+    void should_return_422(String userId, String role, boolean enabled) {
       // given
       UpdateUserRequest updateUserRequest = new UpdateUserRequest(userId, role, enabled);
 
@@ -313,7 +313,7 @@ class UserRestControllerTest implements WithAssertions {
       ValidatableMockMvcResponse response = restAssuredUtils.doPut(updateUserRequest);
 
       // then
-      response.statusCode(BAD_REQUEST.value());
+      response.statusCode(UNPROCESSABLE_ENTITY.value());
     }
 
     private Stream<Arguments> inputProvider() {

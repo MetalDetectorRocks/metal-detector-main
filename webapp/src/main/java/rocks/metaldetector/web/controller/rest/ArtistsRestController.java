@@ -53,14 +53,14 @@ public class ArtistsRestController {
   }
 
   @PostMapping(path = FOLLOW_ARTIST + "/{source}/{externalId}")
-  public ResponseEntity<Void> handleFollow(@PathVariable String source, @PathVariable String externalId) {
-    followArtistService.follow(externalId, ArtistSource.getArtistSourceFromString(source));
+  public ResponseEntity<Void> handleFollow(@PathVariable ArtistSource source, @PathVariable String externalId) {
+    followArtistService.follow(externalId, source);
     return ResponseEntity.ok().build();
   }
 
   @PostMapping(path = UNFOLLOW_ARTIST + "/{source}/{externalId}")
-  public ResponseEntity<Void> handleUnfollow(@PathVariable String source, @PathVariable String externalId) {
-    followArtistService.unfollow(externalId, ArtistSource.getArtistSourceFromString(source));
+  public ResponseEntity<Void> handleUnfollow(@PathVariable ArtistSource source, @PathVariable String externalId) {
+    followArtistService.unfollow(externalId, source);
     return ResponseEntity.ok().build();
   }
 

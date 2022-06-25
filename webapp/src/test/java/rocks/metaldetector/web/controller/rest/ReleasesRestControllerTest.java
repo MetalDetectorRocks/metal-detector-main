@@ -57,8 +57,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.MY_RELEASES;
@@ -139,9 +139,9 @@ class ReleasesRestControllerTest implements WithAssertions {
       assertThat(Arrays.asList(result)).isEqualTo(releases);
     }
 
-    @ParameterizedTest(name = "Should return 400 on invalid query request <{0}>")
+    @ParameterizedTest(name = "Should return 422 on invalid query request <{0}>")
     @MethodSource("requestProvider")
-    @DisplayName("Should return 400 on invalid query request")
+    @DisplayName("Should return 422 on invalid query request")
     void test_invalid_query_requests(ReleasesRequest request) {
       // when
       var validatableResponse = restAssuredUtils.doGet(toMap(request));
@@ -149,7 +149,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       // then
       validatableResponse
           .contentType(ContentType.JSON)
-          .statusCode(BAD_REQUEST.value());
+          .statusCode(UNPROCESSABLE_ENTITY.value());
     }
 
     private Stream<Arguments> requestProvider() {
@@ -238,9 +238,9 @@ class ReleasesRestControllerTest implements WithAssertions {
       assertThat(Arrays.asList(itemsResult)).isEqualTo(page.getItems());
     }
 
-    @ParameterizedTest(name = "Should return 400 on invalid query request <{0}>")
+    @ParameterizedTest(name = "Should return 422 on invalid query request <{0}>")
     @MethodSource("requestProvider")
-    @DisplayName("Should return 400 on invalid query request")
+    @DisplayName("Should return 422 on invalid query request")
     void test_invalid_query_requests(PaginatedReleasesRequest request) {
       // when
       var validatableResponse = restAssuredUtils.doGet(toMap(request));
@@ -248,7 +248,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       // then
       validatableResponse
           .contentType(ContentType.JSON)
-          .statusCode(BAD_REQUEST.value());
+          .statusCode(UNPROCESSABLE_ENTITY.value());
     }
 
     private Stream<Arguments> requestProvider() {
@@ -431,9 +431,9 @@ class ReleasesRestControllerTest implements WithAssertions {
       assertThat(Arrays.asList(itemsResult)).isEqualTo(expectedPage.getItems());
     }
 
-    @ParameterizedTest(name = "Should return 400 on invalid query request <{0}>")
+    @ParameterizedTest(name = "Should return 422 on invalid query request <{0}>")
     @MethodSource("requestProvider")
-    @DisplayName("Should return 400 on invalid query request")
+    @DisplayName("Should return 422 on invalid query request")
     void test_invalid_query_requests(PaginatedReleasesRequest request) {
       // when
       var validatableResponse = restAssuredUtils.doGet(toMap(request));
@@ -441,7 +441,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       // then
       validatableResponse
           .contentType(ContentType.JSON)
-          .statusCode(BAD_REQUEST.value());
+          .statusCode(UNPROCESSABLE_ENTITY.value());
     }
 
     private Stream<Arguments> requestProvider() {

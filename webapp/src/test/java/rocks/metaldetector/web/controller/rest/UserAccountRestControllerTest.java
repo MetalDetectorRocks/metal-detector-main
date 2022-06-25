@@ -32,8 +32,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
 import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER;
 import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER_EMAIL;
@@ -160,13 +160,13 @@ class UserAccountRestControllerTest implements WithAssertions {
 
     @ParameterizedTest
     @MethodSource("inputProvider")
-    @DisplayName("Should return 400 for faulty requests")
-    void should_return_400(UpdateEmailRequest request) {
+    @DisplayName("Should return 422 for faulty requests")
+    void should_return_422(UpdateEmailRequest request) {
       // when
       ValidatableMockMvcResponse response = restAssuredUtils.doPatch(request);
 
       // then
-      response.statusCode(BAD_REQUEST.value());
+      response.statusCode(UNPROCESSABLE_ENTITY.value());
     }
 
     private Stream<Arguments> inputProvider() {
@@ -254,13 +254,13 @@ class UserAccountRestControllerTest implements WithAssertions {
 
     @ParameterizedTest
     @MethodSource("inputProvider")
-    @DisplayName("Should return 400 for faulty requests")
-    void should_return_400(UpdatePasswordRequest request) {
+    @DisplayName("Should return 422 for faulty requests")
+    void should_return_422(UpdatePasswordRequest request) {
       // when
       ValidatableMockMvcResponse response = restAssuredUtils.doPatch(request);
 
       // then
-      response.statusCode(BAD_REQUEST.value());
+      response.statusCode(UNPROCESSABLE_ENTITY.value());
     }
 
     private Stream<Arguments> inputProvider() {
