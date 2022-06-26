@@ -71,6 +71,8 @@ public class Endpoints {
 
     public static final String LOGIN = "/rest/v1/login";
 
+    public static final String CSRF = "/rest/v1/csrf";
+
     public static final String TEST = "/rest/v1/only-for-testing";
   }
 

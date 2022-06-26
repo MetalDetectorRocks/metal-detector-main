@@ -33,7 +33,6 @@ import javax.sql.DataSource;
 import java.time.Duration;
 
 import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ACTUATOR_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ADMIN;
@@ -44,6 +43,7 @@ import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
 import static rocks.metaldetector.support.Endpoints.Frontend.LOGOUT;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
+import static rocks.metaldetector.support.Endpoints.Rest.CSRF;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
@@ -90,6 +90,7 @@ public class SecurityConfig {
         .antMatchers(GET, SEARCH_ARTIST).permitAll()
         .antMatchers(GET, TOP_ARTISTS).permitAll()
         .antMatchers(GET, AUTHENTICATION).permitAll()
+        .antMatchers(GET, CSRF).permitAll()
         .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
         .antMatchers(Endpoints.Rest.LOGIN).permitAll()
         .antMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()

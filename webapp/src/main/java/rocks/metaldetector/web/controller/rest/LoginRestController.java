@@ -21,7 +21,6 @@ public class LoginRestController {
 
   private final LoginService loginService;
 
-  @CrossOrigin(origins = "http://localhost:3000")
   @PostMapping(value = LOGIN, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<LoginResponse> loginUser(@RequestBody @Valid LoginRequest request) {
     LoginResponse response = loginService.loginUser(request);

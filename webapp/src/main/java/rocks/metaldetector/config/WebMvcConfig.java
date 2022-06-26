@@ -2,9 +2,11 @@ package rocks.metaldetector.config;
 
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -16,11 +18,15 @@ import rocks.metaldetector.support.Endpoints;
 
 import java.util.Locale;
 
+import static java.util.Locale.ENGLISH;
 import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
+import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+  @Value("${frontend.origin}")
+  private String frontendOrigin;
   private final RedirectionHandlerInterceptor redirectionHandlerInterceptor;
 
   @Autowired
@@ -61,6 +67,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     registry.addInterceptor(redirectionHandlerInterceptor).addPathPatterns(GUEST_ONLY_PAGES);
   }
 
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping(REST_ENDPOINTS).allowedOrigins(frontendOrigin);
+  }
+
   @Bean
   public LayoutDialect layoutDialect() {
     return new LayoutDialect();
@@ -68,6 +79,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
   @Bean
   LocaleResolver localeResolver() {
-    return new FixedLocaleResolver(Locale.ENGLISH);
+    return new FixedLocaleResolver(ENGLISH);
   }
 }
