@@ -19,7 +19,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import rocks.metaldetector.persistence.domain.artist.ArtistSource;
 import rocks.metaldetector.service.artist.ArtistDto;
 import rocks.metaldetector.service.artist.ArtistSearchService;
@@ -43,6 +42,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
 import static rocks.metaldetector.support.Endpoints.Rest.FOLLOW_ARTIST;
 import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
@@ -56,7 +56,7 @@ import static rocks.metaldetector.web.controller.rest.ArtistsRestController.DEFA
 class ArtistsRestControllerTest implements WithAssertions {
 
   private static final String VALID_EXTERNAL_ID = "252211";
-  private static final String VALID_SOURCE_STRING = "Discogs";
+  private static final String VALID_SOURCE_STRING = DISCOGS.name();
   private static final String VALID_SEARCH_REQUEST = "Darkthrone";
   private static final ArtistSource ARTIST_SOURCE = DISCOGS;
 
@@ -282,7 +282,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       var result = followArtistRestAssuredUtils.doPost(url);
 
       // then
-      result.status(HttpStatus.BAD_REQUEST);
+      result.status(UNPROCESSABLE_ENTITY);
     }
 
     @Test
@@ -322,7 +322,7 @@ class ArtistsRestControllerTest implements WithAssertions {
       var result = unfollowArtistRestAssuredUtils.doPost(url);
 
       // then
-      result.status(HttpStatus.BAD_REQUEST);
+      result.status(UNPROCESSABLE_ENTITY);
     }
   }
 

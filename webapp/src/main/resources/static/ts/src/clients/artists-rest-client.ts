@@ -58,7 +58,7 @@ export class ArtistsRestClient {
 
     public async followArtist(artistId: string, source: string): Promise<unknown> {
         return await axios
-            .post(`${this.FOLLOW_ARTISTS_URL}/${source}/${artistId}`, {}, axiosConfig)
+            .post(`${this.FOLLOW_ARTISTS_URL}/${source.toUpperCase()}/${artistId}`, {}, axiosConfig)
             .catch((error: AxiosError) => {
                 this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
                 throw error;
@@ -67,7 +67,7 @@ export class ArtistsRestClient {
 
     public async unfollowArtist(artistId: string, source: string): Promise<unknown> {
         return await axios
-            .post(`${this.UNFOLLOW_ARTISTS_URL}/${source}/${artistId}`, {}, axiosConfig)
+            .post(`${this.UNFOLLOW_ARTISTS_URL}/${source.toUpperCase()}/${artistId}`, {}, axiosConfig)
             .catch((error: AxiosError) => {
                 this.toastService.createErrorToast(UNKNOWN_ERROR_MESSAGE);
                 throw error;
