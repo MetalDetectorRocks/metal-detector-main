@@ -39,8 +39,6 @@ import static rocks.metaldetector.support.Endpoints.AntPattern.ADMIN;
 import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
-import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
-import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
 import static rocks.metaldetector.support.Endpoints.Frontend.LOGOUT;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.CSRF;
@@ -78,7 +76,7 @@ public class SecurityConfig {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-      .csrf().ignoringAntMatchers(REST_ENDPOINTS, ACTUATOR_ENDPOINTS)
+      .csrf().ignoringAntMatchers(Endpoints.Rest.LOGIN, ACTUATOR_ENDPOINTS)
       .and()
       .authorizeRequests()
         .antMatchers(ADMIN).hasRole(ROLE_ADMINISTRATOR.getName())
@@ -103,7 +101,7 @@ public class SecurityConfig {
 //        .failureHandler(new CustomAuthenticationFailureHandler())
 //      .and()
         .oauth2Login()
-          .loginPage(LOGIN)
+          .loginPage(Endpoints.Authentication.LOGIN)
           .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
           .failureHandler(new CustomAuthenticationFailureHandler())
           .userInfoEndpoint()
