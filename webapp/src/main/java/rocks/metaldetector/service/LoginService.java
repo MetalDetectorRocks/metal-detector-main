@@ -32,14 +32,14 @@ public class LoginService {
     var user = authenticationFacade.getCurrentUser();
     var token = jwtsSupport.generateToken(user.getPublicId(), Duration.ofHours(1));
     return LoginResponse.builder()
-        .email(request.getEmail())
+        .username(request.getUsername())
         .token(token)
         .roles(user.getUserRoles().stream().map(UserRole::getDisplayName).collect(Collectors.toList()))
         .build();
   }
 
   private void authenticateUser(LoginRequest request) {
-    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
     authenticationToken.setDetails(authenticationDetailsSource.buildDetails(httpRequest));
     Authentication authentication = authenticationManager.authenticate(authenticationToken);
     SecurityContextHolder.getContext().setAuthentication(authentication);
