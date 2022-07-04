@@ -23,7 +23,7 @@ plugins {
   id("org.siouan.frontend-jdk11") version "6.0.0" apply false
   id("org.springframework.boot") version "2.7.1" apply false
   id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
-  id("de.europace.docker-publish") version "1.3.0" apply false
+  id("de.europace.docker-publish") version "1.4.0" apply false
 }
 
 subprojects {
