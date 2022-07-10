@@ -69,7 +69,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping(REST_ENDPOINTS).allowedOrigins(frontendOrigin);
+    registry.addMapping(REST_ENDPOINTS).allowedOrigins(frontendOrigin).allowCredentials(true);
   }
 
   @Bean
