@@ -24,13 +24,14 @@ class OAuth2ClientManagerProviderTest implements WithAssertions {
   @Mock
   private OAuth2AuthorizedClientManager schedulingAuthorizedClientManager;
 
-  @Mock
   private TaskSchedulingProperties taskSchedulingProperties;
 
   private OAuth2ClientManagerProvider underTest;
 
   @BeforeEach
   void setup() {
+    taskSchedulingProperties = new TaskSchedulingProperties();
+    taskSchedulingProperties.setThreadNamePrefix("scheduling-");
     underTest = new OAuth2ClientManagerProvider(authorizedClientManager, schedulingAuthorizedClientManager, taskSchedulingProperties);
   }
 
@@ -53,10 +54,8 @@ class OAuth2ClientManagerProviderTest implements WithAssertions {
   @DisplayName("For a scheduled thread the schedulingAuthorizedClientManager is returned")
   void test_scheduling_manager_returned() {
     // given
-    var threadNamePrefix = "scheduling-";
-    doReturn(threadNamePrefix).when(taskSchedulingProperties).getThreadNamePrefix();
     var scheduler = new ThreadPoolTaskScheduler();
-    scheduler.setThreadNamePrefix(threadNamePrefix);
+    scheduler.setThreadNamePrefix(taskSchedulingProperties.getThreadNamePrefix());
     scheduler.initialize();
 
     scheduler.execute(() -> {
