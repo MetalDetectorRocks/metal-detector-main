@@ -28,9 +28,8 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 @Slf4j
 public class ApacheHttpClientConfig {
 
-  public static final String SCHEDULED_TASK_NAME_PREFIX = "threadPoolTaskScheduler";
-  private static final int MAX_ROUTE_CONNECTIONS     = 40;
-  private static final int MAX_TOTAL_CONNECTIONS     = 40;
+  private static final int MAX_ROUTE_CONNECTIONS = 40;
+  private static final int MAX_TOTAL_CONNECTIONS = 40;
   private static final int MAX_LOCALHOST_CONNECTIONS = 80;
 
   private final int port;
@@ -93,15 +92,15 @@ public class ApacheHttpClientConfig {
   @Bean
   public CloseableHttpClient httpClient() {
     RequestConfig requestConfig = RequestConfig.custom()
-            .setConnectTimeout((int) Duration.ofSeconds(20).toMillis()) // the time for waiting until a connection is established
-            .setConnectionRequestTimeout((int) Duration.ofSeconds(20).toMillis()) // the time for waiting for a connection from connection pool
-            .setSocketTimeout((int) Duration.ofSeconds(90).toMillis()) // the time for waiting for data
-            .build();
+        .setConnectTimeout((int) Duration.ofSeconds(20).toMillis()) // the time for waiting until a connection is established
+        .setConnectionRequestTimeout((int) Duration.ofSeconds(20).toMillis()) // the time for waiting for a connection from connection pool
+        .setSocketTimeout((int) Duration.ofSeconds(90).toMillis()) // the time for waiting for data
+        .build();
 
     return HttpClients.custom()
-            .setDefaultRequestConfig(requestConfig)
-            .setConnectionManager(poolingConnectionManager())
-            .setKeepAliveStrategy(connectionKeepAliveStrategy())
-            .build();
+        .setDefaultRequestConfig(requestConfig)
+        .setConnectionManager(poolingConnectionManager())
+        .setKeepAliveStrategy(connectionKeepAliveStrategy())
+        .build();
   }
 }
