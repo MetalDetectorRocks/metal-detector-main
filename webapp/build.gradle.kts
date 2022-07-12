@@ -32,7 +32,7 @@ tasks {
 
   frontend {
     nodeDistributionProvided.set(false)
-    nodeVersion.set("16.14.0")
+    nodeVersion.set("16.16.0")
     nodeDistributionUrlRoot.set("https://nodejs.org/dist/")
     nodeDistributionUrlPathPattern.set("vVERSION/node-vVERSION-ARCH.TYPE")
     nodeInstallDirectory.set(file("${projectDir}/node"))
