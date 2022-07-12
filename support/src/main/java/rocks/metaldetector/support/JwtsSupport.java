@@ -47,7 +47,7 @@ public class JwtsSupport {
 //        .httpOnly(true) // ToDo: activate later
         .path("/") // ToDo: correct?
         .domain("localhost") // ToDo: change later
-        .sameSite("Lax") // ToDo: correct?
+        .sameSite("Strict") // ToDo: correct?
         .build();
   }
 }
