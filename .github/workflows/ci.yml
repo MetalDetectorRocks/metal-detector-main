@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - preview # TODO: remove as soon as the preview branch is removed
 
 jobs:
   ci:
@@ -25,14 +26,16 @@ jobs:
       - name: Execute clean build
         run: ./gradlew clean build --no-daemon --info --stacktrace
       - name: Publish Test Report
-        if: ${{ always() }}
+        if: ${{ github.event.pull_request.base.ref == 'master' }}
         uses: scacap/action-surefire-report@v1
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
       - name: Generate coverage report
         run: ./gradlew jacocoTestReport --no-daemon --info --stacktrace
+        if: ${{ github.event.pull_request.base.ref == 'master' }}
       - name: Upload report to Codecov
         uses: codecov/codecov-action@v3
+        if: ${{ github.event.pull_request.base.ref == 'master' }}
         with:
           name: codecov-umbrella
           fail_ci_if_error: true
