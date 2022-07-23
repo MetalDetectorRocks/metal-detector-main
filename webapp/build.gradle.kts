@@ -15,7 +15,8 @@ dockerPublish {
 springBoot {
   mainClass.set("rocks.metaldetector.MetalDetectorApplication")
   buildInfo().apply {
-    version = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss"))
+    // TODO: remove as soon as the preview branch is removed
+    version = "preview" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss"))
   }
 }
 

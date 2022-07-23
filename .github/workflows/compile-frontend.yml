@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - preview # TODO: remove as soon as the preview branch is removed
 
 jobs:
   compile-frontend:
