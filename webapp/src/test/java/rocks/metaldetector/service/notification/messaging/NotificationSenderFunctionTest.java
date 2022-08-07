@@ -14,7 +14,7 @@ import static rocks.metaldetector.persistence.domain.notification.NotificationCh
 import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.TELEGRAM;
 
 @ExtendWith(MockitoExtension.class)
-class NotificationSenderSupplierTest implements WithAssertions {
+class NotificationSenderFunctionTest implements WithAssertions {
 
   @Mock
   private NotificationSender emailNotificationSender;
@@ -22,11 +22,11 @@ class NotificationSenderSupplierTest implements WithAssertions {
   @Mock
   private NotificationSender telegramNotificationSender;
 
-  private NotificationSenderSupplier underTest;
+  private NotificationSenderFunction underTest;
 
   @BeforeEach
   void setup() {
-    underTest = new NotificationSenderSupplier(emailNotificationSender, telegramNotificationSender);
+    underTest = new NotificationSenderFunction(emailNotificationSender, telegramNotificationSender);
   }
 
   @AfterEach
