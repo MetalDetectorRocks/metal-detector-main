@@ -99,7 +99,7 @@ public class Endpoints {
            static final String[] BLOG                      = {"/blog", "/blog/**"};
            static final String[] RELEASES                  = {"/releases", "/releases/"};
            static final String[] SEARCH                    = {"/artists/search", "/artists/search/"};
-    public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**", "/webjars/**", "/ts/dist/**"};
+    public static final String[] RESOURCES                 = {"/resources/**", "/css/**", "/js/**", "/images/**", "/fonts/**", "/ts/dist/**"};
 
     public static final String[] GUEST_ONLY_PAGES = Stream.of(
             LOGIN,
