@@ -57,13 +57,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
   }
 
   @Override
-  public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/webjars/**")
-            .addResourceLocations("/webjars/")
-            .resourceChain(false);
-  }
-
-  @Override
   public void addInterceptors(InterceptorRegistry registry) {
     registry.addInterceptor(redirectionHandlerInterceptor).addPathPatterns(GUEST_ONLY_PAGES);
   }
