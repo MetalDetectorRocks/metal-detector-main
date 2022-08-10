@@ -19,6 +19,11 @@
     --light-badge-background-color: #adafae;
 }
 
+@font-face {
+    font-family: 'Metal Mania';
+    src: url("/fonts/metal-mania/MetalMania-Regular.ttf");
+}
+
 /* General Styling */
 html {
     height: 100%;
@@ -39,9 +44,6 @@ body {
     line-height: 1.5;
     text-align: left;
     background-color: var(--primary-background-color);
-}
-h1, h2 {
-    font-family: 'Metal Mania', cursive;
 }
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6,
