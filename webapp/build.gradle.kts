@@ -69,7 +69,6 @@ dependencies {
 
   developmentOnly("org.springframework.boot:spring-boot-devtools:${libs.versions.springBoot.get()}")
 
-  runtimeOnly("org.webjars:datatables:${libs.versions.datatables.get()}")
   runtimeOnly("org.flywaydb:flyway-core:${libs.versions.flyway.get()}")
   runtimeOnly("io.micrometer:micrometer-registry-prometheus:${libs.versions.micrometer.get()}")
   runtimeOnly("javax.cache:cache-api:${libs.versions.cacheApi.get()}")
