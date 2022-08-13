@@ -32,7 +32,7 @@ class TelegramUpdateServiceImplTest implements WithAssertions {
   private TelegramUpdateServiceImpl underTest;
 
   @AfterEach
-  private void tearDown() {
+  void tearDown() {
     reset(telegramConfigService, telegramMessagingService);
   }
 
