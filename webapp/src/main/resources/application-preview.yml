@@ -1,5 +1,5 @@
 application:
-  host: https://metal-detector-preview.herokuapp.com
+  host: https://preview.metal-detector.rocks
 
 spring:
   jpa:
@@ -29,7 +29,7 @@ spring:
             redirect-uri: "https://{baseHost}{basePort}{basePath}/settings/spotify-synchronization"
         provider:
           metal-detector-auth:
-            issuer-uri: https://metal-detector-auth-preview.herokuapp.com
+            issuer-uri: http://auth-app:8080
 
 server:
   port: 8080
@@ -53,4 +53,4 @@ management:
       path-mapping.flyway: ${ACTUATOR_FLYWAY_PATH}
 
 metal-release-butler:
-  host: https://metal-release-butler-preview.herokuapp.com
+  host: http://butler-app:8080
