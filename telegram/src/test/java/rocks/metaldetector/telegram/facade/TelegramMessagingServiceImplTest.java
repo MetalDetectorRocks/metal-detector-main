@@ -24,7 +24,7 @@ class TelegramMessagingServiceImplTest implements WithAssertions {
   private TelegramMessagingServiceImpl underTest;
 
   @AfterEach
-  private void tearDown() {
+  void tearDown() {
     reset(telegramClient);
   }
 
