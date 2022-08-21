@@ -1,28 +1,29 @@
 val javaVersion: JavaVersion = JavaVersion.VERSION_17
 
 val dependencyVersions = listOf(
-    "org.slf4j:slf4j-api:1.7.36",
-    "org.jboss.logging:jboss-logging:3.5.0.Final",
     "net.bytebuddy:byte-buddy:1.12.13",
-    "org.junit:junit-bom:${libs.versions.junit.get()}"
+    "org.jboss.logging:jboss-logging:3.5.0.Final",
+    "org.junit:junit-bom:${libs.versions.junit.get()}",
+    "org.slf4j:slf4j-api:1.7.36"
 )
 
 val dependencyGroupVersions = mapOf(
-    "org.springframework" to libs.versions.spring.get(),
-    "org.springframework.security" to libs.versions.springSecurity.get(),
-    "org.springframework.boot" to libs.versions.springBoot.get(),
     "com.fasterxml.jackson.core" to libs.versions.jackson.get(),
     "com.fasterxml.jackson.datatype" to libs.versions.jackson.get(),
     "com.fasterxml.jackson.module" to libs.versions.jackson.get(),
-    "org.mockito" to libs.versions.mockito.get(),
+    "io.rest-assured" to libs.versions.restAssured.get(),
+    "org.apache.groovy" to "4.0.4",
     "org.junit.jupiter" to libs.versions.junit.get(),
-    "org.apache.groovy" to "4.0.4"
+    "org.mockito" to libs.versions.mockito.get(),
+    "org.springframework" to libs.versions.spring.get(),
+    "org.springframework.boot" to libs.versions.springBoot.get(),
+    "org.springframework.security" to libs.versions.springSecurity.get()
 )
 
 plugins {
   id("java")
   id("org.siouan.frontend-jdk11") version "6.0.0" apply false
-  id("org.springframework.boot") version "2.7.2" apply false
+  id("org.springframework.boot") version "2.7.3" apply false
   id("io.spring.dependency-management") version "1.0.13.RELEASE" apply false
   id("de.europace.docker-publish") version "1.4.1" apply false
 }
