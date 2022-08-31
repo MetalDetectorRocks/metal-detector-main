@@ -4,7 +4,7 @@ val dependencyVersions = listOf(
     "net.bytebuddy:byte-buddy:1.12.14",
     "org.jboss.logging:jboss-logging:3.5.0.Final",
     "org.junit:junit-bom:${libs.versions.junit.get()}",
-    "org.slf4j:slf4j-api:1.7.36"
+    "org.slf4j:slf4j-api:2.0.0"
 )
 
 val dependencyGroupVersions = mapOf(
