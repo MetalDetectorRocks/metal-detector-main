@@ -1,13 +1,10 @@
 package rocks.metaldetector.support;
 
+import com.github.valfirst.slf4jtest.TestLogger;
+import com.github.valfirst.slf4jtest.TestLoggerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -17,24 +14,22 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static com.github.valfirst.slf4jtest.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static uk.org.lidalia.slf4jext.Level.INFO;
 
-@ExtendWith(MockitoExtension.class)
 class DefaultRequestLoggingInterceptorTest {
 
-  @Mock
-  private Logger logger;
+  private final TestLogger logger = TestLoggerFactory.getTestLogger(DefaultRequestLoggingInterceptor.class);
 
-  @InjectMocks
-  private DefaultRequestLoggingInterceptor underTest;
+  private final DefaultRequestLoggingInterceptor underTest = new DefaultRequestLoggingInterceptor();
 
   @AfterEach
   void tearDown() {
-    reset(logger);
+    logger.clear();
   }
 
   @Test
@@ -59,13 +54,13 @@ class DefaultRequestLoggingInterceptorTest {
   void test_uri_logging() throws IOException, URISyntaxException {
     // given
     var mockRequest = new MockClientHttpRequest();
-    mockRequest.setURI(new URI("http://www.internet.com"));
+    mockRequest.setURI(new URI("https://www.metal-detector.rocks"));
 
     // when
     underTest.intercept(mockRequest, new byte[0], mock(ClientHttpRequestExecution.class));
 
     // then
-    verify(logger).info("URI: {}", mockRequest.getURI());
+    assertThat(logger).hasLogged(INFO, "URI: {}", mockRequest.getURI());
   }
 
   @Test
@@ -79,6 +74,6 @@ class DefaultRequestLoggingInterceptorTest {
     underTest.intercept(mockRequest, new byte[0], mock(ClientHttpRequestExecution.class));
 
     // then
-    verify(logger).info("Headers: {}", mockRequest.getHeaders().toString());
+    assertThat(logger).hasLogged(INFO, "Headers: {}", mockRequest.getHeaders().toString());
   }
 }

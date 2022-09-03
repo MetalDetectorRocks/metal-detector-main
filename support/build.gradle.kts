@@ -15,7 +15,7 @@ dependencies {
   api("org.springframework.security:spring-security-oauth2-client:${libs.versions.springSecurity.get()}")
   api("io.jsonwebtoken:jjwt:${libs.versions.jsonwebtoken.get()}")
 
-  testImplementation("org.simplify4u:slf4j-mock:${libs.versions.slf4jMock.get()}")
+  testImplementation("com.github.valfirst:slf4j-test:${libs.versions.slf4jTest.get()}")
   testImplementation("org.springframework.boot:spring-boot-starter-test:${libs.versions.springBoot.get()}")
   testImplementation("org.mockito:mockito-inline:${libs.versions.mockito.get()}")
 }

@@ -1,17 +1,13 @@
 package rocks.metaldetector.support.infrastructure;
 
-import org.assertj.core.api.WithAssertions;
+import com.github.valfirst.slf4jtest.TestLogger;
+import com.github.valfirst.slf4jtest.TestLoggerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.mock.http.client.MockClientHttpResponse;
@@ -21,26 +17,26 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
+import static com.github.valfirst.slf4jtest.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
+import static uk.org.lidalia.slf4jext.Level.ERROR;
+import static uk.org.lidalia.slf4jext.Level.WARN;
 
-@ExtendWith(MockitoExtension.class)
-class CustomClientErrorHandlerTest implements WithAssertions {
+class CustomClientErrorHandlerTest {
 
-  @Mock
-  private Logger logger;
+  private final TestLogger logger = TestLoggerFactory.getTestLogger(CustomClientErrorHandler.class);
 
-  @InjectMocks
-  private CustomClientErrorHandler underTest;
+  private final CustomClientErrorHandler underTest = new CustomClientErrorHandler();
 
   @AfterEach
   void tearDown() {
-    reset(logger);
+    logger.clear();
   }
 
   @ParameterizedTest(name = "[{index}] => Response <{0}>")
@@ -51,7 +47,7 @@ class CustomClientErrorHandlerTest implements WithAssertions {
     boolean hasError = underTest.hasError(response);
 
     // then
-    assertThat(hasError).isTrue();
+    assertTrue(hasError);
   }
 
   @ParameterizedTest(name = "[{index}] => Response <{0}>")
@@ -62,7 +58,7 @@ class CustomClientErrorHandlerTest implements WithAssertions {
     boolean hasError = underTest.hasError(response);
 
     // then
-    assertThat(hasError).isFalse();
+    assertFalse(hasError);
   }
 
   @Test
@@ -71,7 +67,7 @@ class CustomClientErrorHandlerTest implements WithAssertions {
     // given
     var mockResponse = new MockClientHttpResponse(new byte[0], NOT_FOUND);
     var uri = new URI("https://www.metal-detector.rocks");
-    var expectedLogMessage = "URL: " + uri.toString() + " | " +
+    var expectedLogMessage = "URL: " + uri + " | " +
                              "Method: " + GET.name() + " | " +
                              "Status code: " + mockResponse.getStatusCode().value() + " | " +
                              "Status text: " + mockResponse.getStatusText();
@@ -80,7 +76,7 @@ class CustomClientErrorHandlerTest implements WithAssertions {
     underTest.handleError(uri, GET, new MockClientHttpResponse(new byte[0], NOT_FOUND));
 
     // then
-    verify(logger).warn(expectedLogMessage);
+    assertThat(logger).hasLogged(WARN, expectedLogMessage);
   }
 
   @Test
@@ -89,7 +85,7 @@ class CustomClientErrorHandlerTest implements WithAssertions {
     // given
     var mockResponse = new MockClientHttpResponse(new byte[0], INTERNAL_SERVER_ERROR);
     var uri = new URI("https://www.metal-detector.rocks");
-    var expectedLogMessage = "URL: " + uri.toString() + " | " +
+    var expectedLogMessage = "URL: " + uri + " | " +
                              "Method: " + GET.name() + " | " +
                              "Status code: " + mockResponse.getStatusCode().value() + " | " +
                              "Status text: " + mockResponse.getStatusText();
@@ -98,7 +94,7 @@ class CustomClientErrorHandlerTest implements WithAssertions {
     underTest.handleError(uri, GET, new MockClientHttpResponse(new byte[0], INTERNAL_SERVER_ERROR));
 
     // then
-    verify(logger).error(expectedLogMessage);
+    assertThat(logger).hasLogged(ERROR, expectedLogMessage);
   }
 
   private static Stream<Arguments> inputProviderHasError() {
