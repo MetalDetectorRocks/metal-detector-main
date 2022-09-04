@@ -47,12 +47,12 @@ tasks {
 }
 
 dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-web:${libs.versions.springBoot.get()}")
-  implementation("org.springframework.boot:spring-boot-starter-mail:${libs.versions.springBoot.get()}")
-  implementation("org.springframework.boot:spring-boot-starter-actuator:${libs.versions.springBoot.get()}")
-  implementation("org.springframework.boot:spring-boot-starter-thymeleaf:${libs.versions.springBoot.get()}")
-  implementation("org.springframework.boot:spring-boot-starter-validation:${libs.versions.springBoot.get()}")
-  implementation("org.springframework.boot:spring-boot-starter-oauth2-client:${libs.versions.springBoot.get()}")
+  implementation("org.springframework.boot:spring-boot-starter-web")
+  implementation("org.springframework.boot:spring-boot-starter-mail")
+  implementation("org.springframework.boot:spring-boot-starter-actuator")
+  implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+  implementation("org.springframework.boot:spring-boot-starter-validation")
+  implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
   implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity5:${libs.versions.thymeleafExtras.get()}")
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${libs.versions.thymeleafDialect.get()}")
@@ -67,7 +67,7 @@ dependencies {
 
   annotationProcessor("org.projectlombok:lombok:${libs.versions.lombok.get()}")
 
-  developmentOnly("org.springframework.boot:spring-boot-devtools:${libs.versions.springBoot.get()}")
+  developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   runtimeOnly("org.flywaydb:flyway-core:${libs.versions.flyway.get()}")
   runtimeOnly("io.micrometer:micrometer-registry-prometheus:${libs.versions.micrometer.get()}")
@@ -80,8 +80,8 @@ dependencies {
   implementation(rootProject.projects.persistence)
   implementation(rootProject.projects.telegram)
 
-  testImplementation("org.springframework.boot:spring-boot-starter-test:${libs.versions.springBoot.get()}")
-  testImplementation("org.springframework.security:spring-security-test:${libs.versions.springSecurity.get()}")
+  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.springframework.security:spring-security-test")
   testImplementation("com.h2database:h2:${libs.versions.h2.get()}")
   testImplementation("io.rest-assured:rest-assured:${libs.versions.restAssured.get()}")
   testImplementation("io.rest-assured:json-path:${libs.versions.restAssured.get()}")
