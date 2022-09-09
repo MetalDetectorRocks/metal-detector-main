@@ -26,7 +26,7 @@ public class NotificationScheduler {
 
   private final NotificationConfigRepository notificationConfigRepository;
   private final NotificationReleaseCollector notificationReleaseCollector;
-  private final NotificationSenderSupplier notificationSenderSupplier;
+  private final NotificationSenderFunction notificationSenderFunction;
 
   @Scheduled(cron = "0 0 7 * * SUN")
   @Transactional
@@ -75,7 +75,7 @@ public class NotificationScheduler {
     NotificationReleaseCollector.ReleaseContainer releaseContainer = notificationReleaseCollector.fetchReleasesForUserAndFrequency(notificationConfig.getUser(), notificationConfig.getFrequencyInWeeks(), notificationConfig.getNotifyReissues());
 
     if (!(releaseContainer.getUpcomingReleases().isEmpty() && releaseContainer.getRecentReleases().isEmpty())) {
-      NotificationSender notificationSender = notificationSenderSupplier.apply(notificationConfig.getChannel());
+      NotificationSender notificationSender = notificationSenderFunction.apply(notificationConfig.getChannel());
       notificationSender.sendFrequencyMessage(notificationConfig.getUser(), releaseContainer.getUpcomingReleases(), releaseContainer.getRecentReleases());
     }
 
@@ -87,7 +87,7 @@ public class NotificationScheduler {
     List<ReleaseDto> todaysReleases = notificationReleaseCollector.fetchTodaysReleaseForUser(notificationConfig.getUser(), notificationConfig.getNotifyReissues());
 
     if (!todaysReleases.isEmpty()) {
-      NotificationSender notificationSender = notificationSenderSupplier.apply(notificationConfig.getChannel());
+      NotificationSender notificationSender = notificationSenderFunction.apply(notificationConfig.getChannel());
       notificationSender.sendReleaseDateMessage(notificationConfig.getUser(), todaysReleases);
     }
   }
@@ -96,7 +96,7 @@ public class NotificationScheduler {
     List<ReleaseDto> todaysAnnouncements = notificationReleaseCollector.fetchTodaysAnnouncementsForUser(notificationConfig.getUser(), notificationConfig.getNotifyReissues());
 
     if (!todaysAnnouncements.isEmpty()) {
-      NotificationSender notificationSender = notificationSenderSupplier.apply(notificationConfig.getChannel());
+      NotificationSender notificationSender = notificationSenderFunction.apply(notificationConfig.getChannel());
       notificationSender.sendAnnouncementDateMessage(notificationConfig.getUser(), todaysAnnouncements);
     }
   }

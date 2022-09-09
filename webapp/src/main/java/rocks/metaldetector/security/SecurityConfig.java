@@ -6,10 +6,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -17,34 +20,31 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequest
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import rocks.metaldetector.security.handler.CustomAccessDeniedHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationFailureHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
 import rocks.metaldetector.security.handler.CustomLogoutSuccessHandler;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.SecurityProperties;
 
 import javax.sql.DataSource;
 import java.time.Duration;
 
 import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ACTUATOR_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ADMIN;
 import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
-import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
-import static rocks.metaldetector.support.Endpoints.Authentication.LOGIN;
-import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 import static rocks.metaldetector.support.Endpoints.Frontend.LOGOUT;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
+import static rocks.metaldetector.support.Endpoints.Rest.CSRF;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
@@ -69,6 +69,9 @@ public class SecurityConfig {
   private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
   private final OAuth2UserService<OidcUserRequest, OidcUser> customOidcUserService;
   private final OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver;
+  private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+  private final JwtAuthenticationFilter authenticationFilter;
+  private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Value("${telegram.bot-id}")
   private String botId;
@@ -76,7 +79,9 @@ public class SecurityConfig {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-      .csrf().ignoringAntMatchers(REST_ENDPOINTS, ACTUATOR_ENDPOINTS)
+      .csrf().ignoringAntMatchers(Endpoints.Rest.LOGIN, ACTUATOR_ENDPOINTS)
+      .and()
+      .sessionManagement().sessionCreationPolicy(STATELESS)
       .and()
       .authorizeRequests()
         .antMatchers(ADMIN).hasRole(ROLE_ADMINISTRATOR.getName())
@@ -88,18 +93,14 @@ public class SecurityConfig {
         .antMatchers(GET, SEARCH_ARTIST).permitAll()
         .antMatchers(GET, TOP_ARTISTS).permitAll()
         .antMatchers(GET, AUTHENTICATION).permitAll()
+        .antMatchers(GET, CSRF).permitAll()
         .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
+        .antMatchers(Endpoints.Rest.LOGIN).permitAll()
         .antMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
         .anyRequest().authenticated()
       .and()
-      .formLogin()
-        .loginPage(LOGIN)
-        .loginProcessingUrl(LOGIN)
-        .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
-        .failureHandler(new CustomAuthenticationFailureHandler())
-      .and()
         .oauth2Login()
-          .loginPage(LOGIN)
+          .loginPage(Endpoints.Authentication.LOGIN)
           .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
           .failureHandler(new CustomAuthenticationFailureHandler())
           .userInfoEndpoint()
@@ -136,11 +137,17 @@ public class SecurityConfig {
           .contentTypeOptions().disable()
           .httpStrictTransportSecurity().disable()
       .and()
-      .exceptionHandling()
-        .accessDeniedHandler(new CustomAccessDeniedHandler(() -> SecurityContextHolder.getContext().getAuthentication()))
-        .defaultAuthenticationEntryPointFor(new LoginUrlAuthenticationEntryPoint(LOGIN), new AntPathRequestMatcher(HOME))
-        .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(UNAUTHORIZED), new AntPathRequestMatcher(REST_ENDPOINTS));
+        .exceptionHandling()
+          .authenticationEntryPoint(authenticationEntryPoint)
+          .accessDeniedHandler(new CustomAccessDeniedHandler(() -> SecurityContextHolder.getContext().getAuthentication()))
+      .and()
+        .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
+  }
+
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    return authenticationConfiguration.getAuthenticationManager();
   }
 
   @Bean

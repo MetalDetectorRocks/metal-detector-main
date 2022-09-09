@@ -38,14 +38,14 @@ class TelegramRestControllerTest implements WithAssertions {
   private RestAssuredMockMvcUtils restAssuredUtils;
 
   @BeforeEach
-  private void setup() {
+  void setup() {
     TelegramRestController underTest = new TelegramRestController(telegramUpdateService, "botId");
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.NOTIFICATION_TELEGRAM);
     RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @AfterEach
-  private void tearDown() {
+  void tearDown() {
     reset(telegramUpdateService);
   }
 
