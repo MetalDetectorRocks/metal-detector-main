@@ -2,6 +2,7 @@ package rocks.metaldetector.support.infrastructure;
 
 import com.github.valfirst.slf4jtest.TestLogger;
 import com.github.valfirst.slf4jtest.TestLoggerFactory;
+import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,9 +18,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
-import static com.github.valfirst.slf4jtest.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -28,7 +26,7 @@ import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 import static uk.org.lidalia.slf4jext.Level.ERROR;
 import static uk.org.lidalia.slf4jext.Level.WARN;
 
-class CustomClientErrorHandlerTest {
+class CustomClientErrorHandlerTest implements WithAssertions {
 
   private final TestLogger logger = TestLoggerFactory.getTestLogger(CustomClientErrorHandler.class);
 
@@ -47,7 +45,7 @@ class CustomClientErrorHandlerTest {
     boolean hasError = underTest.hasError(response);
 
     // then
-    assertTrue(hasError);
+    assertThat(hasError).isTrue();
   }
 
   @ParameterizedTest(name = "[{index}] => Response <{0}>")
@@ -58,7 +56,7 @@ class CustomClientErrorHandlerTest {
     boolean hasError = underTest.hasError(response);
 
     // then
-    assertFalse(hasError);
+    assertThat(hasError).isFalse();
   }
 
   @Test
@@ -76,7 +74,7 @@ class CustomClientErrorHandlerTest {
     underTest.handleError(uri, GET, new MockClientHttpResponse(new byte[0], NOT_FOUND));
 
     // then
-    assertThat(logger).hasLogged(WARN, expectedLogMessage);
+    com.github.valfirst.slf4jtest.Assertions.assertThat(logger).hasLogged(WARN, expectedLogMessage);
   }
 
   @Test
@@ -94,7 +92,7 @@ class CustomClientErrorHandlerTest {
     underTest.handleError(uri, GET, new MockClientHttpResponse(new byte[0], INTERNAL_SERVER_ERROR));
 
     // then
-    assertThat(logger).hasLogged(ERROR, expectedLogMessage);
+    com.github.valfirst.slf4jtest.Assertions.assertThat(logger).hasLogged(ERROR, expectedLogMessage);
   }
 
   private static Stream<Arguments> inputProviderHasError() {
