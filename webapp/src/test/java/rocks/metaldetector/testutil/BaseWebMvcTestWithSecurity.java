@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -13,11 +14,15 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequest
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.test.web.servlet.MockMvc;
+import rocks.metaldetector.persistence.domain.user.UserRepository;
+import rocks.metaldetector.security.JwtAuthenticationEntryPoint;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.SecurityProperties;
 import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
 public abstract class BaseWebMvcTestWithSecurity {
@@ -60,4 +65,16 @@ public abstract class BaseWebMvcTestWithSecurity {
 
   @MockBean
   protected ClientRegistrationRepository clientRegistrationRepository;
+
+  @MockBean
+  protected JwtsSupport jwtsSupport;
+
+  @MockBean
+  protected UserRepository userRepository;
+
+  @MockBean
+  protected AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource;
+
+  @MockBean
+  protected JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 }

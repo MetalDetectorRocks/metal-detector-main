@@ -12,6 +12,7 @@ import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,8 +35,9 @@ public class JobRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity
     @DisplayName("Administrator is allowed to POST on endpoint " + IMPORT_JOB + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_create_import_job() throws Exception {
-      mockMvc.perform(post(IMPORT_JOB))
-              .andExpect(status().isCreated());
+      mockMvc.perform(post(IMPORT_JOB)
+                          .with(csrf()))
+          .andExpect(status().isCreated());
     }
 
     @Test
@@ -43,8 +45,8 @@ public class JobRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_query_import_job_results() throws Exception {
       mockMvc.perform(get(IMPORT_JOB)
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isOk());
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isOk());
     }
 
     @Test
@@ -52,6 +54,7 @@ public class JobRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_create_retry_cover_download_job() throws Exception {
       mockMvc.perform(post(COVER_JOB)
+                          .with(csrf())
                           .contentType(APPLICATION_JSON))
           .andExpect(status().isOk());
     }
@@ -65,8 +68,8 @@ public class JobRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity
     @DisplayName("User is not allowed to POST on endpoint " + IMPORT_JOB + "'")
     @WithMockUser(roles = "USER")
     void user_is_not_allowed_to_create_import_job() throws Exception {
-      mockMvc.perform(post(IMPORT_JOB))
-              .andExpect(status().isForbidden());
+      mockMvc.perform(post(IMPORT_JOB).with(csrf()))
+          .andExpect(status().isForbidden());
     }
 
     @Test
@@ -74,8 +77,8 @@ public class JobRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity
     @WithMockUser(roles = "USER")
     void user_is_not_allowed_to_query_import_job_results() throws Exception {
       mockMvc.perform(get(IMPORT_JOB)
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isForbidden());
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isForbidden());
     }
 
     @Test
@@ -83,8 +86,9 @@ public class JobRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity
     @WithMockUser(roles = "USER")
     void user_not_is_allowed_to_create_retry_cover_download_job() throws Exception {
       mockMvc.perform(post(COVER_JOB)
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isForbidden());
+                          .with(csrf())
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isForbidden());
     }
   }
 }

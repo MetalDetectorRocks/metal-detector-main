@@ -12,6 +12,7 @@ import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UpdateUserRequestFactory;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -31,7 +32,7 @@ class UserRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_can_get_all_users() throws Exception {
       mockMvc.perform(get(USERS))
-             .andExpect(status().isOk());
+          .andExpect(status().isOk());
     }
 
     @Test
@@ -39,7 +40,7 @@ class UserRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_can_get_specified_user() throws Exception {
       mockMvc.perform(get(USERS + "/{id}", "123"))
-             .andExpect(status().isOk());
+          .andExpect(status().isOk());
     }
 
     @Test
@@ -47,9 +48,10 @@ class UserRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_can_create_user_via_post() throws Exception {
       mockMvc.perform(post(USERS)
-             .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
-             .contentType(APPLICATION_JSON))
-             .andExpect(status().isCreated());
+                          .with(csrf())
+                          .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isCreated());
     }
 
     @Test
@@ -57,9 +59,10 @@ class UserRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_can_update_user_via_put() throws Exception {
       mockMvc.perform(put(USERS)
-             .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
-             .contentType(APPLICATION_JSON))
-             .andExpect(status().isOk());
+                          .with(csrf())
+                          .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isOk());
     }
   }
 
@@ -72,7 +75,7 @@ class UserRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
     @WithMockUser(roles = "USER")
     void users_cannot_get_all_users() throws Exception {
       mockMvc.perform(get(USERS))
-             .andExpect(status().isForbidden());
+          .andExpect(status().isForbidden());
     }
 
     @Test
@@ -80,7 +83,7 @@ class UserRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
     @WithMockUser(roles = "USER")
     void users_can_get_specified_user() throws Exception {
       mockMvc.perform(get(USERS + "/{id}", "123"))
-             .andExpect(status().isForbidden());
+          .andExpect(status().isForbidden());
     }
 
     @Test
@@ -88,9 +91,10 @@ class UserRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
     @WithMockUser(roles = "USER")
     void users_can_create_user_via_post() throws Exception {
       mockMvc.perform(post(USERS)
-             .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
-             .contentType(APPLICATION_JSON))
-             .andExpect(status().isForbidden());
+                          .with(csrf())
+                          .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isForbidden());
     }
 
     @Test
@@ -98,9 +102,10 @@ class UserRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
     @WithMockUser(roles = "USER")
     void users_can_update_user_via_put() throws Exception {
       mockMvc.perform(put(USERS)
-             .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
-             .contentType(APPLICATION_JSON))
-             .andExpect(status().isForbidden());
+                          .with(csrf())
+                          .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isForbidden());
     }
   }
 }
