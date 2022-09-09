@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.mock.http.client.MockClientHttpResponse;
 
@@ -22,7 +21,9 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
+import static org.springframework.http.HttpStatus.TEMPORARY_REDIRECT;
 import static uk.org.lidalia.slf4jext.Level.ERROR;
 import static uk.org.lidalia.slf4jext.Level.WARN;
 
@@ -106,8 +107,8 @@ class CustomClientErrorHandlerTest implements WithAssertions {
 
   private static Stream<Arguments> inputProviderNoError() {
     return Stream.of(
-        Arguments.of(new MockClientHttpResponse(new byte[0], HttpStatus.OK)),
-        Arguments.of(new MockClientHttpResponse(new byte[0], HttpStatus.TEMPORARY_REDIRECT))
+        Arguments.of(new MockClientHttpResponse(new byte[0], OK)),
+        Arguments.of(new MockClientHttpResponse(new byte[0], TEMPORARY_REDIRECT))
     );
   }
 }
