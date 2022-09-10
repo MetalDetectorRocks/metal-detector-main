@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.WebUtils;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.support.JwtsSupport;
@@ -15,6 +16,7 @@ import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -22,6 +24,7 @@ import java.io.IOException;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
+// ToDo NilsD add test
 @Slf4j
 @Component
 @AllArgsConstructor
@@ -57,6 +60,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     if (authHeader != null && authHeader.startsWith("Bearer ")) {
       return authHeader.substring(7);
+    }
+
+    Cookie cookie = WebUtils.getCookie(request, "Authorization");
+
+    if (cookie != null) {
+      return cookie.getValue();
     }
 
     return null;
