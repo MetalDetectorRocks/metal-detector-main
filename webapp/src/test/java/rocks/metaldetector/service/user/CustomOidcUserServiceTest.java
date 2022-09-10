@@ -43,7 +43,7 @@ class CustomOidcUserServiceTest implements WithAssertions {
   private CustomOidcUserService underTest;
 
   @AfterEach
-  private void tearDown() {
+  void tearDown() {
     reset(userRepository, oidcUserService, applicationEventPublisher);
   }
 

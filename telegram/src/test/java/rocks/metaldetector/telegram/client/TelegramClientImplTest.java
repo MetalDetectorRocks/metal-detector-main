@@ -42,7 +42,7 @@ class TelegramClientImplTest implements WithAssertions {
   private TelegramClientImpl underTest;
 
   @AfterEach
-  private void tearDown() {
+  void tearDown() {
     reset(restOperations, properties);
   }
 

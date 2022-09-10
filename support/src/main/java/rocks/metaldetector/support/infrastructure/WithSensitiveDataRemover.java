@@ -19,6 +19,7 @@ public interface WithSensitiveDataRemover {
   List<String> SENSITIVE_DATA_FIELD_NAME = List.of(
           "plainPassword",
           "verifyPlainPassword",
+          "password",
           "code",
           "token"
   );

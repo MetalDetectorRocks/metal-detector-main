@@ -11,6 +11,7 @@ import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.service.cleanup.RegistrationCleanupService;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
@@ -31,8 +32,9 @@ public class RegistrationCleanupRestControllerIntegrationTest extends BaseWebMvc
     @DisplayName("Administrator is allowed to POST on endpoint " + REGISTRATION_CLEANUP + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_cleanup() throws Exception {
-      mockMvc.perform(post(REGISTRATION_CLEANUP))
-              .andExpect(status().isOk());
+      mockMvc.perform(post(REGISTRATION_CLEANUP)
+                          .with(csrf()))
+          .andExpect(status().isOk());
     }
   }
 
@@ -44,8 +46,9 @@ public class RegistrationCleanupRestControllerIntegrationTest extends BaseWebMvc
     @DisplayName("User is not allowed to POST on endpoint " + REGISTRATION_CLEANUP + "'")
     @WithMockUser(roles = "USER")
     void user_is_not_allowed_to_cleanup() throws Exception {
-      mockMvc.perform(post(REGISTRATION_CLEANUP))
-              .andExpect(status().isForbidden());
+      mockMvc.perform(post(REGISTRATION_CLEANUP)
+                          .with(csrf()))
+          .andExpect(status().isForbidden());
     }
   }
 }

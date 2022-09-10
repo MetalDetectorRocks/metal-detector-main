@@ -54,3 +54,6 @@ management:
 
 metal-release-butler:
   host: http://butler-app:8080
+
+frontend:
+  origin: https://preview.metal-detector.rocks

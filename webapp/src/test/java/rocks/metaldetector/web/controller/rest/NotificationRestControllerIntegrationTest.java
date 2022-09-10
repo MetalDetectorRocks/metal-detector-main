@@ -11,6 +11,7 @@ import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.service.notification.messaging.NotificationScheduler;
 import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_ANNOUNCEMENT_DATE;
@@ -33,15 +34,17 @@ public class NotificationRestControllerIntegrationTest extends BaseWebMvcTestWit
     @DisplayName("Administrator is allowed to POST on endpoint " + NOTIFICATION_ON_FREQUENCY + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_notify_on_frequency() throws Exception {
-      mockMvc.perform(post(NOTIFICATION_ON_FREQUENCY))
-              .andExpect(status().isOk());
+      mockMvc.perform(post(NOTIFICATION_ON_FREQUENCY)
+                          .with(csrf()))
+          .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("Administrator is allowed to POST on endpoint " + NOTIFICATION_ON_RELEASE_DATE + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_notify_on_release_date() throws Exception {
-      mockMvc.perform(post(NOTIFICATION_ON_RELEASE_DATE))
+      mockMvc.perform(post(NOTIFICATION_ON_RELEASE_DATE)
+                          .with(csrf()))
           .andExpect(status().isOk());
     }
 
@@ -49,7 +52,8 @@ public class NotificationRestControllerIntegrationTest extends BaseWebMvcTestWit
     @DisplayName("Administrator is allowed to POST on endpoint " + NOTIFICATION_ON_ANNOUNCEMENT_DATE + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_notify_on_announcement_date() throws Exception {
-      mockMvc.perform(post(NOTIFICATION_ON_ANNOUNCEMENT_DATE))
+      mockMvc.perform(post(NOTIFICATION_ON_ANNOUNCEMENT_DATE)
+                          .with(csrf()))
           .andExpect(status().isOk());
     }
   }
@@ -62,15 +66,17 @@ public class NotificationRestControllerIntegrationTest extends BaseWebMvcTestWit
     @DisplayName("User is not allowed to POST on endpoint " + NOTIFICATION_ON_RELEASE_DATE + "'")
     @WithMockUser(roles = "USER")
     void user_is_not_allowed_to_notify_on_frequency() throws Exception {
-      mockMvc.perform(post(NOTIFICATION_ON_FREQUENCY))
-              .andExpect(status().isForbidden());
+      mockMvc.perform(post(NOTIFICATION_ON_FREQUENCY)
+                          .with(csrf()))
+          .andExpect(status().isForbidden());
     }
 
     @Test
     @DisplayName("User is not allowed to POST on endpoint " + NOTIFICATION_ON_RELEASE_DATE + "'")
     @WithMockUser(roles = "USER")
     void user_is_not_allowed_to_notify_on_release_date() throws Exception {
-      mockMvc.perform(post(NOTIFICATION_ON_RELEASE_DATE))
+      mockMvc.perform(post(NOTIFICATION_ON_RELEASE_DATE)
+                          .with(csrf()))
           .andExpect(status().isForbidden());
     }
 
@@ -78,7 +84,8 @@ public class NotificationRestControllerIntegrationTest extends BaseWebMvcTestWit
     @DisplayName("User is not allowed to POST on endpoint " + NOTIFICATION_ON_ANNOUNCEMENT_DATE + "'")
     @WithMockUser(roles = "USER")
     void user_is_not_allowed_to_notify_on_announcement_date() throws Exception {
-      mockMvc.perform(post(NOTIFICATION_ON_ANNOUNCEMENT_DATE))
+      mockMvc.perform(post(NOTIFICATION_ON_ANNOUNCEMENT_DATE)
+                          .with(csrf()))
           .andExpect(status().isForbidden());
     }
   }

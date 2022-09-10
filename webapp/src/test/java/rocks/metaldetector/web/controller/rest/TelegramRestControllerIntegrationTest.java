@@ -16,6 +16,7 @@ import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 import rocks.metaldetector.web.api.request.TelegramUpdate;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
@@ -40,6 +41,7 @@ class TelegramRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
   @WithMockUser(roles = "ADMINISTRATOR")
   void admin_is_allowed_to_call() throws Exception {
     mockMvc.perform(post(NOTIFICATION_TELEGRAM + "/" + botId)
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(update))
                         .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
@@ -50,6 +52,7 @@ class TelegramRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
   @WithMockUser(roles = "USER")
   void user_is_allowed_to_call() throws Exception {
     mockMvc.perform(post(NOTIFICATION_TELEGRAM + "/" + botId)
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(update))
                         .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
@@ -60,6 +63,7 @@ class TelegramRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
   @WithAnonymousUser
   void anonymous_is_allowed_to_call() throws Exception {
     mockMvc.perform(post(NOTIFICATION_TELEGRAM + "/" + botId)
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(update))
                         .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());

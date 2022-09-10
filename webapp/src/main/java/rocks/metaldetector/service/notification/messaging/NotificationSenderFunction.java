@@ -8,20 +8,16 @@ import java.util.function.Function;
 
 @Component
 @AllArgsConstructor
-public class NotificationSenderSupplier implements Function<NotificationChannel, NotificationSender> {
+public class NotificationSenderFunction implements Function<NotificationChannel, NotificationSender> {
 
   private final NotificationSender emailNotificationSender;
   private final NotificationSender telegramNotificationSender;
 
   @Override
   public NotificationSender apply(NotificationChannel channel) {
-    switch (channel) {
-      case EMAIL:
-        return emailNotificationSender;
-      case TELEGRAM:
-        return telegramNotificationSender;
-      default:
-        throw new IllegalArgumentException("NotificationChannel '" + channel.name() + "' not supported");
-    }
+    return switch (channel) {
+      case EMAIL -> emailNotificationSender;
+      case TELEGRAM -> telegramNotificationSender;
+    };
   }
 }

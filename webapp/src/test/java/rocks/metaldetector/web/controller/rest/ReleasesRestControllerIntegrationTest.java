@@ -17,6 +17,7 @@ import rocks.metaldetector.testutil.BaseWebMvcTestWithSecurity;
 import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,8 +55,8 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_query_all_releases() throws Exception {
       mockMvc.perform(get(ALL_RELEASES)
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isOk());
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isOk());
     }
 
     @Test
@@ -63,8 +64,8 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_query_releases() throws Exception {
       mockMvc.perform(get(RELEASES).param("sort", "fieldName")
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isOk());
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isOk());
     }
 
     @Test
@@ -72,8 +73,8 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithMockUser(roles = "ADMINISTRATOR")
     void admin_is_allowed_to_query_my_releases() throws Exception {
       mockMvc.perform(get(MY_RELEASES).param("sort", "fieldName")
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isOk());
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isOk());
     }
 
     @Test
@@ -81,6 +82,7 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithMockUser(roles = "ADMINISTRATOR")
     void user_not_is_allowed_to_update_release_state() throws Exception {
       mockMvc.perform(put(RELEASES + "/1")
+                          .with(csrf())
                           .content(objectMapper.writeValueAsString(ReleaseUpdateRequest.builder().state("state").build()))
                           .contentType(APPLICATION_JSON))
           .andExpect(status().isOk());
@@ -96,8 +98,8 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithMockUser(roles = "USER")
     void user_is_not_allowed_to_query_all_releases() throws Exception {
       mockMvc.perform(get(ALL_RELEASES)
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isForbidden());
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isForbidden());
     }
 
     @Test
@@ -105,8 +107,8 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithMockUser(roles = "USER")
     void user_is_allowed_to_query_releases() throws Exception {
       mockMvc.perform(get(RELEASES).param("sort", "fieldName")
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isOk());
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isOk());
     }
 
     @Test
@@ -114,8 +116,8 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithMockUser(roles = "USER")
     void user_is_allowed_to_query_my_releases() throws Exception {
       mockMvc.perform(get(MY_RELEASES).param("sort", "fieldName")
-              .contentType(APPLICATION_JSON))
-              .andExpect(status().isOk());
+                          .contentType(APPLICATION_JSON))
+          .andExpect(status().isOk());
     }
 
     @Test
@@ -123,8 +125,9 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithMockUser(roles = "USER")
     void user_is_not_allowed_to_update_release_state() throws Exception {
       mockMvc.perform(put(RELEASES + "/1")
-                        .content(objectMapper.writeValueAsString(ReleaseUpdateRequest.builder().state("state").build()))
-                        .contentType(APPLICATION_JSON))
+                          .with(csrf())
+                          .content(objectMapper.writeValueAsString(ReleaseUpdateRequest.builder().state("state").build()))
+                          .contentType(APPLICATION_JSON))
           .andExpect(status().isForbidden());
     }
   }
@@ -146,7 +149,7 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithAnonymousUser
     void anonymous_user_is_allowed_to_query_releases() throws Exception {
       mockMvc.perform(get(RELEASES).param("sort", "fieldName")
-              .contentType(APPLICATION_JSON))
+                          .contentType(APPLICATION_JSON))
           .andExpect(status().isOk());
     }
 
@@ -155,7 +158,7 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithAnonymousUser
     void anonymous_user_is_not_allowed_to_query_all_releases() throws Exception {
       mockMvc.perform(get(ALL_RELEASES)
-              .contentType(APPLICATION_JSON))
+                          .contentType(APPLICATION_JSON))
           .andExpect(status().isUnauthorized());
     }
 
@@ -164,7 +167,7 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithAnonymousUser
     void anonymous_user_is_not_allowed_to_query_my_releases() throws Exception {
       mockMvc.perform(get(MY_RELEASES).param("sort", "fieldName")
-              .contentType(APPLICATION_JSON))
+                          .contentType(APPLICATION_JSON))
           .andExpect(status().isUnauthorized());
     }
 
@@ -173,8 +176,9 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithAnonymousUser
     void anonymous_user_is_not_allowed_to_update_release_state() throws Exception {
       mockMvc.perform(put(RELEASES + "/1")
-              .content(objectMapper.writeValueAsString(ReleaseUpdateRequest.builder().state("state").build()))
-              .contentType(APPLICATION_JSON))
+                          .with(csrf())
+                          .content(objectMapper.writeValueAsString(ReleaseUpdateRequest.builder().state("state").build()))
+                          .contentType(APPLICATION_JSON))
           .andExpect(status().isUnauthorized());
     }
   }
