@@ -46,4 +46,8 @@ public class PaginatedReleasesRequest implements WithTimeRangeValidation {
 
   private String query;
 
+  @NotNull
+  @Pattern(regexp = "all|my", flags = CASE_INSENSITIVE)
+  @Builder.Default
+  private String releasesFilter = "all";
 }

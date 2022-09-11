@@ -26,12 +26,12 @@ import rocks.metaldetector.web.api.request.ReleasesRequest;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static rocks.metaldetector.support.Endpoints.Rest.*;
 import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
 
 @RestController
 @AllArgsConstructor
@@ -54,19 +54,16 @@ public class ReleasesRestController {
   public ResponseEntity<Page<ReleaseDto>> findReleases(@Valid PaginatedReleasesRequest request) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
     var pageRequest = new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection()));
-    Page<ReleaseDto> releasePage = releaseService.findReleases(emptyList(), timeRange, request.getQuery(), pageRequest);
-    return ResponseEntity.ok(releasePage);
-  }
 
-  @GetMapping(path = MY_RELEASES, produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<Page<ReleaseDto>> findReleasesOfFollowedArtists(@Valid PaginatedReleasesRequest request) {
-    var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
-    var pageRequest = new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection()));
-    var followedArtists = followArtistService.getFollowedArtistsOfCurrentUser().stream().map(ArtistDto::getArtistName).collect(Collectors.toList());
-    if (followedArtists.isEmpty()) {
-      return ResponseEntity.ok(Page.empty());
+    List<String> artistNames = emptyList();
+    if (request.getReleasesFilter().equals("my")) {
+      artistNames = followArtistService.getFollowedArtistsOfCurrentUser().stream().map(ArtistDto::getArtistName).toList();
+      if (artistNames.isEmpty()) {
+        return ResponseEntity.ok(Page.empty());
+      }
     }
-    Page<ReleaseDto> releasePage = releaseService.findReleases(followedArtists, timeRange, request.getQuery(), pageRequest);
+
+    Page<ReleaseDto> releasePage = releaseService.findReleases(artistNames, timeRange, request.getQuery(), pageRequest);
     return ResponseEntity.ok(releasePage);
   }
 
