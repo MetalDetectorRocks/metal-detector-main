@@ -42,13 +42,13 @@ import rocks.metaldetector.web.api.request.ReleasesRequest;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.time.temporal.ChronoUnit.DAYS;
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -61,7 +61,6 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
-import static rocks.metaldetector.support.Endpoints.Rest.MY_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
 import static rocks.metaldetector.testutil.DtoFactory.PaginatedReleaseRequestFactory;
@@ -116,7 +115,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet(toMap(request));
 
       // then
-      verify(releasesService).findAllReleases(Collections.emptyList(), new TimeRange(request.getDateFrom(), request.getDateTo()));
+      verify(releasesService).findAllReleases(emptyList(), new TimeRange(request.getDateFrom(), request.getDateTo()));
     }
 
     @Test
@@ -183,126 +182,11 @@ class ReleasesRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should pass query request parameter to release service")
-    void should_pass_query_parameter_to_release_service() {
-      // given
-      PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
-
-      // when
-      restAssuredUtils.doGet(toMap(request));
-
-      // then
-      verify(releasesService).findReleases(
-          eq(Collections.emptyList()),
-          eq(new TimeRange(request.getDateFrom(), request.getDateTo())),
-          any(),
-          eq(new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection())))
-      );
-    }
-
-    @Test
-    @DisplayName("Should pass search query to release service")
-    void should_pass_search_query_to_release_service() {
-      // given
-      PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
-      request.setQuery("query");
-
-      // when
-      restAssuredUtils.doGet(toMap(request));
-
-      // then
-      verify(releasesService).findReleases(any(), any(), eq(request.getQuery()), any());
-    }
-
-    @Test
-    @DisplayName("Should return the page from release service")
-    void should_return_releases() {
-      // given
-      var request = PaginatedReleaseRequestFactory.createDefault();
-      var releases = List.of(ReleaseDtoFactory.createDefault());
-      var page = new Page<>(releases, new Pagination(1, 1, 5));
-      doReturn(page).when(releasesService).findReleases(any(), any(), any(), any());
-
-      // when
-      var validatableResponse = restAssuredUtils.doGet(toMap(request));
-
-      // then
-      validatableResponse
-          .contentType(ContentType.JSON)
-          .statusCode(OK.value());
-
-      var jsonPath = validatableResponse.extract().jsonPath();
-      var paginationResult = jsonPath.getObject("pagination", Pagination.class);
-      var itemsResult = jsonPath.getObject("items", ReleaseDto[].class);
-      assertThat(paginationResult).isEqualTo(page.getPagination());
-      assertThat(Arrays.asList(itemsResult)).isEqualTo(page.getItems());
-    }
-
-    @ParameterizedTest(name = "Should return 422 on invalid query request <{0}>")
-    @MethodSource("requestProvider")
-    @DisplayName("Should return 422 on invalid query request")
-    void test_invalid_query_requests(PaginatedReleasesRequest request) {
-      // when
-      var validatableResponse = restAssuredUtils.doGet(toMap(request));
-
-      // then
-      validatableResponse
-          .contentType(ContentType.JSON)
-          .statusCode(UNPROCESSABLE_ENTITY.value());
-    }
-
-    private Stream<Arguments> requestProvider() {
-      var validPage = 1;
-      var validSize = 10;
-      var validSort = "release_date";
-      var validDirection = "asc";
-      var validFrom = LocalDate.now();
-      var validTo = LocalDate.now().plusDays(10);
-      var query = "query";
-
-      return Stream.of(
-          Arguments.of(new PaginatedReleasesRequest(0, validSize, validSort, validDirection, validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, 0, validSort, validDirection, validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, 51, validSort, validDirection, validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, "", validDirection, validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, " ", validDirection, validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "", validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "foo", validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, validDirection, validFrom.plusDays(20), validTo, query))
-      );
-    }
-
-    private Map<String, Object> toMap(PaginatedReleasesRequest request) {
-      Map<String, Object> map = new HashMap<>();
-      map.put("page", request.getPage());
-      map.put("size", request.getSize());
-      map.put("sort", request.getSort());
-      map.put("direction", request.getDirection());
-      map.put("dateFrom", request.getDateFrom().toString());
-      map.put("dateTo", request.getDateTo().toString());
-      map.put("query", request.getQuery());
-
-      return map;
-    }
-  }
-
-  @Nested
-  @TestInstance(PER_CLASS)
-  @DisplayName("Tests for endpoint '" + MY_RELEASES + "'")
-  class QueryMyReleasesTest {
-
-    private RestAssuredMockMvcUtils restAssuredUtils;
-
-    @BeforeEach
-    void setUp() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(MY_RELEASES);
-    }
-
-    @Test
-    @DisplayName("Should call follow artist service")
+    @DisplayName("Should call follow artist service if releasesFilter is 'my'")
     void should_call_follow_artist_service() {
       // given
       PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
+      request.setReleasesFilter("my");
 
       // when
       restAssuredUtils.doGet(toMap(request));
@@ -312,11 +196,25 @@ class ReleasesRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should not call release service if user does not follow any artists")
+    @DisplayName("Should not call follow artist service if releasesFilter is 'all'")
+    void should_not_call_follow_artist_service() {
+      // given
+      PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
+
+      // when
+      restAssuredUtils.doGet(toMap(request));
+
+      // then
+      verifyNoInteractions(followArtistService);
+    }
+
+    @Test
+    @DisplayName("Should not call releaseService if user does not follow any artists")
     void should_not_call_release_service() {
       // given
       PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
-      doReturn(Collections.emptyList()).when(followArtistService).getFollowedArtistsOfCurrentUser();
+      request.setReleasesFilter("my");
+      doReturn(emptyList()).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
       // when
       restAssuredUtils.doGet(toMap(request));
@@ -326,24 +224,56 @@ class ReleasesRestControllerTest implements WithAssertions {
     }
 
     @Test
+    @DisplayName("Should return empty page if user does not follow any artists")
+    void should_return_empty_page() {
+      // given
+      PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
+      request.setReleasesFilter("my");
+      doReturn(emptyList()).when(followArtistService).getFollowedArtistsOfCurrentUser();
+
+      // when
+      var validatableResponse = restAssuredUtils.doGet(toMap(request));
+
+      // then
+      var jsonPath = validatableResponse.extract().jsonPath();
+      var itemsResult = jsonPath.getObject("items", ReleaseDto[].class);
+      var paginationResult = jsonPath.getObject("pagination", Pagination.class);
+      assertThat(itemsResult).isEmpty();
+      assertThat(paginationResult).isEqualTo(Page.empty().getPagination());
+    }
+
+    @Test
     @DisplayName("Should pass query request parameter to release service")
     void should_pass_query_parameter_to_release_service() {
       // given
       PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
-      var artist1 = DtoFactory.ArtistDtoFactory.withName("A");
-      var artist2 = DtoFactory.ArtistDtoFactory.withName("B");
-      doReturn(List.of(artist1, artist2)).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
       // when
       restAssuredUtils.doGet(toMap(request));
 
       // then
       verify(releasesService).findReleases(
-          any(),
+          eq(emptyList()),
           eq(new TimeRange(request.getDateFrom(), request.getDateTo())),
           any(),
           eq(new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection())))
       );
+    }
+
+    @Test
+    @DisplayName("Should pass followed artists names to release service")
+    void should_pass_artists_to_release_service() {
+      // given
+      PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
+      request.setReleasesFilter("my");
+      var artist = DtoFactory.ArtistDtoFactory.withName("superArtist");
+      doReturn(List.of(artist)).when(followArtistService).getFollowedArtistsOfCurrentUser();
+
+      // when
+      restAssuredUtils.doGet(toMap(request));
+
+      // then
+      verify(releasesService).findReleases(eq(List.of(artist.getArtistName())), any(), any(), any());
     }
 
     @Test
@@ -352,9 +282,6 @@ class ReleasesRestControllerTest implements WithAssertions {
       // given
       PaginatedReleasesRequest request = PaginatedReleaseRequestFactory.createDefault();
       request.setQuery("query");
-      var artist1 = DtoFactory.ArtistDtoFactory.withName("A");
-      var artist2 = DtoFactory.ArtistDtoFactory.withName("B");
-      doReturn(List.of(artist1, artist2)).when(followArtistService).getFollowedArtistsOfCurrentUser();
 
       // when
       restAssuredUtils.doGet(toMap(request));
@@ -364,33 +291,12 @@ class ReleasesRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should pass artist names to release service")
-    void should_pass_artist_names_to_release_service() {
-      // given
-      var request = PaginatedReleaseRequestFactory.createDefault();
-      var artist1 = DtoFactory.ArtistDtoFactory.withName("A");
-      var artist2 = DtoFactory.ArtistDtoFactory.withName("B");
-      doReturn(List.of(artist1, artist2)).when(followArtistService).getFollowedArtistsOfCurrentUser();
-
-      // when
-      restAssuredUtils.doGet(toMap(request));
-
-      // then
-      verify(releasesService).findReleases(
-          eq(List.of(artist1.getArtistName(), artist2.getArtistName())),
-          any(), any(), any());
-    }
-
-    @Test
     @DisplayName("Should return the page from release service")
     void should_return_releases() {
       // given
       var request = PaginatedReleaseRequestFactory.createDefault();
       var releases = List.of(ReleaseDtoFactory.createDefault());
       var page = new Page<>(releases, new Pagination(1, 1, 5));
-      var artist1 = DtoFactory.ArtistDtoFactory.withName("A");
-      var artist2 = DtoFactory.ArtistDtoFactory.withName("B");
-      doReturn(List.of(artist1, artist2)).when(followArtistService).getFollowedArtistsOfCurrentUser();
       doReturn(page).when(releasesService).findReleases(any(), any(), any(), any());
 
       // when
@@ -408,29 +314,6 @@ class ReleasesRestControllerTest implements WithAssertions {
       assertThat(Arrays.asList(itemsResult)).isEqualTo(page.getItems());
     }
 
-    @Test
-    @DisplayName("Should return an empty page if user does not follow any artists")
-    void should_return_empty_page() {
-      // given
-      var request = PaginatedReleaseRequestFactory.createDefault();
-      var expectedPage = Page.empty();
-      doReturn(Collections.emptyList()).when(followArtistService).getFollowedArtistsOfCurrentUser();
-
-      // when
-      var validatableResponse = restAssuredUtils.doGet(toMap(request));
-
-      // then
-      validatableResponse
-              .contentType(ContentType.JSON)
-              .statusCode(OK.value());
-
-      var jsonPath = validatableResponse.extract().jsonPath();
-      var paginationResult = jsonPath.getObject("pagination", Pagination.class);
-      var itemsResult = jsonPath.getObject("items", ReleaseDto[].class);
-      assertThat(paginationResult).isEqualTo(expectedPage.getPagination());
-      assertThat(Arrays.asList(itemsResult)).isEqualTo(expectedPage.getItems());
-    }
-
     @ParameterizedTest(name = "Should return 422 on invalid query request <{0}>")
     @MethodSource("requestProvider")
     @DisplayName("Should return 422 on invalid query request")
@@ -440,7 +323,6 @@ class ReleasesRestControllerTest implements WithAssertions {
 
       // then
       validatableResponse
-          .contentType(ContentType.JSON)
           .statusCode(UNPROCESSABLE_ENTITY.value());
     }
 
@@ -449,19 +331,22 @@ class ReleasesRestControllerTest implements WithAssertions {
       var validSize = 10;
       var validSort = "release_date";
       var validDirection = "asc";
+      var validReleasesFilter = "all";
       var validFrom = LocalDate.now();
       var validTo = LocalDate.now().plusDays(10);
       var query = "query";
 
       return Stream.of(
-          Arguments.of(new PaginatedReleasesRequest(0, validSize, validSort, validDirection, validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, 0, validSort, validDirection, validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, 51, validSort, validDirection, validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, "", validDirection, validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, " ", validDirection, validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "", validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "foo", validFrom, validTo, query)),
-          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, validDirection, validFrom.plusDays(20), validTo, query))
+          Arguments.of(new PaginatedReleasesRequest(0, validSize, validSort, validDirection, validFrom, validTo, query, validReleasesFilter)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, 0, validSort, validDirection, validFrom, validTo, query, validReleasesFilter)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, 51, validSort, validDirection, validFrom, validTo, query, validReleasesFilter)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, "", validDirection, validFrom, validTo, query, validReleasesFilter)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, " ", validDirection, validFrom, validTo, query, validReleasesFilter)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "", validFrom, validTo, query, validReleasesFilter)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, "foo", validFrom, validTo, query, validReleasesFilter)),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, validDirection, validFrom, validTo, query, "")),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, validDirection, validFrom, validTo, query, "foo")),
+          Arguments.of(new PaginatedReleasesRequest(validPage, validSize, validSort, validDirection, validFrom.plusDays(20), validTo, query, validReleasesFilter))
       );
     }
 
@@ -474,6 +359,7 @@ class ReleasesRestControllerTest implements WithAssertions {
       map.put("dateFrom", request.getDateFrom().toString());
       map.put("dateTo", request.getDateTo().toString());
       map.put("query", request.getQuery());
+      map.put("releasesFilter", request.getReleasesFilter());
 
       return map;
     }

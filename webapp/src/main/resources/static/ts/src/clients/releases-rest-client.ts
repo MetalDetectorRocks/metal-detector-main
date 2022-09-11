@@ -7,7 +7,6 @@ import { Release } from "../model/release.model";
 
 export class ReleasesRestClient {
     private readonly RELEASES_URL = "/rest/v1/releases";
-    private readonly MY_RELEASES_URL = "/rest/v1/releases/my";
     private readonly TOP_RELEASES_URL = "/rest/v1/releases/top";
 
     private readonly urlService: UrlService;
@@ -18,18 +17,15 @@ export class ReleasesRestClient {
         this.dateService = dateService;
     }
 
-    public async fetchAllReleases(): Promise<ReleasesResponse> {
-        return await this.fetchReleases(this.RELEASES_URL);
+    public async fetchReleases(): Promise<ReleasesResponse> {
+        return await this.doFetchReleases(this.RELEASES_URL);
     }
 
-    public async fetchMyReleases(): Promise<ReleasesResponse> {
-        return await this.fetchReleases(this.MY_RELEASES_URL);
-    }
-
-    private fetchReleases(url: string): Promise<ReleasesResponse> {
+    private doFetchReleases(url: string): Promise<ReleasesResponse> {
         const sort = this.urlService.getParameterFromUrl("sort");
         const direction = this.urlService.getParameterFromUrl("direction");
         const query = this.urlService.getParameterFromUrl("query");
+        const releasesFilter = this.urlService.getParameterFromUrl("releases");
         const dateFrom = this.urlService.getParameterFromUrl("dateFrom");
         const dateTo = this.urlService.getParameterFromUrl("dateTo");
         axiosConfig.params = {
@@ -40,6 +36,7 @@ export class ReleasesRestClient {
             sort: sort.length === 0 ? "release_date" : sort,
             direction: direction.length === 0 ? "asc" : direction,
             query: query,
+            releasesFilter: releasesFilter.length === 0 ? "all" : releasesFilter,
         };
 
         return axios
