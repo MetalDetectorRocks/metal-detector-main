@@ -49,7 +49,7 @@ import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 public class RestExceptionsHandler {
 
   @ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class})
-  Object handleBadRequests(Exception exception, WebRequest webRequest) {
+  public Object handleBadRequests(Exception exception, WebRequest webRequest) {
     log.error(webRequest.getContextPath() + ": " + exception.getMessage());
     String requestUri = ((ServletWebRequest) webRequest).getRequest().getRequestURI();
     if (requestUri.startsWith("/rest/")) {
@@ -61,13 +61,13 @@ public class RestExceptionsHandler {
   }
 
   @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
-  ResponseEntity<ErrorResponse> handleHttpMethodNotSupported(Exception exception, WebRequest webRequest) {
+  public ResponseEntity<ErrorResponse> handleHttpMethodNotSupported(Exception exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(METHOD_NOT_ALLOWED, exception), new HttpHeaders(), METHOD_NOT_ALLOWED);
   }
 
   @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
-  ResponseEntity<ErrorResponse>  handleMediaTypeNotSupported(Exception exception, WebRequest webRequest) {
+  public ResponseEntity<ErrorResponse> handleMediaTypeNotSupported(Exception exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(UNSUPPORTED_MEDIA_TYPE, exception), new HttpHeaders(), UNSUPPORTED_MEDIA_TYPE);
   }

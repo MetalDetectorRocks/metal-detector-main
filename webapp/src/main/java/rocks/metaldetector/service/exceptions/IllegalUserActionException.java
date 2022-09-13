@@ -7,8 +7,6 @@ import static rocks.metaldetector.service.user.UserErrorMessages.OAUTH_USER_CANN
 
 public class IllegalUserActionException extends RuntimeException {
 
-  private static final long serialVersionUID = 1L;
-
   private IllegalUserActionException(String message) {
     super(message);
   }
