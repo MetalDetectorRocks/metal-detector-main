@@ -5,8 +5,6 @@ import rocks.metaldetector.service.user.UserErrorMessages;
 
 public class UserAlreadyExistsException extends RuntimeException {
 
-  private static final long serialVersionUID = 1L;
-
   @Getter
   private final Reason reason;
 
