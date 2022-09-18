@@ -1,4 +1,4 @@
-package rocks.metaldetector.service;
+package rocks.metaldetector.service.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
@@ -7,9 +7,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.support.JwtsSupport;
+import rocks.metaldetector.support.SecurityProperties;
 import rocks.metaldetector.web.api.request.LoginRequest;
 import rocks.metaldetector.web.api.response.LoginResponse;
 
@@ -19,18 +21,22 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class LoginService {
+public class AuthService {
 
   private final JwtsSupport jwtsSupport;
   private final AuthenticationFacade authenticationFacade;
   private final AuthenticationManager authenticationManager;
   private final AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource;
   private HttpServletRequest httpRequest;
+  private SecurityProperties securityProperties;
 
   public LoginResponse loginUser(LoginRequest request) {
     authenticateUser(request);
-    var user = authenticationFacade.getCurrentUser();
-    var token = jwtsSupport.generateToken(user.getPublicId(), Duration.ofHours(1));
+    AbstractUserEntity user = authenticationFacade.getCurrentUser();
+    String token = jwtsSupport.generateToken(
+        user.getPublicId(),
+        Duration.ofMinutes(securityProperties.getAuthTokenExpirationInMinutes())
+    );
     return LoginResponse.builder()
         .username(request.getUsername())
         .token(token)
