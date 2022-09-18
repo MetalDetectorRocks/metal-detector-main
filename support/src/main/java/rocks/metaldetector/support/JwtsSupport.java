@@ -42,7 +42,7 @@ public class JwtsSupport {
 
   public HttpCookie createAccessTokenCookie(String token) {
     return ResponseCookie.from("Authorization", token)
-        .maxAge(Duration.ofMinutes(120))
+        .maxAge(Duration.ofMinutes(securityProperties.getAuthTokenExpirationInMinutes()))
 //        .secure(true) // ToDo: activate later
 //        .httpOnly(true) // ToDo: activate later
         .path("/") // ToDo: correct?

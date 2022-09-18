@@ -14,5 +14,6 @@ public class SecurityProperties {
   private String tokenIssuer;
   private String tokenSecret;
   private String rememberMeSecret;
+  private long authTokenExpirationInMinutes;
 
 }

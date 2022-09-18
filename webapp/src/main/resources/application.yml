@@ -101,6 +101,7 @@ security:
   token-issuer: ${JWT_ISSUER}
   token-secret: ${JWT_SECRET}
   remember-me-secret: ${REMEMBER_ME_SECRET}
+  auth-token-expiration-in-minutes: 120
 
 server:
   port: 8080

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpCookie;
 
 import java.time.Duration;
 import java.util.Date;
@@ -56,5 +57,19 @@ class JwtsSupportTest implements WithAssertions {
     assertThat(claims.getExpiration()).isCloseTo(new Date(currentMillis + Duration.ofHours(1).toMillis()), 1_000L);
     assertThat(claims.getIssuedAt()).isCloseTo(new Date(currentMillis), 1_000L);
     assertThat(claims.getIssuer()).isEqualTo(TOKEN_ISSUER);
+  }
+
+  @Test
+  @DisplayName("should create access token cookie")
+  void should_create_access_token_cookie() {
+    // given
+    String token = "test-token";
+
+    // when
+    HttpCookie cookie = underTest.createAccessTokenCookie(token);
+
+    // then
+    assertThat(cookie.getName()).isEqualTo("Authorization");
+    assertThat(cookie.getValue()).isEqualTo(token);
   }
 }
