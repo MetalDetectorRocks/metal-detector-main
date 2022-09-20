@@ -7,7 +7,7 @@ val dependencyVersions = listOf(
     "net.bytebuddy:byte-buddy:1.12.16",
     "org.jboss.logging:jboss-logging:3.5.0.Final",
     "org.junit:junit-bom:${libs.versions.junit.get()}",
-    "org.slf4j:slf4j-api:2.0.1",
+    "org.slf4j:slf4j-api:2.0.2",
     "com.google.guava:guava:31.1-jre"
 )
 
