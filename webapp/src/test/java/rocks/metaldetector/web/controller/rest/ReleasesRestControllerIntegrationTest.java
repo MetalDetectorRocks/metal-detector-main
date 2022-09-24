@@ -68,15 +68,6 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     }
 
     @Test
-    @DisplayName("Administrator is allowed to GET on endpoint " + MY_RELEASES + "'")
-    @WithMockUser(roles = "ADMINISTRATOR")
-    void admin_is_allowed_to_query_my_releases() throws Exception {
-      mockMvc.perform(get(MY_RELEASES).param("sort", "fieldName")
-                          .contentType(APPLICATION_JSON))
-          .andExpect(status().isOk());
-    }
-
-    @Test
     @DisplayName("Administrator is allowed to PUT on endpoint " + RELEASES + "'")
     @WithMockUser(roles = "ADMINISTRATOR")
     void user_not_is_allowed_to_update_release_state() throws Exception {
@@ -106,15 +97,6 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithMockUser(roles = "USER")
     void user_is_allowed_to_query_releases() throws Exception {
       mockMvc.perform(get(RELEASES).param("sort", "fieldName")
-                          .contentType(APPLICATION_JSON))
-          .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("User is allowed to GET on endpoint " + MY_RELEASES + "'")
-    @WithMockUser(roles = "USER")
-    void user_is_allowed_to_query_my_releases() throws Exception {
-      mockMvc.perform(get(MY_RELEASES).param("sort", "fieldName")
                           .contentType(APPLICATION_JSON))
           .andExpect(status().isOk());
     }
@@ -157,15 +139,6 @@ public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSec
     @WithAnonymousUser
     void anonymous_user_is_not_allowed_to_query_all_releases() throws Exception {
       mockMvc.perform(get(ALL_RELEASES)
-                          .contentType(APPLICATION_JSON))
-          .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("Anonymous user is not allowed to GET on endpoint " + MY_RELEASES + "'")
-    @WithAnonymousUser
-    void anonymous_user_is_not_allowed_to_query_my_releases() throws Exception {
-      mockMvc.perform(get(MY_RELEASES).param("sort", "fieldName")
                           .contentType(APPLICATION_JSON))
           .andExpect(status().isUnauthorized());
     }
