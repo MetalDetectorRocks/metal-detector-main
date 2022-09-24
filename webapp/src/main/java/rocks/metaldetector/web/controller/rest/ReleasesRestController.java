@@ -56,7 +56,7 @@ public class ReleasesRestController {
     var pageRequest = new PageRequest(request.getPage(), request.getSize(), new DetectorSort(request.getSort(), request.getDirection()));
 
     List<String> artistNames = emptyList();
-    if (request.getReleasesFilter().equals("my")) {
+    if (request.getReleasesFilter().equalsIgnoreCase("my")) {
       artistNames = followArtistService.getFollowedArtistsOfCurrentUser().stream().map(ArtistDto::getArtistName).toList();
       if (artistNames.isEmpty()) {
         return ResponseEntity.ok(Page.empty());
