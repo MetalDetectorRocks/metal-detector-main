@@ -4,7 +4,7 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
 val javaVersion: JavaVersion = JavaVersion.VERSION_17
 
 val dependencyVersions = listOf(
-    "net.bytebuddy:byte-buddy:1.12.16",
+    "net.bytebuddy:byte-buddy:1.12.17",
     "org.jboss.logging:jboss-logging:3.5.0.Final",
     "org.junit:junit-bom:${libs.versions.junit.get()}",
     "org.slf4j:slf4j-api:2.0.2",
