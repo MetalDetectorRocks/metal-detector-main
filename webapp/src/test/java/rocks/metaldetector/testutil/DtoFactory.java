@@ -143,6 +143,7 @@ public class DtoFactory {
           .direction("asc")
           .dateFrom(LocalDate.now())
           .dateTo(LocalDate.now().plusDays(30))
+          .releasesFilter("all")
           .build();
     }
   }

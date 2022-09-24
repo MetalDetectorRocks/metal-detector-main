@@ -133,16 +133,7 @@ export class ReleasesService {
     }
 
     public fetchReleases(): void {
-        this.shouldFetchAllReleases() ? this.fetchAllReleases() : this.fetchMyReleases();
-    }
-
-    private fetchAllReleases(): void {
-        const response = this.releasesRestClient.fetchAllReleases();
-        this.releasesRenderService.render(response);
-    }
-
-    private fetchMyReleases(): void {
-        const response = this.releasesRestClient.fetchMyReleases();
+        const response = this.releasesRestClient.fetchReleases();
         this.releasesRenderService.render(response);
     }
 
