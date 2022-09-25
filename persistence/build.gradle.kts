@@ -13,8 +13,8 @@ dependencies {
   implementation(rootProject.projects.support)
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("com.h2database:h2:${libs.versions.h2.get()}")
-  testImplementation("org.mockito:mockito-inline:${libs.versions.mockito.get()}")
+  testImplementation("com.h2database:h2")
+  testImplementation("org.mockito:mockito-inline")
 }
 
 description = "persistence"

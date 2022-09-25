@@ -8,7 +8,7 @@ dependencies {
   annotationProcessor("org.projectlombok:lombok:${libs.versions.lombok.get()}")
 
   testImplementation("org.apache.commons:commons-text:${libs.versions.commonsText.get()}")
-  testImplementation("org.mockito:mockito-inline:${libs.versions.mockito.get()}")
+  testImplementation("org.mockito:mockito-inline")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
