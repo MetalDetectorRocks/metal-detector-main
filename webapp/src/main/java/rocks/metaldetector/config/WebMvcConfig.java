@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
@@ -16,7 +15,7 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
 import rocks.metaldetector.support.Endpoints;
 
-import java.util.Locale;
+import java.util.stream.Stream;
 
 import static java.util.Locale.ENGLISH;
 import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
@@ -69,7 +68,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping(REST_ENDPOINTS).allowedOrigins(frontendOrigin).allowCredentials(true);
+    String[] allowedOrigins = Stream.of(frontendOrigin, "http://localhost:3000").distinct().toArray(String[]::new);
+    registry.addMapping(REST_ENDPOINTS).allowedOrigins(allowedOrigins).allowCredentials(true);
   }
 
   @Bean
