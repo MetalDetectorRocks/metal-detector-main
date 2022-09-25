@@ -7,9 +7,9 @@ dependencies {
   implementation("org.springframework:spring-jdbc")
   api("org.springframework.security:spring-security-oauth2-client")
   implementation("org.apache.commons:commons-text:${libs.versions.commonsText.get()}")
-  implementation("org.apache.httpcomponents:httpclient:${libs.versions.httpClient.get()}")
+  implementation("org.apache.httpcomponents:httpclient")
   implementation("org.projectlombok:lombok:${libs.versions.lombok.get()}")
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${libs.versions.jackson.get()}")
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
   annotationProcessor("org.projectlombok:lombok:${libs.versions.lombok.get()}")
 
@@ -17,7 +17,7 @@ dependencies {
 
   testImplementation("com.github.valfirst:slf4j-test:${libs.versions.slf4jTest.get()}")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("org.mockito:mockito-inline:${libs.versions.mockito.get()}")
+  testImplementation("org.mockito:mockito-inline")
 }
 
 description = "support"

@@ -69,8 +69,8 @@ dependencies {
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-  runtimeOnly("org.flywaydb:flyway-core:${libs.versions.flyway.get()}")
-  runtimeOnly("io.micrometer:micrometer-registry-prometheus:${libs.versions.micrometer.get()}")
+  runtimeOnly("org.flywaydb:flyway-core")
+  runtimeOnly("io.micrometer:micrometer-registry-prometheus")
   runtimeOnly("javax.cache:cache-api:${libs.versions.cacheApi.get()}")
 
   implementation(rootProject.projects.support)
@@ -82,7 +82,7 @@ dependencies {
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("com.h2database:h2:${libs.versions.h2.get()}")
+  testImplementation("com.h2database:h2")
   testImplementation("io.rest-assured:rest-assured:${libs.versions.restAssured.get()}")
   testImplementation("io.rest-assured:json-path:${libs.versions.restAssured.get()}")
   testImplementation("io.rest-assured:xml-path:${libs.versions.restAssured.get()}")
