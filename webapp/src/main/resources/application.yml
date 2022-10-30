@@ -1,5 +1,6 @@
 application:
-  host: http://localhost
+  domain: localhost
+  host: http://${application.domain}
 
 spring:
   application:
@@ -98,10 +99,11 @@ spring:
             issuer-uri: http://auth-app:9000
 
 security:
-  token-issuer: ${JWT_ISSUER}
-  token-secret: ${JWT_SECRET}
-  remember-me-secret: ${REMEMBER_ME_SECRET}
-  auth-token-expiration-in-minutes: 120
+  jwt-issuer: metal-detector
+  jwt-secret: ${JWT_SECRET}
+  access-token-expiration-in-min: 15
+  refresh-token-expiration-in-min: 43800 # 30 days
+  secure-cookie: false
 
 server:
   port: 8080

@@ -21,18 +21,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import rocks.metaldetector.security.handler.CustomAccessDeniedHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationFailureHandler;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
 import rocks.metaldetector.security.handler.CustomLogoutSuccessHandler;
-import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.Endpoints;
-import rocks.metaldetector.support.SecurityProperties;
-
-import javax.sql.DataSource;
-import java.time.Duration;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -65,9 +59,6 @@ import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private final UserService userService;
-  private final DataSource dataSource;
-  private final SecurityProperties securityProperties;
   private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
   private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
   private final OAuth2UserService<OidcUserRequest, OidcUser> customOidcUserService;
@@ -117,12 +108,6 @@ public class SecurityConfig {
           .authorizedClientService(oAuth2AuthorizedClientService)
           .authorizedClientRepository(oAuth2AuthorizedClientRepository)
       .and()
-        .rememberMe()
-          .tokenValiditySeconds((int) Duration.ofDays(14).toSeconds())
-          .tokenRepository(jdbcTokenRepository())
-          .userDetailsService(userService)
-          .key(securityProperties.getRememberMeSecret())
-      .and()
         .logout()
           .logoutUrl(LOGOUT).permitAll()
           .invalidateHttpSession(true)
@@ -152,14 +137,6 @@ public class SecurityConfig {
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
-  }
-
-  @Bean
-  public JdbcTokenRepositoryImpl jdbcTokenRepository() {
-    JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
-    jdbcTokenRepository.setCreateTableOnStartup(false);
-    jdbcTokenRepository.setDataSource(dataSource);
-    return jdbcTokenRepository;
   }
 
   @Bean

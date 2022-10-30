@@ -16,6 +16,8 @@ public interface UserRepository extends JpaRepository<AbstractUserEntity, Long> 
   @Query("select u from users u where dtype = 'native_users' and u.username = :username")
   Optional<AbstractUserEntity> findByUsername(@Param("username") String username);
 
+  UserEntity getByUsername(String username);
+
   Optional<AbstractUserEntity> findByPublicId(String publicId);
 
   boolean existsByEmail(String email);

@@ -1,5 +1,6 @@
 application:
-  host: https://metal-detector.rocks
+  domain: metal-detector.rocks
+  host: https://${application.domain}
 
 spring:
   jpa:
@@ -54,6 +55,9 @@ management:
       path-mapping.metrics: ${ACTUATOR_METRICS_PATH}
       path-mapping.prometheus: ${ACTUATOR_PROMETHEUS_PATH}
       path-mapping.flyway: ${ACTUATOR_FLYWAY_PATH}
+
+security:
+  secure-cookie: true
 
 metal-release-butler:
   host: http://butler-app:8080

@@ -65,7 +65,7 @@ To start the application locally in default profile, the following preparatory a
    - `spring.security.oauth2.client.registration.metal-release-butler-admin.client-secret`
 
 7. Define remember-me secret (you can choose any value you want) in file `application.yml`:
-   - `security.remember-me-secret` for remember me functionality
+   - `security.jwt-secret` for remember me functionality
 
 8. Define a dummy value for `telegram.bot-id` in file `application.yml`.
 

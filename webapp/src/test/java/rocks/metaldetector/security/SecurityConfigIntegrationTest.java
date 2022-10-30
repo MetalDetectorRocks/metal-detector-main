@@ -25,16 +25,6 @@ class SecurityConfigIntegrationTest extends BaseWebMvcTestWithSecurity {
     mockMvc.perform(get(Endpoints.Rest.TEST))
            .andExpect(status().isUnauthorized());
   }
-
-  // ToDo NilsD remove?
-//  @Test
-//  @DisplayName("All mvc controller are secured by default and redirect to login page")
-//  @WithAnonymousUser
-//  void test_mvc_endpoint_security() throws Exception {
-//    mockMvc.perform(get(Endpoints.Frontend.TEST))
-//            .andExpect(status().is3xxRedirection())
-//            .andExpect(header().string(LOCATION, containsString(LOGIN)));
-//  }
 }
 
 @RestController

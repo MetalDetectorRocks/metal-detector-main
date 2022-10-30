@@ -17,13 +17,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.security.JwtAuthenticationEntryPoint;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
-import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.JwtsSupport;
-import rocks.metaldetector.support.SecurityProperties;
 import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.sql.DataSource;
 
 public abstract class BaseWebMvcTestWithSecurity {
 
@@ -34,22 +31,13 @@ public abstract class BaseWebMvcTestWithSecurity {
   protected BCryptPasswordEncoder passwordEncoder;
 
   @MockBean
-  protected DataSource dataSource;
-
-  @MockBean
   protected RedirectionHandlerInterceptor redirectionInterceptor;
-
-  @MockBean
-  protected UserService userService;
 
   @SpyBean
   protected ObjectMapper objectMapper;
 
   @MockBean
   protected UserDtoTransformer userDtoTransformer;
-
-  @MockBean
-  protected SecurityProperties securityProperties;
 
   @MockBean
   protected OAuth2UserService<OidcUserRequest, OidcUser> customOidcUserService;

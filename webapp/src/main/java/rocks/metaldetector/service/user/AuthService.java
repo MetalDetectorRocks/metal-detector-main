@@ -35,7 +35,7 @@ public class AuthService {
     AbstractUserEntity user = authenticationFacade.getCurrentUser();
     String token = jwtsSupport.generateToken(
         user.getPublicId(),
-        Duration.ofMinutes(securityProperties.getAuthTokenExpirationInMinutes())
+        Duration.ofMinutes(securityProperties.getAccessTokenExpirationInMin())
     );
     return LoginResponse.builder()
         .username(request.getUsername())
