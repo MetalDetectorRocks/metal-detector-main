@@ -14,7 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpCookie;
+import org.springframework.http.ResponseCookie;
 import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.user.AuthService;
@@ -125,7 +125,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
       // given
       var loginResponse = new LoginResponse("user", new ArrayList<>(), "test-token");
       doReturn(loginResponse).when(authService).loginUser(any());
-      doReturn(new HttpCookie("foo", "bar")).when(refreshTokenService).createRefreshTokenCookie(any());
+      doReturn(ResponseCookie.from("foo", "bar").build()).when(refreshTokenService).createRefreshTokenCookie(any());
 
       // when
       restAssuredUtils.doPost(new LoginRequest("user", "pass"));
@@ -140,7 +140,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
       // given
       var loginResponse = new LoginResponse("user", new ArrayList<>(), "test-token");
       doReturn(loginResponse).when(authService).loginUser(any());
-      doReturn(new HttpCookie("foo", "bar")).when(refreshTokenService).createRefreshTokenCookie(any());
+      doReturn(ResponseCookie.from("foo", "bar").build()).when(refreshTokenService).createRefreshTokenCookie(any());
 
       // when
       ValidatableMockMvcResponse response = restAssuredUtils.doPost(new LoginRequest("user", "pass"));
@@ -156,7 +156,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
     void should_return_response_with_cookie_header() {
       // given
       doReturn(new LoginResponse("user", new ArrayList<>(), "test-token")).when(authService).loginUser(any());
-      doReturn(new HttpCookie("foo", "bar")).when(refreshTokenService).createRefreshTokenCookie(any());
+      doReturn(ResponseCookie.from("foo", "bar").build()).when(refreshTokenService).createRefreshTokenCookie(any());
 
       // when
       Headers headers = restAssuredUtils.doPostReturningHeaders(new LoginRequest("user", "pass"));
