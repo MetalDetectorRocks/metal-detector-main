@@ -27,7 +27,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserRestControllerIntegrationTest implements WithIntegrationTestConfig {
+public class UserAccountRestControllerIntegrationTest implements WithIntegrationTestConfig {
 
   @Autowired
   private MockMvc mockMvc;
@@ -44,130 +44,133 @@ class UserRestControllerIntegrationTest implements WithIntegrationTestConfig {
   private UserDtoTransformer userDtoTransformer;
 
   @Nested
-  @DisplayName("Administrators should have access to all endpoints")
   class AdministratorRoleTest {
 
     @Test
-    @DisplayName("Administrators can GET on endpoint " + USERS)
+    @DisplayName("Administrator is allowed to GET on endpoint " + USERS + "' (all users)")
     @WithMockUser(roles = {"ADMINISTRATOR"})
-    void admin_can_get_all_users() throws Exception {
+    void administrator_is_allowed_to_fetch_all_users() throws Exception {
       mockMvc.perform(get(USERS))
           .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Administrators can GET on endpoint " + USERS + "/{id}")
+    @DisplayName("Administrator is allowed to GET on endpoint " + USERS + "' (certain user)")
     @WithMockUser(roles = {"ADMINISTRATOR"})
-    void admin_can_get_specified_user() throws Exception {
-      mockMvc.perform(get(USERS + "/{id}", "123"))
+    void administrator_is_allowed_to_fetch_certain_user() throws Exception {
+      mockMvc.perform(get(USERS + "/1"))
           .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Administrators can POST on endpoint " + USERS)
+    @DisplayName("Administrator is allowed to POST on endpoint " + USERS + "'")
     @WithMockUser(roles = {"ADMINISTRATOR"})
-    void admin_can_create_user_via_post() throws Exception {
+    void administrator_is_allowed_to_create_another_administrator() throws Exception {
       mockMvc.perform(post(USERS)
-                          .with(csrf())
-                          .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
-                          .contentType(APPLICATION_JSON))
+              .with(csrf())
+              .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
+              .contentType(APPLICATION_JSON)
+          )
           .andExpect(status().isCreated());
     }
 
     @Test
-    @DisplayName("Administrators can PUT on endpoint " + USERS)
+    @DisplayName("Administrator is allowed to PUT on endpoint " + USERS + "'")
     @WithMockUser(roles = {"ADMINISTRATOR"})
-    void admin_can_update_user_via_put() throws Exception {
+    void administrator_is_allowed_to_update_certain_user() throws Exception {
       mockMvc.perform(put(USERS)
-                          .with(csrf())
-                          .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
-                          .contentType(APPLICATION_JSON))
+              .with(csrf())
+              .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
+              .contentType(APPLICATION_JSON)
+          )
           .andExpect(status().isOk());
     }
   }
 
   @Nested
-  @DisplayName("Users should have no access to all endpoints")
   class UserRoleTest {
 
     @Test
-    @DisplayName("Users cannot GET on endpoint " + USERS)
+    @DisplayName("User is allowed to GET on endpoint " + USERS + "' (all users)")
     @WithMockUser
-    void users_cannot_get_all_users() throws Exception {
+    void user_is_allowed_to_fetch_all_users() throws Exception {
       mockMvc.perform(get(USERS))
           .andExpect(status().isForbidden());
     }
 
     @Test
-    @DisplayName("Users cannot GET on endpoint " + USERS + "/{id}")
+    @DisplayName("User is allowed to GET on endpoint " + USERS + "' (certain user)")
     @WithMockUser
-    void users_can_get_specified_user() throws Exception {
-      mockMvc.perform(get(USERS + "/{id}", "123"))
+    void user_is_allowed_to_fetch_certain_user() throws Exception {
+      mockMvc.perform(get(USERS + "/1"))
           .andExpect(status().isForbidden());
     }
 
     @Test
-    @DisplayName("Users cannot POST on endpoint " + USERS)
+    @DisplayName("User is allowed to POST on endpoint " + USERS + "'")
     @WithMockUser
-    void users_can_create_user_via_post() throws Exception {
+    void user_is_allowed_to_create_another_administrator() throws Exception {
       mockMvc.perform(post(USERS)
-                          .with(csrf())
-                          .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
-                          .contentType(APPLICATION_JSON))
+              .with(csrf())
+              .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
+              .contentType(APPLICATION_JSON)
+          )
           .andExpect(status().isForbidden());
     }
 
     @Test
-    @DisplayName("Users cannot PUT on endpoint " + USERS)
+    @DisplayName("User is allowed to PUT on endpoint " + USERS + "'")
     @WithMockUser
-    void users_can_update_user_via_put() throws Exception {
+    void user_is_allowed_to_update_certain_user() throws Exception {
       mockMvc.perform(put(USERS)
-                          .with(csrf())
-                          .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
-                          .contentType(APPLICATION_JSON))
+              .with(csrf())
+              .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
+              .contentType(APPLICATION_JSON)
+          )
           .andExpect(status().isForbidden());
     }
   }
 
   @Nested
-  @DisplayName("Anonymous user should have no access to all endpoints")
   class AnonymousUserTest {
 
     @Test
-    @DisplayName("Anonymous user cannot GET on endpoint " + USERS)
+    @DisplayName("Anonymous user is not allowed to GET on endpoint " + USERS + "' (all users)")
     @WithAnonymousUser
-    void anonymous_user_cannot_get_all_users() throws Exception {
+    void anonymous_user_is_not_allowed_to_fetch_all_users() throws Exception {
       mockMvc.perform(get(USERS))
           .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("Anonymous user cannot GET on endpoint " + USERS + "/{id}")
+    @DisplayName("Anonymous user is not allowed to GET on endpoint " + USERS + "' (certain user)")
     @WithAnonymousUser
-    void anonymous_user_can_get_specified_user() throws Exception {
-      mockMvc.perform(get(USERS + "/{id}", "123"))
+    void anonymous_user_is_not_allowed_to_fetch_certain_user() throws Exception {
+      mockMvc.perform(get(USERS + "/1"))
           .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("Anonymous user cannot POST on endpoint " + USERS)
+    @DisplayName("Anonymous user is not allowed to POST on endpoint " + USERS + "'")
     @WithAnonymousUser
-    void anonymous_user_can_create_user_via_post() throws Exception {
+    void anonymous_user_is_not_allowed_to_create_another_administrator() throws Exception {
       mockMvc.perform(post(USERS)
               .with(csrf())
               .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
-              .contentType(APPLICATION_JSON))
+              .contentType(APPLICATION_JSON)
+          )
           .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("Anonymous user cannot PUT on endpoint " + USERS)
+    @DisplayName("Anonymous user is not allowed to PUT on endpoint " + USERS + "'")
     @WithAnonymousUser
-    void anonymous_user_can_update_user_via_put() throws Exception {
+    void anonymous_user_is_not_allowed_to_update_certain_user() throws Exception {
       mockMvc.perform(put(USERS)
               .with(csrf())
               .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
-              .contentType(APPLICATION_JSON))
+              .contentType(APPLICATION_JSON)
+          )
           .andExpect(status().isUnauthorized());
     }
   }

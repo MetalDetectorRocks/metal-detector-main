@@ -16,6 +16,8 @@ import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
+import rocks.metaldetector.web.api.request.SynchronizeArtistsRequest;
+import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
@@ -382,6 +384,20 @@ public class DtoFactory {
       return ArtistSearchResponse.builder()
           .searchResults(Collections.emptyList())
           .build();
+    }
+  }
+
+  public static class UpdateNotificationConfigRequestFactory {
+
+    public static UpdateNotificationConfigRequest createDefault() {
+      return new UpdateNotificationConfigRequest(true, true, true, 1, "EMAIL");
+    }
+  }
+
+  public static class SynchronizeArtistsRequestFactory {
+
+    public static SynchronizeArtistsRequest createDefault() {
+      return new SynchronizeArtistsRequest(List.of("1", "2", "3"));
     }
   }
 }

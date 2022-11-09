@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.oauth.OAuth2AuthenticationProvider;
 import rocks.metaldetector.web.api.response.OAuth2UserAuthorizationExistsResponse;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
+import static rocks.metaldetector.support.Endpoints.Rest.OAUTH;
 
 @RestController
-@RequestMapping(Endpoints.Rest.OAUTH)
+@RequestMapping(OAUTH)
 @AllArgsConstructor
 public class OAuth2AuthorizationRestController {
 

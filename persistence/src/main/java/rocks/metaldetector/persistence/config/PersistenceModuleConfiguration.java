@@ -20,6 +20,8 @@ import java.util.Optional;
 @ComponentScan(basePackages = {"rocks.metaldetector.persistence"})
 public class PersistenceModuleConfiguration {
 
+  private static final String ANONYMOUS_USERNAME = "ANONYMOUS";
+
   @Bean
   public AuditorAware<String> auditorAware() {
     return () -> {
@@ -27,11 +29,12 @@ public class PersistenceModuleConfiguration {
       if (authentication != null) {
         Object principal = authentication.getPrincipal();
         if (principal instanceof AbstractUserEntity) {
-          return Optional.of(((AbstractUserEntity) principal).getUsername());
+          String username = ((AbstractUserEntity) principal).getUsername();
+          return Optional.of(username != null ? username : ANONYMOUS_USERNAME);
         }
       }
 
-      return Optional.of("ANONYMOUS");
+      return Optional.of(ANONYMOUS_USERNAME);
     };
   }
 }

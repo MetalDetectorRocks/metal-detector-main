@@ -141,9 +141,9 @@ public class SecurityConfig {
           .httpStrictTransportSecurity().disable()
       .and()
         .exceptionHandling()
-          .defaultAuthenticationEntryPointFor(authenticationEntryPoint, new AntPathRequestMatcher(HOME))
+          .defaultAuthenticationEntryPointFor(authenticationEntryPoint, new AntPathRequestMatcher(HOME)) // TODO DanielW: not needed, remove later
           .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(UNAUTHORIZED), new AntPathRequestMatcher(REST_ENDPOINTS))
-          .accessDeniedHandler(new CustomAccessDeniedHandler())
+          .accessDeniedHandler(new CustomAccessDeniedHandler()) // TODO DanielW: not needed, remove later
       .and()
         .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();

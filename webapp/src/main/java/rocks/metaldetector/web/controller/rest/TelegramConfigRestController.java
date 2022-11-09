@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.service.notification.config.TelegramConfigService;
-import rocks.metaldetector.support.Endpoints;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static rocks.metaldetector.support.Endpoints.Rest.TELEGRAM_CONFIG;
 
 @RestController
-@RequestMapping(Endpoints.Rest.TELEGRAM_CONFIG)
+@RequestMapping(TELEGRAM_CONFIG)
 @AllArgsConstructor
 public class TelegramConfigRestController {
 
