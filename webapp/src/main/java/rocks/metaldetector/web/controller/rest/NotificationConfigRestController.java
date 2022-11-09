@@ -11,7 +11,6 @@ import rocks.metaldetector.service.notification.config.NotificationConfigDto;
 import rocks.metaldetector.service.notification.config.NotificationConfigService;
 import rocks.metaldetector.service.notification.config.TelegramConfigDto;
 import rocks.metaldetector.service.notification.config.TelegramConfigService;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
 import rocks.metaldetector.web.api.response.NotificationConfigResponse;
 import rocks.metaldetector.web.transformer.NotificationConfigResponseTransformer;
@@ -21,9 +20,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_CONFIG;
 
 @RestController
-@RequestMapping(Endpoints.Rest.NOTIFICATION_CONFIG)
+@RequestMapping(NOTIFICATION_CONFIG)
 @AllArgsConstructor
 public class NotificationConfigRestController {
 
