@@ -12,8 +12,8 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.service.spotify.SpotifySynchronizationService;
+import rocks.metaldetector.testutil.BaseSpringBootTest;
 import rocks.metaldetector.testutil.DtoFactory.SynchronizeArtistsRequestFactory;
-import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -25,7 +25,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_SAVED_ARTISTS;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class SpotifySynchronizationRestControllerIntegrationTest implements WithIntegrationTestConfig {
+public class SpotifySynchronizationRestControllerIntegrationTest extends BaseSpringBootTest {
 
   @Autowired
   private MockMvc mockMvc;

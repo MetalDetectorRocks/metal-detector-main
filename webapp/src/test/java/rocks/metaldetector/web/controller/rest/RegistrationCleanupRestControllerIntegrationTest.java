@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import rocks.metaldetector.testutil.WithIntegrationTestConfig;
+import rocks.metaldetector.testutil.BaseSpringBootTest;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,7 +18,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class RegistrationCleanupRestControllerIntegrationTest implements WithIntegrationTestConfig {
+public class RegistrationCleanupRestControllerIntegrationTest extends BaseSpringBootTest {
 
   @Autowired
   private MockMvc mockMvc;

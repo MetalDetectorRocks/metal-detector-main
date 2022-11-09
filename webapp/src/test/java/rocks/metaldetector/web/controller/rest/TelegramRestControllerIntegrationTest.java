@@ -12,7 +12,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.service.telegram.TelegramUpdateFactory;
 import rocks.metaldetector.service.telegram.TelegramUpdateService;
-import rocks.metaldetector.testutil.WithIntegrationTestConfig;
+import rocks.metaldetector.testutil.BaseSpringBootTest;
 import rocks.metaldetector.web.api.request.TelegramUpdate;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -23,7 +23,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class TelegramRestControllerIntegrationTest implements WithIntegrationTestConfig {
+class TelegramRestControllerIntegrationTest extends BaseSpringBootTest {
 
   @Autowired
   private MockMvc mockMvc;

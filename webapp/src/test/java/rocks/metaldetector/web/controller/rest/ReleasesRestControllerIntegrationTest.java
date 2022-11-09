@@ -12,7 +12,7 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.butler.facade.ReleaseService;
-import rocks.metaldetector.testutil.WithIntegrationTestConfig;
+import rocks.metaldetector.testutil.BaseSpringBootTest;
 import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -26,7 +26,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ReleasesRestControllerIntegrationTest implements WithIntegrationTestConfig {
+public class ReleasesRestControllerIntegrationTest extends BaseSpringBootTest {
 
   @Autowired
   private MockMvc mockMvc;

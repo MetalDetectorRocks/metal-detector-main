@@ -11,7 +11,7 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.butler.facade.JobService;
-import rocks.metaldetector.testutil.WithIntegrationTestConfig;
+import rocks.metaldetector.testutil.BaseSpringBootTest;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -23,7 +23,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.IMPORT_JOB;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class JobRestControllerIntegrationTest implements WithIntegrationTestConfig {
+public class JobRestControllerIntegrationTest extends BaseSpringBootTest {
 
   @Autowired
   private MockMvc mockMvc;

@@ -12,8 +12,8 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.service.notification.config.NotificationConfigService;
+import rocks.metaldetector.testutil.BaseSpringBootTest;
 import rocks.metaldetector.testutil.DtoFactory.UpdateNotificationConfigRequestFactory;
-import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -24,7 +24,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_CONFIG;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class NotificationConfigRestControllerIntegrationTest implements WithIntegrationTestConfig {
+public class NotificationConfigRestControllerIntegrationTest extends BaseSpringBootTest {
 
   @Autowired
   private MockMvc mockMvc;
