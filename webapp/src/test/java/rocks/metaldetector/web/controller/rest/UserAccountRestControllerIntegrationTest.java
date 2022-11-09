@@ -12,9 +12,9 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.testutil.BaseSpringBootTest;
 import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UpdateUserRequestFactory;
-import rocks.metaldetector.testutil.WithIntegrationTestConfig;
 import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -27,7 +27,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserAccountRestControllerIntegrationTest implements WithIntegrationTestConfig {
+public class UserAccountRestControllerIntegrationTest extends BaseSpringBootTest {
 
   @Autowired
   private MockMvc mockMvc;

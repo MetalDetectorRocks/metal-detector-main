@@ -11,7 +11,7 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.service.notification.config.TelegramConfigService;
-import rocks.metaldetector.testutil.WithIntegrationTestConfig;
+import rocks.metaldetector.testutil.BaseSpringBootTest;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -21,7 +21,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.TELEGRAM_CONFIG;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TelegramConfigRestControllerIntegrationTest implements WithIntegrationTestConfig {
+public class TelegramConfigRestControllerIntegrationTest extends BaseSpringBootTest {
 
   @Autowired
   private MockMvc mockMvc;
