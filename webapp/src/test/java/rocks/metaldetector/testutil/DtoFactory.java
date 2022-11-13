@@ -13,6 +13,7 @@ import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
+import rocks.metaldetector.web.api.request.LoginRequest;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
@@ -420,6 +421,16 @@ public class DtoFactory {
 
     public static SynchronizeArtistsRequest createDefault() {
       return new SynchronizeArtistsRequest(List.of("1", "2", "3"));
+    }
+  }
+
+  public static class LoginRequestFactory {
+
+    public static LoginRequest createDefault() {
+      return LoginRequest.builder()
+          .username("user")
+          .password("password")
+          .build();
     }
   }
 }
