@@ -11,19 +11,25 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.testutil.BaseSpringBootTest;
-import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
-import rocks.metaldetector.testutil.DtoFactory.UpdateUserRequestFactory;
+import rocks.metaldetector.testutil.DtoFactory.UpdateEmailRequestFactory;
+import rocks.metaldetector.testutil.DtoFactory.UpdatePasswordRequestFactory;
 import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static rocks.metaldetector.support.Endpoints.Rest.USERS;
+import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER;
+import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER_EMAIL;
+import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER_PASSWORD;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -47,41 +53,45 @@ public class UserAccountRestControllerIntegrationTest extends BaseSpringBootTest
   class AdministratorRoleTest {
 
     @Test
-    @DisplayName("Administrator is allowed to GET on endpoint " + USERS + "' (all users)")
+    @DisplayName("Administrator is allowed to GET on endpoint " + CURRENT_USER + "")
     @WithMockUser(roles = {"ADMINISTRATOR"})
-    void administrator_is_allowed_to_fetch_all_users() throws Exception {
-      mockMvc.perform(get(USERS))
+    void administrator_is_allowed_to_fetch_current_user_information() throws Exception {
+      mockMvc.perform(get(CURRENT_USER))
           .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Administrator is allowed to GET on endpoint " + USERS + "' (certain user)")
+    @DisplayName("Administrator is allowed to PATCH on endpoint " + CURRENT_USER_EMAIL + "'")
     @WithMockUser(roles = {"ADMINISTRATOR"})
-    void administrator_is_allowed_to_fetch_certain_user() throws Exception {
-      mockMvc.perform(get(USERS + "/1"))
-          .andExpect(status().isOk());
-    }
+    void administrator_is_allowed_to_update_current_email() throws Exception {
+      doReturn(mock(UserDto.class)).when(userService).updateCurrentEmail(any());
 
-    @Test
-    @DisplayName("Administrator is allowed to POST on endpoint " + USERS + "'")
-    @WithMockUser(roles = {"ADMINISTRATOR"})
-    void administrator_is_allowed_to_create_another_administrator() throws Exception {
-      mockMvc.perform(post(USERS)
+      mockMvc.perform(patch(CURRENT_USER_EMAIL)
               .with(csrf())
-              .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
+              .content(objectMapper.writeValueAsString(UpdateEmailRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON)
           )
-          .andExpect(status().isCreated());
+          .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Administrator is allowed to PUT on endpoint " + USERS + "'")
+    @DisplayName("Administrator is allowed to PATCH on endpoint " + CURRENT_USER_PASSWORD + "'")
     @WithMockUser(roles = {"ADMINISTRATOR"})
-    void administrator_is_allowed_to_update_certain_user() throws Exception {
-      mockMvc.perform(put(USERS)
+    void administrator_is_allowed_to_update_current_password() throws Exception {
+      mockMvc.perform(patch(CURRENT_USER_PASSWORD)
               .with(csrf())
-              .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
+              .content(objectMapper.writeValueAsString(UpdatePasswordRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON)
+          )
+          .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Administrator is allowed to DELETE on endpoint " + CURRENT_USER + "'")
+    @WithMockUser(roles = {"ADMINISTRATOR"})
+    void administrator_is_allowed_to_remove_own_account() throws Exception {
+      mockMvc.perform(delete(CURRENT_USER)
+              .with(csrf())
           )
           .andExpect(status().isOk());
     }
@@ -91,43 +101,47 @@ public class UserAccountRestControllerIntegrationTest extends BaseSpringBootTest
   class UserRoleTest {
 
     @Test
-    @DisplayName("User is allowed to GET on endpoint " + USERS + "' (all users)")
+    @DisplayName("User is allowed to GET on endpoint " + CURRENT_USER + "")
     @WithMockUser
-    void user_is_allowed_to_fetch_all_users() throws Exception {
-      mockMvc.perform(get(USERS))
-          .andExpect(status().isForbidden());
+    void user_is_allowed_to_fetch_current_user_information() throws Exception {
+      mockMvc.perform(get(CURRENT_USER))
+          .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("User is allowed to GET on endpoint " + USERS + "' (certain user)")
+    @DisplayName("User is allowed to PATCH on endpoint " + CURRENT_USER_EMAIL + "'")
     @WithMockUser
-    void user_is_allowed_to_fetch_certain_user() throws Exception {
-      mockMvc.perform(get(USERS + "/1"))
-          .andExpect(status().isForbidden());
-    }
+    void user_is_allowed_to_update_current_email() throws Exception {
+      doReturn(mock(UserDto.class)).when(userService).updateCurrentEmail(any());
 
-    @Test
-    @DisplayName("User is allowed to POST on endpoint " + USERS + "'")
-    @WithMockUser
-    void user_is_allowed_to_create_another_administrator() throws Exception {
-      mockMvc.perform(post(USERS)
+      mockMvc.perform(patch(CURRENT_USER_EMAIL)
               .with(csrf())
-              .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
+              .content(objectMapper.writeValueAsString(UpdateEmailRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON)
           )
-          .andExpect(status().isForbidden());
+          .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("User is allowed to PUT on endpoint " + USERS + "'")
+    @DisplayName("User is allowed to PATCH on endpoint " + CURRENT_USER_PASSWORD + "'")
     @WithMockUser
-    void user_is_allowed_to_update_certain_user() throws Exception {
-      mockMvc.perform(put(USERS)
+    void user_is_allowed_to_update_current_password() throws Exception {
+      mockMvc.perform(patch(CURRENT_USER_PASSWORD)
               .with(csrf())
-              .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
+              .content(objectMapper.writeValueAsString(UpdatePasswordRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON)
           )
-          .andExpect(status().isForbidden());
+          .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("User is allowed to DELETE on endpoint " + CURRENT_USER + "'")
+    @WithMockUser
+    void user_is_allowed_to_remove_own_account() throws Exception {
+      mockMvc.perform(delete(CURRENT_USER)
+              .with(csrf())
+          )
+          .andExpect(status().isOk());
     }
   }
 
@@ -135,41 +149,45 @@ public class UserAccountRestControllerIntegrationTest extends BaseSpringBootTest
   class AnonymousUserTest {
 
     @Test
-    @DisplayName("Anonymous user is not allowed to GET on endpoint " + USERS + "' (all users)")
+    @DisplayName("Anonymous user is not allowed to GET on endpoint " + CURRENT_USER + "")
     @WithAnonymousUser
-    void anonymous_user_is_not_allowed_to_fetch_all_users() throws Exception {
-      mockMvc.perform(get(USERS))
+    void anonymous_user_is_not_allowed_to_fetch_current_user_information() throws Exception {
+      mockMvc.perform(get(CURRENT_USER))
           .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("Anonymous user is not allowed to GET on endpoint " + USERS + "' (certain user)")
+    @DisplayName("Anonymous user is not allowed to PATCH on endpoint " + CURRENT_USER_EMAIL + "'")
     @WithAnonymousUser
-    void anonymous_user_is_not_allowed_to_fetch_certain_user() throws Exception {
-      mockMvc.perform(get(USERS + "/1"))
-          .andExpect(status().isUnauthorized());
-    }
+    void anonymous_user_is_not_allowed_to_update_current_email() throws Exception {
+      doReturn(mock(UserDto.class)).when(userService).updateCurrentEmail(any());
 
-    @Test
-    @DisplayName("Anonymous user is not allowed to POST on endpoint " + USERS + "'")
-    @WithAnonymousUser
-    void anonymous_user_is_not_allowed_to_create_another_administrator() throws Exception {
-      mockMvc.perform(post(USERS)
+      mockMvc.perform(patch(CURRENT_USER_EMAIL)
               .with(csrf())
-              .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
+              .content(objectMapper.writeValueAsString(UpdateEmailRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON)
           )
           .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("Anonymous user is not allowed to PUT on endpoint " + USERS + "'")
+    @DisplayName("Anonymous user is not allowed to PATCH on endpoint " + CURRENT_USER_PASSWORD + "'")
     @WithAnonymousUser
-    void anonymous_user_is_not_allowed_to_update_certain_user() throws Exception {
-      mockMvc.perform(put(USERS)
+    void anonymous_user_is_not_allowed_to_update_current_password() throws Exception {
+      mockMvc.perform(patch(CURRENT_USER_PASSWORD)
               .with(csrf())
-              .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
+              .content(objectMapper.writeValueAsString(UpdatePasswordRequestFactory.createDefault()))
               .contentType(APPLICATION_JSON)
+          )
+          .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("Anonymous user is not allowed to DELETE on endpoint " + CURRENT_USER + "'")
+    @WithAnonymousUser
+    void anonymous_user_is_not_allowed_to_remove_own_account() throws Exception {
+      mockMvc.perform(delete(CURRENT_USER)
+              .with(csrf())
           )
           .andExpect(status().isUnauthorized());
     }
