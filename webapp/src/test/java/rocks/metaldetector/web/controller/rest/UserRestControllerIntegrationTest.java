@@ -101,7 +101,7 @@ class UserRestControllerIntegrationTest extends BaseSpringBootTest {
     @Test
     @DisplayName("Users cannot GET on endpoint " + USERS + "/{id}")
     @WithMockUser
-    void users_can_get_specified_user() throws Exception {
+    void users_cannot_get_specified_user() throws Exception {
       mockMvc.perform(get(USERS + "/{id}", "123"))
           .andExpect(status().isForbidden());
     }
@@ -109,7 +109,7 @@ class UserRestControllerIntegrationTest extends BaseSpringBootTest {
     @Test
     @DisplayName("Users cannot POST on endpoint " + USERS)
     @WithMockUser
-    void users_can_create_user_via_post() throws Exception {
+    void users_cannot_create_user_via_post() throws Exception {
       mockMvc.perform(post(USERS)
                           .with(csrf())
                           .content(objectMapper.writeValueAsString(RegisterUserRequestFactory.createDefault()))
@@ -120,7 +120,7 @@ class UserRestControllerIntegrationTest extends BaseSpringBootTest {
     @Test
     @DisplayName("Users cannot PUT on endpoint " + USERS)
     @WithMockUser
-    void users_can_update_user_via_put() throws Exception {
+    void users_cannot_update_user_via_put() throws Exception {
       mockMvc.perform(put(USERS)
                           .with(csrf())
                           .content(objectMapper.writeValueAsString(UpdateUserRequestFactory.createDefault()))
