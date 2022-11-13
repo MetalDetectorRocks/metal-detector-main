@@ -13,50 +13,47 @@ import rocks.metaldetector.testutil.BaseSpringBootTest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static rocks.metaldetector.support.Endpoints.Rest.DASHBOARD;
+import static rocks.metaldetector.support.Endpoints.Rest.MY_ARTISTS;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class DashboardRestControllerIntegrationTest extends BaseSpringBootTest {
+public class MyArtistsRestControllerIntegrationTest extends BaseSpringBootTest {
 
   @Autowired
   private MockMvc mockMvc;
 
   @Nested
-  @DisplayName("Tests for user with ADMINISTRATOR role")
   class AdministratorRoleTest {
 
     @Test
-    @DisplayName("Administrator is allowed to GET on endpoint " + DASHBOARD + "'")
+    @DisplayName("Administrator is allowed to GET on endpoint " + MY_ARTISTS + "'")
     @WithMockUser(roles = {"ADMINISTRATOR"})
-    void admin_is_allowed_to_get_dashboard() throws Exception {
-      mockMvc.perform(get(DASHBOARD))
+    void administrator_is_allowed_to_fetch_followed_artists() throws Exception {
+      mockMvc.perform(get(MY_ARTISTS))
           .andExpect(status().isOk());
     }
   }
 
   @Nested
-  @DisplayName("Tests for user with USER role")
   class UserRoleTest {
 
     @Test
-    @DisplayName("User is allowed to GET on endpoint " + DASHBOARD + "'")
+    @DisplayName("User is allowed to GET on endpoint " + MY_ARTISTS + "'")
     @WithMockUser
-    void user_is_allowed_to_get_dashboard() throws Exception {
-      mockMvc.perform(get(DASHBOARD))
+    void user_is_allowed_to_fetch_followed_artists() throws Exception {
+      mockMvc.perform(get(MY_ARTISTS))
           .andExpect(status().isOk());
     }
   }
 
   @Nested
-  @DisplayName("Tests for anonymous user")
   class AnonymousUserTest {
 
     @Test
-    @DisplayName("Anonymous user is not allowed to GET on endpoint " + DASHBOARD + "'")
+    @DisplayName("Anonymous user is not allowed to GET on endpoint " + MY_ARTISTS + "'")
     @WithAnonymousUser
-    void anonymous_user_is_not_allowed_to_get_dashboard() throws Exception {
-      mockMvc.perform(get(DASHBOARD))
+    void anonymous_user_is_not_allowed_to_fetch_followed_artists() throws Exception {
+      mockMvc.perform(get(MY_ARTISTS))
           .andExpect(status().isUnauthorized());
     }
   }

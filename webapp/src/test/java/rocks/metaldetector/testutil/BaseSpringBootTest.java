@@ -8,6 +8,7 @@ public abstract class BaseSpringBootTest implements WithIntegrationTestConfig {
 
   @MockBean
   OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
+
   @MockBean
   ClientRegistrationRepository clientRegistrationRepository;
 }

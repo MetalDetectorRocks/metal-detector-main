@@ -16,6 +16,10 @@ import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
+import rocks.metaldetector.web.api.request.SynchronizeArtistsRequest;
+import rocks.metaldetector.web.api.request.UpdateEmailRequest;
+import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
+import rocks.metaldetector.web.api.request.UpdatePasswordRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.ArtistSearchResponse;
 import rocks.metaldetector.web.api.response.ArtistSearchResponseEntryDto;
@@ -100,6 +104,26 @@ public class DtoFactory {
           .publicUserId("abc-123")
           .role("USER")
           .enabled(true)
+          .build();
+    }
+  }
+
+  public static class UpdateEmailRequestFactory {
+
+    public static UpdateEmailRequest createDefault() {
+      return UpdateEmailRequest.builder()
+          .emailAddress("john.d@example.com")
+          .build();
+    }
+  }
+
+  public static class UpdatePasswordRequestFactory {
+
+    public static UpdatePasswordRequest createDefault() {
+      return UpdatePasswordRequest.builder()
+          .oldPlainPassword("old-password")
+          .newPlainPassword("new-password")
+          .verifyNewPlainPassword("new-password")
           .build();
     }
   }
@@ -382,6 +406,20 @@ public class DtoFactory {
       return ArtistSearchResponse.builder()
           .searchResults(Collections.emptyList())
           .build();
+    }
+  }
+
+  public static class UpdateNotificationConfigRequestFactory {
+
+    public static UpdateNotificationConfigRequest createDefault() {
+      return new UpdateNotificationConfigRequest(true, true, true, 1, "EMAIL");
+    }
+  }
+
+  public static class SynchronizeArtistsRequestFactory {
+
+    public static SynchronizeArtistsRequest createDefault() {
+      return new SynchronizeArtistsRequest(List.of("1", "2", "3"));
     }
   }
 }
