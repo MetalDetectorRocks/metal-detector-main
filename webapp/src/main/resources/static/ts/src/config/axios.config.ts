@@ -1,3 +1,4 @@
+import * as qs from "qs";
 import { AxiosRequestConfig } from "axios";
 
 export const axiosConfig: AxiosRequestConfig = {
@@ -9,4 +10,5 @@ export const axiosConfig: AxiosRequestConfig = {
         "Content-Type": "application/json",
         Accept: "application/json",
     },
+    paramsSerializer: { serialize: (params: Record<string, any>) => qs.stringify(params, { indices: false }) },
 };
