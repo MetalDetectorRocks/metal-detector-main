@@ -1,5 +1,4 @@
 import * as qs from "qs";
-import { PathLike } from "fs";
 import { AxiosRequestConfig } from "axios";
 
 export const axiosConfig: AxiosRequestConfig = {
@@ -11,5 +10,5 @@ export const axiosConfig: AxiosRequestConfig = {
         "Content-Type": "application/json",
         Accept: "application/json",
     },
-    paramsSerializer: (params: PathLike) => qs.stringify(params, { indices: false }),
+    paramsSerializer: { serialize: (params: Record<string, any>) => qs.stringify(params, { indices: false }) },
 };
