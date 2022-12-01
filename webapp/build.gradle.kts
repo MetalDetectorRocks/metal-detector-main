@@ -55,11 +55,13 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-validation")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
-  implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity5:${libs.versions.thymeleafExtras.get()}")
-  implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${libs.versions.thymeleafDialect.get()}")
   implementation("org.apache.commons:commons-lang3:${libs.versions.commonsLang3.get()}")
   implementation("commons-codec:commons-codec:${libs.versions.commonsCodec.get()}")
-  implementation("org.ehcache:ehcache:${libs.versions.ehcache.get()}")
+  implementation("org.ehcache:ehcache:${libs.versions.ehcache.get()}") {
+    capabilities {
+      requireCapability("org.ehcache:ehcache-jakarta")
+    }
+  }
   implementation("org.jsoup:jsoup:${libs.versions.jsoup.get()}")
   implementation("org.projectlombok:lombok:${libs.versions.lombok.get()}")
   implementation("org.owasp.esapi:esapi:${libs.versions.esapi.get()}") {

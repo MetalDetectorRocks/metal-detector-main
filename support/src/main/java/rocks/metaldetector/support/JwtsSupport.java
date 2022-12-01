@@ -2,6 +2,7 @@ package rocks.metaldetector.support;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.jackson.io.JacksonSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpCookie;
@@ -24,6 +25,7 @@ public class JwtsSupport {
   public String generateToken(String subject, Duration expirationTime) {
     long currentTimeMillis = System.currentTimeMillis();
     return Jwts.builder()
+        .serializeToJsonWith(new JacksonSerializer<>())
         .setSubject(subject)
         .setId(UUID.randomUUID().toString())
         .setIssuedAt(new Date(currentTimeMillis))

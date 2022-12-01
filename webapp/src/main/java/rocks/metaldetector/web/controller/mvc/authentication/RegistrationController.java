@@ -1,5 +1,6 @@
 package rocks.metaldetector.web.controller.mvc.authentication;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
@@ -22,7 +23,6 @@ import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 import rocks.metaldetector.web.api.request.RegisterUserRequest;
 import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 

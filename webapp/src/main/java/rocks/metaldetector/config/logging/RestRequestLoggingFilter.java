@@ -1,10 +1,9 @@
 package rocks.metaldetector.config.logging;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import rocks.metaldetector.support.infrastructure.WithSensitiveDataRemover;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER_PASSWORD;
 

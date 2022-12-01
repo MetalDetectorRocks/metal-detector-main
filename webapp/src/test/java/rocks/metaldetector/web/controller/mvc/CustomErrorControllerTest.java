@@ -1,6 +1,7 @@
 package rocks.metaldetector.web.controller.mvc;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import jakarta.servlet.RequestDispatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,6 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
-import javax.servlet.RequestDispatcher;
 import java.util.Map;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;

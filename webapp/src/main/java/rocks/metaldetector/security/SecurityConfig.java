@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -61,7 +61,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
         havingValue = "true",
         matchIfMissing = true
 )
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -81,25 +81,24 @@ public class SecurityConfig {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-      .csrf()
-        .ignoringAntMatchers(Endpoints.Rest.LOGIN, ACTUATOR_ENDPOINTS)
+      .csrf().ignoringRequestMatchers(REST_ENDPOINTS)
       .and()
         .sessionManagement().sessionCreationPolicy(STATELESS)
       .and()
-        .authorizeRequests()
-          .antMatchers(ADMIN).hasRole(ROLE_ADMINISTRATOR.getName())
-          .antMatchers(RESOURCES).permitAll()
-          .antMatchers(GUEST_ONLY_PAGES).permitAll()
-          .antMatchers(PUBLIC_PAGES).permitAll()
-          .antMatchers(GET, RELEASES).permitAll()
-          .antMatchers(GET, TOP_UPCOMING_RELEASES).permitAll()
-          .antMatchers(GET, SEARCH_ARTIST).permitAll()
-          .antMatchers(GET, TOP_ARTISTS).permitAll()
-          .antMatchers(GET, AUTHENTICATION).permitAll()
-          .antMatchers(GET, CSRF).permitAll()
-          .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
-          .antMatchers(Endpoints.Rest.LOGIN).permitAll()
-          .antMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
+        .authorizeHttpRequests()
+          .requestMatchers(ADMIN).hasRole(ROLE_ADMINISTRATOR.getName())
+          .requestMatchers(RESOURCES).permitAll()
+          .requestMatchers(GUEST_ONLY_PAGES).permitAll()
+          .requestMatchers(PUBLIC_PAGES).permitAll()
+          .requestMatchers(GET, RELEASES).permitAll()
+          .requestMatchers(GET, TOP_UPCOMING_RELEASES).permitAll()
+          .requestMatchers(GET, SEARCH_ARTIST).permitAll()
+          .requestMatchers(GET, TOP_ARTISTS).permitAll()
+          .requestMatchers(GET, AUTHENTICATION).permitAll()
+          .requestMatchers(GET, CSRF).permitAll()
+          .requestMatchers(ACTUATOR_ENDPOINTS).permitAll()
+          .requestMatchers(Endpoints.Rest.LOGIN).permitAll()
+          .requestMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
           .anyRequest().authenticated()
       .and()
         .oauth2Login()

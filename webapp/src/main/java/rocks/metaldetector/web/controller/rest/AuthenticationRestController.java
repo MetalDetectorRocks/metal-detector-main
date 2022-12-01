@@ -1,5 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +14,6 @@ import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.web.api.request.LoginRequest;
 import rocks.metaldetector.web.api.response.AuthenticationResponse;
 import rocks.metaldetector.web.api.response.LoginResponse;
-
-import javax.validation.Valid;
 
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;

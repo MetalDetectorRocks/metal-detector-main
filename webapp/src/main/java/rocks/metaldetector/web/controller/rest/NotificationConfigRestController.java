@@ -1,5 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,6 @@ import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
 import rocks.metaldetector.web.api.response.NotificationConfigResponse;
 import rocks.metaldetector.web.transformer.NotificationConfigResponseTransformer;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 

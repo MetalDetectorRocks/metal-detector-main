@@ -1,5 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +18,6 @@ import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.UserResponse;
 import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 

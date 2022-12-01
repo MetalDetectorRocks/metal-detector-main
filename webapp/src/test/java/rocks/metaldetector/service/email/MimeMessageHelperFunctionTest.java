@@ -1,10 +1,9 @@
 package rocks.metaldetector.service.email;
 
+import jakarta.mail.internet.MimeMessage;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import javax.mail.internet.MimeMessage;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.Mockito.mock;

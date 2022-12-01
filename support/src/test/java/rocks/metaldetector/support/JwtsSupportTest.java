@@ -19,7 +19,7 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 class JwtsSupportTest implements WithAssertions {
 
-  private static final String TOKEN_SECRET = "dummy-token-secret";
+  private static final String TOKEN_SECRET = "dummyTokenSecretdummyTokenSecretdummyTokenSecretdummyTokenSecretdummyTokenSecretdummyTokenSecretdummyTokenSecret";
   private static final String TOKEN_ISSUER = "dummy-token-issuer";
 
   @Mock

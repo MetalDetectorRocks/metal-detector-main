@@ -1,6 +1,5 @@
 package rocks.metaldetector.config;
 
-import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
@@ -31,6 +31,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
   @Autowired
   public WebMvcConfig(RedirectionHandlerInterceptor redirectionHandlerInterceptor) {
     this.redirectionHandlerInterceptor = redirectionHandlerInterceptor;
+  }
+
+  @Override
+  public void configurePathMatch(PathMatchConfigurer configurer) {
+    configurer.setUseTrailingSlashMatch(true);
   }
 
   @Override
@@ -70,11 +75,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
   public void addCorsMappings(CorsRegistry registry) {
     String[] allowedOrigins = Stream.of(frontendOrigin, "http://localhost:3000").distinct().toArray(String[]::new);
     registry.addMapping(REST_ENDPOINTS).allowedOrigins(allowedOrigins).allowCredentials(true);
-  }
-
-  @Bean
-  public LayoutDialect layoutDialect() {
-    return new LayoutDialect();
   }
 
   @Bean

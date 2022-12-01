@@ -1,5 +1,7 @@
 package rocks.metaldetector.web.controller.rest;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +17,6 @@ import rocks.metaldetector.web.api.request.SynchronizeArtistsRequest;
 import rocks.metaldetector.web.api.response.SpotifyArtistSynchronizationResponse;
 import rocks.metaldetector.web.api.response.SpotifyFetchArtistsResponse;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;

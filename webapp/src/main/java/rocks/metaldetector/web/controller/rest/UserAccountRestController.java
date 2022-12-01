@@ -1,5 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,8 +14,6 @@ import rocks.metaldetector.web.api.request.UpdateEmailRequest;
 import rocks.metaldetector.web.api.request.UpdatePasswordRequest;
 import rocks.metaldetector.web.api.response.UserResponse;
 import rocks.metaldetector.web.transformer.UserDtoTransformer;
-
-import javax.validation.Valid;
 
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;

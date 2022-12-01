@@ -1,5 +1,6 @@
 package rocks.metaldetector.service.exceptions;
 
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,6 @@ import rocks.metaldetector.support.exceptions.ExternalServiceException;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.web.api.response.ErrorResponse;
 
-import javax.validation.ValidationException;
 import java.util.List;
 import java.util.stream.Collectors;
 

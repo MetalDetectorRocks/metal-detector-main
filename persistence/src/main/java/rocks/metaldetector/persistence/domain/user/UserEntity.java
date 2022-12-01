@@ -1,5 +1,7 @@
 package rocks.metaldetector.persistence.domain.user;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -7,8 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
 import java.util.Set;
 
 @Getter
