@@ -3,7 +3,6 @@ import java.time.format.DateTimeFormatter
 
 plugins {
   id("org.springframework.boot")
-  id("org.siouan.frontend-jdk11")
   id("de.europace.docker-publish")
 }
 
@@ -22,28 +21,12 @@ springBoot {
 
 tasks {
   bootJar {
-    dependsOn(assembleFrontend)
     archiveClassifier.set("boot")
     enabled = true
   }
 
   jar {
     enabled = false
-  }
-
-  frontend {
-    nodeDistributionProvided.set(false)
-    nodeVersion.set("16.16.0")
-    nodeDistributionUrlRoot.set("https://nodejs.org/dist/")
-    nodeDistributionUrlPathPattern.set("vVERSION/node-vVERSION-ARCH.TYPE")
-    nodeInstallDirectory.set(file("${projectDir}/node"))
-
-    installScript.set("install")
-    cleanScript.set("run clean")
-    assembleScript.set("run assemble")
-    checkScript.set("run test")
-
-    packageJsonDirectory.set(file("${projectDir}/src/main/resources/static/ts"))
   }
 }
 
