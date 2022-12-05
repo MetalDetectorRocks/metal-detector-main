@@ -34,7 +34,6 @@ import rocks.metaldetector.support.SecurityProperties;
 import javax.sql.DataSource;
 import java.time.Duration;
 
-import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
@@ -46,13 +45,32 @@ import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 import static rocks.metaldetector.support.Endpoints.Frontend.LOGOUT;
+import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
+import static rocks.metaldetector.support.Endpoints.Rest.COVER_JOB;
 import static rocks.metaldetector.support.Endpoints.Rest.CSRF;
+import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER;
+import static rocks.metaldetector.support.Endpoints.Rest.DASHBOARD;
+import static rocks.metaldetector.support.Endpoints.Rest.FOLLOW_ARTIST;
+import static rocks.metaldetector.support.Endpoints.Rest.IMPORT_JOB;
+import static rocks.metaldetector.support.Endpoints.Rest.MY_ARTISTS;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_CONFIG;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_ANNOUNCEMENT_DATE;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_FREQUENCY;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE_DATE;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
+import static rocks.metaldetector.support.Endpoints.Rest.OAUTH;
+import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
+import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION;
+import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_SAVED_ARTISTS;
+import static rocks.metaldetector.support.Endpoints.Rest.TELEGRAM_CONFIG;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_ARTISTS;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.UNFOLLOW_ARTIST;
+import static rocks.metaldetector.support.Endpoints.Rest.UPDATE_RELEASE;
+import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 
 @Configuration
 @EnableWebSecurity
@@ -86,20 +104,40 @@ public class SecurityConfig {
         .sessionManagement().sessionCreationPolicy(STATELESS)
       .and()
         .authorizeHttpRequests()
-          .requestMatchers(ADMIN).hasRole(ROLE_ADMINISTRATOR.getName())
           .requestMatchers(RESOURCES).permitAll()
           .requestMatchers(GUEST_ONLY_PAGES).permitAll()
           .requestMatchers(PUBLIC_PAGES).permitAll()
-          .requestMatchers(GET, RELEASES).permitAll()
-          .requestMatchers(GET, TOP_UPCOMING_RELEASES).permitAll()
-          .requestMatchers(GET, SEARCH_ARTIST).permitAll()
-          .requestMatchers(GET, TOP_ARTISTS).permitAll()
-          .requestMatchers(GET, AUTHENTICATION).permitAll()
-          .requestMatchers(GET, CSRF).permitAll()
-          .requestMatchers(ACTUATOR_ENDPOINTS).permitAll()
-          .requestMatchers(Endpoints.Rest.LOGIN).permitAll()
-          .requestMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
-          .anyRequest().authenticated()
+          .requestMatchers(ACTUATOR_ENDPOINTS,
+                           NOTIFICATION_TELEGRAM + "/" + botId,
+                           Endpoints.Rest.LOGIN,
+                           RELEASES,
+                           TOP_UPCOMING_RELEASES,
+                           SEARCH_ARTIST,
+                           TOP_ARTISTS,
+                           AUTHENTICATION,
+                           CSRF).permitAll()
+          .requestMatchers(FOLLOW_ARTIST + "/**",
+                           UNFOLLOW_ARTIST + "/**",
+                           DASHBOARD,
+                           MY_ARTISTS,
+                           SPOTIFY_SAVED_ARTISTS,
+                           SPOTIFY_ARTIST_SYNCHRONIZATION,
+                           NOTIFICATION_CONFIG,
+                           OAUTH + "/{registration-id}",
+                           TELEGRAM_CONFIG,
+                           "/rest/v1/logging/**",
+                           CURRENT_USER + "/**").authenticated()
+          .requestMatchers(ADMIN,
+                           UPDATE_RELEASE,
+                           ALL_RELEASES,
+                           IMPORT_JOB,
+                           COVER_JOB,
+                           REGISTRATION_CLEANUP,
+                           USERS + "/**",
+                           NOTIFICATION_ON_FREQUENCY,
+                           NOTIFICATION_ON_RELEASE_DATE,
+                           NOTIFICATION_ON_ANNOUNCEMENT_DATE).hasRole(ROLE_ADMINISTRATOR.getName())
+          .anyRequest().denyAll()
       .and()
         .oauth2Login()
           .loginPage(Endpoints.Authentication.LOGIN)

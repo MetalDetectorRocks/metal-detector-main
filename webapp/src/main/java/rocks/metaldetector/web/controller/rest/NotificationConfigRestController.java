@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.service.notification.config.NotificationConfigDto;
 import rocks.metaldetector.service.notification.config.NotificationConfigService;
@@ -23,7 +22,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_CONFIG;
 
 @RestController
-@RequestMapping(NOTIFICATION_CONFIG)
 @AllArgsConstructor
 public class NotificationConfigRestController {
 
@@ -31,14 +29,14 @@ public class NotificationConfigRestController {
   private final TelegramConfigService telegramConfigService;
   private final NotificationConfigResponseTransformer notificationConfigResponseTransformer;
 
-  @GetMapping(produces = APPLICATION_JSON_VALUE)
+  @GetMapping(path = NOTIFICATION_CONFIG, produces = APPLICATION_JSON_VALUE)
   ResponseEntity<NotificationConfigResponse> getCurrentUsersNotificationConfigs() {
     List<NotificationConfigDto> notificationConfigDtos = notificationConfigService.getCurrentUserNotificationConfigs();
     Optional<TelegramConfigDto> telegramConfigOptional = telegramConfigService.getCurrentUserTelegramConfig();
     return ResponseEntity.ok(notificationConfigResponseTransformer.transformResponse(notificationConfigDtos, telegramConfigOptional.orElse(null)));
   }
 
-  @PutMapping(consumes = APPLICATION_JSON_VALUE)
+  @PutMapping(path = NOTIFICATION_CONFIG, consumes = APPLICATION_JSON_VALUE)
   ResponseEntity<Void> updateCurrentUserNotificationConfig(@Valid @RequestBody UpdateNotificationConfigRequest updateNotificationConfigRequest) {
     NotificationConfigDto notificationConfigDto = notificationConfigResponseTransformer.transformUpdateRequest(updateNotificationConfigRequest);
     notificationConfigService.updateCurrentUserNotificationConfig(notificationConfigDto);

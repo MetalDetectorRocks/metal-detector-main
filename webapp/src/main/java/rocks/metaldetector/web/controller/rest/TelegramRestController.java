@@ -27,8 +27,7 @@ public class TelegramRestController {
     this.botId = botId;
   }
 
-  @PostMapping(path = NOTIFICATION_TELEGRAM + "/{botId}",
-               consumes = APPLICATION_JSON_VALUE)
+  @PostMapping(path = NOTIFICATION_TELEGRAM + "/{botId}", consumes = APPLICATION_JSON_VALUE)
   public ResponseEntity<Void> handleWebhook(@PathVariable String botId, @RequestBody @Valid TelegramUpdate update) {
     if (this.botId.equals(botId)) {
       telegramUpdateService.processUpdate(update);

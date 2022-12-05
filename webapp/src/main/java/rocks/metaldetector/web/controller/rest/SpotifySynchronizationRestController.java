@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.service.spotify.SpotifyFetchType;
 import rocks.metaldetector.service.spotify.SpotifySynchronizationService;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.api.request.SynchronizeArtistsRequest;
 import rocks.metaldetector.web.api.response.SpotifyArtistSynchronizationResponse;
 import rocks.metaldetector.web.api.response.SpotifyFetchArtistsResponse;
@@ -20,6 +19,8 @@ import rocks.metaldetector.web.api.response.SpotifyFetchArtistsResponse;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION;
+import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_SAVED_ARTISTS;
 
 @RestController
 @AllArgsConstructor
@@ -29,15 +30,13 @@ public class SpotifySynchronizationRestController {
 
   private final SpotifySynchronizationService spotifySynchronizationService;
 
-  @PostMapping(path = Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION,
-               produces = APPLICATION_JSON_VALUE)
+  @PostMapping(path = SPOTIFY_ARTIST_SYNCHRONIZATION, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<SpotifyArtistSynchronizationResponse> synchronizeArtists(@Valid @RequestBody SynchronizeArtistsRequest request) {
     int artistsCount = spotifySynchronizationService.synchronizeArtists(request.getArtistIds());
     return ResponseEntity.ok(new SpotifyArtistSynchronizationResponse(artistsCount));
   }
 
-  @GetMapping(path = Endpoints.Rest.SPOTIFY_SAVED_ARTISTS,
-              produces = APPLICATION_JSON_VALUE)
+  @GetMapping(path = SPOTIFY_SAVED_ARTISTS, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<SpotifyFetchArtistsResponse> fetchSavedSpotifyArtists(@RequestParam(value = FETCH_TYPES_PARAM) @NotEmpty List<SpotifyFetchType> fetchTypes) {
     List<SpotifyArtistDto> savedArtists = spotifySynchronizationService.fetchSavedArtists(fetchTypes);
     return ResponseEntity.ok(new SpotifyFetchArtistsResponse(savedArtists));

@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.service.telegram.TelegramUpdateFactory;
 import rocks.metaldetector.service.telegram.TelegramUpdateService;
@@ -23,6 +24,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestPropertySource(properties = {"telegram.bot-id=abc"})
 class TelegramRestControllerIntegrationTest extends BaseSpringBootTest {
 
   @Autowired
@@ -33,7 +35,7 @@ class TelegramRestControllerIntegrationTest extends BaseSpringBootTest {
   private TelegramUpdateService telegramUpdateService;
 
   private final TelegramUpdate update = TelegramUpdateFactory.createDefault();
-  private final String botId = "100";
+  private final String botId = "abc";
 
   @Autowired
   private ObjectMapper objectMapper;
