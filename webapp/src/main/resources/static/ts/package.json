@@ -18,7 +18,7 @@
   "author": "Daniel Wagner",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/node": "^18.11.10",
+    "@types/node": "^18.11.11",
     "@types/qs": "^6.9.7",
     "@typescript-eslint/eslint-plugin": "^5.45.1",
     "@typescript-eslint/parser": "^5.45.1",
