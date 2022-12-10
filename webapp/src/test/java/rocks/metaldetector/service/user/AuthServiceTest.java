@@ -114,7 +114,7 @@ class AuthServiceTest implements WithAssertions {
     void should_generate_authentication_token_with_public_user_id_and_configured_duration() {
       // given
       long durationInMinutes = 123;
-      doReturn(durationInMinutes).when(securityProperties).getAuthTokenExpirationInMinutes();
+      doReturn(durationInMinutes).when(securityProperties).getAccessTokenExpirationInMin();
 
       String publicUserId = UUID.randomUUID().toString();
       doReturn(publicUserId).when(userMock).getPublicId();

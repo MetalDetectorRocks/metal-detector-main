@@ -11,8 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.core.SqlParameterValue;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import rocks.metaldetector.config.constants.ViewNames;
@@ -26,13 +24,9 @@ import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.service.user.UserService;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static rocks.metaldetector.service.user.events.UserDeletionEventListener.DELETE_QUERY;
-import static rocks.metaldetector.service.user.events.UserDeletionEventListener.PARAMETER_NAME;
 import static rocks.metaldetector.service.user.events.UserDeletionEventListener.SPOTIFY_REGISTRATION_ID;
-import static rocks.metaldetector.service.user.events.UserDeletionEventListener.VARCHAR_SQL_TYPE;
 
 @ExtendWith(MockitoExtension.class)
 class UserDeletionEventListenerTest implements WithAssertions {
@@ -116,25 +110,6 @@ class UserDeletionEventListenerTest implements WithAssertions {
 
     // then
     verify(oAuth2AuthorizedClientService).removeAuthorizedClient(SPOTIFY_REGISTRATION_ID, userDeletionEvent.getUserEntity().getUsername());
-  }
-
-  @Test
-  @DisplayName("Persistent logins are cleared via jdbcTemplate")
-  void test_persistent_logins_cleared() {
-    // given
-    ArgumentCaptor<MapSqlParameterSource> argumentCaptor = ArgumentCaptor.forClass(MapSqlParameterSource.class);
-
-    // when
-    underTest.onApplicationEvent(userDeletionEvent);
-
-    // then
-    verify(jdbcTemplate).update(eq(DELETE_QUERY), argumentCaptor.capture());
-    MapSqlParameterSource parameterSource = argumentCaptor.getValue();
-    SqlParameterValue value = (SqlParameterValue) parameterSource.getValue(PARAMETER_NAME);
-
-    assertThat(value).isNotNull();
-    assertThat(value.getSqlType()).isEqualTo(VARCHAR_SQL_TYPE);
-    assertThat((String) value.getValue()).isEqualTo(userDeletionEvent.getUserEntity().getUsername());
   }
 
   @Test
