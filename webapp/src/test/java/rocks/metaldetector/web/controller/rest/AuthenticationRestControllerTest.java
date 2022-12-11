@@ -16,24 +16,30 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseCookie;
 import rocks.metaldetector.security.AuthenticationFacade;
+import rocks.metaldetector.service.auth.TokenPair;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
-import rocks.metaldetector.service.user.AuthService;
-import rocks.metaldetector.service.user.RefreshTokenService;
+import rocks.metaldetector.service.auth.AuthService;
+import rocks.metaldetector.service.auth.RefreshTokenService;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
+import rocks.metaldetector.web.api.auth.AccessTokenResponse;
 import rocks.metaldetector.web.api.request.LoginRequest;
-import rocks.metaldetector.web.api.response.AuthenticationResponse;
-import rocks.metaldetector.web.api.response.LoginResponse;
+import rocks.metaldetector.web.api.auth.AuthenticationResponse;
+import rocks.metaldetector.web.api.auth.LoginResponse;
+import rocks.metaldetector.web.controller.rest.auth.AuthenticationRestController;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.LOGIN;
+import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationRestControllerTest implements WithAssertions {
@@ -163,6 +169,83 @@ class AuthenticationRestControllerTest implements WithAssertions {
 
       // then
       assertThat(headers).contains(new Header(SET_COOKIE, "foo=bar"));
+    }
+  }
+
+  @Nested
+  class RefreshAccessTokenTests {
+
+    @BeforeEach
+    void setup() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(REFRESH_ACCESS_TOKEN);
+      RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
+    }
+
+    @Test
+    @DisplayName("should return 400 if refresh token cookie is not present")
+    void should_return_400_if_refresh_token_cookie_is_not_present() {
+      // when
+      var response = restAssuredUtils.doGetWithCookies(Map.of());
+
+      // then
+      response.status(BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("should return ok")
+    void should_return_ok() {
+      // given
+      var tokenPair = new TokenPair("eyAccessToken", ResponseCookie.from("foo", "bar").build());
+      doReturn(tokenPair).when(refreshTokenService).refreshTokens(any());
+
+      // when
+      var response = restAssuredUtils.doGetWithCookies(Map.of("refresh_token", "eyFoo"));
+
+      // then
+      response.status(OK);
+    }
+
+    @Test
+    @DisplayName("should pass refresh token from cookie to refresh token service")
+    void should_pass_refresh_token_from_cookie_to_refresh_token_service() {
+      // given
+      var refreshToken = "eyRefreshToken";
+
+      // when
+      restAssuredUtils.doGetWithCookies(Map.of("refresh_token", refreshToken));
+
+      // then
+      verify(refreshTokenService).refreshTokens(refreshToken);
+    }
+
+    @Test
+    @DisplayName("should return access token response in body")
+    void should_return_access_token_response() {
+      // given
+      var accessTokenResponse = new AccessTokenResponse("eyAccessToken");
+      var tokenPair = new TokenPair("eyAccessToken", ResponseCookie.from("foo", "bar").build());
+      doReturn(tokenPair).when(refreshTokenService).refreshTokens(any());
+
+      // when
+      var response = restAssuredUtils.doGetWithCookies(Map.of("refresh_token", "eyFoo"));
+
+      // then
+      var extractedResponse = response.extract().as(AccessTokenResponse.class);
+      assertThat(extractedResponse).isEqualTo(accessTokenResponse);
+    }
+
+    @Test
+    @DisplayName("should return response with cookie header")
+    void should_return_response_with_cookie_header() {
+      // given
+      var tokenPair = new TokenPair("eyAccessToken", ResponseCookie.from("refresh_token", "eyRefreshToken").build());
+      doReturn(tokenPair).when(refreshTokenService).refreshTokens(any());
+
+      // when
+      var headers = restAssuredUtils.doGetWithCookiesReturningHeaders(Map.of("refresh_token", "eyFoo"));
+
+      // then
+      assertThat(headers).contains(new Header(SET_COOKIE, "refresh_token=eyRefreshToken"));
     }
   }
 }

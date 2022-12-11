@@ -43,6 +43,7 @@ import static rocks.metaldetector.support.Endpoints.Frontend.LOGOUT;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.CSRF;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
+import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_ARTISTS;
@@ -90,6 +91,7 @@ public class SecurityConfig {
           .antMatchers(GET, CSRF).permitAll()
           .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
           .antMatchers(Endpoints.Rest.LOGIN).permitAll()
+          .antMatchers(REFRESH_ACCESS_TOKEN).permitAll()
           .antMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
           .anyRequest().authenticated()
       .and()

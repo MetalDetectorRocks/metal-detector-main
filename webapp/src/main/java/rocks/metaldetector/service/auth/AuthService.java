@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.user;
+package rocks.metaldetector.service.auth;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
@@ -13,7 +13,7 @@ import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.SecurityProperties;
 import rocks.metaldetector.web.api.request.LoginRequest;
-import rocks.metaldetector.web.api.response.LoginResponse;
+import rocks.metaldetector.web.api.auth.LoginResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
@@ -39,7 +39,7 @@ public class AuthService {
     );
     return LoginResponse.builder()
         .username(request.getUsername())
-        .token(token)
+        .accessToken(token)
         .roles(user.getUserRoles().stream().map(UserRole::getDisplayName).collect(Collectors.toList()))
         .build();
   }

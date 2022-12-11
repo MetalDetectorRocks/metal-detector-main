@@ -1,5 +1,6 @@
 package rocks.metaldetector.persistence.domain.user;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import rocks.metaldetector.persistence.domain.BaseEntity;
@@ -16,6 +17,7 @@ public class RefreshTokenEntity extends BaseEntity {
 
   @OneToOne(targetEntity = UserEntity.class)
   @JoinColumn(nullable = false, name = "users_id")
+  @Getter
   private UserEntity user;
 
   @Column(name = "token", unique = true)

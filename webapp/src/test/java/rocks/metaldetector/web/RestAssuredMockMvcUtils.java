@@ -66,6 +66,26 @@ public class RestAssuredMockMvcUtils {
           .then();
   }
 
+  public ValidatableMockMvcResponse doGetWithCookies(Map<String, Object> cookies) {
+    return given()
+          .config(NO_SECURITY_CONFIG)
+          .accept(JSON)
+          .cookies(cookies)
+        .when()
+          .get(requestUri)
+        .then();
+  }
+
+  public Headers doGetWithCookiesReturningHeaders(Map<String, Object> cookies) {
+    return given()
+          .config(NO_SECURITY_CONFIG)
+          .accept(JSON)
+          .cookies(cookies)
+        .when()
+          .get(requestUri)
+        .getHeaders();
+  }
+
   public ValidatableMockMvcResponse doPost() {
     return given()
             .config(NO_SECURITY_CONFIG)

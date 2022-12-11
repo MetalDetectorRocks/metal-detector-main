@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.user;
+package rocks.metaldetector.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.persistence.domain.user.RefreshTokenEntity;
 import rocks.metaldetector.persistence.domain.user.RefreshTokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
+import rocks.metaldetector.service.exceptions.UnauthorizedException;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.SecurityProperties;
 
@@ -18,7 +19,7 @@ import java.time.Duration;
 public class RefreshTokenService {
 
   static final int OFFSET_IN_MINUTES = 5;
-  static final String COOKIE_NAME = "refresh_token";
+  public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
 
   private final RefreshTokenRepository refreshTokenRepository;
   private final UserRepository userRepository;
@@ -31,16 +32,39 @@ public class RefreshTokenService {
     RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity();
     refreshTokenEntity = refreshTokenRepository.save(refreshTokenEntity);
 
-    Duration duration = Duration.ofMinutes(securityProperties.getRefreshTokenExpirationInMin());
-    String refreshToken = jwtsSupport.generateToken(refreshTokenEntity.getId().toString(), duration);
+    String refreshToken = createRefreshToken(refreshTokenEntity.getId().toString());
     refreshTokenEntity.setToken(refreshToken);
     refreshTokenEntity.setUser(userRepository.getByUsername(username));
 
     return createCookie(refreshToken);
   }
 
+  @Transactional
+  public TokenPair refreshTokens(String refreshToken) {
+    if (!refreshTokenRepository.existsByToken(refreshToken) || !jwtsSupport.validateJwtToken(refreshToken)) {
+      throw new UnauthorizedException();
+    }
+
+    RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.getByToken(refreshToken);
+    String accessToken = createAccessToken(refreshTokenEntity.getUser().getPublicId());
+    String newRefreshToken = createRefreshToken(refreshTokenEntity.getId().toString());
+    refreshTokenEntity.setToken(newRefreshToken);
+
+    return new TokenPair(accessToken, createCookie(newRefreshToken));
+  }
+
+  private String createRefreshToken(String tokenEntityId) {
+    Duration duration = Duration.ofMinutes(securityProperties.getRefreshTokenExpirationInMin());
+    return jwtsSupport.generateToken(tokenEntityId, duration);
+  }
+
+  private String createAccessToken(String publicUserId) {
+    Duration duration = Duration.ofMinutes(securityProperties.getAccessTokenExpirationInMin());
+    return jwtsSupport.generateToken(publicUserId, duration);
+  }
+
   private ResponseCookie createCookie(String refreshToken) {
-    return ResponseCookie.from(COOKIE_NAME, refreshToken)
+    return ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, refreshToken)
         .maxAge(Duration.ofMinutes(securityProperties.getRefreshTokenExpirationInMin() - OFFSET_IN_MINUTES))
         .secure(securityProperties.isSecureCookie())
         .httpOnly(true)
