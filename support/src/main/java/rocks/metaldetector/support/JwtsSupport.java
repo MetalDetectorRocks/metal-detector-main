@@ -1,12 +1,14 @@
 package rocks.metaldetector.support;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.jackson.io.JacksonSerializer;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.HttpCookie;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -18,6 +20,7 @@ import static io.jsonwebtoken.SignatureAlgorithm.HS512;
 @Component
 @PropertySource(value = "classpath:application.yml")
 @RequiredArgsConstructor
+@Slf4j
 public class JwtsSupport {
 
   private final SecurityProperties securityProperties;
@@ -29,27 +32,39 @@ public class JwtsSupport {
         .setSubject(subject)
         .setId(UUID.randomUUID().toString())
         .setIssuedAt(new Date(currentTimeMillis))
-        .setIssuer(securityProperties.getTokenIssuer())
+        .setIssuer(securityProperties.getJwtIssuer())
         .setExpiration(new Date(currentTimeMillis + expirationTime.toMillis()))
-        .signWith(HS512, securityProperties.getTokenSecret())
+        .signWith(HS512, securityProperties.getJwtSecret())
         .compact();
   }
 
   public Claims getClaims(String token) {
     return Jwts.parser()
-        .setSigningKey(securityProperties.getTokenSecret())
+        .setSigningKey(securityProperties.getJwtSecret())
         .parseClaimsJws(token)
         .getBody();
   }
 
-  public HttpCookie createAccessTokenCookie(String token) {
-    return ResponseCookie.from("Authorization", token)
-        .maxAge(Duration.ofMinutes(securityProperties.getAuthTokenExpirationInMinutes()))
-//        .secure(true) // ToDo: activate later
-//        .httpOnly(true) // ToDo: activate later
-        .path("/") // ToDo: correct?
-        .domain("localhost") // ToDo: change later
-        .sameSite("Strict") // ToDo: correct?
-        .build();
+  public boolean validateJwtToken(String authToken) {
+    try {
+      Jwts.parser()
+          .setSigningKey(securityProperties.getJwtSecret())
+          .parseClaimsJws(authToken);
+      return true;
+    }
+    catch (MalformedJwtException e) {
+      log.error("Invalid JWT token: {}", e.getMessage());
+    }
+    catch (ExpiredJwtException e) {
+      log.error("JWT token is expired: {}", e.getMessage());
+    }
+    catch (UnsupportedJwtException e) {
+      log.error("JWT token is unsupported: {}", e.getMessage());
+    }
+    catch (IllegalArgumentException e) {
+      log.error("JWT claims string is empty: {}", e.getMessage());
+    }
+
+    return false;
   }
 }

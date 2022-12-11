@@ -12,8 +12,8 @@ import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.WebUtils;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.support.JwtsSupport;
@@ -24,7 +24,6 @@ import java.io.IOException;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
 
-// ToDo NilsD add test
 @Slf4j
 @Component
 @AllArgsConstructor
@@ -38,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     try {
       String token = parseHeader(request);
-      if (token != null) {
+      if (StringUtils.hasText(token) && jwtsSupport.validateJwtToken(token)) {
         Claims claims = jwtsSupport.getClaims(token);
         AbstractUserEntity user = userRepository.findByPublicId(claims.getSubject())
             .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
@@ -57,15 +56,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private String parseHeader(HttpServletRequest request) {
     String authHeader = request.getHeader(AUTHORIZATION);
-
-    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+    if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
       return authHeader.substring(7);
-    }
-
-    Cookie cookie = WebUtils.getCookie(request, "Authorization");
-
-    if (cookie != null) {
-      return cookie.getValue();
     }
 
     return null;

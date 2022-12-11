@@ -9,9 +9,9 @@ import org.springframework.context.annotation.PropertySource;
 @Data
 public class SecurityProperties {
 
-  private String tokenIssuer;
-  private String tokenSecret;
-  private String rememberMeSecret;
-  private long authTokenExpirationInMinutes;
-
+  private String jwtIssuer;
+  private String jwtSecret;
+  private long accessTokenExpirationInMin;
+  private long refreshTokenExpirationInMin;
+  private boolean secureCookie;
 }

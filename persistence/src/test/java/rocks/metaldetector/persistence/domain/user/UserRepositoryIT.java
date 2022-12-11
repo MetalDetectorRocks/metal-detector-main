@@ -104,6 +104,26 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
   }
 
   @Test
+  @DisplayName("getByUsername() should return the correct user entity")
+  void get_by_username_should_return_the_correct_user_entity() {
+    // when
+    UserEntity user = underTest.getByUsername(johnDoe.getUsername());
+
+    // then
+    assertThat(user).isEqualTo(johnDoe);
+  }
+
+  @Test
+  @DisplayName("getByUsername() should not return oauth user entity")
+  void get_by_username_should_not_return_oauth_user_entity() {
+    // given
+    UserEntity user = underTest.getByUsername(oAuthUser.getUsername());
+
+    // then
+    assertThat(user).isNull();
+  }
+
+  @Test
   @DisplayName("findByPublicId() should return the correct user entity")
   void find_by_public_id_should_return_user_entity() {
     Optional<AbstractUserEntity> user = underTest.findByPublicId(johnDoe.getPublicId());

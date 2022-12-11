@@ -14,11 +14,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpCookie;
+import org.springframework.http.ResponseCookie;
 import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.user.AuthService;
-import rocks.metaldetector.support.JwtsSupport;
+import rocks.metaldetector.service.user.RefreshTokenService;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.LoginRequest;
 import rocks.metaldetector.web.api.response.AuthenticationResponse;
@@ -45,7 +45,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
   private AuthService authService;
 
   @Mock
-  private JwtsSupport jwtsSupport;
+  private RefreshTokenService refreshTokenService;
 
   @InjectMocks
   private AuthenticationRestController underTest;
@@ -54,7 +54,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(authenticationFacade, authService, jwtsSupport);
+    reset(authenticationFacade, authService, refreshTokenService);
   }
 
   @Nested
@@ -120,18 +120,18 @@ class AuthenticationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("should create token cookie via jwts support")
-    void should_create_token_cookie_via_jwts_support() {
+    @DisplayName("should pass username to refresh token service")
+    void should_pass_username_to_refresh_token_service() {
       // given
-      var testToken = "test-token";
-      var loginResponse = new LoginResponse("user", new ArrayList<>(), testToken);
+      var loginResponse = new LoginResponse("user", new ArrayList<>(), "test-token");
       doReturn(loginResponse).when(authService).loginUser(any());
+      doReturn(ResponseCookie.from("foo", "bar").build()).when(refreshTokenService).createRefreshTokenCookie(any());
 
       // when
       restAssuredUtils.doPost(new LoginRequest("user", "pass"));
 
       // then
-      verify(jwtsSupport).createAccessTokenCookie(testToken);
+      verify(refreshTokenService).createRefreshTokenCookie("user");
     }
 
     @Test
@@ -140,7 +140,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
       // given
       var loginResponse = new LoginResponse("user", new ArrayList<>(), "test-token");
       doReturn(loginResponse).when(authService).loginUser(any());
-      doReturn(new HttpCookie("foo", null)).when(jwtsSupport).createAccessTokenCookie(any());
+      doReturn(ResponseCookie.from("foo", "bar").build()).when(refreshTokenService).createRefreshTokenCookie(any());
 
       // when
       ValidatableMockMvcResponse response = restAssuredUtils.doPost(new LoginRequest("user", "pass"));
@@ -152,11 +152,11 @@ class AuthenticationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("should return response with headers")
-    void should_return_response_with_headers() {
+    @DisplayName("should return response with cookie header")
+    void should_return_response_with_cookie_header() {
       // given
       doReturn(new LoginResponse("user", new ArrayList<>(), "test-token")).when(authService).loginUser(any());
-      doReturn(new HttpCookie("foo", "bar")).when(jwtsSupport).createAccessTokenCookie(any());
+      doReturn(ResponseCookie.from("foo", "bar").build()).when(refreshTokenService).createRefreshTokenCookie(any());
 
       // when
       Headers headers = restAssuredUtils.doPostReturningHeaders(new LoginRequest("user", "pass"));

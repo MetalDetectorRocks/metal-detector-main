@@ -12,13 +12,11 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.security.RedirectionHandlerInterceptor;
 import rocks.metaldetector.support.Endpoints;
 
 import java.util.stream.Stream;
 
 import static java.util.Locale.ENGLISH;
-import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
 
 @Configuration
@@ -26,12 +24,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
   @Value("${frontend.origin}")
   private String frontendOrigin;
-  private final RedirectionHandlerInterceptor redirectionHandlerInterceptor;
-
-  @Autowired
-  public WebMvcConfig(RedirectionHandlerInterceptor redirectionHandlerInterceptor) {
-    this.redirectionHandlerInterceptor = redirectionHandlerInterceptor;
-  }
 
   @Override
   public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -64,11 +56,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     registry.addViewController(Endpoints.AdminArea.INDEX).setViewName(ViewNames.AdminArea.INDEX);
     registry.addViewController(Endpoints.AdminArea.RELEASES).setViewName(ViewNames.AdminArea.RELEASES);
     registry.addViewController(Endpoints.AdminArea.USERS).setViewName(ViewNames.AdminArea.USERS);
-  }
-
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(redirectionHandlerInterceptor).addPathPatterns(GUEST_ONLY_PAGES);
   }
 
   @Override
