@@ -1,13 +1,12 @@
 package rocks.metaldetector.persistence.domain.user;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import rocks.metaldetector.persistence.domain.BaseEntity;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 
 @Entity(name = "refresh_tokens")
 @NoArgsConstructor

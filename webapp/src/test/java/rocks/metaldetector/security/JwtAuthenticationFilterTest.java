@@ -1,6 +1,8 @@
 package rocks.metaldetector.security;
 
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,8 +23,6 @@ import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.support.JwtsSupport;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Optional;
 

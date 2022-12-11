@@ -1,5 +1,6 @@
 package rocks.metaldetector.service.user;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
@@ -10,7 +11,6 @@ import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.SecurityProperties;
 
-import javax.transaction.Transactional;
 import java.time.Duration;
 
 @Service

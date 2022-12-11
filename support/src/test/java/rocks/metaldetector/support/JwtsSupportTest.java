@@ -93,7 +93,7 @@ class JwtsSupportTest implements WithAssertions {
         .setSubject(UUID.randomUUID().toString())
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() - 1))
-        .signWith(SignatureAlgorithm.HS512, "someKey")
+        .signWith(SignatureAlgorithm.HS512, "someKeysomeKeysomeKeysomeKeysomeKeysomeKeysomeKeysomeKeysomeKeysomeKeysomeKeysomeKeysomeKey")
         .compact();
 
     // when
