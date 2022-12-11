@@ -16,6 +16,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,7 +49,7 @@ import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 @Slf4j
 public class RestExceptionsHandler {
 
-  @ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class})
+  @ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class, MissingRequestCookieException.class})
   public Object handleBadRequests(Exception exception, WebRequest webRequest) {
     log.error(webRequest.getContextPath() + ": " + exception.getMessage());
     String requestUri = ((ServletWebRequest) webRequest).getRequest().getRequestURI();
@@ -106,7 +107,7 @@ public class RestExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(FORBIDDEN, exception), new HttpHeaders(), FORBIDDEN);
   }
 
-  @ExceptionHandler({BadCredentialsException.class, AccountStatusException.class})
+  @ExceptionHandler({UnauthorizedException.class, BadCredentialsException.class, AccountStatusException.class})
   public ResponseEntity<ErrorResponse> handleBadCredentialsException(RuntimeException exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(UNAUTHORIZED, exception), new HttpHeaders(), UNAUTHORIZED);

@@ -1,4 +1,4 @@
-package rocks.metaldetector.web.api.response;
+package rocks.metaldetector.web.api.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +15,6 @@ public class LoginResponse {
 
   private String username;
   private List<String> roles;
-  private String token;
+  private String accessToken;
 
 }
