@@ -15,8 +15,6 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
 
-import static io.jsonwebtoken.SignatureAlgorithm.HS512;
-
 @Component
 @PropertySource(value = "classpath:application.yml")
 @RequiredArgsConstructor
@@ -34,21 +32,23 @@ public class JwtsSupport {
         .setIssuedAt(new Date(currentTimeMillis))
         .setIssuer(securityProperties.getJwtIssuer())
         .setExpiration(new Date(currentTimeMillis + expirationTime.toMillis()))
-        .signWith(HS512, securityProperties.getJwtSecret())
+        .signWith(securityProperties.getKey())
         .compact();
   }
 
   public Claims getClaims(String token) {
-    return Jwts.parser()
-        .setSigningKey(securityProperties.getJwtSecret())
+    return Jwts.parserBuilder()
+        .setSigningKey(securityProperties.getKey())
+        .build()
         .parseClaimsJws(token)
         .getBody();
   }
 
   public boolean validateJwtToken(String authToken) {
     try {
-      Jwts.parser()
-          .setSigningKey(securityProperties.getJwtSecret())
+      Jwts.parserBuilder()
+          .setSigningKey(securityProperties.getKey())
+          .build()
           .parseClaimsJws(authToken);
       return true;
     }
