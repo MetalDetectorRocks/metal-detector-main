@@ -91,7 +91,7 @@ public class SecurityConfig {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-      .csrf().ignoringRequestMatchers(REST_ENDPOINTS) // TODO DanielW: check
+      .csrf().ignoringRequestMatchers(REST_ENDPOINTS) // TODO DanielW: enable csrf
       .and()
         .sessionManagement().sessionCreationPolicy(STATELESS)
       .and()
@@ -107,6 +107,7 @@ public class SecurityConfig {
                            SEARCH_ARTIST,
                            TOP_ARTISTS,
                            AUTHENTICATION,
+                           REFRESH_ACCESS_TOKEN,
                            CSRF).permitAll()
           .requestMatchers(FOLLOW_ARTIST + "/**",
                            UNFOLLOW_ARTIST + "/**",
