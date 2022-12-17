@@ -1,8 +1,8 @@
 package rocks.metaldetector.web.controller.rest;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +17,6 @@ import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.UserResponse;
 import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +28,6 @@ import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 @RestController
 @RequestMapping(USERS)
 @AllArgsConstructor
-@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 public class UserRestController {
 
   private final UserService userService;
@@ -38,14 +36,13 @@ public class UserRestController {
   @GetMapping(produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<List<UserResponse>> getAllUsers() {
     List<UserResponse> response = userService.getAllUsers().stream()
-            .map(userDtoTransformer::transformUserResponse)
-            .collect(Collectors.toList());
+        .map(userDtoTransformer::transformUserResponse)
+        .collect(Collectors.toList());
 
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping(path = "/{id}",
-              produces = APPLICATION_JSON_VALUE)
+  @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<UserResponse> getUser(@PathVariable(name = "id") String publicUserId) {
     UserDto userDto = userService.getUserByPublicId(publicUserId);
     UserResponse response = userDtoTransformer.transformUserResponse(userDto);
@@ -53,8 +50,7 @@ public class UserRestController {
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping(consumes = APPLICATION_JSON_VALUE,
-               produces = APPLICATION_JSON_VALUE)
+  @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<UserResponse> createAdministrator(@Valid @RequestBody RegisterUserRequest request) {
     UserDto userDto = userDtoTransformer.transformUserDto(request);
     UserDto createdUserDto = userService.createAdministrator(userDto);
@@ -63,8 +59,7 @@ public class UserRestController {
     return ResponseEntity.status(CREATED).body(response);
   }
 
-  @PutMapping(consumes = APPLICATION_JSON_VALUE,
-              produces = APPLICATION_JSON_VALUE)
+  @PutMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest request) {
     UserDto userDto = userDtoTransformer.transformUserDto(request);
     UserDto updatedUserDto = userService.updateUser(request.getPublicUserId(), userDto);

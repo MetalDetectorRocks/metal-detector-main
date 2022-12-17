@@ -18,9 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestPropertySource(properties = {
-    "management.health.mail.enabled=false"
-})
+@TestPropertySource(locations = {"classpath:integrationtest.properties"}, properties = {"management.health.mail.enabled=false"})
 @AutoConfigureMockMvc
 @SpringBootTest
 public class ActuatorEndpointSecurityIntegrationTest extends BaseSpringBootTest {
@@ -34,16 +32,16 @@ public class ActuatorEndpointSecurityIntegrationTest extends BaseSpringBootTest 
   @WithAnonymousUser
   void anonymous_user_is_allowed_to_call_actuator_endpoints(String actuatorEndpoint) throws Exception {
     mockMvc.perform(get(actuatorEndpoint))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   private static Stream<Arguments> actuatorEndpointProvider() {
     return Stream.of(
-            Arguments.of("/actuator"),
-            Arguments.of("/actuator/info"),
-            Arguments.of("/actuator/health"),
-            Arguments.of("/actuator/metrics")
+        Arguments.of("/actuator"),
+        Arguments.of("/actuator/info"),
+        Arguments.of("/actuator/health"),
+        Arguments.of("/actuator/metrics")
     );
   }
 }

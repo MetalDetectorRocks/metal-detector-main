@@ -13,7 +13,6 @@ import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Component
 @AllArgsConstructor

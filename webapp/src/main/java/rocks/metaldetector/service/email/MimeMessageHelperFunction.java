@@ -1,11 +1,11 @@
 package rocks.metaldetector.service.email;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.util.function.Function;
 
 import static java.nio.charset.StandardCharsets.UTF_8;

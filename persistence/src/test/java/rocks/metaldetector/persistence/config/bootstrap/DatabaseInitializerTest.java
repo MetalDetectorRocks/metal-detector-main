@@ -1,5 +1,7 @@
 package rocks.metaldetector.persistence.config.bootstrap;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,8 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import java.util.Collections;
 import java.util.List;
 

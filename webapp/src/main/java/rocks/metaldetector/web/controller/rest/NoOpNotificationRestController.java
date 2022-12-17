@@ -2,7 +2,6 @@ package rocks.metaldetector.web.controller.rest;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,7 +10,6 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_FREQUEN
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE_DATE;
 
 @RestController
-@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 @Profile("prod")
 public class NoOpNotificationRestController {
 

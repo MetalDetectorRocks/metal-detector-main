@@ -2,7 +2,7 @@ package rocks.metaldetector.support;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,17 +14,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.security.Key;
 import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class JwtsSupportTest implements WithAssertions {
 
-  private static final String TOKEN_SECRET = "dummy-token-secret";
+  private static final String TOKEN_SECRET = "dummyTokenSecretdummyTokenSecretdummyTokenSecretdummyTokenSecretdummyTokenSecretdummyTokenSecretdummyTokenSecret";
   private static final String TOKEN_ISSUER = "dummy-token-issuer";
 
   @Mock
@@ -33,11 +35,15 @@ class JwtsSupportTest implements WithAssertions {
   @InjectMocks
   private JwtsSupport underTest;
 
+  private Key createTestKey() {
+    return Keys.hmacShaKeyFor(TOKEN_SECRET.getBytes(UTF_8));
+  }
+
   @Test
   @DisplayName("generateToken() should generate a new and unique token")
   void generate_token_should_generate_a_new_and_unique_token() {
     // given
-    doReturn(TOKEN_SECRET).when(securityProperties).getJwtSecret();
+    doReturn(createTestKey()).when(securityProperties).getKey();
 
     // when
     String token1 = underTest.generateToken("Dummy Subject", Duration.ofHours(1));
@@ -53,7 +59,7 @@ class JwtsSupportTest implements WithAssertions {
   void get_claims_should_return_correct_values_from_token() {
     // given
     doReturn(TOKEN_ISSUER).when(securityProperties).getJwtIssuer();
-    doReturn(TOKEN_SECRET).when(securityProperties).getJwtSecret();
+    doReturn(createTestKey()).when(securityProperties).getKey();
     final String SUBJECT = "Dummy Subject";
     long currentMillis = System.currentTimeMillis();
 
@@ -75,7 +81,7 @@ class JwtsSupportTest implements WithAssertions {
   void should_successfully_validate_token() {
     // given
     doReturn(TOKEN_ISSUER).when(securityProperties).getJwtIssuer();
-    doReturn(TOKEN_SECRET).when(securityProperties).getJwtSecret();
+    doReturn(createTestKey()).when(securityProperties).getKey();
     String token = underTest.generateToken("foo", Duration.ofMinutes(1));
 
     // when
@@ -93,7 +99,7 @@ class JwtsSupportTest implements WithAssertions {
         .setSubject(UUID.randomUUID().toString())
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() - 1))
-        .signWith(SignatureAlgorithm.HS512, "someKey")
+        .signWith(createTestKey())
         .compact();
 
     // when

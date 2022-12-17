@@ -1,5 +1,6 @@
 package rocks.metaldetector.web.controller.mvc.authentication;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +18,6 @@ import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
 
-import javax.validation.Valid;
 import java.util.Date;
 
 import static org.springframework.http.HttpStatus.OK;

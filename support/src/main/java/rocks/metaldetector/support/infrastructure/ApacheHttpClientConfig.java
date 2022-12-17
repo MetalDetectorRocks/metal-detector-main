@@ -1,26 +1,28 @@
 package rocks.metaldetector.support.infrastructure;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HeaderElement;
-import org.apache.http.HeaderElementIterator;
-import org.apache.http.HeaderIterator;
-import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
-import org.apache.http.conn.routing.HttpRoute;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicHeaderElementIterator;
-import org.apache.http.protocol.HTTP;
+import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
+import org.apache.hc.client5.http.HttpRoute;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.time.Duration;
+import java.util.Iterator;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Configuration
 @Slf4j
@@ -29,6 +31,7 @@ public class ApacheHttpClientConfig {
   private static final int MAX_ROUTE_CONNECTIONS = 40;
   private static final int MAX_TOTAL_CONNECTIONS = 40;
   private static final int MAX_LOCALHOST_CONNECTIONS = 80;
+  private static final String KEEP_ALIVE_HEADER_NAME = "Keep-alive";
 
   private final int port;
 
@@ -55,20 +58,19 @@ public class ApacheHttpClientConfig {
 
   @Bean
   public ConnectionKeepAliveStrategy connectionKeepAliveStrategy() {
-    return (httpResponse, httpContext) -> {
-      HeaderIterator headerIterator = httpResponse.headerIterator(HTTP.CONN_KEEP_ALIVE);
-      HeaderElementIterator elementIterator = new BasicHeaderElementIterator(headerIterator);
+    return (HttpResponse httpResponse, HttpContext httpContext) -> {
+      Iterator<Header> headerIterator = httpResponse.headerIterator(KEEP_ALIVE_HEADER_NAME);
 
-      while (elementIterator.hasNext()) {
-        HeaderElement element = elementIterator.nextElement();
+      while (headerIterator.hasNext()) {
+        Header element = headerIterator.next();
         String param = element.getName();
         String value = element.getValue();
         if (value != null && param.equalsIgnoreCase("timeout")) {
-          return Long.parseLong(value) * 1000; // convert to ms
+          return TimeValue.of(Long.parseLong(value) * 1000, MILLISECONDS); // convert to ms
         }
       }
 
-      return Duration.ofSeconds(20).toMillis();
+      return TimeValue.of(20, SECONDS);
     };
   }
 
@@ -80,8 +82,8 @@ public class ApacheHttpClientConfig {
       public void run() {
         // only if connection pool is initialised
         if (pool != null) {
-          pool.closeExpiredConnections();
-          pool.closeIdleConnections(10, MINUTES);
+          pool.closeExpired();
+          pool.closeIdle(TimeValue.of(10, MINUTES));
         }
       }
     };
@@ -90,9 +92,9 @@ public class ApacheHttpClientConfig {
   @Bean
   public CloseableHttpClient httpClient() {
     RequestConfig requestConfig = RequestConfig.custom()
-        .setConnectTimeout((int) Duration.ofSeconds(20).toMillis()) // the time for waiting until a connection is established
-        .setConnectionRequestTimeout((int) Duration.ofSeconds(20).toMillis()) // the time for waiting for a connection from connection pool
-        .setSocketTimeout((int) Duration.ofSeconds(90).toMillis()) // the time for waiting for data
+        .setConnectTimeout(Timeout.of(20, SECONDS)) // the time for waiting until a connection is established
+        .setConnectionRequestTimeout(Timeout.of(20, SECONDS)) // the time for waiting for a connection from connection pool
+        .setResponseTimeout(Timeout.of(90, SECONDS)) // the time for waiting for data
         .build();
 
     return HttpClients.custom()

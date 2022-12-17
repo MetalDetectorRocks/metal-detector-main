@@ -1,5 +1,6 @@
 package rocks.metaldetector.service.auth;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.AuthenticationFacade;
@@ -15,7 +17,6 @@ import rocks.metaldetector.support.SecurityProperties;
 import rocks.metaldetector.web.api.request.LoginRequest;
 import rocks.metaldetector.web.api.auth.LoginResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ public class AuthService {
   private HttpServletRequest httpRequest;
   private SecurityProperties securityProperties;
 
+  @Transactional(readOnly = true)
   public LoginResponse loginUser(LoginRequest request) {
     authenticateUser(request);
     AbstractUserEntity user = authenticationFacade.getCurrentUser();

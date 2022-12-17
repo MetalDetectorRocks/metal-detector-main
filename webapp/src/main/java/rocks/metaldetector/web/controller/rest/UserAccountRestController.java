@@ -1,5 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,8 +15,6 @@ import rocks.metaldetector.web.api.request.UpdatePasswordRequest;
 import rocks.metaldetector.web.api.response.UserResponse;
 import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
-import javax.validation.Valid;
-
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER;
@@ -29,17 +28,14 @@ public class UserAccountRestController {
   private final UserService userService;
   private final UserDtoTransformer userDtoTransformer;
 
-  @GetMapping(path = CURRENT_USER,
-              produces = APPLICATION_JSON_VALUE)
+  @GetMapping(path = CURRENT_USER, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<UserResponse> getCurrentUser() {
     UserDto currentUser = userService.getCurrentUser();
     UserResponse response = userDtoTransformer.transformUserResponse(currentUser);
     return ResponseEntity.ok(response);
   }
 
-  @PatchMapping(path = CURRENT_USER_EMAIL,
-                consumes = APPLICATION_JSON_VALUE,
-                produces = APPLICATION_JSON_VALUE)
+  @PatchMapping(path = CURRENT_USER_EMAIL, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<String> updateCurrentEmail(@Valid @RequestBody UpdateEmailRequest request) {
     UserDto updatedUserDto = userService.updateCurrentEmail(request.getEmailAddress());
     return ResponseEntity.ok(updatedUserDto.getEmail());
@@ -51,8 +47,7 @@ public class UserAccountRestController {
     return ResponseEntity.ok().build();
   }
 
-  @PatchMapping(path = CURRENT_USER_PASSWORD,
-                consumes = APPLICATION_JSON_VALUE)
+  @PatchMapping(path = CURRENT_USER_PASSWORD, consumes = APPLICATION_JSON_VALUE)
   public ResponseEntity<Void> updateCurrentPassword(@Valid @RequestBody UpdatePasswordRequest request) {
     userService.updateCurrentPassword(request.getOldPlainPassword(), request.getNewPlainPassword());
     return ResponseEntity.status(OK).build();

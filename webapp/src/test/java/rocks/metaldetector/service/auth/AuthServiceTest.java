@@ -1,5 +1,6 @@
 package rocks.metaldetector.service.auth;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +21,6 @@ import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.SecurityProperties;
 import rocks.metaldetector.web.api.request.LoginRequest;
 import rocks.metaldetector.web.api.auth.LoginResponse;
-
-import javax.servlet.http.HttpServletRequest;
 
 import java.time.Duration;
 import java.util.List;

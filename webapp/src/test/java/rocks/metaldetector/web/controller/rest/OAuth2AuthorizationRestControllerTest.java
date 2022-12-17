@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.oauth.OAuth2AuthenticationProvider;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 
@@ -26,6 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
+import static rocks.metaldetector.support.Endpoints.Rest.OAUTH;
 
 @ExtendWith(MockitoExtension.class)
 class OAuth2AuthorizationRestControllerTest implements WithAssertions {
@@ -44,7 +44,7 @@ class OAuth2AuthorizationRestControllerTest implements WithAssertions {
   @BeforeEach
   void setup() {
     OAuth2AuthorizationRestController underTest = new OAuth2AuthorizationRestController(oAuth2AuthorizedClientService, authenticationProvider);
-    restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.OAUTH);
+    restAssuredUtils = new RestAssuredMockMvcUtils(OAUTH);
     RestAssuredMockMvc.standaloneSetup(underTest);
     doReturn(PRINCIPAL).when(authenticationProvider).provideForGrant(any());
   }

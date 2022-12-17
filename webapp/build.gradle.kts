@@ -3,7 +3,6 @@ import java.time.format.DateTimeFormatter
 
 plugins {
   id("org.springframework.boot")
-  id("org.siouan.frontend-jdk11")
   id("de.europace.docker-publish")
 }
 
@@ -22,28 +21,12 @@ springBoot {
 
 tasks {
   bootJar {
-    dependsOn(assembleFrontend)
     archiveClassifier.set("boot")
     enabled = true
   }
 
   jar {
     enabled = false
-  }
-
-  frontend {
-    nodeDistributionProvided.set(false)
-    nodeVersion.set("16.16.0")
-    nodeDistributionUrlRoot.set("https://nodejs.org/dist/")
-    nodeDistributionUrlPathPattern.set("vVERSION/node-vVERSION-ARCH.TYPE")
-    nodeInstallDirectory.set(file("${projectDir}/node"))
-
-    installScript.set("install")
-    cleanScript.set("run clean")
-    assembleScript.set("run assemble")
-    checkScript.set("run test")
-
-    packageJsonDirectory.set(file("${projectDir}/src/main/resources/static/ts"))
   }
 }
 
@@ -55,11 +38,13 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-validation")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
-  implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity5:${libs.versions.thymeleafExtras.get()}")
-  implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${libs.versions.thymeleafDialect.get()}")
   implementation("org.apache.commons:commons-lang3:${libs.versions.commonsLang3.get()}")
   implementation("commons-codec:commons-codec:${libs.versions.commonsCodec.get()}")
-  implementation("org.ehcache:ehcache:${libs.versions.ehcache.get()}")
+  implementation("org.ehcache:ehcache:${libs.versions.ehcache.get()}") {
+    capabilities {
+      requireCapability("org.ehcache:ehcache-jakarta")
+    }
+  }
   implementation("org.jsoup:jsoup:${libs.versions.jsoup.get()}")
   implementation("org.projectlombok:lombok:${libs.versions.lombok.get()}")
   implementation("org.owasp.esapi:esapi:${libs.versions.esapi.get()}") {
@@ -70,8 +55,8 @@ dependencies {
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-  runtimeOnly("org.flywaydb:flyway-core:${libs.versions.flyway.get()}")
-  runtimeOnly("io.micrometer:micrometer-registry-prometheus:${libs.versions.micrometer.get()}")
+  runtimeOnly("org.flywaydb:flyway-core")
+  runtimeOnly("io.micrometer:micrometer-registry-prometheus")
   runtimeOnly("javax.cache:cache-api:${libs.versions.cacheApi.get()}")
 
   implementation(rootProject.projects.support)
@@ -83,7 +68,7 @@ dependencies {
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("com.h2database:h2:${libs.versions.h2.get()}")
+  testImplementation("com.h2database:h2")
   testImplementation("io.rest-assured:rest-assured:${libs.versions.restAssured.get()}")
   testImplementation("io.rest-assured:json-path:${libs.versions.restAssured.get()}")
   testImplementation("io.rest-assured:xml-path:${libs.versions.restAssured.get()}")

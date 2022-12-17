@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<AbstractUserEntity, Long> 
 
   Optional<AbstractUserEntity> findByEmail(String email);
 
-  @Query("select u from users u where dtype = 'native_users' and u.username = :username")
+  @Query(value = "select * from users as u where u.dtype = 'native_users' and u.username = :username", nativeQuery = true)
   Optional<AbstractUserEntity> findByUsername(@Param("username") String username);
 
   UserEntity getByUsername(String username);
@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<AbstractUserEntity, Long> 
 
   boolean existsByEmail(String email);
 
-  @Query("select case when count(u) > 0 then true else false end from users u where dtype = 'native_users' and u.username = :username")
+  @Query(value = "select case when count(*) > 0 then true else false end from users as u where u.dtype = 'native_users' and u.username = :username", nativeQuery = true)
   boolean existsByUsername(@Param("username") String username);
 
   @Query(value = "select * from users as u where u.created_date = u.last_modified_date and u.enabled = false and u.created_date < NOW() - interval '10' day", nativeQuery = true)

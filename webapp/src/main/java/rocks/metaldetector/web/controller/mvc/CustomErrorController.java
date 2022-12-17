@@ -1,5 +1,7 @@
 package rocks.metaldetector.web.controller.mvc;
 
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
@@ -9,8 +11,6 @@ import org.springframework.web.servlet.ModelAndView;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.support.Endpoints;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Controller

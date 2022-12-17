@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -28,7 +28,6 @@ import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
 import rocks.metaldetector.security.handler.CustomLogoutSuccessHandler;
 import rocks.metaldetector.support.Endpoints;
 
-import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
@@ -40,14 +39,33 @@ import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 import static rocks.metaldetector.support.Endpoints.Frontend.LOGOUT;
+import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
+import static rocks.metaldetector.support.Endpoints.Rest.COVER_JOB;
 import static rocks.metaldetector.support.Endpoints.Rest.CSRF;
+import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER;
+import static rocks.metaldetector.support.Endpoints.Rest.DASHBOARD;
+import static rocks.metaldetector.support.Endpoints.Rest.FOLLOW_ARTIST;
+import static rocks.metaldetector.support.Endpoints.Rest.IMPORT_JOB;
+import static rocks.metaldetector.support.Endpoints.Rest.MY_ARTISTS;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_CONFIG;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_ANNOUNCEMENT_DATE;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_FREQUENCY;
+import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE_DATE;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
 import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
+import static rocks.metaldetector.support.Endpoints.Rest.OAUTH;
+import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
+import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION;
+import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_SAVED_ARTISTS;
+import static rocks.metaldetector.support.Endpoints.Rest.TELEGRAM_CONFIG;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_ARTISTS;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.UNFOLLOW_ARTIST;
+import static rocks.metaldetector.support.Endpoints.Rest.UPDATE_RELEASE;
+import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 
 @Configuration
 @EnableWebSecurity
@@ -56,7 +74,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
         havingValue = "true",
         matchIfMissing = true
 )
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -73,27 +91,46 @@ public class SecurityConfig {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-      .csrf()
-        .ignoringAntMatchers(Endpoints.Rest.LOGIN, ACTUATOR_ENDPOINTS)
+      .csrf().ignoringRequestMatchers(REST_ENDPOINTS) // TODO DanielW: enable csrf
       .and()
         .sessionManagement().sessionCreationPolicy(STATELESS)
       .and()
-        .authorizeRequests()
-          .antMatchers(ADMIN).hasRole(ROLE_ADMINISTRATOR.getName())
-          .antMatchers(RESOURCES).permitAll()
-          .antMatchers(GUEST_ONLY_PAGES).permitAll()
-          .antMatchers(PUBLIC_PAGES).permitAll()
-          .antMatchers(GET, RELEASES).permitAll()
-          .antMatchers(GET, TOP_UPCOMING_RELEASES).permitAll()
-          .antMatchers(GET, SEARCH_ARTIST).permitAll()
-          .antMatchers(GET, TOP_ARTISTS).permitAll()
-          .antMatchers(GET, AUTHENTICATION).permitAll()
-          .antMatchers(GET, CSRF).permitAll()
-          .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
-          .antMatchers(Endpoints.Rest.LOGIN).permitAll()
-          .antMatchers(REFRESH_ACCESS_TOKEN).permitAll()
-          .antMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
-          .anyRequest().authenticated()
+        .authorizeHttpRequests()
+          .requestMatchers(RESOURCES).permitAll()
+          .requestMatchers(GUEST_ONLY_PAGES).permitAll()
+          .requestMatchers(PUBLIC_PAGES).permitAll()
+          .requestMatchers(ACTUATOR_ENDPOINTS,
+                           NOTIFICATION_TELEGRAM + "/" + botId,
+                           Endpoints.Rest.LOGIN,
+                           RELEASES,
+                           TOP_UPCOMING_RELEASES,
+                           SEARCH_ARTIST,
+                           TOP_ARTISTS,
+                           AUTHENTICATION,
+                           REFRESH_ACCESS_TOKEN,
+                           CSRF).permitAll()
+          .requestMatchers(FOLLOW_ARTIST + "/**",
+                           UNFOLLOW_ARTIST + "/**",
+                           DASHBOARD,
+                           MY_ARTISTS,
+                           SPOTIFY_SAVED_ARTISTS,
+                           SPOTIFY_ARTIST_SYNCHRONIZATION,
+                           NOTIFICATION_CONFIG,
+                           OAUTH + "/{registration-id}",
+                           TELEGRAM_CONFIG,
+                           "/rest/v1/logging/**",
+                           CURRENT_USER + "/**").authenticated()
+          .requestMatchers(ADMIN,
+                           UPDATE_RELEASE,
+                           ALL_RELEASES,
+                           IMPORT_JOB,
+                           COVER_JOB,
+                           REGISTRATION_CLEANUP,
+                           USERS + "/**",
+                           NOTIFICATION_ON_FREQUENCY,
+                           NOTIFICATION_ON_RELEASE_DATE,
+                           NOTIFICATION_ON_ANNOUNCEMENT_DATE).hasRole(ROLE_ADMINISTRATOR.getName())
+          .anyRequest().denyAll()
       .and()
         .oauth2Login()
           .loginPage(Endpoints.Authentication.LOGIN)

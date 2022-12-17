@@ -45,6 +45,7 @@ public class Endpoints {
     public static final String SPOTIFY_SAVED_ARTISTS          = "/rest/v1/spotify/saved-artists";
     public static final String ALL_RELEASES                   = "/rest/v1/releases/all";
     public static final String RELEASES                       = "/rest/v1/releases";
+    public static final String UPDATE_RELEASE                 = "/rest/v1/releases/{releaseId:[0-9]+}";
     public static final String TOP_UPCOMING_RELEASES          = "/rest/v1/releases/top";
     public static final String IMPORT_JOB                     = "/rest/v1/releases/import";
     public static final String COVER_JOB                      = "/rest/v1/releases/cover-reload";

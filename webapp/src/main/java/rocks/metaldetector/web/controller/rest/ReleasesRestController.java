@@ -1,8 +1,8 @@
 package rocks.metaldetector.web.controller.rest;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,7 +23,6 @@ import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -32,6 +31,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.UPDATE_RELEASE;
 
 @RestController
 @AllArgsConstructor
@@ -42,7 +42,6 @@ public class ReleasesRestController {
   private final ArtistCollector artistCollector;
   private final ReleaseCollector releaseCollector;
 
-  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
   @GetMapping(path = ALL_RELEASES, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<List<ReleaseDto>> findAllReleases(@Valid ReleasesRequest request) {
     var timeRange = new TimeRange(request.getDateFrom(), request.getDateTo());
@@ -67,8 +66,7 @@ public class ReleasesRestController {
     return ResponseEntity.ok(releasePage);
   }
 
-  @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-  @PutMapping(path = RELEASES + "/{releaseId}", consumes = APPLICATION_JSON_VALUE)
+  @PutMapping(path = UPDATE_RELEASE, consumes = APPLICATION_JSON_VALUE)
   public ResponseEntity<Void> updateReleaseState(@Valid @RequestBody ReleaseUpdateRequest request, @PathVariable("releaseId") long releaseId) {
     releaseService.updateReleaseState(releaseId, request.getState());
     return ResponseEntity.ok().build();

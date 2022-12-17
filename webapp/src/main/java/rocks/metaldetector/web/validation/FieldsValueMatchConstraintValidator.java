@@ -1,9 +1,8 @@
 package rocks.metaldetector.web.validation;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.BeanWrapperImpl;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 public class FieldsValueMatchConstraintValidator implements ConstraintValidator<FieldsValueMatch, Object> {
 
