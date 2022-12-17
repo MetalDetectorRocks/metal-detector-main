@@ -53,6 +53,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_ANNOUNC
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_FREQUENCY;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE_DATE;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
+import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.OAUTH;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
@@ -90,7 +91,7 @@ public class SecurityConfig {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-      .csrf().ignoringRequestMatchers(REST_ENDPOINTS)
+      .csrf().ignoringRequestMatchers(REST_ENDPOINTS) // TODO DanielW: check
       .and()
         .sessionManagement().sessionCreationPolicy(STATELESS)
       .and()

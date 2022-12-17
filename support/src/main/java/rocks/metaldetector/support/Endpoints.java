@@ -69,7 +69,8 @@ public class Endpoints {
     public static final String NOTIFICATION_ON_ANNOUNCEMENT_DATE = "/rest/v1/notify/announcement-date";
     public static final String NOTIFICATION_TELEGRAM = "/rest/v1/notify/telegram";
 
-    public static final String LOGIN = "/rest/v1/login";
+    public static final String LOGIN = "/rest/v1/auth/login";
+    public static final String REFRESH_ACCESS_TOKEN = "/rest/v1/auth/refresh";
 
     public static final String CSRF = "/rest/v1/csrf";
 

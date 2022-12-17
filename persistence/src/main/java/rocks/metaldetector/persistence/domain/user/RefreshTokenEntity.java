@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import rocks.metaldetector.persistence.domain.BaseEntity;
@@ -15,6 +16,7 @@ public class RefreshTokenEntity extends BaseEntity {
 
   @OneToOne(targetEntity = UserEntity.class)
   @JoinColumn(nullable = false, name = "users_id")
+  @Getter
   private UserEntity user;
 
   @Column(name = "token", unique = true)
