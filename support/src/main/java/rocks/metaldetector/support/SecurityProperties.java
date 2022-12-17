@@ -14,12 +14,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Data
 public class SecurityProperties {
 
+  private static Key key;
+
   private String jwtIssuer;
   private String jwtSecret;
   private long accessTokenExpirationInMin;
   private long refreshTokenExpirationInMin;
   private boolean secureCookie;
-  private Key key;
 
   public Key getKey() {
     if (key == null) {

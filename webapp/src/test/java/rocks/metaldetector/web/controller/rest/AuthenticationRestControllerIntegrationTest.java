@@ -1,6 +1,7 @@
 package rocks.metaldetector.web.controller.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,8 +18,6 @@ import rocks.metaldetector.service.auth.TokenPair;
 import rocks.metaldetector.testutil.BaseSpringBootTest;
 import rocks.metaldetector.testutil.DtoFactory.LoginRequestFactory;
 import rocks.metaldetector.web.api.auth.LoginResponse;
-
-import javax.servlet.http.Cookie;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
