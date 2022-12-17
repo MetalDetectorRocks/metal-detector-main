@@ -22,11 +22,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.ModelAndView;
-import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.web.api.response.ErrorResponse;
@@ -44,21 +41,25 @@ import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
+import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
 
 @ControllerAdvice
 @Slf4j
 public class RestExceptionsHandler {
 
-  @ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class, MissingRequestCookieException.class})
-  public Object handleBadRequests(Exception exception, WebRequest webRequest) {
+  @ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class})
+  public ResponseEntity<ErrorResponse> handleBadRequests(Exception exception, WebRequest webRequest) {
     log.error(webRequest.getContextPath() + ": " + exception.getMessage());
-    String requestUri = ((ServletWebRequest) webRequest).getRequest().getRequestURI();
-    if (requestUri.startsWith("/rest/")) {
-      return new ResponseEntity<>(createErrorResponse(BAD_REQUEST, exception), new HttpHeaders(), BAD_REQUEST);
+    return new ResponseEntity<>(createErrorResponse(BAD_REQUEST, exception), new HttpHeaders(), BAD_REQUEST);
+  }
+
+  @ExceptionHandler({MissingRequestCookieException.class})
+  public ResponseEntity<ErrorResponse> handleMissingRequestCookieException(MissingRequestCookieException exception, WebRequest webRequest) {
+    if (!REFRESH_TOKEN_COOKIE_NAME.equals(exception.getCookieName())) {
+      handleBadRequests(exception, webRequest);
     }
-    else {
-      return new ModelAndView(ViewNames.Error.ERROR_400);
-    }
+
+    return new ResponseEntity<>(createErrorResponse(UNAUTHORIZED, exception), new HttpHeaders(), UNAUTHORIZED);
   }
 
   @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
