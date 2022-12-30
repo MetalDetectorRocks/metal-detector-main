@@ -1,4 +1,4 @@
-package rocks.metaldetector.security;
+package rocks.metaldetector.security.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import rocks.metaldetector.security.XSSUtils;
+import rocks.metaldetector.security.filter.XSSFilter;
 
 import java.io.IOException;
 
