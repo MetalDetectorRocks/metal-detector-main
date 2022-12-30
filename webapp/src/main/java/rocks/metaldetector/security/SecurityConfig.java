@@ -1,12 +1,12 @@
 package rocks.metaldetector.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,13 +19,12 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepo
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import rocks.metaldetector.security.handler.CustomAccessDeniedHandler;
-import rocks.metaldetector.security.handler.CustomAuthenticationFailureHandler;
+import rocks.metaldetector.security.filter.CustomUsernamePasswordAuthenticationFilter;
+import rocks.metaldetector.security.filter.CustomAuthorizationFilter;
+import rocks.metaldetector.security.filter.XSSFilter;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
-import rocks.metaldetector.security.handler.CustomLogoutSuccessHandler;
 import rocks.metaldetector.support.Endpoints;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -37,7 +36,6 @@ import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
-import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
 import static rocks.metaldetector.support.Endpoints.Frontend.LOGOUT;
 import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
@@ -82,8 +80,10 @@ public class SecurityConfig {
   private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
   private final OAuth2UserService<OidcUserRequest, OidcUser> customOidcUserService;
   private final OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver;
-  private final JwtAuthenticationEntryPoint authenticationEntryPoint;
-  private final JwtAuthenticationFilter authenticationFilter;
+  private final CustomAuthorizationFilter authenticationFilter;
+  private final AuthenticationConfiguration authenticationConfiguration;
+  private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+  private final ObjectMapper objectMapper;
 
   @Value("${telegram.bot-id}")
   private String botId;
@@ -134,8 +134,6 @@ public class SecurityConfig {
       .and()
         .oauth2Login()
           .loginPage(Endpoints.Authentication.LOGIN)
-          .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
-          .failureHandler(new CustomAuthenticationFailureHandler())
           .userInfoEndpoint()
             .oidcUserService(customOidcUserService)
       .and()
@@ -152,7 +150,6 @@ public class SecurityConfig {
           .invalidateHttpSession(true)
           .clearAuthentication(true)
           .deleteCookies("JSESSIONID", "remember-me")
-          .logoutSuccessHandler(new CustomLogoutSuccessHandler())
       .and()
         .cors()
       .and()
@@ -165,21 +162,24 @@ public class SecurityConfig {
           .httpStrictTransportSecurity().disable()
       .and()
         .exceptionHandling()
-          .defaultAuthenticationEntryPointFor(authenticationEntryPoint, new AntPathRequestMatcher(HOME)) // TODO DanielW: not needed, remove later
           .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(UNAUTHORIZED), new AntPathRequestMatcher(REST_ENDPOINTS))
-          .accessDeniedHandler(new CustomAccessDeniedHandler()) // TODO DanielW: not needed, remove later
       .and()
+        .addFilter(customUsernamePasswordAuthFilter())
         .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 
   @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-    return authenticationConfiguration.getAuthenticationManager();
+  public FilterRegistrationBean<XSSFilter> xssFilterRegistrationBean(XSSFilter xssFilter) {
+    return new FilterRegistrationBean<>(xssFilter);
   }
 
   @Bean
-  public FilterRegistrationBean<XSSFilter> xssFilterRegistrationBean(XSSFilter xssFilter) {
-    return new FilterRegistrationBean<>(xssFilter);
+  public UsernamePasswordAuthenticationFilter customUsernamePasswordAuthFilter() throws Exception {
+    var authenticationFilter = new CustomUsernamePasswordAuthenticationFilter(authenticationConfiguration, objectMapper);
+    authenticationFilter.setFilterProcessesUrl(Endpoints.Rest.LOGIN);
+    authenticationFilter.setAuthenticationSuccessHandler(customAuthenticationSuccessHandler);
+
+    return authenticationFilter;
   }
 }

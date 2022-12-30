@@ -1,49 +1,54 @@
 package rocks.metaldetector.security.handler;
 
-import jakarta.servlet.ServletException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.savedrequest.DefaultSavedRequest;
+import org.springframework.stereotype.Component;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
+import rocks.metaldetector.persistence.domain.user.UserRole;
+import rocks.metaldetector.security.AuthenticationFacade;
+import rocks.metaldetector.service.auth.RefreshTokenService;
+import rocks.metaldetector.support.JwtsSupport;
+import rocks.metaldetector.support.SecurityProperties;
+import rocks.metaldetector.web.api.auth.LoginResponse;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.util.stream.Collectors;
 
-import static rocks.metaldetector.support.Endpoints.Frontend.HOME;
+import static org.springframework.http.HttpHeaders.SET_COOKIE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Component
+@RequiredArgsConstructor
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-  static final String SAVED_REQUEST_ATTRIBUTE = "SPRING_SECURITY_SAVED_REQUEST";
-
-  private final SavedRequestAwareAuthenticationSuccessHandler savedRequestRedirectionHandler;
-
-  public CustomAuthenticationSuccessHandler(SavedRequestAwareAuthenticationSuccessHandler savedRequestRedirectionHandler) {
-    this.savedRequestRedirectionHandler = savedRequestRedirectionHandler;
-  }
+  private final ObjectMapper objectMapper;
+  private final AuthenticationFacade authenticationFacade;
+  private final JwtsSupport jwtsSupport;
+  private final SecurityProperties securityProperties;
+  private final RefreshTokenService refreshTokenService;
 
   @Override
-  public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws ServletException, IOException {
-    handleRedirect(httpServletRequest, httpServletResponse, authentication);
-  }
+  public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+    AbstractUserEntity user = authenticationFacade.getCurrentUser();
+    String token = jwtsSupport.generateToken(
+        user.getPublicId(),
+        Duration.ofMinutes(securityProperties.getAccessTokenExpirationInMin())
+    );
+    LoginResponse loginResponse = LoginResponse.builder()
+        .username(user.getUsername())
+        .accessToken(token)
+        .roles(user.getUserRoles().stream().map(UserRole::getDisplayName).collect(Collectors.toList()))
+        .build();
 
-  /*
-   * We distinguish between two cases:
-   * (1) The user makes a normal login and is then forwarded to the homepage.
-   * (2) The user requested a specific page, but must first log in. He or she is then redirected to the initially requested page.
-   */
-  private void handleRedirect(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws ServletException, IOException {
-    HttpSession session = httpServletRequest.getSession(false);
-    DefaultSavedRequest savedRequest = (DefaultSavedRequest) session.getAttribute(SAVED_REQUEST_ATTRIBUTE);
-
-    if (savedRequest == null) {
-      // redirect to home page for authenticated users
-      httpServletResponse.sendRedirect(HOME);
-    }
-    else {
-      // redirect to requested page
-      savedRequestRedirectionHandler.onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
-    }
+    ResponseCookie cookie = refreshTokenService.createRefreshTokenCookie(user.getUsername());
+    response.setHeader(SET_COOKIE, cookie.toString());
+    response.setContentType(APPLICATION_JSON_VALUE);
+    objectMapper.writeValue(response.getOutputStream(), loginResponse);
   }
 }

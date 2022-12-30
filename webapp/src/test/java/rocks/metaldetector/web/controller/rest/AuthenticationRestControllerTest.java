@@ -1,7 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
 import io.restassured.http.Header;
-import io.restassured.http.Headers;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.ValidatableMockMvcResponse;
 import org.assertj.core.api.WithAssertions;
@@ -18,16 +17,12 @@ import org.springframework.http.ResponseCookie;
 import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.auth.TokenPair;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
-import rocks.metaldetector.service.auth.AuthService;
 import rocks.metaldetector.service.auth.RefreshTokenService;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.auth.AccessTokenResponse;
-import rocks.metaldetector.web.api.request.LoginRequest;
 import rocks.metaldetector.web.api.auth.AuthenticationResponse;
-import rocks.metaldetector.web.api.auth.LoginResponse;
 import rocks.metaldetector.web.controller.rest.auth.AuthenticationRestController;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -38,7 +33,6 @@ import static org.springframework.http.HttpHeaders.SET_COOKIE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
-import static rocks.metaldetector.support.Endpoints.Rest.LOGIN;
 import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,9 +40,6 @@ class AuthenticationRestControllerTest implements WithAssertions {
 
   @Mock
   private AuthenticationFacade authenticationFacade;
-
-  @Mock
-  private AuthService authService;
 
   @Mock
   private RefreshTokenService refreshTokenService;
@@ -60,7 +51,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(authenticationFacade, authService, refreshTokenService);
+    reset(authenticationFacade, refreshTokenService);
   }
 
   @Nested
@@ -100,75 +91,6 @@ class AuthenticationRestControllerTest implements WithAssertions {
       var authenticationResponse = response.extract().as(AuthenticationResponse.class);
       response.status(OK);
       assertThat(authenticationResponse.isAuthenticated()).isTrue();
-    }
-  }
-
-  @Nested
-  class LoginUserTests {
-
-    @BeforeEach
-    void setup() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(LOGIN);
-      RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
-    }
-
-    @Test
-    @DisplayName("should pass login request to auth service")
-    void should_pass_login_request_to_auth_service() {
-      // given
-      var loginRequest = new LoginRequest("user", "pass");
-
-      // when
-      restAssuredUtils.doPost(loginRequest);
-
-      // then
-      verify(authService).loginUser(loginRequest);
-    }
-
-    @Test
-    @DisplayName("should pass username to refresh token service")
-    void should_pass_username_to_refresh_token_service() {
-      // given
-      var loginResponse = new LoginResponse("user", new ArrayList<>(), "test-token");
-      doReturn(loginResponse).when(authService).loginUser(any());
-      doReturn(ResponseCookie.from("foo", "bar").build()).when(refreshTokenService).createRefreshTokenCookie(any());
-
-      // when
-      restAssuredUtils.doPost(new LoginRequest("user", "pass"));
-
-      // then
-      verify(refreshTokenService).createRefreshTokenCookie("user");
-    }
-
-    @Test
-    @DisplayName("should return login response in body")
-    void should_return_login_response() {
-      // given
-      var loginResponse = new LoginResponse("user", new ArrayList<>(), "test-token");
-      doReturn(loginResponse).when(authService).loginUser(any());
-      doReturn(ResponseCookie.from("foo", "bar").build()).when(refreshTokenService).createRefreshTokenCookie(any());
-
-      // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doPost(new LoginRequest("user", "pass"));
-
-      // then
-      var extractedResponse = response.extract().as(LoginResponse.class);
-      response.status(OK);
-      assertThat(extractedResponse).isEqualTo(loginResponse);
-    }
-
-    @Test
-    @DisplayName("should return response with cookie header")
-    void should_return_response_with_cookie_header() {
-      // given
-      doReturn(new LoginResponse("user", new ArrayList<>(), "test-token")).when(authService).loginUser(any());
-      doReturn(ResponseCookie.from("foo", "bar").build()).when(refreshTokenService).createRefreshTokenCookie(any());
-
-      // when
-      Headers headers = restAssuredUtils.doPostReturningHeaders(new LoginRequest("user", "pass"));
-
-      // then
-      assertThat(headers).contains(new Header(SET_COOKIE, "foo=bar"));
     }
   }
 
