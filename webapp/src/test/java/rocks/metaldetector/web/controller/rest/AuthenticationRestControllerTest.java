@@ -35,8 +35,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.LOGIN;
 import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
@@ -182,13 +182,13 @@ class AuthenticationRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("should return 400 if refresh token cookie is not present")
-    void should_return_400_if_refresh_token_cookie_is_not_present() {
+    @DisplayName("should return 401 if refresh token cookie is not present")
+    void should_return_401_if_refresh_token_cookie_is_not_present() {
       // when
       var response = restAssuredUtils.doGetWithCookies(Map.of());
 
       // then
-      response.status(BAD_REQUEST);
+      response.status(UNAUTHORIZED);
     }
 
     @Test
