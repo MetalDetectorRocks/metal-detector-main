@@ -1,12 +1,11 @@
-package rocks.metaldetector.security;
+package rocks.metaldetector.security.filter;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,13 +20,15 @@ import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.io.IOException;
 
+import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
+import static rocks.metaldetector.support.Endpoints.Rest.LOGIN;
 
 @Slf4j
 @Component
-@AllArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+@RequiredArgsConstructor
+public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
   private final JwtsSupport jwtsSupport;
   private final UserRepository userRepository;
@@ -35,6 +36,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    if (LOGIN.equals(request.getServletPath())) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     try {
       String token = parseHeader(request);
       if (StringUtils.hasText(token) && jwtsSupport.validateJwtToken(token)) {
@@ -49,6 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
     catch (Exception e) {
       log.error("Cannot authenticate user", e);
+      response.sendError(SC_FORBIDDEN);
     }
 
     filterChain.doFilter(request, response);
