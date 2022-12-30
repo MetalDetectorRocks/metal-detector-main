@@ -82,7 +82,7 @@ class AuthenticationRestControllerIntegrationTest extends BaseSpringBootTest {
     void anonymous_user_needs_refresh_token_in_cookie_to_refresh_tokens() throws Exception {
       mockMvc.perform(get(REFRESH_ACCESS_TOKEN)
               .accept(APPLICATION_JSON))
-          .andExpect(status().isBadRequest());
+          .andExpect(status().isUnauthorized());
     }
   }
 }
