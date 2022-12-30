@@ -1,4 +1,4 @@
-package rocks.metaldetector.security;
+package rocks.metaldetector.security.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,6 +11,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import rocks.metaldetector.security.XSSRequestWrapper;
+import rocks.metaldetector.security.XSSUtils;
 
 import java.io.IOException;
 
