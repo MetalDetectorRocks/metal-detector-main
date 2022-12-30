@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.hibernate.Hibernate;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -88,7 +89,6 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public UserDto getUserByPublicId(String publicId) {
     AbstractUserEntity userEntity = userRepository.findByPublicId(publicId)
         .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
@@ -97,7 +97,6 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public Optional<UserDto> getUserByEmailOrUsername(String emailOrUsername) {
     Optional<AbstractUserEntity> userEntity = findByEmailOrUsername(emailOrUsername);
     return userEntity.map(userTransformer::transform);
@@ -141,7 +140,6 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public List<UserDto> getAllUsers() {
     return userRepository.findAll()
         .stream()
@@ -151,7 +149,6 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public List<UserDto> getAllActiveUsers() {
     return userRepository.findAll()
         .stream()
@@ -161,14 +158,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public UserDto getCurrentUser() {
     AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
     return userTransformer.transform(currentUser);
   }
 
   @Override
-  @Transactional(readOnly = true)
+  @Transactional
   public UserDetails loadUserByUsername(String emailOrUsername) throws UsernameNotFoundException {
     return findByEmailOrUsername(emailOrUsername).orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.toDisplayString()));
   }
@@ -211,6 +207,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @Transactional
   public void updateCurrentPassword(String oldPlainPassword, String newPlainPassword) {
     AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
 
@@ -247,6 +244,8 @@ public class UserServiceImpl implements UserService {
       userEntity = userRepository.findByUsername(emailOrUsername);
     }
 
+    // make authorities available outside of transaction
+    userEntity.ifPresent(abstractUserEntity -> Hibernate.initialize(abstractUserEntity.getAuthorities()));
     return userEntity;
   }
 
