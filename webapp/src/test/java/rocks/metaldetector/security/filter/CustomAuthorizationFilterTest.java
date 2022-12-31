@@ -1,7 +1,6 @@
 package rocks.metaldetector.security.filter;
 
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.WithAssertions;
@@ -34,7 +33,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static rocks.metaldetector.support.Endpoints.Rest.LOGIN;
 
 @ExtendWith(MockitoExtension.class)
 class CustomAuthorizationFilterTest implements WithAssertions {
@@ -57,22 +55,6 @@ class CustomAuthorizationFilterTest implements WithAssertions {
   @AfterEach
   void tearDown() {
     reset(jwtsSupport, userRepository, authenticationDetailsSource);
-  }
-
-  @Test
-  @DisplayName("should process next filter if login is called")
-  void should_process_next_filter_if_login_is_called() throws ServletException, IOException {
-    // given
-    var filterChain = mock(FilterChain.class);
-    var request = new MockHttpServletRequest();
-    request.setServletPath(LOGIN);
-
-    // when
-    underTest.doFilterInternal(request, new MockHttpServletResponse(), filterChain);
-
-    // then
-    verify(filterChain).doFilter(any(), any());
-    verifyNoInteractions(jwtsSupport, userRepository, authenticationDetailsSource);
   }
 
   @Test

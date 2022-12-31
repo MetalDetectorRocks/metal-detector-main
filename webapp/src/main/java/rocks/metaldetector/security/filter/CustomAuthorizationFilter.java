@@ -23,7 +23,6 @@ import java.io.IOException;
 import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
-import static rocks.metaldetector.support.Endpoints.Rest.LOGIN;
 
 @Slf4j
 @Component
@@ -36,11 +35,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-    if (LOGIN.equals(request.getServletPath())) {
-      filterChain.doFilter(request, response);
-      return;
-    }
-
     try {
       String token = parseHeader(request);
       if (StringUtils.hasText(token) && jwtsSupport.validateJwtToken(token)) {
