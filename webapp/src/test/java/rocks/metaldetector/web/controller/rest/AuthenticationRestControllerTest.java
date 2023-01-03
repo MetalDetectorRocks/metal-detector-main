@@ -19,8 +19,8 @@ import rocks.metaldetector.service.auth.RefreshTokenData;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.auth.RefreshTokenService;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
+import rocks.metaldetector.web.api.auth.AccessTokenResponse;
 import rocks.metaldetector.web.api.auth.AuthenticationResponse;
-import rocks.metaldetector.web.api.auth.LoginResponse;
 import rocks.metaldetector.web.controller.rest.auth.AuthenticationRestController;
 
 import java.util.List;
@@ -34,6 +34,7 @@ import static org.springframework.http.HttpHeaders.SET_COOKIE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 
