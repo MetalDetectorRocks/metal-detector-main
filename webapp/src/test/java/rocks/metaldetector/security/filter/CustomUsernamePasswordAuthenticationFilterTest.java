@@ -59,6 +59,19 @@ class CustomUsernamePasswordAuthenticationFilterTest implements WithAssertions {
   }
 
   @Test
+  @DisplayName("should parse input stream into login request")
+  void should_parse_input_stream_into_login_request() throws IOException {
+    // given
+    doReturn(new LoginRequest("user", "pass")).when(objectMapper).readValue(any(InputStream.class), eq(LoginRequest.class));
+
+    // when
+    underTest.attemptAuthentication(request, response);
+
+    // then
+    verify(objectMapper).readValue(request.getInputStream(), LoginRequest.class);
+  }
+
+  @Test
   @DisplayName("should authenticate with username and password via authentication manager")
   void should_authenticate_user_via_authentication_manager() throws IOException {
     // given

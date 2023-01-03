@@ -1,8 +1,10 @@
 package rocks.metaldetector.security.filter;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,12 +28,9 @@ import rocks.metaldetector.support.JwtsSupport;
 import java.io.IOException;
 import java.util.Optional;
 
+import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @ExtendWith(MockitoExtension.class)
@@ -160,5 +159,21 @@ class CustomAuthorizationFilterTest implements WithAssertions {
     // then
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     assertThat(authentication.getPrincipal()).isEqualTo(user);
+  }
+
+  @Test
+  @DisplayName("should send forbidden status code in case of exception")
+  void should_send_forbidden_status_code_in_case_of_exception() throws ServletException, IOException {
+    // given
+    var authHeaderValue = "Bearer eyFoo";
+    doReturn(authHeaderValue).when(request).getHeader(AUTHORIZATION);
+    doThrow(ExpiredJwtException.class).when(jwtsSupport).validateJwtToken(any());
+    var response = mock(HttpServletResponse.class);
+
+    // when
+    underTest.doFilterInternal(request, response, new MockFilterChain());
+
+    // then
+    verify(response).sendError(SC_FORBIDDEN);
   }
 }
