@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rocks.metaldetector.security.AuthenticationFacade;
+import rocks.metaldetector.service.auth.RefreshTokenData;
 import rocks.metaldetector.service.auth.RefreshTokenService;
-import rocks.metaldetector.service.auth.TokenPair;
-import rocks.metaldetector.web.api.auth.AccessTokenResponse;
+import rocks.metaldetector.web.api.auth.LoginResponse;
 import rocks.metaldetector.web.api.auth.AuthenticationResponse;
 
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
@@ -36,13 +36,13 @@ public class AuthenticationRestController {
   }
 
   @GetMapping(value = REFRESH_ACCESS_TOKEN, produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<AccessTokenResponse> refreshAccessToken(@CookieValue(name = REFRESH_TOKEN_COOKIE_NAME) String refreshToken) {
-    TokenPair tokenPair = refreshTokenService.refreshTokens(refreshToken);
+  public ResponseEntity<LoginResponse> refreshAccessToken(@CookieValue(name = REFRESH_TOKEN_COOKIE_NAME) String refreshToken) {
+    RefreshTokenData refreshTokenData = refreshTokenService.refreshTokens(refreshToken);
     HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.add(SET_COOKIE, tokenPair.refreshToken().toString());
+    httpHeaders.add(SET_COOKIE, refreshTokenData.refreshToken().toString());
 
     return ResponseEntity.ok()
         .headers(httpHeaders)
-        .body(new AccessTokenResponse(tokenPair.accessToken()));
+        .body(refreshTokenData.asLoginResponse());
   }
 }

@@ -132,7 +132,7 @@ class CustomAuthenticationSuccessHandlerTest implements WithAssertions {
     // given
     var username = "test-user";
     var token = "eyToken";
-    doReturn(Set.of(ROLE_ADMINISTRATOR)).when(userMock).getUserRoles();
+    doReturn(List.of(ROLE_ADMINISTRATOR.getDisplayName())).when(userMock).getUserRoleNames();
     doReturn(username).when(userMock).getUsername();
     doReturn(token).when(jwtsSupport).generateToken(any(), any());
 

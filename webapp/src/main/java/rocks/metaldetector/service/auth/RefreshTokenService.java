@@ -40,7 +40,7 @@ public class RefreshTokenService {
   }
 
   @Transactional
-  public TokenPair refreshTokens(String refreshToken) {
+  public RefreshTokenData refreshTokens(String refreshToken) {
     if (!refreshTokenRepository.existsByToken(refreshToken) || !jwtsSupport.validateJwtToken(refreshToken)) {
       throw new UnauthorizedException();
     }
@@ -50,7 +50,12 @@ public class RefreshTokenService {
     String newRefreshToken = createRefreshToken(refreshTokenEntity.getId().toString());
     refreshTokenEntity.setToken(newRefreshToken);
 
-    return new TokenPair(accessToken, createCookie(newRefreshToken));
+    return new RefreshTokenData(
+        refreshTokenEntity.getUser().getUsername(),
+        refreshTokenEntity.getUser().getUserRoleNames(),
+        accessToken,
+        createCookie(newRefreshToken)
+    );
   }
 
   private String createRefreshToken(String tokenEntityId) {

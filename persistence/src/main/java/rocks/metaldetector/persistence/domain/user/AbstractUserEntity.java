@@ -19,6 +19,7 @@ import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -83,6 +84,10 @@ public abstract class AbstractUserEntity extends BaseEntity implements UserDetai
 
   public Set<UserRole> getUserRoles() {
     return Set.copyOf(this.userRoles);
+  }
+
+  public List<String> getUserRoleNames() {
+    return getUserRoles().stream().map(UserRole::getDisplayName).collect(Collectors.toList());
   }
 
   public void setUserRoles(Set<UserRole> newUserRoles) {
