@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 @SpringJUnitConfig
@@ -140,6 +141,19 @@ class UserEntityTest implements WithAssertions {
 
       assertThat(setNullValue).isInstanceOf(IllegalArgumentException.class);
       assertThat(setNullValue).hasMessage("At least one user role must be set!");
+    }
+
+    @Test
+    @DisplayName("should return list of role names")
+    void should_return_list_of_role_names() {
+      // given
+      UserEntity user = UserFactory.createAdministrator();
+
+      // when
+      List<String> result = user.getUserRoleNames();
+
+      // then
+      assertThat(result).containsExactly("Administrator");
     }
   }
 

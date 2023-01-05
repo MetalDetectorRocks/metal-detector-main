@@ -22,12 +22,14 @@ import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.SecurityProperties;
 
 import java.time.Duration;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
 import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
 import static rocks.metaldetector.service.auth.RefreshTokenService.OFFSET_IN_MINUTES;
 
@@ -241,8 +243,27 @@ class RefreshTokenServiceTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("should return token pair with access token")
-    void should_return_token_pair_with_access_token() {
+    @DisplayName("should return token data with username and roles")
+    void should_return_token_data_with_username_and_roles() {
+      // given
+      var refreshTokenAsString = "eyFoo";
+      doReturn("JohnD").when(userMock).getUsername();
+      doReturn(List.of(ROLE_USER.getDisplayName())).when(userMock).getUserRoleNames();
+      doReturn(true).when(refreshTokenRepository).existsByToken(refreshTokenAsString);
+      doReturn(true).when(jwtsSupport).validateJwtToken(refreshTokenAsString);
+      doReturn("eyAccessToken", "eyRefreshToken").when(jwtsSupport).generateToken(any(), any());
+
+      // when
+      var tokenData = underTest.refreshTokens(refreshTokenAsString);
+
+      // then
+      assertThat(tokenData.username()).isEqualTo("JohnD");
+      assertThat(tokenData.roles()).containsExactly("User");
+    }
+
+    @Test
+    @DisplayName("should return token data with access token")
+    void should_return_token_data_with_access_token() {
       // given
       var refreshTokenAsString = "eyFoo";
       doReturn(true).when(refreshTokenRepository).existsByToken(refreshTokenAsString);
@@ -250,15 +271,15 @@ class RefreshTokenServiceTest implements WithAssertions {
       doReturn("eyAccessToken", "eyRefreshToken").when(jwtsSupport).generateToken(any(), any());
 
       // when
-      var tokenPair = underTest.refreshTokens(refreshTokenAsString);
+      var tokenData = underTest.refreshTokens(refreshTokenAsString);
 
       // then
-      assertThat(tokenPair.accessToken()).isEqualTo("eyAccessToken");
+      assertThat(tokenData.accessToken()).isEqualTo("eyAccessToken");
     }
 
     @Test
-    @DisplayName("should return token pair with refresh token")
-    void should_return_token_pair_with_refresh_token() {
+    @DisplayName("should return token data with refresh token")
+    void should_return_token_data_with_refresh_token() {
       // given
       var domain = "example.com";
       var refreshTokenAsString = "eyFoo";
@@ -270,10 +291,10 @@ class RefreshTokenServiceTest implements WithAssertions {
       doReturn("eyAccessToken", "eyRefreshToken").when(jwtsSupport).generateToken(any(), any());
 
       // when
-      var tokenPair = underTest.refreshTokens("eyFoo");
+      var tokenData = underTest.refreshTokens("eyFoo");
 
       // then
-      ResponseCookie cookie = tokenPair.refreshToken();
+      ResponseCookie cookie = tokenData.refreshToken();
       assertThat(cookie.getName()).isEqualTo(REFRESH_TOKEN_COOKIE_NAME);
       assertThat(cookie.getMaxAge()).isEqualTo(Duration.ofMinutes(666 - OFFSET_IN_MINUTES));
       assertThat(cookie.getSameSite()).isEqualTo("Strict");

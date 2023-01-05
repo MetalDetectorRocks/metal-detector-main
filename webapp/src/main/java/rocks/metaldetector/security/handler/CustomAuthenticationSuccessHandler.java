@@ -43,7 +43,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     LoginResponse loginResponse = LoginResponse.builder()
         .username(user.getUsername())
         .accessToken(token)
-        .roles(user.getUserRoles().stream().map(UserRole::getDisplayName).collect(Collectors.toList()))
+        .roles(user.getUserRoleNames())
         .build();
 
     ResponseCookie cookie = refreshTokenService.createRefreshTokenCookie(user.getUsername());
