@@ -58,6 +58,11 @@ public class RefreshTokenService {
     );
   }
 
+  @Transactional
+  public void removeRefreshToken(String tokenValue) {
+    refreshTokenRepository.deleteByToken(tokenValue);
+  }
+
   private String createRefreshToken(String tokenEntityId) {
     Duration duration = Duration.ofMinutes(securityProperties.getRefreshTokenExpirationInMin());
     return jwtsSupport.generateToken(tokenEntityId, duration);
