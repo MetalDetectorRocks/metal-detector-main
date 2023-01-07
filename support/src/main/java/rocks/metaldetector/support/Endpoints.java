@@ -1,11 +1,8 @@
 package rocks.metaldetector.support;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 public class Endpoints {
-
-  public static final String ERROR = "/error";
 
   public static class Authentication {
     public static final String       LOGIN                     = "/login";
@@ -14,14 +11,9 @@ public class Endpoints {
     public static final String       RESEND_VERIFICATION_TOKEN = "/resend-verification-token";
     public static final String       FORGOT_PASSWORD           = "/forgot-password";
     public static final String       RESET_PASSWORD            = "/reset-password";
-    public static final List<String> ALL_AUTH_PAGES            = List.of(LOGIN, REGISTER, REGISTRATION_VERIFICATION,
-                                                                         RESEND_VERIFICATION_TOKEN, FORGOT_PASSWORD, RESET_PASSWORD);
   }
 
   public static class Frontend {
-    public static final String HOME                          = "/";
-    public static final String INDEX                         = "/index";
-    public static final String LOGOUT                        = "/logout";
     public static final String SEARCH                        = "/artists/search";
     public static final String RELEASES                      = "/releases";
     public static final String MY_ARTISTS                    = "/my-artists";
@@ -35,7 +27,6 @@ public class Endpoints {
     public static final String ACCOUNT_DETAILS               = "/settings/account-details";
     public static final String SPOTIFY_SYNCHRONIZATION       = "/settings/spotify-synchronization";
     public static final String NOTIFICATION_SETTINGS         = "/settings/notification-settings";
-    public static final String TEST                          = "/only-for-testing";
   }
 
   public static class Rest {
@@ -70,6 +61,7 @@ public class Endpoints {
     public static final String NOTIFICATION_TELEGRAM = "/rest/v1/notify/telegram";
 
     public static final String LOGIN = "/rest/v1/auth/login";
+    public static final String LOGOUT = "/rest/v1/auth/logout";
     public static final String REFRESH_ACCESS_TOKEN = "/rest/v1/auth/refresh";
 
     public static final String CSRF = "/rest/v1/csrf";

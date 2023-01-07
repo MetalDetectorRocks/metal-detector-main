@@ -304,4 +304,21 @@ class RefreshTokenServiceTest implements WithAssertions {
       assertThat(cookie.getDomain()).isEqualTo(domain);
     }
   }
+
+  @Nested
+  class DeleteTokenTests {
+
+    @Test
+    @DisplayName("should remove refresh token entity via repository")
+    void should_remove_refresh_token_entity_via_repository() {
+      // given
+      String tokenValue = "eyRefreshToken";
+
+      // when
+      underTest.removeRefreshToken(tokenValue);
+
+      // then
+      verify(refreshTokenRepository).deleteByToken(tokenValue);
+    }
+  }
 }
