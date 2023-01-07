@@ -321,4 +321,59 @@ class RefreshTokenServiceTest implements WithAssertions {
       verify(refreshTokenRepository).deleteByToken(tokenValue);
     }
   }
+
+  @Nested
+  class IsValidTests {
+
+    @Test
+    @DisplayName("should be not valid if it is null")
+    void should_be_not_valid_if_it_is_null() {
+      // when
+      boolean result = underTest.isValid(null);
+
+      // then
+      assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("should be not valid if it does not exist in db")
+    void should_be_not_valid_if_it_does_not_exist_in_db() {
+      // given
+      doReturn(false).when(refreshTokenRepository).existsByToken(any());
+
+      // when
+      boolean result = underTest.isValid("eyFoobar");
+
+      // then
+      assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("should be not valid if it is an invalid jwt")
+    void should_be_not_valid_if_it_is_an_invalid_jwt() {
+      // given
+      doReturn(true).when(refreshTokenRepository).existsByToken(any());
+      doReturn(false).when(jwtsSupport).validateJwtToken(any());
+
+      // when
+      boolean result = underTest.isValid("eyFoobar");
+
+      // then
+      assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("should be valid")
+    void should_be_valid() {
+      // given
+      doReturn(true).when(refreshTokenRepository).existsByToken(any());
+      doReturn(true).when(jwtsSupport).validateJwtToken(any());
+
+      // when
+      boolean result = underTest.isValid("eyFoobar");
+
+      // then
+      assertThat(result).isTrue();
+    }
+  }
 }

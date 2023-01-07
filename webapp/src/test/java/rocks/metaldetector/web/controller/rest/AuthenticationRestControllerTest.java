@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseCookie;
-import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.auth.RefreshTokenData;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.auth.RefreshTokenService;
@@ -41,9 +40,6 @@ import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 class AuthenticationRestControllerTest implements WithAssertions {
 
   @Mock
-  private AuthenticationFacade authenticationFacade;
-
-  @Mock
   private RefreshTokenService refreshTokenService;
 
   @InjectMocks
@@ -53,7 +49,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(authenticationFacade, refreshTokenService);
+    reset(refreshTokenService);
   }
 
   @Nested
@@ -69,7 +65,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
     @DisplayName("should return false if user is not authenticated")
     void should_return_false_if_user_is_not_authenticated() {
       // given
-      doReturn(false).when(authenticationFacade).isAuthenticated();
+      doReturn(false).when(refreshTokenService).isValid(any());
 
       // when
       ValidatableMockMvcResponse response = restAssuredUtils.doGet();
@@ -84,7 +80,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
     @DisplayName("should return true if user is authenticated")
     void should_return_true_if_user_is_authenticated() {
       // given
-      doReturn(true).when(authenticationFacade).isAuthenticated();
+      doReturn(true).when(refreshTokenService).isValid(any());
 
       // when
       ValidatableMockMvcResponse response = restAssuredUtils.doGet();
