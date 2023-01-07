@@ -63,6 +63,11 @@ public class RefreshTokenService {
     refreshTokenRepository.deleteByToken(tokenValue);
   }
 
+  @Transactional
+  public boolean isValid(String tokenValue) {
+    return tokenValue != null && refreshTokenRepository.existsByToken(tokenValue) && jwtsSupport.validateJwtToken(tokenValue);
+  }
+
   private String createRefreshToken(String tokenEntityId) {
     Duration duration = Duration.ofMinutes(securityProperties.getRefreshTokenExpirationInMin());
     return jwtsSupport.generateToken(tokenEntityId, duration);

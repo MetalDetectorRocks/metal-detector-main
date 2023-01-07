@@ -22,15 +22,13 @@ import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 @AllArgsConstructor
 public class AuthenticationRestController {
 
-  private final AuthenticationFacade authenticationFacade;
   private final RefreshTokenService refreshTokenService;
 
-  // TODO: should be removed in near future
   @GetMapping(path = AUTHENTICATION, produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<AuthenticationResponse> authenticated() {
+  public ResponseEntity<AuthenticationResponse> authenticated(@CookieValue(name = REFRESH_TOKEN_COOKIE_NAME, required = false) String refreshToken) {
     return ResponseEntity.ok(
         AuthenticationResponse.builder()
-            .authenticated(authenticationFacade.isAuthenticated())
+            .authenticated(refreshTokenService.isValid(refreshToken))
             .build()
     );
   }
