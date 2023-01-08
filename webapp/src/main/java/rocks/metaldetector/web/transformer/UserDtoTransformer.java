@@ -2,7 +2,7 @@ package rocks.metaldetector.web.transformer;
 
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.service.user.UserDto;
-import rocks.metaldetector.web.api.request.RegisterUserRequest;
+import rocks.metaldetector.web.api.auth.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.UserResponse;
 

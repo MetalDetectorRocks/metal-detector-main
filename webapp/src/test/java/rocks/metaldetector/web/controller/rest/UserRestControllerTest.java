@@ -27,7 +27,7 @@ import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.RegisterUserRequestFactory;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
-import rocks.metaldetector.web.api.request.RegisterUserRequest;
+import rocks.metaldetector.web.api.auth.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.UpdateUserRequest;
 import rocks.metaldetector.web.api.response.ErrorResponse;
 import rocks.metaldetector.web.api.response.UserResponse;
@@ -59,13 +59,11 @@ class UserRestControllerTest implements WithAssertions {
   @Spy
   private UserDtoTransformer userDtoTransformer;
 
-  private UserRestController underTest;
-
   private RestAssuredMockMvcUtils restAssuredUtils;
 
   @BeforeEach
   void setup() {
-    underTest = new UserRestController(userService, userDtoTransformer);
+    UserRestController underTest = new UserRestController(userService, userDtoTransformer);
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.USERS);
     RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
   }
@@ -263,13 +261,12 @@ class UserRestControllerTest implements WithAssertions {
           Arguments.of(RegisterUserRequestFactory.withEmail(null), 1),
 
           // invalid passwords
-          Arguments.of(RegisterUserRequestFactory.withPassword("secret-password", "other-secret-password"), 1),
-          Arguments.of(RegisterUserRequestFactory.withPassword("secret", "secret"), 2),
-          Arguments.of(RegisterUserRequestFactory.withPassword("", ""), 4),
-          Arguments.of(RegisterUserRequestFactory.withPassword(null, null), 2),
+          Arguments.of(RegisterUserRequestFactory.withPassword("secret"), 1),
+          Arguments.of(RegisterUserRequestFactory.withPassword(""), 2),
+          Arguments.of(RegisterUserRequestFactory.withPassword(null), 1),
 
           // all null
-          Arguments.of(RegisterUserRequest.builder().build(), 4)
+          Arguments.of(RegisterUserRequest.builder().build(), 3)
       );
     }
   }
