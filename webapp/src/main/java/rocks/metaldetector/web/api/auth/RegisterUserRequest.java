@@ -1,4 +1,4 @@
-package rocks.metaldetector.web.api.request;
+package rocks.metaldetector.web.api.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -7,11 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import rocks.metaldetector.web.validation.FieldsValueMatch;
 
-@FieldsValueMatch.List({
-  @FieldsValueMatch(field = "plainPassword", fieldMatch = "verifyPlainPassword", message = "The passwords must match")
-})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -29,9 +25,5 @@ public class RegisterUserRequest {
   @NotBlank
   @Size(min=8, message="Password length must be at least 8 characters")
   private String plainPassword;
-
-  @NotBlank
-  @Size(min=8, message="Password length must be at least 8 characters")
-  private String verifyPlainPassword;
 
 }

@@ -13,9 +13,8 @@ import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.request.ChangePasswordRequest;
-import rocks.metaldetector.web.api.request.LoginRequest;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
-import rocks.metaldetector.web.api.request.RegisterUserRequest;
+import rocks.metaldetector.web.api.auth.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
 import rocks.metaldetector.web.api.request.SynchronizeArtistsRequest;
 import rocks.metaldetector.web.api.request.UpdateEmailRequest;
@@ -73,27 +72,26 @@ public class DtoFactory {
   public static class RegisterUserRequestFactory {
 
     public static RegisterUserRequest createDefault() {
-      return create("JohnD", "john.d@example.com", "valid-password", "valid-password");
+      return create("JohnD", "john.d@example.com", "valid-password");
     }
 
     public static RegisterUserRequest withUsername(String username) {
-      return create(username, "john.d@example.com", "valid-password", "valid-password");
+      return create(username, "john.d@example.com", "valid-password");
     }
 
     public static RegisterUserRequest withEmail(String email) {
-      return create("JohnD", email, "valid-password", "valid-password");
+      return create("JohnD", email, "valid-password");
     }
 
-    public static RegisterUserRequest withPassword(String plainPassword, String verifyPlainPassword) {
-      return create("JohnD", "john.d@example.com", plainPassword, verifyPlainPassword);
+    public static RegisterUserRequest withPassword(String plainPassword) {
+      return create("JohnD", "john.d@example.com", plainPassword);
     }
 
-    private static RegisterUserRequest create(String username, String email, String plainPassword, String verifyPlainPassword) {
+    private static RegisterUserRequest create(String username, String email, String plainPassword) {
       return RegisterUserRequest.builder()
           .username(username)
           .email(email)
           .plainPassword(plainPassword)
-          .verifyPlainPassword(verifyPlainPassword)
           .build();
     }
   }
@@ -421,16 +419,6 @@ public class DtoFactory {
 
     public static SynchronizeArtistsRequest createDefault() {
       return new SynchronizeArtistsRequest(List.of("1", "2", "3"));
-    }
-  }
-
-  public static class LoginRequestFactory {
-
-    public static LoginRequest createDefault() {
-      return LoginRequest.builder()
-          .username("user")
-          .password("password")
-          .build();
     }
   }
 }
