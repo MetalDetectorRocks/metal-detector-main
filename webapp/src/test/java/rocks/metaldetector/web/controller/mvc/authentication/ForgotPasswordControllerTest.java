@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
-import rocks.metaldetector.service.user.OnResetPasswordRequestCompleteEvent;
+import rocks.metaldetector.service.user.events.OnResetPasswordRequestCompleteEvent;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;

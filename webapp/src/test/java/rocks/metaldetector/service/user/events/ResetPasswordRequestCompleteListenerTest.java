@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.user;
+package rocks.metaldetector.service.user.events;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -13,12 +13,13 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.email.AbstractEmail;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.token.TokenService;
+import rocks.metaldetector.service.user.UserDto;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class RegistrationCompleteListenerTest implements WithAssertions {
+class ResetPasswordRequestCompleteListenerTest implements WithAssertions {
 
   @Mock
   private EmailService emailService;
@@ -30,33 +31,33 @@ class RegistrationCompleteListenerTest implements WithAssertions {
   private ArgumentCaptor<AbstractEmail> emailCaptor;
 
   @InjectMocks
-  private RegistrationCompleteListener listener;
+  private ResetPasswordRequestCompleteListener listener;
 
   @Test
-  @DisplayName("RegistrationCompleteListener should create a new token and send an email after registration")
-  void create_token_and_send_email_on_registration() {
+  @DisplayName("ResetPasswordRequestCompleteListener should create token and send an email after password reset request")
+  void create_token_and_send_email_on_password_reset() {
     // given
     final String EMAIL = "john.doe@example.com";
     final String TOKEN = "1234-56789";
     final String USERNAME = "JohnD";
     UserDto userDto = UserDto.builder().publicId("public-id").email(EMAIL).username(USERNAME).build();
-    OnRegistrationCompleteEvent event = new OnRegistrationCompleteEvent("source", userDto);
-    when(tokenService.createEmailVerificationToken(userDto.getPublicId())).thenReturn(TOKEN);
+    OnResetPasswordRequestCompleteEvent event = new OnResetPasswordRequestCompleteEvent("source", userDto);
+    when(tokenService.createResetPasswordToken(userDto.getPublicId())).thenReturn(TOKEN);
 
     // when
     listener.onApplicationEvent(event);
 
     // then
-    verify(tokenService).createEmailVerificationToken(userDto.getPublicId());
+    verify(tokenService).createResetPasswordToken(userDto.getPublicId());
     verify(emailService).sendEmail(emailCaptor.capture());
 
     AbstractEmail email = emailCaptor.getValue();
-    String verificationUrl = (String) email.getEnhancedViewModel("dummy-base-url").get("verificationUrl");
+    String resetPasswordUrl = (String) email.getEnhancedViewModel("dummy-base-url").get("resetPasswordUrl");
     String username = (String) email.getEnhancedViewModel("dummy-base-url").get("username");
     assertThat(email.getRecipient()).isEqualTo(EMAIL);
-    assertThat(email.getSubject()).isEqualTo("One last step to complete your registration!");
-    assertThat(email.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.REGISTRATION_VERIFICATION);
-    assertThat(verificationUrl).endsWith(TOKEN);
+    assertThat(email.getSubject()).isEqualTo("Your password reset request");
+    assertThat(email.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.FORGOT_PASSWORD);
+    assertThat(resetPasswordUrl).endsWith(TOKEN);
     assertThat(username).isEqualTo(USERNAME);
   }
 }

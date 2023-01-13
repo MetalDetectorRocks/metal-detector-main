@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.user;
+package rocks.metaldetector.service.user.events;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationListener;
@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
 import rocks.metaldetector.service.token.TokenService;
+import rocks.metaldetector.service.user.UserDto;
 
 @Component
 @AllArgsConstructor
