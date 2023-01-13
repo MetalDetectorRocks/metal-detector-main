@@ -34,6 +34,7 @@ import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
+import rocks.metaldetector.service.user.events.OnRegistrationCompleteEvent;
 import rocks.metaldetector.service.user.events.UserCreationEvent;
 import rocks.metaldetector.service.user.events.UserDeletionEvent;
 import rocks.metaldetector.support.JwtsSupport;

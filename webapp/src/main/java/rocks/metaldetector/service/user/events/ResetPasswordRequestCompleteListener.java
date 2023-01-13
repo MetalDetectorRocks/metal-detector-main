@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.user;
+package rocks.metaldetector.service.user.events;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationListener;
