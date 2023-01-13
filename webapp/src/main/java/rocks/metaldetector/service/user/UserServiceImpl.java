@@ -29,6 +29,8 @@ import rocks.metaldetector.service.user.events.UserCreationEvent;
 import rocks.metaldetector.service.user.events.UserDeletionEvent;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
+import rocks.metaldetector.web.api.auth.RegisterUserRequest;
+import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -51,15 +53,19 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final JwtsSupport jwtsSupport;
   private final UserTransformer userTransformer;
+  private final UserDtoTransformer userDtoTransformer;
   private final AuthenticationFacade authenticationFacade;
   private final LoginAttemptService loginAttemptService;
-  private final ApplicationEventPublisher applicationEventPublisher;
+  private final ApplicationEventPublisher eventPublisher;
   private final HttpServletRequest request;
 
   @Override
   @Transactional
-  public UserDto createUser(UserDto userDto) {
-    return createUserEntity(userDto, UserRole.createUserRole(), false);
+  public UserDto createUser(RegisterUserRequest request) {
+    UserDto userDto = userDtoTransformer.transformUserDto(request);
+    UserDto createdUserDto = createUserEntity(userDto, UserRole.createUserRole(), false);
+    eventPublisher.publishEvent(new OnRegistrationCompleteEvent(this, createdUserDto));
+    return createdUserDto;
   }
 
   @Override
@@ -72,7 +78,6 @@ public class UserServiceImpl implements UserService {
     checkIfUserAlreadyExistsByUsername(userDto.getUsername(), userDto.getUsername());
     checkIfUserAlreadyExistsByEmail(userDto.getUsername(), userDto.getEmail());
 
-    // create user
     UserEntity userEntity = UserEntity.builder()
         .username(userDto.getUsername())
         .email(userDto.getEmail())
@@ -83,7 +88,7 @@ public class UserServiceImpl implements UserService {
 
     UserEntity savedUserEntity = userRepository.save(userEntity);
 
-    applicationEventPublisher.publishEvent(new UserCreationEvent(this, savedUserEntity));
+    eventPublisher.publishEvent(new UserCreationEvent(this, savedUserEntity));
 
     return userTransformer.transform(savedUserEntity);
   }
@@ -197,7 +202,7 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public void deleteCurrentUser() {
     AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
-    applicationEventPublisher.publishEvent(new UserDeletionEvent(this, currentUser));
+    eventPublisher.publishEvent(new UserDeletionEvent(this, currentUser));
 
     HttpSession session = request.getSession(false);
     SecurityContextHolder.clearContext();

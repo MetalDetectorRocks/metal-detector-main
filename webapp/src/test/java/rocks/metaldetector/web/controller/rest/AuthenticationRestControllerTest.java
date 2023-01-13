@@ -17,9 +17,11 @@ import org.springframework.http.ResponseCookie;
 import rocks.metaldetector.service.auth.RefreshTokenData;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.auth.RefreshTokenService;
+import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.auth.AuthenticationResponse;
 import rocks.metaldetector.web.api.auth.LoginResponse;
+import rocks.metaldetector.web.api.auth.RegisterUserRequest;
 import rocks.metaldetector.web.controller.rest.auth.AuthenticationRestController;
 
 import java.util.List;
@@ -35,12 +37,16 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
+import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationRestControllerTest implements WithAssertions {
 
   @Mock
   private RefreshTokenService refreshTokenService;
+
+  @Mock
+  private UserService userService;
 
   @InjectMocks
   private AuthenticationRestController underTest;
@@ -180,6 +186,42 @@ class AuthenticationRestControllerTest implements WithAssertions {
 
       // then
       assertThat(headers).contains(new Header(SET_COOKIE, "refresh_token=eyRefreshToken"));
+    }
+  }
+
+  @Nested
+  class RegisterUserTests {
+
+    @BeforeEach
+    void setup() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(REGISTER);
+      RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
+    }
+
+    @Test
+    @DisplayName("should return ok")
+    void should_return_ok() {
+      // given
+      RegisterUserRequest request = new RegisterUserRequest("user", "user@example.com", "secret123");
+
+      // when
+      var response = restAssuredUtils.doPost(request);
+
+      // then
+      response.status(OK);
+    }
+
+    @Test
+    @DisplayName("should pass received request to user service")
+    void should_pass_received_request_to_user_service() {
+      // given
+      RegisterUserRequest request = new RegisterUserRequest("user", "user@example.com", "secret123");
+
+      // when
+      restAssuredUtils.doPost(request);
+
+      // then
+      verify(userService).createUser(request);
     }
   }
 }
