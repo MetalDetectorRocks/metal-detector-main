@@ -25,18 +25,20 @@ import rocks.metaldetector.security.filter.CustomUsernamePasswordAuthenticationF
 import rocks.metaldetector.security.filter.CustomAuthorizationFilter;
 import rocks.metaldetector.security.filter.XSSFilter;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
+import rocks.metaldetector.security.handler.CustomLogoutHandler;
 import rocks.metaldetector.support.Endpoints;
 
+import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
+import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ACTUATOR_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.AntPattern.ADMIN;
 import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
-import static rocks.metaldetector.support.Endpoints.Frontend.LOGOUT;
 import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.COVER_JOB;
@@ -45,6 +47,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER;
 import static rocks.metaldetector.support.Endpoints.Rest.DASHBOARD;
 import static rocks.metaldetector.support.Endpoints.Rest.FOLLOW_ARTIST;
 import static rocks.metaldetector.support.Endpoints.Rest.IMPORT_JOB;
+import static rocks.metaldetector.support.Endpoints.Rest.LOGOUT;
 import static rocks.metaldetector.support.Endpoints.Rest.MY_ARTISTS;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_CONFIG;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_ANNOUNCEMENT_DATE;
@@ -83,6 +86,7 @@ public class SecurityConfig {
   private final CustomAuthorizationFilter authenticationFilter;
   private final AuthenticationConfiguration authenticationConfiguration;
   private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+  private final CustomLogoutHandler customLogoutHandler;
   private final ObjectMapper objectMapper;
 
   @Value("${telegram.bot-id}")
@@ -102,6 +106,7 @@ public class SecurityConfig {
           .requestMatchers(ACTUATOR_ENDPOINTS,
                            NOTIFICATION_TELEGRAM + "/" + botId,
                            Endpoints.Rest.LOGIN,
+                           LOGOUT,
                            RELEASES,
                            TOP_UPCOMING_RELEASES,
                            SEARCH_ARTIST,
@@ -145,13 +150,14 @@ public class SecurityConfig {
           .authorizedClientService(oAuth2AuthorizedClientService)
           .authorizedClientRepository(oAuth2AuthorizedClientRepository)
       .and()
-        .logout()
-          .logoutUrl(LOGOUT).permitAll()
+        .logout(logout -> logout.permitAll()
+          .logoutUrl(LOGOUT)
+          .addLogoutHandler(customLogoutHandler)
+          .logoutSuccessHandler((request, response, authentication) -> response.setStatus(SC_OK))
           .invalidateHttpSession(true)
           .clearAuthentication(true)
-          .deleteCookies("JSESSIONID", "remember-me")
-      .and()
-        .cors()
+          .deleteCookies("JSESSIONID", REFRESH_TOKEN_COOKIE_NAME))
+      .cors()
       .and()
         .headers()
           .permissionsPolicy().policy("interest-cohort=()").and()
