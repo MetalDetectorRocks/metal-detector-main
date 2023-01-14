@@ -46,7 +46,7 @@ class CustomClientErrorHandlerTest implements WithAssertions {
     boolean hasError = underTest.hasError(response);
 
     // then
-    assertThat(hasError).isTrue();
+    assertTrue(hasError);
   }
 
   @ParameterizedTest(name = "[{index}] => Response <{0}>")
@@ -57,7 +57,7 @@ class CustomClientErrorHandlerTest implements WithAssertions {
     boolean hasError = underTest.hasError(response);
 
     // then
-    assertThat(hasError).isFalse();
+    assertFalse(hasError);
   }
 
   @Test
