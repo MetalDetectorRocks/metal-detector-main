@@ -42,7 +42,7 @@ To start the application locally in default profile, the following preparatory a
     - `butler-db`: The database for Metal Release Butler application
     - `auth-app`: Metal Detector Auth Spring Boot application
     - `auth-db`: The database for Metal Detector auth application
-    - `detector-mailcatcher`: Fake SMTP server where you redirect your messages to instead of sending them to a real SMTP server. Emails sent this way arrive only to a local server and can be viewed in a web interface.
+    - `detector-mailcatcher`: Fake SMTP server where you redirect your messages to instead of sending them to a real SMTP server. Emails sent this way arrive only to a local server and can be viewed in a web interface on port 1080.
 
 2. Define the data source connection details in file `application.yml`:
     - `spring.datasource.username` (you have to use user `postgres`)
