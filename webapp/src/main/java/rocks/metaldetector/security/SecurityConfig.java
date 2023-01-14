@@ -56,6 +56,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
 import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.OAUTH;
+import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
@@ -106,6 +107,7 @@ public class SecurityConfig {
           .requestMatchers(ACTUATOR_ENDPOINTS,
                            NOTIFICATION_TELEGRAM + "/" + botId,
                            Endpoints.Rest.LOGIN,
+                           REGISTER,
                            LOGOUT,
                            RELEASES,
                            TOP_UPCOMING_RELEASES,

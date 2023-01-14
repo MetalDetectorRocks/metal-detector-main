@@ -4,7 +4,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -19,8 +18,7 @@ import java.io.UnsupportedEncodingException;
 @Service
 @Slf4j
 @AllArgsConstructor
-@Profile({"preview", "prod"})
-public class JavaMailEmailService implements EmailService {
+public class EmailServiceImpl implements EmailService {
 
   private final JavaMailSender emailSender;
   private final ISpringTemplateEngine templateEngine;

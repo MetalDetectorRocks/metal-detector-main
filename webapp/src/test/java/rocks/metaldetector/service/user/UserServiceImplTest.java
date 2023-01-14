@@ -6,20 +6,20 @@ import jakarta.servlet.http.HttpSession;
 import org.assertj.core.api.WithAssertions;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,12 +34,14 @@ import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
 import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
-import rocks.metaldetector.service.token.TokenService;
+import rocks.metaldetector.service.user.events.OnRegistrationCompleteEvent;
 import rocks.metaldetector.service.user.events.UserCreationEvent;
 import rocks.metaldetector.service.user.events.UserDeletionEvent;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
+import rocks.metaldetector.web.api.auth.RegisterUserRequest;
+import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -93,10 +95,13 @@ class UserServiceImplTest implements WithAssertions {
   private BCryptPasswordEncoder passwordEncoder;
 
   @Mock
-  private TokenService tokenService;
+  private JwtsSupport jwtsSupport;
+
+  @Spy
+  private UserTransformer userTransformer;
 
   @Mock
-  private JwtsSupport jwtsSupport;
+  private UserDtoTransformer userDtoTransformer;
 
   @Mock
   private AuthenticationFacade authenticationFacade;
@@ -107,55 +112,67 @@ class UserServiceImplTest implements WithAssertions {
   @Mock
   private HttpServletRequest request;
 
-  @Spy
-  private UserTransformer userTransformer;
-
   @Mock
-  private ApplicationEventPublisher applicationEventPublisher;
+  private ApplicationEventPublisher eventPublisher;
 
+  @InjectMocks
   private UserServiceImpl underTest;
-
-  @BeforeEach
-  void setup() {
-    underTest = new UserServiceImpl(userRepository, passwordEncoder, jwtsSupport, userTransformer, authenticationFacade,
-                                    loginAttemptService, applicationEventPublisher, request);
-  }
 
   @AfterEach
   void tearDown() {
-    reset(userRepository, passwordEncoder, jwtsSupport, tokenService, authenticationFacade, userTransformer, loginAttemptService, request, applicationEventPublisher);
+    reset(userRepository, passwordEncoder, jwtsSupport, userTransformer, userDtoTransformer,
+        authenticationFacade, loginAttemptService, request, eventPublisher
+    );
   }
 
-  @DisplayName("Create user entity tests")
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
+  @DisplayName("Create user entity tests")
   class CreateUserEntityTest {
 
+    private final RegisterUserRequest registerUserRequest = new RegisterUserRequest("user", "user@example.com", "secret123");
+
     @Test
-    @DisplayName("Should return UserDto")
+    @DisplayName("should transform request to UserDto")
+    void should_transform_request_to_user_dto() {
+      // given
+      UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      when(userDtoTransformer.transformUserDto(any(RegisterUserRequest.class))).thenReturn(givenUserDto);
+      UserEntity userEntity = UserEntityFactory.createUser(USERNAME, EMAIL);
+      when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
+
+      // when
+      underTest.createUser(registerUserRequest);
+
+      // then
+      verify(userDtoTransformer).transformUserDto(registerUserRequest);
+    }
+    @Test
+    @DisplayName("should return UserDto")
     void should_return_user_dto() {
       // given
       UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      when(userDtoTransformer.transformUserDto(any(RegisterUserRequest.class))).thenReturn(givenUserDto);
       UserEntity expectedUserEntity = UserEntityFactory.createUser(USERNAME, EMAIL);
       when(userRepository.save(any(UserEntity.class))).thenReturn(expectedUserEntity);
 
       // when
-      UserDto createdUserDto = underTest.createUser(givenUserDto);
+      UserDto createdUserDto = underTest.createUser(registerUserRequest);
 
       // then
       assertThat(createdUserDto).isEqualTo(userTransformer.transform(expectedUserEntity));
     }
 
-    @DisplayName("Should pass disabled UserEntity with Role USER to UserRepository")
     @Test
+    @DisplayName("should pass disabled UserEntity with Role USER to UserRepository")
     void should_use_user_repository() {
       // given
       ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
       UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      when(userDtoTransformer.transformUserDto(any(RegisterUserRequest.class))).thenReturn(givenUserDto);
       when(userRepository.save(any(UserEntity.class))).thenReturn(UserEntityFactory.createUser(USERNAME, EMAIL));
 
       // when
-      underTest.createUser(givenUserDto);
+      underTest.createUser(registerUserRequest);
 
       // then
       verify(userRepository).save(userEntityCaptor.capture());
@@ -171,11 +188,12 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("Creating a new user should check if email or username is already used")
     void should_check_email_and_username() {
       // given
-      UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      when(userDtoTransformer.transformUserDto(any(RegisterUserRequest.class))).thenReturn(givenUserDto);
       when(userRepository.save(any(UserEntity.class))).thenReturn(UserEntityFactory.createUser(USERNAME, EMAIL));
 
       // when
-      underTest.createUser(userDto);
+      underTest.createUser(registerUserRequest);
 
       // then
       verify(userRepository, times(2)).existsByEmail(anyString());
@@ -183,20 +201,25 @@ class UserServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Creation event is published")
+    @DisplayName("should publish user creation event")
     void creation_event_published() {
       // given
-      ArgumentCaptor<UserCreationEvent> argumentCaptor = ArgumentCaptor.forClass(UserCreationEvent.class);
-      UserDto userDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      ArgumentCaptor<ApplicationEvent> captor = ArgumentCaptor.forClass(ApplicationEvent.class);
+      UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      when(userDtoTransformer.transformUserDto(any(RegisterUserRequest.class))).thenReturn(givenUserDto);
       UserEntity user = UserEntityFactory.createUser(USERNAME, EMAIL);
       doReturn(user).when(userRepository).save(any(UserEntity.class));
 
       // when
-      underTest.createUser(userDto);
+      underTest.createUser(registerUserRequest);
 
       // then
-      verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
-      UserCreationEvent userCreationEvent = argumentCaptor.getValue();
+      verify(eventPublisher, times(2)).publishEvent(captor.capture());
+      var userCreationEvent = captor.getAllValues().stream()
+          .filter(event -> event instanceof UserCreationEvent)
+          .map(event -> (UserCreationEvent) event)
+          .findFirst()
+          .orElseThrow();
 
       assertThat(userCreationEvent.getSource()).isEqualTo(underTest);
       assertThat(userCreationEvent.getUserEntity()).isEqualTo(user);
@@ -207,7 +230,8 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("Creating a new user with a username and email that already exists should throw exception")
     void create_user_with_username_or_email_that_already_exists_should_throw_exception(String username, String email, UserAlreadyExistsException.Reason reason) {
       // given
-      UserDto userDto = UserDtoFactory.withUsernameAndEmail(username, email);
+      UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(username, email);
+      when(userDtoTransformer.transformUserDto(any(RegisterUserRequest.class))).thenReturn(givenUserDto);
 
       when(userRepository.existsByUsername(anyString())).thenAnswer(invocationOnMock -> {
         String usernameArg = invocationOnMock.getArgument(0);
@@ -220,7 +244,7 @@ class UserServiceImplTest implements WithAssertions {
       });
 
       // when
-      Throwable throwable = catchThrowable(() -> underTest.createUser(userDto));
+      Throwable throwable = catchThrowable(() -> underTest.createUser(registerUserRequest));
 
       // then
       assertThat(throwable).isInstanceOf(UserAlreadyExistsException.class);
@@ -229,13 +253,38 @@ class UserServiceImplTest implements WithAssertions {
       verify(userRepository, atMost(2)).existsByUsername(anyString());
     }
 
-    private Stream<Arguments> userDtoProvider() {
+    private static Stream<Arguments> userDtoProvider() {
       return Stream.of(
           Arguments.of(DUPLICATE_USERNAME, EMAIL, USERNAME_ALREADY_EXISTS),
           Arguments.of(DUPLICATE_EMAIL, EMAIL, USERNAME_ALREADY_EXISTS),
           Arguments.of(USERNAME, DUPLICATE_EMAIL, EMAIL_ALREADY_EXISTS),
           Arguments.of(USERNAME, DUPLICATE_USERNAME, EMAIL_ALREADY_EXISTS)
       );
+    }
+
+    @Test
+    @DisplayName("should publish registration complete event")
+    void should_publish_registration_complete_event() {
+      // given
+      ArgumentCaptor<ApplicationEvent> captor = ArgumentCaptor.forClass(ApplicationEvent.class);
+      UserDto givenUserDto = UserDtoFactory.withUsernameAndEmail(USERNAME, EMAIL);
+      when(userDtoTransformer.transformUserDto(any(RegisterUserRequest.class))).thenReturn(givenUserDto);
+      UserEntity userEntity = UserEntityFactory.createUser(USERNAME, EMAIL);
+      when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
+
+      // when
+      underTest.createUser(registerUserRequest);
+
+      // then
+      verify(eventPublisher, times(2)).publishEvent(captor.capture());
+      var registrationCompleteEvent = captor.getAllValues().stream()
+          .filter(event -> event instanceof OnRegistrationCompleteEvent)
+          .map(event -> (OnRegistrationCompleteEvent) event)
+          .findFirst()
+          .orElseThrow();
+
+      assertThat(registrationCompleteEvent.getSource()).isEqualTo(underTest);
+      assertThat(registrationCompleteEvent.getUserDto()).isEqualTo(userTransformer.transform(userEntity));
     }
   }
 
@@ -307,7 +356,7 @@ class UserServiceImplTest implements WithAssertions {
       underTest.createAdministrator(userDto);
 
       // then
-      verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+      verify(eventPublisher).publishEvent(argumentCaptor.capture());
       UserCreationEvent userCreationEvent = argumentCaptor.getValue();
 
       assertThat(userCreationEvent.getSource()).isEqualTo(underTest);
@@ -862,10 +911,10 @@ class UserServiceImplTest implements WithAssertions {
       doReturn(null).when(userTransformer).transform(any());
 
       // when
-      underTest.updateCurrentEmail("new-mail@example.com");
+      Throwable throwable = catchThrowable(() -> underTest.updateCurrentEmail("new-mail@example.com"));
 
       // then
-      assertThatNoException();
+      assertThat(throwable).isNull();
     }
 
     @Test
@@ -1142,7 +1191,7 @@ class UserServiceImplTest implements WithAssertions {
       underTest.deleteCurrentUser();
 
       // then
-      verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+      verify(eventPublisher).publishEvent(argumentCaptor.capture());
       UserDeletionEvent userDeletionEvent = argumentCaptor.getValue();
 
       assertThat(userDeletionEvent.getSource()).isEqualTo(underTest);

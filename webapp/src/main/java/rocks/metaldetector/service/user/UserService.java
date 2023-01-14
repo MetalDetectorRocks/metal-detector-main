@@ -1,13 +1,14 @@
 package rocks.metaldetector.service.user;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
+import rocks.metaldetector.web.api.auth.RegisterUserRequest;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService extends UserDetailsService {
 
-  UserDto createUser(UserDto userDto);
+  UserDto createUser(RegisterUserRequest request);
 
   UserDto createAdministrator(UserDto userDto);
 

@@ -111,6 +111,14 @@ services:
         condition: on-failure
         max_attempts: 3
 
+  mailcatcher:
+    container_name: detector-mailcatcher
+    image: schickling/mailcatcher
+    ports:
+      - "1025:1025" # SMTP server
+      - "1080:1080" # HTTP server
+
+
 volumes:
   detector-db-volume:
     name: detector-db

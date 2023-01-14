@@ -42,6 +42,7 @@ To start the application locally in default profile, the following preparatory a
     - `butler-db`: The database for Metal Release Butler application
     - `auth-app`: Metal Detector Auth Spring Boot application
     - `auth-db`: The database for Metal Detector auth application
+    - `detector-mailcatcher`: Fake SMTP server where you redirect your messages to instead of sending them to a real SMTP server. Emails sent this way arrive only to a local server and can be viewed in a web interface.
 
 2. Define the data source connection details in file `application.yml`:
     - `spring.datasource.username` (you have to use user `postgres`)
@@ -64,7 +65,7 @@ To start the application locally in default profile, the following preparatory a
    - `spring.security.oauth2.client.registration.metal-release-butler-admin.client-id`
    - `spring.security.oauth2.client.registration.metal-release-butler-admin.client-secret`
 
-7. Define remember-me secret (you can choose any value you want) in file `application.yml`:
+7. Define the jwt secret (you can choose any value you want) in file `application.yml`:
    - `security.jwt-secret` for remember me functionality
 
 8. Define a dummy value for `telegram.bot-id` in file `application.yml`.

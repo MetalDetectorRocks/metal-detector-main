@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.service.user.OnResetPasswordRequestCompleteEvent;
+import rocks.metaldetector.service.user.events.OnResetPasswordRequestCompleteEvent;
 import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;

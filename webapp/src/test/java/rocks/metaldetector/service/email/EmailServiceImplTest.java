@@ -26,7 +26,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class JavaMailEmailServiceTest implements WithAssertions {
+class EmailServiceImplTest implements WithAssertions {
 
   @Mock
   private JavaMailSender emailSender;
@@ -44,7 +44,7 @@ class JavaMailEmailServiceTest implements WithAssertions {
   private MimeMessageHelper mimeMessageHelperMock;
 
   @InjectMocks
-  private JavaMailEmailService underTest;
+  private EmailServiceImpl underTest;
 
   @BeforeEach
   void setUp() {

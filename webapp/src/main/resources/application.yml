@@ -47,8 +47,20 @@ spring:
     jcache:
       config: classpath:config/cache/ehcache.xml
   mail:
+    host: localhost
+    port: 1025
+    username: ${#{null}}
+    password: ${#{null}}
+    default-encoding: UTF-8
+    protocol: smtp
+    test-connection: false
     properties:
       from: notifications@metal-detector.rocks
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   thymeleaf:
     enabled: true
     prefix: classpath:/templates/

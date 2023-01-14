@@ -19,7 +19,7 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.Authentication;
-import rocks.metaldetector.web.api.request.LoginRequest;
+import rocks.metaldetector.web.api.auth.LoginRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
