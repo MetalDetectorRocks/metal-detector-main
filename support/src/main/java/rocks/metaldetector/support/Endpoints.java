@@ -6,14 +6,13 @@ public class Endpoints {
 
   public static class Authentication {
     public static final String       LOGIN                     = "/login";
-    public static final String       REGISTER                  = "/register";
-    public static final String       REGISTRATION_VERIFICATION = "/registration-verification";
-    public static final String       RESEND_VERIFICATION_TOKEN = "/resend-verification-token";
     public static final String       FORGOT_PASSWORD           = "/forgot-password";
     public static final String       RESET_PASSWORD            = "/reset-password";
   }
 
   public static class Frontend {
+    public static final String SIGN_IN = "/sign-in";
+    public static final String SIGN_UP = "/sign-up";
     public static final String SEARCH                        = "/artists/search";
     public static final String RELEASES                      = "/releases";
     public static final String MY_ARTISTS                    = "/my-artists";
@@ -64,6 +63,8 @@ public class Endpoints {
     public static final String LOGOUT = "/rest/v1/auth/logout";
     public static final String REFRESH_ACCESS_TOKEN = "/rest/v1/auth/refresh";
     public static final String REGISTER = "/rest/v1/auth/register";
+    public static final String REGISTRATION_VERIFICATION = "/rest/v1/auth/register/verification";
+    public static final String RESEND_VERIFICATION_TOKEN = "/rest/v1/auth/register/resend";
 
     public static final String CSRF = "/rest/v1/csrf";
 

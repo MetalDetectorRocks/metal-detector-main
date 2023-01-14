@@ -1,10 +1,11 @@
 package rocks.metaldetector.service.email;
 
-import rocks.metaldetector.config.constants.ViewNames;
+import java.util.List;
 
-import static rocks.metaldetector.support.Endpoints.Authentication.REGISTRATION_VERIFICATION;
+import static rocks.metaldetector.config.constants.ViewNames.EmailTemplates.REGISTRATION_VERIFICATION;
+import static rocks.metaldetector.support.Endpoints.Frontend.SIGN_IN;
 
-public final class RegistrationVerificationEmail extends AbstractEmail {
+public final class RegistrationVerificationEmail implements Email {
 
   private static final String SUBJECT = "One last step to complete your registration!";
 
@@ -29,21 +30,15 @@ public final class RegistrationVerificationEmail extends AbstractEmail {
   }
 
   @Override
-  void buildViewModel() {
-    addViewModelEntry(ViewModelEntry.builder()
-            .name("username")
-            .value(username)
-            .build());
-
-    addViewModelEntry(ViewModelEntry.builder()
-            .name("verificationUrl")
-            .value(REGISTRATION_VERIFICATION + "?token=" + emailVerificationToken)
-            .relativeUrl(true)
-            .build());
+  public String getTemplateName() {
+    return REGISTRATION_VERIFICATION;
   }
 
   @Override
-  public String getTemplateName() {
-    return ViewNames.EmailTemplates.REGISTRATION_VERIFICATION;
+  public List<ViewModelEntry> getViewModelEntries() {
+    return List.of(
+        new ViewModelEntry("username", username),
+        new ViewModelEntry("verificationUrl", SIGN_IN + "?token=" + emailVerificationToken, true)
+    );
   }
 }

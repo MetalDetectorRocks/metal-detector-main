@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.service.email.AbstractEmail;
+import rocks.metaldetector.service.email.Email;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.UserDto;
@@ -28,7 +28,7 @@ class RegistrationCompleteListenerTest implements WithAssertions {
   private TokenService tokenService;
 
   @Captor
-  private ArgumentCaptor<AbstractEmail> emailCaptor;
+  private ArgumentCaptor<Email> emailCaptor;
 
   @InjectMocks
   private RegistrationCompleteListener listener;
@@ -51,9 +51,9 @@ class RegistrationCompleteListenerTest implements WithAssertions {
     verify(tokenService).createEmailVerificationToken(userDto.getPublicId());
     verify(emailService).sendEmail(emailCaptor.capture());
 
-    AbstractEmail email = emailCaptor.getValue();
-    String verificationUrl = (String) email.getEnhancedViewModel("dummy-base-url").get("verificationUrl");
-    String username = (String) email.getEnhancedViewModel("dummy-base-url").get("username");
+    Email email = emailCaptor.getValue();
+    String verificationUrl = (String) email.createViewModel("dummy-base-url").get("verificationUrl");
+    String username = (String) email.createViewModel("dummy-base-url").get("username");
     assertThat(email.getRecipient()).isEqualTo(EMAIL);
     assertThat(email.getSubject()).isEqualTo("One last step to complete your registration!");
     assertThat(email.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.REGISTRATION_VERIFICATION);

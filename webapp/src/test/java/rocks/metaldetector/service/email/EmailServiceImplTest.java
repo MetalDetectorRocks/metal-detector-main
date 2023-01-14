@@ -16,7 +16,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.ISpringTemplateEngine;
 import rocks.metaldetector.config.misc.MailProperties;
-import rocks.metaldetector.support.Endpoints;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
@@ -24,6 +23,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static rocks.metaldetector.support.Endpoints.Frontend.SIGN_IN;
 
 @ExtendWith(MockitoExtension.class)
 class EmailServiceImplTest implements WithAssertions {
@@ -49,6 +49,7 @@ class EmailServiceImplTest implements WithAssertions {
   @BeforeEach
   void setUp() {
     doReturn(mimeMessageHelperMock).when(messageHelperFunction).apply(any());
+    underTest.setFrontendBaseUrl("http://localhost");
   }
 
   @AfterEach
@@ -60,7 +61,7 @@ class EmailServiceImplTest implements WithAssertions {
   @DisplayName("Should call createMimeMessage on JavaMailSender")
   void should_call_create_mime_message() {
     // given
-    AbstractEmail email = new ForgotPasswordEmail("john.doe@example.com", "user", "token");
+    Email email = new ForgotPasswordEmail("john.doe@example.com", "user", "token");
 
     // when
     underTest.sendEmail(email);
@@ -74,10 +75,10 @@ class EmailServiceImplTest implements WithAssertions {
   void should_call_template_engine() {
     // given
     final String TOKEN = "token";
-    final String EXPECTED_VERIFICATION_URL = mailProperties.getApplicationHostUrl() + Endpoints.Authentication.REGISTRATION_VERIFICATION + "?token=" + TOKEN;
+    final String EXPECTED_VERIFICATION_URL = "http://localhost" + SIGN_IN + "?token=" + TOKEN;
     ArgumentCaptor<Context> contextCaptor = ArgumentCaptor.forClass(Context.class);
     ArgumentCaptor<String> templateNameCaptor = ArgumentCaptor.forClass(String.class);
-    AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", "username", TOKEN);
+    Email email = new RegistrationVerificationEmail("john.doe@example.com", "username", TOKEN);
 
     // when
     underTest.sendEmail(email);
@@ -94,7 +95,7 @@ class EmailServiceImplTest implements WithAssertions {
     // given
     MimeMessage mimeMessage = mock(MimeMessage.class);
     doReturn(mimeMessage).when(emailSender).createMimeMessage();
-    AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", "username", "token");
+    Email email = new RegistrationVerificationEmail("john.doe@example.com", "username", "token");
 
     // when
     underTest.sendEmail(email);
@@ -107,7 +108,7 @@ class EmailServiceImplTest implements WithAssertions {
   @DisplayName("Should set email data")
   void should_set_email_data() throws Exception {
     // given
-    AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", "username", "token");
+    Email email = new RegistrationVerificationEmail("john.doe@example.com", "username", "token");
     String emailAsHtml = "<h1>Test</h1>";
     String fromEmail = "from@example.de";
     String fromName = "Example";
@@ -132,7 +133,7 @@ class EmailServiceImplTest implements WithAssertions {
   @DisplayName("Should send mime message via emailSender")
   void should_send_message() {
     // given
-    AbstractEmail email = new RegistrationVerificationEmail("john.doe@example.com", "username", "token");
+    Email email = new RegistrationVerificationEmail("john.doe@example.com", "username", "token");
     MimeMessage mimeMessageMock = mock(MimeMessage.class);
     doReturn(mimeMessageMock).when(emailSender).createMimeMessage();
 

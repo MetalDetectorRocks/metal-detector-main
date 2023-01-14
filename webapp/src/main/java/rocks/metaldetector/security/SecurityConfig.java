@@ -58,7 +58,9 @@ import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.OAUTH;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
+import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_VERIFICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
+import static rocks.metaldetector.support.Endpoints.Rest.RESEND_VERIFICATION_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
 import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION;
 import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_SAVED_ARTISTS;
@@ -108,6 +110,8 @@ public class SecurityConfig {
                            NOTIFICATION_TELEGRAM + "/" + botId,
                            Endpoints.Rest.LOGIN,
                            REGISTER,
+                           REGISTRATION_VERIFICATION,
+                           RESEND_VERIFICATION_TOKEN,
                            LOGOUT,
                            RELEASES,
                            TOP_UPCOMING_RELEASES,
