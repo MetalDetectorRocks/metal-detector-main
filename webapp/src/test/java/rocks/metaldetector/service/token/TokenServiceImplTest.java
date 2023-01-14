@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.service.email.AbstractEmail;
+import rocks.metaldetector.service.email.Email;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.RegistrationVerificationEmail;
 import rocks.metaldetector.service.user.UserEntityFactory;
@@ -113,7 +113,7 @@ class TokenServiceImplTest implements WithAssertions {
     void resend_expired_email_verification_token_should_send_new_email() {
       // given
       UserEntity userOfToken = UserEntityFactory.createUser("JohnD", "johnd@example.com");
-      ArgumentCaptor<AbstractEmail> emailArgumentCaptor = ArgumentCaptor.forClass(AbstractEmail.class);
+      ArgumentCaptor<Email> emailArgumentCaptor = ArgumentCaptor.forClass(Email.class);
       doReturn(mock(Claims.class)).when(jwtsSupport).getClaims(any());
       doReturn(Optional.of(userOfToken)).when(userRepository).findByPublicId(any());
 

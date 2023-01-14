@@ -1,11 +1,12 @@
 package rocks.metaldetector.service.email;
 
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
-import rocks.metaldetector.config.constants.ViewNames;
 
 import java.util.List;
 
-public final class TodaysReleasesEmail extends AbstractEmail {
+import static rocks.metaldetector.config.constants.ViewNames.EmailTemplates.TODAYS_RELEASES;
+
+public final class TodaysReleasesEmail implements Email {
 
   public static final String SUBJECT = "Today's releases";
 
@@ -31,19 +32,14 @@ public final class TodaysReleasesEmail extends AbstractEmail {
 
   @Override
   public String getTemplateName() {
-    return ViewNames.EmailTemplates.TODAYS_RELEASES;
+    return TODAYS_RELEASES;
   }
 
   @Override
-  void buildViewModel() {
-    addViewModelEntry(ViewModelEntry.builder()
-                          .name("username")
-                          .value(username)
-                          .build());
-
-    addViewModelEntry(ViewModelEntry.builder()
-                          .name("todaysReleases")
-                          .value(todaysReleases)
-                          .build());
+  public List<ViewModelEntry> getViewModelEntries() {
+    return List.of(
+        new ViewModelEntry("username", username),
+        new ViewModelEntry("todaysReleases", todaysReleases)
+    );
   }
 }

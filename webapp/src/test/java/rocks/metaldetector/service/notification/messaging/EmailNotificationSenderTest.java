@@ -57,9 +57,9 @@ class EmailNotificationSenderTest implements WithAssertions {
     assertThat(mail.getSubject()).isEqualTo(ReleasesEmail.SUBJECT);
     assertThat(mail.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.NEW_RELEASES);
 
-    var upcomingReleases = (List<ReleaseDto>) mail.getEnhancedViewModel("dummy-base-url").get("upcomingReleases");
-    var recentReleases = (List<ReleaseDto>) mail.getEnhancedViewModel("dummy-base-url").get("recentReleases");
-    var username = (String) mail.getEnhancedViewModel("dummy-base-url").get("username");
+    var upcomingReleases = (List<ReleaseDto>) mail.createViewModel("dummy-base-url").get("upcomingReleases");
+    var recentReleases = (List<ReleaseDto>) mail.createViewModel("dummy-base-url").get("recentReleases");
+    var username = (String) mail.createViewModel("dummy-base-url").get("username");
     assertThat(username).isEqualTo(USER.getUsername());
     assertThat(upcomingReleases).isEqualTo(releases);
     assertThat(recentReleases).isEqualTo(releases);
@@ -82,8 +82,8 @@ class EmailNotificationSenderTest implements WithAssertions {
     assertThat(mail.getSubject()).isEqualTo(TodaysReleasesEmail.SUBJECT);
     assertThat(mail.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.TODAYS_RELEASES);
 
-    var todaysReleases = (List<ReleaseDto>) mail.getEnhancedViewModel("dummy-base-url").get("todaysReleases");
-    var username = (String) mail.getEnhancedViewModel("dummy-base-url").get("username");
+    var todaysReleases = (List<ReleaseDto>) mail.createViewModel("dummy-base-url").get("todaysReleases");
+    var username = (String) mail.createViewModel("dummy-base-url").get("username");
     assertThat(username).isEqualTo(USER.getUsername());
     assertThat(todaysReleases).isEqualTo(releases);
   }
@@ -105,8 +105,8 @@ class EmailNotificationSenderTest implements WithAssertions {
     assertThat(mail.getSubject()).isEqualTo(TodaysAnnouncementsEmail.SUBJECT);
     assertThat(mail.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.TODAYS_ANNOUNCEMENTS);
 
-    var todaysAnnouncements = (List<ReleaseDto>) mail.getEnhancedViewModel("dummy-base-url").get("todaysAnnouncements");
-    var username = (String) mail.getEnhancedViewModel("dummy-base-url").get("username");
+    var todaysAnnouncements = (List<ReleaseDto>) mail.createViewModel("dummy-base-url").get("todaysAnnouncements");
+    var username = (String) mail.createViewModel("dummy-base-url").get("username");
     assertThat(username).isEqualTo(USER.getUsername());
     assertThat(todaysAnnouncements).isEqualTo(releases);
   }

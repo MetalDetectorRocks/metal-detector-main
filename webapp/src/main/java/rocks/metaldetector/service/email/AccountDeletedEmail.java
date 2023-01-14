@@ -1,8 +1,10 @@
 package rocks.metaldetector.service.email;
 
-import rocks.metaldetector.config.constants.ViewNames;
+import java.util.List;
 
-public final class AccountDeletedEmail extends AbstractEmail {
+import static rocks.metaldetector.config.constants.ViewNames.EmailTemplates.ACCOUNT_DELETED;
+
+public final class AccountDeletedEmail implements Email {
 
   public static final String SUBJECT = "Account deleted";
 
@@ -26,14 +28,13 @@ public final class AccountDeletedEmail extends AbstractEmail {
 
   @Override
   public String getTemplateName() {
-    return ViewNames.EmailTemplates.ACCOUNT_DELETED;
+    return ACCOUNT_DELETED;
   }
 
   @Override
-  void buildViewModel() {
-    addViewModelEntry(ViewModelEntry.builder()
-                          .name("username")
-                          .value(username)
-                          .build());
+  public List<ViewModelEntry> getViewModelEntries() {
+    return List.of(
+        new ViewModelEntry("username", username)
+    );
   }
 }

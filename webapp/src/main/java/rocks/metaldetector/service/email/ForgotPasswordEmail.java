@@ -1,9 +1,11 @@
 package rocks.metaldetector.service.email;
 
+import java.util.List;
+
 import static rocks.metaldetector.config.constants.ViewNames.EmailTemplates.FORGOT_PASSWORD;
 import static rocks.metaldetector.support.Endpoints.Authentication.RESET_PASSWORD;
 
-public final class ForgotPasswordEmail extends AbstractEmail {
+public final class ForgotPasswordEmail implements Email {
 
   private static final String  SUBJECT = "Your password reset request";
 
@@ -33,17 +35,10 @@ public final class ForgotPasswordEmail extends AbstractEmail {
   }
 
   @Override
-  void buildViewModel() {
-    addViewModelEntry(ViewModelEntry.builder()
-            .name("username")
-            .value(username)
-            .build());
-
-    addViewModelEntry(ViewModelEntry.builder()
-            .name("resetPasswordUrl")
-            .value(RESET_PASSWORD + "?token=" + resetPasswordToken)
-            .relativeUrl(true)
-            .build());
+  public List<ViewModelEntry> getViewModelEntries() {
+    return List.of(
+        new ViewModelEntry("username", username),
+        new ViewModelEntry("resetPasswordUrl", RESET_PASSWORD + "?token=" + resetPasswordToken, true)
+    );
   }
-
 }

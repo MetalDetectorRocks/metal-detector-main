@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.config.constants.ViewNames;
-import rocks.metaldetector.service.email.AbstractEmail;
+import rocks.metaldetector.service.email.Email;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.token.TokenService;
 import rocks.metaldetector.service.user.UserDto;
@@ -28,7 +28,7 @@ class ResetPasswordRequestCompleteListenerTest implements WithAssertions {
   private TokenService tokenService;
 
   @Captor
-  private ArgumentCaptor<AbstractEmail> emailCaptor;
+  private ArgumentCaptor<Email> emailCaptor;
 
   @InjectMocks
   private ResetPasswordRequestCompleteListener listener;
@@ -51,9 +51,9 @@ class ResetPasswordRequestCompleteListenerTest implements WithAssertions {
     verify(tokenService).createResetPasswordToken(userDto.getPublicId());
     verify(emailService).sendEmail(emailCaptor.capture());
 
-    AbstractEmail email = emailCaptor.getValue();
-    String resetPasswordUrl = (String) email.getEnhancedViewModel("dummy-base-url").get("resetPasswordUrl");
-    String username = (String) email.getEnhancedViewModel("dummy-base-url").get("username");
+    Email email = emailCaptor.getValue();
+    String resetPasswordUrl = (String) email.createViewModel("dummy-base-url").get("resetPasswordUrl");
+    String username = (String) email.createViewModel("dummy-base-url").get("username");
     assertThat(email.getRecipient()).isEqualTo(EMAIL);
     assertThat(email.getSubject()).isEqualTo("Your password reset request");
     assertThat(email.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.FORGOT_PASSWORD);
