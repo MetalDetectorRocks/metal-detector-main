@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseCookie;
-import rocks.metaldetector.service.auth.PasswordResetService;
+import rocks.metaldetector.service.auth.ResetPasswordService;
 import rocks.metaldetector.service.auth.RefreshTokenData;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.auth.RefreshTokenService;
@@ -22,10 +22,11 @@ import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.auth.AuthenticationResponse;
 import rocks.metaldetector.web.api.auth.LoginResponse;
-import rocks.metaldetector.web.api.auth.PasswordResetRequest;
+import rocks.metaldetector.web.api.auth.InitResetPasswordRequest;
 import rocks.metaldetector.web.api.auth.RegisterUserRequest;
 import rocks.metaldetector.web.api.auth.RegistrationVerificationRequest;
 import rocks.metaldetector.web.api.auth.RegistrationVerificationResponse;
+import rocks.metaldetector.web.api.auth.ResetPasswordRequest;
 import rocks.metaldetector.web.controller.rest.auth.AuthenticationRestController;
 
 import java.util.List;
@@ -46,6 +47,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_VERIFICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.REQUEST_PASSWORD_RESET;
+import static rocks.metaldetector.support.Endpoints.Rest.RESET_PASSWORD;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationRestControllerTest implements WithAssertions {
@@ -57,7 +59,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
   private UserService userService;
 
   @Mock
-  private PasswordResetService passwordResetService;
+  private ResetPasswordService resetPasswordService;
 
   @InjectMocks
   private AuthenticationRestController underTest;
@@ -66,7 +68,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(refreshTokenService, userService, passwordResetService);
+    reset(refreshTokenService, userService, resetPasswordService);
   }
 
   @Nested
@@ -315,7 +317,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
     @DisplayName("should return ok")
     void should_return_ok() {
       // given
-      PasswordResetRequest request = new PasswordResetRequest("test@example.com");
+      InitResetPasswordRequest request = new InitResetPasswordRequest("test@example.com");
 
       // when
       var response = restAssuredUtils.doPost(request);
@@ -328,13 +330,49 @@ class AuthenticationRestControllerTest implements WithAssertions {
     @DisplayName("should pass request to password reset service")
     void should_pass_request_to_password_reset_service() {
       // given
-      PasswordResetRequest request = new PasswordResetRequest("test@example.com");
+      InitResetPasswordRequest request = new InitResetPasswordRequest("test@example.com");
 
       // when
       restAssuredUtils.doPost(request);
 
       // then
-      verify(passwordResetService).requestPasswordReset(request);
+      verify(resetPasswordService).requestPasswordReset(request);
+    }
+  }
+
+  @Nested
+  class ResetPasswordTests {
+
+    @BeforeEach
+    void setup() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(RESET_PASSWORD);
+      RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
+    }
+
+    @Test
+    @DisplayName("should return ok")
+    void should_return_ok() {
+      // given
+      ResetPasswordRequest request = new ResetPasswordRequest("eyFoobar", "new-password");
+
+      // when
+      var response = restAssuredUtils.doPost(request);
+
+      // then
+      response.status(OK);
+    }
+
+    @Test
+    @DisplayName("should pass request to password reset service")
+    void should_pass_request_to_password_reset_service() {
+      // given
+      ResetPasswordRequest request = new ResetPasswordRequest("eyFoobar", "new-password");
+
+      // when
+      restAssuredUtils.doPost(request);
+
+      // then
+      verify(resetPasswordService).resetPassword(request);
     }
   }
 }

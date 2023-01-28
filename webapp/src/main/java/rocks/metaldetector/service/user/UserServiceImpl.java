@@ -27,7 +27,6 @@ import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.user.events.OnRegistrationCompleteEvent;
 import rocks.metaldetector.service.user.events.UserCreationEvent;
 import rocks.metaldetector.service.user.events.UserDeletionEvent;
-import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.web.api.auth.RegisterUserRequest;
 import rocks.metaldetector.web.api.auth.RegistrationVerificationResponse;
@@ -51,9 +50,9 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
-  private final JwtsSupport jwtsSupport;
   private final UserTransformer userTransformer;
   private final UserDtoTransformer userDtoTransformer;
+  private final UserFromTokenExtractor userFromTokenExtractor;
   private final AuthenticationFacade authenticationFacade;
   private final LoginAttemptService loginAttemptService;
   private final ApplicationEventPublisher eventPublisher;
@@ -177,16 +176,6 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void resetPasswordWithToken(String tokenString, String newPassword) {
-    UserEntity userEntity = extractUserFromToken(tokenString);
-
-    // set new password
-    userEntity.setPassword(passwordEncoder.encode(newPassword));
-    userRepository.save(userEntity);
-  }
-
-  @Override
-  @Transactional
   public void persistSuccessfulLogin(String publicUserId) {
     Optional<AbstractUserEntity> userEntityOptional = userRepository.findByPublicId(publicUserId);
 
@@ -232,7 +221,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public RegistrationVerificationResponse verifyEmailToken(String tokenString) {
-    AbstractUserEntity userEntity = extractUserFromToken(tokenString);
+    AbstractUserEntity userEntity = userFromTokenExtractor.extractUserFromToken(tokenString);
     userEntity.setEnabled(true);
     userRepository.save(userEntity);
 
@@ -281,11 +270,5 @@ public class UserServiceImpl implements UserService {
     }
 
     return DigestUtils.md5Hex(clientIp);
-  }
-
-  private UserEntity extractUserFromToken(String token) {
-    var claims = jwtsSupport.getClaims(token);
-    return (UserEntity) userRepository.findByPublicId(claims.getSubject())
-        .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
   }
 }
