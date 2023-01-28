@@ -64,7 +64,8 @@ public class Endpoints {
     public static final String REFRESH_ACCESS_TOKEN = "/rest/v1/auth/refresh";
     public static final String REGISTER = "/rest/v1/auth/register";
     public static final String REGISTRATION_VERIFICATION = "/rest/v1/auth/register/verification";
-    public static final String RESEND_VERIFICATION_TOKEN = "/rest/v1/auth/register/resend";
+    public static final String REQUEST_PASSWORD_RESET = "/rest/v1/auth/forgot-password";
+    public static final String RESET_PASSWORD = "/rest/v1/auth/reset-password";
 
     public static final String CSRF = "/rest/v1/csrf";
 

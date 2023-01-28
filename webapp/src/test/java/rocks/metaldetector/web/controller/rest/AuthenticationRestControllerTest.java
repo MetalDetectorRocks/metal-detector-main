@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseCookie;
+import rocks.metaldetector.service.auth.PasswordResetService;
 import rocks.metaldetector.service.auth.RefreshTokenData;
 import rocks.metaldetector.service.exceptions.RestExceptionsHandler;
 import rocks.metaldetector.service.auth.RefreshTokenService;
@@ -21,6 +22,7 @@ import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.auth.AuthenticationResponse;
 import rocks.metaldetector.web.api.auth.LoginResponse;
+import rocks.metaldetector.web.api.auth.PasswordResetRequest;
 import rocks.metaldetector.web.api.auth.RegisterUserRequest;
 import rocks.metaldetector.web.api.auth.RegistrationVerificationRequest;
 import rocks.metaldetector.web.api.auth.RegistrationVerificationResponse;
@@ -43,6 +45,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_VERIFICATION;
+import static rocks.metaldetector.support.Endpoints.Rest.REQUEST_PASSWORD_RESET;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationRestControllerTest implements WithAssertions {
@@ -53,6 +56,9 @@ class AuthenticationRestControllerTest implements WithAssertions {
   @Mock
   private UserService userService;
 
+  @Mock
+  private PasswordResetService passwordResetService;
+
   @InjectMocks
   private AuthenticationRestController underTest;
 
@@ -60,7 +66,7 @@ class AuthenticationRestControllerTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(refreshTokenService);
+    reset(refreshTokenService, userService, passwordResetService);
   }
 
   @Nested
@@ -293,6 +299,42 @@ class AuthenticationRestControllerTest implements WithAssertions {
       // then
       var extractedResponse = response.extract().as(RegistrationVerificationResponse.class);
       assertThat(extractedResponse).isEqualTo(verificationResponse);
+    }
+  }
+
+  @Nested
+  class RequestPasswordResetTests {
+
+    @BeforeEach
+    void setup() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(REQUEST_PASSWORD_RESET);
+      RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
+    }
+
+    @Test
+    @DisplayName("should return ok")
+    void should_return_ok() {
+      // given
+      PasswordResetRequest request = new PasswordResetRequest("test@example.com");
+
+      // when
+      var response = restAssuredUtils.doPost(request);
+
+      // then
+      response.status(OK);
+    }
+
+    @Test
+    @DisplayName("should pass request to password reset service")
+    void should_pass_request_to_password_reset_service() {
+      // given
+      PasswordResetRequest request = new PasswordResetRequest("test@example.com");
+
+      // when
+      restAssuredUtils.doPost(request);
+
+      // then
+      verify(passwordResetService).requestPasswordReset(request);
     }
   }
 }

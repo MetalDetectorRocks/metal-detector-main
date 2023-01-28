@@ -102,9 +102,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Optional<UserDto> getUserByEmailOrUsername(String emailOrUsername) {
-    Optional<AbstractUserEntity> userEntity = findByEmailOrUsername(emailOrUsername);
-    return userEntity.map(userTransformer::transform);
+  public UserDto getUserByEmailOrUsername(String emailOrUsername) {
+    AbstractUserEntity user = findByEmailOrUsername(emailOrUsername)
+        .orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND.toDisplayString()));
+    return userTransformer.transform(user);
   }
 
   @Override

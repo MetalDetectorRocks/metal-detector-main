@@ -60,7 +60,8 @@ import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_VERIFICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
-import static rocks.metaldetector.support.Endpoints.Rest.RESEND_VERIFICATION_TOKEN;
+import static rocks.metaldetector.support.Endpoints.Rest.REQUEST_PASSWORD_RESET;
+import static rocks.metaldetector.support.Endpoints.Rest.RESET_PASSWORD;
 import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
 import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION;
 import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_SAVED_ARTISTS;
@@ -111,7 +112,8 @@ public class SecurityConfig {
                            Endpoints.Rest.LOGIN,
                            REGISTER,
                            REGISTRATION_VERIFICATION,
-                           RESEND_VERIFICATION_TOKEN,
+                           REQUEST_PASSWORD_RESET,
+                           RESET_PASSWORD,
                            LOGOUT,
                            RELEASES,
                            TOP_UPCOMING_RELEASES,

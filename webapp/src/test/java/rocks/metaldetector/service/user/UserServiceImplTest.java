@@ -408,14 +408,13 @@ class UserServiceImplTest implements WithAssertions {
       when(request.getHeader(anyString())).thenReturn("666");
 
       // when
-      Optional<UserDto> userDto = underTest.getUserByEmailOrUsername(EMAIL);
+      UserDto userDto = underTest.getUserByEmailOrUsername(EMAIL);
 
       // then
       verify(userRepository).findByEmail(EMAIL);
       verify(userRepository, never()).findByUsername(EMAIL);
-      assertThat(userDto).isPresent();
-      assertThat(userDto.get().getUsername()).isEqualTo(USERNAME);
-      assertThat(userDto.get().getEmail()).isEqualTo(EMAIL);
+      assertThat(userDto.getUsername()).isEqualTo(USERNAME);
+      assertThat(userDto.getEmail()).isEqualTo(EMAIL);
     }
 
     @Test
@@ -429,18 +428,17 @@ class UserServiceImplTest implements WithAssertions {
       when(request.getHeader(anyString())).thenReturn("666");
 
       // when
-      Optional<UserDto> userDto = underTest.getUserByEmailOrUsername(USERNAME);
+      UserDto userDto = underTest.getUserByEmailOrUsername(USERNAME);
 
       // then
       verify(userRepository).findByEmail(USERNAME);
       verify(userRepository).findByUsername(USERNAME);
-      assertThat(userDto).isPresent();
-      assertThat(userDto.get().getUsername()).isEqualTo(USERNAME);
-      assertThat(userDto.get().getEmail()).isEqualTo(EMAIL);
+      assertThat(userDto.getUsername()).isEqualTo(USERNAME);
+      assertThat(userDto.getEmail()).isEqualTo(EMAIL);
     }
 
     @Test
-    @DisplayName("Requesting a not existing user by email or username should return empty optional")
+    @DisplayName("Requesting a not existing user by email or username should throw exception")
     void get_user_by_email_or_username_for_not_existing_user() {
       // given
       String NOT_EXISTING = "not-existing";
@@ -449,12 +447,12 @@ class UserServiceImplTest implements WithAssertions {
       when(userRepository.findByUsername(NOT_EXISTING)).thenReturn(Optional.empty());
 
       // when
-      Optional<UserDto> userDto = underTest.getUserByEmailOrUsername(NOT_EXISTING);
+      Throwable throwable = catchThrowable(() -> underTest.getUserByEmailOrUsername(NOT_EXISTING));
 
       // then
       verify(userRepository).findByEmail(NOT_EXISTING);
       verify(userRepository).findByUsername(NOT_EXISTING);
-      assertThat(userDto).isEmpty();
+      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
