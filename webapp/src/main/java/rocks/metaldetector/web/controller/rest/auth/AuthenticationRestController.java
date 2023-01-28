@@ -16,6 +16,8 @@ import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.web.api.auth.LoginResponse;
 import rocks.metaldetector.web.api.auth.AuthenticationResponse;
 import rocks.metaldetector.web.api.auth.RegisterUserRequest;
+import rocks.metaldetector.web.api.auth.RegistrationVerificationRequest;
+import rocks.metaldetector.web.api.auth.RegistrationVerificationResponse;
 
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -23,6 +25,7 @@ import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
+import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_VERIFICATION;
 
 @RestController
 @AllArgsConstructor
@@ -56,5 +59,11 @@ public class AuthenticationRestController {
   public ResponseEntity<Void> registerUser(@Valid @RequestBody RegisterUserRequest registerUserRequest) {
     userService.createUser(registerUserRequest);
     return ResponseEntity.ok().build();
+  }
+
+  @PostMapping(value = REGISTRATION_VERIFICATION, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+  public ResponseEntity<RegistrationVerificationResponse> verifyUser(@Valid @RequestBody RegistrationVerificationRequest verificationRequest) {
+    RegistrationVerificationResponse response = userService.verifyEmailToken(verificationRequest.getToken());
+    return ResponseEntity.ok(response);
   }
 }

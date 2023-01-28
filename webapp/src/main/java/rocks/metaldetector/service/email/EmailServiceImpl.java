@@ -3,6 +3,7 @@ package rocks.metaldetector.service.email;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
@@ -25,6 +26,9 @@ public class EmailServiceImpl implements EmailService {
   private final ISpringTemplateEngine templateEngine;
   private final MailProperties mailProperties;
   private final MimeMessageHelperFunction messageHelperFunction;
+
+  @Setter
+  @Value("${frontend.origin}")
   private String frontendBaseUrl;
 
   @Async
@@ -62,10 +66,5 @@ public class EmailServiceImpl implements EmailService {
     }
 
     return mimeMessage;
-  }
-
-  @Value("${frontend.origin}")
-  void setFrontendBaseUrl(String frontendBaseUrl) {
-    this.frontendBaseUrl = frontendBaseUrl;
   }
 }

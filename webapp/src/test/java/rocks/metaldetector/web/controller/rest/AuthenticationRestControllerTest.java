@@ -22,6 +22,8 @@ import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.auth.AuthenticationResponse;
 import rocks.metaldetector.web.api.auth.LoginResponse;
 import rocks.metaldetector.web.api.auth.RegisterUserRequest;
+import rocks.metaldetector.web.api.auth.RegistrationVerificationRequest;
+import rocks.metaldetector.web.api.auth.RegistrationVerificationResponse;
 import rocks.metaldetector.web.controller.rest.auth.AuthenticationRestController;
 
 import java.util.List;
@@ -31,13 +33,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
+import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
+import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_VERIFICATION;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationRestControllerTest implements WithAssertions {
@@ -95,6 +100,19 @@ class AuthenticationRestControllerTest implements WithAssertions {
       var authenticationResponse = response.extract().as(AuthenticationResponse.class);
       response.status(OK);
       assertThat(authenticationResponse.isAuthenticated()).isTrue();
+    }
+
+    @Test
+    @DisplayName("should pass token from cookie")
+    void should_pass_token_from_cookie() {
+      // given
+      String token = "eyFoobar";
+
+      // when
+      restAssuredUtils.doGetWithCookies(Map.of(REFRESH_TOKEN_COOKIE_NAME, token));
+
+      // then
+      verify(refreshTokenService).isValid(token);
     }
   }
 
@@ -222,6 +240,59 @@ class AuthenticationRestControllerTest implements WithAssertions {
 
       // then
       verify(userService).createUser(request);
+    }
+  }
+
+  @Nested
+  class VerifyUserTests {
+
+    @BeforeEach
+    void setup() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(REGISTRATION_VERIFICATION);
+      RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
+    }
+
+    @Test
+    @DisplayName("should return ok")
+    void should_return_ok() {
+      // given
+      RegistrationVerificationRequest request = new RegistrationVerificationRequest("eyFoo");
+
+      // when
+      var response = restAssuredUtils.doPost(request);
+
+      // then
+      response.status(OK);
+    }
+
+    @Test
+    @DisplayName("should pass received token to user service")
+    void should_pass_received_request_to_user_service() {
+      // given
+      String token = "eyFoo";
+      RegistrationVerificationRequest request = new RegistrationVerificationRequest(token);
+
+      // when
+      restAssuredUtils.doPost(request);
+
+      // then
+      verify(userService).verifyEmailToken(token);
+    }
+
+    @Test
+    @DisplayName("should return registration verification response")
+    void should_return_registration_verification_response() {
+      // given
+      RegistrationVerificationRequest request = new RegistrationVerificationRequest("eyFoo");
+      RegistrationVerificationResponse verificationResponse = new RegistrationVerificationResponse("JohnD");
+      when(userService.verifyEmailToken(any())).thenReturn(verificationResponse);
+
+      // when
+      var response = restAssuredUtils.doPost(request);
+
+      // then
+      var extractedResponse = response.extract().as(RegistrationVerificationResponse.class);
+      assertThat(extractedResponse).isEqualTo(verificationResponse);
     }
   }
 }

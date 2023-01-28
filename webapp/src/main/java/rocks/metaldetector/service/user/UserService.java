@@ -2,6 +2,7 @@ package rocks.metaldetector.service.user;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 import rocks.metaldetector.web.api.auth.RegisterUserRequest;
+import rocks.metaldetector.web.api.auth.RegistrationVerificationResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,5 +35,5 @@ public interface UserService extends UserDetailsService {
 
   void updateCurrentPassword(String oldPlainPassword, String newPlainPassword);
 
-  void verifyEmailToken(String tokenString);
+  RegistrationVerificationResponse verifyEmailToken(String tokenString);
 }

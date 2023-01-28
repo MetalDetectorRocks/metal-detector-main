@@ -1,5 +1,6 @@
 package rocks.metaldetector.service.exceptions;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -42,6 +43,8 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
+import static rocks.metaldetector.support.ErrorMessages.UNEXPECTED_EXTERNAL_SERVICE_BEHAVIOUR;
+import static rocks.metaldetector.support.ErrorMessages.UNEXPECTED_SERVICE_BEHAVIOUR;
 
 @ControllerAdvice
 @Slf4j
@@ -108,7 +111,7 @@ public class RestExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(FORBIDDEN, exception), new HttpHeaders(), FORBIDDEN);
   }
 
-  @ExceptionHandler({UnauthorizedException.class, BadCredentialsException.class, AccountStatusException.class})
+  @ExceptionHandler({UnauthorizedException.class, BadCredentialsException.class, AccountStatusException.class, ExpiredJwtException.class})
   public ResponseEntity<ErrorResponse> handleBadCredentialsException(RuntimeException exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(UNAUTHORIZED, exception), new HttpHeaders(), UNAUTHORIZED);
@@ -117,17 +120,28 @@ public class RestExceptionsHandler {
   @ExceptionHandler({ExternalServiceException.class, RestClientException.class})
   public ResponseEntity<ErrorResponse> handleRestExceptions(RuntimeException exception, WebRequest webRequest) {
     log.error(webRequest.getContextPath() + ": " + exception.getMessage());
-    return new ResponseEntity<>(createErrorResponse(SERVICE_UNAVAILABLE, exception), new HttpHeaders(), SERVICE_UNAVAILABLE);
+    return new ResponseEntity<>(
+        createErrorResponse(SERVICE_UNAVAILABLE, UNEXPECTED_EXTERNAL_SERVICE_BEHAVIOUR.toDisplayString()),
+        new HttpHeaders(),
+        SERVICE_UNAVAILABLE
+    );
   }
 
   @ExceptionHandler({Exception.class})
   public ResponseEntity<ErrorResponse> handleAllOtherExceptions(Exception exception, WebRequest webRequest) {
     log.error(webRequest.getContextPath() + ": " + exception.getMessage(), exception);
-    return new ResponseEntity<>(createErrorResponse(INTERNAL_SERVER_ERROR, exception), new HttpHeaders(), INTERNAL_SERVER_ERROR);
+    return new ResponseEntity<>(
+        createErrorResponse(INTERNAL_SERVER_ERROR, UNEXPECTED_SERVICE_BEHAVIOUR.toDisplayString()),
+        new HttpHeaders(),
+        INTERNAL_SERVER_ERROR);
   }
 
   private ErrorResponse createErrorResponse(HttpStatus status, Throwable exception) {
     return new ErrorResponse(status.value(), status.getReasonPhrase(), List.of(exception.getMessage()));
+  }
+
+  private ErrorResponse createErrorResponse(HttpStatus status, String message) {
+    return new ErrorResponse(status.value(), status.getReasonPhrase(), List.of(message));
   }
 
   private ErrorResponse createErrorResponse(BindingResult bindingResult) {
