@@ -9,11 +9,11 @@ val dependencyVersions = listOf(
 
 val dependencyGroupVersions = mapOf(
     "io.rest-assured" to libs.versions.restAssured.get(),
-    "org.apache.groovy" to "4.0.7"
+    "org.apache.groovy" to "4.0.8"
 )
 
 plugins {
-  id("org.springframework.boot") version "3.0.1" apply false
+  id("org.springframework.boot") version "3.0.2" apply false
   id("io.spring.dependency-management") version "1.1.0" apply false
   id("de.europace.docker-publish") version "1.4.2" apply false
 }
