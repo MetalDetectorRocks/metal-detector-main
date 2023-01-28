@@ -7,6 +7,10 @@ import java.util.Set;
 
 public class UserEntityFactory {
 
+  public static UserEntity createDefaultUser() {
+    return createUser("JohnD", "john.doe@example.com");
+  }
+
   public static UserEntity createUser(String username, String email) {
     return UserEntity.builder()
             .username(username)

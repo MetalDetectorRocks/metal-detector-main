@@ -26,8 +26,6 @@ public interface UserService extends UserDetailsService {
 
   UserDto getCurrentUser();
 
-  void resetPasswordWithToken(String tokenString, String newPassword);
-
   void persistSuccessfulLogin(String publicUserId);
 
   void deleteCurrentUser();

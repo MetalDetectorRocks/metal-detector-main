@@ -1,6 +1,5 @@
 package rocks.metaldetector.service.user;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.assertj.core.api.WithAssertions;
@@ -36,7 +35,6 @@ import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.user.events.OnRegistrationCompleteEvent;
 import rocks.metaldetector.service.user.events.UserCreationEvent;
 import rocks.metaldetector.service.user.events.UserDeletionEvent;
-import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 import rocks.metaldetector.web.api.auth.RegisterUserRequest;
@@ -81,8 +79,6 @@ class UserServiceImplTest implements WithAssertions {
   private static final String DUPLICATE_USERNAME = "Duplicate";
   private static final String DUPLICATE_EMAIL = "duplicate@example.com";
   private static final String PUBLIC_ID = "public-id";
-  private final String TOKEN = "user-token";
-  private final String NEW_PLAIN_PASSWORD = "new-plain-password";
   private final String NEW_ENCRYPTED_PASSWORD = "encryption".repeat(6); // an encrypted password must be 60 characters long
 
   @Mock
@@ -91,14 +87,14 @@ class UserServiceImplTest implements WithAssertions {
   @Spy
   private BCryptPasswordEncoder passwordEncoder;
 
-  @Mock
-  private JwtsSupport jwtsSupport;
-
   @Spy
   private UserTransformer userTransformer;
 
   @Mock
   private UserDtoTransformer userDtoTransformer;
+
+  @Mock
+  private UserFromTokenExtractor userFromTokenExtractor;
 
   @Mock
   private AuthenticationFacade authenticationFacade;
@@ -117,7 +113,7 @@ class UserServiceImplTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(userRepository, passwordEncoder, jwtsSupport, userTransformer, userDtoTransformer,
+    reset(userRepository, passwordEncoder, userTransformer, userDtoTransformer, userFromTokenExtractor,
         authenticationFacade, loginAttemptService, request, eventPublisher
     );
   }
@@ -733,92 +729,6 @@ class UserServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Changing the password of a user should call JwtsSupport")
-    void change_password_calls_jwts_support() {
-      // given
-      var token = "token";
-      var claims = mock(Claims.class);
-      var user = UserEntityFactory.createUser("JohnD", "johnd@example.com");
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
-
-      // when
-      underTest.resetPasswordWithToken(token, "newPW");
-
-      // then
-      verify(jwtsSupport).getClaims(token);
-    }
-
-    @Test
-    @DisplayName("Changing the password of a user with valid token should call UserRepository to find user")
-    void change_password_should_call_user_repository_to_find() {
-      // given
-      var claims = mock(Claims.class);
-      var publicUserId = "publicUserId";
-      var userEntity = UserEntityFactory.createUser(USERNAME, EMAIL);
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-      doReturn(publicUserId).when(claims).getSubject();
-      doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
-
-      // when
-      underTest.resetPasswordWithToken("token", "newPW");
-
-      // then
-      verify(userRepository).findByPublicId(publicUserId);
-    }
-
-    @Test
-    @DisplayName("Changing the password of a user with valid token should call PasswordEncoder")
-    void change_password_should_call_password_encoder() {
-      // given
-      var claims = mock(Claims.class);
-      var newPassword = "newPw";
-      var userEntity = UserEntityFactory.createUser(USERNAME, EMAIL);
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-      doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
-
-      // when
-      underTest.resetPasswordWithToken("token", newPassword);
-
-      // then
-      verify(passwordEncoder).encode(newPassword);
-    }
-
-    @Test
-    @DisplayName("Changing the password of a user with valid token should call UserRepository to save user")
-    void change_password_should_call_user_repository_to_save() {
-      // given
-      ArgumentCaptor<UserEntity> argumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
-      var claims = mock(Claims.class);
-      var userEntity = UserEntityFactory.createUser(USERNAME, EMAIL);
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-      doReturn(Optional.of(userEntity)).when(userRepository).findByPublicId(any());
-      doReturn(NEW_ENCRYPTED_PASSWORD).when(passwordEncoder).encode(any());
-
-      // when
-      underTest.resetPasswordWithToken("token", "newPW");
-
-      // then
-      verify(userRepository).save(argumentCaptor.capture());
-      assertThat(argumentCaptor.getValue().getPassword()).isEqualTo(NEW_ENCRYPTED_PASSWORD);
-    }
-
-    @Test
-    @DisplayName("Changing the password of a not existing user should throw exception")
-    void change_password_should_throw_user_not_found() {
-      // given
-      var claims = mock(Claims.class);
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-
-      // when
-      Throwable throwable = catchThrowable(() -> underTest.resetPasswordWithToken(TOKEN, NEW_PLAIN_PASSWORD));
-
-      // then
-      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
-    }
-
-    @Test
     @DisplayName("Updating the current user's email address calls currentUserSupplier")
     void test_updating_email_calls_current_user_supplier() {
       // given
@@ -1041,52 +951,18 @@ class UserServiceImplTest implements WithAssertions {
   class VerifyEmailTokenTests {
 
     @Test
-    @DisplayName("Verifying the registration with an existing and not expired token should call jwts support")
-    void verify_registration_with_valid_token_should_call_jwts_support() {
+    @DisplayName("should extract user from token")
+    void should_extract_user_from_token() {
       // given
       var token = "token";
-      var claims = mock(Claims.class);
       var user = UserEntityFactory.createUser("JohnD", "johnd@example.com");
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
+      doReturn(user).when(userFromTokenExtractor).extractUserFromToken(any());
 
       // when
       underTest.verifyEmailToken(token);
 
       // then
-      verify(jwtsSupport).getClaims(token);
-    }
-
-    @Test
-    @DisplayName("Verifying the registration with an existing and not expired token should call user repository to find user")
-    void verify_registration_with_valid_token_should_call_user_repo() {
-      // given
-      var claims = mock(Claims.class);
-      var user = UserEntityFactory.createUser("JohnD", "johnd@example.com");
-      doReturn(PUBLIC_ID).when(claims).getSubject();
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
-
-      // when
-      underTest.verifyEmailToken("token");
-
-      // then
-      verify(userRepository).findByPublicId(PUBLIC_ID);
-    }
-
-    @Test
-    @DisplayName("Verifying the registration with an existing and not expired token should throw exception if user is not found")
-    void verify_registration_with_valid_token_should_throw_exception() {
-      // given
-      var claims = mock(Claims.class);
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-
-      // when
-      Throwable throwable = catchThrowable(() -> underTest.verifyEmailToken("token"));
-
-      // then
-      assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
-      assertThat(throwable).hasMessageContaining(USER_WITH_ID_NOT_FOUND.toDisplayString());
+      verify(userFromTokenExtractor).extractUserFromToken(token);
     }
 
     @Test
@@ -1094,11 +970,8 @@ class UserServiceImplTest implements WithAssertions {
     void verify_registration_with_valid_token() {
       // given
       ArgumentCaptor<UserEntity> userEntityCaptor = ArgumentCaptor.forClass(UserEntity.class);
-      var claims = mock(Claims.class);
       var user = UserEntityFactory.createUser("JohnD", "johnd@example.com");
-      doReturn(PUBLIC_ID).when(claims).getSubject();
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
+      doReturn(user).when(userFromTokenExtractor).extractUserFromToken(any());
 
       // when
       underTest.verifyEmailToken("token");
@@ -1112,10 +985,8 @@ class UserServiceImplTest implements WithAssertions {
     @DisplayName("should return registration verification response")
     void should_return_registration_verification_response() {
       // given
-      var claims = mock(Claims.class);
       var user = UserEntityFactory.createUser("JohnD", "johnd@example.com");
-      doReturn(claims).when(jwtsSupport).getClaims(any());
-      doReturn(Optional.of(user)).when(userRepository).findByPublicId(any());
+      doReturn(user).when(userFromTokenExtractor).extractUserFromToken(any());
 
       // when
       RegistrationVerificationResponse response = underTest.verifyEmailToken("token");
