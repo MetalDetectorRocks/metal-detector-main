@@ -23,7 +23,6 @@ import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.security.LoginAttemptService;
 import rocks.metaldetector.service.exceptions.IllegalUserActionException;
-import rocks.metaldetector.service.exceptions.TokenExpiredException;
 import rocks.metaldetector.service.exceptions.UserAlreadyExistsException;
 import rocks.metaldetector.service.user.events.OnRegistrationCompleteEvent;
 import rocks.metaldetector.service.user.events.UserCreationEvent;
@@ -31,11 +30,11 @@ import rocks.metaldetector.service.user.events.UserDeletionEvent;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.web.api.auth.RegisterUserRequest;
+import rocks.metaldetector.web.api.auth.RegistrationVerificationResponse;
 import rocks.metaldetector.web.transformer.UserDtoTransformer;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -231,10 +230,12 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void verifyEmailToken(String tokenString) {
+  public RegistrationVerificationResponse verifyEmailToken(String tokenString) {
     AbstractUserEntity userEntity = extractUserFromToken(tokenString);
     userEntity.setEnabled(true);
     userRepository.save(userEntity);
+
+    return new RegistrationVerificationResponse(userEntity.getUsername());
   }
 
   private Optional<AbstractUserEntity> findByEmailOrUsername(String emailOrUsername) {
@@ -283,11 +284,6 @@ public class UserServiceImpl implements UserService {
 
   private UserEntity extractUserFromToken(String token) {
     var claims = jwtsSupport.getClaims(token);
-
-    if (claims.getExpiration().before(new Date())) {
-      throw new TokenExpiredException();
-    }
-
     return (UserEntity) userRepository.findByPublicId(claims.getSubject())
         .orElseThrow(() -> new ResourceNotFoundException(USER_WITH_ID_NOT_FOUND.toDisplayString()));
   }
