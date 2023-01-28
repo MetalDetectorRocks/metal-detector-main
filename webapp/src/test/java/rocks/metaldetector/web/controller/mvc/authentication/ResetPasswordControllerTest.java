@@ -26,7 +26,7 @@ import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.testutil.DtoFactory.ChangePasswordRequestFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
-import rocks.metaldetector.web.api.request.ChangePasswordRequest;
+import rocks.metaldetector.web.api.auth.ChangePasswordRequest;
 
 import java.time.Duration;
 import java.util.Date;
@@ -201,10 +201,9 @@ class ResetPasswordControllerTest implements WithAssertions {
         Arguments.of(ChangePasswordRequestFactory.withTokenString(null)),
 
         // invalid passwords
-        Arguments.of(ChangePasswordRequestFactory.withPassword("secret-password", "other-secret-password")),
-        Arguments.of(ChangePasswordRequestFactory.withPassword("secret", "secret")),
-        Arguments.of(ChangePasswordRequestFactory.withPassword("", "")),
-        Arguments.of(ChangePasswordRequestFactory.withPassword(null, null))
+        Arguments.of(ChangePasswordRequestFactory.withPassword("secret")),
+        Arguments.of(ChangePasswordRequestFactory.withPassword("")),
+        Arguments.of(ChangePasswordRequestFactory.withPassword(null))
     );
   }
 }

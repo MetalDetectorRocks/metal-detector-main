@@ -10,17 +10,17 @@ import rocks.metaldetector.service.token.TokenService;
 
 @Component
 @AllArgsConstructor
-public class ResetPasswordRequestCompleteListener implements ApplicationListener<OnResetPasswordRequestCompleteEvent> {
+public class RequestPasswordResetListener implements ApplicationListener<OnRequestPasswordResetEvent> {
 
   private final EmailService emailService;
   private final TokenService tokenService;
 
   @Override
-  public void onApplicationEvent(@NonNull OnResetPasswordRequestCompleteEvent event) {
+  public void onApplicationEvent(@NonNull OnRequestPasswordResetEvent event) {
     sendResetPasswordEmail(event);
   }
 
-  private void sendResetPasswordEmail(OnResetPasswordRequestCompleteEvent event) {
+  private void sendResetPasswordEmail(OnRequestPasswordResetEvent event) {
     String token = tokenService.createResetPasswordToken(event.getUserDto().getPublicId());
     emailService.sendEmail(new ForgotPasswordEmail(event.getUserDto().getEmail(), event.getUserDto().getUsername(), token));
   }

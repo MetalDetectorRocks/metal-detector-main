@@ -5,7 +5,6 @@ import rocks.metaldetector.web.api.auth.RegisterUserRequest;
 import rocks.metaldetector.web.api.auth.RegistrationVerificationResponse;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService extends UserDetailsService {
 
@@ -15,7 +14,7 @@ public interface UserService extends UserDetailsService {
 
   UserDto getUserByPublicId(String publicId);
 
-  Optional<UserDto> getUserByEmailOrUsername(String emailOrUsername);
+  UserDto getUserByEmailOrUsername(String emailOrUsername);
 
   UserDto updateUser(String publicId, UserDto userDto);
 

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -17,12 +16,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.service.user.UserDto;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
 import java.util.Map;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -116,7 +113,7 @@ class AuthenticationListenerTest implements WithAssertions {
     doReturn(webAuthenticationDetails).when(authentication).getDetails();
     doReturn(oAuthUser).when(authentication).getPrincipal();
     doReturn(userAttributes).when(oAuthUser).getAttributes();
-    doReturn(Optional.of(UserDtoFactory.createDefault())).when(userService).getUserByEmailOrUsername(any());
+    doReturn(UserDtoFactory.createDefault()).when(userService).getUserByEmailOrUsername(any());
     doReturn("i'm an ip").when(webAuthenticationDetails).getRemoteAddress();
 
     // when
@@ -127,27 +124,6 @@ class AuthenticationListenerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Exception is thrown if user is not found")
-  void test_exception_if_user_not_found() {
-    // given
-    var email = "mail@mail.mail";
-    var userAttributes = Map.of("email", email);
-    doReturn(authentication).when(successEvent).getAuthentication();
-    doReturn(webAuthenticationDetails).when(authentication).getDetails();
-    doReturn(oAuthUser).when(authentication).getPrincipal();
-    doReturn(userAttributes).when(oAuthUser).getAttributes();
-    doReturn(Optional.empty()).when(userService).getUserByEmailOrUsername(any());
-    doReturn("i'm an ip").when(webAuthenticationDetails).getRemoteAddress();
-
-    // when
-    Throwable throwable = catchThrowable(() -> underTest.onAuthenticationSuccess(successEvent));
-
-    // then
-    assertThat(throwable).isInstanceOf(IllegalStateException.class);
-    assertThat(throwable).hasMessageContaining(email);
-  }
-
-  @Test
   @DisplayName("UserService is called to persist login on authentication success of OAuth user")
   void test_login_persisted_for_oauth_user() {
     // given
@@ -155,7 +131,7 @@ class AuthenticationListenerTest implements WithAssertions {
     doReturn(authentication).when(successEvent).getAuthentication();
     doReturn(webAuthenticationDetails).when(authentication).getDetails();
     doReturn(oAuthUser).when(authentication).getPrincipal();
-    doReturn(Optional.of(userDto)).when(userService).getUserByEmailOrUsername(any());
+    doReturn(userDto).when(userService).getUserByEmailOrUsername(any());
     doReturn("i'm an ip").when(webAuthenticationDetails).getRemoteAddress();
 
     // when

@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+import rocks.metaldetector.service.auth.PasswordResetService;
 import rocks.metaldetector.service.auth.RefreshTokenData;
 import rocks.metaldetector.service.auth.RefreshTokenService;
 import rocks.metaldetector.service.user.UserService;
+import rocks.metaldetector.web.api.auth.PasswordResetRequest;
 import rocks.metaldetector.web.api.auth.LoginResponse;
 import rocks.metaldetector.web.api.auth.AuthenticationResponse;
 import rocks.metaldetector.web.api.auth.RegisterUserRequest;
@@ -26,6 +28,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_VERIFICATION;
+import static rocks.metaldetector.support.Endpoints.Rest.REQUEST_PASSWORD_RESET;
 
 @RestController
 @AllArgsConstructor
@@ -34,6 +37,7 @@ public class AuthenticationRestController {
 
   private final RefreshTokenService refreshTokenService;
   private final UserService userService;
+  private final PasswordResetService passwordResetService;
 
   @GetMapping(path = AUTHENTICATION, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<AuthenticationResponse> authenticated(@CookieValue(name = REFRESH_TOKEN_COOKIE_NAME, required = false) String refreshToken) {
@@ -65,5 +69,11 @@ public class AuthenticationRestController {
   public ResponseEntity<RegistrationVerificationResponse> verifyUser(@Valid @RequestBody RegistrationVerificationRequest verificationRequest) {
     RegistrationVerificationResponse response = userService.verifyEmailToken(verificationRequest.getToken());
     return ResponseEntity.ok(response);
+  }
+
+  @PostMapping(value = REQUEST_PASSWORD_RESET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+  public ResponseEntity<PasswordResetRequest> requestPasswordReset(@Valid @RequestBody PasswordResetRequest passwordResetRequest) {
+    passwordResetService.requestPasswordReset(passwordResetRequest);
+    return ResponseEntity.ok().build();
   }
 }

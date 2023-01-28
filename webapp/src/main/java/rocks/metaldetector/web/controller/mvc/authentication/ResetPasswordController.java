@@ -16,7 +16,7 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.support.JwtsSupport;
-import rocks.metaldetector.web.api.request.ChangePasswordRequest;
+import rocks.metaldetector.web.api.auth.ChangePasswordRequest;
 
 import java.util.Date;
 
