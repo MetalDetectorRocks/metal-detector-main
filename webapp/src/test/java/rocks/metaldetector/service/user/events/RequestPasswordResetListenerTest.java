@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ResetPasswordRequestCompleteListenerTest implements WithAssertions {
+class RequestPasswordResetListenerTest implements WithAssertions {
 
   @Mock
   private EmailService emailService;
@@ -31,7 +31,7 @@ class ResetPasswordRequestCompleteListenerTest implements WithAssertions {
   private ArgumentCaptor<Email> emailCaptor;
 
   @InjectMocks
-  private ResetPasswordRequestCompleteListener listener;
+  private RequestPasswordResetListener listener;
 
   @Test
   @DisplayName("ResetPasswordRequestCompleteListener should create token and send an email after password reset request")
@@ -41,7 +41,7 @@ class ResetPasswordRequestCompleteListenerTest implements WithAssertions {
     final String TOKEN = "1234-56789";
     final String USERNAME = "JohnD";
     UserDto userDto = UserDto.builder().publicId("public-id").email(EMAIL).username(USERNAME).build();
-    OnResetPasswordRequestCompleteEvent event = new OnResetPasswordRequestCompleteEvent("source", userDto);
+    OnRequestPasswordResetEvent event = new OnRequestPasswordResetEvent("source", userDto);
     when(tokenService.createResetPasswordToken(userDto.getPublicId())).thenReturn(TOKEN);
 
     // when

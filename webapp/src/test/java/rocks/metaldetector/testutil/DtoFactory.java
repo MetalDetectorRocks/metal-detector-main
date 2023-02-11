@@ -12,7 +12,7 @@ import rocks.metaldetector.spotify.facade.dto.SpotifyAlbumDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.support.Pagination;
-import rocks.metaldetector.web.api.request.ChangePasswordRequest;
+import rocks.metaldetector.web.api.auth.ResetPasswordRequest;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.auth.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
@@ -123,25 +123,6 @@ public class DtoFactory {
           .oldPlainPassword("old-password")
           .newPlainPassword("new-password")
           .verifyNewPlainPassword("new-password")
-          .build();
-    }
-  }
-
-  public static class ChangePasswordRequestFactory {
-
-    public static ChangePasswordRequest withTokenString(String tokenString) {
-      return create(tokenString, "valid-password", "valid-password");
-    }
-
-    public static ChangePasswordRequest withPassword(String plainPassword, String verifyPlainPassword) {
-      return create("valid-token", plainPassword, verifyPlainPassword);
-    }
-
-    private static ChangePasswordRequest create(String tokenString, String plainPassword, String verifyPlainPassword) {
-      return ChangePasswordRequest.builder()
-          .tokenString(tokenString)
-          .newPlainPassword(plainPassword)
-          .verifyNewPlainPassword(verifyPlainPassword)
           .build();
     }
   }

@@ -7,11 +7,11 @@ import rocks.metaldetector.service.user.UserDto;
 
 @Getter
 @Setter
-public class OnResetPasswordRequestCompleteEvent extends ApplicationEvent {
+public class OnRequestPasswordResetEvent extends ApplicationEvent {
 
   private final UserDto userDto;
 
-  public OnResetPasswordRequestCompleteEvent(Object source, UserDto userDto) {
+  public OnRequestPasswordResetEvent(Object source, UserDto userDto) {
     super(source);
     this.userDto = userDto;
   }

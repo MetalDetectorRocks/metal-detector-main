@@ -1,4 +1,4 @@
-package rocks.metaldetector.web.api.request;
+package rocks.metaldetector.web.api.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-public class ForgotPasswordRequest {
+public class InitResetPasswordRequest {
 
   @NotBlank
   private String emailOrUsername;
