@@ -13,7 +13,7 @@ val dependencyGroupVersions = mapOf(
 )
 
 plugins {
-  id("org.springframework.boot") version "3.0.2" apply false
+  id("org.springframework.boot") version "3.0.3" apply false
   id("io.spring.dependency-management") version "1.1.0" apply false
   id("de.europace.docker-publish") version "1.4.2" apply false
 }
@@ -22,6 +22,12 @@ subprojects {
   project.apply(plugin = "java")
   project.apply(plugin = "io.spring.dependency-management")
   project.apply(plugin = "jacoco")
+
+  the<DependencyManagementExtension>().apply {
+    imports {
+      mavenBom(BOM_COORDINATES)
+    }
+  }
 
   configurations {
     all {
