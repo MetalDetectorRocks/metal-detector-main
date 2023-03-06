@@ -36,9 +36,9 @@ public class UserAccountRestController {
   }
 
   @PatchMapping(path = CURRENT_USER_EMAIL, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<String> updateCurrentEmail(@Valid @RequestBody UpdateEmailRequest request) {
-    UserDto updatedUserDto = userService.updateCurrentEmail(request.getEmailAddress());
-    return ResponseEntity.ok(updatedUserDto.getEmail());
+  public ResponseEntity<Void> updateCurrentEmail(@Valid @RequestBody UpdateEmailRequest request) {
+    userService.updateCurrentEmail(request.getEmail());
+    return ResponseEntity.ok().build();
   }
 
   @DeleteMapping(path = CURRENT_USER)

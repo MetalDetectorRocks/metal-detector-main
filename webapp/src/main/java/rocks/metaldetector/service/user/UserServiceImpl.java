@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
       throw IllegalUserActionException.createOAuthUserCannotChangeEMailException();
     }
     if (!currentUser.getEmail().equalsIgnoreCase(emailAddress) && userRepository.existsByEmail(emailAddress)) {
-      throw new IllegalArgumentException("The email address is already in use!");
+      throw UserAlreadyExistsException.createUserWithEmailAlreadyExistsException();
     }
 
     currentUser.setEmail(emailAddress);

@@ -757,7 +757,7 @@ class UserServiceImplTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("should throw IllegalArgumentException if new email address already exists")
+    @DisplayName("should throw UserAlreadyExistsException if new email address already exists")
     void should_throw_exception_if_new_email_address_already_exists() {
       // given
       doReturn(UserEntityFactory.createUser("user", "mail@example.com")).when(authenticationFacade).getCurrentUser();
@@ -768,7 +768,7 @@ class UserServiceImplTest implements WithAssertions {
       Throwable throwable = catchThrowable(() -> underTest.updateCurrentEmail("new-mail@example.com"));
 
       // then
-      assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+      assertThat(throwable).isInstanceOf(UserAlreadyExistsException.class);
     }
 
     @Test

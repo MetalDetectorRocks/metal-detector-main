@@ -10,6 +10,7 @@ import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
+import rocks.metaldetector.persistence.domain.user.RefreshTokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.AccountDeletedEmail;
 import rocks.metaldetector.service.email.EmailService;
@@ -21,6 +22,7 @@ public class UserDeletionEventListener implements ApplicationListener<UserDeleti
 
   static final String SPOTIFY_REGISTRATION_ID = "spotify-user";
 
+  private final RefreshTokenRepository refreshTokenRepository;
   private final FollowActionRepository followActionRepository;
   private final NotificationConfigRepository notificationConfigRepository;
   private final TelegramConfigRepository telegramConfigRepository;
@@ -34,6 +36,7 @@ public class UserDeletionEventListener implements ApplicationListener<UserDeleti
     AbstractUserEntity user = event.getUserEntity();
     log.info("User '" + user.getPublicId() + "' deleted");
 
+    refreshTokenRepository.deleteAllByUser(user);
     telegramConfigRepository.deleteByUser(user);
     notificationConfigRepository.deleteAllByUser(user);
     followActionRepository.deleteAllByUser(user);

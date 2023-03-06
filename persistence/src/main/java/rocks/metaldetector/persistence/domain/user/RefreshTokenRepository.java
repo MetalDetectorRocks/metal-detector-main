@@ -12,4 +12,5 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity
   RefreshTokenEntity getByToken(String token);
   void deleteByToken(String token);
   List<RefreshTokenEntity> findAllByLastModifiedDateTimeBefore(Date date);
+  void deleteAllByUser(AbstractUserEntity user);
 }

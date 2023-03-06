@@ -48,11 +48,9 @@ class UserAccountRestControllerTest implements WithAssertions {
   @Spy
   private UserDtoTransformer userDtoTransformer;
 
-  private UserAccountRestController underTest;
-
   @BeforeEach
   void setup() {
-    underTest = new UserAccountRestController(userService, userDtoTransformer);
+    UserAccountRestController underTest = new UserAccountRestController(userService, userDtoTransformer);
     RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
   }
 
@@ -107,12 +105,11 @@ class UserAccountRestControllerTest implements WithAssertions {
   class UpdateCurrentEmailAddressTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
-    private UserDto userDto;
 
     @BeforeEach
     void setup() {
       restAssuredUtils = new RestAssuredMockMvcUtils(CURRENT_USER_EMAIL);
-      userDto = UserDtoFactory.createUser("user", ROLE_USER, true);
+      UserDto userDto = UserDtoFactory.createUser("user", ROLE_USER, true);
       doReturn(userDto).when(userService).updateCurrentEmail(any());
     }
 
@@ -130,22 +127,6 @@ class UserAccountRestControllerTest implements WithAssertions {
     }
 
     @Test
-    @DisplayName("Should return updated email address if updating user is successful")
-    void should_return_updated_email() {
-      // given
-      var request = new UpdateEmailRequest("mail@mail.com");
-      userDto.setEmail(request.getEmailAddress());
-      doReturn(userDto).when(userService).updateCurrentEmail(any());
-
-      // when
-      ValidatableMockMvcResponse response = restAssuredUtils.doPatch(request);
-
-      // then
-      String emailAddress = response.extract().asString();
-      assertThat(emailAddress).isEqualTo(request.getEmailAddress());
-    }
-
-    @Test
     @DisplayName("Should call userService")
     void should_call_user_service() {
       // given
@@ -155,7 +136,7 @@ class UserAccountRestControllerTest implements WithAssertions {
       restAssuredUtils.doPatch(request);
 
       // then
-      verify(userService).updateCurrentEmail(request.getEmailAddress());
+      verify(userService).updateCurrentEmail(request.getEmail());
     }
 
     @ParameterizedTest
@@ -217,12 +198,11 @@ class UserAccountRestControllerTest implements WithAssertions {
   class UpdateCurrentPasswordTest {
 
     private RestAssuredMockMvcUtils restAssuredUtils;
-    private UserDto userDto;
 
     @BeforeEach
     void setup() {
       restAssuredUtils = new RestAssuredMockMvcUtils(CURRENT_USER_PASSWORD);
-      userDto = UserDtoFactory.createUser("user", ROLE_USER, true);
+      UserDto userDto = UserDtoFactory.createUser("user", ROLE_USER, true);
       doReturn(userDto).when(userService).updateCurrentEmail(any());
     }
 
@@ -230,7 +210,7 @@ class UserAccountRestControllerTest implements WithAssertions {
     @DisplayName("Should return 200 if updating user is successful")
     void should_return_200() {
       // given
-      var request = new UpdatePasswordRequest("oldPassword", "newPassword", "newPassword");
+      var request = new UpdatePasswordRequest("oldPassword", "newPassword");
 
       // when
       ValidatableMockMvcResponse response = restAssuredUtils.doPatch(request);
@@ -243,7 +223,7 @@ class UserAccountRestControllerTest implements WithAssertions {
     @DisplayName("Should call userService")
     void should_call_user_service() {
       // given
-      var request = new UpdatePasswordRequest("oldPassword", "newPassword", "newPassword");
+      var request = new UpdatePasswordRequest("oldPassword", "newPassword");
 
       // when
       restAssuredUtils.doPatch(request);
@@ -265,11 +245,9 @@ class UserAccountRestControllerTest implements WithAssertions {
 
     private Stream<Arguments> inputProvider() {
       return Stream.of(
-          Arguments.of(new UpdatePasswordRequest("         ", "newPassword", "newPassword")),
-          Arguments.of(new UpdatePasswordRequest("oldPassword", "", "newPassword")),
-          Arguments.of(new UpdatePasswordRequest("oldPassword", "newPassword", "")),
-          Arguments.of(new UpdatePasswordRequest("oldPassword", "newPassword", "newPasswordNotMatching")),
-          Arguments.of(new UpdatePasswordRequest("oldPassword", "         ", "         "))
+          Arguments.of(new UpdatePasswordRequest("         ", "newPassword")),
+          Arguments.of(new UpdatePasswordRequest("oldPassword", "")),
+          Arguments.of(new UpdatePasswordRequest("oldPassword", "         "))
       );
     }
   }
