@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import rocks.metaldetector.service.cleanup.RegistrationCleanupService;
+import rocks.metaldetector.service.auth.RegistrationCleanupService;
 
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
 

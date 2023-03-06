@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.cleanup;
+package rocks.metaldetector.service.auth;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-class RegistrationCleanupServiceImplTest implements WithAssertions {
+class RegistrationCleanupServiceTest implements WithAssertions {
 
   @Mock
   private UserRepository userRepository;
@@ -31,7 +31,7 @@ class RegistrationCleanupServiceImplTest implements WithAssertions {
   private NotificationConfigRepository notificationConfigRepository;
 
   @InjectMocks
-  private RegistrationCleanupServiceImpl underTest;
+  private RegistrationCleanupService underTest;
 
   @AfterEach
   void tearDown() {

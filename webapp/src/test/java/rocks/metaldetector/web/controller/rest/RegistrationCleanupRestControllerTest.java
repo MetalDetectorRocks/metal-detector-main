@@ -8,7 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.service.cleanup.RegistrationCleanupService;
+import rocks.metaldetector.service.auth.RegistrationCleanupService;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
