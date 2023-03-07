@@ -1,90 +1,71 @@
-<!DOCTYPE html>
-<html layout:decorate="~{email/fragments/releases-layout}"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:th="http://www.w3.org/1999/xhtml"
-      lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
 <head>
     <title>Your new metal releases</title>
-    <style type="text/css">
-        #upcoming-releases {
-            padding-top: 1rem;
-        }
-        .cover-box {
-            float: left;
-            min-width: 26%;
-            box-sizing: border-box;
-            margin-bottom: 0.5rem;
-        }
-        .cover {
-            border-radius: 5px;
-            width: 9rem;
-            height: 9rem;
-            object-fit: cover;
-            border: 1px solid #464b53;
-        }
-        .release-box {
-            float: left;
-            padding-left: 4%;
-            width: 66%;
-            margin-bottom: 0.5rem;
-            box-sizing: border-box;
-        }
-        @media screen and (max-width: 650px) {
-            .cover-box {
-                width: 100%;
-            }
-            .cover {
-                width: 12rem;
-                height: 12rem;
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            .release-box {
-                width: 100%;
-                text-align: center;
-                margin-bottom: 1.5rem;
-            }
-        }
-    </style>
+    <meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
 </head>
-<body>
-    <div layout:fragment="content">
-        <p class="text-l">The following releases have been released recently or will be released in the next days.</p>
+<body style="background-color:#02040A;padding:50px 0;color:#a4aab0;font-family:Roboto, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, sans-serif">
+<table align="center" role="presentation" cellSpacing="0" cellPadding="0" border="0" width="100%" style="max-width:37.5em;background-color:#0C0E14;border:1px solid #21262d;padding:45px;border-radius:5px">
+    <tr style="width:100%">
+        <td><img alt="Metal Detector Logo" src="https://s3.eu-central-1.amazonaws.com/rocks.metal-detector.s3.images/images/assets/logo.png" width="450" style="display:block;outline:none;border:none;text-decoration:none;margin-left:auto;margin-right:auto" />
+            <table align="center" border="0" cellPadding="0" cellSpacing="0" role="presentation" width="100%">
+                <tbody>
+                <tr>
+                    <td>
+                        <h1 style="font-size:30px;font-weight:bold;text-align:center">Hi <span th:text="${username}">username</span>,</h1>
+                        <p style="font-size:18px;line-height:28px;margin:16px 0;font-weight:300;margin-bottom:25px">The following releases have been released recently or will be released in the next days.</p>
 
-        <div id="recent-releases" th:unless="${#lists.isEmpty(recentReleases)}">
-            <h2 class="text-xl">Recent releases</h2>
-            <div th:each="release: ${recentReleases}">
-                <div class="cover-box">
-                    <img class="cover" src="#" th:src="${release.coverUrl}" alt="Release Cover" width="150"/>
-                </div>
-                <div class="release-box">
-                    <div class="release-title">
-                        <span class="text-xl text-bold" th:text="${release.artist}"></span><br />
-                        <span class="text-l text-bold" th:text="${release.albumTitle}"></span><br />
-                        <span class="text-bold" th:text="${release.releaseDateAsDisplayString}"></span>
-                    </div>
-                </div>
-                <div style="clear:both;"></div>
-            </div>
-        </div>
+                        <div th:unless="${#lists.isEmpty(recentReleases)}">
+                            <h2>Recent releases</h2>
+                            <table th:each="release: ${recentReleases}" align="center" role="presentation" cellSpacing="0" cellPadding="0" border="0" width="100%" style="max-width:37.5em;margin-bottom:48px">
+                                <tr style="width:100%">
+                                    <td><img th:src="${release.coverUrl}" alt="Album cover" width="450" style="display:block;outline:none;border:none;text-decoration:none;margin-left:auto;margin-right:auto;border-radius:5px" />
+                                        <table align="center" border="0" cellPadding="0" cellSpacing="0" role="presentation" width="100%">
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    <h2 style="text-align:center;margin-top:8px;margin-bottom:0" th:text="${release.artist}"></h2>
+                                                    <h2 style="text-align:center;margin-top:0;margin-bottom:0" th:text="${release.albumTitle}"></h2>
+                                                    <h4 style="text-align:center;margin-top:8px;margin-bottom:0" th:text="${release.releaseDateAsDisplayString}"></h4>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
 
-        <div id="upcoming-releases" th:unless="${#lists.isEmpty(upcomingReleases)}">
-            <h2 class="text-xl">Upcoming releases</h2>
-            <div th:each="release: ${upcomingReleases}">
-                <div class="cover-box">
-                    <img class="cover" src="#" th:src="${release.coverUrl}" alt="Release Cover" width="150" />
-                </div>
-                <div class="release-box">
-                    <div class="release-title">
-                        <span class="text-xl text-bold" th:text="${release.artist}"></span><br />
-                        <span class="text-l text-bold" th:text="${release.albumTitle}"></span><br />
-                        <span class="text-bold" th:text="${release.releaseDateAsDisplayString}"></span>
-                    </div>
-                </div>
-                <div style="clear:both;"></div>
-            </div>
-        </div>
-    </div>
+                        <div th:unless="${#lists.isEmpty(upcomingReleases)}">
+                            <h2>Upcoming releases</h2>
+                            <table th:each="release: ${upcomingReleases}" align="center" role="presentation" cellSpacing="0" cellPadding="0" border="0" width="100%" style="max-width:37.5em;margin-bottom:48px">
+                                <tr style="width:100%">
+                                    <td><img th:src="${release.coverUrl}" alt="Album cover" width="450" style="display:block;outline:none;border:none;text-decoration:none;margin-left:auto;margin-right:auto;border-radius:5px" />
+                                        <table align="center" border="0" cellPadding="0" cellSpacing="0" role="presentation" width="100%">
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    <h2 style="text-align:center;margin-top:8px;margin-bottom:0" th:text="${release.artist}"></h2>
+                                                    <h2 style="text-align:center;margin-top:0;margin-bottom:0" th:text="${release.albumTitle}"></h2>
+                                                    <h4 style="text-align:center;margin-top:8px;margin-bottom:0" th:text="${release.releaseDateAsDisplayString}"></h4>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <hr style="width:100%;border:none;border-top:1px solid;margin-top:30px;border-color:#21262d" />
+                        <p style="font-size:13px;line-height:1.2;margin:16px 0;color:#555;margin-top:0;text-align:center;margin-bottom:0">This email was sent to you because you are registered as a member on<a target="_blank" style="color:#067df7;text-decoration:none;padding-left:4px" href="https://metal-detector.rocks">metal-detector.rocks</a>. Please do not reply to this email. <span>If you want to unsubscribe please go to your account&#x27;s<a target="_blank" style="color:#067df7;text-decoration:none;padding-left:4px" href="https://www.metal-detector.rocks/settings/notification-settings">notification settings</a>.</span></p>
+                        <p style="font-size:14px;line-height:24px;margin:16px 0;margin-top:5px;text-align:center"><a target="_blank" style="color:#555;text-decoration:underline;font-size:13px;margin-top:0;text-align:center;line-height:1.2;margin-bottom:0;margin-right:5px;margin-left:5px" href="https://www.metal-detector.rocks/imprint">Imprint</a><a target="_blank" style="color:#555;text-decoration:underline;font-size:13px;margin-top:0;text-align:center;line-height:1.2;margin-bottom:0;margin-right:5px;margin-left:5px" href="https://www.metal-detector.rocks/privacy-policy">Privacy Policy</a></p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+</table>
 </body>
 </html>
