@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.facade.dto.ReleaseDto;
-import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.email.ReleasesEmail;
@@ -23,6 +22,9 @@ import java.util.List;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static rocks.metaldetector.service.email.EmailTemplateNames.NEW_RELEASES;
+import static rocks.metaldetector.service.email.EmailTemplateNames.TODAYS_ANNOUNCEMENTS;
+import static rocks.metaldetector.service.email.EmailTemplateNames.TODAYS_RELEASES;
 
 @ExtendWith(MockitoExtension.class)
 class EmailNotificationSenderTest implements WithAssertions {
@@ -55,7 +57,7 @@ class EmailNotificationSenderTest implements WithAssertions {
     var mail = argumentCaptor.getValue();
     assertThat(mail.getRecipient()).isEqualTo(USER.getEmail());
     assertThat(mail.getSubject()).isEqualTo(ReleasesEmail.SUBJECT);
-    assertThat(mail.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.NEW_RELEASES);
+    assertThat(mail.getTemplateName()).isEqualTo(NEW_RELEASES);
 
     var upcomingReleases = (List<ReleaseDto>) mail.createViewModel("dummy-base-url").get("upcomingReleases");
     var recentReleases = (List<ReleaseDto>) mail.createViewModel("dummy-base-url").get("recentReleases");
@@ -80,7 +82,7 @@ class EmailNotificationSenderTest implements WithAssertions {
     var mail = argumentCaptor.getValue();
     assertThat(mail.getRecipient()).isEqualTo(USER.getEmail());
     assertThat(mail.getSubject()).isEqualTo(TodaysReleasesEmail.SUBJECT);
-    assertThat(mail.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.TODAYS_RELEASES);
+    assertThat(mail.getTemplateName()).isEqualTo(TODAYS_RELEASES);
 
     var todaysReleases = (List<ReleaseDto>) mail.createViewModel("dummy-base-url").get("todaysReleases");
     var username = (String) mail.createViewModel("dummy-base-url").get("username");
@@ -103,7 +105,7 @@ class EmailNotificationSenderTest implements WithAssertions {
     var mail = argumentCaptor.getValue();
     assertThat(mail.getRecipient()).isEqualTo(USER.getEmail());
     assertThat(mail.getSubject()).isEqualTo(TodaysAnnouncementsEmail.SUBJECT);
-    assertThat(mail.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.TODAYS_ANNOUNCEMENTS);
+    assertThat(mail.getTemplateName()).isEqualTo(TODAYS_ANNOUNCEMENTS);
 
     var todaysAnnouncements = (List<ReleaseDto>) mail.createViewModel("dummy-base-url").get("todaysAnnouncements");
     var username = (String) mail.createViewModel("dummy-base-url").get("username");

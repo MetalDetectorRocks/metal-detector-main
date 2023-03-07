@@ -2,7 +2,7 @@ package rocks.metaldetector.service.email;
 
 import java.util.List;
 
-import static rocks.metaldetector.config.constants.ViewNames.EmailTemplates.REGISTRATION_VERIFICATION;
+import static rocks.metaldetector.service.email.EmailTemplateNames.REGISTRATION_VERIFICATION;
 import static rocks.metaldetector.support.Endpoints.Frontend.SIGN_IN;
 
 public final class RegistrationVerificationEmail implements Email {

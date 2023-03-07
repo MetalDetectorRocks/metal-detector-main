@@ -9,7 +9,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.service.email.Email;
 import rocks.metaldetector.service.email.EmailService;
 import rocks.metaldetector.service.token.TokenService;
@@ -17,6 +16,7 @@ import rocks.metaldetector.service.user.UserDto;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static rocks.metaldetector.service.email.EmailTemplateNames.REGISTRATION_VERIFICATION;
 
 @ExtendWith(MockitoExtension.class)
 class RegistrationCompleteListenerTest implements WithAssertions {
@@ -56,7 +56,7 @@ class RegistrationCompleteListenerTest implements WithAssertions {
     String username = (String) email.createViewModel("dummy-base-url").get("username");
     assertThat(email.getRecipient()).isEqualTo(EMAIL);
     assertThat(email.getSubject()).isEqualTo("One last step to complete your registration!");
-    assertThat(email.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.REGISTRATION_VERIFICATION);
+    assertThat(email.getTemplateName()).isEqualTo(REGISTRATION_VERIFICATION);
     assertThat(verificationUrl).endsWith(TOKEN);
     assertThat(username).isEqualTo(USERNAME);
   }

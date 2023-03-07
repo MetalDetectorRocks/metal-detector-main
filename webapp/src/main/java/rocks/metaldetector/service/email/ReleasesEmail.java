@@ -4,7 +4,7 @@ import rocks.metaldetector.butler.facade.dto.ReleaseDto;
 
 import java.util.List;
 
-import static rocks.metaldetector.config.constants.ViewNames.EmailTemplates.NEW_RELEASES;
+import static rocks.metaldetector.service.email.EmailTemplateNames.NEW_RELEASES;
 
 public final class ReleasesEmail implements Email {
 

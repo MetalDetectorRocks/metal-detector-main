@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
@@ -26,6 +25,7 @@ import rocks.metaldetector.service.user.UserService;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static rocks.metaldetector.service.email.EmailTemplateNames.ACCOUNT_DELETED;
 import static rocks.metaldetector.service.user.events.UserDeletionEventListener.SPOTIFY_REGISTRATION_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -136,7 +136,7 @@ class UserDeletionEventListenerTest implements WithAssertions {
     AccountDeletedEmail email = argumentCaptor.getValue();
 
     assertThat(email.getRecipient()).isEqualTo(userDeletionEvent.getUserEntity().getEmail());
-    assertThat(email.getTemplateName()).isEqualTo(ViewNames.EmailTemplates.ACCOUNT_DELETED);
+    assertThat(email.getTemplateName()).isEqualTo(ACCOUNT_DELETED);
     assertThat(email.getSubject()).isEqualTo(AccountDeletedEmail.SUBJECT);
   }
 

@@ -21,12 +21,18 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import rocks.metaldetector.security.filter.CustomUsernamePasswordAuthenticationFilter;
 import rocks.metaldetector.security.filter.CustomAuthorizationFilter;
 import rocks.metaldetector.security.filter.XSSFilter;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
 import rocks.metaldetector.security.handler.CustomLogoutHandler;
 import rocks.metaldetector.support.Endpoints;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -195,5 +201,21 @@ public class SecurityConfig {
     authenticationFilter.setAuthenticationSuccessHandler(customAuthenticationSuccessHandler);
 
     return authenticationFilter;
+  }
+
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource(@Value("${frontend.origin}") String frontendOrigin) {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Stream.of(
+        frontendOrigin,
+        "http://localhost:3000",
+        "http://localhost:1080"
+    ).distinct().toList());
+    configuration.setAllowedMethods(List.of("*"));
+    configuration.setAllowedHeaders(List.of("*"));
+    configuration.setAllowCredentials(true);
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration(REST_ENDPOINTS, configuration);
+    return source;
   }
 }

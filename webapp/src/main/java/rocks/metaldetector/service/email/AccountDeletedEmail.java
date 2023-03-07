@@ -2,7 +2,7 @@ package rocks.metaldetector.service.email;
 
 import java.util.List;
 
-import static rocks.metaldetector.config.constants.ViewNames.EmailTemplates.ACCOUNT_DELETED;
+import static rocks.metaldetector.service.email.EmailTemplateNames.ACCOUNT_DELETED;
 
 public final class AccountDeletedEmail implements Email {
 
