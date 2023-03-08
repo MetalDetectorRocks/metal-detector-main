@@ -45,6 +45,7 @@ dependencies {
       requireCapability("org.ehcache:ehcache-jakarta")
     }
   }
+  implementation("com.github.loki4j:loki-logback-appender:${libs.versions.lokiLogbackAppender.get()}")
   implementation("org.jsoup:jsoup:${libs.versions.jsoup.get()}")
   implementation("org.projectlombok:lombok:${libs.versions.lombok.get()}")
   implementation("org.owasp.esapi:esapi:${libs.versions.esapi.get()}") {
