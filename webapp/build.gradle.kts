@@ -8,7 +8,7 @@ plugins {
 }
 
 dockerPublish {
-  organisation.set("metaldetector")
+  organisation.set("metaldetectorrocks")
   imageName.set(rootProject.name)
 }
 
