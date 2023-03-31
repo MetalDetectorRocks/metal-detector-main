@@ -1,17 +1,19 @@
 package rocks.metaldetector.web.api.response;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
 public class ErrorResponse {
 
-  private final int status;
-  private final LocalDateTime timestamp;
-  private final String error;
-  private final List<String> messages;
+  private int status;
+  private LocalDateTime timestamp;
+  private String error;
+  private List<String> messages;
 
   public ErrorResponse(int status, String error, List<String> messages) {
     this.timestamp = LocalDateTime.now();

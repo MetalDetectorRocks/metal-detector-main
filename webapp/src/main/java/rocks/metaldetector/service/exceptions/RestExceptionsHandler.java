@@ -77,7 +77,7 @@ public class RestExceptionsHandler {
     return new ResponseEntity<>(createErrorResponse(UNSUPPORTED_MEDIA_TYPE, exception), new HttpHeaders(), UNSUPPORTED_MEDIA_TYPE);
   }
 
-  @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class, ValidationException.class, MethodArgumentTypeMismatchException.class})
+  @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class, ValidationException.class, MethodArgumentTypeMismatchException.class, IllegalArgumentException.class})
   public ResponseEntity<ErrorResponse> handleValidationErrors(Exception exception, WebRequest webRequest) {
     log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
     BindingResult bindingResult = null;

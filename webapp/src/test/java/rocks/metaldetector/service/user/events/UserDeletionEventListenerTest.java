@@ -11,12 +11,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.notification.NotificationConfigRepository;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
+import rocks.metaldetector.persistence.domain.user.RefreshTokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.email.AccountDeletedEmail;
@@ -32,6 +32,9 @@ import static rocks.metaldetector.service.user.events.UserDeletionEventListener.
 class UserDeletionEventListenerTest implements WithAssertions {
 
   @Mock
+  private RefreshTokenRepository refreshTokenRepository;
+
+  @Mock
   private FollowActionRepository followActionRepository;
 
   @Mock
@@ -42,9 +45,6 @@ class UserDeletionEventListenerTest implements WithAssertions {
 
   @Mock
   private UserRepository userRepository;
-
-  @Mock
-  private NamedParameterJdbcTemplate jdbcTemplate;
 
   @Mock
   private EmailService emailService;
@@ -67,7 +67,17 @@ class UserDeletionEventListenerTest implements WithAssertions {
   @AfterEach
   void tearDown() {
     reset(followActionRepository, notificationConfigRepository, userRepository,
-          jdbcTemplate, emailService, telegramConfigRepository, oAuth2AuthorizedClientService);
+          emailService, telegramConfigRepository, refreshTokenRepository, oAuth2AuthorizedClientService);
+  }
+
+  @Test
+  @DisplayName("refresh tokens are deleted")
+  void test_refresh_tokens_deleted() {
+    // when
+    underTest.onApplicationEvent(userDeletionEvent);
+
+    // then
+    verify(refreshTokenRepository).deleteAllByUser(userDeletionEvent.getUserEntity());
   }
 
   @Test
