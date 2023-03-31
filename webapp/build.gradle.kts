@@ -45,7 +45,6 @@ dependencies {
       requireCapability("org.ehcache:ehcache-jakarta")
     }
   }
-  implementation("com.github.loki4j:loki-logback-appender:${libs.versions.lokiLogbackAppender.get()}")
   implementation("org.jsoup:jsoup:${libs.versions.jsoup.get()}")
   implementation("org.projectlombok:lombok:${libs.versions.lombok.get()}")
   implementation("org.owasp.esapi:esapi:${libs.versions.esapi.get()}") {
@@ -56,6 +55,7 @@ dependencies {
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
+  runtimeOnly("com.github.loki4j:loki-logback-appender:${libs.versions.lokiLogbackAppender.get()}")
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("io.micrometer:micrometer-registry-prometheus")
   runtimeOnly("javax.cache:cache-api:${libs.versions.cacheApi.get()}")
