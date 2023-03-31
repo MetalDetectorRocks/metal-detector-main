@@ -32,7 +32,7 @@
     </root>
 
     <!-- LOG "rocks.metaldetector.*" at TRACE level -->
-    <logger name="rocks.metaldetector" level="info" additivity="false">
+    <logger name="rocks.metaldetector" level="trace" additivity="false">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </logger>

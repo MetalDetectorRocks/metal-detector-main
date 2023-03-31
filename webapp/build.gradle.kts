@@ -7,7 +7,7 @@ plugins {
 }
 
 dockerPublish {
-  organisation.set("metaldetector")
+  organisation.set("metaldetectorrocks")
   imageName.set(rootProject.name)
 }
 
@@ -55,6 +55,7 @@ dependencies {
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
+  runtimeOnly("com.github.loki4j:loki-logback-appender:${libs.versions.lokiLogbackAppender.get()}")
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("io.micrometer:micrometer-registry-prometheus")
   runtimeOnly("javax.cache:cache-api:${libs.versions.cacheApi.get()}")
