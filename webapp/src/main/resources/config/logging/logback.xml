@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="15 seconds">
+    <!-- scan="true": reloads the config file while application is running if there is any change -->
+    <!-- scanPeriod="15 seconds": We can specify values in milliseconds, seconds, minutes, or hours for scan -->
+    <!-- debug="true": prints debug messages regarding this configuration file -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%cyan(%d{ISO8601}) [%magenta(%thread)] %yellow(%-5level) %green(%logger{40}) - %msg %n%throwable</Pattern>
+        </encoder>
+    </appender>
+
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+    <springProperty scope="context" name="appName" source="spring.application.name"/>
+    <springProperty scope="context" name="profile" source="spring.profiles.active"/>
+    <appender name="Loki" class="com.github.loki4j.logback.Loki4jAppender">
+        <batchMaxItems>100</batchMaxItems>
+        <batchTimeoutMs>10000</batchTimeoutMs>
+        <http>
+            <url>${GRAFANA_CLOUD_ENDPOINT}</url>
+            <auth>
+                <username>${GRAFANA_CLOUD_USER}</username>
+                <password>${GRAFANA_CLOUD_API_KEY}</password>
+            </auth>
+            <requestTimeoutMs>10000</requestTimeoutMs>
+        </http>
+        <format>
+            <label>
+                <pattern>app=${appName},env=${profile},hostname=${HOSTNAME},level=%level</pattern>
+            </label>
+            <message>
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </message>
+            <sortByTime>true</sortByTime>
+        </format>
+    </appender>
+
+    <!-- LOG everything at INFO level -->
+    <root level="info">
+        <appender-ref ref="Console" />
+        <appender-ref ref="Loki"/>
+    </root>
+
+    <!-- LOG "rocks.metaldetector.*" at TRACE level -->
+    <logger name="rocks.metaldetector" level="trace" additivity="false">
+        <appender-ref ref="Console" />
+        <appender-ref ref="Loki"/>
+    </logger>
+</configuration>
