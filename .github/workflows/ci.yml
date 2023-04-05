@@ -29,10 +29,3 @@ jobs:
         uses: scacap/action-surefire-report@v1
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
-      - name: Generate coverage report
-        run: ./gradlew jacocoTestReport --no-daemon --info --stacktrace
-      - name: Upload report to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          name: codecov-umbrella
-          fail_ci_if_error: true

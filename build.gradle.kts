@@ -22,7 +22,6 @@ plugins {
 subprojects {
   project.apply(plugin = "java")
   project.apply(plugin = "io.spring.dependency-management")
-  project.apply(plugin = "jacoco")
 
   the<DependencyManagementExtension>().apply {
     imports {
@@ -59,12 +58,6 @@ subprojects {
     withType<Test> {
       useJUnitPlatform()
       testLogging.showStandardStreams = true
-    }
-    withType<JacocoReport> {
-      reports {
-        xml.required.set(true)
-        html.required.set(false)
-      }
     }
     withType<JavaCompile> {
       options.encoding = "UTF-8"

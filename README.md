@@ -1,5 +1,4 @@
 ![Continous Integration](https://github.com/MetalDetectorRocks/metal-detector-main/workflows/Continous%20Integration/badge.svg)
-[![codecov](https://codecov.io/gh/MetalDetectorRocks/metal-detector-main/branch/master/graph/badge.svg)](https://codecov.io/gh/MetalDetectorRocks/metal-detector-main)
 ![Build and deploy docker container image](https://github.com/MetalDetectorRocks/metal-detector-main/workflows/Build%20and%20deploy%20docker%20container%20image/badge.svg)
 
 ![Alt](https://repobeats.axiom.co/api/embed/cb9842a5ae951f4f965972409be5ff2b64ff02b8.svg "Repobeats analytics image")
