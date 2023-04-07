@@ -1,20 +1,29 @@
-<!DOCTYPE html>
-<html layout:decorate="~{email/fragments/layout}"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:th="http://www.w3.org/1999/xhtml"
-      lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
 <head>
     <title>Account deleted</title>
+    <meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
 </head>
-<body>
-<section layout:fragment="content">
-    <p>
-        Hi <span th:text="${username}">username</span>
-    </p>
-    <p>
-        Your account and all related data on metal-detector.rocks have been deleted successfully.
-    </p>
-    <p>Cheers!</p>
-</section>
+<body style="background-color:#02040A;padding:50px 0;color:#a4aab0;font-family:Roboto, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, sans-serif">
+    <table align="center" role="presentation" cellSpacing="0" cellPadding="0" border="0" width="100%" style="max-width:37.5em;background-color:#0C0E14;border:1px solid #21262d;padding:45px;border-radius:5px">
+        <tr style="width:100%">
+            <td><img alt="Metal Detector Logo" src="https://s3.eu-central-1.amazonaws.com/rocks.metal-detector.s3.images/images/assets/logo.png" width="450" style="display:block;outline:none;border:none;text-decoration:none;margin-left:auto;margin-right:auto" />
+                <table align="center" border="0" cellPadding="0" cellSpacing="0" role="presentation" width="100%">
+                    <tbody>
+                    <tr>
+                        <td>
+                            <h1 style="font-size:30px;font-weight:bold;text-align:center">Hi <span th:text="${username}">username</span>,</h1>
+                            <p style="font-size:18px;line-height:28px;margin:16px 0;font-weight:300;margin-bottom:25px">Your account and all related data on<a target="_blank" style="color:#067df7;text-decoration:none;padding-left:5px;padding-right:5px" href="https://metal-detector.rocks">metal-detector.rocks</a>have been deleted successfully.</p>
+                            <p style="font-size:18px;line-height:28px;margin:16px 0;font-weight:300;margin-bottom:25px">Too bad you&#x27;re leaving. You can always return and create a new account.</p>
+                            <hr style="width:100%;border:none;border-top:1px solid;margin-top:30px;border-color:#21262d" />
+                            <p style="font-size:13px;line-height:1.2;margin:16px 0;color:#555;margin-top:0;text-align:center;margin-bottom:0">This email was sent to you because you are registered as a member on<a target="_blank" style="color:#067df7;text-decoration:none;padding-left:4px" href="https://metal-detector.rocks">metal-detector.rocks</a>. Please do not reply to this email. </p>
+                            <p style="font-size:14px;line-height:24px;margin:16px 0;margin-top:5px;text-align:center"><a target="_blank" style="color:#555;text-decoration:underline;font-size:13px;margin-top:0;text-align:center;line-height:1.2;margin-bottom:0;margin-right:5px;margin-left:5px" href="https://www.metal-detector.rocks/imprint">Imprint</a><a target="_blank" style="color:#555;text-decoration:underline;font-size:13px;margin-top:0;text-align:center;line-height:1.2;margin-bottom:0;margin-right:5px;margin-left:5px" href="https://www.metal-detector.rocks/privacy-policy">Privacy Policy</a></p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

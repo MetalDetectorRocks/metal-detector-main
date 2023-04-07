@@ -2,7 +2,7 @@ package rocks.metaldetector.service.email;
 
 import java.util.List;
 
-import static rocks.metaldetector.config.constants.ViewNames.EmailTemplates.FORGOT_PASSWORD;
+import static rocks.metaldetector.service.email.EmailTemplateNames.FORGOT_PASSWORD;
 import static rocks.metaldetector.support.Endpoints.Authentication.RESET_PASSWORD;
 
 public final class ForgotPasswordEmail implements Email {
