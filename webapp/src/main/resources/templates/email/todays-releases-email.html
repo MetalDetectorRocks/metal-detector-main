@@ -13,7 +13,7 @@
                 <tr>
                     <td>
                         <h1 style="font-size:30px;font-weight:bold;text-align:center">Hi <span th:text="${username}">username</span>,</h1>
-                        <p style="font-size:18px;line-height:28px;margin:16px 0;font-weight:300;margin-bottom:25px">Here are your favorite band's releases coming out today:</p>
+                        <p style="font-size:18px;line-height:28px;margin:16px 0;font-weight:300;margin-bottom:25px">Here are your favorite bands' releases coming out today:</p>
                         <table th:each="release: ${todaysReleases}" align="center" role="presentation" cellSpacing="0" cellPadding="0" border="0" width="100%" style="max-width:37.5em;margin-bottom:48px">
                             <tr style="width:100%">
                                 <td><img th:src="${release.coverUrl}" alt="Album cover" width="450" style="display:block;outline:none;border:none;text-decoration:none;margin-left:auto;margin-right:auto;border-radius:5px" />
