@@ -14,4 +14,4 @@ restAssured = "5.3.0"
 servletApi = "4.0.1"
 slf4jTest = "2.8.1"
 thymeleafDialect = "3.2.0"
-thymeleafExtras = "3.1.1.RELEASE"
+thymeleafExtras = "3.0.5.RELEASE" # version 3.1.x may not compatible with spring boot 2, pleas do not upgrade
