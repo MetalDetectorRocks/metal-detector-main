@@ -1,15 +1,15 @@
 dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-web")
-  implementation("org.apache.commons:commons-text:${libs.versions.commonsText.get()}")
-  implementation("org.projectlombok:lombok:${libs.versions.lombok.get()}")
+  implementation(libs.springBootStarterWeb)
+  implementation(libs.commonsText)
+  implementation(libs.lombok)
 
   implementation(rootProject.projects.support)
 
-  annotationProcessor("org.projectlombok:lombok:${libs.versions.lombok.get()}")
+  annotationProcessor(libs.lombok)
 
-  testImplementation("org.apache.commons:commons-text:${libs.versions.commonsText.get()}")
-  testImplementation("org.mockito:mockito-inline")
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation(libs.commonsText)
+  testImplementation(libs.mockitoInline)
+  testImplementation(libs.springBootStarterTest)
 }
 
 description = "butler"

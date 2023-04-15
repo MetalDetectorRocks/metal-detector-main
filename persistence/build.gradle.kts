@@ -3,18 +3,18 @@ plugins {
 }
 
 dependencies {
-  api("org.springframework.boot:spring-boot-starter-data-jpa")
+  api(libs.springBootStarterDataJpa)
 
-  implementation("org.postgresql:postgresql:${libs.versions.postgresql.get()}")
-  implementation("org.projectlombok:lombok:${libs.versions.lombok.get()}")
+  implementation(libs.postgres)
+  implementation(libs.lombok)
 
-  annotationProcessor("org.projectlombok:lombok:${libs.versions.lombok.get()}")
+  annotationProcessor(libs.lombok)
 
   implementation(rootProject.projects.support)
 
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("com.h2database:h2")
-  testImplementation("org.mockito:mockito-inline")
+  testImplementation(libs.springBootStarterTest)
+  testImplementation(libs.h2)
+  testImplementation(libs.mockitoInline)
 }
 
 description = "persistence"
