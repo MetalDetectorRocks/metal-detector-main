@@ -9,7 +9,7 @@ val dependencyVersions = listOf(
 
 val dependencyGroupVersions = mapOf(
     "io.rest-assured" to libs.versions.restAssured.get(),
-    "org.apache.groovy" to "4.0.9"
+    "org.apache.groovy" to libs.groovy.get().version
 )
 
 plugins {
@@ -21,7 +21,6 @@ plugins {
 subprojects {
   project.apply(plugin = "java")
   project.apply(plugin = "io.spring.dependency-management")
-  project.apply(plugin = "jacoco")
 
   the<DependencyManagementExtension>().apply {
     imports {
@@ -58,12 +57,6 @@ subprojects {
     withType<Test> {
       useJUnitPlatform()
       testLogging.showStandardStreams = true
-    }
-    withType<JacocoReport> {
-      reports {
-        xml.required.set(true)
-        html.required.set(false)
-      }
     }
     withType<JavaCompile> {
       options.encoding = "UTF-8"

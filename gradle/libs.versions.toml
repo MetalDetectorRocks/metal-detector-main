@@ -5,12 +5,55 @@ commonsLang3 = "3.12.0"
 commonsText = "1.9"
 ehcache = "3.10.8"
 esapi = "2.5.1.0"
-httpClient = "5.2.1"
-jacoco = "0.8.8"
 jsonwebtoken = "0.11.5"
 jsoup = "1.15.4"
 lokiLogbackAppender = "1.4.0"
 lombok = "1.18.26"
-postgresql = "42.5.4"
+postgres = "42.5.4"
 restAssured = "5.3.0"
 slf4jTest = "2.8.1"
+
+[libraries]
+cacheApi = { module = "javax.cache:cache-api", version.ref = "cacheApi" }
+commonsCodec = { module = "commons-codec:commons-codec", version.ref = "commonsCodec" }
+commonsLang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang3" }
+commonsText = { module = "org.apache.commons:commons-text", version.ref = "commonsText" }
+ehcache = { module = "org.ehcache:ehcache", version.ref = "ehcache" }
+esapi = { module = "org.owasp.esapi:esapi", version.ref = "esapi" }
+flyway = { module = "org.flywaydb:flyway-core" }
+groovy = { module = "org.apache.groovy:groovy", version = "4.0.9" }
+h2 = { module = "com.h2database:h2" }
+httpClient = { module = "org.apache.httpcomponents.client5:httpclient5" }
+jacksonDatatypeJsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+jjwtApi = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jsonwebtoken" }
+jjwtImpl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jsonwebtoken" }
+jjwtJackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jsonwebtoken" }
+lokiLogbackAppender = { module = "com.github.loki4j:loki-logback-appender", version.ref = "lokiLogbackAppender" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+micrometerRegistryPrometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
+mockitoInline = { module = "org.mockito:mockito-inline" }
+postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+restAssured = { module = "io.rest-assured:rest-assured", version.ref = "restAssured" }
+restAssuredJsonPath = { module = "io.rest-assured:json-path", version.ref = "restAssured" }
+restAssuredXmlPath = { module = "io.rest-assured:xml-path", version.ref = "restAssured" }
+restAssuredSpringMockMvc = { module = "io.rest-assured:spring-mock-mvc", version.ref = "restAssured" }
+slf4jTest = { module = "com.github.valfirst:slf4j-test", version.ref = "slf4jTest" }
+springBootDevTools = { module = "org.springframework.boot:spring-boot-devtools" }
+springBootStarterActuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+springBootStarterDataJpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+springBootStarterMail = { module = "org.springframework.boot:spring-boot-starter-mail" }
+springBootStarterOAuth2Client = { module = "org.springframework.boot:spring-boot-starter-oauth2-client" }
+springBootStarterSecurity = { module = "org.springframework.boot:spring-boot-starter-security" }
+springBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test" }
+springBootStarterThymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf" }
+springBootStarterValidation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+springBootStarterWeb = { module = "org.springframework.boot:spring-boot-starter-web" }
+springJdbc = { module = "org.springframework:spring-jdbc" }
+springSecurityOAuth2Client = { module = "org.springframework.security:spring-security-oauth2-client" }
+springSecurityTest = { module = "org.springframework.security:spring-security-test" }
+
+[bundles]
+jjwt = ["jjwtImpl", "jjwtJackson"]
+restAssured = ["restAssured", "restAssuredJsonPath", "restAssuredXmlPath", "restAssuredSpringMockMvc"]
+springBootStarterApp = ["springBootStarterActuator", "springBootStarterMail", "springBootStarterValidation", "springBootStarterWeb", "springBootStarterThymeleaf", "springBootStarterOAuth2Client"]

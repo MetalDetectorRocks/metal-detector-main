@@ -1,14 +1,14 @@
 dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-web")
+  implementation(libs.springBootStarterWeb)
 
-  implementation("org.apache.commons:commons-text:${libs.versions.commonsText.get()}")
-  implementation("org.projectlombok:lombok:${libs.versions.lombok.get()}")
+  implementation(libs.commonsText)
+  implementation(libs.lombok)
 
-  annotationProcessor("org.projectlombok:lombok:${libs.versions.lombok.get()}")
+  annotationProcessor(libs.lombok)
 
   implementation(rootProject.projects.support)
 
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation(libs.springBootStarterTest)
 }
 
 description = "spotify"
