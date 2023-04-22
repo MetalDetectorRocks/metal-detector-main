@@ -18,7 +18,7 @@ public interface WithSensitiveDataRemover {
   String PAYLOAD_IDENTIFIER = "payload={";
   List<String> SENSITIVE_DATA_FIELD_NAME = List.of(
           "plainPassword",
-          "verifyPlainPassword",
+          "newPlainPassword",
           "password",
           "code",
           "token"
