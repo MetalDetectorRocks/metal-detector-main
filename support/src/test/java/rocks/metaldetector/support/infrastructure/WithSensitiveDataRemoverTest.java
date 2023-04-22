@@ -100,8 +100,8 @@ class WithSensitiveDataRemoverTest implements WithAssertions {
     private Stream<Arguments> messageProvider() {
       return Stream.of(
               Arguments.of(
-                      "POST /rest/v1/users, payload={\"username\":\"TestUser\",\"plainPassword\":\"foobar123\",\"verifyPlainPassword\":\"foobar123\"}",
-                      "POST /rest/v1/users, payload={\"username\":\"TestUser\",\"plainPassword\":\"REMOVED_FOR_LOGGING\",\"verifyPlainPassword\":\"REMOVED_FOR_LOGGING\"}"
+                      "POST /rest/v1/users, payload={\"username\":\"TestUser\",\"plainPassword\":\"foobar123\",\"newPlainPassword\":\"foobar123\"}",
+                      "POST /rest/v1/users, payload={\"username\":\"TestUser\",\"plainPassword\":\"REMOVED_FOR_LOGGING\",\"newPlainPassword\":\"REMOVED_FOR_LOGGING\"}"
               ),
               Arguments.of(
                       "POST /rest/v1/users, payload={\"username\":\"TestUser\",\"code\":\"foobar123\"}",
