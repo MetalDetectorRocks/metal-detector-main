@@ -242,8 +242,6 @@ public class UserServiceImpl implements UserService {
       userEntity = userRepository.findByUsername(emailOrUsername);
     }
 
-    // make authorities available outside of transaction
-    userEntity.ifPresent(abstractUserEntity -> Hibernate.initialize(abstractUserEntity.getAuthorities()));
     return userEntity;
   }
 
