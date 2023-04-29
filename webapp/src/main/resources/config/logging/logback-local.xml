@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="15 seconds">
+    <!-- scan="true": reloads the config file while application is running if there is any change -->
+    <!-- scanPeriod="15 seconds": We can specify values in milliseconds, seconds, minutes, or hours for scan -->
+    <!-- debug="true": prints debug messages regarding this configuration file -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%cyan(%d{ISO8601}) [%magenta(%thread)] %yellow(%-5level) %green(%logger{40}) - %msg %n%throwable</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- LOG everything at INFO level -->
+    <root level="info">
+        <appender-ref ref="Console" />
+    </root>
+
+    <!-- LOG "rocks.metaldetector.*" at TRACE level -->
+    <logger name="rocks.metaldetector" level="trace" additivity="false">
+        <appender-ref ref="Console" />
+    </logger>
+</configuration>

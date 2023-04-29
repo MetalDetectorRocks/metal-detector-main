@@ -47,13 +47,17 @@ server:
         secure: true
   forward-headers-strategy: FRAMEWORK
 
+logging:
+  config: classpath:config/logging/logback.xml
+
 management:
   endpoints:
     web:
-      path-mapping.info: ${ACTUATOR_INFO_PATH}
-      path-mapping.metrics: ${ACTUATOR_METRICS_PATH}
-      path-mapping.prometheus: ${ACTUATOR_PROMETHEUS_PATH}
-      path-mapping.flyway: ${ACTUATOR_FLYWAY_PATH}
+      path-mapping:
+        info: ${ACTUATOR_INFO_PATH}
+        metrics: ${ACTUATOR_METRICS_PATH}
+        prometheus: ${ACTUATOR_PROMETHEUS_PATH}
+        flyway: ${ACTUATOR_FLYWAY_PATH}
 
 metal-release-butler:
   host: http://butler-app:8080
