@@ -114,7 +114,9 @@ server:
   shutdown: graceful
 
 logging:
-  config: classpath:config/logging/logback-spring.xml
+  config: classpath:config/logging/logback-local.xml
+  pattern:
+    level: '%5p [${spring.application.name:}]'
 
 management:
   endpoints:
