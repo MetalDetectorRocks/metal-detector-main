@@ -49,7 +49,7 @@ LABEL org.label-schema.vcs-url="https://github.com/MetalDetectorRocks/metal-dete
 LABEL org.label-schema.vcs-ref=$VCS_REF
 
 COPY --from=builder app/dependencies/ ./
-RUN true
+RUN true # Bug in older docker versions, see https://stackoverflow.com/questions/51115856/docker-failed-to-export-image-failed-to-create-image-failed-to-get-layer
 COPY --from=builder app/spring-boot-loader/ ./
 RUN true
 COPY --from=builder app/snapshot-dependencies/ ./

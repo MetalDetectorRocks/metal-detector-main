@@ -5,10 +5,6 @@ on:
     branches:
       - master
       - preview # TODO: remove as soon as the preview branch is removed
-  # TODO: only for testing
-  pull_request:
-    branches:
-      - preview
 
 jobs:
   build-image:
