@@ -5,6 +5,10 @@ on:
     branches:
       - master
       - preview # TODO: remove as soon as the preview branch is removed
+  # TODO: only for testing
+  pull_request:
+    branches:
+      - preview
 
 jobs:
   build-image:
@@ -28,4 +32,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Execute gradle task 'build' and 'publish'
-        run: ./gradlew clean build publish --no-daemon --info --stacktrace
+        run: DOCKER_BUILDKIT=1 ./gradlew clean build publish --no-daemon --info --stacktrace
