@@ -49,8 +49,12 @@ LABEL org.label-schema.vcs-url="https://github.com/MetalDetectorRocks/metal-dete
 LABEL org.label-schema.vcs-ref=$VCS_REF
 
 COPY --from=builder app/dependencies/ ./
+RUN true
 COPY --from=builder app/spring-boot-loader/ ./
+RUN true
 COPY --from=builder app/snapshot-dependencies/ ./
+RUN true
 COPY --from=builder app/application/ ./
+RUN true
 
 ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]

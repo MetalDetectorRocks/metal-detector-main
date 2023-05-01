@@ -32,4 +32,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Execute gradle task 'build' and 'publish'
-        run: DOCKER_BUILDKIT=1 ./gradlew clean build publish --no-daemon --info --stacktrace
+        run: ./gradlew clean build publish --no-daemon --info --stacktrace
