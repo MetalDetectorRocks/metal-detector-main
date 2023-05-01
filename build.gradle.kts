@@ -13,9 +13,9 @@ val dependencyGroupVersions = mapOf(
 )
 
 plugins {
-  id("org.springframework.boot") version "3.0.6" apply false
-  id("io.spring.dependency-management") version "1.1.0" apply false
-  id("de.europace.docker-publish") version "1.4.3" apply false
+  alias(libs.plugins.springBootPlugin) apply false
+  alias(libs.plugins.springDependencyManagementPlugin) apply false
+  alias(libs.plugins.dockerPublishPlugin) apply false
 }
 
 subprojects {
