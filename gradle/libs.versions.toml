@@ -57,3 +57,8 @@ springSecurityTest = { module = "org.springframework.security:spring-security-te
 jjwt = ["jjwtImpl", "jjwtJackson"]
 restAssured = ["restAssured", "restAssuredJsonPath", "restAssuredXmlPath", "restAssuredSpringMockMvc"]
 springBootStarterApp = ["springBootStarterActuator", "springBootStarterMail", "springBootStarterValidation", "springBootStarterWeb", "springBootStarterThymeleaf", "springBootStarterOAuth2Client"]
+
+[plugins]
+dockerPublishPlugin = { id = "de.europace.docker-publish", version = "1.4.3" }
+springBootPlugin = { id = "org.springframework.boot", version = "3.0.6" }
+springDependencyManagementPlugin = { id = "io.spring.dependency-management", version = "1.1.0" }
