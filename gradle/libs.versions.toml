@@ -21,7 +21,7 @@ commonsText = { module = "org.apache.commons:commons-text", version.ref = "commo
 ehcache = { module = "org.ehcache:ehcache", version.ref = "ehcache" }
 esapi = { module = "org.owasp.esapi:esapi", version.ref = "esapi" }
 flyway = { module = "org.flywaydb:flyway-core" }
-groovy = { module = "org.apache.groovy:groovy", version = "4.0.11" }
+groovy = { module = "org.apache.groovy:groovy", version = "4.0.12" }
 h2 = { module = "com.h2database:h2" }
 httpClient = { module = "org.apache.httpcomponents.client5:httpclient5" }
 jacksonDatatypeJsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
