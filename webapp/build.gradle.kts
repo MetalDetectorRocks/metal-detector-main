@@ -2,8 +2,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 plugins {
-  id("org.springframework.boot")
-  id("de.europace.docker-publish")
+  alias(libs.plugins.springBoot)
+  alias(libs.plugins.dockerPublish)
 }
 
 dockerPublish {

@@ -59,6 +59,6 @@ restAssured = ["restAssured", "restAssuredJsonPath", "restAssuredXmlPath", "rest
 springBootStarterApp = ["springBootStarterActuator", "springBootStarterMail", "springBootStarterValidation", "springBootStarterWeb", "springBootStarterThymeleaf", "springBootStarterOAuth2Client"]
 
 [plugins]
-dockerPublishPlugin = { id = "de.europace.docker-publish", version = "1.4.4" }
-springBootPlugin = { id = "org.springframework.boot", version = "3.0.7" }
-springDependencyManagementPlugin = { id = "io.spring.dependency-management", version = "1.1.0" }
+dockerPublish = { id = "de.europace.docker-publish", version = "1.4.4" }
+springBoot = { id = "org.springframework.boot", version = "3.0.7" }
+springDependencyManagement = { id = "io.spring.dependency-management", version = "1.1.0" }
