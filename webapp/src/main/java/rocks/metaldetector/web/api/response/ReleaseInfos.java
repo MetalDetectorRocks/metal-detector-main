@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.YearMonth;
 import java.util.Map;
 
 @Data
@@ -13,9 +14,9 @@ import java.util.Map;
 @Builder
 public class ReleaseInfos {
 
-  Map<String, Long> releasesPerMonth;
-  long totalReleases;
-  long upcomingReleases;
-  long releasesThisMonth;
-  long duplicates;
+  Map<YearMonth, Integer> releasesPerMonth;
+  int totalReleases;
+  int upcomingReleases;
+  int releasesThisMonth;
+  int duplicates;
 }

@@ -8,6 +8,7 @@ import rocks.metaldetector.web.api.response.ReleaseInfos;
 import rocks.metaldetector.web.api.response.UserInfos;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 
@@ -43,12 +44,12 @@ public class AdminDashboardServiceMock implements AdminDashboardService {
 
   private ReleaseInfos buildReleaseInfos() {
     return ReleaseInfos.builder()
-        .releasesPerMonth(Map.of("2020-01", 2000L,
-                                 "2020-02", 3000L,
-                                 "2020-03", 6400L,
-                                 "2020-04", 3400L,
-                                 "2020-05", 4500L,
-                                 "2020-06", 6666L))
+        .releasesPerMonth(Map.of(YearMonth.of(2020, 1), 2000,
+                                 YearMonth.of(2020, 2), 3000,
+                                 YearMonth.of(2020, 3), 6400,
+                                 YearMonth.of(2020, 4), 3400,
+                                 YearMonth.of(2020, 5), 4500,
+                                 YearMonth.of(2020, 6), 6666))
         .totalReleases(66666)
         .duplicates(66)
         .releasesThisMonth(666)
@@ -58,12 +59,12 @@ public class AdminDashboardServiceMock implements AdminDashboardService {
 
   private ArtistFollowingInfos buildArtistFollowingInfos() {
     return ArtistFollowingInfos.builder()
-        .followingsPerMonth(Map.of("2020-01", 200L,
-                                   "2020-02", 4000L,
-                                   "2020-03", 3300L,
-                                   "2020-04", 4100L,
-                                   "2020-05", 5000L,
-                                   "2020-06", 6666L))
+        .followingsPerMonth(Map.of(YearMonth.of(2020, 1), 200L,
+                                   YearMonth.of(2020, 2), 4000L,
+                                   YearMonth.of(2020, 3), 3300L,
+                                   YearMonth.of(2020, 4), 4100L,
+                                   YearMonth.of(2020, 5), 5000L,
+                                   YearMonth.of(2020, 6), 6666L))
         .totalFollowings(6666)
         .followingsThisMonth(666)
         .build();
@@ -73,12 +74,12 @@ public class AdminDashboardServiceMock implements AdminDashboardService {
     return UserInfos.builder()
         .totalUsers(666)
         .newThisMonth(6)
-        .usersPerMonth(Map.of("2020-01", 2L,
-                              "2020-02", 20L,
-                              "2020-03", 200L,
-                              "2020-04", 300L,
-                              "2020-05", 450L,
-                              "2020-06", 666L))
+        .usersPerMonth(Map.of(YearMonth.of(2020, 1), 2,
+                              YearMonth.of(2020, 2), 20,
+                              YearMonth.of(2020, 3), 200,
+                              YearMonth.of(2020, 4), 300,
+                              YearMonth.of(2020, 5), 450,
+                              YearMonth.of(2020, 6), 666))
         .build();
   }
 }
