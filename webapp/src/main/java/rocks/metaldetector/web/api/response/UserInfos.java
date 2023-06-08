@@ -14,7 +14,7 @@ import java.util.Map;
 @Builder
 public class UserInfos {
 
-  Map<YearMonth, Integer> usersPerMonth;
-  int totalUsers;
-  int newThisMonth;
+  Map<YearMonth, Long> usersPerMonth;
+  long totalUsers;
+  long newThisMonth;
 }
