@@ -16,9 +16,9 @@ class AdminDashboardServiceMockTest implements WithAssertions {
 
     // then
     assertThat(result).isNotNull();
-    assertThat(result.getUserInfos()).isNotNull();
-    assertThat(result.getArtistFollowingInfos()).isNotNull();
-    assertThat(result.getReleaseInfos()).isNotNull();
-    assertThat(result.getImportInfos()).isNotEmpty();
+    assertThat(result.getUserInfo()).isNotNull();
+    assertThat(result.getArtistFollowingInfo()).isNotNull();
+    assertThat(result.getReleaseInfo()).isNotNull();
+    assertThat(result.getImportInfo()).isNotEmpty();
   }
 }
