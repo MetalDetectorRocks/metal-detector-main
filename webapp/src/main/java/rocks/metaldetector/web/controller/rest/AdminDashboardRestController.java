@@ -1,6 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,10 +11,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static rocks.metaldetector.support.Endpoints.Rest.ADMIN_DASHBOARD;
 
 @RestController
-@AllArgsConstructor
 public class AdminDashboardRestController {
 
   private final AdminDashboardService adminDashboardService;
+
+  public AdminDashboardRestController(@Qualifier("adminDashboardServiceImpl") AdminDashboardService adminDashboardService) {
+    this.adminDashboardService = adminDashboardService;
+  }
 
   @GetMapping(path = ADMIN_DASHBOARD, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<AdminDashboardResponse> handleAdminDashboardRequest() {
