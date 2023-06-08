@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.web.api.response.AdminDashboardResponse;
-import rocks.metaldetector.web.api.response.UserInfos;
+import rocks.metaldetector.web.api.response.UserInfo;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -29,20 +29,20 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
   public AdminDashboardResponse createAdminDashboardResponse() {
     AdminDashboardResponse mockResponse = adminDashboardServiceMock.createAdminDashboardResponse();
     return AdminDashboardResponse.builder()
-        .userInfos(buildUserInfos())
-        .artistFollowingInfos(mockResponse.getArtistFollowingInfos())
-        .releaseInfos(mockResponse.getReleaseInfos())
-        .importInfos(mockResponse.getImportInfos())
+        .userInfo(buildUserInfo())
+        .artistFollowingInfo(mockResponse.getArtistFollowingInfo())
+        .releaseInfo(mockResponse.getReleaseInfo())
+        .importInfo(mockResponse.getImportInfo())
         .build();
   }
 
-  private UserInfos buildUserInfos() {
+  private UserInfo buildUserInfo() {
     List<AbstractUserEntity> allUsers = userRepository.findAll();
     Map<YearMonth, Long> usersPerMonth = allUsers.stream()
         .collect(Collectors.groupingBy(user -> YearMonth.of(user.getCreatedDateTime().getYear(), user.getCreatedDateTime().getMonth()),
                                        TreeMap::new,
                                        Collectors.counting()));
-    return UserInfos.builder()
+    return UserInfo.builder()
         .usersPerMonth(usersPerMonth)
         .totalUsers(allUsers.size())
         .newThisMonth(usersPerMonth.getOrDefault(YearMonth.now(), 0L).intValue())

@@ -37,44 +37,44 @@ class AdminDashboardServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("mockResponse is returned for ArtistFollowingInfos")
-  void test_mock_artist_following_infos_returned() {
+  @DisplayName("mockResponse is returned for ArtistFollowingInfo")
+  void test_mock_artist_following_info_returned() {
     var mockResponse = adminDashboardServiceMock.createAdminDashboardResponse();
 
     // when
     var result = underTest.createAdminDashboardResponse();
 
     // then
-    assertThat(result.getArtistFollowingInfos()).isEqualTo(mockResponse.getArtistFollowingInfos());
+    assertThat(result.getArtistFollowingInfo()).isEqualTo(mockResponse.getArtistFollowingInfo());
   }
 
   @Test
-  @DisplayName("mockResponse is returned for ReleaseInfos")
-  void test_mock_release_infos_returned() {
+  @DisplayName("mockResponse is returned for ReleaseInfo")
+  void test_mock_release_info_returned() {
     var mockResponse = adminDashboardServiceMock.createAdminDashboardResponse();
 
     // when
     var result = underTest.createAdminDashboardResponse();
 
     // then
-    assertThat(result.getReleaseInfos()).isEqualTo(mockResponse.getReleaseInfos());
+    assertThat(result.getReleaseInfo()).isEqualTo(mockResponse.getReleaseInfo());
   }
 
   @Test
-  @DisplayName("mockResponse is returned for ImportInfos")
-  void test_mock_import_infos_returned() {
+  @DisplayName("mockResponse is returned for ImportInfo")
+  void test_mock_import_info_returned() {
     var mockResponse = adminDashboardServiceMock.createAdminDashboardResponse();
 
     // when
     var result = underTest.createAdminDashboardResponse();
 
     // then
-    assertThat(result.getImportInfos()).isEqualTo(mockResponse.getImportInfos());
+    assertThat(result.getImportInfo()).isEqualTo(mockResponse.getImportInfo());
   }
 
   @Nested
-  @DisplayName("Tests for UserInfos")
-  class UserInfosTest {
+  @DisplayName("Tests for UserInfo")
+  class UserInfoTest {
 
     @Test
     @DisplayName("userRepository is called")
@@ -110,7 +110,7 @@ class AdminDashboardServiceImplTest implements WithAssertions {
       var result = underTest.createAdminDashboardResponse();
 
       // then
-      var usersPerMonth = result.getUserInfos().getUsersPerMonth();
+      var usersPerMonth = result.getUserInfo().getUsersPerMonth();
       assertThat(usersPerMonth.size()).isEqualTo(3);
       assertThat(usersPerMonth).containsExactly(
           Map.entry(YearMonth.of(2020, 1), 2L),
@@ -133,7 +133,7 @@ class AdminDashboardServiceImplTest implements WithAssertions {
       var result = underTest.createAdminDashboardResponse();
 
       // then
-      assertThat(result.getUserInfos().getTotalUsers()).isEqualTo(5);
+      assertThat(result.getUserInfo().getTotalUsers()).isEqualTo(5);
     }
 
     @Test
@@ -154,7 +154,7 @@ class AdminDashboardServiceImplTest implements WithAssertions {
       var result = underTest.createAdminDashboardResponse();
 
       // then
-      assertThat(result.getUserInfos().getNewThisMonth()).isEqualTo(2);
+      assertThat(result.getUserInfo().getNewThisMonth()).isEqualTo(2);
     }
   }
 }
