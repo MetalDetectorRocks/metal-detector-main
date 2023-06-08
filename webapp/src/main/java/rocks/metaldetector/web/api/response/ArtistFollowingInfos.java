@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.YearMonth;
 import java.util.Map;
 
 @Data
@@ -13,7 +14,7 @@ import java.util.Map;
 @Builder
 public class ArtistFollowingInfos {
 
-  Map<String, Long> followingsPerMonth;
+  Map<YearMonth, Long> followingsPerMonth;
   long totalFollowings;
   long followingsThisMonth;
 }

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.YearMonth;
 import java.util.Map;
 
 @Data
@@ -13,7 +14,7 @@ import java.util.Map;
 @Builder
 public class UserInfos {
 
-  Map<String, Long> usersPerMonth;
-  long totalUsers;
+  Map<YearMonth, Integer> usersPerMonth;
+  int totalUsers;
   int newThisMonth;
 }
