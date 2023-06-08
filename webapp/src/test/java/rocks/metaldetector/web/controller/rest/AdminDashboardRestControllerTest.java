@@ -67,8 +67,8 @@ class AdminDashboardRestControllerTest implements WithAssertions {
   @DisplayName("user info is returned on GET dashboard")
   void test_get_admin_dashboard_response() {
     // given
-    var userInfos = UserInfo.builder().totalUsers(666).build();
-    var responseMock = AdminDashboardResponse.builder().userInfo(userInfos).build();
+    var userInfo = UserInfo.builder().totalUsers(666).build();
+    var responseMock = AdminDashboardResponse.builder().userInfo(userInfo).build();
     doReturn(responseMock).when(adminDashboardService).createAdminDashboardResponse();
 
     // when
@@ -76,6 +76,6 @@ class AdminDashboardRestControllerTest implements WithAssertions {
 
     // then
     var responseBody = (AdminDashboardResponse) result.extract().as(AdminDashboardResponse.class);
-    assertThat(responseBody.getUserInfo()).isEqualTo(userInfos);
+    assertThat(responseBody.getUserInfo()).isEqualTo(userInfo);
   }
 }
