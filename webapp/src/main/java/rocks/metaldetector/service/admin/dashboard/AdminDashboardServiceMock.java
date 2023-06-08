@@ -74,12 +74,12 @@ public class AdminDashboardServiceMock implements AdminDashboardService {
     return UserInfos.builder()
         .totalUsers(666)
         .newThisMonth(6)
-        .usersPerMonth(Map.of(YearMonth.of(2020, 1), 2,
-                              YearMonth.of(2020, 2), 20,
-                              YearMonth.of(2020, 3), 200,
-                              YearMonth.of(2020, 4), 300,
-                              YearMonth.of(2020, 5), 450,
-                              YearMonth.of(2020, 6), 666))
+        .usersPerMonth(Map.of(YearMonth.of(2020, 1), 2L,
+                              YearMonth.of(2020, 2), 20L,
+                              YearMonth.of(2020, 3), 200L,
+                              YearMonth.of(2020, 4), 300L,
+                              YearMonth.of(2020, 5), 450L,
+                              YearMonth.of(2020, 6), 666L))
         .build();
   }
 }
