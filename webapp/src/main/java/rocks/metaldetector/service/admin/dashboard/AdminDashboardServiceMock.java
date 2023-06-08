@@ -2,10 +2,10 @@ package rocks.metaldetector.service.admin.dashboard;
 
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.web.api.response.AdminDashboardResponse;
-import rocks.metaldetector.web.api.response.ArtistFollowingInfos;
-import rocks.metaldetector.web.api.response.ImportInfos;
-import rocks.metaldetector.web.api.response.ReleaseInfos;
-import rocks.metaldetector.web.api.response.UserInfos;
+import rocks.metaldetector.web.api.response.ArtistFollowingInfo;
+import rocks.metaldetector.web.api.response.ImportInfo;
+import rocks.metaldetector.web.api.response.ReleaseInfo;
+import rocks.metaldetector.web.api.response.UserInfo;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -18,22 +18,22 @@ public class AdminDashboardServiceMock implements AdminDashboardService {
   @Override
   public AdminDashboardResponse createAdminDashboardResponse() {
     return AdminDashboardResponse.builder()
-        .userInfos(buildUserInfos())
-        .artistFollowingInfos(buildArtistFollowingInfos())
-        .releaseInfos(buildReleaseInfos())
-        .importInfos(buildImportInfos())
+        .userInfo(buildUserInfos())
+        .artistFollowingInfo(buildArtistFollowingInfos())
+        .releaseInfo(buildReleaseInfos())
+        .importInfo(buildImportInfos())
         .build();
   }
 
-  private List<ImportInfos> buildImportInfos() {
+  private List<ImportInfo> buildImportInfos() {
     return List.of(
-        ImportInfos.builder()
+        ImportInfo.builder()
             .source("Metal Archives")
             .successRate(98)
             .lastImport(LocalDate.now().minusDays(1))
             .lastSuccessfulImport(LocalDate.now().minusDays(1))
             .build(),
-        ImportInfos.builder()
+        ImportInfo.builder()
             .source("Time for Metal")
             .successRate(66)
             .lastImport(LocalDate.now().minusDays(1))
@@ -42,8 +42,8 @@ public class AdminDashboardServiceMock implements AdminDashboardService {
     );
   }
 
-  private ReleaseInfos buildReleaseInfos() {
-    return ReleaseInfos.builder()
+  private ReleaseInfo buildReleaseInfos() {
+    return ReleaseInfo.builder()
         .releasesPerMonth(Map.of(YearMonth.of(2020, 1), 2000,
                                  YearMonth.of(2020, 2), 3000,
                                  YearMonth.of(2020, 3), 6400,
@@ -57,8 +57,8 @@ public class AdminDashboardServiceMock implements AdminDashboardService {
         .build();
   }
 
-  private ArtistFollowingInfos buildArtistFollowingInfos() {
-    return ArtistFollowingInfos.builder()
+  private ArtistFollowingInfo buildArtistFollowingInfos() {
+    return ArtistFollowingInfo.builder()
         .followingsPerMonth(Map.of(YearMonth.of(2020, 1), 200L,
                                    YearMonth.of(2020, 2), 4000L,
                                    YearMonth.of(2020, 3), 3300L,
@@ -70,8 +70,8 @@ public class AdminDashboardServiceMock implements AdminDashboardService {
         .build();
   }
 
-  private UserInfos buildUserInfos() {
-    return UserInfos.builder()
+  private UserInfo buildUserInfos() {
+    return UserInfo.builder()
         .totalUsers(666)
         .newThisMonth(6)
         .usersPerMonth(Map.of(YearMonth.of(2020, 1), 2L,

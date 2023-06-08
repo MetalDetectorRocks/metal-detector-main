@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.service.admin.dashboard.AdminDashboardService;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.response.AdminDashboardResponse;
-import rocks.metaldetector.web.api.response.UserInfos;
+import rocks.metaldetector.web.api.response.UserInfo;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
@@ -64,11 +64,11 @@ class AdminDashboardRestControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("user infos are returned on GET dashboard")
+  @DisplayName("user info is returned on GET dashboard")
   void test_get_admin_dashboard_response() {
     // given
-    var userInfos = UserInfos.builder().totalUsers(666).build();
-    var responseMock = AdminDashboardResponse.builder().userInfos(userInfos).build();
+    var userInfos = UserInfo.builder().totalUsers(666).build();
+    var responseMock = AdminDashboardResponse.builder().userInfo(userInfos).build();
     doReturn(responseMock).when(adminDashboardService).createAdminDashboardResponse();
 
     // when
@@ -76,6 +76,6 @@ class AdminDashboardRestControllerTest implements WithAssertions {
 
     // then
     var responseBody = (AdminDashboardResponse) result.extract().as(AdminDashboardResponse.class);
-    assertThat(responseBody.getUserInfos()).isEqualTo(userInfos);
+    assertThat(responseBody.getUserInfo()).isEqualTo(userInfos);
   }
 }

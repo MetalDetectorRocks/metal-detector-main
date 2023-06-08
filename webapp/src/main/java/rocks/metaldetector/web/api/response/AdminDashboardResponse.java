@@ -13,8 +13,8 @@ import java.util.List;
 @Builder
 public class AdminDashboardResponse {
 
-  UserInfos userInfos;
-  ArtistFollowingInfos artistFollowingInfos;
-  ReleaseInfos releaseInfos;
-  List<ImportInfos> importInfos;
+  UserInfo userInfo;
+  ArtistFollowingInfo artistFollowingInfo;
+  ReleaseInfo releaseInfo;
+  List<ImportInfo> importInfo;
 }

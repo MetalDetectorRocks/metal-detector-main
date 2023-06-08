@@ -5,18 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.YearMonth;
-import java.util.Map;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReleaseInfos {
+public class ImportInfo {
 
-  Map<YearMonth, Integer> releasesPerMonth;
-  int totalReleases;
-  int upcomingReleases;
-  int releasesThisMonth;
-  int duplicates;
+  String source;
+  int successRate;
+  LocalDate lastImport;
+  LocalDate lastSuccessfulImport;
 }

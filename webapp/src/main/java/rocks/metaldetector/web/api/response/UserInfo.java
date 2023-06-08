@@ -12,7 +12,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserInfos {
+public class UserInfo {
 
   Map<YearMonth, Long> usersPerMonth;
   long totalUsers;

@@ -12,7 +12,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ArtistFollowingInfos {
+public class ArtistFollowingInfo {
 
   Map<YearMonth, Long> followingsPerMonth;
   long totalFollowings;
