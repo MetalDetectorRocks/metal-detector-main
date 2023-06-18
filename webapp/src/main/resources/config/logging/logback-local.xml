@@ -14,8 +14,8 @@
         <appender-ref ref="Console" />
     </root>
 
-    <!-- LOG "rocks.metaldetector.*" at TRACE level -->
-    <logger name="rocks.metaldetector" level="trace" additivity="false">
+    <!-- LOG "rocks.metaldetector.*" at INFO level -->
+    <logger name="rocks.metaldetector" level="info" additivity="false">
         <appender-ref ref="Console" />
     </logger>
 </configuration>
