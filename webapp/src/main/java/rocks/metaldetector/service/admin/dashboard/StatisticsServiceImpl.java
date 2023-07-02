@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.web.api.response.AdminDashboardResponse;
+import rocks.metaldetector.web.api.response.StatisticsResponse;
 import rocks.metaldetector.web.api.response.UserInfo;
 
 import java.time.YearMonth;
@@ -14,21 +14,21 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
-public class AdminDashboardServiceImpl implements AdminDashboardService {
+public class StatisticsServiceImpl implements StatisticsService {
 
-  private final AdminDashboardService adminDashboardServiceMock;
+  private final StatisticsService statisticsServiceMock;
   private final UserRepository userRepository;
 
-  public AdminDashboardServiceImpl(@Qualifier("adminDashboardServiceMock") AdminDashboardService adminDashboardService,
-                                   UserRepository userRepository) {
-    this.adminDashboardServiceMock = adminDashboardService;
+  public StatisticsServiceImpl(@Qualifier("statisticsServiceMock") StatisticsService statisticsService,
+                               UserRepository userRepository) {
+    this.statisticsServiceMock = statisticsService;
     this.userRepository = userRepository;
   }
 
   @Override
-  public AdminDashboardResponse createAdminDashboardResponse() {
-    AdminDashboardResponse mockResponse = adminDashboardServiceMock.createAdminDashboardResponse();
-    return AdminDashboardResponse.builder()
+  public StatisticsResponse createStatisticsResponse() {
+    StatisticsResponse mockResponse = statisticsServiceMock.createStatisticsResponse();
+    return StatisticsResponse.builder()
         .userInfo(buildUserInfo())
         .artistFollowingInfo(mockResponse.getArtistFollowingInfo())
         .releaseInfo(mockResponse.getReleaseInfo())

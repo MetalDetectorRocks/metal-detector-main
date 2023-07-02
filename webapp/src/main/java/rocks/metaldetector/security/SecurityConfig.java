@@ -45,7 +45,6 @@ import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
-import static rocks.metaldetector.support.Endpoints.Rest.ADMIN_DASHBOARD;
 import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.COVER_JOB;
@@ -72,6 +71,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.RESET_PASSWORD;
 import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
 import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION;
 import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_SAVED_ARTISTS;
+import static rocks.metaldetector.support.Endpoints.Rest.STATISTICS;
 import static rocks.metaldetector.support.Endpoints.Rest.TELEGRAM_CONFIG;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_ARTISTS;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
@@ -150,7 +150,7 @@ public class SecurityConfig {
                            NOTIFICATION_ON_FREQUENCY,
                            NOTIFICATION_ON_RELEASE_DATE,
                            NOTIFICATION_ON_ANNOUNCEMENT_DATE,
-                           ADMIN_DASHBOARD).hasRole(ROLE_ADMINISTRATOR.getName())
+                           STATISTICS).hasRole(ROLE_ADMINISTRATOR.getName())
           .anyRequest().denyAll()
       .and()
         .oauth2Login()

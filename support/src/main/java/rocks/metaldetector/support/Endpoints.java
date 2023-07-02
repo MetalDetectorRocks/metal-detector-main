@@ -30,7 +30,7 @@ public class Endpoints {
 
   public static class Rest {
     public static final String DASHBOARD                      = "/rest/v1/dashboard";
-    public static final String ADMIN_DASHBOARD                = "/rest/v1/admin-dashboard";
+    public static final String STATISTICS                     = "/rest/v1/statistics";
     public static final String MY_ARTISTS                     = "/rest/v1/my-artists";
     public static final String SPOTIFY_ARTIST_SYNCHRONIZATION = "/rest/v1/spotify/synchronize";
     public static final String SPOTIFY_SAVED_ARTISTS          = "/rest/v1/spotify/saved-artists";

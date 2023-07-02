@@ -23,13 +23,13 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class AdminDashboardServiceImplTest implements WithAssertions {
+class StatisticsServiceImplTest implements WithAssertions {
 
   UserRepository userRepository = mock(UserRepository.class);
 
-  AdminDashboardService adminDashboardServiceMock = new AdminDashboardServiceMock();
+  StatisticsService statisticsServiceMock = new StatisticsServiceMock();
 
-  AdminDashboardServiceImpl underTest = new AdminDashboardServiceImpl(adminDashboardServiceMock, userRepository);
+  StatisticsServiceImpl underTest = new StatisticsServiceImpl(statisticsServiceMock, userRepository);
 
   @AfterEach
   void tearDown() {
@@ -39,10 +39,10 @@ class AdminDashboardServiceImplTest implements WithAssertions {
   @Test
   @DisplayName("mockResponse is returned for ArtistFollowingInfo")
   void test_mock_artist_following_info_returned() {
-    var mockResponse = adminDashboardServiceMock.createAdminDashboardResponse();
+    var mockResponse = statisticsServiceMock.createStatisticsResponse();
 
     // when
-    var result = underTest.createAdminDashboardResponse();
+    var result = underTest.createStatisticsResponse();
 
     // then
     assertThat(result.getArtistFollowingInfo()).isEqualTo(mockResponse.getArtistFollowingInfo());
@@ -51,10 +51,10 @@ class AdminDashboardServiceImplTest implements WithAssertions {
   @Test
   @DisplayName("mockResponse is returned for ReleaseInfo")
   void test_mock_release_info_returned() {
-    var mockResponse = adminDashboardServiceMock.createAdminDashboardResponse();
+    var mockResponse = statisticsServiceMock.createStatisticsResponse();
 
     // when
-    var result = underTest.createAdminDashboardResponse();
+    var result = underTest.createStatisticsResponse();
 
     // then
     assertThat(result.getReleaseInfo()).isEqualTo(mockResponse.getReleaseInfo());
@@ -63,10 +63,10 @@ class AdminDashboardServiceImplTest implements WithAssertions {
   @Test
   @DisplayName("mockResponse is returned for ImportInfo")
   void test_mock_import_info_returned() {
-    var mockResponse = adminDashboardServiceMock.createAdminDashboardResponse();
+    var mockResponse = statisticsServiceMock.createStatisticsResponse();
 
     // when
-    var result = underTest.createAdminDashboardResponse();
+    var result = underTest.createStatisticsResponse();
 
     // then
     assertThat(result.getImportInfo()).isEqualTo(mockResponse.getImportInfo());
@@ -80,7 +80,7 @@ class AdminDashboardServiceImplTest implements WithAssertions {
     @DisplayName("userRepository is called")
     void test_user_repository_called() {
       // when
-      underTest.createAdminDashboardResponse();
+      underTest.createStatisticsResponse();
 
       // then
       verify(userRepository).findAll();
@@ -107,7 +107,7 @@ class AdminDashboardServiceImplTest implements WithAssertions {
       doReturn(users).when(userRepository).findAll();
 
       // when
-      var result = underTest.createAdminDashboardResponse();
+      var result = underTest.createStatisticsResponse();
 
       // then
       var usersPerMonth = result.getUserInfo().getUsersPerMonth();
@@ -130,7 +130,7 @@ class AdminDashboardServiceImplTest implements WithAssertions {
       doReturn(users).when(userRepository).findAll();
 
       // when
-      var result = underTest.createAdminDashboardResponse();
+      var result = underTest.createStatisticsResponse();
 
       // then
       assertThat(result.getUserInfo().getTotalUsers()).isEqualTo(5);
@@ -151,7 +151,7 @@ class AdminDashboardServiceImplTest implements WithAssertions {
       doReturn(users).when(userRepository).findAll();
 
       // when
-      var result = underTest.createAdminDashboardResponse();
+      var result = underTest.createStatisticsResponse();
 
       // then
       assertThat(result.getUserInfo().getNewThisMonth()).isEqualTo(2);

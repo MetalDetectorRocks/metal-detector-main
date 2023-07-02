@@ -1,10 +1,10 @@
 package rocks.metaldetector.service.admin.dashboard;
 
 import org.springframework.stereotype.Service;
-import rocks.metaldetector.web.api.response.AdminDashboardResponse;
 import rocks.metaldetector.web.api.response.ArtistFollowingInfo;
 import rocks.metaldetector.web.api.response.ImportInfo;
 import rocks.metaldetector.web.api.response.ReleaseInfo;
+import rocks.metaldetector.web.api.response.StatisticsResponse;
 import rocks.metaldetector.web.api.response.UserInfo;
 
 import java.time.LocalDate;
@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class AdminDashboardServiceMock implements AdminDashboardService {
+public class StatisticsServiceMock implements StatisticsService {
 
   @Override
-  public AdminDashboardResponse createAdminDashboardResponse() {
-    return AdminDashboardResponse.builder()
+  public StatisticsResponse createStatisticsResponse() {
+    return StatisticsResponse.builder()
         .userInfo(buildUserInfo())
         .artistFollowingInfo(buildArtistFollowingInfo())
         .releaseInfo(buildReleaseInfo())
