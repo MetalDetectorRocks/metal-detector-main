@@ -24,8 +24,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import rocks.metaldetector.security.filter.CustomUsernamePasswordAuthenticationFilter;
 import rocks.metaldetector.security.filter.CustomAuthorizationFilter;
+import rocks.metaldetector.security.filter.CustomUsernamePasswordAuthenticationFilter;
 import rocks.metaldetector.security.filter.XSSFilter;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
 import rocks.metaldetector.security.handler.CustomLogoutHandler;
@@ -45,6 +45,7 @@ import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
+import static rocks.metaldetector.support.Endpoints.Rest.ADMIN_DASHBOARD;
 import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
 import static rocks.metaldetector.support.Endpoints.Rest.COVER_JOB;
@@ -60,8 +61,8 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_ANNOUNC
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_FREQUENCY;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE_DATE;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
-import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.OAUTH;
+import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_VERIFICATION;
@@ -148,7 +149,8 @@ public class SecurityConfig {
                            USERS + "/**",
                            NOTIFICATION_ON_FREQUENCY,
                            NOTIFICATION_ON_RELEASE_DATE,
-                           NOTIFICATION_ON_ANNOUNCEMENT_DATE).hasRole(ROLE_ADMINISTRATOR.getName())
+                           NOTIFICATION_ON_ANNOUNCEMENT_DATE,
+                           ADMIN_DASHBOARD).hasRole(ROLE_ADMINISTRATOR.getName())
           .anyRequest().denyAll()
       .and()
         .oauth2Login()

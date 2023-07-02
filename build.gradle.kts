@@ -7,10 +7,7 @@ val dependencyVersions = listOf(
     "com.google.guava:guava:32.1.1-jre"
 )
 
-val dependencyGroupVersions = mapOf(
-    "io.rest-assured" to libs.versions.restAssured.get(),
-    "org.apache.groovy" to libs.groovy.get().version
-)
+val dependencyGroupVersions = mapOf<String, String>()
 
 plugins {
   alias(libs.plugins.springBoot) apply false
