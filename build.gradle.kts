@@ -4,7 +4,7 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
 val javaVersion: JavaVersion = JavaVersion.VERSION_17
 
 val dependencyVersions = listOf(
-    "com.google.guava:guava:32.0.0-jre"
+    "com.google.guava:guava:32.1.1-jre"
 )
 
 val dependencyGroupVersions = mapOf<String, String>()
