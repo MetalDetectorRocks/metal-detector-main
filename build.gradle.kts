@@ -4,13 +4,10 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
 val javaVersion: JavaVersion = JavaVersion.VERSION_17
 
 val dependencyVersions = listOf(
-    "com.google.guava:guava:32.0.1-jre"
+    "com.google.guava:guava:32.1.1-jre"
 )
 
-val dependencyGroupVersions = mapOf(
-    "io.rest-assured" to libs.versions.restAssured.get(),
-    "org.apache.groovy" to libs.groovy.get().version
-)
+val dependencyGroupVersions = mapOf<String, String>()
 
 plugins {
   alias(libs.plugins.springBoot) apply false
