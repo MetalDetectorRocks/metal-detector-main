@@ -2,6 +2,9 @@ name: Update Gradle Wrapper
 
 on:
   workflow_dispatch:
+    branches:
+      - master
+      - preview # TODO: remove as soon as the preview branch is removed
   schedule:
     - cron: "0 0 * * 0"
 
