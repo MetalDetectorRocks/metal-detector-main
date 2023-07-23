@@ -20,6 +20,7 @@ import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.user.UserEntityFactory;
@@ -30,7 +31,12 @@ import java.util.Optional;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,6 +102,8 @@ class CustomAuthorizationFilterTest implements WithAssertions {
     var authHeaderValue = "Bearer eyFoo";
     doReturn(authHeaderValue).when(request).getHeader(AUTHORIZATION);
     doReturn(true).when(jwtsSupport).validateJwtToken(any());
+    doReturn(mock(Claims.class)).when(jwtsSupport).getClaims(any());
+    doReturn(Optional.of(mock(AbstractUserEntity.class))).when(userRepository).findByPublicId(any());
 
     // when
     underTest.doFilterInternal(request, new MockHttpServletResponse(), new MockFilterChain());
