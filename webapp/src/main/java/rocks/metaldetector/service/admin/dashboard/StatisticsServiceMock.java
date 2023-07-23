@@ -1,10 +1,10 @@
 package rocks.metaldetector.service.admin.dashboard;
 
 import org.springframework.stereotype.Service;
-import rocks.metaldetector.web.api.response.AdminDashboardResponse;
 import rocks.metaldetector.web.api.response.ArtistFollowingInfo;
 import rocks.metaldetector.web.api.response.ImportInfo;
 import rocks.metaldetector.web.api.response.ReleaseInfo;
+import rocks.metaldetector.web.api.response.StatisticsResponse;
 import rocks.metaldetector.web.api.response.UserInfo;
 
 import java.time.LocalDate;
@@ -13,19 +13,19 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class AdminDashboardServiceMock implements AdminDashboardService {
+public class StatisticsServiceMock implements StatisticsService {
 
   @Override
-  public AdminDashboardResponse createAdminDashboardResponse() {
-    return AdminDashboardResponse.builder()
-        .userInfo(buildUserInfos())
-        .artistFollowingInfo(buildArtistFollowingInfos())
-        .releaseInfo(buildReleaseInfos())
-        .importInfo(buildImportInfos())
+  public StatisticsResponse createStatisticsResponse() {
+    return StatisticsResponse.builder()
+        .userInfo(buildUserInfo())
+        .artistFollowingInfo(buildArtistFollowingInfo())
+        .releaseInfo(buildReleaseInfo())
+        .importInfo(buildImportInfo())
         .build();
   }
 
-  private List<ImportInfo> buildImportInfos() {
+  private List<ImportInfo> buildImportInfo() {
     return List.of(
         ImportInfo.builder()
             .source("Metal Archives")
@@ -42,7 +42,7 @@ public class AdminDashboardServiceMock implements AdminDashboardService {
     );
   }
 
-  private ReleaseInfo buildReleaseInfos() {
+  private ReleaseInfo buildReleaseInfo() {
     return ReleaseInfo.builder()
         .releasesPerMonth(Map.of(YearMonth.of(2020, 1), 2000,
                                  YearMonth.of(2020, 2), 3000,
@@ -57,7 +57,7 @@ public class AdminDashboardServiceMock implements AdminDashboardService {
         .build();
   }
 
-  private ArtistFollowingInfo buildArtistFollowingInfos() {
+  private ArtistFollowingInfo buildArtistFollowingInfo() {
     return ArtistFollowingInfo.builder()
         .followingsPerMonth(Map.of(YearMonth.of(2020, 1), 200L,
                                    YearMonth.of(2020, 2), 4000L,
@@ -70,7 +70,7 @@ public class AdminDashboardServiceMock implements AdminDashboardService {
         .build();
   }
 
-  private UserInfo buildUserInfos() {
+  private UserInfo buildUserInfo() {
     return UserInfo.builder()
         .totalUsers(666)
         .newThisMonth(6)

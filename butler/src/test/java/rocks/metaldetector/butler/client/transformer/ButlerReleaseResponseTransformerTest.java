@@ -42,7 +42,7 @@ class ButlerReleaseResponseTransformerTest implements WithAssertions {
   private ButlerReleaseResponseTransformer underTest;
 
   @Test
-  @DisplayName("Should transform pagination infos from ButlerReleasesResponse to Pagination within Page of ReleaseDto")
+  @DisplayName("Should transform pagination info from ButlerReleasesResponse to Pagination within Page of ReleaseDto")
   void should_transform_butler_releases_response_to_page_of_release_dto() {
     // given
     ButlerRelease release = ButlerReleaseFactory.createDefault();

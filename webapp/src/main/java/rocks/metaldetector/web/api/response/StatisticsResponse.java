@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class AdminDashboardResponse {
+public class StatisticsResponse {
 
   UserInfo userInfo;
   ArtistFollowingInfo artistFollowingInfo;

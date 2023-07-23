@@ -13,11 +13,11 @@ import rocks.metaldetector.testutil.BaseSpringBootTest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static rocks.metaldetector.support.Endpoints.Rest.ADMIN_DASHBOARD;
+import static rocks.metaldetector.support.Endpoints.Rest.STATISTICS;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class AdminDashboardRestControllerIntegrationTest extends BaseSpringBootTest {
+class StatisticsRestControllerIntegrationTest extends BaseSpringBootTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -27,10 +27,10 @@ class AdminDashboardRestControllerIntegrationTest extends BaseSpringBootTest {
   class AdministratorRoleTest {
 
     @Test
-    @DisplayName("Administrator is allowed to GET on endpoint " + ADMIN_DASHBOARD + "'")
+    @DisplayName("Administrator is allowed to GET on endpoint " + STATISTICS + "'")
     @WithMockUser(roles = {"ADMINISTRATOR"})
     void admin_is_allowed_to_get_dashboard() throws Exception {
-      mockMvc.perform(get(ADMIN_DASHBOARD))
+      mockMvc.perform(get(STATISTICS))
           .andExpect(status().isOk());
     }
   }
@@ -40,10 +40,10 @@ class AdminDashboardRestControllerIntegrationTest extends BaseSpringBootTest {
   class UserRoleTest {
 
     @Test
-    @DisplayName("User is not allowed to GET on endpoint " + ADMIN_DASHBOARD + "'")
+    @DisplayName("User is not allowed to GET on endpoint " + STATISTICS + "'")
     @WithMockUser
     void user_is_not_allowed_to_get_dashboard() throws Exception {
-      mockMvc.perform(get(ADMIN_DASHBOARD))
+      mockMvc.perform(get(STATISTICS))
           .andExpect(status().isForbidden());
     }
   }
@@ -53,10 +53,10 @@ class AdminDashboardRestControllerIntegrationTest extends BaseSpringBootTest {
   class AnonymousUserTest {
 
     @Test
-    @DisplayName("Anonymous user is not allowed to GET on endpoint " + ADMIN_DASHBOARD + "'")
+    @DisplayName("Anonymous user is not allowed to GET on endpoint " + STATISTICS + "'")
     @WithAnonymousUser
     void anonymous_user_is_not_allowed_to_get_dashboard() throws Exception {
-      mockMvc.perform(get(ADMIN_DASHBOARD))
+      mockMvc.perform(get(STATISTICS))
           .andExpect(status().isUnauthorized());
     }
   }

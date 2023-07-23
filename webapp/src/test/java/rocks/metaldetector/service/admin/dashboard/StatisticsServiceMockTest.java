@@ -4,15 +4,15 @@ import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class AdminDashboardServiceMockTest implements WithAssertions {
+class StatisticsServiceMockTest implements WithAssertions {
 
-  AdminDashboardServiceMock underTest = new AdminDashboardServiceMock();
+  StatisticsServiceMock underTest = new StatisticsServiceMock();
 
   @Test
   @DisplayName("response with mock results is created")
   void test_response() {
     // when
-    var result = underTest.createAdminDashboardResponse();
+    var result = underTest.createStatisticsResponse();
 
     // then
     assertThat(result).isNotNull();

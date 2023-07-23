@@ -10,52 +10,52 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.service.admin.dashboard.AdminDashboardService;
+import rocks.metaldetector.service.admin.dashboard.StatisticsService;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
-import rocks.metaldetector.web.api.response.AdminDashboardResponse;
+import rocks.metaldetector.web.api.response.StatisticsResponse;
 import rocks.metaldetector.web.api.response.UserInfo;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static rocks.metaldetector.support.Endpoints.Rest.ADMIN_DASHBOARD;
+import static rocks.metaldetector.support.Endpoints.Rest.STATISTICS;
 
 @ExtendWith(MockitoExtension.class)
-class AdminDashboardRestControllerTest implements WithAssertions {
+class StatisticsRestControllerTest implements WithAssertions {
 
   @Mock
-  private AdminDashboardService adminDashboardService;
+  private StatisticsService statisticsService;
 
   @InjectMocks
-  private AdminDashboardRestController underTest;
+  private StatisticsRestController underTest;
 
   private RestAssuredMockMvcUtils restAssuredUtils;
 
   @BeforeEach
   void setUp() {
-    restAssuredUtils = new RestAssuredMockMvcUtils(ADMIN_DASHBOARD);
+    restAssuredUtils = new RestAssuredMockMvcUtils(STATISTICS);
     RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @AfterEach
   void tearDown() {
-    reset(adminDashboardService);
+    reset(statisticsService);
   }
 
   @Test
-  @DisplayName("adminDashboardService is called on GET")
-  void test_get_dashboard_calls_dashboard_service() {
+  @DisplayName("statisticsService is called on GET")
+  void test_get_statistics_calls_statistics_service() {
     // when
     restAssuredUtils.doGet();
 
     // then
-    verify(adminDashboardService).createAdminDashboardResponse();
+    verify(statisticsService).createStatisticsResponse();
   }
 
   @Test
   @DisplayName("httpStatus OK is returned on GET dashboard")
-  void test_get_dashboard_http_200() {
+  void test_get_statistics_http_200() {
     // when
     var result = restAssuredUtils.doGet();
 
@@ -64,18 +64,18 @@ class AdminDashboardRestControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("user info is returned on GET dashboard")
-  void test_get_admin_dashboard_response() {
+  @DisplayName("user info is returned on GET statistics")
+  void test_get_statistics_response() {
     // given
     var userInfo = UserInfo.builder().totalUsers(666).build();
-    var responseMock = AdminDashboardResponse.builder().userInfo(userInfo).build();
-    doReturn(responseMock).when(adminDashboardService).createAdminDashboardResponse();
+    var responseMock = StatisticsResponse.builder().userInfo(userInfo).build();
+    doReturn(responseMock).when(statisticsService).createStatisticsResponse();
 
     // when
     var result = restAssuredUtils.doGet();
 
     // then
-    var responseBody = (AdminDashboardResponse) result.extract().as(AdminDashboardResponse.class);
+    var responseBody = (StatisticsResponse) result.extract().as(StatisticsResponse.class);
     assertThat(responseBody.getUserInfo()).isEqualTo(userInfo);
   }
 }
