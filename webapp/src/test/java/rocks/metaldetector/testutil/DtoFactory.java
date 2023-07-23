@@ -12,8 +12,8 @@ import rocks.metaldetector.spotify.facade.dto.SpotifyAlbumDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistDto;
 import rocks.metaldetector.spotify.facade.dto.SpotifyArtistSearchResultDto;
 import rocks.metaldetector.support.Pagination;
-import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.auth.RegisterUserRequest;
+import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
 import rocks.metaldetector.web.api.request.SynchronizeArtistsRequest;
 import rocks.metaldetector.web.api.request.UpdateEmailRequest;
@@ -383,6 +383,7 @@ public class DtoFactory {
     public static ArtistSearchResponse empty() {
       return ArtistSearchResponse.builder()
           .searchResults(Collections.emptyList())
+          .pagination(Pagination.builder().build())
           .build();
     }
   }
