@@ -2,7 +2,7 @@ package rocks.metaldetector.persistence.domain.artist;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,12 +23,12 @@ import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 @EqualsAndHashCode(callSuper = true)
 public class FollowActionEntity extends BaseEntity {
 
-  @OneToOne(targetEntity = AbstractUserEntity.class)
+  @ManyToOne(targetEntity = AbstractUserEntity.class)
   @JoinColumn(nullable = false, name = "user_id")
   @NonNull
   private AbstractUserEntity user;
 
-  @OneToOne(targetEntity = ArtistEntity.class)
+  @ManyToOne(targetEntity = ArtistEntity.class)
   @JoinColumn(nullable = false, name = "artist_id")
   @NonNull
   private ArtistEntity artist;

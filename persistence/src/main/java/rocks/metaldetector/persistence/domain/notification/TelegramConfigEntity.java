@@ -3,7 +3,7 @@ package rocks.metaldetector.persistence.domain.notification;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +21,7 @@ import rocks.metaldetector.persistence.domain.BaseEntity;
 @Entity(name = "telegramConfigs")
 public class TelegramConfigEntity extends BaseEntity {
 
-  @OneToOne(targetEntity = NotificationConfigEntity.class)
+  @ManyToOne(targetEntity = NotificationConfigEntity.class)
   @JoinColumn(nullable = false, name = "notification_configs_id")
   private NotificationConfigEntity notificationConfig;
 
