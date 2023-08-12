@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -82,9 +83,9 @@ import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 @Configuration
 @EnableWebSecurity
 @ConditionalOnProperty(
-        name = "rocks.metaldetector.security.enabled",
-        havingValue = "true",
-        matchIfMissing = true
+    name = "rocks.metaldetector.security.enabled",
+    havingValue = "true",
+    matchIfMissing = true
 )
 @EnableMethodSecurity
 @RequiredArgsConstructor
@@ -106,86 +107,78 @@ public class SecurityConfig {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-      .csrf().ignoringRequestMatchers(REST_ENDPOINTS) // TODO DanielW: enable csrf
-      .and()
-        .sessionManagement().sessionCreationPolicy(STATELESS)
-      .and()
-        .authorizeHttpRequests()
-          .requestMatchers(RESOURCES).permitAll()
-          .requestMatchers(GUEST_ONLY_PAGES).permitAll()
-          .requestMatchers(PUBLIC_PAGES).permitAll()
-          .requestMatchers(ACTUATOR_ENDPOINTS,
-                           NOTIFICATION_TELEGRAM + "/" + botId,
-                           Endpoints.Rest.LOGIN,
-                           REGISTER,
-                           REGISTRATION_VERIFICATION,
-                           REQUEST_PASSWORD_RESET,
-                           RESET_PASSWORD,
-                           LOGOUT,
-                           RELEASES,
-                           TOP_UPCOMING_RELEASES,
-                           SEARCH_ARTIST,
-                           TOP_ARTISTS,
-                           AUTHENTICATION,
-                           REFRESH_ACCESS_TOKEN,
-                           CSRF).permitAll()
-          .requestMatchers(FOLLOW_ARTIST + "/**",
-                           UNFOLLOW_ARTIST + "/**",
-                           DASHBOARD,
-                           MY_ARTISTS,
-                           SPOTIFY_SAVED_ARTISTS,
-                           SPOTIFY_ARTIST_SYNCHRONIZATION,
-                           NOTIFICATION_CONFIG,
-                           OAUTH + "/{registration-id}",
-                           TELEGRAM_CONFIG,
-                           "/rest/v1/logging/**",
-                           CURRENT_USER + "/**").authenticated()
-          .requestMatchers(ADMIN,
-                           UPDATE_RELEASE,
-                           ALL_RELEASES,
-                           IMPORT_JOB,
-                           COVER_JOB,
-                           REGISTRATION_CLEANUP,
-                           USERS + "/**",
-                           NOTIFICATION_ON_FREQUENCY,
-                           NOTIFICATION_ON_RELEASE_DATE,
-                           NOTIFICATION_ON_ANNOUNCEMENT_DATE,
-                           STATISTICS).hasRole(ROLE_ADMINISTRATOR.getName())
-          .anyRequest().denyAll()
-      .and()
-        .oauth2Login()
-          .loginPage(Endpoints.Authentication.LOGIN)
-          .userInfoEndpoint()
-            .oidcUserService(customOidcUserService)
-      .and()
-        .authorizationEndpoint()
-          .authorizationRequestResolver(oAuth2AuthorizationRequestResolver)
-      .and()
-      .and()
-        .oauth2Client()
-          .authorizedClientService(oAuth2AuthorizedClientService)
-          .authorizedClientRepository(oAuth2AuthorizedClientRepository)
-      .and()
+        .csrf((customizer) -> customizer.ignoringRequestMatchers(REST_ENDPOINTS)) // TODO DanielW: enable csrf
+        .sessionManagement((customizer) -> customizer.sessionCreationPolicy(STATELESS))
+        .authorizeHttpRequests((customizer) -> customizer
+            .requestMatchers(RESOURCES).permitAll()
+            .requestMatchers(GUEST_ONLY_PAGES).permitAll()
+            .requestMatchers(PUBLIC_PAGES).permitAll()
+            .requestMatchers(ACTUATOR_ENDPOINTS,
+                             NOTIFICATION_TELEGRAM + "/" + botId,
+                             Endpoints.Rest.LOGIN,
+                             REGISTER,
+                             REGISTRATION_VERIFICATION,
+                             REQUEST_PASSWORD_RESET,
+                             RESET_PASSWORD,
+                             LOGOUT,
+                             RELEASES,
+                             TOP_UPCOMING_RELEASES,
+                             SEARCH_ARTIST,
+                             TOP_ARTISTS,
+                             AUTHENTICATION,
+                             REFRESH_ACCESS_TOKEN,
+                             CSRF).permitAll()
+            .requestMatchers(FOLLOW_ARTIST + "/**",
+                             UNFOLLOW_ARTIST + "/**",
+                             DASHBOARD,
+                             MY_ARTISTS,
+                             SPOTIFY_SAVED_ARTISTS,
+                             SPOTIFY_ARTIST_SYNCHRONIZATION,
+                             NOTIFICATION_CONFIG,
+                             OAUTH + "/{registration-id}",
+                             TELEGRAM_CONFIG,
+                             "/rest/v1/logging/**",
+                             CURRENT_USER + "/**").authenticated()
+            .requestMatchers(ADMIN,
+                             UPDATE_RELEASE,
+                             ALL_RELEASES,
+                             IMPORT_JOB,
+                             COVER_JOB,
+                             REGISTRATION_CLEANUP,
+                             USERS + "/**",
+                             NOTIFICATION_ON_FREQUENCY,
+                             NOTIFICATION_ON_RELEASE_DATE,
+                             NOTIFICATION_ON_ANNOUNCEMENT_DATE,
+                             STATISTICS).hasRole(ROLE_ADMINISTRATOR.getName())
+            .anyRequest().denyAll())
+        .oauth2Login((oAuth2LoginConfigurer) -> oAuth2LoginConfigurer
+            .loginPage(Endpoints.Authentication.LOGIN)
+            .userInfoEndpoint((customizer) -> customizer.oidcUserService(customOidcUserService))
+            .authorizationEndpoint((customizer) -> customizer.authorizationRequestResolver(oAuth2AuthorizationRequestResolver))
+        )
+        .oauth2Client((customizer) -> customizer
+            .authorizedClientService(oAuth2AuthorizedClientService)
+            .authorizedClientRepository(oAuth2AuthorizedClientRepository)
+        )
         .logout(logout -> logout.permitAll()
-          .logoutUrl(LOGOUT)
-          .addLogoutHandler(customLogoutHandler)
-          .logoutSuccessHandler((request, response, authentication) -> response.setStatus(SC_OK))
-          .invalidateHttpSession(true)
-          .clearAuthentication(true)
-          .deleteCookies("JSESSIONID", REFRESH_TOKEN_COOKIE_NAME))
-      .cors()
-      .and()
-        .headers()
-          .permissionsPolicy().policy("interest-cohort=()").and()
-          // These headers are set in the proxy, so disabled here
-          .frameOptions().disable()
-          .xssProtection().disable()
-          .contentTypeOptions().disable()
-          .httpStrictTransportSecurity().disable()
-      .and()
-        .exceptionHandling()
-          .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(UNAUTHORIZED), new AntPathRequestMatcher(REST_ENDPOINTS))
-      .and()
+            .logoutUrl(LOGOUT)
+            .addLogoutHandler(customLogoutHandler)
+            .logoutSuccessHandler((request, response, authentication) -> response.setStatus(SC_OK))
+            .invalidateHttpSession(true)
+            .clearAuthentication(true)
+            .deleteCookies("JSESSIONID", REFRESH_TOKEN_COOKIE_NAME))
+        .cors((it) -> {
+        })
+        .headers((customizer) ->
+                     // These headers are set in the proxy, so disabled here
+                     customizer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
+                         .xssProtection(HeadersConfigurer.XXssConfig::disable)
+                         .contentTypeOptions(HeadersConfigurer.ContentTypeOptionsConfig::disable)
+                         .httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable)
+                         .permissionsPolicy((it) -> it.policy("interest-cohort=()")))
+        .exceptionHandling((configurer) ->
+                               configurer.defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(UNAUTHORIZED),
+                                                                             new AntPathRequestMatcher(REST_ENDPOINTS)))
         .addFilter(customUsernamePasswordAuthFilter())
         .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
