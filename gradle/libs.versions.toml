@@ -9,6 +9,7 @@ jsonwebtoken = "0.11.5"
 jsoup = "1.16.1"
 lokiLogbackAppender = "1.4.1"
 lombok = "1.18.28"
+mockitoInline = "5.2.0"
 postgres = "42.6.0"
 restAssured = "5.3.1"
 slf4jTest = "3.0.1"
@@ -31,7 +32,7 @@ jjwtJackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jsonwebt
 lokiLogbackAppender = { module = "com.github.loki4j:loki-logback-appender", version.ref = "lokiLogbackAppender" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 micrometerRegistryPrometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
-mockitoInline = { module = "org.mockito:mockito-inline" }
+mockitoInline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 restAssured = { module = "io.rest-assured:rest-assured", version.ref = "restAssured" }
 restAssuredJsonPath = { module = "io.rest-assured:json-path", version.ref = "restAssured" }
@@ -59,5 +60,5 @@ springBootStarterApp = ["springBootStarterActuator", "springBootStarterMail", "s
 
 [plugins]
 dockerPublish = { id = "de.europace.docker-publish", version = "1.4.4" }
-springBoot = { id = "org.springframework.boot", version = "3.0.7" }
+springBoot = { id = "org.springframework.boot", version = "3.1.2" }
 springDependencyManagement = { id = "io.spring.dependency-management", version = "1.1.3" }
