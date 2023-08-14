@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.admin.dashboard;
+package rocks.metaldetector.service.statistics;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

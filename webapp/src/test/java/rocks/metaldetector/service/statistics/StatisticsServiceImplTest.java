@@ -1,4 +1,4 @@
-package rocks.metaldetector.service.admin.dashboard;
+package rocks.metaldetector.service.statistics;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
