@@ -41,18 +41,6 @@ class StatisticsServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("mockResponse is returned for ArtistFollowingInfo")
-  void test_mock_artist_following_info_returned() {
-    var mockResponse = statisticsServiceMock.createStatisticsResponse();
-
-    // when
-    var result = underTest.createStatisticsResponse();
-
-    // then
-    assertThat(result.getArtistFollowingInfo()).isEqualTo(mockResponse.getArtistFollowingInfo());
-  }
-
-  @Test
   @DisplayName("mockResponse is returned for ReleaseInfo")
   void test_mock_release_info_returned() {
     var mockResponse = statisticsServiceMock.createStatisticsResponse();
@@ -170,7 +158,7 @@ class StatisticsServiceImplTest implements WithAssertions {
     @DisplayName("followActionRepository is called")
     void test_follow_action_repository_called() {
       // when
-      underTest.createAdminDashboardResponse();
+      underTest.createStatisticsResponse();
 
       // then
       verify(followActionRepository).findAll();
@@ -199,7 +187,7 @@ class StatisticsServiceImplTest implements WithAssertions {
       doReturn(followActions).when(followActionRepository).findAll();
 
       // when
-      var result = underTest.createAdminDashboardResponse();
+      var result = underTest.createStatisticsResponse();
 
       // then
       var followingsPerMonth = result.getArtistFollowingInfo().getFollowingsPerMonth();
@@ -224,7 +212,7 @@ class StatisticsServiceImplTest implements WithAssertions {
       doReturn(followActions).when(followActionRepository).findAll();
 
       // when
-      var result = underTest.createAdminDashboardResponse();
+      var result = underTest.createStatisticsResponse();
 
       // then
       assertThat(result.getArtistFollowingInfo().getTotalFollowings()).isEqualTo(5);
@@ -247,7 +235,7 @@ class StatisticsServiceImplTest implements WithAssertions {
       doReturn(followActions).when(followActionRepository).findAll();
 
       // when
-      var result = underTest.createAdminDashboardResponse();
+      var result = underTest.createStatisticsResponse();
 
       // then
       assertThat(result.getArtistFollowingInfo().getFollowingsThisMonth()).isEqualTo(2);
