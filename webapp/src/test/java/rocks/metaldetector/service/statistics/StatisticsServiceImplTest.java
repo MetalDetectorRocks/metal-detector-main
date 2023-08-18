@@ -7,15 +7,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.persistence.domain.artist.FollowActionEntity;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
+import rocks.metaldetector.persistence.domain.artist.FollowingsPerMonth;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.service.artist.ArtistEntityFactory;
 import rocks.metaldetector.service.user.UserEntityFactory;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -161,41 +161,26 @@ class StatisticsServiceImplTest implements WithAssertions {
       underTest.createStatisticsResponse();
 
       // then
-      verify(followActionRepository).findAll();
+      verify(followActionRepository).groupFollowingsByYearAndMonth();
     }
 
     @Test
     @DisplayName("sorted map with created follow actions per month is returned")
     void test_sorted_follow_actions_per_month_returned() {
       //given
-      var user = UserEntityFactory.createDefaultUser();
-      var artist = ArtistEntityFactory.withExternalId("someId");
-      var followAction1 = FollowActionEntity.builder().user(user).artist(artist).build();
-      var followAction2 = FollowActionEntity.builder().user(user).artist(artist).build();
-      var followAction3 = FollowActionEntity.builder().user(user).artist(artist).build();
-      var followAction4 = FollowActionEntity.builder().user(user).artist(artist).build();
-      var followAction5 = FollowActionEntity.builder().user(user).artist(artist).build();
-      var localDate1 = LocalDate.of(2020, 1, 1);
-      var localDate2 = LocalDate.of(2021, 1, 1);
-      var localDate3 = LocalDate.of(2022, 1, 1);
-      followAction1.setCreatedDateTime(Date.from(localDate1.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-      followAction2.setCreatedDateTime(Date.from(localDate2.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-      followAction3.setCreatedDateTime(Date.from(localDate3.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-      followAction4.setCreatedDateTime(Date.from(localDate1.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-      followAction5.setCreatedDateTime(Date.from(localDate2.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-      var followActions = List.of(followAction5, followAction4, followAction3, followAction2, followAction1);
-      doReturn(followActions).when(followActionRepository).findAll();
+      var followingsPerMonths = setupFollowingPerMonthTest();
+      doReturn(followingsPerMonths).when(followActionRepository).groupFollowingsByYearAndMonth();
 
       // when
       var result = underTest.createStatisticsResponse();
 
       // then
-      var followingsPerMonth = result.getArtistFollowingInfo().getFollowingsPerMonth();
-      assertThat(followingsPerMonth.size()).isEqualTo(3);
-      assertThat(followingsPerMonth).containsExactly(
-          Map.entry(YearMonth.of(2020, 1), 2L),
+      var resultFollowingsPerMonth = result.getArtistFollowingInfo().getFollowingsPerMonth();
+      assertThat(resultFollowingsPerMonth.size()).isEqualTo(3);
+      assertThat(resultFollowingsPerMonth).containsExactly(
+          Map.entry(YearMonth.of(2020, 1), 1L),
           Map.entry(YearMonth.of(2021, 1), 2L),
-          Map.entry(YearMonth.of(2022, 1), 1L)
+          Map.entry(YearMonth.of(2022, 1), 3L)
       );
     }
 
@@ -203,42 +188,70 @@ class StatisticsServiceImplTest implements WithAssertions {
     @DisplayName("total number of followActions is returned")
     void test_total_number_of_follow_actions_returned() {
       //given
-      var user = UserEntityFactory.createDefaultUser();
-      var artist = ArtistEntityFactory.withExternalId("someId");
-      var followAction = FollowActionEntity.builder().user(user).artist(artist).build();
-      var localDate = LocalDate.now();
-      followAction.setCreatedDateTime(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-      var followActions = List.of(followAction, followAction, followAction, followAction, followAction);
-      doReturn(followActions).when(followActionRepository).findAll();
+      var followingsPerMonths = setupFollowingPerMonthTest();
+      doReturn(followingsPerMonths).when(followActionRepository).groupFollowingsByYearAndMonth();
 
       // when
       var result = underTest.createStatisticsResponse();
 
       // then
-      assertThat(result.getArtistFollowingInfo().getTotalFollowings()).isEqualTo(5);
+      assertThat(result.getArtistFollowingInfo().getTotalFollowings()).isEqualTo(6);
     }
 
     @Test
     @DisplayName("new followings this month is returned")
     void test_new_followings_this_month_returned() {
       //given
-      var user = UserEntityFactory.createDefaultUser();
-      var artist = ArtistEntityFactory.withExternalId("someId");
-      var oldFollowAction = FollowActionEntity.builder().user(user).artist(artist).build();
-      var newFollowAction1 = FollowActionEntity.builder().user(user).artist(artist).build();
-      var newFollowAction2 = FollowActionEntity.builder().user(user).artist(artist).build();
-      var localDate = LocalDate.now();
-      oldFollowAction.setCreatedDateTime(Date.from(localDate.minusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
-      newFollowAction1.setCreatedDateTime(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-      newFollowAction2.setCreatedDateTime(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-      var followActions = List.of(oldFollowAction, newFollowAction1, newFollowAction2);
-      doReturn(followActions).when(followActionRepository).findAll();
+      var localDateNow = LocalDate.now();
+      var followingsPerMonthNow = mock(FollowingsPerMonth.class);
+      doReturn(6L).when(followingsPerMonthNow).getFollowings();
+      doReturn(localDateNow.getYear()).when(followingsPerMonthNow).getFollowingYear();
+      doReturn(localDateNow.getMonth().getValue()).when(followingsPerMonthNow).getFollowingMonth();
+
+      var followingsPerMonths = setupFollowingPerMonthTest();
+      followingsPerMonths.add(followingsPerMonthNow);
+      doReturn(followingsPerMonths).when(followActionRepository).groupFollowingsByYearAndMonth();
 
       // when
       var result = underTest.createStatisticsResponse();
 
       // then
-      assertThat(result.getArtistFollowingInfo().getFollowingsThisMonth()).isEqualTo(2);
+      assertThat(result.getArtistFollowingInfo().getFollowingsThisMonth()).isEqualTo(6);
+    }
+
+    private List<FollowingsPerMonth> setupFollowingPerMonthTest() {
+      var followingsPerMonth1 = mock(FollowingsPerMonth.class);
+      var followingsPerMonth2 = mock(FollowingsPerMonth.class);
+      var followingsPerMonth3 = mock(FollowingsPerMonth.class);
+      var followingsPerMonth4 = mock(FollowingsPerMonth.class);
+      var followingsPerMonth5 = mock(FollowingsPerMonth.class);
+
+      var localDate1 = LocalDate.of(2020, 1, 1);
+      var localDate2 = LocalDate.of(2021, 1, 1);
+      var localDate3 = LocalDate.of(2022, 1, 1);
+
+      doReturn(localDate1.getYear()).when(followingsPerMonth1).getFollowingYear();
+      doReturn(localDate1.getMonth().getValue()).when(followingsPerMonth1).getFollowingMonth();
+      doReturn(localDate2.getYear()).when(followingsPerMonth2).getFollowingYear();
+      doReturn(localDate2.getMonth().getValue()).when(followingsPerMonth2).getFollowingMonth();
+      doReturn(localDate3.getYear()).when(followingsPerMonth3).getFollowingYear();
+      doReturn(localDate3.getMonth().getValue()).when(followingsPerMonth3).getFollowingMonth();
+      doReturn(localDate1.getYear()).when(followingsPerMonth4).getFollowingYear();
+      doReturn(localDate1.getMonth().getValue()).when(followingsPerMonth4).getFollowingMonth();
+      doReturn(localDate2.getYear()).when(followingsPerMonth5).getFollowingYear();
+      doReturn(localDate2.getMonth().getValue()).when(followingsPerMonth5).getFollowingMonth();
+
+      doReturn(1L).when(followingsPerMonth1).getFollowings();
+      doReturn(2L).when(followingsPerMonth2).getFollowings();
+      doReturn(3L).when(followingsPerMonth3).getFollowings();
+
+      List<FollowingsPerMonth> followingsPerMonths = new ArrayList<>();
+      followingsPerMonths.add(followingsPerMonth1);
+      followingsPerMonths.add(followingsPerMonth2);
+      followingsPerMonths.add(followingsPerMonth3);
+      followingsPerMonths.add(followingsPerMonth4);
+      followingsPerMonths.add(followingsPerMonth5);
+      return followingsPerMonths;
     }
   }
 }
