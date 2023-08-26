@@ -27,3 +27,4 @@ src/main/docker/env.txt
 node_modules/
 node/
 dist/
+.frontend-gradle-plugin/

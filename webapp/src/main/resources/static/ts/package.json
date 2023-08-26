@@ -17,6 +17,7 @@
   "keywords": [],
   "author": "Daniel Wagner",
   "license": "Apache-2.0",
+  "packageManager": "npm@8.19.4",
   "devDependencies": {
     "@types/node": "^18.17.11",
     "@types/qs": "^6.9.7",
