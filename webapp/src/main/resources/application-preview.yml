@@ -49,7 +49,7 @@ management:
         flyway: ${ACTUATOR_FLYWAY_PATH}
 
 security:
-  secure-cookie: true
+  secure-cookie: false
 
 metal-release-butler:
   host: http://butler-app:8080
