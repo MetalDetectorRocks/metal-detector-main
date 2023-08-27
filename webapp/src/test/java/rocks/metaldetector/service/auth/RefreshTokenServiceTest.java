@@ -144,6 +144,20 @@ class RefreshTokenServiceTest implements WithAssertions {
       assertThat(cookie.isSecure()).isTrue();
       assertThat(cookie.getDomain()).isEqualTo(domain);
     }
+
+    @Test
+    @DisplayName("should return cookie with unsecure settings if its not a secure environment")
+    void should_return_cookie_with_unsecure_settings_if_its_not_a_secure_environment() {
+      // given
+      doReturn(false).when(securityProperties).isSecureCookie();
+
+      // when
+      ResponseCookie cookie = underTest.createRefreshTokenCookie("foobar");
+
+      // then
+      assertThat(cookie.getSameSite()).isEqualTo("None");
+      assertThat(cookie.isSecure()).isFalse();
+    }
   }
 
   @Nested
