@@ -14,6 +14,8 @@ import rocks.metaldetector.support.SecurityProperties;
 
 import java.time.Duration;
 
+import static org.apache.tomcat.util.http.SameSiteCookies.LAX;
+
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
@@ -84,8 +86,8 @@ public class RefreshTokenService {
         .secure(securityProperties.isSecureCookie())
         .httpOnly(true)
         .path("/")
-        .domain(domain)
-        .sameSite("Strict")
+//        .domain(domain)
+        .sameSite(LAX.getValue())
         .build();
   }
 

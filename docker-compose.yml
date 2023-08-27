@@ -42,8 +42,8 @@ services:
         max_attempts: 3
 
   butler-app:
-    container_name: butler-app
-    image: metaldetector/metal-release-butler:20220625T095023
+    container_name: detector-butler-app
+    image: metaldetectorrocks/metal-release-butler:20230825T163205
     environment:
       DATASOURCE_URL: jdbc:postgresql://butler-db:5432/metal-release-butler
       DATASOURCE_USERNAME: postgres
@@ -87,14 +87,14 @@ services:
 
   auth-app:
     container_name: detector-auth-app
-    image: metaldetector/metal-detector-auth:20220625T094902
+    image: metaldetectorrocks/metal-detector-auth:20230827T132755
     environment:
       SERVER_PORT: 9000
       DATASOURCE_URL: jdbc:postgresql://auth-db:5432/metal-detector-auth
       DATASOURCE_USERNAME: postgres
       DATASOURCE_PASSWORD: secret
-      AUTHORIZATION_SERVER_PRIVATE_KEY:
-      AUTHORIZATION_SERVER_PUBLIC_KEY:
+      AUTHORIZATION_SERVER_PRIVATE_KEY: ''
+      AUTHORIZATION_SERVER_PUBLIC_KEY: ''
       METAL_DETECTOR_USER_CLIENT_ID: metal-detector-user
       METAL_DETECTOR_USER_CLIENT_SECRET: userSecret
       METAL_DETECTOR_ADMIN_CLIENT_ID: metal-detector-admin
@@ -117,7 +117,6 @@ services:
     ports:
       - "1025:1025" # SMTP server
       - "1080:1080" # HTTP server
-
 
 volumes:
   detector-db-volume:
