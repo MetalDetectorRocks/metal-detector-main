@@ -142,7 +142,7 @@ class RefreshTokenServiceTest implements WithAssertions {
       assertThat(cookie.getPath()).isEqualTo("/");
       assertThat(cookie.isHttpOnly()).isTrue();
       assertThat(cookie.isSecure()).isTrue();
-//      assertThat(cookie.getDomain()).isEqualTo(domain);
+      assertThat(cookie.getDomain()).isEqualTo(domain);
     }
   }
 
@@ -301,7 +301,7 @@ class RefreshTokenServiceTest implements WithAssertions {
       assertThat(cookie.getPath()).isEqualTo("/");
       assertThat(cookie.isHttpOnly()).isTrue();
       assertThat(cookie.isSecure()).isTrue();
-//      assertThat(cookie.getDomain()).isEqualTo(domain);
+      assertThat(cookie.getDomain()).isEqualTo(domain);
     }
   }
 

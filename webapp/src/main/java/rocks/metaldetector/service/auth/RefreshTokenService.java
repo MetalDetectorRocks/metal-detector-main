@@ -86,7 +86,7 @@ public class RefreshTokenService {
         .secure(securityProperties.isSecureCookie())
         .httpOnly(true)
         .path("/")
-//        .domain(domain)
+        .domain(domain)
         .sameSite(LAX.getValue())
         .build();
   }

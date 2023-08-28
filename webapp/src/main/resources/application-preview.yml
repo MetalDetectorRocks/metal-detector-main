@@ -34,7 +34,7 @@ server:
   servlet:
     session:
       cookie:
-        secure: true
+        secure: false
 
 logging:
   config: classpath:config/logging/logback.xml
