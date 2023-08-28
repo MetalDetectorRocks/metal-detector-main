@@ -10,7 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.service.admin.dashboard.StatisticsService;
+import rocks.metaldetector.service.statistics.StatisticsService;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.response.StatisticsResponse;
 import rocks.metaldetector.web.api.response.UserInfo;

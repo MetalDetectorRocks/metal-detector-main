@@ -12,6 +12,7 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserFactory;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static rocks.metaldetector.persistence.domain.artist.ArtistSource.DISCOGS;
@@ -103,5 +104,19 @@ class FollowActionRepositoryIT extends BaseDataJpaTest implements WithAssertions
 
     // then
     assertThat(result).isFalse();
+  }
+
+  @Test
+  @DisplayName("Should return correct followings per month")
+  void should_return_followings_per_month() {
+    // when
+    List<FollowingsPerMonth> result = underTest.groupFollowingsByYearAndMonth();
+
+    // then
+    assertThat(result.size()).isEqualTo(1);
+    var now = LocalDate.now();
+    assertThat(result.get(0).getFollowingYear()).isEqualTo(now.getYear());
+    assertThat(result.get(0).getFollowingMonth()).isEqualTo(now.getMonth().getValue());
+    assertThat(result.get(0).getFollowings()).isEqualTo(5);
   }
 }
