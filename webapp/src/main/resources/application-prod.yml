@@ -53,6 +53,7 @@ management:
 
 security:
   secure-cookie: true
+  mock-mode: false
 
 metal-release-butler:
   host: http://butler-app:8080
