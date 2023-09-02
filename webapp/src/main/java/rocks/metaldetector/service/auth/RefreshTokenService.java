@@ -75,7 +75,7 @@ public class RefreshTokenService {
     return jwtsSupport.generateToken(tokenEntityId, duration);
   }
 
-  private String createAccessToken(String publicUserId) {
+  public String createAccessToken(String publicUserId) {
     Duration duration = Duration.ofMinutes(securityProperties.getAccessTokenExpirationInMin());
     return jwtsSupport.generateToken(publicUserId, duration);
   }

@@ -113,6 +113,7 @@ security:
   access-token-expiration-in-min: 15
   refresh-token-expiration-in-min: 43800 # 30 days
   secure-cookie: false
+  mock-mode: false
 
 server:
   port: 8080
