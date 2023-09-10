@@ -75,7 +75,7 @@ public class RefreshTokenService {
     return jwtsSupport.generateToken(tokenEntityId, duration);
   }
 
-  private String createAccessToken(String publicUserId) {
+  public String createAccessToken(String publicUserId) {
     Duration duration = Duration.ofMinutes(securityProperties.getAccessTokenExpirationInMin());
     return jwtsSupport.generateToken(publicUserId, duration);
   }
@@ -86,7 +86,7 @@ public class RefreshTokenService {
         .secure(securityProperties.isSecureCookie())
         .httpOnly(true)
         .path("/")
-//        .domain(domain)
+        .domain(domain)
         .sameSite(LAX.getValue())
         .build();
   }
