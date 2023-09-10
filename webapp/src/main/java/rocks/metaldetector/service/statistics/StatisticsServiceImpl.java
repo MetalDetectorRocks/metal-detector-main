@@ -1,12 +1,16 @@
 package rocks.metaldetector.service.statistics;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import rocks.metaldetector.butler.facade.ReleaseStatisticsService;
+import rocks.metaldetector.butler.facade.dto.ReleaseStatisticsDto;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowingsPerMonth;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.web.api.response.ArtistFollowingInfo;
+import rocks.metaldetector.web.api.response.ReleaseInfo;
 import rocks.metaldetector.web.api.response.StatisticsResponse;
 import rocks.metaldetector.web.api.response.UserInfo;
 
@@ -22,13 +26,19 @@ public class StatisticsServiceImpl implements StatisticsService {
   private final StatisticsService statisticsServiceMock;
   private final UserRepository userRepository;
   private final FollowActionRepository followActionRepository;
+  private final ReleaseStatisticsService releaseStatisticsService;
+  private final ObjectMapper objectMapper;
 
   public StatisticsServiceImpl(@Qualifier("statisticsServiceMock") StatisticsService statisticsService,
                                UserRepository userRepository,
-                               FollowActionRepository followActionRepository) {
+                               FollowActionRepository followActionRepository,
+                               ReleaseStatisticsService releaseStatisticsService,
+                               ObjectMapper objectMapper) {
     this.statisticsServiceMock = statisticsService;
     this.userRepository = userRepository;
     this.followActionRepository = followActionRepository;
+    this.releaseStatisticsService = releaseStatisticsService;
+    this.objectMapper = objectMapper;
   }
 
   @Override
@@ -37,7 +47,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     return StatisticsResponse.builder()
         .userInfo(buildUserInfo())
         .artistFollowingInfo(buildArtistFollowingInfo())
-        .releaseInfo(mockResponse.getReleaseInfo())
+        .releaseInfo(getReleaseInfo())
         .importInfo(mockResponse.getImportInfo())
         .build();
   }
@@ -67,5 +77,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         .totalFollowings(totalFollowings)
         .followingsThisMonth(followingsPerMonths.getOrDefault(YearMonth.now(), 0L))
         .build();
+  }
+
+  private ReleaseInfo getReleaseInfo() {
+    ReleaseStatisticsDto releaseStatistics = releaseStatisticsService.getReleaseStatistics();
+    return objectMapper.convertValue(releaseStatistics, ReleaseInfo.class);
   }
 }

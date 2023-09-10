@@ -1,5 +1,6 @@
 package rocks.metaldetector.service.statistics;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import rocks.metaldetector.butler.facade.ReleaseStatisticsService;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowingsPerMonth;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
@@ -23,6 +25,7 @@ import java.util.Map;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,10 +33,12 @@ class StatisticsServiceImplTest implements WithAssertions {
 
   UserRepository userRepository = mock(UserRepository.class);
   FollowActionRepository followActionRepository = mock(FollowActionRepository.class);
+  ReleaseStatisticsService releaseStatisticsService = mock(ReleaseStatisticsService.class);
+  ObjectMapper objectMapper = spy(ObjectMapper.class);
 
   StatisticsService statisticsServiceMock = new StatisticsServiceMock();
 
-  StatisticsServiceImpl underTest = new StatisticsServiceImpl(statisticsServiceMock, userRepository, followActionRepository);
+  StatisticsServiceImpl underTest = new StatisticsServiceImpl(statisticsServiceMock, userRepository, followActionRepository, releaseStatisticsService, objectMapper);
 
   @AfterEach
   void tearDown() {

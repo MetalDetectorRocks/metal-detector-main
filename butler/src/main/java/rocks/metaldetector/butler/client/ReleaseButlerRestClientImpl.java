@@ -11,6 +11,7 @@ import rocks.metaldetector.butler.api.ButlerImportJob;
 import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
+import rocks.metaldetector.butler.api.ButlerStatisticsResponse;
 import rocks.metaldetector.butler.api.ButlerUpdateReleaseStateRequest;
 import rocks.metaldetector.butler.config.ButlerConfig;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
@@ -116,5 +117,17 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
     if (shouldNotHappen) {
       throw new ExternalServiceException("Could not update release state (Response code: " + responseEntity.getStatusCode() + ")");
     }
+  }
+
+  @Override
+  public ButlerStatisticsResponse getStatistics() {
+    ResponseEntity<ButlerStatisticsResponse> responseEntity = releaseButlerRestTemplate.getForEntity(butlerConfig.getStatisticsUrl(), ButlerStatisticsResponse.class);
+    ButlerStatisticsResponse response = responseEntity.getBody();
+
+    var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
+    if (shouldNotHappen) {
+      throw new ExternalServiceException("Could not get statistics (Response code: " + responseEntity.getStatusCode() + ")");
+    }
+    return response;
   }
 }
