@@ -112,4 +112,15 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
     // when
     underTest.updateReleaseState(1L, "state");
   }
+
+  @Test
+  @DisplayName("Should do return mock data for statistics")
+  void should_return_mock_statistics() {
+    // when
+    var result = underTest.getStatistics();
+
+    // then
+    assertThat(result.getReleaseInfo()).isNotNull();
+    assertThat(result.getReleaseInfo().getReleasesPerMonth()).isNotEmpty();
+  }
 }

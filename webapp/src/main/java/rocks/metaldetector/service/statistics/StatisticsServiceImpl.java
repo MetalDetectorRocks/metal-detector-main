@@ -3,8 +3,8 @@ package rocks.metaldetector.service.statistics;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import rocks.metaldetector.butler.facade.ReleaseStatisticsService;
-import rocks.metaldetector.butler.facade.dto.ReleaseStatisticsDto;
+import rocks.metaldetector.butler.facade.ButlerStatisticsService;
+import rocks.metaldetector.butler.facade.dto.ButlerStatisticsDto;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowingsPerMonth;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
@@ -26,18 +26,18 @@ public class StatisticsServiceImpl implements StatisticsService {
   private final StatisticsService statisticsServiceMock;
   private final UserRepository userRepository;
   private final FollowActionRepository followActionRepository;
-  private final ReleaseStatisticsService releaseStatisticsService;
+  private final ButlerStatisticsService butlerStatisticsService;
   private final ObjectMapper objectMapper;
 
   public StatisticsServiceImpl(@Qualifier("statisticsServiceMock") StatisticsService statisticsService,
                                UserRepository userRepository,
                                FollowActionRepository followActionRepository,
-                               ReleaseStatisticsService releaseStatisticsService,
+                               ButlerStatisticsService butlerStatisticsService,
                                ObjectMapper objectMapper) {
     this.statisticsServiceMock = statisticsService;
     this.userRepository = userRepository;
     this.followActionRepository = followActionRepository;
-    this.releaseStatisticsService = releaseStatisticsService;
+    this.butlerStatisticsService = butlerStatisticsService;
     this.objectMapper = objectMapper;
   }
 
@@ -80,7 +80,7 @@ public class StatisticsServiceImpl implements StatisticsService {
   }
 
   private ReleaseInfo getReleaseInfo() {
-    ReleaseStatisticsDto releaseStatistics = releaseStatisticsService.getReleaseStatistics();
-    return objectMapper.convertValue(releaseStatistics, ReleaseInfo.class);
+    ButlerStatisticsDto butlerStatistics = butlerStatisticsService.getButlerStatistics();
+    return objectMapper.convertValue(butlerStatistics.getReleaseInfo(), ReleaseInfo.class);
   }
 }

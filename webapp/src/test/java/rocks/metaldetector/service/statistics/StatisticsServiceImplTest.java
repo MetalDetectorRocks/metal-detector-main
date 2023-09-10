@@ -3,16 +3,20 @@ package rocks.metaldetector.service.statistics;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rocks.metaldetector.butler.facade.ReleaseStatisticsService;
+import rocks.metaldetector.butler.facade.ButlerStatisticsService;
+import rocks.metaldetector.butler.facade.dto.ButlerStatisticsDto;
+import rocks.metaldetector.butler.facade.dto.ReleaseInfoDto;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowingsPerMonth;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.user.UserEntityFactory;
+import rocks.metaldetector.web.api.response.ReleaseInfo;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -22,10 +26,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,28 +38,21 @@ class StatisticsServiceImplTest implements WithAssertions {
 
   UserRepository userRepository = mock(UserRepository.class);
   FollowActionRepository followActionRepository = mock(FollowActionRepository.class);
-  ReleaseStatisticsService releaseStatisticsService = mock(ReleaseStatisticsService.class);
-  ObjectMapper objectMapper = spy(ObjectMapper.class);
+  ButlerStatisticsService butlerStatisticsService = mock(ButlerStatisticsService.class);
+  ObjectMapper objectMapper = mock(ObjectMapper.class);
 
   StatisticsService statisticsServiceMock = new StatisticsServiceMock();
 
-  StatisticsServiceImpl underTest = new StatisticsServiceImpl(statisticsServiceMock, userRepository, followActionRepository, releaseStatisticsService, objectMapper);
+  StatisticsServiceImpl underTest = new StatisticsServiceImpl(statisticsServiceMock, userRepository, followActionRepository, butlerStatisticsService, objectMapper);
+
+  @BeforeEach
+  void setup() {
+    doReturn(ButlerStatisticsDto.builder().build()).when(butlerStatisticsService).getButlerStatistics();
+  }
 
   @AfterEach
   void tearDown() {
     reset(userRepository, followActionRepository);
-  }
-
-  @Test
-  @DisplayName("mockResponse is returned for ReleaseInfo")
-  void test_mock_release_info_returned() {
-    var mockResponse = statisticsServiceMock.createStatisticsResponse();
-
-    // when
-    var result = underTest.createStatisticsResponse();
-
-    // then
-    assertThat(result.getReleaseInfo()).isEqualTo(mockResponse.getReleaseInfo());
   }
 
   @Test
@@ -257,6 +255,51 @@ class StatisticsServiceImplTest implements WithAssertions {
       followingsPerMonths.add(followingsPerMonth4);
       followingsPerMonths.add(followingsPerMonth5);
       return followingsPerMonths;
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests for ReleaseInfo")
+  class ReleaseInfoTest {
+
+    @Test
+    @DisplayName("butlerStatisticsService is called")
+    void test_butler_statistics_service_called() {
+      // when
+      underTest.createStatisticsResponse();
+
+      // then
+      verify(butlerStatisticsService).getButlerStatistics();
+    }
+
+    @Test
+    @DisplayName("objectMapper is called")
+    void test_object_mapper_called() {
+      // given
+      var expectedResponse = ButlerStatisticsDto.builder()
+          .releaseInfo(ReleaseInfoDto.builder().build())
+          .build();
+      doReturn(expectedResponse).when(butlerStatisticsService).getButlerStatistics();
+
+      // when
+      underTest.createStatisticsResponse();
+
+      // then
+      verify(objectMapper).convertValue(expectedResponse.getReleaseInfo(), ReleaseInfo.class);
+    }
+
+    @Test
+    @DisplayName("releaseInfo is returned")
+    void test_release_info_returned() {
+      // given
+      var expectedResponse = ReleaseInfo.builder().build();
+      doReturn(expectedResponse).when(objectMapper).convertValue(any(), eq(ReleaseInfo.class));
+
+      // when
+      var result = underTest.createStatisticsResponse();
+
+      // then
+      assertThat(result.getReleaseInfo()).isEqualTo(expectedResponse);
     }
   }
 }

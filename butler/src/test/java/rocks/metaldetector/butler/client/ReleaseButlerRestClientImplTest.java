@@ -22,8 +22,10 @@ import org.springframework.web.client.RestTemplate;
 import rocks.metaldetector.butler.ButlerDtoFactory.ButlerReleasesResponseFactory;
 import rocks.metaldetector.butler.api.ButlerImportJob;
 import rocks.metaldetector.butler.api.ButlerImportResponse;
+import rocks.metaldetector.butler.api.ButlerReleaseInfo;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
 import rocks.metaldetector.butler.api.ButlerReleasesResponse;
+import rocks.metaldetector.butler.api.ButlerStatisticsResponse;
 import rocks.metaldetector.butler.api.ButlerUpdateReleaseStateRequest;
 import rocks.metaldetector.butler.config.ButlerConfig;
 import rocks.metaldetector.support.exceptions.ExternalServiceException;
@@ -548,6 +550,77 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
 
       // when
       Throwable throwable = catchThrowable(() -> underTest.updateReleaseState(1L, "state"));
+
+      // then
+      assertThat(throwable).isInstanceOf(ExternalServiceException.class);
+    }
+
+    private Stream<Arguments> httpStatusCodeProvider() {
+      return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
+    }
+  }
+
+  @DisplayName("Tests getting statistics")
+  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+  @Nested
+  class StatisticsTest {
+
+    @Test
+    @DisplayName("restTemplate is called with correct url")
+    void test_rest_template_called() {
+      // given
+      var url = "url";
+      doReturn(url).when(butlerConfig).getStatisticsUrl();
+      doReturn(ResponseEntity.ok(ButlerStatisticsResponse.builder().build())).when(restTemplate).getForEntity(anyString(), eq(ButlerStatisticsResponse.class));
+
+      // when
+      underTest.getStatistics();
+
+      // then
+      verify(restTemplate).getForEntity(eq(url), eq(ButlerStatisticsResponse.class));
+    }
+
+    @Test
+    @DisplayName("response is returned")
+    void test_response_returned() {
+      // given
+      var expectedResponse = ButlerStatisticsResponse.builder()
+          .releaseInfo(ButlerReleaseInfo.builder().build())
+          .build();
+      doReturn("url").when(butlerConfig).getStatisticsUrl();
+      doReturn(ResponseEntity.ok(expectedResponse)).when(restTemplate).getForEntity(anyString(), eq(ButlerStatisticsResponse.class));
+
+      // when
+      var result = underTest.getStatistics();
+
+      // then
+      assertThat(result).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    @DisplayName("if the status code is not OK on getting statistics, an ExternalServiceException is thrown")
+    void test_exception_response_null() {
+      // given
+      doReturn("url").when(butlerConfig).getStatisticsUrl();
+      doReturn(ResponseEntity.ok().build()).when(restTemplate).getForEntity(anyString(), eq(ButlerStatisticsResponse.class));
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.getStatistics());
+
+      // then
+      assertThat(throwable).isInstanceOf(ExternalServiceException.class);
+    }
+
+    @ParameterizedTest(name = "if the status is {0}, an ExternalServiceException is thrown")
+    @MethodSource("httpStatusCodeProvider")
+    @DisplayName("if the status code is not OK on getting statistics, an ExternalServiceException is thrown")
+    void test_statistics_exception_if_status_is_not_ok(HttpStatus httpStatus) {
+      // given
+      doReturn("url").when(butlerConfig).getStatisticsUrl();
+      doReturn(ResponseEntity.status(httpStatus).body(ButlerStatisticsResponse.builder().build())).when(restTemplate).getForEntity(anyString(), eq(ButlerStatisticsResponse.class));
+
+      // when
+      Throwable throwable = catchThrowable(() -> underTest.getStatistics());
 
       // then
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);

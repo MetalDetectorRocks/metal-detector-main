@@ -5,17 +5,17 @@ import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.api.ButlerStatisticsResponse;
 import rocks.metaldetector.butler.client.ReleaseButlerRestClient;
 import rocks.metaldetector.butler.client.transformer.ButlerStatisticsTransformer;
-import rocks.metaldetector.butler.facade.dto.ReleaseStatisticsDto;
+import rocks.metaldetector.butler.facade.dto.ButlerStatisticsDto;
 
 @Service
 @AllArgsConstructor
-public class ReleaseStatisticsServiceImpl implements ReleaseStatisticsService{
+public class ButlerStatisticsServiceImpl implements ButlerStatisticsService {
 
   private final ReleaseButlerRestClient releaseButlerRestClient;
   private final ButlerStatisticsTransformer statisticsTransformer;
 
   @Override
-  public ReleaseStatisticsDto getReleaseStatistics() {
+  public ButlerStatisticsDto getButlerStatistics() {
     ButlerStatisticsResponse response = releaseButlerRestClient.getStatistics();
     return statisticsTransformer.transform(response);
   }

@@ -1,21 +1,18 @@
 package rocks.metaldetector.butler.client.transformer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import rocks.metaldetector.butler.api.ButlerReleaseInfo;
 import rocks.metaldetector.butler.api.ButlerStatisticsResponse;
-import rocks.metaldetector.butler.facade.dto.ReleaseStatisticsDto;
+import rocks.metaldetector.butler.facade.dto.ButlerStatisticsDto;
 
 @Component
+@AllArgsConstructor
 public class ButlerStatisticsTransformer {
 
-  public ReleaseStatisticsDto transform(ButlerStatisticsResponse response) {
-    ButlerReleaseInfo releaseInfo = response.getReleaseInfo();
-    return ReleaseStatisticsDto.builder()
-        .releasesPerMonth(releaseInfo.getReleasesPerMonth())
-        .totalReleases(releaseInfo.getTotalReleases())
-        .upcomingReleases(releaseInfo.getUpcomingReleases())
-        .releasesThisMonth(releaseInfo.getReleasesThisMonth())
-        .duplicates(releaseInfo.getDuplicates())
-        .build();
+  private final ObjectMapper objectMapper;
+
+  public ButlerStatisticsDto transform(ButlerStatisticsResponse response) {
+    return objectMapper.convertValue(response, ButlerStatisticsDto.class);
   }
 }

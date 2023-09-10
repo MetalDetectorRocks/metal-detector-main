@@ -12,7 +12,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReleaseStatisticsDto {
+public class ReleaseInfoDto {
 
   private Map<YearMonth, Integer> releasesPerMonth;
   private long totalReleases;
