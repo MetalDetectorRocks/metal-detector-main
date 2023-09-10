@@ -8,7 +8,9 @@ val dependencyVersions = listOf(
     "com.nimbusds:nimbus-jose-jwt:9.31"
 )
 
-val dependencyGroupVersions = mapOf<String, String>()
+val dependencyGroupVersions = mapOf(
+    libs.restAssured.get().group to libs.restAssured.get().version
+)
 
 plugins {
   alias(libs.plugins.springBoot) apply false
