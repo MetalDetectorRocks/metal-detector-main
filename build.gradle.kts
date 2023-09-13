@@ -5,7 +5,7 @@ val javaVersion: JavaVersion = JavaVersion.VERSION_17
 
 val dependencyVersions = listOf(
     "com.google.guava:guava:32.1.2-jre",
-    "com.nimbusds:nimbus-jose-jwt:9.31"
+    "com.nimbusds:nimbus-jose-jwt:9.32"
 )
 
 val dependencyGroupVersions = mapOf(
