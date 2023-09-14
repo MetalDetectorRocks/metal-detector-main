@@ -8,20 +8,25 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.facade.ButlerStatisticsService;
 import rocks.metaldetector.butler.facade.dto.ButlerStatisticsDto;
+import rocks.metaldetector.butler.facade.dto.ImportInfoDto;
 import rocks.metaldetector.butler.facade.dto.ReleaseInfoDto;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowingsPerMonth;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.user.UserEntityFactory;
+import rocks.metaldetector.web.api.response.ImportInfo;
 import rocks.metaldetector.web.api.response.ReleaseInfo;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,35 +41,26 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class StatisticsServiceImplTest implements WithAssertions {
 
-  UserRepository userRepository = mock(UserRepository.class);
-  FollowActionRepository followActionRepository = mock(FollowActionRepository.class);
-  ButlerStatisticsService butlerStatisticsService = mock(ButlerStatisticsService.class);
-  ObjectMapper objectMapper = mock(ObjectMapper.class);
+  @Mock
+  UserRepository userRepository;
+  @Mock
+  FollowActionRepository followActionRepository;
+  @Mock
+  ButlerStatisticsService butlerStatisticsService;
+  @Mock
+  ObjectMapper objectMapper;
 
-  StatisticsService statisticsServiceMock = new StatisticsServiceMock();
-
-  StatisticsServiceImpl underTest = new StatisticsServiceImpl(statisticsServiceMock, userRepository, followActionRepository, butlerStatisticsService, objectMapper);
+  @InjectMocks
+  StatisticsServiceImpl underTest;
 
   @BeforeEach
   void setup() {
-    doReturn(ButlerStatisticsDto.builder().build()).when(butlerStatisticsService).getButlerStatistics();
+    doReturn(ButlerStatisticsDto.builder().importInfo(Collections.emptyList()).build()).when(butlerStatisticsService).getButlerStatistics();
   }
 
   @AfterEach
   void tearDown() {
-    reset(userRepository, followActionRepository);
-  }
-
-  @Test
-  @DisplayName("mockResponse is returned for ImportInfo")
-  void test_mock_import_info_returned() {
-    var mockResponse = statisticsServiceMock.createStatisticsResponse();
-
-    // when
-    var result = underTest.createStatisticsResponse();
-
-    // then
-    assertThat(result.getImportInfo()).isEqualTo(mockResponse.getImportInfo());
+    reset(userRepository, followActionRepository, butlerStatisticsService, objectMapper);
   }
 
   @Nested
@@ -278,6 +274,7 @@ class StatisticsServiceImplTest implements WithAssertions {
       // given
       var expectedResponse = ButlerStatisticsDto.builder()
           .releaseInfo(ReleaseInfoDto.builder().build())
+          .importInfo(Collections.emptyList())
           .build();
       doReturn(expectedResponse).when(butlerStatisticsService).getButlerStatistics();
 
@@ -300,6 +297,59 @@ class StatisticsServiceImplTest implements WithAssertions {
 
       // then
       assertThat(result.getReleaseInfo()).isEqualTo(expectedResponse);
+    }
+  }
+
+  @Nested
+  @DisplayName("Tests for ImportInfo")
+  class ImportInfoTest {
+
+    @Test
+    @DisplayName("butlerStatisticsService is called")
+    void test_butler_statistics_service_called() {
+      // when
+      underTest.createStatisticsResponse();
+
+      // then
+      verify(butlerStatisticsService).getButlerStatistics();
+    }
+
+    @Test
+    @DisplayName("objectMapper is called for every info")
+    void test_object_mapper_called() {
+      // given
+      var importInfos = List.of(ImportInfoDto.builder().source("source1").build(),
+                                ImportInfoDto.builder().source("source2").build());
+      var expectedResponse = ButlerStatisticsDto.builder()
+          .releaseInfo(ReleaseInfoDto.builder().build())
+          .importInfo(importInfos)
+          .build();
+      doReturn(expectedResponse).when(butlerStatisticsService).getButlerStatistics();
+
+      // when
+      underTest.createStatisticsResponse();
+
+      // then
+      verify(objectMapper).convertValue(importInfos.get(0), ImportInfo.class);
+      verify(objectMapper).convertValue(importInfos.get(1), ImportInfo.class);
+    }
+
+    @Test
+    @DisplayName("importInfo is returned")
+    void test_import_info_returned() {
+      // given
+      var expectedResponse = ImportInfo.builder().source("source1").build();
+      doReturn(expectedResponse).when(objectMapper).convertValue(any(), eq(ImportInfo.class));
+      doReturn(null).when(objectMapper).convertValue(any(), eq(ReleaseInfo.class));
+      doReturn(ButlerStatisticsDto.builder().importInfo(List.of(ImportInfoDto.builder().build())).build())
+          .when(butlerStatisticsService).getButlerStatistics();
+
+      // when
+      var result = underTest.createStatisticsResponse();
+
+      // then
+      assertThat(result.getImportInfo()).isNotEmpty();
+      assertThat(result.getImportInfo().get(0)).isEqualTo(expectedResponse);
     }
   }
 }

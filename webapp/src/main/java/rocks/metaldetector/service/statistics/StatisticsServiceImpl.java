@@ -1,15 +1,18 @@
 package rocks.metaldetector.service.statistics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.facade.ButlerStatisticsService;
 import rocks.metaldetector.butler.facade.dto.ButlerStatisticsDto;
+import rocks.metaldetector.butler.facade.dto.ImportInfoDto;
+import rocks.metaldetector.butler.facade.dto.ReleaseInfoDto;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowingsPerMonth;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.web.api.response.ArtistFollowingInfo;
+import rocks.metaldetector.web.api.response.ImportInfo;
 import rocks.metaldetector.web.api.response.ReleaseInfo;
 import rocks.metaldetector.web.api.response.StatisticsResponse;
 import rocks.metaldetector.web.api.response.UserInfo;
@@ -21,34 +24,22 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
 
-  private final StatisticsService statisticsServiceMock;
   private final UserRepository userRepository;
   private final FollowActionRepository followActionRepository;
   private final ButlerStatisticsService butlerStatisticsService;
   private final ObjectMapper objectMapper;
 
-  public StatisticsServiceImpl(@Qualifier("statisticsServiceMock") StatisticsService statisticsService,
-                               UserRepository userRepository,
-                               FollowActionRepository followActionRepository,
-                               ButlerStatisticsService butlerStatisticsService,
-                               ObjectMapper objectMapper) {
-    this.statisticsServiceMock = statisticsService;
-    this.userRepository = userRepository;
-    this.followActionRepository = followActionRepository;
-    this.butlerStatisticsService = butlerStatisticsService;
-    this.objectMapper = objectMapper;
-  }
-
   @Override
   public StatisticsResponse createStatisticsResponse() {
-    StatisticsResponse mockResponse = statisticsServiceMock.createStatisticsResponse();
+    ButlerStatisticsDto butlerStatistics = butlerStatisticsService.getButlerStatistics();
     return StatisticsResponse.builder()
         .userInfo(buildUserInfo())
         .artistFollowingInfo(buildArtistFollowingInfo())
-        .releaseInfo(getReleaseInfo())
-        .importInfo(mockResponse.getImportInfo())
+        .releaseInfo(getReleaseInfo(butlerStatistics.getReleaseInfo()))
+        .importInfo(getImportInfo(butlerStatistics.getImportInfo()))
         .build();
   }
 
@@ -79,8 +70,13 @@ public class StatisticsServiceImpl implements StatisticsService {
         .build();
   }
 
-  private ReleaseInfo getReleaseInfo() {
-    ButlerStatisticsDto butlerStatistics = butlerStatisticsService.getButlerStatistics();
-    return objectMapper.convertValue(butlerStatistics.getReleaseInfo(), ReleaseInfo.class);
+  private ReleaseInfo getReleaseInfo(ReleaseInfoDto releaseInfoDto) {
+    return objectMapper.convertValue(releaseInfoDto, ReleaseInfo.class);
+  }
+
+  private List<ImportInfo> getImportInfo(List<ImportInfoDto> importInfoDtos) {
+    return importInfoDtos.stream()
+        .map((importInfo) -> objectMapper.convertValue(importInfo, ImportInfo.class))
+        .collect(Collectors.toList());
   }
 }

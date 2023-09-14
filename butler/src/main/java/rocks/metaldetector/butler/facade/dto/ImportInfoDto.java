@@ -5,14 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ButlerStatisticsDto {
+public class ImportInfoDto {
 
-  private ReleaseInfoDto releaseInfo;
-  private List<ImportInfoDto> importInfo;
+  private String source;
+  private int successRate;
+  private LocalDateTime lastImport;
+  private LocalDateTime lastSuccessfulImport;
 }

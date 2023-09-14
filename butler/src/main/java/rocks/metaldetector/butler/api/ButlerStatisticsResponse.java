@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -14,4 +16,7 @@ public class ButlerStatisticsResponse {
 
   @JsonProperty("releaseInfo")
   private ButlerReleaseInfo releaseInfo;
+
+  @JsonProperty("importInfo")
+  private List<ButlerImportInfo> importInfo;
 }

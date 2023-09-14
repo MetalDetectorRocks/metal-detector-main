@@ -64,7 +64,7 @@ class StatisticsRestControllerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("user info is returned on GET statistics")
+  @DisplayName("statistics response is returned on GET statistics")
   void test_get_statistics_response() {
     // given
     var userInfo = UserInfo.builder().totalUsers(666).build();
