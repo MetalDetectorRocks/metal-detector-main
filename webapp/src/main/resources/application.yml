@@ -96,7 +96,7 @@ spring:
             client-id: ${BUTLER_ADMIN_CLIENT_ID}
             client-secret: ${BUTLER_ADMIN_CLIENT_SECRET}
             authorization-grant-type: client_credentials
-            scope: releases-read, releases-write, releases-read-all, import
+            scope: releases-read, releases-write, releases-read-all, import, statistics
             provider: metal-detector-auth
         provider:
           spotify-app:
@@ -152,6 +152,7 @@ metal-release-butler:
   unpaginated-releases-url: ${metal-release-butler.host}/rest/v1/releases/unpaginated
   import-url: ${metal-release-butler.host}/rest/v1/releases/import
   retry-cover-download-url: ${metal-release-butler.host}/rest/v1/releases/cover-reload
+  statistics-url: ${metal-release-butler.host}/rest/v1/releases/statistics
 
 log-csp-report: false
 

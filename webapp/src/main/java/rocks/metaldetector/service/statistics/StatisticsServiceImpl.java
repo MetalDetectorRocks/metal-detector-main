@@ -1,7 +1,9 @@
 package rocks.metaldetector.service.statistics;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import rocks.metaldetector.butler.facade.ButlerStatisticsService;
+import rocks.metaldetector.butler.facade.dto.ButlerStatisticsDto;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowingsPerMonth;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
@@ -17,28 +19,21 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
 
-  private final StatisticsService statisticsServiceMock;
   private final UserRepository userRepository;
   private final FollowActionRepository followActionRepository;
-
-  public StatisticsServiceImpl(@Qualifier("statisticsServiceMock") StatisticsService statisticsService,
-                               UserRepository userRepository,
-                               FollowActionRepository followActionRepository) {
-    this.statisticsServiceMock = statisticsService;
-    this.userRepository = userRepository;
-    this.followActionRepository = followActionRepository;
-  }
+  private final ButlerStatisticsService butlerStatisticsService;
 
   @Override
   public StatisticsResponse createStatisticsResponse() {
-    StatisticsResponse mockResponse = statisticsServiceMock.createStatisticsResponse();
+    ButlerStatisticsDto butlerStatistics = butlerStatisticsService.getButlerStatistics();
     return StatisticsResponse.builder()
         .userInfo(buildUserInfo())
         .artistFollowingInfo(buildArtistFollowingInfo())
-        .releaseInfo(mockResponse.getReleaseInfo())
-        .importInfo(mockResponse.getImportInfo())
+        .releaseInfo(butlerStatistics.getReleaseInfo())
+        .importInfo(butlerStatistics.getImportInfo())
         .build();
   }
 

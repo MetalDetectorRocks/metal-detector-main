@@ -14,5 +14,6 @@ public class ButlerConfig {
   private String unpaginatedReleasesUrl;
   private String importUrl;
   private String retryCoverDownloadUrl;
+  private String statisticsUrl;
 
 }
