@@ -1,19 +1,14 @@
 package rocks.metaldetector.service.statistics;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rocks.metaldetector.butler.facade.ButlerStatisticsService;
 import rocks.metaldetector.butler.facade.dto.ButlerStatisticsDto;
-import rocks.metaldetector.butler.facade.dto.ImportInfoDto;
-import rocks.metaldetector.butler.facade.dto.ReleaseInfoDto;
 import rocks.metaldetector.persistence.domain.artist.FollowActionRepository;
 import rocks.metaldetector.persistence.domain.artist.FollowingsPerMonth;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.web.api.response.ArtistFollowingInfo;
-import rocks.metaldetector.web.api.response.ImportInfo;
-import rocks.metaldetector.web.api.response.ReleaseInfo;
 import rocks.metaldetector.web.api.response.StatisticsResponse;
 import rocks.metaldetector.web.api.response.UserInfo;
 
@@ -30,7 +25,6 @@ public class StatisticsServiceImpl implements StatisticsService {
   private final UserRepository userRepository;
   private final FollowActionRepository followActionRepository;
   private final ButlerStatisticsService butlerStatisticsService;
-  private final ObjectMapper objectMapper;
 
   @Override
   public StatisticsResponse createStatisticsResponse() {
@@ -38,8 +32,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     return StatisticsResponse.builder()
         .userInfo(buildUserInfo())
         .artistFollowingInfo(buildArtistFollowingInfo())
-        .releaseInfo(getReleaseInfo(butlerStatistics.getReleaseInfo()))
-        .importInfo(getImportInfo(butlerStatistics.getImportInfo()))
+        .releaseInfo(butlerStatistics.getReleaseInfo())
+        .importInfo(butlerStatistics.getImportInfo())
         .build();
   }
 
@@ -68,15 +62,5 @@ public class StatisticsServiceImpl implements StatisticsService {
         .totalFollowings(totalFollowings)
         .followingsThisMonth(followingsPerMonths.getOrDefault(YearMonth.now(), 0L))
         .build();
-  }
-
-  private ReleaseInfo getReleaseInfo(ReleaseInfoDto releaseInfoDto) {
-    return objectMapper.convertValue(releaseInfoDto, ReleaseInfo.class);
-  }
-
-  private List<ImportInfo> getImportInfo(List<ImportInfoDto> importInfoDtos) {
-    return importInfoDtos.stream()
-        .map((importInfo) -> objectMapper.convertValue(importInfo, ImportInfo.class))
-        .collect(Collectors.toList());
   }
 }

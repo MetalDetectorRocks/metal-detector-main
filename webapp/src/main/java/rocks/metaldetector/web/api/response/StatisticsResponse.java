@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import rocks.metaldetector.butler.facade.dto.ImportInfoDto;
+import rocks.metaldetector.butler.facade.dto.ReleaseInfoDto;
 
 import java.util.List;
 
@@ -15,6 +17,6 @@ public class StatisticsResponse {
 
   UserInfo userInfo;
   ArtistFollowingInfo artistFollowingInfo;
-  ReleaseInfo releaseInfo;
-  List<ImportInfo> importInfo;
+  ReleaseInfoDto releaseInfo;
+  List<ImportInfoDto> importInfo;
 }

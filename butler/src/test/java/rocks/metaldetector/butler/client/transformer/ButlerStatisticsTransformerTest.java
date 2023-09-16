@@ -1,65 +1,162 @@
 package rocks.metaldetector.butler.client.transformer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import rocks.metaldetector.butler.api.ButlerImportInfo;
 import rocks.metaldetector.butler.api.ButlerReleaseInfo;
 import rocks.metaldetector.butler.api.ButlerStatisticsResponse;
-import rocks.metaldetector.butler.facade.dto.ButlerStatisticsDto;
-import rocks.metaldetector.butler.facade.dto.ReleaseInfoDto;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.Map;
 
-@ExtendWith(MockitoExtension.class)
 class ButlerStatisticsTransformerTest implements WithAssertions {
 
-  @Mock
-  private ObjectMapper objectMapper;
+  private final ButlerStatisticsTransformer underTest = new ButlerStatisticsTransformer();
 
-  @InjectMocks
-  private ButlerStatisticsTransformer underTest;
+  @DisplayName("Test for ReleaseInfo")
+  @Nested
+  class ReleaseInfoTest {
 
-  @AfterEach
-  void tearDown() {
-    reset(objectMapper);
+    private static final ButlerReleaseInfo RELEASE_INFO = ButlerReleaseInfo.builder()
+        .releasesPerMonth(Map.of(YearMonth.now(), 66))
+        .upcomingReleases(6)
+        .totalReleases(666)
+        .releasesThisMonth(67)
+        .duplicates(1)
+        .build();
+    private static final ButlerStatisticsResponse BUTLER_RESPONSE = ButlerStatisticsResponse.builder()
+        .releaseInfo(RELEASE_INFO)
+        .build();
+
+    @Test
+    @DisplayName("Should transform releases per month")
+    void should_transform_releases_per_month() {
+      // when
+      var result = underTest.transform(BUTLER_RESPONSE);
+
+      // then
+      assertThat(result.getReleaseInfo()).isNotNull();
+      assertThat(result.getReleaseInfo().getReleasesPerMonth()).isEqualTo(RELEASE_INFO.getReleasesPerMonth());
+    }
+
+    @Test
+    @DisplayName("Should transform upcoming releases")
+    void should_transform_upcoming_releases() {
+      // when
+      var result = underTest.transform(BUTLER_RESPONSE);
+
+      // then
+      assertThat(result.getReleaseInfo()).isNotNull();
+      assertThat(result.getReleaseInfo().getUpcomingReleases()).isEqualTo(RELEASE_INFO.getUpcomingReleases());
+    }
+
+    @Test
+    @DisplayName("Should transform releases this month")
+    void should_transform_releases_this_month() {
+      // when
+      var result = underTest.transform(BUTLER_RESPONSE);
+
+      // then
+      assertThat(result.getReleaseInfo()).isNotNull();
+      assertThat(result.getReleaseInfo().getReleasesThisMonth()).isEqualTo(RELEASE_INFO.getReleasesThisMonth());
+    }
+
+    @Test
+    @DisplayName("Should transform total releases")
+    void should_transform_total_releases() {
+      // when
+      var result = underTest.transform(BUTLER_RESPONSE);
+
+      // then
+      assertThat(result.getReleaseInfo()).isNotNull();
+      assertThat(result.getReleaseInfo().getTotalReleases()).isEqualTo(RELEASE_INFO.getTotalReleases());
+    }
+
+    @Test
+    @DisplayName("Should transform duplicates")
+    void should_transform_duplicates() {
+      // when
+      var result = underTest.transform(BUTLER_RESPONSE);
+
+      // then
+      assertThat(result.getReleaseInfo()).isNotNull();
+      assertThat(result.getReleaseInfo().getDuplicates()).isEqualTo(RELEASE_INFO.getDuplicates());
+    }
   }
 
-  @Test
-  @DisplayName("Should call objectMapper")
-  void should_call_object_mapper() {
-    // given
-    var releaseInfo = ButlerReleaseInfo.builder().build();
-    var butlerResponse = ButlerStatisticsResponse.builder().releaseInfo(releaseInfo).build();
+  @DisplayName("Test of ImportInfo")
+  @Nested
+  class ImportInfoTest {
 
-    // when
-    underTest.transform(butlerResponse);
+    private static final ButlerImportInfo IMPORT_INFO = ButlerImportInfo.builder()
+        .source("someSource")
+        .successRate(100)
+        .lastImport(LocalDateTime.now())
+        .lastImport(LocalDateTime.now())
+        .build();
+    private static final ButlerStatisticsResponse BUTLER_RESPONSE = ButlerStatisticsResponse.builder()
+        .importInfo(List.of(IMPORT_INFO))
+        .build();
 
-    // then
-    verify(objectMapper).convertValue(butlerResponse, ButlerStatisticsDto.class);
-  }
+    @Test
+    @DisplayName("Should transform source")
+    void should_transform_source() {
+      // when
+      var result = underTest.transform(BUTLER_RESPONSE);
 
-  @Test
-  @DisplayName("Should return Dto")
-  void should_return_dto() {
-    // given
-    var releaseInfo = ReleaseInfoDto.builder().build();
-    var butlerStatistics = ButlerStatisticsDto.builder().releaseInfo(releaseInfo).build();
-    doReturn(butlerStatistics).when(objectMapper).convertValue(any(), eq(ButlerStatisticsDto.class));
+      // then
+      assertThat(result.getImportInfo()).isNotNull().isNotEmpty();
+      assertThat(result.getImportInfo().get(0).getSource()).isEqualTo(IMPORT_INFO.getSource());
+    }
 
-    // when
-    ButlerStatisticsDto result = underTest.transform(ButlerStatisticsResponse.builder().build());
+    @Test
+    @DisplayName("Should transform success rate")
+    void should_transform_success_rate() {
+      // when
+      var result = underTest.transform(BUTLER_RESPONSE);
 
-    // then
-    assertThat(result).isEqualTo(butlerStatistics);
+      // then
+      assertThat(result.getImportInfo()).isNotNull().isNotEmpty();
+      assertThat(result.getImportInfo().get(0).getSuccessRate()).isEqualTo(IMPORT_INFO.getSuccessRate());
+    }
+
+    @Test
+    @DisplayName("Should transform last import")
+    void should_transform_last_import() {
+      // when
+      var result = underTest.transform(BUTLER_RESPONSE);
+
+      // then
+      assertThat(result.getImportInfo()).isNotNull().isNotEmpty();
+      assertThat(result.getImportInfo().get(0).getLastImport()).isEqualTo(IMPORT_INFO.getLastImport());
+    }
+
+    @Test
+    @DisplayName("Should transform last successful import")
+    void should_transform_last_successful_import() {
+      // when
+      var result = underTest.transform(BUTLER_RESPONSE);
+
+      // then
+      assertThat(result.getImportInfo()).isNotNull().isNotEmpty();
+      assertThat(result.getImportInfo().get(0).getLastSuccessfulImport()).isEqualTo(IMPORT_INFO.getLastSuccessfulImport());
+    }
+
+    @Test
+    @DisplayName("Should transform all imports")
+    void should_transform_all() {
+      // given
+      BUTLER_RESPONSE.setImportInfo(List.of(IMPORT_INFO, IMPORT_INFO, IMPORT_INFO));
+
+      // when
+      var result = underTest.transform(BUTLER_RESPONSE);
+
+      // then
+      assertThat(result.getImportInfo()).isNotNull().hasSize(BUTLER_RESPONSE.getImportInfo().size());
+    }
   }
 }

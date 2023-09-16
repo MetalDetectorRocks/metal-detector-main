@@ -73,7 +73,6 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
   }
 
   @DisplayName("Test of query releases (without pagination)")
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
   class QueryAllReleasesTest {
 
@@ -161,13 +160,12 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
     }
 
-    private Stream<Arguments> httpStatusCodeProvider() {
+    private static Stream<Arguments> httpStatusCodeProvider() {
       return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
     }
   }
 
   @DisplayName("Test of query releases (with pagination)")
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
   class QueryReleasesTest {
 
@@ -273,13 +271,12 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
     }
 
-    private Stream<Arguments> httpStatusCodeProvider() {
+    private static Stream<Arguments> httpStatusCodeProvider() {
       return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
     }
   }
 
   @DisplayName("Test of create import job")
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
   class CreateImportJobTest {
 
@@ -327,13 +324,12 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
     }
 
-    private Stream<Arguments> httpStatusCodeProvider() {
+    private static Stream<Arguments> httpStatusCodeProvider() {
       return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
     }
   }
 
   @DisplayName("Test of create cover download job")
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
   class CreateCoverDownloadJobTest {
 
@@ -381,13 +377,12 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
     }
 
-    private Stream<Arguments> httpStatusCodeProvider() {
+    private static Stream<Arguments> httpStatusCodeProvider() {
       return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
     }
   }
 
   @DisplayName("Test of query import job results")
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
   class QueryImportJobResultsTest {
 
@@ -452,13 +447,12 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
     }
 
-    private Stream<Arguments> httpStatusCodeProvider() {
+    private static Stream<Arguments> httpStatusCodeProvider() {
       return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
     }
   }
 
   @DisplayName("Test updating a release")
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
   @Nested
   class UpdateReleaseTest {
 
@@ -555,7 +549,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
     }
 
-    private Stream<Arguments> httpStatusCodeProvider() {
+    private static Stream<Arguments> httpStatusCodeProvider() {
       return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
     }
   }
@@ -626,7 +620,7 @@ class ReleaseButlerRestClientImplTest implements WithAssertions {
       assertThat(throwable).isInstanceOf(ExternalServiceException.class);
     }
 
-    private Stream<Arguments> httpStatusCodeProvider() {
+    private static Stream<Arguments> httpStatusCodeProvider() {
       return Stream.of(HttpStatus.values()).filter(status -> !status.is2xxSuccessful()).map(Arguments::of);
     }
   }
