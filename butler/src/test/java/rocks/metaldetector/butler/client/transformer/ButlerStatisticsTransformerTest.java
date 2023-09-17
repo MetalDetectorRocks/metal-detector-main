@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 class ButlerStatisticsTransformerTest implements WithAssertions {
 
@@ -33,13 +34,14 @@ class ButlerStatisticsTransformerTest implements WithAssertions {
         .build();
 
     @Test
-    @DisplayName("Should transform releases per month")
+    @DisplayName("Should transform sorted releases per month")
     void should_transform_releases_per_month() {
       // when
       var result = underTest.transform(BUTLER_RESPONSE);
 
       // then
       assertThat(result.getReleaseInfo()).isNotNull();
+      assertThat(result.getReleaseInfo().getReleasesPerMonth()).isInstanceOf(TreeMap.class);
       assertThat(result.getReleaseInfo().getReleasesPerMonth()).isEqualTo(RELEASE_INFO.getReleasesPerMonth());
     }
 
