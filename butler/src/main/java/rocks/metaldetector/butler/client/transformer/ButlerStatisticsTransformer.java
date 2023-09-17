@@ -10,6 +10,7 @@ import rocks.metaldetector.butler.facade.dto.ReleaseInfoDto;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Component
@@ -31,7 +32,7 @@ public class ButlerStatisticsTransformer {
     return ReleaseInfoDto.builder()
         .totalReleases(releaseInfo.getTotalReleases())
         .upcomingReleases(releaseInfo.getUpcomingReleases())
-        .releasesPerMonth(releaseInfo.getReleasesPerMonth())
+        .releasesPerMonth(new TreeMap<>(releaseInfo.getReleasesPerMonth()))
         .releasesThisMonth(releaseInfo.getReleasesThisMonth())
         .duplicates(releaseInfo.getDuplicates())
         .build();
