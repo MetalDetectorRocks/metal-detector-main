@@ -96,9 +96,9 @@ class JwtsSupportTest implements WithAssertions {
   void should_validate_expiration_time() {
     // given
     String expiredToken = Jwts.builder()
-        .setSubject(UUID.randomUUID().toString())
-        .setIssuedAt(new Date())
-        .setExpiration(new Date(System.currentTimeMillis() - 1))
+        .subject(UUID.randomUUID().toString())
+        .issuedAt(new Date())
+        .expiration(new Date(System.currentTimeMillis() - 1))
         .signWith(createTestKey())
         .compact();
 

@@ -5,7 +5,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -14,7 +14,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Data
 public class SecurityProperties {
 
-  private static Key key;
+  private static SecretKey key;
 
   private String jwtIssuer;
   private String jwtSecret;
@@ -22,7 +22,7 @@ public class SecurityProperties {
   private long refreshTokenExpirationInMin;
   private boolean secureCookie;
 
-  public Key getKey() {
+  public SecretKey getKey() {
     if (key == null) {
       key = Keys.hmacShaKeyFor(jwtSecret.getBytes(UTF_8));
     }
