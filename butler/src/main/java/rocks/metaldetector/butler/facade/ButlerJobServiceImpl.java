@@ -12,14 +12,14 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class JobServiceImpl implements JobService {
+public class ButlerJobServiceImpl implements ButlerJobService {
 
   private final ReleaseButlerRestClient butlerClient;
   private final ButlerImportJobTransformer importJobResponseTransformer;
 
   @Override
-  public void createImportJob() {
-    butlerClient.createImportJob();
+  public List<String> createImportJobs() {
+    return butlerClient.createImportJobs().getImportJobIds();
   }
 
   @Override
@@ -28,8 +28,14 @@ public class JobServiceImpl implements JobService {
   }
 
   @Override
-  public List<ImportJobResultDto> queryImportJobResults() {
-    List<ButlerImportJob> importJobResponses = butlerClient.queryImportJobResults();
+  public List<ImportJobResultDto> queryImportJobs() {
+    List<ButlerImportJob> importJobResponses = butlerClient.queryImportJobs();
     return importJobResponses.stream().map(importJobResponseTransformer::transform).collect(Collectors.toList());
+  }
+
+  @Override
+  public ImportJobResultDto queryImportJob(String jobId) {
+    ButlerImportJob importJob = butlerClient.queryImportJob(jobId);
+    return importJobResponseTransformer.transform(importJob);
   }
 }

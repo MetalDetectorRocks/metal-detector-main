@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestOperations;
 import rocks.metaldetector.support.DefaultRequestLoggingInterceptor;
 import rocks.metaldetector.support.PostHeaderInterceptor;
 import rocks.metaldetector.support.infrastructure.CustomClientErrorHandler;
@@ -26,9 +26,9 @@ public class ButlerModuleConfig {
   private final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory;
 
   @Bean
-  public RestTemplate releaseButlerRestTemplate(RestTemplateBuilder restTemplateBuilder,
-                                                OAuth2AccessTokenClient userAccessTokenClient,
-                                                OAuth2AccessTokenClient adminAccessTokenClient) {
+  public RestOperations releaseButlerRestOperations(RestTemplateBuilder restTemplateBuilder,
+                                                    OAuth2AccessTokenClient userAccessTokenClient,
+                                                    OAuth2AccessTokenClient adminAccessTokenClient) {
     userAccessTokenClient.setRegistrationId("metal-release-butler-user");
     userAccessTokenClient.setAuthorizationGrantType(CLIENT_CREDENTIALS);
     adminAccessTokenClient.setRegistrationId("metal-release-butler-admin");

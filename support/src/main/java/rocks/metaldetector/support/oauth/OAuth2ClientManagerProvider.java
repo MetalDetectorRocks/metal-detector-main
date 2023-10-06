@@ -11,12 +11,15 @@ import static java.lang.Thread.currentThread;
 @AllArgsConstructor
 public class OAuth2ClientManagerProvider {
 
+  public static final String JOB_COMPLETED_THREAD_NAME = "ImportJobCompletedEvent";
+
   private final OAuth2AuthorizedClientManager authorizedClientManager;
   private final OAuth2AuthorizedClientManager schedulingAuthorizedClientManager;
   private final TaskSchedulingProperties taskSchedulingProperties;
 
   public OAuth2AuthorizedClientManager provide() {
-    if (currentThread().getName().startsWith(taskSchedulingProperties.getThreadNamePrefix())) {
+    if (currentThread().getName().startsWith(taskSchedulingProperties.getThreadNamePrefix()) ||
+        currentThread().getName().startsWith(JOB_COMPLETED_THREAD_NAME)) {
       return schedulingAuthorizedClientManager;
     }
     return authorizedClientManager;

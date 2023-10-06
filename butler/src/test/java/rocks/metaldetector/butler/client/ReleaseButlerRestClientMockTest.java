@@ -83,10 +83,14 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("Should do nothing on create import job")
-  void should_do_nothing_on_create_import_job() {
+  @DisplayName("Should return uuid list on create import job")
+  void should_return_uuid_on_create_import_job() {
     // when
-    underTest.createImportJob();
+    var result = underTest.createImportJobs();
+
+    // then
+    assertThat(result).isNotNull();
+    assertThat(result.getImportJobIds()).isNotEmpty();
   }
 
   @Test
@@ -100,10 +104,20 @@ class ReleaseButlerRestClientMockTest implements WithAssertions {
   @DisplayName("Should return mocked import job responses")
   void should_return_mocked_import_job_responses() {
     // when
-    List<ButlerImportJob> responses = underTest.queryImportJobResults();
+    List<ButlerImportJob> responses = underTest.queryImportJobs();
 
     // then
     assertThat(responses).hasSize(4);
+  }
+
+  @Test
+  @DisplayName("Should return mocked import job response")
+  void should_return_mocked_import_job_response() {
+    // when
+    ButlerImportJob responses = underTest.queryImportJob("123");
+
+    // then
+    assertThat(responses).isNotNull();
   }
 
   @Test

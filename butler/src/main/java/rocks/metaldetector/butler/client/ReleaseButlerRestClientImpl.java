@@ -6,7 +6,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestOperations;
+import rocks.metaldetector.butler.api.ButlerImportCreatedResponse;
 import rocks.metaldetector.butler.api.ButlerImportJob;
 import rocks.metaldetector.butler.api.ButlerImportResponse;
 import rocks.metaldetector.butler.api.ButlerReleasesRequest;
@@ -29,14 +30,14 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
 
   static final String UPDATE_ENDPOINT_PATH_PARAM = "/{releaseId}";
 
-  private final RestTemplate releaseButlerRestTemplate;
+  private final RestOperations releaseButlerRestOperations;
   private final ButlerConfig butlerConfig;
 
   @Override
   public ButlerReleasesResponse queryAllReleases(ButlerReleasesRequest request) {
     HttpEntity<ButlerReleasesRequest> requestEntity = new HttpEntity<>(request);
 
-    ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(
+    ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestOperations.postForEntity(
         butlerConfig.getUnpaginatedReleasesUrl(),
         requestEntity,
         ButlerReleasesResponse.class
@@ -48,7 +49,7 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   @Override
   public ButlerReleasesResponse queryReleases(ButlerReleasesRequest request, String sort) {
     HttpEntity<ButlerReleasesRequest> requestEntity = new HttpEntity<>(request);
-    ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestTemplate.postForEntity(
+    ResponseEntity<ButlerReleasesResponse> responseEntity = releaseButlerRestOperations.postForEntity(
         createReleaseUrlWithParameter(sort),
         requestEntity,
         ButlerReleasesResponse.class
@@ -73,24 +74,29 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
   }
 
   @Override
-  public void createImportJob() {
-    ResponseEntity<Void> responseEntity = releaseButlerRestTemplate.postForEntity(butlerConfig.getImportUrl(), null, Void.class);
-    if (!responseEntity.getStatusCode().is2xxSuccessful()) {
-      throw new ExternalServiceException("Could not create import job (Response code: " + responseEntity.getStatusCode() + ")");
+  public ButlerImportCreatedResponse createImportJobs() {
+    ResponseEntity<ButlerImportCreatedResponse> responseEntity = releaseButlerRestOperations.postForEntity(butlerConfig.getImportUrl(), null, ButlerImportCreatedResponse.class);
+    ButlerImportCreatedResponse response = responseEntity.getBody();
+
+    var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
+    if (shouldNotHappen) {
+      throw new ExternalServiceException("Could not create import jobs' (Response code: " + responseEntity.getStatusCode() + ")");
     }
+
+    return response;
   }
 
   @Override
   public void createRetryCoverDownloadJob() {
-    ResponseEntity<Void> responseEntity = releaseButlerRestTemplate.postForEntity(butlerConfig.getRetryCoverDownloadUrl(), null, Void.class);
+    ResponseEntity<Void> responseEntity = releaseButlerRestOperations.postForEntity(butlerConfig.getRetryCoverDownloadUrl(), null, Void.class);
     if (!responseEntity.getStatusCode().is2xxSuccessful()) {
       throw new ExternalServiceException("Could not retry cover download (Response code: " + responseEntity.getStatusCode() + ")");
     }
   }
 
   @Override
-  public List<ButlerImportJob> queryImportJobResults() {
-    ResponseEntity<ButlerImportResponse> responseEntity = releaseButlerRestTemplate.getForEntity(
+  public List<ButlerImportJob> queryImportJobs() {
+    ResponseEntity<ButlerImportResponse> responseEntity = releaseButlerRestOperations.getForEntity(
         butlerConfig.getImportUrl(),
         ButlerImportResponse.class
     );
@@ -98,17 +104,33 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
     ButlerImportResponse response = responseEntity.getBody();
     var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
-      throw new ExternalServiceException("Could not fetch import job results (Response code: " + responseEntity.getStatusCode() + ")");
+      throw new ExternalServiceException("Could not fetch import jobs (Response code: " + responseEntity.getStatusCode() + ")");
     }
 
     return response.getImportJobs();
   }
 
   @Override
+  public ButlerImportJob queryImportJob(String jobId) {
+    ResponseEntity<ButlerImportJob> responseEntity = releaseButlerRestOperations.getForEntity(
+        butlerConfig.getImportUrl() + "/" + jobId,
+        ButlerImportJob.class
+    );
+
+    ButlerImportJob response = responseEntity.getBody();
+    var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
+    if (shouldNotHappen) {
+      throw new ExternalServiceException("Could not fetch import job (Response code: " + responseEntity.getStatusCode() + ")");
+    }
+
+    return response;
+  }
+
+  @Override
   public void updateReleaseState(long releaseId, String state) {
     ButlerUpdateReleaseStateRequest request = ButlerUpdateReleaseStateRequest.builder().state(state.toUpperCase()).build();
     HttpEntity<ButlerUpdateReleaseStateRequest> httpEntity = new HttpEntity<>(request);
-    ResponseEntity<Void> responseEntity = releaseButlerRestTemplate.exchange(butlerConfig.getReleasesUrl() + UPDATE_ENDPOINT_PATH_PARAM,
+    ResponseEntity<Void> responseEntity = releaseButlerRestOperations.exchange(butlerConfig.getReleasesUrl() + UPDATE_ENDPOINT_PATH_PARAM,
                                                                              PUT,
                                                                              httpEntity,
                                                                              Void.class,
@@ -121,7 +143,7 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
 
   @Override
   public ButlerStatisticsResponse getStatistics() {
-    ResponseEntity<ButlerStatisticsResponse> responseEntity = releaseButlerRestTemplate.getForEntity(butlerConfig.getStatisticsUrl(), ButlerStatisticsResponse.class);
+    ResponseEntity<ButlerStatisticsResponse> responseEntity = releaseButlerRestOperations.getForEntity(butlerConfig.getStatisticsUrl(), ButlerStatisticsResponse.class);
     ButlerStatisticsResponse response = responseEntity.getBody();
 
     var shouldNotHappen = response == null || !responseEntity.getStatusCode().is2xxSuccessful();
