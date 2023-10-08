@@ -43,7 +43,7 @@ services:
 
   butler-app:
     container_name: detector-butler-app
-    image: metaldetectorrocks/metal-release-butler:20230825T163205
+    image: metaldetectorrocks/metal-release-butler:20231008T064517
     environment:
       DATASOURCE_URL: jdbc:postgresql://butler-db:5432/metal-release-butler
       DATASOURCE_USERNAME: postgres
@@ -59,7 +59,7 @@ services:
         source: butler-logs-volume
         target: /app/logs
     ports:
-      - "8095:8080"
+      - "8095:8095"
     deploy:
       restart_policy:
         condition: on-failure

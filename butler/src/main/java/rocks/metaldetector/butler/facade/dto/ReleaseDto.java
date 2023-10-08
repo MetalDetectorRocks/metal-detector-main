@@ -40,6 +40,10 @@ public class ReleaseDto {
   @ArtifactForFramework
   @JsonProperty(access = READ_ONLY)
   public String getReleaseDateAsDisplayString() {
+    if (releaseDate == null) {
+      return null;
+    }
+
     return releaseDate.format(DateTimeFormatter.ofLocalizedDate(FULL).withLocale(US));
   }
 }
