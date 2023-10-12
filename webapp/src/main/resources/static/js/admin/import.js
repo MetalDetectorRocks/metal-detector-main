@@ -53,6 +53,7 @@ function getImportJobs() {
         "targets": [6],
         "render": function (state) {
           switch (state) {
+            case "Initialized": return '<span class="badge bg-secondary">Initialized</span>';
             case "Running": return '<span class="badge bg-primary">Running</span>';
             case "Successful": return '<span class="badge bg-success">Successful</span>';
             case "Error": return '<span class="badge bg-danger">Error</span>';
