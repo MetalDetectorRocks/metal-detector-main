@@ -15,19 +15,16 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import rocks.metaldetector.butler.facade.ButlerJobService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
-import rocks.metaldetector.persistence.domain.notification.TelegramConfigEntity;
-import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
+import rocks.metaldetector.service.telegram.TelegramService;
 import rocks.metaldetector.service.user.UserEntityFactory;
-import rocks.metaldetector.telegram.facade.TelegramMessagingService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -47,20 +44,17 @@ public class JobCompletedEventListenerTest implements WithAssertions {
   private ButlerJobService butlerJobService;
 
   @Mock
-  private TelegramMessagingService telegramMessagingService;
-
-  @Mock
-  private TelegramConfigRepository telegramConfigRepository;
-
-  @Mock
   private UserRepository userRepository;
+
+  @Mock
+  private TelegramService telegramService;
 
   @InjectMocks
   private JobCompletedEventListener underTest;
 
   @AfterEach
   void tearDown() {
-    reset(butlerJobService, telegramMessagingService, telegramConfigRepository, userRepository);
+    reset(butlerJobService, userRepository, telegramService);
   }
 
   @Test
@@ -141,108 +135,70 @@ public class JobCompletedEventListenerTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("state Error: telegramConfigRepository is called to find admins")
-  void test_error_telegram_config_repository_is_called() {
-    // given
-    var user = UserEntityFactory.createDefaultUser();
-    doReturn(ImportJobResultDto.builder().state("Error").build()).when(butlerJobService).queryImportJob(any());
-    doReturn(List.of(user)).when(userRepository).findByUserRolesContaining(any());
-
-    //when
-    underTest.handle(new JobCompletedEvent("666"));
-
-    //then
-    verify(telegramConfigRepository).findByUser(user);
-  }
-
-  @Test
-  @DisplayName("state Running: telegramConfigRepository is called to find admins")
-  void test_running_telegram_config_repository_is_called() {
-    // given
-    var user = UserEntityFactory.createDefaultUser();
-    doReturn(ImportJobResultDto.builder().state("Running").build()).when(butlerJobService).queryImportJob(any());
-    doReturn(List.of(user)).when(userRepository).findByUserRolesContaining(any());
-
-    //when
-    underTest.handle(new JobCompletedEvent("666"));
-
-    //then
-    verify(telegramConfigRepository).findByUser(user);
-  }
-
-  @Test
-  @DisplayName("state Error: telegramMessagingService is called with chatId to find admins")
-  void test_error_telegram_messaging_service_is_called_with_chat_id() {
+  @DisplayName("state Error: telegramService is called with user")
+  void test_error_telegram_messaging_service_is_called_with_user() {
     // given
     var importDto = ImportJobResultDto.builder().state("Error").source("Source1").startTime(LocalDateTime.now()).build();
     var user = UserEntityFactory.createDefaultUser();
-    var telegramConfig = TelegramConfigEntity.builder().chatId(666).build();
     doReturn(importDto).when(butlerJobService).queryImportJob(any());
     doReturn(List.of(user)).when(userRepository).findByUserRolesContaining(any());
-    doReturn(Optional.of(telegramConfig)).when(telegramConfigRepository).findByUser(any());
 
     //when
     underTest.handle(new JobCompletedEvent("666"));
 
     //then
-    verify(telegramMessagingService).sendMessage(eq(telegramConfig.getChatId()), any());
+    verify(telegramService).sendMessage(eq(user), anyString());
   }
 
   @Test
-  @DisplayName("state Running: telegramMessagingService is called with chatId to find admins")
-  void test_running_telegram_messaging_service_is_called_with_chat_id() {
+  @DisplayName("state Running: telegramService is called with user")
+  void test_running_telegram_messaging_service_is_called_with_user() {
     // given
     var importDto = ImportJobResultDto.builder().state("Running").source("Source1").startTime(LocalDateTime.now()).build();
     var user = UserEntityFactory.createDefaultUser();
-    var telegramConfig = TelegramConfigEntity.builder().chatId(666).build();
     doReturn(importDto).when(butlerJobService).queryImportJob(any());
     doReturn(List.of(user)).when(userRepository).findByUserRolesContaining(any());
-    doReturn(Optional.of(telegramConfig)).when(telegramConfigRepository).findByUser(any());
 
     //when
     underTest.handle(new JobCompletedEvent("666"));
 
     //then
-    verify(telegramMessagingService).sendMessage(eq(telegramConfig.getChatId()), any());
+    verify(telegramService).sendMessage(eq(user), anyString());
   }
 
   @Test
-  @DisplayName("state Error: telegramMessagingService is called with chatId to find admins")
+  @DisplayName("state Error: telegramService is called with message")
   void test_error_telegram_messaging_service_is_called_with_message() {
     // given
     var importDto = ImportJobResultDto.builder().state("Error").source("Source1").startTime(LocalDateTime.now()).build();
     var user = UserEntityFactory.createDefaultUser();
-    var telegramConfig = TelegramConfigEntity.builder().chatId(666).build();
     var expectedMessage = JOB_FAILED_MESSAGE.replace("%1", importDto.getSource())
         .replace("%2", importDto.getStartTime().format(ISO_LOCAL_DATE_TIME));
     doReturn(importDto).when(butlerJobService).queryImportJob(any());
     doReturn(List.of(user)).when(userRepository).findByUserRolesContaining(any());
-    doReturn(Optional.of(telegramConfig)).when(telegramConfigRepository).findByUser(any());
 
     //when
     underTest.handle(new JobCompletedEvent("666"));
 
     //then
-    verify(telegramMessagingService).sendMessage(anyInt(), eq(expectedMessage));
+    verify(telegramService).sendMessage(any(), eq(expectedMessage));
   }
 
   @Test
-  @DisplayName("state Running: telegramMessagingService is called with chatId to find admins")
+  @DisplayName("state Running: telegramService is called with message")
   void test_running_telegram_messaging_service_is_called_with_message() {
     // given
     var importDto = ImportJobResultDto.builder().state("Running").source("Source1").startTime(LocalDateTime.now()).build();
     var user = UserEntityFactory.createDefaultUser();
-    var telegramConfig = TelegramConfigEntity.builder().chatId(666).build();
     var expectedMessage = JOB_RUNNING_MESSAGE.replace("%1", importDto.getSource())
         .replace("%2", importDto.getStartTime().format(ISO_LOCAL_DATE_TIME));
     doReturn(importDto).when(butlerJobService).queryImportJob(any());
     doReturn(List.of(user)).when(userRepository).findByUserRolesContaining(any());
-    doReturn(Optional.of(telegramConfig)).when(telegramConfigRepository).findByUser(any());
 
     //when
     underTest.handle(new JobCompletedEvent("666"));
 
     //then
-    verify(telegramMessagingService).sendMessage(anyInt(), eq(expectedMessage));
+    verify(telegramService).sendMessage(any(), eq(expectedMessage));
   }
 }
