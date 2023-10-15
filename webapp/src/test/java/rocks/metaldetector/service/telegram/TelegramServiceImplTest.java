@@ -16,11 +16,11 @@ import rocks.metaldetector.web.api.request.TelegramUpdate;
 
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static rocks.metaldetector.service.telegram.TelegramUpdateServiceImpl.FIRST_BOT_MESSAGE_TEXT;
-import static rocks.metaldetector.service.telegram.TelegramUpdateServiceImpl.FIRST_BOT_RESPONSE_TEXT;
+import static rocks.metaldetector.service.telegram.TelegramServiceImpl.FIRST_BOT_MESSAGE_TEXT;
+import static rocks.metaldetector.service.telegram.TelegramServiceImpl.FIRST_BOT_RESPONSE_TEXT;
 
 @ExtendWith(MockitoExtension.class)
-class TelegramUpdateServiceImplTest implements WithAssertions {
+class TelegramServiceImplTest implements WithAssertions {
 
   @Mock
   private TelegramConfigService telegramConfigService;
@@ -29,7 +29,7 @@ class TelegramUpdateServiceImplTest implements WithAssertions {
   private TelegramMessagingService telegramMessagingService;
 
   @InjectMocks
-  private TelegramUpdateServiceImpl underTest;
+  private TelegramServiceImpl underTest;
 
   @AfterEach
   void tearDown() {

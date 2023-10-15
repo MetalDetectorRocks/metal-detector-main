@@ -10,7 +10,7 @@ import rocks.metaldetector.web.api.request.TelegramUpdate;
 @Component
 @AllArgsConstructor
 @Slf4j
-public class TelegramUpdateServiceImpl implements TelegramUpdateService {
+public class TelegramServiceImpl implements TelegramService {
 
   static final String FIRST_BOT_MESSAGE_TEXT = "/start";
   static final String FIRST_BOT_RESPONSE_TEXT = "Hi! If you want to register for notifications, please generate a " +

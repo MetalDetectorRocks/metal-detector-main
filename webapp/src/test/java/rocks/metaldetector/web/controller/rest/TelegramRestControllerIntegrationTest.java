@@ -11,8 +11,8 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import rocks.metaldetector.service.telegram.TelegramService;
 import rocks.metaldetector.service.telegram.TelegramUpdateFactory;
-import rocks.metaldetector.service.telegram.TelegramUpdateService;
 import rocks.metaldetector.testutil.BaseSpringBootTest;
 import rocks.metaldetector.web.api.request.TelegramUpdate;
 
@@ -32,7 +32,7 @@ class TelegramRestControllerIntegrationTest extends BaseSpringBootTest {
 
   @MockBean
   @SuppressWarnings("unused")
-  private TelegramUpdateService telegramUpdateService;
+  private TelegramService telegramService;
 
   private final TelegramUpdate update = TelegramUpdateFactory.createDefault();
   private final String botId = "abc";
