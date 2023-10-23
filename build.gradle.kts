@@ -1,7 +1,7 @@
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
 import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
 
-val javaVersion: JavaVersion = JavaVersion.VERSION_17
+val javaVersion: JavaVersion = JavaVersion.VERSION_21
 
 val dependencyVersions = listOf(
     libs.commonsText

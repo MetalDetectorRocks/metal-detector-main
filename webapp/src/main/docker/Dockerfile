@@ -1,7 +1,7 @@
 ###
 # Please note: The alpine base image is not available for platform linux/arm64.
 ###
-FROM --platform=linux/amd64 eclipse-temurin:17-jre-alpine as builder
+FROM --platform=linux/amd64 eclipse-temurin:21-jre-alpine as builder
 
 WORKDIR app
 
@@ -10,7 +10,7 @@ COPY ${SOURCE_JAR_FILE} app.jar
 
 RUN java -Djarmode=layertools -jar app.jar extract
 
-FROM --platform=linux/amd64 eclipse-temurin:17-jre-alpine
+FROM --platform=linux/amd64 eclipse-temurin:21-jre-alpine
 
 WORKDIR app
 
