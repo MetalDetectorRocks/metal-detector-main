@@ -20,7 +20,7 @@
   "packageManager": "npm@9.8.0",
   "devDependencies": {
     "@types/node": "^20.6.2",
-    "@types/qs": "^6.9.9",
+    "@types/qs": "^6.9.10",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "clean-webpack-plugin": "^4.0.0",
