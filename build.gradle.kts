@@ -7,9 +7,7 @@ val dependencyVersions = listOf(
     libs.commonsText
 )
 
-val dependencyGroupVersions = mapOf(
-    libs.restAssured.get().group to libs.restAssured.get().version
-)
+val dependencyGroupVersions = mapOf<String, String>()
 
 plugins {
   alias(libs.plugins.springBoot) apply false
