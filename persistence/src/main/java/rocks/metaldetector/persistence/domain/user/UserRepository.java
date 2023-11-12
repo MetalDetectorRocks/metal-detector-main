@@ -27,4 +27,6 @@ public interface UserRepository extends JpaRepository<AbstractUserEntity, Long> 
 
   @Query(value = "select * from users as u where u.created_date = u.last_modified_date and u.enabled = false and u.created_date < NOW() - interval '10' day", nativeQuery = true)
   List<AbstractUserEntity> findAllExpiredUsers();
+
+  List<AbstractUserEntity> findByUserRolesContaining(UserRole role);
 }

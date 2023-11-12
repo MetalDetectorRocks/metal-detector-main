@@ -13,8 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
-import rocks.metaldetector.butler.facade.JobService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
+import rocks.metaldetector.service.imports.JobService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.testutil.DtoFactory;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
@@ -63,7 +63,7 @@ class JobRestControllerTest implements WithAssertions {
       restAssuredUtils.doPost();
 
       // then
-      verify(jobService).createImportJob();
+      verify(jobService).createImportJobs();
     }
 
     @Test
@@ -127,7 +127,7 @@ class JobRestControllerTest implements WithAssertions {
       restAssuredUtils.doGet();
 
       // then
-      verify(jobService).queryImportJobResults();
+      verify(jobService).queryImportJobs();
     }
 
     @Test
@@ -138,7 +138,7 @@ class JobRestControllerTest implements WithAssertions {
           DtoFactory.ImportJobResultDtoFactory.createDefault(),
           DtoFactory.ImportJobResultDtoFactory.createDefault()
       );
-      doReturn(importJobResultDto).when(jobService).queryImportJobResults();
+      doReturn(importJobResultDto).when(jobService).queryImportJobs();
 
       // when
       ValidatableMockMvcResponse validatableResponse = restAssuredUtils.doGet();

@@ -6,6 +6,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.stereotype.Component;
 
 import static java.lang.Thread.currentThread;
+import static rocks.metaldetector.support.SchedulingConfig.JOB_COMPLETED_THREAD_NAME;
 
 @Component
 @AllArgsConstructor
@@ -16,7 +17,8 @@ public class OAuth2ClientManagerProvider {
   private final TaskSchedulingProperties taskSchedulingProperties;
 
   public OAuth2AuthorizedClientManager provide() {
-    if (currentThread().getName().startsWith(taskSchedulingProperties.getThreadNamePrefix())) {
+    if (currentThread().getName().startsWith(taskSchedulingProperties.getThreadNamePrefix()) ||
+        currentThread().getName().startsWith(JOB_COMPLETED_THREAD_NAME)) {
       return schedulingAuthorizedClientManager;
     }
     return authorizedClientManager;

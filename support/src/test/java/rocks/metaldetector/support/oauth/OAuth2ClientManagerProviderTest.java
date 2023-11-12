@@ -9,11 +9,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 
-import static org.mockito.Mockito.doReturn;
+import static java.lang.Thread.currentThread;
 import static org.mockito.Mockito.reset;
+import static rocks.metaldetector.support.SchedulingConfig.JOB_COMPLETED_THREAD_NAME;
 
 @ExtendWith(MockitoExtension.class)
 class OAuth2ClientManagerProviderTest implements WithAssertions {
@@ -52,18 +52,37 @@ class OAuth2ClientManagerProviderTest implements WithAssertions {
 
   @Test
   @DisplayName("For a scheduled thread the schedulingAuthorizedClientManager is returned")
-  void test_scheduling_manager_returned() {
+  void test_scheduling_manager_returned_for_scheduled() {
     // given
-    var scheduler = new ThreadPoolTaskScheduler();
-    scheduler.setThreadNamePrefix(taskSchedulingProperties.getThreadNamePrefix());
-    scheduler.initialize();
+    var currentThreadName = currentThread().getName();
+    try {
+      currentThread().setName(taskSchedulingProperties.getThreadNamePrefix());
 
-    scheduler.execute(() -> {
       // when
       var result = underTest.provide();
 
       // then
-      assertThat(result).isEqualTo(authorizedClientManager);
-    });
+      assertThat(result).isEqualTo(schedulingAuthorizedClientManager);
+    } finally {
+      currentThread().setName(currentThreadName);
+    }
+  }
+
+  @Test
+  @DisplayName("For a timed thread the schedulingAuthorizedClientManager is returned")
+  void test_scheduling_manager_returned_for_timed() {
+    // given
+    var currentThreadName = currentThread().getName();
+    try {
+      currentThread().setName(JOB_COMPLETED_THREAD_NAME);
+
+      // when
+      var result = underTest.provide();
+
+      // then
+      assertThat(result).isEqualTo(schedulingAuthorizedClientManager);
+    } finally {
+      currentThread().setName(currentThreadName);
+    }
   }
 }
