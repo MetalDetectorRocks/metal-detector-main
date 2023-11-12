@@ -131,10 +131,10 @@ public class ReleaseButlerRestClientImpl implements ReleaseButlerRestClient {
     ButlerUpdateReleaseStateRequest request = ButlerUpdateReleaseStateRequest.builder().state(state.toUpperCase()).build();
     HttpEntity<ButlerUpdateReleaseStateRequest> httpEntity = new HttpEntity<>(request);
     ResponseEntity<Void> responseEntity = releaseButlerRestOperations.exchange(butlerConfig.getReleasesUrl() + UPDATE_ENDPOINT_PATH_PARAM,
-                                                                             PUT,
-                                                                             httpEntity,
-                                                                             Void.class,
-                                                                             Map.of("releaseId", releaseId));
+                                                                               PUT,
+                                                                               httpEntity,
+                                                                               Void.class,
+                                                                               Map.of("releaseId", releaseId));
     var shouldNotHappen = !responseEntity.getStatusCode().is2xxSuccessful();
     if (shouldNotHappen) {
       throw new ExternalServiceException("Could not update release state (Response code: " + responseEntity.getStatusCode() + ")");

@@ -21,7 +21,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static rocks.metaldetector.config.misc.DelayedEventPublisher.DELAY_IN_MILLISECONDS;
+import static rocks.metaldetector.config.misc.DelayedEventPublisher.DELAY;
 
 @ExtendWith(MockitoExtension.class)
 class DelayedEventPublisherTest implements WithAssertions {
@@ -69,7 +69,7 @@ class DelayedEventPublisherTest implements WithAssertions {
     verify(applicationEventPublisher).publishEvent(argumentCaptorJobEvent.capture());
 
     JobCompletedEvent event = argumentCaptorJobEvent.getValue();
-    assertThat(event.getJobId()).isEqualTo(jobId);
+    assertThat(event.jobId()).isEqualTo(jobId);
   }
 
   @Test
@@ -79,6 +79,6 @@ class DelayedEventPublisherTest implements WithAssertions {
     underTest.publishDelayedJobEvent("666");
 
     // then
-    verify(timer).schedule(any(), eq(DELAY_IN_MILLISECONDS));
+    verify(timer).schedule(any(), eq(DELAY.toMillis()));
   }
 }

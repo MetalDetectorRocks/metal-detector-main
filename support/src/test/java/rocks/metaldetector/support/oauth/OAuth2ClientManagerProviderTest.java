@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 
 import static java.lang.Thread.currentThread;
 import static org.mockito.Mockito.reset;
-import static rocks.metaldetector.support.oauth.OAuth2ClientManagerProvider.JOB_COMPLETED_THREAD_NAME;
+import static rocks.metaldetector.support.SchedulingConfig.JOB_COMPLETED_THREAD_NAME;
 
 @ExtendWith(MockitoExtension.class)
 class OAuth2ClientManagerProviderTest implements WithAssertions {

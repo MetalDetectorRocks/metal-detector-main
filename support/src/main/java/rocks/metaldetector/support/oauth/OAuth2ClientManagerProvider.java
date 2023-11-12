@@ -6,12 +6,11 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.stereotype.Component;
 
 import static java.lang.Thread.currentThread;
+import static rocks.metaldetector.support.SchedulingConfig.JOB_COMPLETED_THREAD_NAME;
 
 @Component
 @AllArgsConstructor
 public class OAuth2ClientManagerProvider {
-
-  public static final String JOB_COMPLETED_THREAD_NAME = "ImportJobCompletedEvent";
 
   private final OAuth2AuthorizedClientManager authorizedClientManager;
   private final OAuth2AuthorizedClientManager schedulingAuthorizedClientManager;

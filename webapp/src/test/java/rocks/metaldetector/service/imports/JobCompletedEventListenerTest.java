@@ -75,7 +75,7 @@ public class JobCompletedEventListenerTest implements WithAssertions {
       mock.when(SecurityContextHolder::getContext).thenReturn(securityContextMock);
 
       //when
-      underTest.onApplicationEvent(new JobCompletedEvent(new Object(), "666"));
+      underTest.handle(new JobCompletedEvent("666"));
 
       //then
       mock.verify(SecurityContextHolder::getContext);
@@ -95,7 +95,7 @@ public class JobCompletedEventListenerTest implements WithAssertions {
     doReturn(ImportJobResultDto.builder().state("Successful").build()).when(butlerJobService).queryImportJob(any());
 
     //when
-    underTest.onApplicationEvent(new JobCompletedEvent(new Object(), jobId));
+    underTest.handle(new JobCompletedEvent(jobId));
 
     //then
     verify(butlerJobService).queryImportJob(jobId);
@@ -108,7 +108,7 @@ public class JobCompletedEventListenerTest implements WithAssertions {
     doReturn(ImportJobResultDto.builder().state("Successful").build()).when(butlerJobService).queryImportJob(any());
 
     //when
-    underTest.onApplicationEvent(new JobCompletedEvent(new Object(), "666"));
+    underTest.handle(new JobCompletedEvent("666"));
 
     //then
     verifyNoInteractions(userRepository);
@@ -121,7 +121,7 @@ public class JobCompletedEventListenerTest implements WithAssertions {
     doReturn(ImportJobResultDto.builder().state("Error").build()).when(butlerJobService).queryImportJob(any());
 
     //when
-    underTest.onApplicationEvent(new JobCompletedEvent(new Object(), "666"));
+    underTest.handle(new JobCompletedEvent("666"));
 
     //then
     verify(userRepository).findByUserRolesContaining(ROLE_ADMINISTRATOR);
@@ -134,7 +134,7 @@ public class JobCompletedEventListenerTest implements WithAssertions {
     doReturn(ImportJobResultDto.builder().state("Running").build()).when(butlerJobService).queryImportJob(any());
 
     //when
-    underTest.onApplicationEvent(new JobCompletedEvent(new Object(), "666"));
+    underTest.handle(new JobCompletedEvent("666"));
 
     //then
     verify(userRepository).findByUserRolesContaining(ROLE_ADMINISTRATOR);
@@ -149,7 +149,7 @@ public class JobCompletedEventListenerTest implements WithAssertions {
     doReturn(List.of(user)).when(userRepository).findByUserRolesContaining(any());
 
     //when
-    underTest.onApplicationEvent(new JobCompletedEvent(new Object(), "666"));
+    underTest.handle(new JobCompletedEvent("666"));
 
     //then
     verify(telegramConfigRepository).findByUser(user);
@@ -164,7 +164,7 @@ public class JobCompletedEventListenerTest implements WithAssertions {
     doReturn(List.of(user)).when(userRepository).findByUserRolesContaining(any());
 
     //when
-    underTest.onApplicationEvent(new JobCompletedEvent(new Object(), "666"));
+    underTest.handle(new JobCompletedEvent("666"));
 
     //then
     verify(telegramConfigRepository).findByUser(user);
@@ -182,7 +182,7 @@ public class JobCompletedEventListenerTest implements WithAssertions {
     doReturn(Optional.of(telegramConfig)).when(telegramConfigRepository).findByUser(any());
 
     //when
-    underTest.onApplicationEvent(new JobCompletedEvent(new Object(), "666"));
+    underTest.handle(new JobCompletedEvent("666"));
 
     //then
     verify(telegramMessagingService).sendMessage(eq(telegramConfig.getChatId()), any());
@@ -200,7 +200,7 @@ public class JobCompletedEventListenerTest implements WithAssertions {
     doReturn(Optional.of(telegramConfig)).when(telegramConfigRepository).findByUser(any());
 
     //when
-    underTest.onApplicationEvent(new JobCompletedEvent(new Object(), "666"));
+    underTest.handle(new JobCompletedEvent("666"));
 
     //then
     verify(telegramMessagingService).sendMessage(eq(telegramConfig.getChatId()), any());
@@ -220,7 +220,7 @@ public class JobCompletedEventListenerTest implements WithAssertions {
     doReturn(Optional.of(telegramConfig)).when(telegramConfigRepository).findByUser(any());
 
     //when
-    underTest.onApplicationEvent(new JobCompletedEvent(new Object(), "666"));
+    underTest.handle(new JobCompletedEvent("666"));
 
     //then
     verify(telegramMessagingService).sendMessage(anyInt(), eq(expectedMessage));
@@ -240,7 +240,7 @@ public class JobCompletedEventListenerTest implements WithAssertions {
     doReturn(Optional.of(telegramConfig)).when(telegramConfigRepository).findByUser(any());
 
     //when
-    underTest.onApplicationEvent(new JobCompletedEvent(new Object(), "666"));
+    underTest.handle(new JobCompletedEvent("666"));
 
     //then
     verify(telegramMessagingService).sendMessage(anyInt(), eq(expectedMessage));
