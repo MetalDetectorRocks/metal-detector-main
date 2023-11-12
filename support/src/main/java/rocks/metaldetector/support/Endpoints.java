@@ -6,26 +6,11 @@ public class Endpoints {
 
   public static class Authentication {
     public static final String       LOGIN                     = "/login";
-    public static final String       FORGOT_PASSWORD           = "/forgot-password";
     public static final String       RESET_PASSWORD            = "/reset-password";
   }
 
   public static class Frontend {
     public static final String SIGN_IN = "/sign-in";
-    public static final String SIGN_UP = "/sign-up";
-    public static final String SEARCH                        = "/artists/search";
-    public static final String RELEASES                      = "/releases";
-    public static final String MY_ARTISTS                    = "/my-artists";
-    public static final String BLOG                          = "/blog";
-    public static final String BLOG_POST_WE_ARE_ONLINE       = "/blog/we-are-online";
-    public static final String BLOG_POST_TOP_RELEASES_2020   = "/blog/top-6-releases-2020";
-    public static final String BLOG_POST_FUTURE_PLANS        = "/blog/future-plans";
-    public static final String IMPRINT                       = "/imprint";
-    public static final String PRIVACY_POLICY                = "/privacy-policy";
-    public static final String STATUS                        = "/status";
-    public static final String ACCOUNT_DETAILS               = "/settings/account-details";
-    public static final String SPOTIFY_SYNCHRONIZATION       = "/settings/spotify-synchronization";
-    public static final String NOTIFICATION_SETTINGS         = "/settings/notification-settings";
   }
 
   public static class Rest {
@@ -71,17 +56,6 @@ public class Endpoints {
     public static final String CSRF = "/rest/v1/csrf";
 
     public static final String TEST = "/rest/v1/only-for-testing";
-  }
-
-  public static class AdminArea {
-    public static final String INDEX          = "/admin";
-    public static final String IMPORT         = "/admin/import";
-    public static final String ANALYTICS      = "/admin/analytics";
-    public static final String SETTINGS       = "/admin/settings";
-    public static final String RELEASES       = "/admin/releases";
-    public static final String USERS          = "/admin/users";
-    public static final String PROFILE        = "/admin/profile";
-    public static final String NOTIFICATIONS  = "/admin/notifications";
   }
 
   public static class AntPattern {
