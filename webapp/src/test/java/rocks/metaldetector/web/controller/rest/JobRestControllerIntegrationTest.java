@@ -10,7 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import rocks.metaldetector.butler.facade.JobService;
+import rocks.metaldetector.service.imports.JobService;
 import rocks.metaldetector.testutil.BaseSpringBootTest;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;

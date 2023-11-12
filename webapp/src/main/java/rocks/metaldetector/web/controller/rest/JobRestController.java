@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import rocks.metaldetector.butler.facade.JobService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
+import rocks.metaldetector.service.imports.JobService;
 
 import java.util.List;
 
@@ -23,13 +23,13 @@ public class JobRestController {
 
   @PostMapping(path = IMPORT_JOB)
   public ResponseEntity<Void> createImportJob() {
-    jobService.createImportJob();
+    jobService.createImportJobs();
     return ResponseEntity.status(CREATED).build();
   }
 
   @GetMapping(path = IMPORT_JOB, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<List<ImportJobResultDto>> getImportJobResults() {
-    List<ImportJobResultDto> response = jobService.queryImportJobResults();
+    List<ImportJobResultDto> response = jobService.queryImportJobs();
     return ResponseEntity.ok(response);
   }
 

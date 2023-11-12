@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rocks.metaldetector.butler.ButlerDtoFactory;
+import rocks.metaldetector.butler.api.ButlerImportCreatedResponse;
 import rocks.metaldetector.butler.api.ButlerImportJob;
 import rocks.metaldetector.butler.client.ReleaseButlerRestClient;
 import rocks.metaldetector.butler.client.transformer.ButlerImportJobTransformer;
@@ -24,7 +25,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class JobServiceImplTest implements WithAssertions {
+class ButlerJobServiceImplTest implements WithAssertions {
 
   @Mock
   private ReleaseButlerRestClient butlerClient;
@@ -32,11 +33,11 @@ class JobServiceImplTest implements WithAssertions {
   @Mock
   private ButlerImportJobTransformer importJobResponseTransformer;
 
-  private JobServiceImpl underTest;
+  private ButlerJobServiceImpl underTest;
 
   @BeforeEach
   void setup() {
-    underTest = new JobServiceImpl(butlerClient, importJobResponseTransformer);
+    underTest = new ButlerJobServiceImpl(butlerClient, importJobResponseTransformer);
   }
 
   @AfterEach
@@ -47,24 +48,41 @@ class JobServiceImplTest implements WithAssertions {
   @Test
   @DisplayName("Creating an import job should call butler client")
   void create_import_job_should_call_butler_client() {
+    // given
+    doReturn(ButlerImportCreatedResponse.builder().build()).when(butlerClient).createImportJobs();
+
     // when
-    underTest.createImportJob();
+    underTest.createImportJobs();
 
     // then
-    verify(butlerClient).createImportJob();
+    verify(butlerClient).createImportJobs();
+  }
+
+  @Test
+  @DisplayName("Creating an import job should return ids of created jobs")
+  void create_import_job_should_return_ids() {
+    // given
+    var jobIds = List.of("1", "2", "3");
+    doReturn(ButlerImportCreatedResponse.builder().importJobIds(jobIds).build()).when(butlerClient).createImportJobs();
+
+    // when
+    var result = underTest.createImportJobs();
+
+    // then
+    assertThat(result).isEqualTo(jobIds);
   }
 
   @Test
   @DisplayName("Querying import job results should use butler client")
   void query_import_job_results_should_use_butler_client() {
     // given
-    doReturn(Collections.emptyList()).when(butlerClient).queryImportJobResults();
+    doReturn(Collections.emptyList()).when(butlerClient).queryImportJobs();
 
     // when
-    underTest.queryImportJobResults();
+    underTest.queryImportJobs();
 
     // then
-    verify(butlerClient).queryImportJobResults();
+    verify(butlerClient).queryImportJobs();
   }
 
   @Test
@@ -75,10 +93,10 @@ class JobServiceImplTest implements WithAssertions {
         ButlerDtoFactory.ButlerImportJobFactory.createDefault(),
         ButlerDtoFactory.ButlerImportJobFactory.createDefault()
     );
-    doReturn(butlerImportJobs).when(butlerClient).queryImportJobResults();
+    doReturn(butlerImportJobs).when(butlerClient).queryImportJobs();
 
     // when
-    underTest.queryImportJobResults();
+    underTest.queryImportJobs();
 
     // then
     verify(importJobResponseTransformer, times(butlerImportJobs.size())).transform(any(ButlerImportJob.class));
@@ -92,11 +110,11 @@ class JobServiceImplTest implements WithAssertions {
         ButlerDtoFactory.ButlerImportJobFactory.createDefault(),
         ButlerDtoFactory.ButlerImportJobFactory.createDefault()
     );
-    doReturn(butlerImportJobs).when(butlerClient).queryImportJobResults();
+    doReturn(butlerImportJobs).when(butlerClient).queryImportJobs();
     doReturn(ButlerDtoFactory.ImportJobResultDtoFactory.createDefault()).when(importJobResponseTransformer).transform(any());
 
     // when
-    List<ImportJobResultDto> response = underTest.queryImportJobResults();
+    List<ImportJobResultDto> response = underTest.queryImportJobs();
 
     // then
     assertThat(response).isEqualTo(List.of(
@@ -113,5 +131,46 @@ class JobServiceImplTest implements WithAssertions {
 
     // then
     verify(butlerClient).createRetryCoverDownloadJob();
+  }
+
+  @Test
+  @DisplayName("Querying a job should call butler client")
+  void query_import_job_should_call_butler() {
+    // given
+    var jobId = "666";
+
+    // when
+    underTest.queryImportJob(jobId);
+
+    // then
+    verify(butlerClient).queryImportJob(jobId);
+  }
+
+  @Test
+  @DisplayName("Querying a job should call job transformer")
+  void query_import_job_should_call_job_transformer() {
+    // given
+    var job = ButlerImportJob.builder().totalCountImported(666).build();
+    doReturn(job).when(butlerClient).queryImportJob(any());
+
+    // when
+    underTest.queryImportJob("666");
+
+    // then
+    verify(importJobResponseTransformer).transform(job);
+  }
+
+  @Test
+  @DisplayName("Querying a job should return job dto")
+  void query_import_job_should_return_job_dto() {
+    // given
+    var jobDto = ImportJobResultDto.builder().totalCountImported(666).build();
+    doReturn(jobDto).when(importJobResponseTransformer).transform(any());
+
+    // when
+    var result = underTest.queryImportJob("666");
+
+    // then
+    assertThat(result).isEqualTo(jobDto);
   }
 }

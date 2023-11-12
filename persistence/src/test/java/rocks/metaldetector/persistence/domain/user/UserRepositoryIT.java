@@ -12,6 +12,9 @@ import rocks.metaldetector.persistence.WithIntegrationTestConfig;
 
 import java.util.Optional;
 
+import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
+import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
+
 class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIntegrationTestConfig {
 
   private static final String UNKNOWN_USERNAME = "Unknown";
@@ -178,5 +181,25 @@ class UserRepositoryIT extends BaseDataJpaTest implements WithAssertions, WithIn
 
     // then
     assertThat(result).containsExactly(expiredUser);
+  }
+
+  @DisplayName("findByUserRolesContaining() returns correct users")
+  @Test
+  void test_find_user_by_role() {
+    // when
+    var result = underTest.findByUserRolesContaining(ROLE_USER);
+
+    // then
+    assertThat(result).containsExactly(johnDoe, janeDoe, oAuthUser);
+  }
+
+  @DisplayName("findByUserRolesContaining() returns correct admins")
+  @Test
+  void test_find_admin_by_role() {
+    // when
+    var result = underTest.findByUserRolesContaining(ROLE_ADMINISTRATOR);
+
+    // then
+    assertThat(result).isEmpty();
   }
 }
