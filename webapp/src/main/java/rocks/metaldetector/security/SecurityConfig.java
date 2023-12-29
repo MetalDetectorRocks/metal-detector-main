@@ -105,9 +105,10 @@ public class SecurityConfig {
   private String botId;
 
   @Bean
-  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
     http
         .csrf((customizer) -> customizer.ignoringRequestMatchers(REST_ENDPOINTS)) // TODO DanielW: enable csrf
+        .cors((customizer) -> customizer.configurationSource(corsConfigurationSource))
         .sessionManagement((customizer) -> customizer.sessionCreationPolicy(STATELESS))
         .authorizeHttpRequests((customizer) -> customizer
             .requestMatchers(RESOURCES).permitAll()
@@ -127,7 +128,8 @@ public class SecurityConfig {
                              TOP_ARTISTS,
                              AUTHENTICATION,
                              REFRESH_ACCESS_TOKEN,
-                             CSRF).permitAll()
+                             CSRF,
+                             OAUTH + "/callback").permitAll()
             .requestMatchers(FOLLOW_ARTIST + "/**",
                              UNFOLLOW_ARTIST + "/**",
                              DASHBOARD,
@@ -136,6 +138,7 @@ public class SecurityConfig {
                              SPOTIFY_ARTIST_SYNCHRONIZATION,
                              NOTIFICATION_CONFIG,
                              OAUTH + "/{registration-id}",
+                             "/oauth2/authorization/**",
                              TELEGRAM_CONFIG,
                              "/rest/v1/logging/**",
                              CURRENT_USER + "/**").authenticated()
@@ -203,14 +206,17 @@ public class SecurityConfig {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(Stream.of(
         frontendOrigin,
-        "http://localhost:3000",
+//        "http://localhost:3000",
         "http://localhost:1080"
     ).distinct().toList());
-    configuration.setAllowedMethods(List.of("*"));
-    configuration.setAllowedHeaders(List.of("*"));
+//    configuration.setAllowedMethods(List.of("*"));
+//    configuration.setAllowedHeaders(List.of("*"));
+    configuration.setAllowedMethods(List.of("GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE"));
+    configuration.setAllowedHeaders(List.of("cache-control", "pragma", "authorization", "content-type"));
     configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration(REST_ENDPOINTS, configuration);
+    source.registerCorsConfiguration("/oauth2/authorization/**", configuration);
     return source;
   }
 }
