@@ -1,7 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,7 +58,7 @@ public class OAuth2AuthorizationRestController {
   public ResponseEntity<Void> handleCallback(@RequestParam(value = "code", defaultValue = "") String code,
                                              @RequestParam(value = "state", defaultValue = "") String state,
                                              @Value("${frontend.origin}") String frontendOrigin,
-                                             HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+                                             HttpServletRequest servletRequest) {
     OAuth2AuthorizationRequest authorizationRequest = authorizationRequestRepository.loadAuthorizationRequest(servletRequest);
     OAuth2AccessTokenResponse tokenResponse = null;
     if (authorizationRequest != null && Objects.equals(state, authorizationRequest.getState())) {
