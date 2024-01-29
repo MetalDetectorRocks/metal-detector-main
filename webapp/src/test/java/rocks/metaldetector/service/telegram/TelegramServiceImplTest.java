@@ -12,6 +12,7 @@ import rocks.metaldetector.persistence.domain.notification.TelegramConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
 import rocks.metaldetector.service.notification.config.TelegramConfigService;
 import rocks.metaldetector.service.user.UserEntityFactory;
+import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.telegram.facade.TelegramMessagingService;
 import rocks.metaldetector.web.api.request.TelegramChat;
 import rocks.metaldetector.web.api.request.TelegramMessage;
@@ -82,6 +83,8 @@ class TelegramServiceImplTest implements WithAssertions {
   @DisplayName("sendMessage: telegramConfigRepository is called")
   void test_telegram_config_repository_called() {
     // given
+    var telegramConfig = TelegramConfigEntity.builder().chatId(666).build();
+    doReturn(Optional.of(telegramConfig)).when(telegramConfigRepository).findByUser(any());
     var user = UserEntityFactory.createDefaultUser();
 
     //when
@@ -123,16 +126,17 @@ class TelegramServiceImplTest implements WithAssertions {
   }
 
   @Test
-  @DisplayName("sendMessage: telegramMessagingService is not called if telegram config does not exist")
-  void test_telegram_messaging_service_not_called_without_config() {
+  @DisplayName("sendMessage: exception is thrown if no config could not be found")
+  void test_exception_thrown() {
     // given
-    var user = UserEntityFactory.createDefaultUser();
     doReturn(Optional.empty()).when(telegramConfigRepository).findByUser(any());
+    var user = UserEntityFactory.createDefaultUser();
 
-    //when
-    underTest.sendMessage(user, "message");
+    // when
+    var throwable = catchThrowable(() -> underTest.sendMessage(user, "message"));
 
-    //then
+    // then
+    assertThat(throwable).isInstanceOf(ResourceNotFoundException.class);
     verifyNoInteractions(telegramMessagingService);
   }
 

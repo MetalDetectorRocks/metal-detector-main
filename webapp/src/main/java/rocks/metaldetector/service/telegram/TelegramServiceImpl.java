@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.service.notification.config.TelegramConfigService;
+import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.telegram.facade.TelegramMessagingService;
 import rocks.metaldetector.web.api.request.TelegramUpdate;
 
@@ -35,11 +36,13 @@ public class TelegramServiceImpl implements TelegramService {
   @Override
   public void sendMessage(AbstractUserEntity user, String message) {
     telegramConfigRepository.findByUser(user)
-        .ifPresent(telegramConfig -> {
+        .ifPresentOrElse(telegramConfig -> {
           var chatId = telegramConfig.getChatId();
           if (chatId != null) {
             telegramMessagingService.sendMessage(chatId, message);
           }
+        }, () -> {
+          throw new ResourceNotFoundException("TelegramConfigEntity for user '" + user.getPublicId() + "' not found");
         });
   }
 
