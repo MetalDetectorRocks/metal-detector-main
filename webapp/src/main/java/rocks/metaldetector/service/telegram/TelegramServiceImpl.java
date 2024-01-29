@@ -3,14 +3,11 @@ package rocks.metaldetector.service.telegram;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import rocks.metaldetector.persistence.domain.notification.TelegramConfigEntity;
 import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.service.notification.config.TelegramConfigService;
 import rocks.metaldetector.telegram.facade.TelegramMessagingService;
 import rocks.metaldetector.web.api.request.TelegramUpdate;
-
-import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -37,15 +34,13 @@ public class TelegramServiceImpl implements TelegramService {
 
   @Override
   public void sendMessage(AbstractUserEntity user, String message) {
-    Optional<TelegramConfigEntity> telegramConfigOptional = telegramConfigRepository.findByUser(user);
-
-    if (telegramConfigOptional.isPresent()) {
-      TelegramConfigEntity telegramConfig = telegramConfigOptional.get();
-      var chatId = telegramConfig.getChatId();
-      if (chatId != null) {
-        telegramMessagingService.sendMessage(chatId, message);
-      }
-    }
+    telegramConfigRepository.findByUser(user)
+        .ifPresent(telegramConfig -> {
+          var chatId = telegramConfig.getChatId();
+          if (chatId != null) {
+            telegramMessagingService.sendMessage(chatId, message);
+          }
+        });
   }
 
   private void registerForTelegramNotifications(TelegramUpdate update) {
