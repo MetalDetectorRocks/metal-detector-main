@@ -9,10 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.butler.facade.ButlerJobService;
 import rocks.metaldetector.butler.facade.dto.ImportJobResultDto;
-import rocks.metaldetector.persistence.domain.notification.TelegramConfigRepository;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
-import rocks.metaldetector.telegram.facade.TelegramMessagingService;
+import rocks.metaldetector.service.telegram.TelegramService;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -30,9 +29,8 @@ public class JobCompletedEventListener {
   protected static final AnonymousAuthenticationToken PRINCIPAL = new AnonymousAuthenticationToken("key", "jobCompletedListenerPrincipal", createAuthorityList("ROLE_ADMINISTRATOR"));
 
   private final ButlerJobService butlerJobService;
-  private final TelegramMessagingService telegramMessagingService;
-  private final TelegramConfigRepository telegramConfigRepository;
   private final UserRepository userRepository;
+  private final TelegramService telegramService;
 
   @EventListener
   public void handle(JobCompletedEvent event) {
@@ -57,17 +55,10 @@ public class JobCompletedEventListener {
     List<AbstractUserEntity> admins = userRepository.findByUserRolesContaining(ROLE_ADMINISTRATOR);
 
     for (AbstractUserEntity admin : admins) {
-      telegramConfigRepository
-          .findByUser(admin)
-          .ifPresent(telegramConfig -> {
-            var chatId = telegramConfig.getChatId();
-            if (chatId != null) {
-              var formattedMessage = message
-                  .replace("%1", importJob.getSource())
-                  .replace("%2", importJob.getStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-              telegramMessagingService.sendMessage(chatId, formattedMessage);
-            }
-          });
+      message = message
+          .replace("%1", importJob.getSource())
+          .replace("%2", importJob.getStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+      telegramService.sendMessage(admin, message);
     }
   }
 }
