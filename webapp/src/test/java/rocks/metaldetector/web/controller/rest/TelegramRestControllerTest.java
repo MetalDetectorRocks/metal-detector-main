@@ -12,8 +12,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import rocks.metaldetector.service.telegram.TelegramService;
 import rocks.metaldetector.service.telegram.TelegramUpdateFactory;
-import rocks.metaldetector.service.telegram.TelegramUpdateService;
 import rocks.metaldetector.support.Endpoints;
 import rocks.metaldetector.web.RestAssuredMockMvcUtils;
 import rocks.metaldetector.web.api.request.TelegramChat;
@@ -33,20 +33,20 @@ import static org.springframework.http.HttpStatus.OK;
 class TelegramRestControllerTest implements WithAssertions {
 
   @Mock
-  private TelegramUpdateService telegramUpdateService;
+  private TelegramService telegramService;
 
   private RestAssuredMockMvcUtils restAssuredUtils;
 
   @BeforeEach
   void setup() {
-    TelegramRestController underTest = new TelegramRestController(telegramUpdateService, "botId");
+    TelegramRestController underTest = new TelegramRestController(telegramService, "botId");
     restAssuredUtils = new RestAssuredMockMvcUtils(Endpoints.Rest.NOTIFICATION_TELEGRAM);
     RestAssuredMockMvc.standaloneSetup(underTest);
   }
 
   @AfterEach
   void tearDown() {
-    reset(telegramUpdateService);
+    reset(telegramService);
   }
 
   @Test
@@ -59,7 +59,7 @@ class TelegramRestControllerTest implements WithAssertions {
     restAssuredUtils.doPost(update, "/botId");
 
     // then
-    verify(telegramUpdateService).processUpdate(update);
+    verify(telegramService).processUpdate(update);
   }
 
   @Test
@@ -85,7 +85,7 @@ class TelegramRestControllerTest implements WithAssertions {
     restAssuredUtils.doPost(update, "/wrongBotId");
 
     // then
-    verifyNoInteractions(telegramUpdateService);
+    verifyNoInteractions(telegramService);
   }
 
   @ParameterizedTest
