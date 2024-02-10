@@ -15,6 +15,8 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationCodeGrantFilter;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -27,6 +29,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import rocks.metaldetector.security.filter.CustomAuthorizationFilter;
 import rocks.metaldetector.security.filter.CustomUsernamePasswordAuthenticationFilter;
+import rocks.metaldetector.security.filter.OAuth2AuthorizationCodeLoginFilter;
+import rocks.metaldetector.security.filter.OAuth2AuthorizationCodeSaveRequestFilter;
 import rocks.metaldetector.security.filter.XSSFilter;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
 import rocks.metaldetector.security.handler.CustomLogoutHandler;
@@ -81,7 +85,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.UPDATE_RELEASE;
 import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @ConditionalOnProperty(
     name = "rocks.metaldetector.security.enabled",
     havingValue = "true",
@@ -100,6 +104,8 @@ public class SecurityConfig {
   private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
   private final CustomLogoutHandler customLogoutHandler;
   private final ObjectMapper objectMapper;
+  private final OAuth2AuthorizationCodeSaveRequestFilter authorizationCodeSaveRequestFilter;
+  private final OAuth2AuthorizationCodeLoginFilter authorizationCodeLoginFilter;
 
   @Value("${telegram.bot-id}")
   private String botId;
@@ -138,7 +144,6 @@ public class SecurityConfig {
                              SPOTIFY_ARTIST_SYNCHRONIZATION,
                              NOTIFICATION_CONFIG,
                              OAUTH + "/{registration-id}",
-                             "/oauth2/authorization/**",
                              TELEGRAM_CONFIG,
                              "/rest/v1/logging/**",
                              CURRENT_USER + "/**").authenticated()
@@ -183,7 +188,9 @@ public class SecurityConfig {
                                configurer.defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(UNAUTHORIZED),
                                                                              new AntPathRequestMatcher(REST_ENDPOINTS)))
         .addFilter(customUsernamePasswordAuthFilter())
-        .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(authorizationCodeSaveRequestFilter, OAuth2AuthorizationRequestRedirectFilter.class)
+        .addFilterBefore(authorizationCodeLoginFilter, OAuth2AuthorizationCodeGrantFilter.class);
     return http.build();
   }
 
@@ -213,7 +220,6 @@ public class SecurityConfig {
     configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration(REST_ENDPOINTS, configuration);
-    source.registerCorsConfiguration("/oauth2/authorization/**", configuration);
     return source;
   }
 }
