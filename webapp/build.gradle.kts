@@ -44,6 +44,7 @@ dependencies {
   implementation(libs.lombok)
   implementation(libs.esapi) {
     exclude(group = "org.slf4j", module = "slf4j-simple")
+    exclude(group = "commons-logging", module = "commons-logging")
   }
 
   annotationProcessor(libs.lombok)
