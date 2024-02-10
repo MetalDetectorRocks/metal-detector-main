@@ -81,7 +81,7 @@ import static rocks.metaldetector.support.Endpoints.Rest.UPDATE_RELEASE;
 import static rocks.metaldetector.support.Endpoints.Rest.USERS;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @ConditionalOnProperty(
     name = "rocks.metaldetector.security.enabled",
     havingValue = "true",
@@ -206,11 +206,8 @@ public class SecurityConfig {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(Stream.of(
         frontendOrigin,
-//        "http://localhost:3000",
         "http://localhost:1080"
     ).distinct().toList());
-//    configuration.setAllowedMethods(List.of("*"));
-//    configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowedMethods(List.of("GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE"));
     configuration.setAllowedHeaders(List.of("cache-control", "pragma", "authorization", "content-type"));
     configuration.setAllowCredentials(true);

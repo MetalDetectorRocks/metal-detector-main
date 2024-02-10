@@ -1,6 +1,8 @@
 package rocks.metaldetector.web.controller.rest;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,23 +13,21 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationExchange;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.support.oauth.OAuth2AuthenticationProvider;
 import rocks.metaldetector.web.api.response.OAuth2UserAuthorizationExistsResponse;
 
 import java.net.URI;
-import java.util.Objects;
+import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
@@ -43,6 +43,8 @@ public class OAuth2AuthorizationRestController {
   private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository;
   private final OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient;
   private final ClientRegistrationRepository clientRegistrationRepository;
+  private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
+  private final AuthenticationFacade authenticationFacade;
 
   @GetMapping(path = OAUTH + "/{registration-id}", produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<OAuth2UserAuthorizationExistsResponse> checkAuthorization(@PathVariable("registration-id") String registrationId) {
@@ -58,18 +60,17 @@ public class OAuth2AuthorizationRestController {
   public ResponseEntity<Void> handleCallback(@RequestParam(value = "code", defaultValue = "") String code,
                                              @RequestParam(value = "state", defaultValue = "") String state,
                                              @Value("${frontend.origin}") String frontendOrigin,
-                                             HttpServletRequest servletRequest) {
+                                             HttpServletRequest servletRequest,
+                                             HttpServletResponse servletResponse) {
     OAuth2AuthorizationRequest authorizationRequest = authorizationRequestRepository.loadAuthorizationRequest(servletRequest);
-    OAuth2AccessTokenResponse tokenResponse = null;
-    if (authorizationRequest != null && Objects.equals(state, authorizationRequest.getState())) {
-      OAuth2AuthorizationResponse authorizationResponse = OAuth2AuthorizationResponse.success(code).state(state).redirectUri(authorizationRequest.getRedirectUri()).build();
-      OAuth2AuthorizationExchange authorizationExchange = new OAuth2AuthorizationExchange(authorizationRequest, authorizationResponse);
-      ClientRegistration clientRegistration = clientRegistrationRepository.findByRegistrationId("spotify-user");
-      OAuth2AuthorizationCodeGrantRequest authorizationCodeGrantRequest = new OAuth2AuthorizationCodeGrantRequest(clientRegistration, authorizationExchange);
-      tokenResponse = accessTokenResponseClient.getTokenResponse(authorizationCodeGrantRequest);
-      log.info(tokenResponse.toString());
+    HttpSession session = servletRequest.getSession(false);
+    Map<String, OAuth2AuthorizedClient> authorizedClients = (Map<String, OAuth2AuthorizedClient>) session.getAttribute("org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizedClientRepository.AUTHORIZED_CLIENTS");
+
+    if (authorizedClients != null && authorizedClients.containsKey("spotify-user")) {
+//      oAuth2AuthorizedClientService.saveAuthorizedClient(authorizedClients.get("spotify-user"), authorizationRequest.);
     }
-    return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(frontendOrigin)).build();
+
+    return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(frontendOrigin + "/settings/spotify-synchronization")).build();
   }
 
   @DeleteMapping(path = OAUTH + "/{registration-id}")
