@@ -208,7 +208,7 @@ public class SecurityConfig {
         frontendOrigin,
         "http://localhost:1080"
     ).distinct().toList());
-    configuration.setAllowedMethods(List.of("GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE"));
+    configuration.setAllowedMethods(List.of("GET", "HEAD", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"));
     configuration.setAllowedHeaders(List.of("cache-control", "pragma", "authorization", "content-type"));
     configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
