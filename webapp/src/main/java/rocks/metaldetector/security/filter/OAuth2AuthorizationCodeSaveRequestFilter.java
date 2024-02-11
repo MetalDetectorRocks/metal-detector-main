@@ -43,7 +43,7 @@ public class OAuth2AuthorizationCodeSaveRequestFilter extends OncePerRequestFilt
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     try {
-      String token = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals("authorization")).findFirst().map(Cookie::getValue).orElseThrow(() -> new IllegalStateException("cookie not found"));
+      String token = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals("authorization")).findFirst().map(Cookie::getValue).orElseThrow(() -> new IllegalStateException("Cookie 'authorization' not found"));
       if (StringUtils.hasText(token) && jwtsSupport.validateJwtToken(token)) {
         Claims claims = jwtsSupport.getClaims(token);
         AbstractUserEntity user = userRepository.findByPublicId(claims.getSubject())
@@ -57,7 +57,7 @@ public class OAuth2AuthorizationCodeSaveRequestFilter extends OncePerRequestFilt
       }
     }
     catch (Exception e) {
-      log.error("Cannot authenticate user", e);
+      log.error("Cannot authenticate user starting authorization code flow", e);
       response.sendError(SC_FORBIDDEN);
     }
 
