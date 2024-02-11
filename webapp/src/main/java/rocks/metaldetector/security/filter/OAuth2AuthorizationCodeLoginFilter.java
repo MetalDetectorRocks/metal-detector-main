@@ -34,16 +34,16 @@ public class OAuth2AuthorizationCodeLoginFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     String state = request.getParameter("state");
-    AbstractUserEntity user = authorizationStateService.findUserByState(state);
-    if (user == null) {
-      log.error("Cannot authenticate user returning from authorization code flow");
-      response.sendError(SC_FORBIDDEN);
-    }
-    if (user != null) {
+    try {
+      AbstractUserEntity user = authorizationStateService.findUserByState(state);
       UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
       authentication.setDetails(authenticationDetailsSource.buildDetails(request));
       SecurityContextHolder.getContext().setAuthentication(authentication);
       authorizationStateService.deleteByState(state);
+    }
+    catch (Exception e) {
+      log.error("Cannot authenticate user returning from authorization code flow", e);
+      response.sendError(SC_FORBIDDEN);
     }
 
     filterChain.doFilter(request, response);
