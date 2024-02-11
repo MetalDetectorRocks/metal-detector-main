@@ -65,7 +65,8 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_ANNOUNC
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_FREQUENCY;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE_DATE;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
-import static rocks.metaldetector.support.Endpoints.Rest.OAUTH;
+import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_CALLBACK;
+import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_REGISTRATION_ID;
 import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
@@ -135,7 +136,7 @@ public class SecurityConfig {
                              AUTHENTICATION,
                              REFRESH_ACCESS_TOKEN,
                              CSRF,
-                             OAUTH + "/callback").permitAll()
+                             OAUTH_CALLBACK).permitAll()
             .requestMatchers(FOLLOW_ARTIST + "/**",
                              UNFOLLOW_ARTIST + "/**",
                              DASHBOARD,
@@ -143,7 +144,7 @@ public class SecurityConfig {
                              SPOTIFY_SAVED_ARTISTS,
                              SPOTIFY_ARTIST_SYNCHRONIZATION,
                              NOTIFICATION_CONFIG,
-                             OAUTH + "/{registration-id}",
+                             OAUTH_REGISTRATION_ID,
                              TELEGRAM_CONFIG,
                              "/rest/v1/logging/**",
                              CURRENT_USER + "/**").authenticated()

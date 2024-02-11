@@ -24,6 +24,7 @@ import java.util.Arrays;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
+import static rocks.metaldetector.support.oauth.OAuth2ClientConfig.OAUTH_AUTHORIZATION_ENDPOINT;
 
 @Component
 @AllArgsConstructor
@@ -37,7 +38,7 @@ public class OAuth2AuthorizationCodeSaveRequestFilter extends OncePerRequestFilt
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
-    return !request.getRequestURI().equals("/oauth2/authorization/spotify-user");
+    return !request.getRequestURI().startsWith(OAUTH_AUTHORIZATION_ENDPOINT);
   }
 
   @Override

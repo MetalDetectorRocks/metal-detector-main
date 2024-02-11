@@ -17,6 +17,7 @@ import rocks.metaldetector.service.oauthAuthorizationState.OAuthAuthorizationSta
 import java.io.IOException;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
+import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_CALLBACK;
 
 @Component
 @AllArgsConstructor
@@ -28,7 +29,7 @@ public class OAuth2AuthorizationCodeLoginFilter extends OncePerRequestFilter {
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
-    return !request.getRequestURI().equals("/rest/v1/oauth/callback");
+    return !request.getRequestURI().equals(OAUTH_CALLBACK);
   }
 
   @Override

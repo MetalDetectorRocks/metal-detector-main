@@ -18,7 +18,7 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepo
 @Configuration
 public class OAuth2ClientConfig {
 
-  private static final String OAUTH_AUTHORIZATION_ENDPOINT = "/oauth2/authorization";
+  public static final String OAUTH_AUTHORIZATION_ENDPOINT = "/oauth2/authorization";
 
   @Bean
   public OAuth2AuthorizedClientManager authorizedClientManager(OAuth2AuthorizedClientRepository authorizedClientRepository,

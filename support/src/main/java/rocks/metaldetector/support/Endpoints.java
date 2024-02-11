@@ -27,7 +27,9 @@ public class Endpoints {
     public static final String COVER_JOB                      = "/rest/v1/releases/cover-reload";
     public static final String NOTIFICATION_CONFIG            = "/rest/v1/notification-config";
     public static final String TELEGRAM_CONFIG                = "/rest/v1/telegram-config";
-    public static final String OAUTH                          = "/rest/v1/oauth";
+    public static final String OAUTH_BASE                     = "/rest/v1/oauth";
+    public static final String OAUTH_CALLBACK                 = OAUTH_BASE + "/callback";
+    public static final String OAUTH_REGISTRATION_ID          = OAUTH_BASE + "/{registration-id}";
     public static final String REGISTRATION_CLEANUP           = "/rest/v1/registration-cleanup";
     public static final String SEARCH_ARTIST                  = "/rest/v1/artists/search";
     public static final String FOLLOW_ARTIST                  = "/rest/v1/artists/follow";
