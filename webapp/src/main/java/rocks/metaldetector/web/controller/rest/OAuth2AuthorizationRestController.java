@@ -3,7 +3,6 @@ package rocks.metaldetector.web.controller.rest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -17,6 +16,7 @@ import rocks.metaldetector.web.api.response.OAuth2UserAuthorizationExistsRespons
 
 import java.net.URI;
 
+import static org.springframework.http.HttpStatus.FOUND;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
 import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_CALLBACK;
@@ -26,6 +26,8 @@ import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_REGISTRATION_ID;
 @AllArgsConstructor
 @Slf4j
 public class OAuth2AuthorizationRestController {
+
+  private static final String FRONTEND_REDIRECT_ENDPOINT = "/settings/spotify-synchronization";
 
   private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
   private final OAuth2AuthenticationProvider authenticationProvider;
@@ -42,7 +44,8 @@ public class OAuth2AuthorizationRestController {
 
   @GetMapping(path = OAUTH_CALLBACK)
   public ResponseEntity<Void> handleCallback(@Value("${frontend.origin}") String frontendOrigin) {
-    return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(frontendOrigin + "/settings/spotify-synchronization")).build();
+    URI locationHeaderValue = URI.create(frontendOrigin).resolve(FRONTEND_REDIRECT_ENDPOINT);
+    return ResponseEntity.status(FOUND).location(locationHeaderValue).build();
   }
 
   @DeleteMapping(path = OAUTH_REGISTRATION_ID)
