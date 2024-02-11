@@ -1,10 +1,10 @@
 package rocks.metaldetector.service.auth;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.user.RefreshTokenEntity;
 import rocks.metaldetector.persistence.domain.user.RefreshTokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
