@@ -11,8 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
-import rocks.metaldetector.persistence.domain.user.OAuthAuthorizationStateEntity;
-import rocks.metaldetector.persistence.domain.user.OAuthAuthorizationStateRepository;
+import rocks.metaldetector.service.oauthAuthorizationState.OAuthAuthorizationStateService;
 
 import java.io.IOException;
 
@@ -20,7 +19,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class OAuth2AuthorizationCodeLoginFilter extends OncePerRequestFilter {
 
-  private final OAuthAuthorizationStateRepository authorizationStateRepository;
+  private final OAuthAuthorizationStateService authorizationStateService;
   private final AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource;
 
   @Override
@@ -31,13 +30,12 @@ public class OAuth2AuthorizationCodeLoginFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     String state = request.getParameter("state");
-    OAuthAuthorizationStateEntity authorizationState = authorizationStateRepository.findByState(state);
-    if (authorizationState != null) {
-      AbstractUserEntity user = authorizationState.getUser();
+    AbstractUserEntity user = authorizationStateService.findUserByState(state);
+    if (user != null) {
       UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
       authentication.setDetails(authenticationDetailsSource.buildDetails(request));
       SecurityContextHolder.getContext().setAuthentication(authentication);
-//      authorizationStateRepository.deleteByState(state); // ToDo not working, something with transactions
+      authorizationStateService.deleteByState(state);
     }
 
     filterChain.doFilter(request, response);
