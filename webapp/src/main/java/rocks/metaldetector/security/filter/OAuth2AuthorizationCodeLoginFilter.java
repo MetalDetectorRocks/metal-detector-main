@@ -34,7 +34,6 @@ public class OAuth2AuthorizationCodeLoginFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     String state = request.getParameter("state");
-    log.info(state == null ? "state is null" : "state: " + state);
     if (state != null && !state.isBlank()) {
       try {
         AbstractUserEntity user = authorizationStateService.findUserByState(state);
