@@ -11,7 +11,6 @@ import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.exceptions.UnauthorizedException;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.SecurityProperties;
-import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.time.Duration;
 
@@ -48,8 +47,7 @@ public class RefreshTokenService {
       throw new UnauthorizedException();
     }
 
-    RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.getByToken(refreshToken)
-        .orElseThrow(() -> new ResourceNotFoundException("Refresh token not found"));
+    RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.getByToken(refreshToken);
     String accessToken = createAccessToken(refreshTokenEntity.getUser().getPublicId());
     String newRefreshToken = createRefreshToken(refreshTokenEntity.getId().toString());
     refreshTokenEntity.setToken(newRefreshToken);

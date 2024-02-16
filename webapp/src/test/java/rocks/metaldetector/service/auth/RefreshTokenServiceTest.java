@@ -23,7 +23,6 @@ import rocks.metaldetector.support.SecurityProperties;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -156,7 +155,7 @@ class RefreshTokenServiceTest implements WithAssertions {
     @BeforeEach
     void beforeEach() {
       lenient().doReturn(1L).when(refreshToken).getId();
-      lenient().doReturn(Optional.of(refreshToken)).when(refreshTokenRepository).getByToken(any());
+      lenient().doReturn(refreshToken).when(refreshTokenRepository).getByToken(any());
       lenient().doReturn(userMock).when(refreshToken).getUser();
     }
 

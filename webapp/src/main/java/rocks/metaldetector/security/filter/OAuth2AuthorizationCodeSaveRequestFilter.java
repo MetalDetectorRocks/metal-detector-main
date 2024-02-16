@@ -16,7 +16,6 @@ import rocks.metaldetector.persistence.domain.user.RefreshTokenEntity;
 import rocks.metaldetector.persistence.domain.user.RefreshTokenRepository;
 import rocks.metaldetector.service.auth.RefreshTokenService;
 import rocks.metaldetector.service.exceptions.UnauthorizedException;
-import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.support.oauth.OAuth2AuthorizationCodeStateGenerator;
 
 import java.io.IOException;
@@ -50,8 +49,7 @@ public class OAuth2AuthorizationCodeSaveRequestFilter extends OncePerRequestFilt
           .map(Cookie::getValue)
           .orElseThrow(() -> new IllegalStateException("Cookie '" + REFRESH_TOKEN_COOKIE_NAME + "' not found"));
       if (refreshTokenService.isValid(token)) {
-        RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.getByToken(token)
-            .orElseThrow(() -> new ResourceNotFoundException("Refresh token not found"));
+        RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.getByToken(token);
         AbstractUserEntity user = refreshTokenEntity.getUser();
 
         OAuthAuthorizationStateEntity authorizationStateEntity = OAuthAuthorizationStateEntity.builder()
