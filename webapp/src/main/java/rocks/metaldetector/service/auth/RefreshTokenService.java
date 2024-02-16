@@ -11,6 +11,7 @@ import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.exceptions.UnauthorizedException;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.SecurityProperties;
+import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
 import java.time.Duration;
 
@@ -41,13 +42,14 @@ public class RefreshTokenService {
     return createCookie(refreshToken);
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   public RefreshTokenData refreshTokens(String refreshToken) {
-    if (!refreshTokenRepository.existsByToken(refreshToken) || !jwtsSupport.validateJwtToken(refreshToken)) {
+    if (!isValid(refreshToken)) {
       throw new UnauthorizedException();
     }
 
-    RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.getByToken(refreshToken);
+    RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.getByToken(refreshToken)
+        .orElseThrow(() -> new ResourceNotFoundException("Refresh token not found"));
     String accessToken = createAccessToken(refreshTokenEntity.getUser().getPublicId());
     String newRefreshToken = createRefreshToken(refreshTokenEntity.getId().toString());
     refreshTokenEntity.setToken(newRefreshToken);
@@ -65,7 +67,7 @@ public class RefreshTokenService {
     refreshTokenRepository.deleteByToken(tokenValue);
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   public boolean isValid(String tokenValue) {
     return tokenValue != null && refreshTokenRepository.existsByToken(tokenValue) && jwtsSupport.validateJwtToken(tokenValue);
   }
