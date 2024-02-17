@@ -40,7 +40,7 @@ public class OAuth2AuthorizationCodeLoginFilter extends OncePerRequestFilter {
         AbstractUserEntity user = authorizationStateService.findUserByState(state);
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         authentication.setDetails(authenticationDetailsSource.buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authentication); // todo clear context later?
+        SecurityContextHolder.getContext().setAuthentication(authentication); // todo NilsD clear context later?
         authorizationStateService.deleteByState(state);
       }
       catch (Exception e) {
