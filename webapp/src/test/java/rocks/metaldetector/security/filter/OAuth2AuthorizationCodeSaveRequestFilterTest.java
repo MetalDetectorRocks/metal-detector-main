@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
 import static rocks.metaldetector.support.oauth.OAuth2ClientConfig.OAUTH_AUTHORIZATION_ENDPOINT;
 
@@ -108,7 +108,7 @@ class OAuth2AuthorizationCodeSaveRequestFilterTest implements WithAssertions {
     underTest.doFilterInternal(new MockHttpServletRequest(), response, new MockFilterChain());
 
     // then
-    assertThat(response.getStatus()).isEqualTo(UNAUTHORIZED.value());
+    assertThat(response.getStatus()).isEqualTo(FORBIDDEN.value());
   }
 
   @Test

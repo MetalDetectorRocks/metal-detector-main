@@ -35,14 +35,12 @@ public class OAuth2AuthorizationCodeLoginFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     String state = request.getParameter("state");
-    boolean securityContextChanged = false;
     if (state != null && !state.isBlank()) {
       try {
         AbstractUserEntity user = authorizationStateService.findUserByState(state);
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         authentication.setDetails(authenticationDetailsSource.buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        securityContextChanged = true;
+        SecurityContextHolder.getContext().setAuthentication(authentication); // todo clear context later?
         authorizationStateService.deleteByState(state);
       }
       catch (Exception e) {
@@ -50,13 +48,7 @@ public class OAuth2AuthorizationCodeLoginFilter extends OncePerRequestFilter {
         response.sendError(SC_FORBIDDEN);
       }
     }
-    try {
-      filterChain.doFilter(request, response);
-    }
-    finally {
-      if (securityContextChanged) {
-        SecurityContextHolder.clearContext();
-      }
-    }
+
+    filterChain.doFilter(request, response);
   }
 }
