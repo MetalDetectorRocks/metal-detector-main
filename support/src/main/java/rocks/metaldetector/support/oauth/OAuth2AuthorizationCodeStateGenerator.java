@@ -1,26 +1,32 @@
 package rocks.metaldetector.support.oauth;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.security.crypto.keygen.Base64StringKeyGenerator;
 import org.springframework.security.crypto.keygen.StringKeyGenerator;
 import org.springframework.stereotype.Component;
 
-import java.util.Base64;
-
+import static org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS;
 import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUEST;
 
 @Component
-@Scope(value = SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+@RequiredArgsConstructor
 public class OAuth2AuthorizationCodeStateGenerator {
 
-  private final StringKeyGenerator stringKeyGenerator = new Base64StringKeyGenerator(Base64.getUrlEncoder());
+  private final StringKeyGenerator stringKeyGenerator;
   private String state = null;
 
   public String generateState() {
-    if (state == null || state.isBlank()) {
+    if (this.state == null) {
       this.state = stringKeyGenerator.generateKey();
     }
     return this.state;
+  }
+
+  // For testing purposes only
+  void setState(String state) {
+    if (this.state == null) {
+      this.state = state;
+    }
   }
 }

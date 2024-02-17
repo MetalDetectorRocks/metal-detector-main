@@ -136,7 +136,7 @@ public class SecurityConfig {
                              AUTHENTICATION,
                              REFRESH_ACCESS_TOKEN,
                              CSRF,
-                             OAUTH_CALLBACK).permitAll()
+                             OAUTH_CALLBACK).permitAll() // todo NilsD callback should be secured
             .requestMatchers(FOLLOW_ARTIST + "/**",
                              UNFOLLOW_ARTIST + "/**",
                              DASHBOARD,

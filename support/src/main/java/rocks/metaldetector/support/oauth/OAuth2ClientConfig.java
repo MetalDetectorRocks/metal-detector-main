@@ -3,6 +3,8 @@ package rocks.metaldetector.support.oauth;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.security.crypto.keygen.Base64StringKeyGenerator;
+import org.springframework.security.crypto.keygen.StringKeyGenerator;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
@@ -14,6 +16,8 @@ import org.springframework.security.oauth2.client.web.DefaultOAuth2Authorization
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+
+import java.util.Base64;
 
 @Configuration
 public class OAuth2ClientConfig {
@@ -60,5 +64,10 @@ public class OAuth2ClientConfig {
         })
         .state(stateGenerator.generateState()));
     return resolver;
+  }
+
+  @Bean
+  public StringKeyGenerator stringKeyGenerator() {
+    return new Base64StringKeyGenerator(Base64.getUrlEncoder());
   }
 }

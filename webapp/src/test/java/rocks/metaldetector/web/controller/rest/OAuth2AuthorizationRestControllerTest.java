@@ -22,16 +22,19 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.springframework.http.HttpHeaders.LOCATION;
+import static org.springframework.http.HttpStatus.FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
 import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_BASE;
+import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_CALLBACK;
+import static rocks.metaldetector.web.controller.rest.OAuth2AuthorizationRestController.FRONTEND_REDIRECT_ENDPOINT;
 
 @ExtendWith(MockitoExtension.class)
 class OAuth2AuthorizationRestControllerTest implements WithAssertions {
 
   private static final AnonymousAuthenticationToken PRINCIPAL = new AnonymousAuthenticationToken("key", "anonymous", createAuthorityList("ROLE_ANONYMOUS"));
-  private static final String USER_ID = "userId";
 
   @Mock
   private OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
@@ -39,12 +42,11 @@ class OAuth2AuthorizationRestControllerTest implements WithAssertions {
   @Mock
   private OAuth2AuthenticationProvider authenticationProvider;
 
-  private RestAssuredMockMvcUtils restAssuredUtils;
+  OAuth2AuthorizationRestController underTest;
 
   @BeforeEach
   void setup() {
-    OAuth2AuthorizationRestController underTest = new OAuth2AuthorizationRestController(oAuth2AuthorizedClientService, authenticationProvider);
-    restAssuredUtils = new RestAssuredMockMvcUtils(OAUTH_BASE);
+    underTest = new OAuth2AuthorizationRestController(oAuth2AuthorizedClientService, authenticationProvider);
     RestAssuredMockMvc.standaloneSetup(underTest);
     doReturn(PRINCIPAL).when(authenticationProvider).provideForGrant(any());
   }
@@ -57,6 +59,13 @@ class OAuth2AuthorizationRestControllerTest implements WithAssertions {
   @Nested
   @DisplayName("Tests for check endpoint")
   class CheckEndpointTest {
+
+    private RestAssuredMockMvcUtils restAssuredUtils;
+
+    @BeforeEach
+    void setup() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(OAUTH_BASE);
+    }
 
     @Test
     @DisplayName("authorizedClientService is called with registrationId")
@@ -141,8 +150,51 @@ class OAuth2AuthorizationRestControllerTest implements WithAssertions {
   }
 
   @Nested
+  @DisplayName("Tests for callback endpoint")
+  class CallbackEndpointTest {
+
+    static final String FRONTEND_ORIGIN = "http://localhost:8080";
+
+    private RestAssuredMockMvcUtils restAssuredUtils;
+
+    @BeforeEach
+    void setup() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(OAUTH_CALLBACK);
+      underTest.setFrontendOrigin(FRONTEND_ORIGIN);
+    }
+
+    @Test
+    @DisplayName("302 is returned")
+    void test_302() {
+      // when
+      var result = restAssuredUtils.doGet();
+
+      // then
+      result.status(FOUND);
+    }
+
+    @Test
+    @DisplayName("location header is set")
+    void test_location_header() {
+      // when
+      var result = restAssuredUtils.doGet();
+
+      // then
+      var location = result.extract().header(LOCATION);
+      assertThat(location).isEqualTo(FRONTEND_ORIGIN + FRONTEND_REDIRECT_ENDPOINT);
+    }
+  }
+
+  @Nested
   @DisplayName("Tests for delete endpoint")
   class DeleteEndpointTest {
+
+    private RestAssuredMockMvcUtils restAssuredUtils;
+
+    @BeforeEach
+    void setup() {
+      restAssuredUtils = new RestAssuredMockMvcUtils(OAUTH_BASE);
+    }
 
     @Test
     @DisplayName("authorizedClientService is called with registrationId")

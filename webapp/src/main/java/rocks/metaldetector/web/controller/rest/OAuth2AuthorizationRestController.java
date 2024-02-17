@@ -1,6 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +23,15 @@ import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_CALLBACK;
 import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_REGISTRATION_ID;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class OAuth2AuthorizationRestController {
 
-  private static final String FRONTEND_REDIRECT_ENDPOINT = "/settings/spotify-synchronization";
+  public static final String FRONTEND_REDIRECT_ENDPOINT = "/settings/spotify-synchronization";
 
   private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
   private final OAuth2AuthenticationProvider authenticationProvider;
+  private String frontendOrigin;
 
   @GetMapping(path = OAUTH_REGISTRATION_ID, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<OAuth2UserAuthorizationExistsResponse> checkAuthorization(@PathVariable("registration-id") String registrationId) {
@@ -43,7 +44,7 @@ public class OAuth2AuthorizationRestController {
   }
 
   @GetMapping(path = OAUTH_CALLBACK)
-  public ResponseEntity<Void> handleCallback(@Value("${frontend.origin}") String frontendOrigin) {
+  public ResponseEntity<Void> handleCallback() {
     URI locationHeaderValue = URI.create(frontendOrigin).resolve(FRONTEND_REDIRECT_ENDPOINT);
     return ResponseEntity.status(FOUND).location(locationHeaderValue).build();
   }
@@ -53,5 +54,10 @@ public class OAuth2AuthorizationRestController {
     Authentication currentOAuthAuthentication = authenticationProvider.provideForGrant(AUTHORIZATION_CODE);
     oAuth2AuthorizedClientService.removeAuthorizedClient(registrationId, currentOAuthAuthentication.getName());
     return ResponseEntity.ok().build();
+  }
+
+  @Value("${frontend.origin}")
+  public void setFrontendOrigin(String frontendOrigin) {
+    this.frontendOrigin = frontendOrigin;
   }
 }
