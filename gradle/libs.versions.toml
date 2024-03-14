@@ -10,7 +10,7 @@ jsoup = "1.17.2"
 lokiLogbackAppender = "1.5.1"
 lombok = "1.18.30"
 mockitoInline = "5.2.0"
-postgres = "42.7.2"
+postgres = "42.7.3"
 restAssured = "5.4.0"
 slf4jTest = "3.0.1"
 
