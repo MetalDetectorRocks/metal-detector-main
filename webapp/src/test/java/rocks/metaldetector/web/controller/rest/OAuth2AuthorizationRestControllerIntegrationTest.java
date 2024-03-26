@@ -17,7 +17,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static rocks.metaldetector.support.Endpoints.Rest.OAUTH;
+import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_BASE;
+import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_CALLBACK;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,18 +35,26 @@ public class OAuth2AuthorizationRestControllerIntegrationTest extends BaseSpring
   class AdministratorRoleTest {
 
     @Test
-    @DisplayName("Administrator is allowed to GET on endpoint " + OAUTH + "'")
+    @DisplayName("Administrator is allowed to GET on endpoint " + OAUTH_BASE + "'")
     @WithMockUser(roles = {"ADMINISTRATOR"})
     void administrator_is_allowed_to_check_authorization() throws Exception {
-      mockMvc.perform(get(OAUTH + "/{id}", "foo"))
+      mockMvc.perform(get(OAUTH_BASE + "/{id}", "foo"))
           .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Administrator is allowed to DELETE on endpoint " + OAUTH + "'")
+    @DisplayName("Administrator is allowed to GET on endpoint " + OAUTH_CALLBACK + "'")
+    @WithMockUser(roles = {"ADMINISTRATOR"})
+    void administrator_is_allowed_to_callback() throws Exception {
+      mockMvc.perform(get(OAUTH_CALLBACK))
+          .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    @DisplayName("Administrator is allowed to DELETE on endpoint " + OAUTH_BASE + "'")
     @WithMockUser(roles = {"ADMINISTRATOR"})
     void administrator_is_allowed_to_delete_authorization() throws Exception {
-      mockMvc.perform(delete(OAUTH + "/{id}", "foo")
+      mockMvc.perform(delete(OAUTH_BASE + "/{id}", "foo")
               .with(csrf())
           )
           .andExpect(status().isOk());
@@ -56,18 +65,26 @@ public class OAuth2AuthorizationRestControllerIntegrationTest extends BaseSpring
   class UserRoleTest {
 
     @Test
-    @DisplayName("User is allowed to GET on endpoint " + OAUTH + "'")
+    @DisplayName("User is allowed to GET on endpoint " + OAUTH_BASE + "'")
     @WithMockUser
     void user_is_allowed_to_check_authorization() throws Exception {
-      mockMvc.perform(get(OAUTH + "/{id}", "foo"))
+      mockMvc.perform(get(OAUTH_BASE + "/{id}", "foo"))
           .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("User is allowed to DELETE on endpoint " + OAUTH + "'")
+    @DisplayName("User is allowed to GET on endpoint " + OAUTH_CALLBACK + "'")
+    @WithMockUser
+    void user_is_allowed_to_callback() throws Exception {
+      mockMvc.perform(get(OAUTH_CALLBACK))
+          .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    @DisplayName("User is allowed to DELETE on endpoint " + OAUTH_BASE + "'")
     @WithMockUser
     void user_is_allowed_to_delete_authorization() throws Exception {
-      mockMvc.perform(delete(OAUTH + "/{id}", "foo")
+      mockMvc.perform(delete(OAUTH_BASE + "/{id}", "foo")
               .with(csrf())
           )
           .andExpect(status().isOk());
@@ -78,18 +95,26 @@ public class OAuth2AuthorizationRestControllerIntegrationTest extends BaseSpring
   class AnonymousUserTest {
 
     @Test
-    @DisplayName("Anonymous user is not allowed to GET on endpoint " + OAUTH + "'")
+    @DisplayName("Anonymous user is not allowed to GET on endpoint " + OAUTH_BASE + "'")
     @WithAnonymousUser
     void anonymous_user_is_not_allowed_to_check_authorization() throws Exception {
-      mockMvc.perform(get(OAUTH + "/{id}", "foo"))
+      mockMvc.perform(get(OAUTH_BASE + "/{id}", "foo"))
           .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("Anonymous user is not allowed to DELETE on endpoint " + OAUTH + "'")
+    @DisplayName("Anonymous user is allowed to GET on endpoint " + OAUTH_CALLBACK + "'")
+    @WithAnonymousUser
+    void anonymous_user_is_allowed_to_callback() throws Exception {
+      mockMvc.perform(get(OAUTH_CALLBACK))
+          .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    @DisplayName("Anonymous user is not allowed to DELETE on endpoint " + OAUTH_BASE + "'")
     @WithAnonymousUser
     void anonymous_user_is_not_allowed_to_delete_authorization() throws Exception {
-      mockMvc.perform(delete(OAUTH + "/{id}", "foo")
+      mockMvc.perform(delete(OAUTH_BASE + "/{id}", "foo")
               .with(csrf())
           )
           .andExpect(status().isUnauthorized());

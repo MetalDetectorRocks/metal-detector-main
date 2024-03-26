@@ -83,7 +83,7 @@ spring:
             client-id: ${SPOTIFY_CLIENT_ID}
             client-secret: ${SPOTIFY_CLIENT_SECRET}
             authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/settings/spotify-synchronization"
+            redirect-uri: "{baseUrl}/rest/v1/oauth/callback"
             scope: user-library-read, user-follow-read
             provider: spotify-user
           metal-release-butler-user:

@@ -15,6 +15,8 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationCodeGrantFilter;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -27,6 +29,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import rocks.metaldetector.security.filter.CustomAuthorizationFilter;
 import rocks.metaldetector.security.filter.CustomUsernamePasswordAuthenticationFilter;
+import rocks.metaldetector.security.filter.OAuth2AuthorizationCodeLoginFilter;
+import rocks.metaldetector.security.filter.OAuth2AuthorizationCodeSaveRequestFilter;
 import rocks.metaldetector.security.filter.XSSFilter;
 import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
 import rocks.metaldetector.security.handler.CustomLogoutHandler;
@@ -61,7 +65,8 @@ import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_ANNOUNC
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_FREQUENCY;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE_DATE;
 import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
-import static rocks.metaldetector.support.Endpoints.Rest.OAUTH;
+import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_CALLBACK;
+import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_REGISTRATION_ID;
 import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
 import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
@@ -100,14 +105,17 @@ public class SecurityConfig {
   private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
   private final CustomLogoutHandler customLogoutHandler;
   private final ObjectMapper objectMapper;
+  private final OAuth2AuthorizationCodeSaveRequestFilter authorizationCodeSaveRequestFilter;
+  private final OAuth2AuthorizationCodeLoginFilter authorizationCodeLoginFilter;
 
   @Value("${telegram.bot-id}")
   private String botId;
 
   @Bean
-  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
     http
         .csrf((customizer) -> customizer.ignoringRequestMatchers(REST_ENDPOINTS)) // TODO DanielW: enable csrf
+        .cors((customizer) -> customizer.configurationSource(corsConfigurationSource))
         .sessionManagement((customizer) -> customizer.sessionCreationPolicy(STATELESS))
         .authorizeHttpRequests((customizer) -> customizer
             .requestMatchers(RESOURCES).permitAll()
@@ -127,7 +135,8 @@ public class SecurityConfig {
                              TOP_ARTISTS,
                              AUTHENTICATION,
                              REFRESH_ACCESS_TOKEN,
-                             CSRF).permitAll()
+                             CSRF,
+                             OAUTH_CALLBACK).permitAll()
             .requestMatchers(FOLLOW_ARTIST + "/**",
                              UNFOLLOW_ARTIST + "/**",
                              DASHBOARD,
@@ -135,7 +144,7 @@ public class SecurityConfig {
                              SPOTIFY_SAVED_ARTISTS,
                              SPOTIFY_ARTIST_SYNCHRONIZATION,
                              NOTIFICATION_CONFIG,
-                             OAUTH + "/{registration-id}",
+                             OAUTH_REGISTRATION_ID,
                              TELEGRAM_CONFIG,
                              "/rest/v1/logging/**",
                              CURRENT_USER + "/**").authenticated()
@@ -180,7 +189,9 @@ public class SecurityConfig {
                                configurer.defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(UNAUTHORIZED),
                                                                              new AntPathRequestMatcher(REST_ENDPOINTS)))
         .addFilter(customUsernamePasswordAuthFilter())
-        .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(authorizationCodeSaveRequestFilter, OAuth2AuthorizationRequestRedirectFilter.class)
+        .addFilterBefore(authorizationCodeLoginFilter, OAuth2AuthorizationCodeGrantFilter.class);
     return http.build();
   }
 
@@ -203,11 +214,10 @@ public class SecurityConfig {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(Stream.of(
         frontendOrigin,
-        "http://localhost:3000",
         "http://localhost:1080"
     ).distinct().toList());
-    configuration.setAllowedMethods(List.of("*"));
-    configuration.setAllowedHeaders(List.of("*"));
+    configuration.setAllowedMethods(List.of("GET", "HEAD", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"));
+    configuration.setAllowedHeaders(List.of("cache-control", "pragma", "authorization", "content-type"));
     configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration(REST_ENDPOINTS, configuration);

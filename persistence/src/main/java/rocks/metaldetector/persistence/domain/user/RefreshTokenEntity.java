@@ -17,7 +17,7 @@ public class RefreshTokenEntity extends BaseEntity {
   @OneToOne(targetEntity = UserEntity.class)
   @JoinColumn(nullable = false, name = "users_id")
   @Getter
-  private UserEntity user;
+  private AbstractUserEntity user;
 
   @Column(name = "token", unique = true)
   private String token;
