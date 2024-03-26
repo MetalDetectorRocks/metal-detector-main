@@ -7,10 +7,10 @@ ehcache = "3.10.8"
 esapi = "2.5.3.1"
 jsonwebtoken = "0.12.5"
 jsoup = "1.17.2"
-lokiLogbackAppender = "1.4.2"
-lombok = "1.18.30"
+lokiLogbackAppender = "1.5.1"
+lombok = "1.18.32"
 mockitoInline = "5.2.0"
-postgres = "42.7.2"
+postgres = "42.7.3"
 restAssured = "5.4.0"
 slf4jTest = "3.0.1"
 
@@ -60,5 +60,5 @@ springBootStarterApp = ["springBootStarterActuator", "springBootStarterMail", "s
 
 [plugins]
 dockerPublish = { id = "de.europace.docker-publish", version = "2.0.5" }
-springBoot = { id = "org.springframework.boot", version = "3.2.3" }
+springBoot = { id = "org.springframework.boot", version = "3.2.4" }
 springDependencyManagement = { id = "io.spring.dependency-management", version = "1.1.4" }
