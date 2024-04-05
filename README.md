@@ -132,3 +132,9 @@ via your IDE
 Click the button below to import a Postman collection holding some of the most important requests. Please follow this tutorial to import a [Postman collection](https://www.getpostman.com/docs/collections).
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/run-collection/237a57215d5d6f0f9fb6)
+
+-----------------------------
+
+Supported by [JetBrains](https://jb.gg/OpenSourceSupport)
+
+<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/IntelliJ_IDEA.svg" height="35" alt="Logo of Jetbrains IntelliJ IDEA IDE">
