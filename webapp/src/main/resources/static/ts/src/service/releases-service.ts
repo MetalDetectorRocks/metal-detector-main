@@ -205,8 +205,8 @@ export class ReleasesService {
         const dateTo = this.timeNextMonthRb.checked
             ? this.dateService.inAMonth()
             : this.timeLastMonthRb.checked
-            ? this.dateService.today()
-            : "";
+              ? this.dateService.today()
+              : "";
 
         const urlSearchParams = new URLSearchParams();
         urlSearchParams.set("page", "1");
