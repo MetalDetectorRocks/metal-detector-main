@@ -1,5 +1,5 @@
 import * as qs from "qs";
-import {AxiosRequestConfig} from "axios";
+import { AxiosRequestConfig } from "axios";
 
 export const axiosConfig: AxiosRequestConfig = {
     withCredentials: false,
