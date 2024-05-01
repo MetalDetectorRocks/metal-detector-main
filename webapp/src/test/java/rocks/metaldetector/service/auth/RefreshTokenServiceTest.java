@@ -30,8 +30,8 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;
-import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
 import static rocks.metaldetector.service.auth.RefreshTokenService.OFFSET_IN_MINUTES;
+import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
 
 @ExtendWith(MockitoExtension.class)
 class RefreshTokenServiceTest implements WithAssertions {

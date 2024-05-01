@@ -1,10 +1,10 @@
 package rocks.metaldetector.service.auth;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rocks.metaldetector.persistence.domain.user.RefreshTokenEntity;
 import rocks.metaldetector.persistence.domain.user.RefreshTokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
@@ -41,9 +41,9 @@ public class RefreshTokenService {
     return createCookie(refreshToken);
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   public RefreshTokenData refreshTokens(String refreshToken) {
-    if (!refreshTokenRepository.existsByToken(refreshToken) || !jwtsSupport.validateJwtToken(refreshToken)) {
+    if (!isValid(refreshToken)) {
       throw new UnauthorizedException();
     }
 
@@ -65,7 +65,7 @@ public class RefreshTokenService {
     refreshTokenRepository.deleteByToken(tokenValue);
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   public boolean isValid(String tokenValue) {
     return tokenValue != null && refreshTokenRepository.existsByToken(tokenValue) && jwtsSupport.validateJwtToken(tokenValue);
   }
