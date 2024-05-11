@@ -6,12 +6,20 @@ updates:
       interval: "daily"
     open-pull-requests-limit: 10
     target-branch: "master"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 10
     target-branch: "preview"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -27,3 +35,7 @@ updates:
     schedule:
       interval: "daily"
     open-pull-requests-limit: 10
+    groups:
+      dependencies:
+        patterns:
+          - "*"
