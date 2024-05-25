@@ -22,6 +22,7 @@ commonsText = { module = "org.apache.commons:commons-text", version.ref = "commo
 ehcache = { module = "org.ehcache:ehcache", version.ref = "ehcache" }
 esapi = { module = "org.owasp.esapi:esapi", version.ref = "esapi" }
 flyway = { module = "org.flywaydb:flyway-core" }
+flywayPostgres = { module = "org.flywaydb:flyway-database-postgresql" }
 h2 = { module = "com.h2database:h2" }
 httpClient = { module = "org.apache.httpcomponents.client5:httpclient5" }
 jacksonDatatypeJsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
@@ -54,11 +55,12 @@ springSecurityOAuth2Client = { module = "org.springframework.security:spring-sec
 springSecurityTest = { module = "org.springframework.security:spring-security-test" }
 
 [bundles]
+flyway = ["flyway", "flywayPostgres"]
 jjwt = ["jjwtImpl", "jjwtJackson"]
 restAssured = ["restAssured", "restAssuredJsonPath", "restAssuredXmlPath", "restAssuredSpringMockMvc"]
 springBootStarterApp = ["springBootStarterActuator", "springBootStarterMail", "springBootStarterValidation", "springBootStarterWeb", "springBootStarterThymeleaf", "springBootStarterOAuth2Client"]
 
 [plugins]
 dockerPublish = { id = "de.europace.docker-publish", version = "2.0.6" }
-springBoot = { id = "org.springframework.boot", version = "3.2.5" }
+springBoot = { id = "org.springframework.boot", version = "3.3.0" }
 springDependencyManagement = { id = "io.spring.dependency-management", version = "1.1.5" }

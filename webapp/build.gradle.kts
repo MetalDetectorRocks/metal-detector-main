@@ -52,7 +52,7 @@ dependencies {
   developmentOnly(libs.springBootDevTools)
 
   runtimeOnly(libs.lokiLogbackAppender)
-  runtimeOnly(libs.flyway)
+  runtimeOnly(libs.bundles.flyway)
   runtimeOnly(libs.micrometerRegistryPrometheus)
   runtimeOnly(libs.cacheApi)
 
