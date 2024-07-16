@@ -1,6 +1,6 @@
 [versions]
 cacheApi = "1.1.1"
-commonsCodec = "1.17.0"
+commonsCodec = "1.17.1"
 commonsLang3 = "3.14.0"
 commonsText = "1.12.0"
 ehcache = "3.10.8"
@@ -61,6 +61,6 @@ restAssured = ["restAssured", "restAssuredJsonPath", "restAssuredXmlPath", "rest
 springBootStarterApp = ["springBootStarterActuator", "springBootStarterMail", "springBootStarterValidation", "springBootStarterWeb", "springBootStarterThymeleaf", "springBootStarterOAuth2Client"]
 
 [plugins]
-dockerPublish = { id = "de.europace.docker-publish", version = "2.0.9" }
+dockerPublish = { id = "de.europace.docker-publish", version = "2.0.10" }
 springBoot = { id = "org.springframework.boot", version = "3.3.1" }
 springDependencyManagement = { id = "io.spring.dependency-management", version = "1.1.6" }
