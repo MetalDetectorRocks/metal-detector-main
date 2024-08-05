@@ -74,16 +74,20 @@ export class ReleasesRenderService extends AbstractRenderService<ReleasesRespons
                 : release.estimatedReleaseDate;
 
         const sortPropertySelector = document.getElementById("sort-property-selector") as HTMLSelectElement;
-        sortPropertySelector.value === ReleasesService.SORT_BY_ANNOUNCEMENT_DATE_OPTION_VALUE
-            ? (announcementDateElement.textContent = this.dateService.format(release.announcementDate, DateFormat.LONG))
-            : releaseDivElement.querySelector("#announcement-date-wrapper")?.remove();
+        if (sortPropertySelector.value === ReleasesService.SORT_BY_ANNOUNCEMENT_DATE_OPTION_VALUE) {
+            announcementDateElement.textContent = this.dateService.format(release.announcementDate, DateFormat.LONG);
+        } else {
+            releaseDivElement.querySelector("#announcement-date-wrapper")?.remove();
+        }
 
         releaseTypeElement.textContent = release.type || "n/a";
         releaseGenreElement.textContent = release.genre || "n/a";
 
-        release.reissue
-            ? (reissueElement.textContent = "possibly a re-release")
-            : releaseTemplateNode.getElementById("reissue-text")?.remove();
+        if (release.reissue) {
+            reissueElement.textContent = "possibly a re-release";
+        } else {
+            releaseTemplateNode.getElementById("reissue-text")?.remove();
+        }
 
         return releaseDivElement;
     }
