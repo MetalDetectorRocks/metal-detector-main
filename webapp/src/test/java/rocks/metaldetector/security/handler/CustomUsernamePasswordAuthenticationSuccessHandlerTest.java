@@ -25,22 +25,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.Duration;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
 
 @ExtendWith(MockitoExtension.class)
-class CustomAuthenticationSuccessHandlerTest implements WithAssertions {
+class CustomUsernamePasswordAuthenticationSuccessHandlerTest implements WithAssertions {
 
   @InjectMocks
-  private CustomAuthenticationSuccessHandler underTest;
+  private CustomUsernamePasswordAuthenticationSuccessHandler underTest;
 
   @Mock
   private ObjectMapper objectMapper;

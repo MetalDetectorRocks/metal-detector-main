@@ -25,8 +25,8 @@ import static org.springframework.security.oauth2.core.AuthorizationGrantType.CL
 @AllArgsConstructor
 public class SpotifyModuleConfig {
 
-  private static final String REGISTRATION_ID_APP = "spotify-app";
-  private static final String REGISTRATION_ID_USER = "spotify-user";
+  private static final String SPOTIFY_REGISTRATION_ID_APP = "spotify-app";
+  public static final String SPOTIFY_REGISTRATION_ID_USER = "spotify-user";
 
   private final MappingJackson2HttpMessageConverter jackson2HttpMessageConverter;
   private final StringHttpMessageConverter stringHttpMessageConverter;
@@ -35,7 +35,7 @@ public class SpotifyModuleConfig {
 
   @Bean
   public RestOperations spotifyOAuthClientCredentialsRestTemplate(RestTemplateBuilder restTemplateBuilder, OAuth2AccessTokenClient accessTokenClient) {
-    accessTokenClient.setRegistrationId(REGISTRATION_ID_APP);
+    accessTokenClient.setRegistrationId(SPOTIFY_REGISTRATION_ID_APP);
     accessTokenClient.setAuthorizationGrantType(CLIENT_CREDENTIALS);
     RestTemplate restTemplate = restTemplate(restTemplateBuilder);
     restTemplate.getInterceptors().add(new OAuth2ClientInterceptor(accessTokenClient));
@@ -44,7 +44,7 @@ public class SpotifyModuleConfig {
 
   @Bean
   public RestOperations spotifyOAuthAuthorizationCodeRestTemplate(RestTemplateBuilder restTemplateBuilder, OAuth2AccessTokenClient accessTokenClient) {
-    accessTokenClient.setRegistrationId(REGISTRATION_ID_USER);
+    accessTokenClient.setRegistrationId(SPOTIFY_REGISTRATION_ID_USER);
     accessTokenClient.setAuthorizationGrantType(AUTHORIZATION_CODE);
     RestTemplate restTemplate = restTemplate(restTemplateBuilder);
     restTemplate.getInterceptors().add(new OAuth2ClientInterceptor(accessTokenClient));

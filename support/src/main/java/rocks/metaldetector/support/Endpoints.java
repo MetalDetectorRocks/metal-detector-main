@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 public class Endpoints {
 
   public static class Authentication {
-    public static final String       LOGIN                     = "/login";
+    public static final String       SIGN_IN                   = "/sign-in";
     public static final String       RESET_PASSWORD            = "/reset-password";
   }
 

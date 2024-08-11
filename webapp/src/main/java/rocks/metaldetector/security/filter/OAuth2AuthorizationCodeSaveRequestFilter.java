@@ -9,11 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
-import rocks.metaldetector.persistence.domain.user.OAuthAuthorizationStateEntity;
-import rocks.metaldetector.persistence.domain.user.OAuthAuthorizationStateRepository;
-import rocks.metaldetector.persistence.domain.user.RefreshTokenEntity;
-import rocks.metaldetector.persistence.domain.user.RefreshTokenRepository;
+import rocks.metaldetector.persistence.domain.user.*;
 import rocks.metaldetector.service.auth.RefreshTokenService;
 import rocks.metaldetector.service.exceptions.UnauthorizedException;
 import rocks.metaldetector.support.oauth.OAuth2AuthorizationCodeStateGenerator;
@@ -23,6 +19,7 @@ import java.util.Arrays;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
+import static rocks.metaldetector.spotify.config.SpotifyModuleConfig.SPOTIFY_REGISTRATION_ID_USER;
 import static rocks.metaldetector.support.oauth.OAuth2ClientConfig.OAUTH_AUTHORIZATION_ENDPOINT;
 
 @Component
@@ -37,7 +34,7 @@ public class OAuth2AuthorizationCodeSaveRequestFilter extends OncePerRequestFilt
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
-    return !request.getRequestURI().startsWith(OAUTH_AUTHORIZATION_ENDPOINT);
+    return !request.getRequestURI().startsWith(OAUTH_AUTHORIZATION_ENDPOINT + SPOTIFY_REGISTRATION_ID_USER);
   }
 
   @Override

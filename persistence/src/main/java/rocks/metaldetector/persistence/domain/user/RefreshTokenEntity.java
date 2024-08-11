@@ -14,7 +14,7 @@ import rocks.metaldetector.persistence.domain.BaseEntity;
 @Setter
 public class RefreshTokenEntity extends BaseEntity {
 
-  @OneToOne(targetEntity = UserEntity.class)
+  @OneToOne(targetEntity = AbstractUserEntity.class)
   @JoinColumn(nullable = false, name = "users_id")
   @Getter
   private AbstractUserEntity user;

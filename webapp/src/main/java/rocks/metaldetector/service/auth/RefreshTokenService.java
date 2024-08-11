@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.RefreshTokenEntity;
 import rocks.metaldetector.persistence.domain.user.RefreshTokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
@@ -30,13 +31,13 @@ public class RefreshTokenService {
   private String domain;
 
   @Transactional
-  public ResponseCookie createRefreshTokenCookie(String username) {
+  public ResponseCookie createRefreshTokenCookie(AbstractUserEntity user) {
     RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity();
     refreshTokenEntity = refreshTokenRepository.save(refreshTokenEntity);
 
     String refreshToken = createRefreshToken(refreshTokenEntity.getId().toString());
     refreshTokenEntity.setToken(refreshToken);
-    refreshTokenEntity.setUser(userRepository.getByUsername(username));
+    refreshTokenEntity.setUser(userRepository.findByPublicId(user.getPublicId()).orElseThrow());
 
     return createCookie(refreshToken);
   }

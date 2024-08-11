@@ -9,7 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
-import rocks.metaldetector.persistence.domain.user.UserRole;
 import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.auth.RefreshTokenService;
 import rocks.metaldetector.support.JwtsSupport;
@@ -18,14 +17,13 @@ import rocks.metaldetector.web.api.auth.LoginResponse;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
 @RequiredArgsConstructor
-public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class CustomUsernamePasswordAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
   private final ObjectMapper objectMapper;
   private final AuthenticationFacade authenticationFacade;
@@ -46,7 +44,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         .roles(user.getUserRoleNames())
         .build();
 
-    ResponseCookie cookie = refreshTokenService.createRefreshTokenCookie(user.getUsername());
+    ResponseCookie cookie = refreshTokenService.createRefreshTokenCookie(user);
     response.setHeader(SET_COOKIE, cookie.toString());
     response.setContentType(APPLICATION_JSON_VALUE);
     objectMapper.writeValue(response.getOutputStream(), loginResponse);

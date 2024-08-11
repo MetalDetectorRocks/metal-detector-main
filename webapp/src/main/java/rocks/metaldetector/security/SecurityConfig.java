@@ -27,13 +27,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import rocks.metaldetector.security.filter.CustomAuthorizationFilter;
-import rocks.metaldetector.security.filter.CustomUsernamePasswordAuthenticationFilter;
-import rocks.metaldetector.security.filter.OAuth2AuthorizationCodeLoginFilter;
-import rocks.metaldetector.security.filter.OAuth2AuthorizationCodeSaveRequestFilter;
-import rocks.metaldetector.security.filter.XSSFilter;
-import rocks.metaldetector.security.handler.CustomAuthenticationSuccessHandler;
+import rocks.metaldetector.security.filter.*;
 import rocks.metaldetector.security.handler.CustomLogoutHandler;
+import rocks.metaldetector.security.handler.CustomOAuth2AuthenticationSuccessHandler;
+import rocks.metaldetector.security.handler.CustomUsernamePasswordAuthenticationSuccessHandler;
 import rocks.metaldetector.support.Endpoints;
 
 import java.util.List;
@@ -43,47 +40,10 @@ import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
+import static rocks.metaldetector.security.CustomCookieAuthorizationRequestRepository.SESSION_STATE_COOKIE_NAME;
 import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
-import static rocks.metaldetector.support.Endpoints.AntPattern.ACTUATOR_ENDPOINTS;
-import static rocks.metaldetector.support.Endpoints.AntPattern.ADMIN;
-import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
-import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
-import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
-import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
-import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
-import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
-import static rocks.metaldetector.support.Endpoints.Rest.COVER_JOB;
-import static rocks.metaldetector.support.Endpoints.Rest.CSRF;
-import static rocks.metaldetector.support.Endpoints.Rest.CURRENT_USER;
-import static rocks.metaldetector.support.Endpoints.Rest.DASHBOARD;
-import static rocks.metaldetector.support.Endpoints.Rest.FOLLOW_ARTIST;
-import static rocks.metaldetector.support.Endpoints.Rest.IMPORT_JOB;
-import static rocks.metaldetector.support.Endpoints.Rest.LOGOUT;
-import static rocks.metaldetector.support.Endpoints.Rest.MY_ARTISTS;
-import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_CONFIG;
-import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_ANNOUNCEMENT_DATE;
-import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_FREQUENCY;
-import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_ON_RELEASE_DATE;
-import static rocks.metaldetector.support.Endpoints.Rest.NOTIFICATION_TELEGRAM;
-import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_CALLBACK;
-import static rocks.metaldetector.support.Endpoints.Rest.OAUTH_REGISTRATION_ID;
-import static rocks.metaldetector.support.Endpoints.Rest.REFRESH_ACCESS_TOKEN;
-import static rocks.metaldetector.support.Endpoints.Rest.REGISTER;
-import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_CLEANUP;
-import static rocks.metaldetector.support.Endpoints.Rest.REGISTRATION_VERIFICATION;
-import static rocks.metaldetector.support.Endpoints.Rest.RELEASES;
-import static rocks.metaldetector.support.Endpoints.Rest.REQUEST_PASSWORD_RESET;
-import static rocks.metaldetector.support.Endpoints.Rest.RESET_PASSWORD;
-import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
-import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION;
-import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_SAVED_ARTISTS;
-import static rocks.metaldetector.support.Endpoints.Rest.STATISTICS;
-import static rocks.metaldetector.support.Endpoints.Rest.TELEGRAM_CONFIG;
-import static rocks.metaldetector.support.Endpoints.Rest.TOP_ARTISTS;
-import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
-import static rocks.metaldetector.support.Endpoints.Rest.UNFOLLOW_ARTIST;
-import static rocks.metaldetector.support.Endpoints.Rest.UPDATE_RELEASE;
-import static rocks.metaldetector.support.Endpoints.Rest.USERS;
+import static rocks.metaldetector.support.Endpoints.AntPattern.*;
+import static rocks.metaldetector.support.Endpoints.Rest.*;
 
 @Configuration
 @EnableWebSecurity
@@ -102,22 +62,27 @@ public class SecurityConfig {
   private final OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver;
   private final CustomAuthorizationFilter authenticationFilter;
   private final AuthenticationConfiguration authenticationConfiguration;
-  private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+  private final CustomUsernamePasswordAuthenticationSuccessHandler usernamePasswordAuthenticationSuccessHandler;
+  private final CustomOAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
   private final CustomLogoutHandler customLogoutHandler;
   private final ObjectMapper objectMapper;
   private final OAuth2AuthorizationCodeSaveRequestFilter authorizationCodeSaveRequestFilter;
   private final OAuth2AuthorizationCodeLoginFilter authorizationCodeLoginFilter;
+  private final CustomCookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
 
   @Value("${telegram.bot-id}")
   private String botId;
 
+  @Value("${frontend.origin}")
+  private String frontendOrigin;
+
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
     http
-        .csrf((customizer) -> customizer.ignoringRequestMatchers(REST_ENDPOINTS)) // TODO DanielW: enable csrf
-        .cors((customizer) -> customizer.configurationSource(corsConfigurationSource))
-        .sessionManagement((customizer) -> customizer.sessionCreationPolicy(STATELESS))
-        .authorizeHttpRequests((customizer) -> customizer
+        .csrf(customizer -> customizer.ignoringRequestMatchers(REST_ENDPOINTS)) // TODO DanielW: enable csrf
+        .cors(customizer -> customizer.configurationSource(corsConfigurationSource))
+        .sessionManagement(customizer -> customizer.sessionCreationPolicy(STATELESS))
+        .authorizeHttpRequests(customizer -> customizer
             .requestMatchers(RESOURCES).permitAll()
             .requestMatchers(GUEST_ONLY_PAGES).permitAll()
             .requestMatchers(PUBLIC_PAGES).permitAll()
@@ -160,12 +125,15 @@ public class SecurityConfig {
                              NOTIFICATION_ON_ANNOUNCEMENT_DATE,
                              STATISTICS).hasRole(ROLE_ADMINISTRATOR.getName())
             .anyRequest().denyAll())
-        .oauth2Login((oAuth2LoginConfigurer) -> oAuth2LoginConfigurer
-            .loginPage(Endpoints.Authentication.LOGIN)
-            .userInfoEndpoint((customizer) -> customizer.oidcUserService(customOidcUserService))
-            .authorizationEndpoint((customizer) -> customizer.authorizationRequestResolver(oAuth2AuthorizationRequestResolver))
+        .oauth2Login(oAuth2LoginConfigurer -> oAuth2LoginConfigurer
+            .loginPage(frontendOrigin + Endpoints.Authentication.SIGN_IN)
+            .successHandler(oAuth2AuthenticationSuccessHandler)
+            .userInfoEndpoint(customizer -> customizer.oidcUserService(customOidcUserService))
+            .authorizationEndpoint(customizer -> customizer
+                .authorizationRequestResolver(oAuth2AuthorizationRequestResolver)
+                .authorizationRequestRepository(cookieAuthorizationRequestRepository))
         )
-        .oauth2Client((customizer) -> customizer
+        .oauth2Client(customizer -> customizer
             .authorizedClientService(oAuth2AuthorizedClientService)
             .authorizedClientRepository(oAuth2AuthorizedClientRepository)
         )
@@ -175,10 +143,9 @@ public class SecurityConfig {
             .logoutSuccessHandler((request, response, authentication) -> response.setStatus(SC_OK))
             .invalidateHttpSession(true)
             .clearAuthentication(true)
-            .deleteCookies("JSESSIONID", REFRESH_TOKEN_COOKIE_NAME))
-        .cors((it) -> {
-        })
-        .headers((customizer) ->
+            .deleteCookies("JSESSIONID", REFRESH_TOKEN_COOKIE_NAME, SESSION_STATE_COOKIE_NAME))
+        .cors((it) -> {})
+        .headers(customizer ->
                      // These headers are set in the proxy, so disabled here
                      customizer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
                          .xssProtection(HeadersConfigurer.XXssConfig::disable)
@@ -204,13 +171,12 @@ public class SecurityConfig {
   public UsernamePasswordAuthenticationFilter customUsernamePasswordAuthFilter() throws Exception {
     var authenticationFilter = new CustomUsernamePasswordAuthenticationFilter(authenticationConfiguration, objectMapper);
     authenticationFilter.setFilterProcessesUrl(Endpoints.Rest.LOGIN);
-    authenticationFilter.setAuthenticationSuccessHandler(customAuthenticationSuccessHandler);
-
+    authenticationFilter.setAuthenticationSuccessHandler(usernamePasswordAuthenticationSuccessHandler);
     return authenticationFilter;
   }
 
   @Bean
-  public CorsConfigurationSource corsConfigurationSource(@Value("${frontend.origin}") String frontendOrigin) {
+  public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(Stream.of(
         frontendOrigin,
