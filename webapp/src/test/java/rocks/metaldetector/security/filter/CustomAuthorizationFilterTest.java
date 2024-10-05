@@ -31,13 +31,9 @@ import java.util.Optional;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static rocks.metaldetector.support.oauth.OAuth2ClientConfig.OAUTH_AUTHORIZATION_ENDPOINT;
 
 @ExtendWith(MockitoExtension.class)
 class CustomAuthorizationFilterTest implements WithAssertions {
@@ -183,5 +179,33 @@ class CustomAuthorizationFilterTest implements WithAssertions {
 
     // then
     verify(response).sendError(SC_FORBIDDEN);
+  }
+
+  @Test
+  @DisplayName("shouldNotFilter: should return true for oauth authorization endpoint")
+  void should_not_filter_oauth_authorization_endpoint() {
+    // given
+    var request = new MockHttpServletRequest();
+    request.setRequestURI(OAUTH_AUTHORIZATION_ENDPOINT);
+
+    // when
+    boolean result = underTest.shouldNotFilter(request);
+
+    // then
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  @DisplayName("shouldNotFilter: should return false for oauth authorization endpoint")
+  void should_filter_other_endpoints() {
+    // given
+    var request = new MockHttpServletRequest();
+    request.setRequestURI("/any_other_endpoint");
+
+    // when
+    boolean result = underTest.shouldNotFilter(request);
+
+    // then
+    assertThat(result).isFalse();
   }
 }

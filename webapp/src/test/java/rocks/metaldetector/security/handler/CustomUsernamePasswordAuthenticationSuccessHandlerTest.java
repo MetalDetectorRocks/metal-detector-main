@@ -94,7 +94,7 @@ class CustomUsernamePasswordAuthenticationSuccessHandlerTest implements WithAsse
     underTest.onAuthenticationSuccess(request, response, null);
 
     // then
-    verify(refreshTokenService).createRefreshTokenCookie(username);
+    verify(refreshTokenService).createRefreshTokenCookie(userMock);
   }
 
   @Test

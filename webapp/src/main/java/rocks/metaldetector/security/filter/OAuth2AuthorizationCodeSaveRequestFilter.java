@@ -34,7 +34,7 @@ public class OAuth2AuthorizationCodeSaveRequestFilter extends OncePerRequestFilt
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
-    return !request.getRequestURI().startsWith(OAUTH_AUTHORIZATION_ENDPOINT + SPOTIFY_REGISTRATION_ID_USER);
+    return !request.getRequestURI().startsWith(OAUTH_AUTHORIZATION_ENDPOINT + "/" + SPOTIFY_REGISTRATION_ID_USER);
   }
 
   @Override
