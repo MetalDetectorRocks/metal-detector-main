@@ -25,7 +25,9 @@ import rocks.metaldetector.support.oauth.OAuth2AuthorizationCodeStateGenerator;
 import java.io.IOException;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
 import static rocks.metaldetector.spotify.config.SpotifyModuleConfig.SPOTIFY_REGISTRATION_ID_USER;

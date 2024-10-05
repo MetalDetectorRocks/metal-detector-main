@@ -1,14 +1,17 @@
 package rocks.metaldetector.security;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
+import rocks.metaldetector.support.SecurityProperties;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -16,14 +19,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.tomcat.util.http.SameSiteCookies.LAX;
+
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomCookieAuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 
   public static final String SESSION_STATE_COOKIE_NAME = "session_state";
-  private static final int COOKIE_MAX_AGE_SECONDS = 60;
+  static final int COOKIE_MAX_AGE_SECONDS = 60;
 
   private final ObjectMapper objectMapper;
+  private final SecurityProperties securityProperties;
+  private String domain;
 
   @Override
   public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
@@ -43,12 +50,16 @@ public class CustomCookieAuthorizationRequestRepository implements Authorization
     String serializedRequest = null;
     try {
       serializedRequest = new String(Base64.getEncoder().encode(objectMapper.writeValueAsString(authorizationRequest).getBytes()));
-    } catch (IOException e) {
+    } catch (JsonProcessingException e) {
       throw new RuntimeException("Failed to serialize OAuth2AuthorizationRequest", e);
     }
     Cookie cookie = new Cookie(SESSION_STATE_COOKIE_NAME, serializedRequest);
     cookie.setPath("/");
     cookie.setMaxAge(COOKIE_MAX_AGE_SECONDS);
+    cookie.setHttpOnly(true);
+    cookie.setSecure(securityProperties.isSecureCookie());
+    cookie.setDomain(domain);
+    cookie.setAttribute("SameSite", LAX.getValue());
     response.addCookie(cookie);
   }
 
@@ -86,5 +97,10 @@ public class CustomCookieAuthorizationRequestRepository implements Authorization
     } catch (IOException e) {
       throw new RuntimeException("Failed to deserialize OAuth2AuthorizationRequest", e);
     }
+  }
+
+  @Value("${application.domain}")
+  void setDomain(String domain) {
+    this.domain = domain;
   }
 }

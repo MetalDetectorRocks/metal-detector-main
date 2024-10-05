@@ -1,6 +1,5 @@
 package rocks.metaldetector.security.handler;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +12,6 @@ import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.auth.RefreshTokenService;
 
-import java.io.IOException;
-
 import static jakarta.servlet.http.HttpServletResponse.SC_FOUND;
 import static org.springframework.http.HttpHeaders.LOCATION;
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
@@ -25,16 +22,19 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
 
   private final AuthenticationFacade authenticationFacade;
   private final RefreshTokenService refreshTokenService;
-
-  @Value("${frontend.origin}")
   private String frontendOrigin;
 
   @Override
-  public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+  public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
     AbstractUserEntity user = authenticationFacade.getCurrentUser();
     ResponseCookie cookie = refreshTokenService.createRefreshTokenCookie(user);
     response.setHeader(SET_COOKIE, cookie.toString());
     response.setStatus(SC_FOUND);
     response.addHeader(LOCATION, frontendOrigin);
+  }
+
+  @Value("${frontend.origin}")
+  void setFrontendOrigin(String frontendOrigin) {
+    this.frontendOrigin = frontendOrigin;
   }
 }

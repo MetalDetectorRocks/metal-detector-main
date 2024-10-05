@@ -3,6 +3,7 @@ package rocks.metaldetector.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_ADMINISTRATOR;
@@ -64,6 +68,11 @@ class CustomUsernamePasswordAuthenticationSuccessHandlerTest implements WithAsse
   void beforeEach() {
     doReturn(userMock).when(authenticationFacade).getCurrentUser();
     doReturn(ResponseCookie.from("foo", "bar").build()).when(refreshTokenService).createRefreshTokenCookie(any());
+  }
+
+  @AfterEach
+  void tearDown() {
+    reset(objectMapper, authenticationFacade, jwtsSupport, securityProperties, refreshTokenService, userMock);
   }
 
   @Test
