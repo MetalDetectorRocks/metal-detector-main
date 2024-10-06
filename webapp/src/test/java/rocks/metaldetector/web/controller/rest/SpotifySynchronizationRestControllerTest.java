@@ -105,8 +105,8 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
     @DisplayName("POST on " + Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION + " return the import result")
     void test_returns_result() {
       // given
-      var artistCount = 666;
-      doReturn(artistCount).when(spotifySynchronizationService).synchronizeArtists(any());
+      var artistNames = List.of("abc", "def");
+      doReturn(artistNames).when(spotifySynchronizationService).synchronizeArtists(any());
       var request = SynchronizeArtistsRequest.builder().artistIds(Collections.emptyList()).build();
 
       // when
@@ -114,7 +114,7 @@ class SpotifySynchronizationRestControllerTest implements WithAssertions {
 
       // then
       var response = validatableResponse.extract().as(SpotifyArtistSynchronizationResponse.class);
-      assertThat(response.getArtistsCount()).isEqualTo(artistCount);
+      assertThat(response.getArtistNames()).isEqualTo(artistNames);
     }
   }
 
