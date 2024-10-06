@@ -21,6 +21,7 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.service.artist.transformer.ArtistDtoTransformer;
 import rocks.metaldetector.service.artist.transformer.ArtistEntityTransformer;
+import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.spotify.facade.SpotifyService;
 import rocks.metaldetector.testutil.DtoFactory.ArtistDtoFactory;
 
@@ -479,5 +480,24 @@ class FollowArtistServiceImplTest implements WithAssertions {
 
     // then
     verify(followActionRepository).saveAll(expectedFollowActionEntities);
+  }
+
+  @Test
+  @DisplayName("Followed artists names are returned")
+  void test_followed_artists_names_are_returned() {
+    // given
+    var user = UserEntityFactory.createDefaultUser();
+    var artists = List.of(ArtistEntityFactory.withName("a"), ArtistEntityFactory.withExternalId("b"));
+    var followActions = List.of(FollowActionEntity.builder().user(user).artist(artists.get(0)).build(),
+        FollowActionEntity.builder().user(user).artist(artists.get(1)).build());
+    doReturn(followActions).when(followActionRepository).saveAll(any());
+
+    // when
+    var result = underTest.followSpotifyArtists(Collections.emptyList());
+
+    // then
+    assertThat(result).hasSize(2);
+    assertThat(result.get(0)).isEqualTo(artists.get(0).getArtistName());
+    assertThat(result.get(1)).isEqualTo(artists.get(1).getArtistName());
   }
 }

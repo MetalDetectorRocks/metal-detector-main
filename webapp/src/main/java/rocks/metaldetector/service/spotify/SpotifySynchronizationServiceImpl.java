@@ -25,7 +25,7 @@ public class SpotifySynchronizationServiceImpl implements SpotifySynchronization
   private final FollowArtistService followArtistService;
 
   @Override
-  public int synchronizeArtists(List<String> artistsIds) {
+  public List<String> synchronizeArtists(List<String> artistsIds) {
     return followArtistService.followSpotifyArtists(artistsIds);
   }
 

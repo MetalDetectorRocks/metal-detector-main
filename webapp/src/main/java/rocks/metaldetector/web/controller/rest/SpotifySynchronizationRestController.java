@@ -32,8 +32,8 @@ public class SpotifySynchronizationRestController {
 
   @PostMapping(path = SPOTIFY_ARTIST_SYNCHRONIZATION, produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<SpotifyArtistSynchronizationResponse> synchronizeArtists(@Valid @RequestBody SynchronizeArtistsRequest request) {
-    int artistsCount = spotifySynchronizationService.synchronizeArtists(request.getArtistIds());
-    return ResponseEntity.ok(new SpotifyArtistSynchronizationResponse(artistsCount));
+    List<String> followedArtistNames = spotifySynchronizationService.synchronizeArtists(request.getArtistIds());
+    return ResponseEntity.ok(new SpotifyArtistSynchronizationResponse(followedArtistNames));
   }
 
   @GetMapping(path = SPOTIFY_SAVED_ARTISTS, produces = APPLICATION_JSON_VALUE)
