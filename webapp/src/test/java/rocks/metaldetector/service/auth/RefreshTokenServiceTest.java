@@ -15,7 +15,6 @@ import org.springframework.http.ResponseCookie;
 import rocks.metaldetector.persistence.domain.user.RefreshTokenEntity;
 import rocks.metaldetector.persistence.domain.user.RefreshTokenRepository;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
-import rocks.metaldetector.persistence.domain.user.UserRepository;
 import rocks.metaldetector.service.exceptions.UnauthorizedException;
 import rocks.metaldetector.service.user.UserEntityFactory;
 import rocks.metaldetector.support.JwtsSupport;
@@ -40,9 +39,6 @@ class RefreshTokenServiceTest implements WithAssertions {
   private RefreshTokenRepository refreshTokenRepository;
 
   @Mock
-  private UserRepository userRepository;
-
-  @Mock
   private SecurityProperties securityProperties;
 
   @Mock
@@ -56,11 +52,13 @@ class RefreshTokenServiceTest implements WithAssertions {
 
   @AfterEach
   void tearDown() {
-    reset(refreshTokenRepository, userRepository, securityProperties, jwtsSupport);
+    reset(refreshTokenRepository, securityProperties, jwtsSupport);
   }
 
   @Nested
   class CreateRefreshTokenCookieTests {
+
+    static final UserEntity SAMPLE_USER = UserEntityFactory.createUser("user", "user@example.com");
 
     @BeforeEach
     void beforeEach() {
@@ -72,7 +70,7 @@ class RefreshTokenServiceTest implements WithAssertions {
     @DisplayName("should create new refresh token entity")
     void should_create_new_refresh_token_entity() {
       // when
-      underTest.createRefreshTokenCookie("foobar");
+      underTest.createRefreshTokenCookie(SAMPLE_USER);
 
       // then
       refreshTokenRepository.save(any());
@@ -85,7 +83,7 @@ class RefreshTokenServiceTest implements WithAssertions {
       doReturn(666L).when(securityProperties).getRefreshTokenExpirationInMin();
 
       // when
-      underTest.createRefreshTokenCookie("foobar");
+      underTest.createRefreshTokenCookie(SAMPLE_USER);
 
       // then
       verify(jwtsSupport).generateToken(refreshToken.getId().toString(), Duration.ofMinutes(666));
@@ -99,7 +97,7 @@ class RefreshTokenServiceTest implements WithAssertions {
       doReturn(sampleToken).when(jwtsSupport).generateToken(any(), any());
 
       // when
-      underTest.createRefreshTokenCookie("foobar");
+      underTest.createRefreshTokenCookie(SAMPLE_USER);
 
       // then
       ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
@@ -110,17 +108,13 @@ class RefreshTokenServiceTest implements WithAssertions {
     @Test
     @DisplayName("should set user into entity")
     void should_set_user_into_entity() {
-      // given
-      var sampleUser = UserEntityFactory.createUser("user", "user@example.com");
-      doReturn(sampleUser).when(userRepository).getByUsername(any());
-
       // when
-      underTest.createRefreshTokenCookie("foobar");
+      underTest.createRefreshTokenCookie(SAMPLE_USER);
 
       // then
       ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
       verify(refreshToken).setUser(captor.capture());
-      assertThat(captor.getValue()).isEqualTo(sampleUser);
+      assertThat(captor.getValue()).isEqualTo(SAMPLE_USER);
     }
 
     @Test
@@ -133,7 +127,7 @@ class RefreshTokenServiceTest implements WithAssertions {
       underTest.setDomain(domain);
 
       // when
-      ResponseCookie cookie = underTest.createRefreshTokenCookie("foobar");
+      ResponseCookie cookie = underTest.createRefreshTokenCookie(SAMPLE_USER);
 
       // then
       assertThat(cookie.getName()).isEqualTo(REFRESH_TOKEN_COOKIE_NAME);

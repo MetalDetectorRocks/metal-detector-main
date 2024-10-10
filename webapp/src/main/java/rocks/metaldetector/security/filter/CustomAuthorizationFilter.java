@@ -23,6 +23,7 @@ import java.io.IOException;
 import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rocks.metaldetector.service.user.UserErrorMessages.USER_WITH_ID_NOT_FOUND;
+import static rocks.metaldetector.support.oauth.OAuth2ClientConfig.OAUTH_AUTHORIZATION_ENDPOINT;
 
 @Slf4j
 @Component
@@ -32,6 +33,11 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
   private final JwtsSupport jwtsSupport;
   private final UserRepository userRepository;
   private final AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource;
+
+  @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) {
+    return request.getRequestURI().startsWith(OAUTH_AUTHORIZATION_ENDPOINT);
+  }
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
