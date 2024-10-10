@@ -30,6 +30,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
+import static rocks.metaldetector.spotify.config.SpotifyModuleConfig.SPOTIFY_REGISTRATION_ID_USER;
 import static rocks.metaldetector.support.oauth.OAuth2ClientConfig.OAUTH_AUTHORIZATION_ENDPOINT;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,7 +61,7 @@ class OAuth2AuthorizationCodeSaveRequestFilterTest implements WithAssertions {
   void test_should_filter() {
     // given
     var request = new MockHttpServletRequest();
-    request.setRequestURI(OAUTH_AUTHORIZATION_ENDPOINT + "/some-registration-id");
+    request.setRequestURI(OAUTH_AUTHORIZATION_ENDPOINT + "/" + SPOTIFY_REGISTRATION_ID_USER);
 
     // when
     boolean result = underTest.shouldNotFilter(request);

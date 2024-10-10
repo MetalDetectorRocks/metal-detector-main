@@ -23,6 +23,7 @@ import java.util.Arrays;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static rocks.metaldetector.service.auth.RefreshTokenService.REFRESH_TOKEN_COOKIE_NAME;
+import static rocks.metaldetector.spotify.config.SpotifyModuleConfig.SPOTIFY_REGISTRATION_ID_USER;
 import static rocks.metaldetector.support.oauth.OAuth2ClientConfig.OAUTH_AUTHORIZATION_ENDPOINT;
 
 @Component
@@ -37,7 +38,7 @@ public class OAuth2AuthorizationCodeSaveRequestFilter extends OncePerRequestFilt
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
-    return !request.getRequestURI().startsWith(OAUTH_AUTHORIZATION_ENDPOINT);
+    return !request.getRequestURI().startsWith(OAUTH_AUTHORIZATION_ENDPOINT + "/" + SPOTIFY_REGISTRATION_ID_USER);
   }
 
   @Override
