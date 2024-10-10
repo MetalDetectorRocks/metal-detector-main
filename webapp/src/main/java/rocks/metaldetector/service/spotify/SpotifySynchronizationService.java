@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface SpotifySynchronizationService {
 
-  int synchronizeArtists(List<String> artistIds);
+  List<String> synchronizeArtists(List<String> artistIds);
 
   List<SpotifyArtistDto> fetchSavedArtists(List<SpotifyFetchType> fetchTypes);
 }

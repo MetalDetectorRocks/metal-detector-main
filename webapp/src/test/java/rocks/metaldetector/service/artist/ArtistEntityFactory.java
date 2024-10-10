@@ -16,4 +16,15 @@ public class ArtistEntityFactory {
             .imageM("http://example.com/image.jpg")
             .build();
   }
+
+  public static ArtistEntity withName(String name) {
+    return ArtistEntity.builder()
+        .externalId(name)
+        .externalUrl("http://example.com/666")
+        .artistName(name)
+        .genres("Black Metal, Post Black Metal")
+        .source(SPOTIFY)
+        .imageM("http://example.com/image.jpg")
+        .build();
+  }
 }

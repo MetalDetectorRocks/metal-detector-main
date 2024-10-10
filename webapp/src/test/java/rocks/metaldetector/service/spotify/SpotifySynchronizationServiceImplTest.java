@@ -64,14 +64,14 @@ class SpotifySynchronizationServiceImplTest implements WithAssertions {
     @DisplayName("result from followArtistService is returned")
     void test_follow_artist_service_result_is_returned() {
       // given
-      var artistCount = 666;
-      doReturn(artistCount).when(followArtistService).followSpotifyArtists(any());
+      var artistNames = List.of("abc", "def");
+      doReturn(artistNames).when(followArtistService).followSpotifyArtists(any());
 
       // when
       var result = underTest.synchronizeArtists(Collections.emptyList());
 
       // then
-      assertThat(result).isEqualTo(artistCount);
+      assertThat(result).isEqualTo(artistNames);
     }
   }
 

@@ -15,7 +15,6 @@ import rocks.metaldetector.support.Pagination;
 import rocks.metaldetector.web.api.auth.RegisterUserRequest;
 import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
-import rocks.metaldetector.web.api.request.SynchronizeArtistsRequest;
 import rocks.metaldetector.web.api.request.UpdateEmailRequest;
 import rocks.metaldetector.web.api.request.UpdateNotificationConfigRequest;
 import rocks.metaldetector.web.api.request.UpdatePasswordRequest;
@@ -291,6 +290,24 @@ public class DtoFactory {
       return withArtistName("Slayer");
     }
 
+    public static SpotifyArtistDto withArtistId(String artistId) {
+      return SpotifyArtistDto.builder()
+          .id(artistId)
+          .name(artistId)
+          .uri("uri")
+          .url("https://example.com/" + artistId)
+          .genres(List.of("Black Metal"))
+          .popularity(100)
+          .follower(666)
+          .images(Map.of(
+              XS, "https://example.com/image-xs.jpg",
+              S, "https://example.com/image-s.jpg",
+              M, "https://example.com/image-m.jpg",
+              L, "https://example.com/image-l.jpg"
+          ))
+          .build();
+    }
+
     public static SpotifyArtistDto withArtistName(String artistName) {
       return SpotifyArtistDto.builder()
           .id(artistName)
@@ -392,13 +409,6 @@ public class DtoFactory {
 
     public static UpdateNotificationConfigRequest createDefault() {
       return new UpdateNotificationConfigRequest(true, true, true, 1, "EMAIL");
-    }
-  }
-
-  public static class SynchronizeArtistsRequestFactory {
-
-    public static SynchronizeArtistsRequest createDefault() {
-      return new SynchronizeArtistsRequest(List.of("1", "2", "3"));
     }
   }
 }

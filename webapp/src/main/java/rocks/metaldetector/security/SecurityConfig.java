@@ -78,7 +78,6 @@ import static rocks.metaldetector.support.Endpoints.Rest.REQUEST_PASSWORD_RESET;
 import static rocks.metaldetector.support.Endpoints.Rest.RESET_PASSWORD;
 import static rocks.metaldetector.support.Endpoints.Rest.SEARCH_ARTIST;
 import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_ARTIST_SYNCHRONIZATION;
-import static rocks.metaldetector.support.Endpoints.Rest.SPOTIFY_SAVED_ARTISTS;
 import static rocks.metaldetector.support.Endpoints.Rest.STATISTICS;
 import static rocks.metaldetector.support.Endpoints.Rest.TELEGRAM_CONFIG;
 import static rocks.metaldetector.support.Endpoints.Rest.TOP_ARTISTS;
@@ -148,7 +147,6 @@ public class SecurityConfig {
                              UNFOLLOW_ARTIST + "/**",
                              DASHBOARD,
                              MY_ARTISTS,
-                             SPOTIFY_SAVED_ARTISTS,
                              SPOTIFY_ARTIST_SYNCHRONIZATION,
                              NOTIFICATION_CONFIG,
                              OAUTH_REGISTRATION_ID,

@@ -50,7 +50,7 @@ public class FollowArtistServiceImpl implements FollowArtistService {
 
   @Override
   @Transactional
-  public int followSpotifyArtists(List<String> spotifyArtistIds) {
+  public List<String> followSpotifyArtists(List<String> spotifyArtistIds) {
     saveSpotifyArtists(spotifyArtistIds);
     List<ArtistEntity> artistEntitiesToFollow = artistRepository.findAllByExternalIdIn(spotifyArtistIds);
     AbstractUserEntity currentUser = authenticationFacade.getCurrentUser();
@@ -60,8 +60,9 @@ public class FollowArtistServiceImpl implements FollowArtistService {
             .artist(artistEntity)
             .build())
         .collect(Collectors.toList());
-
-    return followActionRepository.saveAll(followActionEntities).size();
+    return followActionRepository.saveAll(followActionEntities).stream()
+        .map(followEntity -> followEntity.getArtist().getArtistName())
+        .collect(Collectors.toList());
   }
 
   @Override

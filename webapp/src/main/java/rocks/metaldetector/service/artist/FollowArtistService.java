@@ -9,7 +9,7 @@ public interface FollowArtistService {
 
   void follow(String externalArtistId, ArtistSource source);
 
-  int followSpotifyArtists(List<String> spotifyArtistIds);
+  List<String> followSpotifyArtists(List<String> spotifyArtistIds);
 
   void unfollow(String externalArtistId, ArtistSource source);
 
