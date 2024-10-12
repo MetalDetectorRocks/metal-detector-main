@@ -184,7 +184,6 @@ public class SecurityConfig {
             .invalidateHttpSession(true)
             .clearAuthentication(true)
             .deleteCookies("JSESSIONID", REFRESH_TOKEN_COOKIE_NAME, SESSION_STATE_COOKIE_NAME))
-        .cors((it) -> {})
         .headers(customizer ->
                      // These headers are set in the proxy, so disabled here
                      customizer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
