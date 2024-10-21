@@ -19,7 +19,7 @@
   "license": "Apache-2.0",
   "packageManager": "npm@9.8.0",
   "devDependencies": {
-    "@types/node": "^20.16.11",
+    "@types/node": "^20.16.13",
     "@types/qs": "^6.9.16",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
