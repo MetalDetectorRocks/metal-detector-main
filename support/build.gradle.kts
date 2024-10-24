@@ -14,7 +14,8 @@ dependencies {
   annotationProcessor("org.projectlombok:lombok:${libs.versions.lombok.get()}")
 
   api("io.jsonwebtoken:jjwt-api:${libs.versions.jsonwebtoken.get()}")
-  api("io.jsonwebtoken:jjwt-impl:${libs.versions.jsonwebtoken.get()}")
+  implementation("io.jsonwebtoken:jjwt-impl:${libs.versions.jsonwebtoken.get()}")
+  implementation("io.jsonwebtoken:jjwt-jackson:${libs.versions.jsonwebtoken.get()}")
 
   testImplementation("com.github.valfirst:slf4j-test:${libs.versions.slf4jTest.get()}")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
