@@ -6,9 +6,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -54,11 +55,11 @@ import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
 @Configuration
 @EnableWebSecurity
 @ConditionalOnProperty(
-        name = "rocks.metaldetector.security.enabled",
-        havingValue = "true",
-        matchIfMissing = true
+    name = "rocks.metaldetector.security.enabled",
+    havingValue = "true",
+    matchIfMissing = true
 )
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -76,70 +77,68 @@ public class SecurityConfig {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-      .csrf().ignoringAntMatchers(REST_ENDPOINTS, ACTUATOR_ENDPOINTS)
-      .and()
-      .authorizeRequests()
-        .antMatchers(ADMIN).hasRole(ROLE_ADMINISTRATOR.getName())
-        .antMatchers(RESOURCES).permitAll()
-        .antMatchers(GUEST_ONLY_PAGES).permitAll()
-        .antMatchers(PUBLIC_PAGES).permitAll()
-        .antMatchers(GET, RELEASES).permitAll()
-        .antMatchers(GET, TOP_UPCOMING_RELEASES).permitAll()
-        .antMatchers(GET, SEARCH_ARTIST).permitAll()
-        .antMatchers(GET, TOP_ARTISTS).permitAll()
-        .antMatchers(GET, AUTHENTICATION).permitAll()
-        .antMatchers(ACTUATOR_ENDPOINTS).permitAll()
-        .antMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
-        .anyRequest().authenticated()
-      .and()
-      .formLogin()
-        .loginPage(LOGIN)
-        .loginProcessingUrl(LOGIN)
-        .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
-        .failureHandler(new CustomAuthenticationFailureHandler())
-      .and()
-        .oauth2Login()
-          .loginPage(LOGIN)
-          .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
-          .failureHandler(new CustomAuthenticationFailureHandler())
-          .userInfoEndpoint()
-            .oidcUserService(customOidcUserService)
-        .and()
-          .authorizationEndpoint()
-            .authorizationRequestResolver(oAuth2AuthorizationRequestResolver)
-          .and()
-      .and()
-        .oauth2Client()
-          .authorizedClientService(oAuth2AuthorizedClientService)
-          .authorizedClientRepository(oAuth2AuthorizedClientRepository)
-      .and()
-      .rememberMe()
-        .tokenValiditySeconds((int) Duration.ofDays(14).toSeconds())
-        .tokenRepository(jdbcTokenRepository())
-        .userDetailsService(userService)
-        .key(securityProperties.getRememberMeSecret())
-      .and()
-      .logout()
-        .logoutUrl(LOGOUT).permitAll()
-        .invalidateHttpSession(true)
-        .clearAuthentication(true)
-        .deleteCookies("JSESSIONID", "remember-me")
-        .logoutSuccessHandler(new CustomLogoutSuccessHandler())
-      .and()
-        .cors()
-      .and()
-        .headers()
-          .permissionsPolicy().policy("interest-cohort=()").and()
-          // These headers are set in the proxy, so disabled here
-          .frameOptions().disable()
-          .xssProtection().disable()
-          .contentTypeOptions().disable()
-          .httpStrictTransportSecurity().disable()
-      .and()
-      .exceptionHandling()
-        .accessDeniedHandler(new CustomAccessDeniedHandler(() -> SecurityContextHolder.getContext().getAuthentication()))
-        .defaultAuthenticationEntryPointFor(new LoginUrlAuthenticationEntryPoint(LOGIN), new AntPathRequestMatcher(HOME))
-        .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(UNAUTHORIZED), new AntPathRequestMatcher(REST_ENDPOINTS));
+        .csrf(customizer -> customizer.ignoringRequestMatchers(REST_ENDPOINTS, ACTUATOR_ENDPOINTS))
+        .authorizeHttpRequests(customizer -> customizer
+            .requestMatchers(ADMIN).hasRole(ROLE_ADMINISTRATOR.getName())
+            .requestMatchers(RESOURCES).permitAll()
+            .requestMatchers(GUEST_ONLY_PAGES).permitAll()
+            .requestMatchers(PUBLIC_PAGES).permitAll()
+            .requestMatchers(GET, RELEASES).permitAll()
+            .requestMatchers(GET, TOP_UPCOMING_RELEASES).permitAll()
+            .requestMatchers(GET, SEARCH_ARTIST).permitAll()
+            .requestMatchers(GET, TOP_ARTISTS).permitAll()
+            .requestMatchers(GET, AUTHENTICATION).permitAll()
+            .requestMatchers(ACTUATOR_ENDPOINTS).permitAll()
+            .requestMatchers(NOTIFICATION_TELEGRAM + "/" + botId).permitAll()
+            .anyRequest().authenticated()
+        )
+        .formLogin(customizer -> customizer
+            .loginPage(LOGIN)
+            .loginProcessingUrl(LOGIN)
+            .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
+            .failureHandler(new CustomAuthenticationFailureHandler())
+        )
+        .oauth2Login(customizer -> customizer
+            .loginPage(LOGIN)
+            .successHandler(new CustomAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
+            .failureHandler(new CustomAuthenticationFailureHandler())
+            .userInfoEndpoint(infoEndpointCustomizer -> infoEndpointCustomizer
+                .oidcUserService(customOidcUserService)
+            )
+            .authorizationEndpoint(authorizationEndpointCustomizer -> authorizationEndpointCustomizer
+                .authorizationRequestResolver(oAuth2AuthorizationRequestResolver)
+            )
+        )
+        .oauth2Client(customizer -> customizer
+            .authorizedClientService(oAuth2AuthorizedClientService)
+            .authorizedClientRepository(oAuth2AuthorizedClientRepository)
+        )
+        .rememberMe(customizer -> customizer
+            .tokenValiditySeconds((int) Duration.ofDays(14).toSeconds())
+            .tokenRepository(jdbcTokenRepository())
+            .userDetailsService(userService)
+            .key(securityProperties.getRememberMeSecret())
+        )
+        .logout(customizer -> customizer
+            .logoutUrl(LOGOUT).permitAll()
+            .invalidateHttpSession(true)
+            .clearAuthentication(true)
+            .deleteCookies("JSESSIONID", "remember-me")
+            .logoutSuccessHandler(new CustomLogoutSuccessHandler())
+        )
+        .cors(customizer -> {
+        })
+        .headers(customizer ->
+            // These headers are set in the proxy, so disabled here
+            customizer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
+                .xssProtection(HeadersConfigurer.XXssConfig::disable)
+                .contentTypeOptions(HeadersConfigurer.ContentTypeOptionsConfig::disable)
+                .httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable)
+                .permissionsPolicy((it) -> it.policy("interest-cohort=()")))
+        .exceptionHandling(customizer -> customizer
+            .accessDeniedHandler(new CustomAccessDeniedHandler(() -> SecurityContextHolder.getContext().getAuthentication()))
+            .defaultAuthenticationEntryPointFor(new LoginUrlAuthenticationEntryPoint(LOGIN), new AntPathRequestMatcher(HOME))
+            .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(UNAUTHORIZED), new AntPathRequestMatcher(REST_ENDPOINTS)));
     return http.build();
   }
 

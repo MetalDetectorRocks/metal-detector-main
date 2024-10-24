@@ -1,5 +1,7 @@
 package rocks.metaldetector.persistence.config.bootstrap;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -10,8 +12,6 @@ import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserRole;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Component

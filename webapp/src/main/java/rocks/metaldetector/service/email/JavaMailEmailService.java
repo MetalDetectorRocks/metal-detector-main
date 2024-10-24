@@ -1,19 +1,20 @@
 package rocks.metaldetector.service.email;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.ISpringTemplateEngine;
+import org.thymeleaf.spring6.ISpringTemplateEngine;
 import rocks.metaldetector.config.misc.MailProperties;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 
 @Service
@@ -22,7 +23,7 @@ import java.io.UnsupportedEncodingException;
 @Profile({"preview", "prod"})
 public class JavaMailEmailService implements EmailService {
 
-  private final JavaMailSender emailSender;
+  private final JavaMailSender emailSender = new JavaMailSenderImpl(); // ToDo NilsD
   private final ISpringTemplateEngine templateEngine;
   private final MailProperties mailProperties;
   private final MimeMessageHelperFunction messageHelperFunction;

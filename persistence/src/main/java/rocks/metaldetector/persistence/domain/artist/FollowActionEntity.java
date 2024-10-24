@@ -1,5 +1,8 @@
 package rocks.metaldetector.persistence.domain.artist;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,10 +13,6 @@ import lombok.NonNull;
 import lombok.ToString;
 import rocks.metaldetector.persistence.domain.BaseEntity;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
-
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 
 @Getter
 @Entity(name = "followActions")

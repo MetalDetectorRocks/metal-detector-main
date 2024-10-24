@@ -1,5 +1,6 @@
 package rocks.metaldetector.service.email;
 
+import jakarta.mail.internet.MimeMessage;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +17,6 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.ISpringTemplateEngine;
 import rocks.metaldetector.config.misc.MailProperties;
 import rocks.metaldetector.support.Endpoints;
-
-import javax.mail.internet.MimeMessage;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;

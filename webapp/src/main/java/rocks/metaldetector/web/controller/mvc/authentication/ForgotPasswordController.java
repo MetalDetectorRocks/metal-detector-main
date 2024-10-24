@@ -1,5 +1,6 @@
 package rocks.metaldetector.web.controller.mvc.authentication;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,6 @@ import rocks.metaldetector.service.user.UserService;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 import rocks.metaldetector.web.api.request.ForgotPasswordRequest;
 
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

@@ -1,5 +1,6 @@
 package rocks.metaldetector.persistence.domain.user;
 
+import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -7,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import javax.persistence.Entity;
 import java.util.Set;
 
 import static rocks.metaldetector.persistence.domain.user.UserRole.ROLE_USER;

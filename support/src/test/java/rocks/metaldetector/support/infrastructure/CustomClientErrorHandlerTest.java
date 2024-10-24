@@ -20,13 +20,13 @@ import java.util.stream.Stream;
 import static com.github.valfirst.slf4jtest.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.slf4j.event.Level.ERROR;
+import static org.slf4j.event.Level.WARN;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
-import static uk.org.lidalia.slf4jext.Level.ERROR;
-import static uk.org.lidalia.slf4jext.Level.WARN;
 
 class CustomClientErrorHandlerTest {
 

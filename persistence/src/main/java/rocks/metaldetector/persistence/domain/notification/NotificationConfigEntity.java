@@ -1,5 +1,11 @@
 package rocks.metaldetector.persistence.domain.notification;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,12 +16,6 @@ import lombok.Setter;
 import rocks.metaldetector.persistence.domain.BaseEntity;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import java.time.LocalDate;
 
 @Getter

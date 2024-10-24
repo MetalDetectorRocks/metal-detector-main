@@ -54,7 +54,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-validation")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
-  implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity5:${libs.versions.thymeleafExtras.get()}")
+  implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${libs.versions.thymeleafExtras.get()}")
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${libs.versions.thymeleafDialect.get()}")
   implementation("org.apache.commons:commons-lang3:${libs.versions.commonsLang3.get()}")
   implementation("commons-codec:commons-codec:${libs.versions.commonsCodec.get()}")
@@ -72,7 +72,7 @@ dependencies {
   runtimeOnly("com.github.loki4j:loki-logback-appender:${libs.versions.lokiLogbackAppender.get()}")
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("io.micrometer:micrometer-registry-prometheus")
-  runtimeOnly("javax.cache:cache-api:${libs.versions.cacheApi.get()}")
+//  runtimeOnly("javax.cache:cache-api:${libs.versions.cacheApi.get()}")
 
   implementation(rootProject.projects.support)
   implementation(rootProject.projects.spotify)

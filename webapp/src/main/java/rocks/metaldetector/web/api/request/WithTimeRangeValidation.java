@@ -1,8 +1,8 @@
 package rocks.metaldetector.web.api.request;
 
+import jakarta.validation.constraints.AssertTrue;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 
-import javax.validation.constraints.AssertTrue;
 import java.time.LocalDate;
 
 public interface WithTimeRangeValidation {
