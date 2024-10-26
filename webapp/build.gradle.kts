@@ -58,7 +58,11 @@ dependencies {
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${libs.versions.thymeleafDialect.get()}")
   implementation("org.apache.commons:commons-lang3:${libs.versions.commonsLang3.get()}")
   implementation("commons-codec:commons-codec:${libs.versions.commonsCodec.get()}")
-  implementation("org.ehcache:ehcache:${libs.versions.ehcache.get()}")
+  implementation("org.ehcache:ehcache:${libs.versions.ehcache.get()}") {
+    capabilities {
+      requireCapability("org.ehcache:ehcache-jakarta")
+    }
+  }
   implementation("org.jsoup:jsoup:${libs.versions.jsoup.get()}")
   implementation("org.projectlombok:lombok:${libs.versions.lombok.get()}")
   implementation("org.owasp.esapi:esapi:${libs.versions.esapi.get()}") {

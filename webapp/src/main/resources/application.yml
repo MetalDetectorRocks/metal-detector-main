@@ -54,9 +54,6 @@ spring:
     suffix: .html
     mode: HTML
     cache: false
-  mvc:
-    pathmatch:
-      matching-strategy: ANT_PATH_MATCHER
   security:
     oauth2:
       client:
