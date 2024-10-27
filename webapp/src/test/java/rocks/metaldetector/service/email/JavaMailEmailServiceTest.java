@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.ISpringTemplateEngine;
+import org.thymeleaf.spring6.ISpringTemplateEngine;
 import rocks.metaldetector.config.misc.MailProperties;
 import rocks.metaldetector.support.Endpoints;
 

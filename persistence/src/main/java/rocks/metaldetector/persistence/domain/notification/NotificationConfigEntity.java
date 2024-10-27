@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +26,7 @@ import java.time.LocalDate;
 @Entity(name = "notificationConfigs")
 public class NotificationConfigEntity extends BaseEntity {
 
-  @OneToOne(targetEntity = AbstractUserEntity.class)
+  @ManyToOne(targetEntity = AbstractUserEntity.class)
   @JoinColumn(nullable = false, name = "users_id")
   private AbstractUserEntity user;
 
