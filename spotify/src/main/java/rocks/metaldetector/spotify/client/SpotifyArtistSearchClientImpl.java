@@ -1,7 +1,7 @@
 package rocks.metaldetector.spotify.client;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,6 @@ import static org.springframework.http.HttpMethod.GET;
 @Slf4j
 @Service
 @Profile({"default", "preview", "prod"})
-@AllArgsConstructor
 public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient {
 
   static final String ID_PARAMETER_NAME = "id";
@@ -32,11 +31,17 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
   static final String GET_ARTIST_ENDPOINT = "/v1/artists/{" + ID_PARAMETER_NAME + "}";
   static final String GET_ARTISTS_ENDPOINT = "/v1/artists?ids={" + ID_PARAMETER_NAME + "}";
   static final String SEARCH_ENDPOINT = "/v1/search?q={" + QUERY_PARAMETER_NAME + "}&"
-                                        + "type=artist&offset={" + OFFSET_PARAMETER_NAME + "}&"
-                                        + "limit={" + LIMIT_PARAMETER_NAME + "}";
+      + "type=artist&offset={" + OFFSET_PARAMETER_NAME + "}&"
+      + "limit={" + LIMIT_PARAMETER_NAME + "}";
 
   private final RestOperations spotifyOAuthClientCredentialsRestTemplate;
   private final SpotifyProperties spotifyProperties;
+
+  public SpotifyArtistSearchClientImpl(@Qualifier("spotifyOAuthClientCredentialsRestTemplate") RestOperations spotifyOAuthClientCredentialsRestTemplate,
+                                       SpotifyProperties spotifyProperties) {
+    this.spotifyOAuthClientCredentialsRestTemplate = spotifyOAuthClientCredentialsRestTemplate;
+    this.spotifyProperties = spotifyProperties;
+  }
 
   @Override
   public SpotifyArtistSearchResultContainer searchByName(String artistQueryString, int pageNumber, int pageSize) {
@@ -49,8 +54,8 @@ public class SpotifyArtistSearchClientImpl implements SpotifyArtistSearchClient 
         httpEntity,
         SpotifyArtistSearchResultContainer.class,
         Map.of(QUERY_PARAMETER_NAME, artistQueryString,
-               OFFSET_PARAMETER_NAME, offset,
-               LIMIT_PARAMETER_NAME, pageSize)
+            OFFSET_PARAMETER_NAME, offset,
+            LIMIT_PARAMETER_NAME, pageSize)
     );
 
     SpotifyArtistSearchResultContainer resultContainer = responseEntity.getBody();

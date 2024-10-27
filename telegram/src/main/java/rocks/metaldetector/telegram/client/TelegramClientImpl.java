@@ -1,6 +1,6 @@
 package rocks.metaldetector.telegram.client;
 
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -12,13 +12,18 @@ import rocks.metaldetector.telegram.config.TelegramProperties;
 
 @Component
 @Profile({"default", "preview", "prod"})
-@AllArgsConstructor
 public class TelegramClientImpl implements TelegramClient {
 
   static final String METHOD_ENDPOINT_NAME = "/bot{botId}/sendMessage";
 
   private final RestOperations telegramRestOperations;
   private final TelegramProperties telegramProperties;
+
+  public TelegramClientImpl(@Qualifier("telegramRestOperations") RestOperations telegramRestOperations,
+                            TelegramProperties telegramProperties) {
+    this.telegramRestOperations = telegramRestOperations;
+    this.telegramProperties = telegramProperties;
+  }
 
   @Override
   public TelegramMessage sendMessage(TelegramSendMessageRequest request) {

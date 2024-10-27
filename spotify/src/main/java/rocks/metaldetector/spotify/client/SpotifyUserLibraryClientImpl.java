@@ -1,7 +1,7 @@
 package rocks.metaldetector.spotify.client;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,6 @@ import static org.springframework.http.HttpMethod.GET;
 @Slf4j
 @Service
 @Profile({"default", "preview", "prod"})
-@AllArgsConstructor
 public class SpotifyUserLibraryClientImpl implements SpotifyUserLibraryClient {
 
   static final int LIMIT = 50;
@@ -32,6 +31,12 @@ public class SpotifyUserLibraryClientImpl implements SpotifyUserLibraryClient {
 
   private final RestOperations spotifyOAuthAuthorizationCodeRestTemplate;
   private final SpotifyProperties spotifyProperties;
+
+  public SpotifyUserLibraryClientImpl(@Qualifier("spotifyOAuthAuthorizationCodeRestTemplate") RestOperations spotifyOAuthAuthorizationCodeRestTemplate,
+                                      SpotifyProperties spotifyProperties) {
+    this.spotifyOAuthAuthorizationCodeRestTemplate = spotifyOAuthAuthorizationCodeRestTemplate;
+    this.spotifyProperties = spotifyProperties;
+  }
 
   @Override
   public SpotifySavedAlbumsPage fetchLikedAlbums(int offset) {
