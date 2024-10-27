@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 @Profile({"preview", "prod"})
 public class JavaMailEmailService implements EmailService {
 
-  private final JavaMailSender emailSender = new JavaMailSenderImpl(); // ToDo NilsD
+  private final JavaMailSender emailSender;
   private final ISpringTemplateEngine templateEngine;
   private final MailProperties mailProperties;
   private final MimeMessageHelperFunction messageHelperFunction;
