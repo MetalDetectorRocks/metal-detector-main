@@ -46,19 +46,19 @@
                 <!-- Desktop Menu -->
                 <ul class="links desktop-only">
                     <li sec:authorize="!isAuthenticated()">
-                        <a th:classappend="${#request.requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Home</a>
+                        <a th:classappend="${requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Home</a>
                     </li>
                     <li sec:authorize="isAuthenticated()">
-                        <a th:classappend="${#request.requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Dashboard</a>
+                        <a th:classappend="${requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Dashboard</a>
                     </li>
                     <li >
-                        <a th:classappend="${#request.requestURI == '/blog' ? 'active':''}" href="#" th:href="@{/blog}">Blog</a>
+                        <a th:classappend="${requestURI == '/blog' ? 'active':''}" href="#" th:href="@{/blog}">Blog</a>
                     </li>
                     <li sec:authorize="isAuthenticated()">
-                        <a th:classappend="${#request.requestURI == '/my-artists' ? 'active':''}" href="#" th:href="@{/my-artists}">My Artists</a>
+                        <a th:classappend="${requestURI == '/my-artists' ? 'active':''}" href="#" th:href="@{/my-artists}">My Artists</a>
                     </li>
                     <li>
-                        <a th:classappend="${#request.requestURI == '/releases' ? 'active':''}" href="#" th:href="@{/releases}">Releases</a>
+                        <a th:classappend="${requestURI == '/releases' ? 'active':''}" href="#" th:href="@{/releases}">Releases</a>
                     </li>
                 </ul>
                 <label for="show-search" class="search-icon">
@@ -97,19 +97,19 @@
                 <div class="offcanvas-body">
                     <ul>
                         <li sec:authorize="!isAuthenticated()">
-                            <a th:classappend="${#request.requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Home</a>
+                            <a th:classappend="${requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Home</a>
                         </li>
                         <li sec:authorize="isAuthenticated()">
-                            <a th:classappend="${#request.requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Dashboard</a>
+                            <a th:classappend="${requestURI == '/' ? 'active':''}" href="#" th:href="@{/}">Dashboard</a>
                         </li>
                         <li>
-                            <a th:classappend="${#request.requestURI == '/blog' ? 'active':''}" href="#" th:href="@{/blog}">Blog</a>
+                            <a th:classappend="${requestURI == '/blog' ? 'active':''}" href="#" th:href="@{/blog}">Blog</a>
                         </li>
                         <li sec:authorize="isAuthenticated()">
-                            <a th:classappend="${#request.requestURI == '/my-artists' ? 'active':''}" href="#" th:href="@{/my-artists}">My Artists</a>
+                            <a th:classappend="${requestURI == '/my-artists' ? 'active':''}" href="#" th:href="@{/my-artists}">My Artists</a>
                         </li>
                         <li>
-                            <a th:classappend="${#request.requestURI == '/releases' ? 'active':''}" href="#" th:href="@{/releases}">Releases</a>
+                            <a th:classappend="${requestURI == '/releases' ? 'active':''}" href="#" th:href="@{/releases}">Releases</a>
                         </li>
                         <li sec:authorize="isAuthenticated()">
                             <a href="#profileAndSettingsCollapsable" data-bs-toggle="collapse" aria-expanded="false" aria-controls="profileAndSettingsCollapsable">
@@ -117,7 +117,7 @@
                             </a>
                             <ul class="collapse" id="profileAndSettingsCollapsable">
                                 <li>
-                                    <a th:classappend="${#request.requestURI == '/settings/account-details' ? 'active':''}"
+                                    <a th:classappend="${requestURI == '/settings/account-details' ? 'active':''}"
                                        href="#"
                                        th:href="@{/settings/account-details}"
                                     >
@@ -125,7 +125,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a th:classappend="${#request.requestURI == '/settings/spotify-synchronization' ? 'active':''}"
+                                    <a th:classappend="${requestURI == '/settings/spotify-synchronization' ? 'active':''}"
                                        href="#"
                                        th:href="@{/settings/spotify-synchronization}"
                                     >
@@ -133,7 +133,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a th:classappend="${#request.requestURI == '/settings/notification-settings' ? 'active':''}"
+                                    <a th:classappend="${requestURI == '/settings/notification-settings' ? 'active':''}"
                                        href="#"
                                        th:href="@{/settings/notification-settings}"
                                     >

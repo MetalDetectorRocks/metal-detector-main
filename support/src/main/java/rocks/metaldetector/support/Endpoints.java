@@ -117,5 +117,15 @@ public class Endpoints {
             RELEASES,
             SEARCH
     ).flatMap(Stream::of).toArray(String[]::new);
+
+    public static final String[] FRONTEND_PAGES = Stream.of(
+        Frontend.HOME,
+        Frontend.BLOG,
+        Frontend.MY_ARTISTS,
+        Frontend.RELEASES,
+        Frontend.ACCOUNT_DETAILS,
+        Frontend.SPOTIFY_SYNCHRONIZATION,
+        Frontend.NOTIFICATION_SETTINGS
+    ).toArray(String[]::new);
   }
 }
