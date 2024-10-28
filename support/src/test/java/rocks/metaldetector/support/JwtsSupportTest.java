@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
+import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 class JwtsSupportTest implements WithAssertions {
 
-  private static final String TOKEN_SECRET = "dummy-token-secret";
+  private static final String TOKEN_SECRET = new String(Base64.getEncoder().encode("dummy-token-secret-dummy-token-secret-dummy-token-secret-dummy-token-secret".getBytes()));
   private static final String TOKEN_ISSUER = "dummy-token-issuer";
 
   @Mock

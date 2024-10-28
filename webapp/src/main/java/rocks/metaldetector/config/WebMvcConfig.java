@@ -1,12 +1,19 @@
 package rocks.metaldetector.config;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
@@ -16,6 +23,7 @@ import rocks.metaldetector.support.Endpoints;
 
 import java.util.Locale;
 
+import static rocks.metaldetector.support.Endpoints.AntPattern.FRONTEND_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
 
 @Configuration
@@ -59,6 +67,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
     registry.addInterceptor(redirectionHandlerInterceptor).addPathPatterns(GUEST_ONLY_PAGES);
+    registry.addInterceptor(new RequestContextInterceptor()).addPathPatterns(FRONTEND_PAGES);
   }
 
   @Bean
@@ -69,5 +78,20 @@ public class WebMvcConfig implements WebMvcConfigurer {
   @Bean
   LocaleResolver localeResolver() {
     return new FixedLocaleResolver(Locale.ENGLISH);
+  }
+
+  @Override
+  public void configurePathMatch(PathMatchConfigurer configurer) {
+    configurer.setUseTrailingSlashMatch(true);
+  }
+
+  private static class RequestContextInterceptor implements HandlerInterceptor {
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+      RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+      if (requestAttributes != null) {
+        modelAndView.addObject("requestURI", ((ServletRequestAttributes) requestAttributes).getRequest().getRequestURI());
+      }
+    }
   }
 }

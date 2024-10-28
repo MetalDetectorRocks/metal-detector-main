@@ -1,5 +1,14 @@
 package rocks.metaldetector.persistence.domain.user;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.PrePersist;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,15 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import rocks.metaldetector.persistence.domain.BaseEntity;
 import rocks.metaldetector.support.infrastructure.ArtifactForFramework;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.PrePersist;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;

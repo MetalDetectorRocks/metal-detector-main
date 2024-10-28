@@ -1,5 +1,6 @@
 package rocks.metaldetector.web.controller.rest;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +24,6 @@ import rocks.metaldetector.web.api.request.PaginatedReleasesRequest;
 import rocks.metaldetector.web.api.request.ReleaseUpdateRequest;
 import rocks.metaldetector.web.api.request.ReleasesRequest;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 

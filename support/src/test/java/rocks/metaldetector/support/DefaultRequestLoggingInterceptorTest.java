@@ -18,8 +18,8 @@ import static com.github.valfirst.slf4jtest.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.slf4j.event.Level.INFO;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static uk.org.lidalia.slf4jext.Level.INFO;
 
 class DefaultRequestLoggingInterceptorTest {
 

@@ -1,12 +1,11 @@
 package rocks.metaldetector.security;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import static org.springframework.http.HttpStatus.TEMPORARY_REDIRECT;
 import static rocks.metaldetector.support.Endpoints.Frontend.HOME;

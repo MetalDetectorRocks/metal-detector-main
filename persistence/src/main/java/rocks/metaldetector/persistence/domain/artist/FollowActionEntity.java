@@ -1,5 +1,8 @@
 package rocks.metaldetector.persistence.domain.artist;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +14,6 @@ import lombok.ToString;
 import rocks.metaldetector.persistence.domain.BaseEntity;
 import rocks.metaldetector.persistence.domain.user.AbstractUserEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-
 @Getter
 @Entity(name = "followActions")
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // for hibernate and model mapper
@@ -24,12 +23,12 @@ import javax.persistence.OneToOne;
 @EqualsAndHashCode(callSuper = true)
 public class FollowActionEntity extends BaseEntity {
 
-  @OneToOne(targetEntity = AbstractUserEntity.class)
+  @ManyToOne(targetEntity = AbstractUserEntity.class)
   @JoinColumn(nullable = false, name = "user_id")
   @NonNull
   private AbstractUserEntity user;
 
-  @OneToOne(targetEntity = ArtistEntity.class)
+  @ManyToOne(targetEntity = ArtistEntity.class)
   @JoinColumn(nullable = false, name = "artist_id")
   @NonNull
   private ArtistEntity artist;

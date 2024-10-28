@@ -1,13 +1,12 @@
 package rocks.metaldetector.web.api.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import rocks.metaldetector.web.validation.FieldsValueMatch;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @FieldsValueMatch.List({
   @FieldsValueMatch(field = "newPlainPassword", fieldMatch = "verifyNewPlainPassword", message = "The passwords must match")

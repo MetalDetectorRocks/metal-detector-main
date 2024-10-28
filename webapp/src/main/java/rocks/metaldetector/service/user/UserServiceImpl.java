@@ -1,5 +1,7 @@
 package rocks.metaldetector.service.user;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -27,8 +29,6 @@ import rocks.metaldetector.service.user.events.UserDeletionEvent;
 import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Date;

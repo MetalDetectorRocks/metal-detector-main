@@ -54,11 +54,15 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-validation")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
-  implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity5:${libs.versions.thymeleafExtras.get()}")
+  implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${libs.versions.thymeleafExtras.get()}")
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${libs.versions.thymeleafDialect.get()}")
   implementation("org.apache.commons:commons-lang3:${libs.versions.commonsLang3.get()}")
   implementation("commons-codec:commons-codec:${libs.versions.commonsCodec.get()}")
-  implementation("org.ehcache:ehcache:${libs.versions.ehcache.get()}")
+  implementation("org.ehcache:ehcache:${libs.versions.ehcache.get()}") {
+    capabilities {
+      requireCapability("org.ehcache:ehcache-jakarta")
+    }
+  }
   implementation("org.jsoup:jsoup:${libs.versions.jsoup.get()}")
   implementation("org.projectlombok:lombok:${libs.versions.lombok.get()}")
   implementation("org.owasp.esapi:esapi:${libs.versions.esapi.get()}") {
@@ -71,8 +75,9 @@ dependencies {
 
   runtimeOnly("com.github.loki4j:loki-logback-appender:${libs.versions.lokiLogbackAppender.get()}")
   runtimeOnly("org.flywaydb:flyway-core")
+  runtimeOnly("org.flywaydb:flyway-database-postgresql")
   runtimeOnly("io.micrometer:micrometer-registry-prometheus")
-  runtimeOnly("javax.cache:cache-api:${libs.versions.cacheApi.get()}")
+//  runtimeOnly("javax.cache:cache-api:${libs.versions.cacheApi.get()}") // TODO NilsD remove if not necessary
 
   implementation(rootProject.projects.support)
   implementation(rootProject.projects.spotify)

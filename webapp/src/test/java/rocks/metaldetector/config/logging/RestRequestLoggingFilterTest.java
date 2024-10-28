@@ -1,5 +1,6 @@
 package rocks.metaldetector.config.logging;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Stream;
 
 import static org.springframework.http.HttpMethod.GET;

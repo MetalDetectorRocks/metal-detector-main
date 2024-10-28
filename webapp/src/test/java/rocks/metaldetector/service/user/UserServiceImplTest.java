@@ -1,6 +1,8 @@
 package rocks.metaldetector.service.user;
 
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.assertj.core.api.WithAssertions;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.AfterEach;
@@ -39,8 +41,6 @@ import rocks.metaldetector.support.JwtsSupport;
 import rocks.metaldetector.support.exceptions.ResourceNotFoundException;
 import rocks.metaldetector.testutil.DtoFactory.UserDtoFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;

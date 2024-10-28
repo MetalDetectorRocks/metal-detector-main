@@ -3,18 +3,13 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
 
 val javaVersion: JavaVersion = JavaVersion.VERSION_17
 
-val dependencyVersions = listOf(
-    "com.google.guava:guava:33.3.1-jre"
-)
+val dependencyVersions = listOf<String>()
 
-val dependencyGroupVersions = mapOf(
-    "io.rest-assured" to libs.versions.restAssured.get(),
-    "org.apache.groovy" to "4.0.9"
-)
+val dependencyGroupVersions = mapOf<String,String>()
 
 plugins {
   id("org.siouan.frontend-jdk11") version "9.0.0" apply false
-  id("org.springframework.boot") version "2.7.18" apply false
+  id("org.springframework.boot") version "3.3.5" apply false
   id("io.spring.dependency-management") version "1.1.6" apply false
   id("de.europace.docker-publish") version "2.0.13" apply false
 }
