@@ -62,5 +62,5 @@ springBootStarterApp = ["springBootStarterActuator", "springBootStarterMail", "s
 
 [plugins]
 dockerPublish = { id = "de.europace.docker-publish", version = "2.0.13" }
-springBoot = { id = "org.springframework.boot", version = "3.3.4" }
+springBoot = { id = "org.springframework.boot", version = "3.3.5" }
 springDependencyManagement = { id = "io.spring.dependency-management", version = "1.1.6" }
