@@ -53,37 +53,37 @@
     <div class="sidebar border-end">
         <ul class="nav flex-column pt-2">
             <li class="nav-item h5">
-                <a href="#" th:href="@{/admin}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin'}? 'active' : ''" class="text-dark px-4 py-3">
+                <a href="#" th:href="@{/admin}" th:classappend="${requestURI == '/admin'}? 'active' : ''" class="text-dark px-4 py-3">
                     <i class="material-icons pe-2">dashboard</i>Dashboard
                 </a>
             </li>
             <li class="nav-item h5">
-                <a href="#" th:href="@{/admin/import}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/import'}? 'active' : ''" class="text-dark px-4 py-3 ">
+                <a href="#" th:href="@{/admin/import}" th:classappend="${requestURI == '/admin/import'}? 'active' : ''" class="text-dark px-4 py-3 ">
                     <i class="material-icons pe-2">import_export</i>Import
                 </a>
             </li>
             <li class="nav-item h5">
-                <a href="#" th:href="@{/admin/releases}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/releases'}? 'active' : ''" class="text-dark px-4 py-3 ">
+                <a href="#" th:href="@{/admin/releases}" th:classappend="${requestURI == '/admin/releases'}? 'active' : ''" class="text-dark px-4 py-3 ">
                     <i class="material-icons pe-2">queue_music</i>Releases
                 </a>
             </li>
             <li class="nav-item h5">
-                <a href="#" th:href="@{/admin/notifications}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/notifications'}? 'active' : ''" class="text-dark px-4 py-3 ">
+                <a href="#" th:href="@{/admin/notifications}" th:classappend="${requestURI == '/admin/notifications'}? 'active' : ''" class="text-dark px-4 py-3 ">
                     <i class="material-icons pe-2">announcement</i>Notifications
                 </a>
             </li>
             <li class="nav-item h5">
-                <a href="#" th:href="@{/admin/analytics}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/analytics'}? 'active' : ''" class="text-dark px-4 py-3 ">
+                <a href="#" th:href="@{/admin/analytics}" th:classappend="${requestURI == '/admin/analytics'}? 'active' : ''" class="text-dark px-4 py-3 ">
                     <i class="material-icons pe-2">timeline</i>Analytics
                 </a>
             </li>
             <li class="nav-item h5">
-                <a href="#" th:href="@{/admin/users}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/users'}? 'active' : ''" class="text-dark px-4 py-3 ">
+                <a href="#" th:href="@{/admin/users}" th:classappend="${requestURI == '/admin/users'}? 'active' : ''" class="text-dark px-4 py-3 ">
                     <i class="material-icons pe-2">people</i>Users
                 </a>
             </li>
             <li class="nav-item h5">
-                <a href="#" th:href="@{/admin/settings}" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/settings'}? 'active' : ''" class="text-dark px-4 py-3 ">
+                <a href="#" th:href="@{/admin/settings}" th:classappend="${requestURI == '/admin/settings'}? 'active' : ''" class="text-dark px-4 py-3 ">
                     <i class="material-icons pe-2">build</i>Settings
                 </a>
             </li>

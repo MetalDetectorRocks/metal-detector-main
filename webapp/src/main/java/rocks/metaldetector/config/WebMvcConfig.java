@@ -21,8 +21,12 @@ import rocks.metaldetector.config.constants.ViewNames;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
 import rocks.metaldetector.support.Endpoints;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Stream;
 
+import static rocks.metaldetector.support.Endpoints.AntPattern.ADMIN;
 import static rocks.metaldetector.support.Endpoints.AntPattern.FRONTEND_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
 
@@ -67,7 +71,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
     registry.addInterceptor(redirectionHandlerInterceptor).addPathPatterns(GUEST_ONLY_PAGES);
-    registry.addInterceptor(new RequestContextInterceptor()).addPathPatterns(FRONTEND_PAGES);
+
+    List<String> pagesThatNeedRequestURI = Stream.concat(Arrays.stream(FRONTEND_PAGES), Stream.of(ADMIN)).toList();
+    registry.addInterceptor(new RequestContextInterceptor()).addPathPatterns(pagesThatNeedRequestURI);
   }
 
   @Bean
