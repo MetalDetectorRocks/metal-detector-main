@@ -4,6 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "friday"
     open-pull-requests-limit: 10
     target-branch: "master"
     groups:
@@ -14,6 +15,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "friday"
     open-pull-requests-limit: 10
     target-branch: "preview"
     groups:
@@ -24,16 +26,19 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "friday"
     target-branch: "master"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "friday"
     target-branch: "preview"
   - package-ecosystem: "npm"
     directory: "/webapp/src/main/resources/static/ts"
     schedule:
       interval: "weekly"
+      day: "friday"
     open-pull-requests-limit: 10
     groups:
       dependencies:
