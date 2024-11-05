@@ -50,7 +50,6 @@ import static rocks.metaldetector.support.Endpoints.AntPattern.ACTUATOR_ENDPOINT
 import static rocks.metaldetector.support.Endpoints.AntPattern.ADMIN;
 import static rocks.metaldetector.support.Endpoints.AntPattern.GUEST_ONLY_PAGES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.PUBLIC_PAGES;
-import static rocks.metaldetector.support.Endpoints.AntPattern.RESOURCES;
 import static rocks.metaldetector.support.Endpoints.AntPattern.REST_ENDPOINTS;
 import static rocks.metaldetector.support.Endpoints.Rest.ALL_RELEASES;
 import static rocks.metaldetector.support.Endpoints.Rest.AUTHENTICATION;
@@ -124,7 +123,6 @@ public class SecurityConfig {
         .cors(customizer -> customizer.configurationSource(corsConfigurationSource))
         .sessionManagement(customizer -> customizer.sessionCreationPolicy(STATELESS))
         .authorizeHttpRequests(customizer -> customizer
-            .requestMatchers(RESOURCES).permitAll()
             .requestMatchers(GUEST_ONLY_PAGES).permitAll()
             .requestMatchers(PUBLIC_PAGES).permitAll()
             .requestMatchers(ACTUATOR_ENDPOINTS,
