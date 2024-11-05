@@ -3,6 +3,7 @@ package rocks.metaldetector.support.infrastructure;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
 import org.apache.hc.client5.http.HttpRoute;
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -53,6 +54,11 @@ public class ApacheHttpClientConfig {
     HttpHost localhost = new HttpHost("http://localhost", port);
     poolingConnectionManager.setMaxPerRoute(new HttpRoute(localhost), MAX_LOCALHOST_CONNECTIONS);
 
+    poolingConnectionManager.setDefaultConnectionConfig(ConnectionConfig.custom()
+        .setConnectTimeout(Timeout.of(20, SECONDS)) // the time for waiting until a connection is established
+        .setSocketTimeout(Timeout.of(90, SECONDS)) // the time for waiting for data
+        .build());
+
     return poolingConnectionManager;
   }
 
@@ -92,7 +98,6 @@ public class ApacheHttpClientConfig {
   @Bean
   public CloseableHttpClient httpClient() {
     RequestConfig requestConfig = RequestConfig.custom()
-        .setConnectTimeout(Timeout.of(20, SECONDS)) // the time for waiting until a connection is established
         .setConnectionRequestTimeout(Timeout.of(20, SECONDS)) // the time for waiting for a connection from connection pool
         .setResponseTimeout(Timeout.of(90, SECONDS)) // the time for waiting for data
         .build();
