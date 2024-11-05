@@ -4,6 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "friday"
     open-pull-requests-limit: 10
     groups:
       dependencies:
@@ -13,8 +14,18 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "friday"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
   - package-ecosystem: "npm"
     directory: "/webapp/src/main/resources/static/ts"
     schedule:
       interval: "weekly"
+      day: "friday"
     open-pull-requests-limit: 10
+    groups:
+      dependencies:
+        patterns:
+          - "*"
