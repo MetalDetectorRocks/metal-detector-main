@@ -52,7 +52,7 @@ public class RestExceptionsHandler {
 
   @ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class})
   public ResponseEntity<ErrorResponse> handleBadRequests(Exception exception, WebRequest webRequest) {
-    log.error(webRequest.getContextPath() + ": " + exception.getMessage());
+    log.error("{}: {}", webRequest.getContextPath(), exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(BAD_REQUEST, exception), new HttpHeaders(), BAD_REQUEST);
   }
 
@@ -67,19 +67,19 @@ public class RestExceptionsHandler {
 
   @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
   public ResponseEntity<ErrorResponse> handleHttpMethodNotSupported(Exception exception, WebRequest webRequest) {
-    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
+    log.warn("{}: {}", webRequest.getContextPath(), exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(METHOD_NOT_ALLOWED, exception), new HttpHeaders(), METHOD_NOT_ALLOWED);
   }
 
   @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
   public ResponseEntity<ErrorResponse> handleMediaTypeNotSupported(Exception exception, WebRequest webRequest) {
-    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
+    log.warn("{}: {}", webRequest.getContextPath(), exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(UNSUPPORTED_MEDIA_TYPE, exception), new HttpHeaders(), UNSUPPORTED_MEDIA_TYPE);
   }
 
   @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class, ValidationException.class, MethodArgumentTypeMismatchException.class, IllegalArgumentException.class})
   public ResponseEntity<ErrorResponse> handleValidationErrors(Exception exception, WebRequest webRequest) {
-    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
+    log.warn("{}: {}", webRequest.getContextPath(), exception.getMessage());
     BindingResult bindingResult = null;
     if (exception instanceof MethodArgumentNotValidException) {
       bindingResult = ((MethodArgumentNotValidException) exception).getBindingResult();
@@ -95,31 +95,31 @@ public class RestExceptionsHandler {
 
   @ExceptionHandler({UserAlreadyExistsException.class, IllegalUserActionException.class})
   public ResponseEntity<ErrorResponse> handleUserExceptions(RuntimeException exception, WebRequest webRequest) {
-    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
+    log.warn("{}: {}", webRequest.getContextPath(), exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(CONFLICT, exception), new HttpHeaders(), CONFLICT);
   }
 
   @ExceptionHandler({ResourceNotFoundException.class})
   public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException exception, WebRequest webRequest) {
-    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
+    log.warn("{}: {}", webRequest.getContextPath(), exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(NOT_FOUND, exception), new HttpHeaders(), NOT_FOUND);
   }
 
   @ExceptionHandler({AccessDeniedException.class, OAuth2AuthorizationException.class})
   public ResponseEntity<ErrorResponse> handleAccessDeniedException(RuntimeException exception, WebRequest webRequest) {
-    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
+    log.warn("{}: {}", webRequest.getContextPath(), exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(FORBIDDEN, exception), new HttpHeaders(), FORBIDDEN);
   }
 
   @ExceptionHandler({UnauthorizedException.class, BadCredentialsException.class, AccountStatusException.class, ExpiredJwtException.class})
   public ResponseEntity<ErrorResponse> handleBadCredentialsException(RuntimeException exception, WebRequest webRequest) {
-    log.warn(webRequest.getContextPath() + ": " + exception.getMessage());
+    log.warn("{}: {}", webRequest.getContextPath(), exception.getMessage());
     return new ResponseEntity<>(createErrorResponse(UNAUTHORIZED, exception), new HttpHeaders(), UNAUTHORIZED);
   }
 
   @ExceptionHandler({ExternalServiceException.class, RestClientException.class})
   public ResponseEntity<ErrorResponse> handleRestExceptions(RuntimeException exception, WebRequest webRequest) {
-    log.error(webRequest.getContextPath() + ": " + exception.getMessage());
+    log.error("{}: {}", webRequest.getContextPath(), exception.getMessage());
     return new ResponseEntity<>(
         createErrorResponse(SERVICE_UNAVAILABLE, UNEXPECTED_EXTERNAL_SERVICE_BEHAVIOUR.toDisplayString()),
         new HttpHeaders(),
@@ -129,7 +129,7 @@ public class RestExceptionsHandler {
 
   @ExceptionHandler({Exception.class})
   public ResponseEntity<ErrorResponse> handleAllOtherExceptions(Exception exception, WebRequest webRequest) {
-    log.error(webRequest.getContextPath() + ": " + exception.getMessage(), exception);
+    log.error("{}: {}", webRequest.getContextPath(), exception.getMessage(), exception);
     return new ResponseEntity<>(
         createErrorResponse(INTERNAL_SERVER_ERROR, UNEXPECTED_SERVICE_BEHAVIOUR.toDisplayString()),
         new HttpHeaders(),

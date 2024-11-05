@@ -12,6 +12,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.ResponseErrorHandler;
 
 import java.util.List;
 
@@ -58,5 +59,10 @@ public class WebConfig {
   @Bean
   public HttpComponentsClientHttpRequestFactory clientHttpRequestFactory(CloseableHttpClient httpClient) {
     return new HttpComponentsClientHttpRequestFactory(httpClient);
+  }
+
+  @Bean
+  public ResponseErrorHandler customClientErrorHandler() {
+    return new CustomClientErrorHandler();
   }
 }
