@@ -27,12 +27,20 @@ updates:
     schedule:
       interval: "weekly"
       day: "friday"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
     target-branch: "master"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "friday"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
     target-branch: "preview"
   - package-ecosystem: "npm"
     directory: "/webapp/src/main/resources/static/ts"
