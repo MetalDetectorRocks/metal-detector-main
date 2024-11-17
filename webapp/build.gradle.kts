@@ -3,7 +3,7 @@ import java.time.format.DateTimeFormatter
 
 plugins {
   id("org.springframework.boot")
-  id("org.siouan.frontend-jdk11")
+  id("org.siouan.frontend-jdk17")
   id("de.europace.docker-publish")
 }
 
