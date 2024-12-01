@@ -10,7 +10,6 @@
     "test": "echo \"No tests specified\"",
     "compile": "tsc",
     "update-dependencies": "npm-check -u",
-    "clean": "rm -rf node_modules/ && rm -rf dist/",
     "dev-build": "webpack --progress --watch --config webpack.config.dev.js",
     "assemble": "npm install; webpack --config webpack.config.prod.js"
   },
