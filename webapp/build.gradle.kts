@@ -30,15 +30,22 @@ tasks {
     enabled = false
   }
 
+  register<Delete>("cleanFrontend") {
+    delete("src/main/resources/static/ts/node_modules/", "src/main/resources/static/ts/dist/")
+  }
+
+  named("clean") {
+    dependsOn("cleanFrontend")
+  }
+
   frontend {
     nodeDistributionProvided.set(false)
-    nodeVersion.set("20.11.1")
+    nodeVersion.set("20.18.1")
     nodeDistributionUrlRoot.set("https://nodejs.org/dist/")
     nodeDistributionUrlPathPattern.set("vVERSION/node-vVERSION-ARCH.TYPE")
     nodeInstallDirectory.set(file("${projectDir}/node"))
 
     installScript.set("install")
-    cleanScript.set("run clean")
     assembleScript.set("run assemble")
     checkScript.set("run test")
 
