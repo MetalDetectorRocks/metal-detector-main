@@ -45,8 +45,6 @@ public class RefreshTokenRestControllerTest  implements WithAssertions {
   @InjectMocks
   private RefreshTokenRestController underTest;
 
-  private RestAssuredMockMvcUtils restAssuredUtils;
-
   @AfterEach
   void tearDown() {
     reset(refreshTokenService);
@@ -55,9 +53,10 @@ public class RefreshTokenRestControllerTest  implements WithAssertions {
   @Nested
   class AuthenticatedTests {
 
+    private final RestAssuredMockMvcUtils restAssuredUtils = new RestAssuredMockMvcUtils(AUTHENTICATION);
+
     @BeforeEach
     void setup() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(AUTHENTICATION);
       RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
     }
 
@@ -108,9 +107,10 @@ public class RefreshTokenRestControllerTest  implements WithAssertions {
   @Nested
   class RefreshAccessTokenTests {
 
+    private final RestAssuredMockMvcUtils restAssuredUtils = new RestAssuredMockMvcUtils(REFRESH_ACCESS_TOKEN);
+
     @BeforeEach
     void setup() {
-      restAssuredUtils = new RestAssuredMockMvcUtils(REFRESH_ACCESS_TOKEN);
       RestAssuredMockMvc.standaloneSetup(underTest, RestExceptionsHandler.class);
     }
 
