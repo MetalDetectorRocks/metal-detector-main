@@ -54,6 +54,9 @@ springJdbc = { module = "org.springframework:spring-jdbc" }
 springSecurityOAuth2Client = { module = "org.springframework.security:spring-security-oauth2-client" }
 springSecurityTest = { module = "org.springframework.security:spring-security-test" }
 
+# for dependency enforcement
+logbackCore = { module = "ch.qos.logback:logback-core", version = "1.5.15" }
+
 [bundles]
 flyway = ["flyway", "flywayPostgres"]
 jjwt = ["jjwtImpl", "jjwtJackson"]
