@@ -5,7 +5,9 @@ val javaVersion: JavaVersion = JavaVersion.VERSION_17
 
 val dependencyVersions = listOf<String>()
 
-val dependencyGroupVersions = mapOf<String,String>()
+val dependencyGroupVersions = mapOf(
+  "ch.qos.logback" to libs.versions.logback.get(),
+)
 
 plugins {
   id("org.siouan.frontend-jdk17") version "10.0.0" apply false
