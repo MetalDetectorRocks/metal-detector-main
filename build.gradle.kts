@@ -8,7 +8,8 @@ val dependencyVersions = listOf(
 )
 
 val dependencyGroupVersions = mapOf(
-    libs.logbackCore.get().group to libs.logbackCore.get().version
+    libs.logbackCore.get().group to libs.logbackCore.get().version,
+    libs.tomcatEmbedCore.get().group to libs.tomcatEmbedCore.get().version
 )
 
 plugins {
