@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.testutil.BaseSpringBootTest;
 
@@ -27,7 +27,7 @@ public class OAuth2AuthorizationRestControllerIntegrationTest extends BaseSpring
   @Autowired
   private MockMvc mockMvc;
 
-  @MockBean
+  @MockitoBean
   @SuppressWarnings("unused")
   private OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
 
