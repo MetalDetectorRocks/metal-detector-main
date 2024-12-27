@@ -4,10 +4,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import rocks.metaldetector.butler.facade.ReleaseService;
 import rocks.metaldetector.security.SecurityConfig;
 import rocks.metaldetector.service.artist.FollowArtistService;
@@ -28,19 +28,19 @@ import static rocks.metaldetector.support.Endpoints.Rest.TOP_UPCOMING_RELEASES;
 @Import({SecurityConfig.class})
 public class ReleasesRestControllerIntegrationTest extends BaseWebMvcTestWithSecurity {
 
-  @MockBean
+  @MockitoBean
   @SuppressWarnings("unused")
   private ReleaseService releaseService;
 
-  @MockBean
+  @MockitoBean
   @SuppressWarnings("unused")
   private FollowArtistService followArtistService;
 
-  @MockBean
+  @MockitoBean
   @SuppressWarnings("unused")
   private ArtistCollector artistCollector;
 
-  @MockBean
+  @MockitoBean
   @SuppressWarnings("unused")
   private ReleaseCollector releaseCollector;
 

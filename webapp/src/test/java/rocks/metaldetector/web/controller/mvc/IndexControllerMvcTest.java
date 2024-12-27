@@ -3,8 +3,8 @@ package rocks.metaldetector.web.controller.mvc;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.security.AuthenticationFacade;
 import rocks.metaldetector.security.SecurityConfig;
@@ -21,7 +21,7 @@ public class IndexControllerMvcTest extends BaseWebMvcTestWithSecurity {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     @SuppressWarnings("unused")
     private AuthenticationFacade authenticationFacade;
 
