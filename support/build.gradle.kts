@@ -2,6 +2,8 @@ plugins {
   `java-library`
 }
 
+val mockitoAgent = configurations.create("mockitoAgent")
+
 dependencies {
   implementation(libs.springBootStarterSecurity)
   implementation(libs.springJdbc)
@@ -18,7 +20,15 @@ dependencies {
 
   testImplementation(libs.slf4jTest)
   testImplementation(libs.springBootStarterTest)
-  testImplementation(libs.mockitoInline)
+
+  testImplementation(libs.mockito)
+  mockitoAgent(libs.mockito) { isTransitive = false }
+}
+
+tasks {
+  test {
+    jvmArgs("-javaagent:${mockitoAgent.asPath}")
+  }
 }
 
 description = "support"

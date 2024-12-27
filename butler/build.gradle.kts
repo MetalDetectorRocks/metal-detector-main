@@ -1,3 +1,5 @@
+val mockitoAgent = configurations.create("mockitoAgent")
+
 dependencies {
   implementation(libs.springBootStarterWeb)
   implementation(libs.commonsText)
@@ -8,8 +10,16 @@ dependencies {
   annotationProcessor(libs.lombok)
 
   testImplementation(libs.commonsText)
-  testImplementation(libs.mockitoInline)
   testImplementation(libs.springBootStarterTest)
+
+  testImplementation(libs.mockito)
+  mockitoAgent(libs.mockito) { isTransitive = false }
+}
+
+tasks {
+  test {
+    jvmArgs("-javaagent:${mockitoAgent.asPath}")
+  }
 }
 
 description = "butler"

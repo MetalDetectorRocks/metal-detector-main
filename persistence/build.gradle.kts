@@ -14,7 +14,7 @@ dependencies {
 
   testImplementation(libs.springBootStarterTest)
   testImplementation(libs.h2)
-  testImplementation(libs.mockitoInline)
+  testImplementation(libs.mockito)
 }
 
 description = "persistence"
