@@ -188,7 +188,7 @@ public class SecurityConfig {
                          .xssProtection(HeadersConfigurer.XXssConfig::disable)
                          .contentTypeOptions(HeadersConfigurer.ContentTypeOptionsConfig::disable)
                          .httpStrictTransportSecurity(HeadersConfigurer.HstsConfig::disable)
-                         .permissionsPolicy((it) -> it.policy("interest-cohort=()")))
+                         .permissionsPolicyHeader((it) -> it.policy("interest-cohort=()")))
         .exceptionHandling((configurer) ->
                                configurer.defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(UNAUTHORIZED),
                                                                              new AntPathRequestMatcher(REST_ENDPOINTS)))
