@@ -2,7 +2,6 @@ package rocks.metaldetector.testutil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -12,6 +11,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 import rocks.metaldetector.security.RedirectionHandlerInterceptor;
 import rocks.metaldetector.service.user.UserService;
@@ -28,36 +29,36 @@ public abstract class BaseWebMvcTestWithSecurity {
   @SpyBean
   protected BCryptPasswordEncoder passwordEncoder;
 
-  @MockBean
+  @MockitoBean
   protected DataSource dataSource;
 
-  @MockBean
+  @MockitoBean
   protected RedirectionHandlerInterceptor redirectionInterceptor;
 
-  @MockBean
+  @MockitoBean
   protected UserService userService;
 
-  @SpyBean
+  @MockitoSpyBean
   protected ObjectMapper objectMapper;
 
-  @MockBean
+  @MockitoBean
   protected UserDtoTransformer userDtoTransformer;
 
-  @MockBean
+  @MockitoBean
   protected SecurityProperties securityProperties;
 
-  @MockBean
+  @MockitoBean
   protected OAuth2UserService<OidcUserRequest, OidcUser> customOidcUserService;
 
-  @MockBean
+  @MockitoBean
   protected OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver;
 
-  @MockBean
+  @MockitoBean
   protected OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
 
-  @MockBean
+  @MockitoBean
   protected OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
 
-  @MockBean
+  @MockitoBean
   protected ClientRegistrationRepository clientRegistrationRepository;
 }
