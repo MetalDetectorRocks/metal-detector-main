@@ -2,14 +2,13 @@
 cacheApi = "1.1.1"
 commonsCodec = "1.17.1"
 commonsLang3 = "3.17.0"
-commonsText = "1.12.0"
+commonsText = "1.13.0"
 ehcache = "3.10.8"
-esapi = "2.5.5.0"
+esapi = "2.6.0.0"
 jsonwebtoken = "0.12.6"
-jsoup = "1.18.1"
+jsoup = "1.18.3"
 lokiLogbackAppender = "1.5.2"
 lombok = "1.18.36"
-mockitoInline = "5.2.0"
 postgres = "42.7.4"
 restAssured = "5.5.0"
 slf4jTest = "3.0.1"
@@ -33,7 +32,7 @@ jjwtJackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jsonwebt
 lokiLogbackAppender = { module = "com.github.loki4j:loki-logback-appender", version.ref = "lokiLogbackAppender" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 micrometerRegistryPrometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
-mockitoInline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockito = { module = "org.mockito:mockito-core" }
 postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 restAssured = { module = "io.rest-assured:rest-assured", version.ref = "restAssured" }
 restAssuredJsonPath = { module = "io.rest-assured:json-path", version.ref = "restAssured" }
@@ -54,6 +53,9 @@ springJdbc = { module = "org.springframework:spring-jdbc" }
 springSecurityOAuth2Client = { module = "org.springframework.security:spring-security-oauth2-client" }
 springSecurityTest = { module = "org.springframework.security:spring-security-test" }
 
+# for dependency enforcement
+logbackCore = { module = "ch.qos.logback:logback-core", version = "1.5.15" }
+
 [bundles]
 flyway = ["flyway", "flywayPostgres"]
 jjwt = ["jjwtImpl", "jjwtJackson"]
@@ -62,5 +64,5 @@ springBootStarterApp = ["springBootStarterActuator", "springBootStarterMail", "s
 
 [plugins]
 dockerPublish = { id = "de.europace.docker-publish", version = "2.0.13" }
-springBoot = { id = "org.springframework.boot", version = "3.3.5" }
-springDependencyManagement = { id = "io.spring.dependency-management", version = "1.1.6" }
+springBoot = { id = "org.springframework.boot", version = "3.4.1" }
+springDependencyManagement = { id = "io.spring.dependency-management", version = "1.1.7" }

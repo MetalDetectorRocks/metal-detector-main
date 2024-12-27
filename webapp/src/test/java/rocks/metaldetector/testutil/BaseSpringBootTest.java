@@ -1,14 +1,14 @@
 package rocks.metaldetector.testutil;
 
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public abstract class BaseSpringBootTest implements WithIntegrationTestConfig {
 
-  @MockBean
+  @MockitoBean
   OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
 
-  @MockBean
+  @MockitoBean
   ClientRegistrationRepository clientRegistrationRepository;
 }

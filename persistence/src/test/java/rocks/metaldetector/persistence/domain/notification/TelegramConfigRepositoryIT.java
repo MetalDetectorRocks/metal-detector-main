@@ -11,14 +11,17 @@ import rocks.metaldetector.persistence.domain.user.UserEntity;
 import rocks.metaldetector.persistence.domain.user.UserFactory;
 import rocks.metaldetector.persistence.domain.user.UserRepository;
 
+import java.util.List;
+
 import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.EMAIL;
 import static rocks.metaldetector.persistence.domain.notification.NotificationChannel.TELEGRAM;
 
 class TelegramConfigRepositoryIT extends BaseDataJpaTest implements WithAssertions {
 
-  private static UserEntity USER_1;
-  private static NotificationConfigEntity NOTIFICATION_CONFIG_1;
-  private static TelegramConfigEntity TELEGRAM_CONFIG;
+  private UserEntity user1;
+  private UserEntity user2;
+  private NotificationConfigEntity notificationConfig1;
+  private TelegramConfigEntity telegramConfig;
 
   @Autowired
   private TelegramConfigRepository underTest;
@@ -31,36 +34,36 @@ class TelegramConfigRepositoryIT extends BaseDataJpaTest implements WithAssertio
 
   @BeforeEach
   void setup() {
-    USER_1 = UserFactory.createUser("user1", "user1@example.com");
-    UserEntity USER_2 = UserFactory.createUser("user2", "user2@example.com");
-    NOTIFICATION_CONFIG_1 = NotificationConfigEntity.builder().user(USER_1).channel(TELEGRAM).build();
-    NotificationConfigEntity NOTIFICATION_CONFIG_2 = NotificationConfigEntity.builder().user(USER_1).channel(EMAIL).build();
-    NotificationConfigEntity NOTIFICATION_CONFIG_3 = NotificationConfigEntity.builder().user(USER_2).channel(EMAIL).build();
-    TELEGRAM_CONFIG = TelegramConfigEntity.builder().notificationConfig(NOTIFICATION_CONFIG_1).registrationId(666).build();
-    userRepository.save(USER_1);
-    userRepository.save(USER_2);
-    notificationConfigRepository.save(NOTIFICATION_CONFIG_1);
-    notificationConfigRepository.save(NOTIFICATION_CONFIG_2);
-    notificationConfigRepository.save(NOTIFICATION_CONFIG_3);
-    underTest.save(TELEGRAM_CONFIG);
+    user1 = UserFactory.createUser("user1", "user1@example.com");
+    user2 = UserFactory.createUser("user2", "user2@example.com");
+    notificationConfig1 = NotificationConfigEntity.builder().user(user1).channel(TELEGRAM).build();
+    NotificationConfigEntity notificationConfig2 = NotificationConfigEntity.builder().user(user1).channel(EMAIL).build();
+    NotificationConfigEntity notificationConfig3 = NotificationConfigEntity.builder().user(user2).channel(EMAIL).build();
+    telegramConfig = TelegramConfigEntity.builder().notificationConfig(notificationConfig1).registrationId(666).build();
+    userRepository.save(user1);
+    userRepository.save(user2);
+    notificationConfigRepository.save(notificationConfig1);
+    notificationConfigRepository.save(notificationConfig2);
+    notificationConfigRepository.save(notificationConfig3);
+    underTest.save(telegramConfig);
   }
 
   @AfterEach
   void tearDown() {
     underTest.deleteAll();
     notificationConfigRepository.deleteAll();
-    userRepository.deleteAll();
+    userRepository.deleteAll(List.of(user1, user2));
   }
 
   @Test
   @DisplayName("findByUser finds correct telegram config for a given user")
   void test_find_by_user() {
     // when
-    var resultOptional = underTest.findByUser(USER_1);
+    var resultOptional = underTest.findByUser(user1);
 
     // then
     assertThat(resultOptional).isPresent();
-    assertThat(resultOptional.get()).isEqualTo(TELEGRAM_CONFIG);
+    assertThat(resultOptional.get()).isEqualTo(telegramConfig);
   }
 
   @Test
@@ -107,11 +110,11 @@ class TelegramConfigRepositoryIT extends BaseDataJpaTest implements WithAssertio
   @DisplayName("should find telegram config entity by telegram registration id")
   void should_find_telegram_config_entity_by_registration_id() {
     // when
-    var result = underTest.findByRegistrationId(TELEGRAM_CONFIG.getRegistrationId());
+    var result = underTest.findByRegistrationId(telegramConfig.getRegistrationId());
 
     // then
     assertThat(result).isPresent();
-    assertThat(result.get()).isEqualTo(TELEGRAM_CONFIG);
+    assertThat(result.get()).isEqualTo(telegramConfig);
   }
 
   @Test
@@ -128,11 +131,11 @@ class TelegramConfigRepositoryIT extends BaseDataJpaTest implements WithAssertio
   @DisplayName("should find telegram config entity by notification config")
   void should_find_telegram_config_entity_by_notification_config() {
     // when
-    var result = underTest.findByNotificationConfig(NOTIFICATION_CONFIG_1);
+    var result = underTest.findByNotificationConfig(notificationConfig1);
 
     // then
     assertThat(result).isPresent();
-    assertThat(result.get()).isEqualTo(TELEGRAM_CONFIG);
+    assertThat(result.get()).isEqualTo(telegramConfig);
   }
 
   @Test
@@ -155,8 +158,8 @@ class TelegramConfigRepositoryIT extends BaseDataJpaTest implements WithAssertio
   @DisplayName("should delete telegram config if exists")
   void test_delete_by_user() {
     // when
-    underTest.deleteByUser(USER_1);
-    var result = underTest.findByUser(USER_1);
+    underTest.deleteByUser(user1);
+    var result = underTest.findByUser(user1);
 
     // then
     assertThat(result).isEmpty();

@@ -19,16 +19,7 @@ springBoot {
   }
 }
 
-tasks {
-  bootJar {
-    archiveClassifier.set("boot")
-    enabled = true
-  }
-
-  jar {
-    enabled = false
-  }
-}
+val mockitoAgent = configurations.create("mockitoAgent")
 
 dependencies {
   implementation(libs.bundles.springBootStarterApp)
@@ -67,6 +58,25 @@ dependencies {
   testImplementation(libs.springSecurityTest)
   testImplementation(libs.h2)
   testImplementation(libs.bundles.restAssured)
+
+  testImplementation(libs.mockito)
+  mockitoAgent(libs.mockito) { isTransitive = false }
+}
+
+tasks {
+
+  bootJar {
+    archiveClassifier.set("boot")
+    enabled = true
+  }
+
+  jar {
+    enabled = false
+  }
+
+  test {
+    jvmArgs("-javaagent:${mockitoAgent.asPath}")
+  }
 }
 
 description = "webapp"
