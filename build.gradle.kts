@@ -7,6 +7,7 @@ val dependencyVersions = listOf<String>()
 
 val dependencyGroupVersions = mapOf(
   "ch.qos.logback" to libs.versions.logback.get(),
+  "org.apache.tomcat.embed" to libs.versions.tomcat.get(),
 )
 
 plugins {
