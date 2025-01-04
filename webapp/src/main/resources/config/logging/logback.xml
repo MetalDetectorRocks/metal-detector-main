@@ -30,7 +30,6 @@
             <message>
                 <pattern>${FILE_LOG_PATTERN}</pattern>
             </message>
-            <sortByTime>true</sortByTime>
         </format>
     </appender>
 
