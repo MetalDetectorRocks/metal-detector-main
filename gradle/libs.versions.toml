@@ -1,6 +1,6 @@
 [versions]
 cacheApi = "1.1.1"
-commonsCodec = "1.17.1"
+commonsCodec = "1.17.2"
 commonsLang3 = "3.17.0"
 commonsText = "1.13.0"
 ehcache = "3.10.8"
@@ -54,7 +54,7 @@ springSecurityOAuth2Client = { module = "org.springframework.security:spring-sec
 springSecurityTest = { module = "org.springframework.security:spring-security-test" }
 
 # for dependency enforcement
-logbackCore = { module = "ch.qos.logback:logback-core", version = "1.5.15" }
+logbackCore = { module = "ch.qos.logback:logback-core", version = "1.5.16" }
 
 [bundles]
 flyway = ["flyway", "flywayPostgres"]
