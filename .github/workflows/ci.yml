@@ -26,6 +26,6 @@ jobs:
         run: ./gradlew clean build --no-daemon --info --stacktrace
       - name: Publish Test Report
         if: ${{ always() }}
-        uses: scacap/action-surefire-report@a2911bd1a4412ec18dde2d93b1758b3e56d2a880 # 1.8.0
+        uses: scacap/action-surefire-report@1a128e49c0585bc0b8e38e541ac3b6e35a5bc727 # 1.9.0
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
