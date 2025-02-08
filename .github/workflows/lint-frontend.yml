@@ -16,6 +16,9 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install Corepack
+        run: npm i -g corepack
+
       - name: Install Node.js dependencies
         run: npm --prefix webapp/src/main/resources/static/ts/ install
 

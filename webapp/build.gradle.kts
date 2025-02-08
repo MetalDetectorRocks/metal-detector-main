@@ -48,6 +48,7 @@ tasks {
     installScript.set("install")
     assembleScript.set("run assemble")
     checkScript.set("run test")
+    corepackVersion.set("0.31.0")
 
     packageJsonDirectory.set(file("${projectDir}/src/main/resources/static/ts"))
   }
