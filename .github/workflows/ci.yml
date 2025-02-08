@@ -22,6 +22,12 @@ jobs:
           distribution: 'temurin'
           java-version: 17
           cache: 'gradle'
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # 4.1.0
+        with:
+          node-version: 20
+      - name: Install Corepack
+        run: npm i -g corepack
       - name: Execute clean build
         run: ./gradlew clean build --no-daemon --info --stacktrace
       - name: Publish Test Report
