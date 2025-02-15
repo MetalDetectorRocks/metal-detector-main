@@ -25,6 +25,9 @@ subprojects {
     imports {
       mavenBom(BOM_COORDINATES)
     }
+    dependencies {
+      dependency("net.minidev:json-smart:2.5.2")
+    }
   }
 
   configurations {
