@@ -54,7 +54,7 @@ springSecurityOAuth2Client = { module = "org.springframework.security:spring-sec
 springSecurityTest = { module = "org.springframework.security:spring-security-test" }
 
 # for dependency enforcement
-logbackCore = { module = "ch.qos.logback:logback-core", version = "1.5.16" }
+logbackCore = { module = "ch.qos.logback:logback-core", version = "1.5.17" }
 
 [bundles]
 flyway = ["flyway", "flywayPostgres"]
