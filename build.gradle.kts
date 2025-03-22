@@ -3,13 +3,9 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
 
 val javaVersion: JavaVersion = JavaVersion.VERSION_21
 
-val dependencyVersions = listOf(
-    libs.commonsText
-)
+val dependencyVersions = listOf<String>()
 
-val dependencyGroupVersions = mapOf(
-    libs.logbackCore.get().group to libs.logbackCore.get().version
-)
+val dependencyGroupVersions = mapOf<String, String>()
 
 plugins {
   alias(libs.plugins.springBoot) apply false
