@@ -53,9 +53,6 @@ springJdbc = { module = "org.springframework:spring-jdbc" }
 springSecurityOAuth2Client = { module = "org.springframework.security:spring-security-oauth2-client" }
 springSecurityTest = { module = "org.springframework.security:spring-security-test" }
 
-# for dependency enforcement
-logbackCore = { module = "ch.qos.logback:logback-core", version = "1.5.17" }
-
 [bundles]
 flyway = ["flyway", "flywayPostgres"]
 jjwt = ["jjwtImpl", "jjwtJackson"]
@@ -64,5 +61,5 @@ springBootStarterApp = ["springBootStarterActuator", "springBootStarterMail", "s
 
 [plugins]
 dockerPublish = { id = "de.europace.docker-publish", version = "2.0.14" }
-springBoot = { id = "org.springframework.boot", version = "3.4.3" }
+springBoot = { id = "org.springframework.boot", version = "3.4.4" }
 springDependencyManagement = { id = "io.spring.dependency-management", version = "1.1.7" }
