@@ -18,7 +18,7 @@
   "license": "Apache-2.0",
   "packageManager": "npm@9.8.0",
   "devDependencies": {
-    "@types/node": "^20.17.25",
+    "@types/node": "^20.17.28",
     "@types/qs": "^6.9.18",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
@@ -26,7 +26,7 @@
     "css-loader": "^7.1.2",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-prettier": "^5.2.5",
     "prettier": "^3.5.3",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.2",
