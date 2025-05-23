@@ -2,15 +2,15 @@
 cacheApi = "1.1.1"
 commonsCodec = "1.18.0"
 commonsLang3 = "3.17.0"
-commonsText = "1.13.0"
+commonsText = "1.13.1"
 ehcache = "3.10.8"
-esapi = "2.6.0.0"
+esapi = "2.6.1.0"
 jsonwebtoken = "0.12.6"
-jsoup = "1.18.3"
+jsoup = "1.20.1"
 lokiLogbackAppender = "1.6.0"
-lombok = "1.18.36"
+lombok = "1.18.38"
 postgres = "42.7.5"
-restAssured = "5.5.1"
+restAssured = "5.5.5"
 slf4jTest = "3.0.1"
 
 [libraries]
@@ -60,6 +60,6 @@ restAssured = ["restAssured", "restAssuredJsonPath", "restAssuredXmlPath", "rest
 springBootStarterApp = ["springBootStarterActuator", "springBootStarterMail", "springBootStarterValidation", "springBootStarterWeb", "springBootStarterThymeleaf", "springBootStarterOAuth2Client"]
 
 [plugins]
-dockerPublish = { id = "de.europace.docker-publish", version = "2.0.14" }
-springBoot = { id = "org.springframework.boot", version = "3.4.4" }
+dockerPublish = { id = "de.europace.docker-publish", version = "2.0.15" }
+springBoot = { id = "org.springframework.boot", version = "3.5.0" }
 springDependencyManagement = { id = "io.spring.dependency-management", version = "1.1.7" }
