@@ -7,6 +7,7 @@ dependencies {
   implementation(rootProject.projects.support)
 
   testImplementation(libs.springBootStarterTest)
+  testRuntimeOnly(libs.jupiterLauncher)
 }
 
 description = "telegram"

@@ -58,6 +58,7 @@ dependencies {
   testImplementation(libs.springSecurityTest)
   testImplementation(libs.h2)
   testImplementation(libs.bundles.restAssured)
+  testRuntimeOnly(libs.jupiterLauncher)
 
   testImplementation(libs.mockito)
   mockitoAgent(libs.mockito) { isTransitive = false }

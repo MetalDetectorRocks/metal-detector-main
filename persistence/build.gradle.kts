@@ -13,6 +13,7 @@ dependencies {
   implementation(rootProject.projects.support)
 
   testImplementation(libs.springBootStarterTest)
+  testRuntimeOnly(libs.jupiterLauncher)
   testImplementation(libs.h2)
   testImplementation(libs.mockito)
 }
