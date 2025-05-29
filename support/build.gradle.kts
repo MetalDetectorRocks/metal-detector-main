@@ -20,6 +20,7 @@ dependencies {
 
   testImplementation(libs.slf4jTest)
   testImplementation(libs.springBootStarterTest)
+  testRuntimeOnly(libs.jupiterLauncher)
 
   testImplementation(libs.mockito)
   mockitoAgent(libs.mockito) { isTransitive = false }

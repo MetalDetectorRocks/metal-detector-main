@@ -5,6 +5,7 @@ commonsLang3 = "3.17.0"
 commonsText = "1.13.1"
 ehcache = "3.10.8"
 esapi = "2.6.1.0"
+jupiter = "1.12.2"
 jsonwebtoken = "0.12.6"
 jsoup = "1.20.1"
 lokiLogbackAppender = "1.6.0"
@@ -25,6 +26,7 @@ flywayPostgres = { module = "org.flywaydb:flyway-database-postgresql" }
 h2 = { module = "com.h2database:h2" }
 httpClient = { module = "org.apache.httpcomponents.client5:httpclient5" }
 jacksonDatatypeJsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
+jupiterLauncher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "jupiter" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 jjwtApi = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jsonwebtoken" }
 jjwtImpl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jsonwebtoken" }
