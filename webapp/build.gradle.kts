@@ -101,6 +101,7 @@ dependencies {
   testImplementation("io.rest-assured:json-path:${libs.versions.restAssured.get()}")
   testImplementation("io.rest-assured:xml-path:${libs.versions.restAssured.get()}")
   testImplementation("io.rest-assured:spring-mock-mvc:${libs.versions.restAssured.get()}")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 description = "webapp"
