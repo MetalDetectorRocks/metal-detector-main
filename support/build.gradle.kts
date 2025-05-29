@@ -19,6 +19,7 @@ dependencies {
 
   testImplementation("com.github.valfirst:slf4j-test:${libs.versions.slf4jTest.get()}")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 description = "support"
