@@ -5,7 +5,7 @@ val javaVersion: JavaVersion = JavaVersion.VERSION_21
 
 val dependencyVersions = listOf(
   "commons-beanutils:commons-beanutils:1.11.0"
-  )
+)
 
 val dependencyGroupVersions = mapOf<String, String>()
 
